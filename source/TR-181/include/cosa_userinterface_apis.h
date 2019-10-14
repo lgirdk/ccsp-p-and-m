@@ -119,7 +119,6 @@ _COSA_DML_USERINTERFACE_CFG
     BOOLEAN                         bHTTPSecurityHeaderEnable;
     ULONG                           PasswordLockoutAttempts;
     ULONG                           PasswordLockoutTime;
-    BOOLEAN                         bEnableNginx;
 }
 COSA_DML_USERINTERFACE_CFG,  *PCOSA_DML_USERINTERFACE_CFG;
 

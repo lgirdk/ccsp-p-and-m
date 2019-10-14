@@ -184,12 +184,6 @@ UserInterface_GetParamBoolValue
         *pBool = pMyObject->UserInterfaceCfg.bHTTPSecurityHeaderEnable;
         return TRUE;
     }
-    
-    if( AnscEqualString(ParamName, "EnableNginx", TRUE))      
-    {
-        *pBool = pMyObject->UserInterfaceCfg.bEnableNginx;
-        return TRUE;
-    }
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
@@ -231,22 +225,6 @@ UserInterface_SetParamBoolValue
         pMyObject->UserInterfaceCfg.bHTTPSecurityHeaderEnable = bValue;
         return TRUE;
     }
-   
-   if( AnscEqualString(ParamName, "EnableNginx", TRUE))
-    {
-        pMyObject->UserInterfaceCfg.bEnableNginx = bValue;
-        if(bValue == TRUE)
-        {
-           system("iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport 81 -j ACCEPT ");
-           system("iptables-save");
-           system("systemctl start nginx");
-        }
-       else{
-                system("systemctl stop nginx");
-        }
-        return TRUE;
-    } 
-
 
     return FALSE;
 }
