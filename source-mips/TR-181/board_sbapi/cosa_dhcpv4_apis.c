@@ -468,7 +468,7 @@ int usg_get_cpe_associated_ssid(void *arg)
 
     while(1){
 reopen:
-        fd = open(WIFI_CLIENTS_MAC_FILE, O_CREAT|O_WRONLY|O_TRUNC);
+        fd = open(WIFI_CLIENTS_MAC_FILE, O_CREAT|O_WRONLY|O_TRUNC, S_IRUSR | S_IWUSR);
         if (-1 == fd){
             sleep(1);
             goto reopen;
