@@ -2716,9 +2716,9 @@ CosaDmlDcSetReinitMacThreshold
         ULONG                       value
     )
 {
-    char buf[5];
-    memset(buf,0,sizeof(buf));
-    sprintf(buf,"%d",value);
+    char buf[12];
+
+    snprintf(buf,sizeof(buf),"%d",value);
 	
     if((syscfg_set( NULL, "rdkbReinitMacThreshold", buf)) != 0 )
     {
@@ -2743,7 +2743,8 @@ CosaDmlDcGetReinitMacThreshold
         ULONG                       *pValue
     )
 {
-    char buf[5];
+    char buf[12];
+
     if( (syscfg_get( NULL, "rdkbReinitMacThreshold", buf, sizeof(buf))) == 0 )
     {
     	*pValue = atoi(buf);
