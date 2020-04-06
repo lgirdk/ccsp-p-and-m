@@ -2881,9 +2881,9 @@ CosaDmlDcSetReinitMacThreshold
 
 #else
     UNREFERENCED_PARAMETER(hContext);
-    char buf[5];
-    memset(buf,0,sizeof(buf));
-    sprintf(buf,"%lu",value);
+    char buf[12];
+
+    snprintf (buf, sizeof(buf), "%lu", value);
 	
     if((syscfg_set( NULL, "rdkbReinitMacThreshold", buf)) != 0 )
     {
@@ -2917,7 +2917,8 @@ CosaDmlDcGetReinitMacThreshold
         return ANSC_STATUS_SUCCESS;
 
 #else
-    char buf[5];
+    char buf[12];
+
     if( (syscfg_get( NULL, "rdkbReinitMacThreshold", buf, sizeof(buf))) == 0 )
     {
     	*pValue = atoi(buf);
