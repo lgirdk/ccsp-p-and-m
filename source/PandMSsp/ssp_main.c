@@ -529,6 +529,10 @@ int main(int argc, char* argv[])
     FILE *fp;
     int s, svalue = -1;
 
+    // Buffer characters till newline for stdout and stderr
+    setlinebuf(stdout);
+    setlinebuf(stderr);
+
 #ifdef FEATURE_SUPPORT_RDKLOG
     RDK_LOGGER_INIT();
 #endif
