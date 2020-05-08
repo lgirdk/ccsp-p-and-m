@@ -518,6 +518,10 @@ int main(int argc, char* argv[])
     int s, svalue = -1;
     long uptime1=0, uptime2=0, diff=0;
 
+    // Buffer characters till newline for stdout and stderr
+    setlinebuf(stdout);
+    setlinebuf(stderr);
+
 #ifdef FEATURE_SUPPORT_RDKLOG
     RDK_LOGGER_INIT();
 #endif
