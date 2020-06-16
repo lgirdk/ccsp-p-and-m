@@ -66,10 +66,12 @@
 
 **************************************************************************/
 
+#include <arpa/inet.h>
 #include "ansc_platform.h"
 #include "cosa_firewall_dml.h"
 #include "cosa_firewall_internal.h"
 #include "safec_lib_common.h"
+
 /***********************************************************************
  IMPORTANT NOTE:
 
@@ -103,6 +105,10 @@
  }
  
 ***********************************************************************/
+// LGI ADD START
+#define BTMASK_ALWAYS               0
+#define DAYOFWEEK_BT_MASK_LEN       25
+// LGI ADD END
 /***********************************************************************
 
  APIs for Object:
@@ -732,6 +738,12 @@ V4_GetParamBoolValue
       CosaDmlGatewayV4GetIPFloodDetect(pBool);
       return TRUE;
     }
+    else if (strcmp(ParamName, "Enable") == 0) {
+
+      CosaDmlGatewayV4GetFwEnable(pBool);
+      return TRUE;
+    }
+
     return FALSE;
 }
 
@@ -789,8 +801,43 @@ V4_SetParamBoolValue
       CosaDmlGatewayV4SetIPFloodDetect(bValue);
       return TRUE;
     }
+    else if (strcmp(ParamName, "Enable") == 0) {
+
+      CosaDmlGatewayV4SetFwEnable(bValue);
+      return TRUE;
+    }
 
     return FALSE;
+}
+
+BOOL V4_GetParamUlongValue ( ANSC_HANDLE hInsContext, char* ParamName, ULONG* puLong )
+{
+    if (strcmp(ParamName, "ScheduleEnable") == 0)
+    {
+        if(ANSC_STATUS_SUCCESS == CosaDmlFW_V4DayOfWeek_GetBlockTimeBitMaskType(puLong))
+	{
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+BOOL V4_SetParamUlongValue ( ANSC_HANDLE hInsContext, char* ParamName, ULONG ulValue )
+{
+    PCOSA_DATAMODEL_FIREWALL pCosaDMFirewall = (PCOSA_DATAMODEL_FIREWALL)g_pCosaBEManager->hFirewall;
+
+    if (strcmp(ParamName, "ScheduleEnable") == 0)
+    {
+        if(ANSC_STATUS_SUCCESS != CosaDmlFW_V4DayOfWeek_SetBlockTimeBitMaskType(ulValue))
+	{
+            return FALSE;
+        }
+
+        pCosaDMFirewall->V4DayOfWeekBlockTimeBitMaskType = ulValue;
+    }
+
+    return TRUE;
 }
 
 /**********************************************************************
@@ -904,6 +951,441 @@ V4_Rollback
   return ANSC_STATUS_SUCCESS;
 }
 
+// V4 IP Filter----------------------------------------------------------------
+
+ULONG FW_V4_IpFilter_GetEntryCount ( ANSC_HANDLE hInsContext )
+{
+    COSA_DATAMODEL_FIREWALL   *pCosaDMFirewall = (COSA_DATAMODEL_FIREWALL*)g_pCosaBEManager->hFirewall;
+    return AnscSListQueryDepth(&pCosaDMFirewall->FwV4IpFilterList);
+}
+
+ANSC_HANDLE FW_V4_IpFilter_GetEntry ( ANSC_HANDLE hInsContext, ULONG nIndex, ULONG* pInsNumber )
+{
+    COSA_DATAMODEL_FIREWALL   *pCosaDMFirewall = (COSA_DATAMODEL_FIREWALL*)g_pCosaBEManager->hFirewall;
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = NULL;
+    PSINGLE_LINK_ENTRY              pSLinkEntry = NULL;
+
+    pSLinkEntry = AnscQueueGetEntryByIndex((ANSC_HANDLE)&pCosaDMFirewall->FwV4IpFilterList, nIndex);
+
+    if (pSLinkEntry)
+    {
+        pLinkObj = ACCESS_COSA_CONTEXT_LINK_OBJECT(pSLinkEntry);
+        *pInsNumber = pLinkObj->InstanceNumber;
+    }
+
+    return pLinkObj;
+}
+
+ANSC_HANDLE FW_V4_IpFilter_AddEntry ( ANSC_HANDLE hInsContext, ULONG* pInsNumber )
+{
+    COSA_DATAMODEL_FIREWALL   *pCosaDMFirewall = (COSA_DATAMODEL_FIREWALL*)g_pCosaBEManager->hFirewall;
+    PCOSA_CONTEXT_LINK_OBJECT     pLinkObj      = NULL;
+    COSA_DML_FW_IPFILTER          *pFwIpFilter    = NULL;
+
+    pLinkObj = AnscAllocateMemory(sizeof(COSA_CONTEXT_LINK_OBJECT));
+    if (!pLinkObj)
+        return NULL;
+
+    pFwIpFilter = AnscAllocateMemory(sizeof(COSA_DML_FW_IPFILTER));
+    if (!pFwIpFilter)
+    {
+        AnscFreeMemory(pLinkObj);
+        return NULL;
+    }
+
+     /* now we have this link content */
+    pLinkObj->InstanceNumber = pCosaDMFirewall->FwV4IpFilterNextInsNum;
+    pFwIpFilter->InstanceNumber = pCosaDMFirewall->FwV4IpFilterNextInsNum;
+    pCosaDMFirewall->FwV4IpFilterNextInsNum++;
+    if (pCosaDMFirewall->FwV4IpFilterNextInsNum == 0)
+        pCosaDMFirewall->FwV4IpFilterNextInsNum = 1;
+
+    _ansc_sprintf(pFwIpFilter->Alias, "FW-V4IpFilter-%d", (int)pLinkObj->InstanceNumber);
+    pLinkObj->hContext      = (ANSC_HANDLE)pFwIpFilter;
+    pLinkObj->hParentTable  = NULL;
+    pLinkObj->bNew          = TRUE;
+
+    CosaSListPushEntryByInsNum((PSLIST_HEADER)&pCosaDMFirewall->FwV4IpFilterList, pLinkObj);
+    CosaFwReg_V4_IpFilterAddInfo((ANSC_HANDLE)pCosaDMFirewall, (ANSC_HANDLE)pLinkObj);
+
+    *pInsNumber = pLinkObj->InstanceNumber;
+
+    return pLinkObj;
+}
+
+ULONG FW_V4_IpFilter_DelEntry ( ANSC_HANDLE hInsContext, ANSC_HANDLE hInstance )
+{
+    ANSC_STATUS                    returnStatus = ANSC_STATUS_SUCCESS;
+    COSA_DATAMODEL_FIREWALL   *pCosaDMFirewall = (COSA_DATAMODEL_FIREWALL*)g_pCosaBEManager->hFirewall;
+    PCOSA_CONTEXT_LINK_OBJECT      pLinkObj     = (PCOSA_CONTEXT_LINK_OBJECT)hInstance;
+    COSA_DML_FW_IPFILTER          *pFwIpFilter  = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+
+   if (pLinkObj->bNew)
+    {
+        /* Set bNew to FALSE to indicate this node is not going to save to SysRegistry */
+        pLinkObj->bNew = FALSE;
+        returnStatus = CosaFwReg_V4_IpFilterDelInfo((ANSC_HANDLE)pCosaDMFirewall, (ANSC_HANDLE)pLinkObj);
+    }
+    else
+    {
+        returnStatus = CosaDmlFW_V4_IPFilter_DelEntry(pLinkObj->InstanceNumber);
+    }
+
+    if ( returnStatus == ANSC_STATUS_SUCCESS )
+    {
+        AnscSListPopEntryByLink((PSLIST_HEADER)&pCosaDMFirewall->FwV4IpFilterList, &pLinkObj->Linkage);
+        AnscFreeMemory(pFwIpFilter);
+        AnscFreeMemory(pLinkObj);
+    }
+    return returnStatus;
+
+}
+
+BOOL FW_V4_IpFilter_GetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName, BOOL* pBool )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj            = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER            *pFwIpFilter        = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+        *pBool = pFwIpFilter->Enable;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+ULONG FW_V4_IpFilter_GetParamStringValue ( ANSC_HANDLE hInsContext, char* ParamName, char* pValue, ULONG* pUlSize )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj            = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER            *pFwIpFilter        = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+
+    if (strcmp(ParamName, "Description") == 0)
+    {
+        AnscCopyString(pValue, pFwIpFilter->Description);
+        return 0;
+    }
+    if (strcmp(ParamName, "SrcStartAddr") == 0)
+    {
+        AnscCopyString(pValue, pFwIpFilter->SrcStartIPAddress);
+        return 0;
+    }
+    if (strcmp(ParamName, "SrcEndAddr") == 0)
+    {
+        AnscCopyString(pValue, pFwIpFilter->SrcEndIPAddress);
+        return 0;
+    }
+    if (strcmp(ParamName, "DstStartAddr") == 0)
+    {
+        AnscCopyString(pValue, pFwIpFilter->DstStartIPAddress);
+        return 0;
+    }
+    if (strcmp(ParamName, "DstEndAddr") == 0)
+    {
+        AnscCopyString(pValue, pFwIpFilter->DstEndIPAddress);
+        return 0;
+    }
+
+    return 1;
+}
+
+BOOL FW_V4_IpFilter_GetParamUlongValue ( ANSC_HANDLE hInsContext, char *ParamName, ULONG *pUlong )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER           *pFwIpFilter   = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+
+    if (strcmp(ParamName, "SrcPortStart") == 0)
+    {
+        *pUlong = pFwIpFilter->SrcStartPort;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "SrcPortEnd") == 0)
+    {
+        *pUlong = pFwIpFilter->SrcEndPort;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "DstPortStart") == 0)
+    {
+        *pUlong = pFwIpFilter->DstStartPort;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "DstPortEnd") == 0)
+    {
+        *pUlong = pFwIpFilter->DstEndPort;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "Protocol") == 0)
+    {
+        *pUlong = pFwIpFilter->ProtocolType;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "Action") == 0)
+    {
+        *pUlong = pFwIpFilter->FilterAction;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "Direction") == 0)
+    {
+        *pUlong = pFwIpFilter->FilterDirec;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+BOOL FW_V4_IpFilter_SetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName, BOOL bValue )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj            = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER           *pFwIpFilter     = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+        pFwIpFilter->Enable = bValue;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+BOOL FW_V4_IpFilter_SetParamStringValue ( ANSC_HANDLE hInsContext, char* ParamName, char* strValue )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj            = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER           *pFwIpFilter     = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+    unsigned char buf[sizeof(struct in_addr)];
+
+    if (strcmp(ParamName, "Description") == 0)
+    {
+        _ansc_snprintf(pFwIpFilter->Description, sizeof(pFwIpFilter->Description), "%s", strValue);
+        return TRUE;
+    }
+    if (strcmp(ParamName, "SrcStartAddr") == 0)
+    {
+        _ansc_snprintf(pFwIpFilter->SrcStartIPAddress, sizeof(pFwIpFilter->SrcStartIPAddress), "%s", strValue);
+        return TRUE;
+    }
+    if (strcmp(ParamName, "SrcEndAddr") == 0)
+    {
+        _ansc_snprintf(pFwIpFilter->SrcEndIPAddress, sizeof(pFwIpFilter->SrcEndIPAddress), "%s", strValue);
+        return TRUE;
+    }
+    if (strcmp(ParamName, "DstStartAddr") == 0)
+    {
+       if(inet_pton(AF_INET,strValue,buf))
+       {
+               _ansc_snprintf(pFwIpFilter->DstStartIPAddress, sizeof(pFwIpFilter->DstStartIPAddress), "%s", strValue);
+               return TRUE;
+       }
+    }
+    if (strcmp(ParamName, "DstEndAddr") == 0)
+    {
+        _ansc_snprintf(pFwIpFilter->DstEndIPAddress, sizeof(pFwIpFilter->DstEndIPAddress), "%s", strValue);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+BOOL FW_V4_IpFilter_SetParamUlongValue ( ANSC_HANDLE hInsContext, char *ParamName, ULONG ulValue )
+{
+    PCOSA_CONTEXT_LINK_OBJECT     pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER         *pFwIpFilter   = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+
+    if (strcmp(ParamName, "SrcPortStart") == 0)
+    {
+        pFwIpFilter->SrcStartPort = ulValue;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "SrcPortEnd") == 0)
+    {
+        pFwIpFilter->SrcEndPort = ulValue;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "DstPortStart") == 0)
+    {
+        pFwIpFilter->DstStartPort = ulValue;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "DstPortEnd") == 0)
+    {
+        pFwIpFilter->DstEndPort = ulValue;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "Protocol") == 0)
+    {
+        pFwIpFilter->ProtocolType= ulValue;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "Action") == 0)
+    {
+        pFwIpFilter->FilterAction= ulValue;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "Direction") == 0)
+    {
+        pFwIpFilter->FilterDirec= ulValue;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+BOOL FW_V4_IpFilter_Validate ( ANSC_HANDLE hInsContext, char* pReturnParamName, ULONG* puLength )
+{
+    return TRUE;
+}
+
+ULONG FW_V4_IpFilter_Commit ( ANSC_HANDLE hInsContext )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj     = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER           *pFwIpFilter  = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+    PCOSA_DATAMODEL_FIREWALL        pCosaDMFirewall = (PCOSA_DATAMODEL_FIREWALL)g_pCosaBEManager->hFirewall;
+
+    if (pLinkObj->bNew)
+    {
+        if (CosaDmlFW_V4_IPFilter_AddEntry(pFwIpFilter) != ANSC_STATUS_SUCCESS)
+            return -1;
+        CosaFwReg_V4_IpFilterDelInfo((ANSC_HANDLE)pCosaDMFirewall, (ANSC_HANDLE)pLinkObj);
+        pLinkObj->bNew = FALSE;
+    }
+    else
+    {
+        if (CosaDmlFW_V4_IPFilter_SetConf(pFwIpFilter->InstanceNumber, pFwIpFilter) != ANSC_STATUS_SUCCESS)
+        {
+            CosaDmlFW_V4_IPFilter_GetConf(pFwIpFilter->InstanceNumber, pFwIpFilter);
+            return -1;
+        }
+        else
+            CosaDmlFW_V4_IPFilter_GetConf(pFwIpFilter->InstanceNumber, pFwIpFilter);
+    }
+    return 0;
+}
+
+ULONG FW_V4_IpFilter_Rollback ( ANSC_HANDLE hInsContext )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj            = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER           *pFwIpFilter         = (COSA_DML_FW_IPFILTER *)pLinkObj->hContext;
+
+    if (CosaDmlFW_V4_IPFilter_GetConf(pFwIpFilter->InstanceNumber, pFwIpFilter) != ANSC_STATUS_SUCCESS)
+        return -1;
+
+    return 0;
+}
+
+ULONG V4_IPFilter_DayOfWeek_GetEntryCount ( ANSC_HANDLE hInsContext )
+{
+    COSA_DATAMODEL_FIREWALL   *pCosaDMFirewall = (COSA_DATAMODEL_FIREWALL*)g_pCosaBEManager->hFirewall;
+    return AnscSListQueryDepth(&pCosaDMFirewall->V4DayOfWeekList);
+}
+
+ANSC_HANDLE V4_IPFilter_DayOfWeek_GetEntry ( ANSC_HANDLE hInsContext, ULONG nIndex, ULONG* pInsNumber )
+{
+    COSA_DATAMODEL_FIREWALL   *pCosaDMFirewall = (COSA_DATAMODEL_FIREWALL*)g_pCosaBEManager->hFirewall;
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = NULL;
+    PSINGLE_LINK_ENTRY              pSLinkEntry = NULL;
+
+    pSLinkEntry = AnscQueueGetEntryByIndex((ANSC_HANDLE)&pCosaDMFirewall->V4DayOfWeekList, nIndex);
+    if (pSLinkEntry)
+    {
+        pLinkObj = ACCESS_COSA_CONTEXT_LINK_OBJECT(pSLinkEntry);
+        *pInsNumber = pLinkObj->InstanceNumber;
+    }
+    return pLinkObj;
+}
+
+ULONG V4_IPFilter_DayOfWeek_GetParamStringValue ( ANSC_HANDLE hInsContext, char* ParamName, char* pValue, ULONG* pUlSize )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj        = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_V4_DAYOFWEEK       *pV4DayOfWeek    = (COSA_DML_FW_V4_DAYOFWEEK*)pLinkObj->hContext;
+
+    if (strcmp(ParamName, "BlockTimeBitMask") == 0) {
+        AnscCopyString(pValue, pV4DayOfWeek->V4DayOfWeek_BlockTimeBitMask);
+        return 0;
+    }
+    return 1;
+}
+
+BOOL V4_IPFilter_DayOfWeek_SetParamStringValue ( ANSC_HANDLE hInsContext, char* ParamName, char* strValue )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj         = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_V4_DAYOFWEEK       *pV4DayOfWeek    = (COSA_DML_FW_V4_DAYOFWEEK*)pLinkObj->hContext;
+    int iMaskLen = 0;
+    int i = 0;
+
+    /* check the parameter name and set the corresponding value */
+    if (strcmp(ParamName, "BlockTimeBitMask") == 0)
+    {
+        // Ensure Mask Len is 24 characters
+        iMaskLen = strlen(strValue);
+        if(iMaskLen != (DAYOFWEEK_BT_MASK_LEN - 1))
+        {
+            return FALSE;
+        }
+        // Ensure Mask is a valid Binary String
+        for(i = 0; i < iMaskLen; i++)
+        {
+            if((int)strValue[i] < 48 || (int)strValue[i] > 49)
+            {
+                return FALSE; // Not a Binary character
+            }
+        }
+        _ansc_snprintf(pV4DayOfWeek->V4DayOfWeek_BlockTimeBitMask, sizeof(pV4DayOfWeek->V4DayOfWeek_BlockTimeBitMask), "%s", strValue);
+        return TRUE;
+    }
+    return FALSE;
+}
+
+BOOL V4_IPFilter_DayOfWeek_Validate ( ANSC_HANDLE hInsContext, char* pReturnParamName, ULONG* puLength )
+{
+    PCOSA_DATAMODEL_FIREWALL        pCosaDMFirewall = (PCOSA_DATAMODEL_FIREWALL)g_pCosaBEManager->hFirewall;
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj     = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_V4_DAYOFWEEK       *pV4DayOfWeek = (COSA_DML_FW_V4_DAYOFWEEK*)pLinkObj->hContext;
+
+    int iMaskLen = 0;
+    int i = 0;
+
+    if(BTMASK_ALWAYS != pCosaDMFirewall->V4DayOfWeekBlockTimeBitMaskType)
+    {
+        // Ensure Mask Len is 24 characters
+        iMaskLen = strlen(pV4DayOfWeek->V4DayOfWeek_BlockTimeBitMask);
+        if(iMaskLen != (DAYOFWEEK_BT_MASK_LEN - 1))
+        {
+            return FALSE;
+        }
+        // Ensure Mask is a valid Binary String
+        for(i = 0; i < iMaskLen; i++)
+        {
+            if((int)pV4DayOfWeek->V4DayOfWeek_BlockTimeBitMask[i] < 48 || (int)pV4DayOfWeek->V4DayOfWeek_BlockTimeBitMask[i] > 49)
+            {
+                return FALSE; // Not a Binary character
+            }
+        }
+    }
+
+    return TRUE;
+}
+
+ULONG V4_IPFilter_DayOfWeek_Commit ( ANSC_HANDLE hInsContext )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj     = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_V4_DAYOFWEEK       *pV4DayOfWeek = (COSA_DML_FW_V4_DAYOFWEEK*)pLinkObj->hContext;
+
+    if (CosaDmlFW_V4DayOfWeek_SetConf(pV4DayOfWeek->InstanceNumber, pV4DayOfWeek) != ANSC_STATUS_SUCCESS)
+    {
+        CosaDmlFW_V4DayOfWeek_GetConf(pV4DayOfWeek->InstanceNumber, pV4DayOfWeek);
+        return -1;
+    }
+    return 0;
+}
+
+ULONG V4_IPFilter_DayOfWeek_Rollback ( ANSC_HANDLE hInsContext )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_V4_DAYOFWEEK       *pV4DayOfWeek = (COSA_DML_FW_V4_DAYOFWEEK*)pLinkObj->hContext;
+
+    if (CosaDmlFW_V4DayOfWeek_GetConf(pV4DayOfWeek->InstanceNumber, pV4DayOfWeek) != ANSC_STATUS_SUCCESS)
+        return -1;
+
+    return 0;
+}
+
 /**********************************************************************
 
     caller:     owner of this object
@@ -958,7 +1440,11 @@ V6_GetParamBoolValue
       CosaDmlGatewayV6GetIPFloodDetect(pBool);
       return TRUE;
     }
+    else if (strcmp(ParamName, "Enable") == 0) {
 
+      CosaDmlGatewayV6GetFwEnable(pBool);
+      return TRUE;
+    }
 
     return FALSE;
 }
@@ -1017,8 +1503,37 @@ V6_SetParamBoolValue
       CosaDmlGatewayV6SetIPFloodDetect(bValue);
       return TRUE;
     }
+    else if (strcmp(ParamName, "Enable") == 0) {
+
+      CosaDmlGatewayV6SetFwEnable(bValue);
+      return TRUE;
+    }
 
     return FALSE;
+}
+
+BOOL V6_GetParamUlongValue ( ANSC_HANDLE hInsContext, char* ParamName, ULONG* puLong )
+{
+    /* check the parameter name and return the corresponding value */
+    if (strcmp(ParamName, "ScheduleEnable") == 0) {
+        if(ANSC_STATUS_SUCCESS == CosaDmlFW_V6DayOfWeek_GetBlockTimeBitMaskType(puLong)) {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+BOOL V6_SetParamUlongValue ( ANSC_HANDLE hInsContext, char* ParamName, ULONG ulValue )
+{
+    PCOSA_DATAMODEL_FIREWALL        pCosaDMFirewall = (PCOSA_DATAMODEL_FIREWALL)g_pCosaBEManager->hFirewall;
+    /* check the parameter name and set the corresponding value */
+    if (strcmp(ParamName, "ScheduleEnable") == 0) {
+        if(ANSC_STATUS_SUCCESS != CosaDmlFW_V6DayOfWeek_SetBlockTimeBitMaskType(ulValue)) {
+            return FALSE;
+        }
+        pCosaDMFirewall->V6DayOfWeekBlockTimeBitMaskType = ulValue;
+    }
+    return TRUE;
 }
 
 /**********************************************************************
@@ -1132,5 +1647,441 @@ V6_Rollback
   system("sysevent set firewall-restart");
 
   return 0;
+}
+
+// V6 IP Filter----------------------------------------------------------------
+
+ULONG FW_V6_IpFilter_GetEntryCount ( ANSC_HANDLE hInsContext )
+{
+    COSA_DATAMODEL_FIREWALL   *pCosaDMFirewall = (COSA_DATAMODEL_FIREWALL*)g_pCosaBEManager->hFirewall;
+    return AnscSListQueryDepth(&pCosaDMFirewall->FwV6IpFilterList);
+}
+
+ANSC_HANDLE FW_V6_IpFilter_GetEntry ( ANSC_HANDLE hInsContext, ULONG nIndex, ULONG* pInsNumber )
+{
+    COSA_DATAMODEL_FIREWALL   *pCosaDMFirewall = (COSA_DATAMODEL_FIREWALL*)g_pCosaBEManager->hFirewall;
+    PCOSA_CONTEXT_LINK_OBJECT     pLinkObj    = NULL;
+    PSINGLE_LINK_ENTRY            pSLinkEntry = NULL;
+
+    pSLinkEntry = AnscQueueGetEntryByIndex((ANSC_HANDLE)&pCosaDMFirewall->FwV6IpFilterList, nIndex);
+
+    if (pSLinkEntry)
+    {
+        pLinkObj = ACCESS_COSA_CONTEXT_LINK_OBJECT(pSLinkEntry);
+        *pInsNumber = pLinkObj->InstanceNumber;
+    }
+
+    return pLinkObj;
+}
+
+ANSC_HANDLE FW_V6_IpFilter_AddEntry ( ANSC_HANDLE hInsContext, ULONG* pInsNumber )
+{
+    COSA_DATAMODEL_FIREWALL   *pCosaDMFirewall = (COSA_DATAMODEL_FIREWALL*)g_pCosaBEManager->hFirewall;
+    PCOSA_CONTEXT_LINK_OBJECT      pLinkObj    = NULL;
+    COSA_DML_FW_IPFILTER          *pFwIpFilter   = NULL;
+
+    pLinkObj = AnscAllocateMemory(sizeof(COSA_CONTEXT_LINK_OBJECT));
+    if (!pLinkObj)
+        return NULL;
+
+    pFwIpFilter = AnscAllocateMemory(sizeof(COSA_DML_FW_IPFILTER));
+    if (!pFwIpFilter)
+    {
+        AnscFreeMemory(pLinkObj);
+        return NULL;
+    }
+
+     /* now we have this link content */
+    pLinkObj->InstanceNumber = pCosaDMFirewall->FwV6IpFilterNextInsNum;
+    pFwIpFilter->InstanceNumber = pCosaDMFirewall->FwV6IpFilterNextInsNum;
+    pFwIpFilter->Enable = TRUE;
+    pCosaDMFirewall->FwV6IpFilterNextInsNum++;
+    if (pCosaDMFirewall->FwV6IpFilterNextInsNum == 0)
+        pCosaDMFirewall->FwV6IpFilterNextInsNum = 1;
+
+    _ansc_sprintf(pFwIpFilter->Alias, "FW-V6IpFilter-%d", (int)pLinkObj->InstanceNumber);
+    pLinkObj->hContext      = (ANSC_HANDLE)pFwIpFilter;
+    pLinkObj->hParentTable  = NULL;
+    pLinkObj->bNew          = TRUE;
+
+    CosaSListPushEntryByInsNum((PSLIST_HEADER)&pCosaDMFirewall->FwV6IpFilterList, pLinkObj);
+    CosaFwReg_V6_IpFilterAddInfo((ANSC_HANDLE)pCosaDMFirewall, (ANSC_HANDLE)pLinkObj);
+
+    *pInsNumber = pLinkObj->InstanceNumber;
+
+    return pLinkObj;
+}
+
+ULONG FW_V6_IpFilter_DelEntry ( ANSC_HANDLE hInsContext, ANSC_HANDLE hInstance )
+{
+    ANSC_STATUS                    returnStatus = ANSC_STATUS_SUCCESS;
+    COSA_DATAMODEL_FIREWALL   *pCosaDMFirewall = (COSA_DATAMODEL_FIREWALL*)g_pCosaBEManager->hFirewall;
+    PCOSA_CONTEXT_LINK_OBJECT      pLinkObj = (PCOSA_CONTEXT_LINK_OBJECT)hInstance;
+    COSA_DML_FW_IPFILTER          *pFwIpFilter  = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+
+   if (pLinkObj->bNew)
+    {
+        /* Set bNew to FALSE to indicate this node is not going to save to SysRegistry */
+        pLinkObj->bNew = FALSE;
+        returnStatus = CosaFwReg_V6_IpFilterDelInfo((ANSC_HANDLE)pCosaDMFirewall, (ANSC_HANDLE)pLinkObj);
+    }
+    else
+    {
+        returnStatus = CosaDmlFW_V6_IPFilter_DelEntry(pLinkObj->InstanceNumber);
+    }
+
+    if ( returnStatus == ANSC_STATUS_SUCCESS )
+    {
+        AnscSListPopEntryByLink((PSLIST_HEADER)&pCosaDMFirewall->FwV6IpFilterList, &pLinkObj->Linkage);
+        AnscFreeMemory(pFwIpFilter);
+        AnscFreeMemory(pLinkObj);
+    }
+    return returnStatus;
+}
+
+BOOL FW_V6_IpFilter_GetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName, BOOL* pBool )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER            *pFwIpFilter  = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+        *pBool = pFwIpFilter->Enable;
+        return TRUE;
+    }
+    return TRUE;
+}
+
+ULONG FW_V6_IpFilter_GetParamStringValue ( ANSC_HANDLE hInsContext, char* ParamName, char* pValue, ULONG* pUlSize )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER            *pFwIpFilter  = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+
+    if (strcmp(ParamName, "Description") == 0)
+    {
+        AnscCopyString(pValue, pFwIpFilter->Description);
+        return 0;
+    }
+    if (strcmp(ParamName, "SrcStartAddr") == 0)
+    {
+        AnscCopyString(pValue, pFwIpFilter->SrcStartIPAddress);
+        return 0;
+    }
+    if (strcmp(ParamName, "DstStartAddr") == 0)
+    {
+        AnscCopyString(pValue, pFwIpFilter->DstStartIPAddress);
+        return 0;
+    }
+
+    return 1;
+}
+
+BOOL FW_V6_IpFilter_GetParamUlongValue ( ANSC_HANDLE hInsContext, char *ParamName, ULONG *pUlong )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER           *pFwIpFilter   = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+
+    if (strcmp(ParamName, "SrcPortStart") == 0)
+    {
+        *pUlong = pFwIpFilter->SrcStartPort;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "SrcPortEnd") == 0)
+    {
+        *pUlong = pFwIpFilter->SrcEndPort;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "DstPortStart") == 0)
+    {
+        *pUlong = pFwIpFilter->DstStartPort;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "DstPortEnd") == 0)
+    {
+        *pUlong = pFwIpFilter->DstEndPort;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "IPv6SrcPrefixLen") == 0)
+    {
+        *pUlong = pFwIpFilter->IPv6SrcPrefixLen;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "IPv6DstPrefixLen") == 0)
+    {
+        *pUlong = pFwIpFilter->IPv6DstPrefixLen;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "Protocol") == 0)
+    {
+        *pUlong = pFwIpFilter->ProtocolType;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "Action") == 0)
+    {
+        *pUlong = pFwIpFilter->FilterAction;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "Direction") == 0)
+    {
+        *pUlong = pFwIpFilter->FilterDirec;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+BOOL FW_V6_IpFilter_SetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName, BOOL bValue )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj        = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER           *pFwIpFilter     = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+        pFwIpFilter->Enable = bValue;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+BOOL FW_V6_IpFilter_SetParamStringValue ( ANSC_HANDLE hInsContext, char* ParamName, char* strValue )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj        = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER           *pFwIpFilter     = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+    unsigned char buf[sizeof(struct in6_addr)];
+
+    if (strcmp(ParamName, "Description") == 0)
+    {
+        _ansc_snprintf(pFwIpFilter->Description, sizeof(pFwIpFilter->Description), "%s", strValue);
+        return TRUE;
+    }
+    if (strcmp(ParamName, "SrcStartAddr") == 0)
+    {
+        _ansc_snprintf(pFwIpFilter->SrcStartIPAddress, sizeof(pFwIpFilter->SrcStartIPAddress), "%s", strValue);
+        return TRUE;
+    }
+    if (strcmp(ParamName, "DstStartAddr") == 0)
+    {
+       if(inet_pton(AF_INET6,strValue,buf))
+       {
+               _ansc_snprintf(pFwIpFilter->DstStartIPAddress, sizeof(pFwIpFilter->DstStartIPAddress), "%s", strValue);
+               return TRUE;
+       }
+
+    }
+
+    return FALSE;
+}
+
+BOOL FW_V6_IpFilter_SetParamUlongValue ( ANSC_HANDLE hInsContext, char *ParamName, ULONG ulValue )
+{
+    PCOSA_CONTEXT_LINK_OBJECT     pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER         *pFwIpFilter   = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+
+    if (strcmp(ParamName, "SrcPortStart") == 0)
+    {
+        pFwIpFilter->SrcStartPort = ulValue;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "SrcPortEnd") == 0)
+    {
+        pFwIpFilter->SrcEndPort = ulValue;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "DstPortStart") == 0)
+    {
+        pFwIpFilter->DstStartPort = ulValue;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "DstPortEnd") == 0)
+    {
+        pFwIpFilter->DstEndPort = ulValue;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "IPv6SrcPrefixLen") == 0)
+    {
+        if((ulValue == 0) || (ulValue >= 64 && ulValue <= 128))
+        {
+            pFwIpFilter->IPv6SrcPrefixLen = ulValue;
+            return TRUE;
+        }
+    }
+    if (strcmp(ParamName, "IPv6DstPrefixLen") == 0)
+    {
+        pFwIpFilter->IPv6DstPrefixLen = ulValue;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "Protocol") == 0)
+    {
+        pFwIpFilter->ProtocolType= ulValue;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "Action") == 0)
+    {
+        pFwIpFilter->FilterAction = ulValue;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "Direction") == 0)
+    {
+        pFwIpFilter->FilterDirec = ulValue;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+BOOL FW_V6_IpFilter_Validate ( ANSC_HANDLE hInsContext, char* pReturnParamName, ULONG* puLength )
+{
+    return TRUE;
+}
+
+ULONG FW_V6_IpFilter_Commit ( ANSC_HANDLE hInsContext )
+{
+    PCOSA_CONTEXT_LINK_OBJECT      pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER           *pFwIpFilter  = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+    PCOSA_DATAMODEL_FIREWALL        pCosaDMFirewall = (PCOSA_DATAMODEL_FIREWALL)g_pCosaBEManager->hFirewall;
+
+    if (pLinkObj->bNew)
+    {
+        if (CosaDmlFW_V6_IPFilter_AddEntry(pFwIpFilter) != ANSC_STATUS_SUCCESS)
+            return -1;
+        CosaFwReg_V6_IpFilterDelInfo((ANSC_HANDLE)pCosaDMFirewall, (ANSC_HANDLE)pLinkObj);
+        pLinkObj->bNew = FALSE;
+    }
+    else
+    {
+        if (CosaDmlFW_V6_IPFilter_SetConf(pFwIpFilter->InstanceNumber, pFwIpFilter) != ANSC_STATUS_SUCCESS)
+        {
+            CosaDmlFW_V6_IPFilter_GetConf(pFwIpFilter->InstanceNumber, pFwIpFilter);
+            return -1;
+        }
+    }
+    return 0;
+}
+
+ULONG FW_V6_IpFilter_Rollback ( ANSC_HANDLE hInsContext )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj       = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER           *pFwIpFilter    = (COSA_DML_FW_IPFILTER *)pLinkObj->hContext;
+
+    if (CosaDmlFW_V6_IPFilter_GetConf(pFwIpFilter->InstanceNumber, pFwIpFilter) != ANSC_STATUS_SUCCESS)
+        return -1;
+
+    return 0;
+}
+
+ULONG V6_IPFilter_DayOfWeek_GetEntryCount ( ANSC_HANDLE hInsContext )
+{
+    COSA_DATAMODEL_FIREWALL   *pCosaDMFirewall = (COSA_DATAMODEL_FIREWALL*)g_pCosaBEManager->hFirewall;
+    return AnscSListQueryDepth(&pCosaDMFirewall->V6DayOfWeekList);
+}
+
+ANSC_HANDLE V6_IPFilter_DayOfWeek_GetEntry ( ANSC_HANDLE hInsContext, ULONG nIndex, ULONG* pInsNumber )
+{
+    COSA_DATAMODEL_FIREWALL    *pCosaDMFirewall = (COSA_DATAMODEL_FIREWALL*)g_pCosaBEManager->hFirewall;
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = NULL;
+    PSINGLE_LINK_ENTRY              pSLinkEntry = NULL;
+
+    pSLinkEntry = AnscQueueGetEntryByIndex((ANSC_HANDLE)&pCosaDMFirewall->V6DayOfWeekList, nIndex);
+    if (pSLinkEntry)
+    {
+        pLinkObj = ACCESS_COSA_CONTEXT_LINK_OBJECT(pSLinkEntry);
+        *pInsNumber = pLinkObj->InstanceNumber;
+    }
+
+    return pLinkObj;
+}
+
+ULONG V6_IPFilter_DayOfWeek_GetParamStringValue ( ANSC_HANDLE hInsContext, char* ParamName, char* pValue, ULONG* pUlSize )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj        = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_V6_DAYOFWEEK       *pV6DayOfWeek    = (COSA_DML_FW_V6_DAYOFWEEK*)pLinkObj->hContext;
+
+    if (strcmp(ParamName, "BlockTimeBitMask") == 0) {
+        AnscCopyString(pValue, pV6DayOfWeek->V6DayOfWeek_BlockTimeBitMask);
+        return 0;
+    }
+    return 1;
+}
+
+BOOL V6_IPFilter_DayOfWeek_SetParamStringValue ( ANSC_HANDLE hInsContext, char* ParamName, char* strValue )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj        = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_V6_DAYOFWEEK       *pV6DayOfWeek    = (COSA_DML_FW_V6_DAYOFWEEK*)pLinkObj->hContext;
+    int iMaskLen = 0;
+    int i = 0;
+
+    /* check the parameter name and set the corresponding value */
+    if (strcmp(ParamName, "BlockTimeBitMask") == 0)
+    {
+        // Ensure Mask Len is 24 characters
+        iMaskLen = strlen(strValue);
+        if(iMaskLen != (DAYOFWEEK_BT_MASK_LEN - 1))
+        {
+            return FALSE;
+        }
+        // Ensure Mask is a valid Binary String
+        for(i = 0; i < iMaskLen; i++)
+        {
+            if((int)strValue[i] < 48 || (int)strValue[i] > 49)
+            {
+                return FALSE; // Not a Binary character
+            }
+        }
+        _ansc_snprintf(pV6DayOfWeek->V6DayOfWeek_BlockTimeBitMask, sizeof(pV6DayOfWeek->V6DayOfWeek_BlockTimeBitMask), "%s", strValue);
+        return TRUE;
+    }
+    return FALSE;
+}
+
+BOOL V6_IPFilter_DayOfWeek_Validate ( ANSC_HANDLE hInsContext, char* pReturnParamName, ULONG* puLength )
+{
+    PCOSA_DATAMODEL_FIREWALL        pCosaDMFirewall = (PCOSA_DATAMODEL_FIREWALL)g_pCosaBEManager->hFirewall;
+    PCOSA_CONTEXT_LINK_OBJECT      pLinkObj        = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_V6_DAYOFWEEK       *pV6DayOfWeek   = (COSA_DML_FW_V6_DAYOFWEEK*)pLinkObj->hContext;
+
+    int iMaskLen = 0;
+    int i = 0;
+
+    if(BTMASK_ALWAYS != pCosaDMFirewall->V6DayOfWeekBlockTimeBitMaskType)
+    {
+        // Ensure Mask Len is 24 characters
+        iMaskLen = strlen(pV6DayOfWeek->V6DayOfWeek_BlockTimeBitMask);
+        if(iMaskLen != (DAYOFWEEK_BT_MASK_LEN - 1))
+    {
+            return FALSE;
+        }
+        // Ensure Mask is a valid Binary String
+        for(i = 0; i < iMaskLen; i++)
+    {
+            if((int)pV6DayOfWeek->V6DayOfWeek_BlockTimeBitMask[i] < 48 || (int)pV6DayOfWeek->V6DayOfWeek_BlockTimeBitMask[i] > 49)
+            {
+                return FALSE; // Not a Binary character
+            }
+        }
+    }
+
+    return TRUE;
+}
+
+ULONG V6_IPFilter_DayOfWeek_Commit ( ANSC_HANDLE hInsContext )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj     = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_V6_DAYOFWEEK       *pV6DayOfWeek = (COSA_DML_FW_V6_DAYOFWEEK*)pLinkObj->hContext;
+
+    if (CosaDmlFW_V6DayOfWeek_SetConf(pV6DayOfWeek->InstanceNumber, pV6DayOfWeek) != ANSC_STATUS_SUCCESS)
+    {
+        CosaDmlFW_V6DayOfWeek_GetConf(pV6DayOfWeek->InstanceNumber, pV6DayOfWeek);
+        return -1;
+    }
+
+    return 0;
+}
+
+ULONG V6_IPFilter_DayOfWeek_Rollback ( ANSC_HANDLE hInsContext )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj        = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_V6_DAYOFWEEK       *pV6DayOfWeek    = (COSA_DML_FW_V6_DAYOFWEEK*)pLinkObj->hContext;
+
+    if (CosaDmlFW_V6DayOfWeek_GetConf(pV6DayOfWeek->InstanceNumber, pV6DayOfWeek) != ANSC_STATUS_SUCCESS)
+        return -1;
+    return 0;
 }
 
