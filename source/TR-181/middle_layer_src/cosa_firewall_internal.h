@@ -63,15 +63,55 @@
 #ifndef  _COSA_FIREWALL_INTERNAL_H
 #define  _COSA_FIREWALL_INTERNAL_H
 
-
+// LGI ADD START
+#include "poam_irepfo_interface.h"
+#include "sys_definitions.h"
+// LGI ADD END
 #include "cosa_firewall_apis.h"
 
+// LGI ADD START
+#define COSA_IREP_FOLDER_NAME_IP_FILTER_FIREWALL              "IpFilterFirewall"
+#define COSA_DML_RR_NAME_IP_FILTER_FIREWALL_Alias             "IpFilterAlias"
+#define COSA_DML_RR_NAME_IP_FILTER_FIREWALL_InsNum            "IpFilterInstanceNumber"
+#define COSA_DML_RR_NAME_IP_FILTER_FIREWALL_NextInsNumber     "IpFilterNextInstanceNumber"
+#define COSA_DML_RR_NAME_IP_FILTER_FIREWALL_NewlyAdded        "IpFilterNewlyAdded"
+#define  COSA_IREP_FOLDER_NAME_V4DAYOFWEEK                    "V4DayOfWeek"
+#define  COSA_DML_RR_NAME_V4DayOfWeekNextInsNumber            "NextInstanceNumber"
+#define  COSA_DML_RR_NAME_V4DayOfWeekInsNumber                "InstanceNumber"
+#define  COSA_DML_RR_NAME_V4DayOfWeekAlias                    "V4DayOfWeekAlias"
+#define  COSA_IREP_FOLDER_NAME_V6DAYOFWEEK                    "V6DayOfWeek"
+#define  COSA_DML_RR_NAME_V6DayOfWeekNextInsNumber            "NextInstanceNumber"
+#define  COSA_DML_RR_NAME_V6DayOfWeekInsNumber                "InstanceNumber"
+#define  COSA_DML_RR_NAME_V6DayOfWeekAlias                    "V6DayOfWeekAlias"
+// LGI ADD END
 
 #define  COSA_DATAMODEL_FIREWALL_CLASS_CONTENT                                              \
     /* duplication of the base object class content */                                      \
     COSA_BASE_CONTENT                                                                       \
     /* start of FIREWALL object class content */                                            \
     COSA_DML_FIREWALL_CFG           FirewallConfig;                                         \
+    /* LGI ADD START */                                                                     \
+    /* v4 ip filter*/                                                                       \
+    ANSC_HANDLE                     hIrepFolderV4IPCOSA;                                    \
+    SLIST_HEADER                    FwV4IpFilterList;                                       \
+    ULONG                           FwV4IpFilterNextInsNum;                                 \
+    ANSC_HANDLE                     hIrepFolderFwV4IpFiler;                                 \
+    /* v6 ip filter*/                                                                       \
+    ANSC_HANDLE                     hIrepFolderV6IPCOSA;                                    \
+    SLIST_HEADER                    FwV6IpFilterList;                                       \
+    ULONG                           FwV6IpFilterNextInsNum;                                 \
+    ANSC_HANDLE                     hIrepFolderFwV6IpFiler;                                 \
+    ULONG                           V4DayOfWeekBlockTimeBitMaskType;                        \
+    ULONG                           V6DayOfWeekBlockTimeBitMaskType;                        \
+    ANSC_HANDLE                     hIrepFolderV4DayOfWeekCOSA;                             \
+    SLIST_HEADER                    V4DayOfWeekList;                                        \
+    ULONG                           V4DayOfWeekNextInsNum;                                  \
+    ANSC_HANDLE                     hIrepFolderFwV4DayOfWeek;                               \
+    ANSC_HANDLE                     hIrepFolderV6DayOfWeekCOSA;                             \
+    SLIST_HEADER                    V6DayOfWeekList;                                        \
+    ULONG                           V6DayOfWeekNextInsNum;                                  \
+    ANSC_HANDLE                     hIrepFolderFwV6DayOfWeek;                               \
+    /* LGI ADD END */                                                                       \
 
 
 typedef  struct
@@ -104,5 +144,51 @@ CosaFirewallRemove
         ANSC_HANDLE                 hThisObject
     );
 
+// LGI ADD START
+// V4 IP Filter----------------------------------------------------------------
+ANSC_STATUS
+CosaFwReg_V4_IpFilterGetInfo(
+        ANSC_HANDLE                 hThisObject
+    );
 
+ANSC_STATUS
+CosaFwReg_V4_IpFilterAddInfo(
+        ANSC_HANDLE                 hThisObject,
+        ANSC_HANDLE                 hCosaContext
+    );
+
+ANSC_STATUS
+CosaFwReg_V4_IpFilterDelInfo(
+        ANSC_HANDLE                 hThisObject,
+        ANSC_HANDLE                 hCosaContext
+    );
+
+ANSC_STATUS
+CosaFwReg_V4DayOfWeekGetInfo(
+        ANSC_HANDLE                 hThisObject
+    );
+
+// V6 IP Filter----------------------------------------------------------------
+ANSC_STATUS
+CosaFwReg_V6_IpFilterGetInfo(
+        ANSC_HANDLE                 hThisObject
+    );
+
+ANSC_STATUS
+CosaFwReg_V6_IpFilterAddInfo(
+        ANSC_HANDLE                 hThisObject,
+        ANSC_HANDLE                 hCosaContext
+    );
+
+ANSC_STATUS
+CosaFwReg_V6_IpFilterDelInfo(
+        ANSC_HANDLE                 hThisObject,
+        ANSC_HANDLE                 hCosaContext
+    );
+
+ANSC_STATUS
+CosaFwReg_V6DayOfWeekGetInfo(
+        ANSC_HANDLE                 hThisObject
+    );
+// LGI ADD END
 #endif
