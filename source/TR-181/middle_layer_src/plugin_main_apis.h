@@ -162,6 +162,7 @@ extern COSARegisterCallBackAfterInitDmlProc  g_RegisterCallBackAfterInitDml;
 #endif
 #define COSA_DATAMODEL_TSIP_OID                                 40
 #define COSA_DATAMODEL_FILETRANSFER_OID                         41
+#define COSA_DATAMODEL_MAC_FILTER_OID                          123 /* LGI ADD */
 #define COSA_DATAMODEL_LANMANAGEMENT_OID                        42
 #if defined(DDNS_BROADBANDFORUM)
 #define COSA_DATAMODEL_DYNDNS_OID                               43
@@ -214,6 +215,7 @@ extern COSARegisterCallBackAfterInitDmlProc  g_RegisterCallBackAfterInitDml;
     ANSC_HANDLE                  hHotspot;                                                  \
     ANSC_HANDLE                  hTSIP;                                                     \
     ANSC_HANDLE                  hFileTransfer;                                             \
+    ANSC_HANDLE                  hMacFilter;                     /* LGI ADD */              \
     ANSC_HANDLE                  hRabid;                                                    \
     ANSC_HANDLE                  hAdvPC;                                                    \
     ANSC_HANDLE                  hPrivacyProtection;                                        \
