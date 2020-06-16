@@ -9174,6 +9174,110 @@
 
           <objects>
 
+<!-- LGI ADD START -->
+            <object>
+              <name>MACFiltering</name>
+              <objectType>object</objectType>
+              <functions>
+                <func_GetParamUlongValue>MacFltTimeMask_GetParamUlongValue</func_GetParamUlongValue>
+                <func_SetParamUlongValue>MacFltTimeMask_SetParamUlongValue</func_SetParamUlongValue>
+              </functions>
+              <parameters>
+                <parameter>
+                  <name>ScheduleEnable</name>
+                  <description>
+                    Schedules for MAC filtering rules to be active.
+                    - Always: filtering always active
+                    - ByHour: filtering active by hour every day
+                    - ByDayHour: filtering active by Day and Hour.
+                  </description>
+                  <type>string:  Always(0), ByHour(1), ByDayHour(2)</type>
+                  <syntax>uint32/mapped</syntax>
+                  <writable>true</writable>
+                </parameter>
+              </parameters>
+              <objects>
+                <object>
+                  <name>DayOfWeek</name>
+                  <objectType>staticTable</objectType>
+                  <maxInstance>7</maxInstance>
+                  <functions>
+                    <func_GetEntryCount>MacFilter_DayOfWeek_GetEntryCount</func_GetEntryCount>
+                    <func_GetEntry>MacFilter_DayOfWeek_GetEntry</func_GetEntry>
+                    <func_GetParamStringValue>MacFilter_DayOfWeek_GetParamStringValue</func_GetParamStringValue>
+                    <func_SetParamStringValue>MacFilter_DayOfWeek_SetParamStringValue</func_SetParamStringValue>
+                    <func_Validate>MacFilter_DayOfWeek_Validate</func_Validate>
+                    <func_Commit>MacFilter_DayOfWeek_Commit</func_Commit>
+                    <func_Rollback>MacFilter_DayOfWeek_Rollback</func_Rollback>
+                  </functions>
+                  <parameters>
+                    <parameter>
+                      <name>BlockTimeBitMask</name>
+                      <description>
+                        A bitmask that sets the time of day and days of the week to apply this rule. This must be stored in bit format and not hex. The indices for the days of the week have 1-7 corresponding to Sunday-Saturday.
+                        The bitmask has the following representation: b23b22b21b20b19b18b17b16b15b14b13b12b11b10b9b8b7b6b5b4b3b2b1b0 where b0 for example is "bit 0".
+                        - Bits 0-23 apply to hours of the day 00:00:00-23:00:00.  Each bit corresponds to an hour. 0th bit-hour0-1,1st bit-hour1-2 and so on. Set the bit high to enable the rule for specified hour.
+                        - When ScheduleEnable is set to (Always), all bits for all days are set to high. Bits: 111111111111111111111111.
+                        - When ScheduleEnable is set to (Byhour), the 1st index of DayOfWeek indicates the hours enabled for all days of the week. Write is allowed only for the 1st index.
+                        - When ScheduleEnable is set to (ByDayHour): Write is allowed for all indices of DayOfWeek.
+                      </description>
+                      <type>string(60)</type>
+                      <syntax>string</syntax>
+                      <writable>true</writable>
+                    </parameter>
+                  </parameters>
+                </object>
+                <object>
+                  <name>Device</name>
+                  <objectType>writableTable</objectType>
+                  <maxInstance>128</maxInstance>
+                  <functions>
+                    <func_GetEntryCount>MACFilter_GetEntryCount</func_GetEntryCount>
+                    <func_GetEntry>MACFilter_GetEntry</func_GetEntry>
+                    <func_AddEntry>MACFilter_AddEntry</func_AddEntry>
+                    <func_DelEntry>MACFilter_DelEntry</func_DelEntry>
+                    <func_GetParamBoolValue>MACFilter_GetParamBoolValue</func_GetParamBoolValue>
+                    <func_GetParamStringValue>MACFilter_GetParamStringValue</func_GetParamStringValue>
+                    <func_SetParamBoolValue>MACFilter_SetParamBoolValue</func_SetParamBoolValue>
+                    <func_SetParamStringValue>MACFilter_SetParamStringValue</func_SetParamStringValue>
+                    <func_Validate>MACFilter_Validate</func_Validate>
+                    <func_Commit>MACFilter_Commit</func_Commit>
+                    <func_Rollback>MACFilter_Rollback</func_Rollback>
+                  </functions>
+                  <parameters>
+                    <parameter>
+                      <name>Enable</name>
+                      <description>
+                        Rule enabled/disabled
+                      </description>
+                      <type>boolean</type>
+                      <syntax>bool</syntax>
+                      <writable>true</writable>
+                      </parameter>
+                    <parameter>
+                      <name>Hostname</name>
+                      <description>
+                        Host name of device
+                      </description>
+                      <type>string</type>
+                      <syntax>string</syntax>
+                      <writable>true</writable>
+                    </parameter>
+                    <parameter>
+                      <name>MACAddress</name>
+                      <description>
+                        MAC address of device
+                      </description>
+                      <type>string</type>
+                      <syntax>string</syntax>
+                      <writable>true</writable>
+                    </parameter>
+                  </parameters>
+                </object>
+              </objects>
+            </object>
+<!-- LGI ADD END -->
+
             <object>
 
               <name>V4</name>
@@ -9195,6 +9299,18 @@
               </functions>
 
               <parameters>
+
+<!-- LGI ADD START -->
+                <parameter>
+                  <name>Enable</name>
+                  <description>
+                    Enables/disables IPv4 firewall
+                  </description>
+                  <type>boolean</type>
+                  <syntax>bool</syntax>
+                  <writable>true</writable>
+                </parameter>
+<!-- LGI ADD END -->
 
                 <parameter>
 
@@ -9233,6 +9349,204 @@
                 </parameter>
 
               </parameters>
+
+<!-- LGI ADD START -->
+              <objects>
+                <object>
+                  <name>IPFiltering</name>
+                  <objectType>object</objectType>
+                  <functions>
+                    <func_GetParamUlongValue>V4_GetParamUlongValue</func_GetParamUlongValue>
+                    <func_SetParamUlongValue>V4_SetParamUlongValue</func_SetParamUlongValue>
+                    <func_Validate>V4_Validate</func_Validate>
+                    <func_Commit>V4_Commit</func_Commit>
+                    <func_Rollback>V4_Rollback</func_Rollback>
+                  </functions>
+                  <parameters>
+                    <parameter>
+                      <name>ScheduleEnable</name>
+                      <description>
+                        Schedules for IPv4 filtering rules to be active.
+                        - Always: filtering always active
+                        - ByHour: filtering active by hour every day
+                        - ByDayHour: filtering active by Day and Hour.
+                      </description>
+                      <type>string:  Always(0), ByHour(1), ByDayHour(2)</type>
+                      <syntax>uint32/mapped</syntax>
+                      <writable>true</writable>
+                    </parameter>
+                  </parameters>
+                  <objects>
+                    <object>
+                      <name>Service</name>
+                      <objectType>writableTable</objectType>
+                      <maxInstance>32</maxInstance>
+                      <functions>
+                        <func_GetEntryCount>FW_V4_IpFilter_GetEntryCount</func_GetEntryCount>
+                        <func_GetEntry>FW_V4_IpFilter_GetEntry</func_GetEntry>
+                        <func_AddEntry>FW_V4_IpFilter_AddEntry</func_AddEntry>
+                        <func_DelEntry>FW_V4_IpFilter_DelEntry</func_DelEntry>
+                        <func_GetParamBoolValue>FW_V4_IpFilter_GetParamBoolValue</func_GetParamBoolValue>
+                        <func_GetParamStringValue>FW_V4_IpFilter_GetParamStringValue</func_GetParamStringValue>
+                        <func_GetParamUlongValue>FW_V4_IpFilter_GetParamUlongValue</func_GetParamUlongValue>
+                        <func_SetParamBoolValue>FW_V4_IpFilter_SetParamBoolValue</func_SetParamBoolValue>
+                        <func_SetParamStringValue>FW_V4_IpFilter_SetParamStringValue</func_SetParamStringValue>
+                        <func_SetParamUlongValue>FW_V4_IpFilter_SetParamUlongValue</func_SetParamUlongValue>
+                        <func_Validate>FW_V4_IpFilter_Validate</func_Validate>
+                        <func_Commit>FW_V4_IpFilter_Commit</func_Commit>
+                        <func_Rollback>FW_V4_IpFilter_Rollback</func_Rollback>
+                      </functions>
+                      <parameters>
+                        <parameter>
+                          <name>Description</name>
+                          <type>string(64)</type>
+                          <syntax>string</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                        <parameter>
+                          <name>Enable</name>
+                          <description>
+                            Enable/disable IP filtering rule
+                          </description>
+                          <type>boolean</type>
+                          <syntax>bool</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                        <parameter>
+                          <name>SrcStartAddr</name>
+                          <description>
+                            Beginning of source IP range
+                          </description>
+                          <type>string(64)</type>
+                          <syntax>string</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                        <parameter>
+                          <name>SrcEndAddr</name>
+                          <description>
+                            End of source IP range (the address is not contrained by a binary mask length)
+                          </description>
+                          <type>string(64)</type>
+                          <syntax>string</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                        <parameter>
+                          <name>DstStartAddr</name>
+                          <description>
+                            Beginning of destination IP range
+                          </description>
+                          <type>string(64)</type>
+                          <syntax>string</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                        <parameter>
+                          <name>DstEndAddr</name>
+                          <description>
+                            End of source destination range (the address is not contrained by a binary mask length)
+                          </description>
+                          <type>string(64)</type>
+                          <syntax>string</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                        <parameter>
+                          <name>SrcPortStart</name>
+                          <description>
+                            Beginning of source port range (0..65535), where 0 is undefined
+                          </description>
+                          <type>unsignedInt[1:65535]</type>
+                          <syntax>uint32</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                        <parameter>
+                          <name>SrcPortEnd</name>
+                          <description>
+                            End of source port range (0..65535), where 0 is undefined
+                          </description>
+                          <type>unsignedInt[1:65535]</type>
+                          <syntax>uint32</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                        <parameter>
+                          <name>DstPortStart</name>
+                          <description>
+                            Beginning of destination port range (0..65535), where 0 is undefined
+                          </description>
+                          <type>unsignedInt[1:65535]</type>
+                          <syntax>uint32</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                        <parameter>
+                          <name>DstPortEnd</name>
+                          <description>
+                            End of destination port range (0..65535), where 0 is undefined
+                          </description>
+                          <type>unsignedInt[1:65535]</type>
+                          <syntax>uint32</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                        <parameter>
+                          <name>Protocol</name>
+                          <description>
+                            Which protocols are filtered
+                          </description>
+                          <type>string: TCP(1),UDP(2),TCP_UDP(3),ALL(4)</type>
+                          <syntax>uint32/mapped</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                        <parameter>
+                          <name>Direction</name>
+                          <description>
+                            Whether IP filtering rule is applied to inbound or outbound packets
+                          </description>
+                          <type>string: Inbound(1),Outbound(2)</type>
+                          <syntax>uint32/mapped</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                        <parameter>
+                          <name>Action</name>
+                          <description>
+                            Whether rule allows or denies (drops) access
+                          </description>
+                          <type>string: Allow(1),Deny(2)</type>
+                          <syntax>uint32/mapped</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                      </parameters>
+                    </object>
+                    <object>
+                      <name>DayOfWeek</name>
+                      <objectType>staticTable</objectType>
+                      <maxInstance>7</maxInstance>
+                      <functions>
+                        <func_GetEntryCount>V4_IPFilter_DayOfWeek_GetEntryCount</func_GetEntryCount>
+                        <func_GetEntry>V4_IPFilter_DayOfWeek_GetEntry</func_GetEntry>
+                        <func_GetParamStringValue>V4_IPFilter_DayOfWeek_GetParamStringValue</func_GetParamStringValue>
+                        <func_SetParamStringValue>V4_IPFilter_DayOfWeek_SetParamStringValue</func_SetParamStringValue>
+                        <func_Validate>V4_IPFilter_DayOfWeek_Validate</func_Validate>
+                        <func_Commit>V4_IPFilter_DayOfWeek_Commit</func_Commit>
+                        <func_Rollback>V4_IPFilter_DayOfWeek_Rollback</func_Rollback>
+                      </functions>
+                      <parameters>
+                        <parameter>
+                          <name>BlockTimeBitMask</name>
+                          <description>
+                            A bitmask that sets the time of day and days of the week to apply this rule. This must be stored in bit format and not hex. The indices for the days of the week have 1-7 corresponding to Sunday-Saturday.
+                            The bitmask has the following representation: b23b22b21b20b19b18b17b16b15b14b13b12b11b10b9b8b7b6b5b4b3b2b1b0 where b0 for example is "bit 0".
+                            - Bits 0-23 apply to hours of the day 00:00:00-23:00:00.  Each bit corresponds to an hour. 0th bit-hour0-1,1st bit-hour1-2 and so on. Set the bit high to enable the rule for specified hour.
+                            - When ScheduleEnable is set to (Always), all bits for all days are set to high. Bits: 111111111111111111111111.
+                            - When ScheduleEnable is set to (Byhour), the 1st index of DayOfWeek indicates the hours enabled for all days of the week. Write is allowed only for the 1st index.
+                            - When ScheduleEnable is set to (ByDayHour): Write is allowed for all indices of DayOfWeek.
+                          </description>
+                          <type>string(60)</type>
+                          <syntax>string</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                      </parameters>
+                    </object>
+                  </objects>
+                </object>
+              </objects>
+<!-- LGI ADD END -->
 
             </object>
 
@@ -9258,6 +9572,18 @@
 
               <parameters>
 
+<!-- LGI ADD START -->
+                <parameter>
+                  <name>Enable</name>
+                  <description>
+                    Enables/disables IPv6 firewall
+                  </description>
+                  <type>boolean</type>
+                  <syntax>bool</syntax>
+                  <writable>true</writable>
+                </parameter>
+<!-- LGI ADD END -->
+
                 <parameter>
 
                   <name>BlockFragIPPkts</name>
@@ -9295,6 +9621,204 @@
                 </parameter>
 
               </parameters>
+
+<!-- LGI ADD START -->
+              <objects>
+                <object>
+                  <name>IPFiltering</name>
+                  <objectType>object</objectType>
+                  <functions>
+                    <func_GetParamUlongValue>V6_GetParamUlongValue</func_GetParamUlongValue>
+                    <func_SetParamUlongValue>V6_SetParamUlongValue</func_SetParamUlongValue>
+                    <func_Validate>V6_Validate</func_Validate>
+                    <func_Commit>V6_Commit</func_Commit>
+                    <func_Rollback>V6_Rollback</func_Rollback>
+                  </functions>
+                  <parameters>
+                    <parameter>
+                      <name>ScheduleEnable</name>
+                      <description>
+                        Schedules for IPv6 filtering rules to be active.
+                        - Always: filtering always active
+                        - ByHour: filtering active by hour every day
+                        - ByDayHour: filtering active by Day and Hour.
+                      </description>
+                      <type>string:  Always(0), ByHour(1), ByDayHour(2)</type>
+                      <syntax>uint32/mapped</syntax>
+                      <writable>true</writable>
+                    </parameter>
+                  </parameters>
+                  <objects>
+                    <object>
+                      <name>Service</name>
+                      <objectType>writableTable</objectType>
+                      <maxInstance>32</maxInstance>
+                      <functions>
+                        <func_GetEntryCount>FW_V6_IpFilter_GetEntryCount</func_GetEntryCount>
+                        <func_GetEntry>FW_V6_IpFilter_GetEntry</func_GetEntry>
+                        <func_AddEntry>FW_V6_IpFilter_AddEntry</func_AddEntry>
+                        <func_DelEntry>FW_V6_IpFilter_DelEntry</func_DelEntry>
+                        <func_GetParamBoolValue>FW_V6_IpFilter_GetParamBoolValue</func_GetParamBoolValue>
+                        <func_GetParamStringValue>FW_V6_IpFilter_GetParamStringValue</func_GetParamStringValue>
+                        <func_GetParamUlongValue>FW_V6_IpFilter_GetParamUlongValue</func_GetParamUlongValue>
+                        <func_SetParamBoolValue>FW_V6_IpFilter_SetParamBoolValue</func_SetParamBoolValue>
+                        <func_SetParamStringValue>FW_V6_IpFilter_SetParamStringValue</func_SetParamStringValue>
+                        <func_SetParamUlongValue>FW_V6_IpFilter_SetParamUlongValue</func_SetParamUlongValue>
+                        <func_Validate>FW_V6_IpFilter_Validate</func_Validate>
+                        <func_Commit>FW_V6_IpFilter_Commit</func_Commit>
+                        <func_Rollback>FW_V6_IpFilter_Rollback</func_Rollback>
+                      </functions>
+                      <parameters>
+                        <parameter>
+                          <name>Description</name>
+                          <type>string(64)</type>
+                          <syntax>string</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                        <parameter>
+                          <name>SrcStartAddr</name>
+                          <description>
+                            Beginning of source IP range
+                          </description>
+                          <type>string(64)</type>
+                          <syntax>string</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                        <parameter>
+                          <name>SrcPortStart</name>
+                          <description>
+                            Beginning of source port range (0..65535), where 0 is undefined
+                          </description>
+                          <type>unsignedInt[1:65535]</type>
+                          <syntax>uint32</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                        <parameter>
+                          <name>SrcPortEnd</name>
+                          <description>
+                            End of source port range (0..65535), where 0 is undefined
+                          </description>
+                          <type>unsignedInt[1:65535]</type>
+                          <syntax>uint32</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                        <parameter>
+                          <name>Protocol</name>
+                          <description>
+                            Which protocols are filtered
+                          </description>
+                          <type>string: TCP(1),UDP(2),TCP_UDP(3),ALL(4),ICMPv6(5),ESP(6),AH(7),GRE(8),IPv6Encap(9),IPv4Encap(10),IPv6Fragment(11),L2TP(12)</type>
+                          <syntax>uint32/mapped</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                        <parameter>
+                          <name>Enable</name>
+                          <description>
+                            Enable/disable IP filtering rule
+                          </description>
+                          <type>boolean</type>
+                          <syntax>bool</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                        <parameter>
+                          <name>Direction</name>
+                          <description>
+                            Whether IP filtering rule is applied to inbound or outbound packets
+                          </description>
+                          <type>string: Inbound(1),Outbound(2)</type>
+                          <syntax>uint32/mapped</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                        <parameter>
+                          <name>IPv6SrcPrefixLen</name>
+                          <description>
+                            Specifies prefix for source IPv6 range
+                          </description>
+                          <type>unsignedInt[0:128]</type>
+                          <syntax>uint32</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                        <parameter>
+                          <name>DstStartAddr</name>
+                          <description>
+                            End of source IP range
+                          </description>
+                          <type>string(64)</type>
+                          <syntax>string</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                        <parameter>
+                          <name>IPv6DstPrefixLen</name>
+                          <description>
+                            Specifies prefix for destination IPv6 range
+                          </description>
+                          <type>unsignedInt[0:128]</type>
+                          <syntax>uint32</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                        <parameter>
+                          <name>DstPortStart</name>
+                          <description>
+                            Beginning of destination port range (0..65535), where 0 is undefined
+                          </description>
+                          <type>unsignedInt[1:65535]</type>
+                          <syntax>uint32</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                        <parameter>
+                          <name>DstPortEnd</name>
+                          <description>
+                            End of destination port range (0..65535), where 0 is undefined
+                          </description>
+                          <type>unsignedInt[1:65535]</type>
+                          <syntax>uint32</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                        <parameter>
+                          <name>Action</name>
+                          <description>
+                            Whether rule allows or denies (drops) access
+                          </description>
+                          <type>string: Allow(1),Deny(2)</type>
+                          <syntax>uint32/mapped</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                      </parameters>
+                    </object>
+                    <object>
+                      <name>DayOfWeek</name>
+                      <objectType>staticTable</objectType>
+                      <maxInstance>7</maxInstance>
+                      <functions>
+                        <func_GetEntryCount>V6_IPFilter_DayOfWeek_GetEntryCount</func_GetEntryCount>
+                        <func_GetEntry>V6_IPFilter_DayOfWeek_GetEntry</func_GetEntry>
+                        <func_GetParamStringValue>V6_IPFilter_DayOfWeek_GetParamStringValue</func_GetParamStringValue>
+                        <func_SetParamStringValue>V6_IPFilter_DayOfWeek_SetParamStringValue</func_SetParamStringValue>
+                        <func_Validate>V6_IPFilter_DayOfWeek_Validate</func_Validate>
+                        <func_Commit>V6_IPFilter_DayOfWeek_Commit</func_Commit>
+                        <func_Rollback>V6_IPFilter_DayOfWeek_Rollback</func_Rollback>
+                      </functions>
+                      <parameters>
+                        <parameter>
+                          <name>BlockTimeBitMask</name>
+                          <description>
+                            A bitmask that sets the time of day and days of the week to apply this rule. This must be stored in bit format and not hex. The indices for the days of the week have 1-7 corresponding to Sunday-Saturday.
+                            The bitmask has the following representation: b23b22b21b20b19b18b17b16b15b14b13b12b11b10b9b8b7b6b5b4b3b2b1b0 where b0 for example is "bit 0".
+                            - Bits 0-23 apply to hours of the day 00:00:00-23:00:00.  Each bit corresponds to an hour. 0th bit-hour0-1,1st bit-hour1-2 and so on. Set the bit high to enable the rule for specified hour.
+                            - When ScheduleEnable is set to (Always), all bits for all days are set to high. Bits: 111111111111111111111111.
+                            - When ScheduleEnable is set to (Byhour), the 1st index of DayOfWeek indicates the hours enabled for all days of the week. Write is allowed only for the 1st index.
+                            - When ScheduleEnable is set to (ByDayHour): Write is allowed for all indices of DayOfWeek.
+                          </description>
+                          <type>string(60)</type>
+                          <syntax>string</syntax>
+                          <writable>true</writable>
+                        </parameter>
+                      </parameters>
+                    </object>
+                  </objects>
+                </object>
+              </objects>
+<!-- LGI ADD END -->
 
             </object>
 
