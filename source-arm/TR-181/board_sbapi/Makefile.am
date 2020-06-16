@@ -85,3 +85,5 @@ libCcspPandM_board_sbapi_la_SOURCES += cosa_mapt_apis.c
 endif
 
 libCcspPandM_board_sbapi_la_LDFLAGS = -lccsp_common -ltime_conversion -lwebconfig_framework -lmsgpackc -lHotspotApi
+
+libCcspPandM_board_sbapi_la_SOURCES += cosa_mac_filter_apis.c
