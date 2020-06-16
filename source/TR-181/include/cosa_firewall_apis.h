@@ -94,6 +94,89 @@ _COSA_DML_FIREWALL_CFG
 }
 COSA_DML_FIREWALL_CFG,  *PCOSA_DML_FIREWALL_CFG;
 
+// LGI ADD START
+typedef enum
+{
+    IPADDR_IPV4 = 1,
+    IPADDR_IPV6 = 2,
+}
+COSA_DML_FW_IPADDR_TYPE;
+
+typedef enum
+{
+    ACTION_ALLOW = 1,
+    ACTION_DENY  = 2,
+}
+COSA_DML_FW_ACTION;
+
+typedef enum
+{
+    DIRECTION_INCOMING = 1,
+    DIRECTION_OUTGOING = 2,
+}
+COSA_DML_FW_DIRECTION;
+
+typedef enum
+{
+    PROTO_TCP = 1,
+    PROTO_UDP = 2,
+    PROTO_BOTH = 3,
+    PROTO_ALL = 4,
+    PROTO_ICMPV6 = 5,
+    PROTO_ESP = 6,
+    PROTO_AH = 7,
+    PROTO_GRE = 8,
+    PROTO_IPV6ENCAP = 9,
+    PROTO_IPV4ENCAP = 10,
+    PROTO_IPV6FRAGMENT = 11,
+    PROTO_L2TP = 12,
+}
+COSA_DML_FW_PROTO_TYPE;
+
+/*
+ * .Firewall.IpFilter.{i}.
+ */
+typedef struct
+_COSA_DML_FW_IPFILTER
+{
+    ULONG                      InstanceNumber;
+    BOOL                       Enable;
+    char                       Alias[256];
+    char                       Description[64];
+    char                       SrcStartIPAddress[64];
+    char                       SrcEndIPAddress[64];
+    char                       DstStartIPAddress[64];
+    char                       DstEndIPAddress[64];
+    ULONG                      SrcStartPort;
+    ULONG                      SrcEndPort;
+    ULONG                      DstStartPort;
+    ULONG                      DstEndPort;
+    ULONG                      IPv6SrcPrefixLen;
+    ULONG                      IPv6DstPrefixLen;
+    COSA_DML_FW_PROTO_TYPE     ProtocolType;
+    COSA_DML_FW_ACTION         FilterAction;
+    COSA_DML_FW_DIRECTION      FilterDirec;
+}
+COSA_DML_FW_IPFILTER;
+
+typedef struct
+COSA_DML_FW_V4_DAYOFWEEK
+{
+   ULONG          InstanceNumber;
+   char           Alias[256];
+   char           V4DayOfWeek_BlockTimeBitMask[25];
+}
+COSA_DML_FW_V4_DAYOFWEEK;
+
+typedef struct
+COSA_DML_FW_V6_DAYOFWEEK
+{
+   ULONG          InstanceNumber;
+   char           Alias[256];
+   char           V6DayOfWeek_BlockTimeBitMask[25];
+}
+COSA_DML_FW_V6_DAYOFWEEK;
+// LGI ADD END
 
 /* 
  *  The actual function declaration 
@@ -119,6 +202,29 @@ CosaDmlFirewallGetConfig
         ANSC_HANDLE                 hContext,
         PCOSA_DML_FIREWALL_CFG      pCfg
     );
+
+// LGI ADD START
+ANSC_STATUS
+CosaDmlGatewayV4GetFwEnable
+    (
+        BOOL *pValue
+    );
+ANSC_STATUS
+CosaDmlGatewayV4SetFwEnable
+    (
+        BOOL bValue
+    );
+ANSC_STATUS
+CosaDmlFW_V4DayOfWeek_GetBlockTimeBitMaskType
+    (
+        ULONG *pulBlockTimeBitMaskType
+    );
+ANSC_STATUS
+CosaDmlFW_V4DayOfWeek_SetBlockTimeBitMaskType
+    (
+        ULONG blockTimeBitMaskType
+    );
+// LGI ADD END
 
 ULONG
 CosaDmlGatewayV4GetBlockFragIPPkts
@@ -156,6 +262,122 @@ CosaDmlGatewayV4SetIPFloodDetect
         BOOL bValue
     );
 
+// LGI ADD START
+ULONG
+CosaDmlFW_V4_IPFilter_GetNumberOfEntries
+    (
+        void
+    );
+
+ANSC_STATUS
+CosaDmlFW_V4_IPFilter_GetEntryByIndex
+    (
+        ULONG                  index,
+        COSA_DML_FW_IPFILTER   *pEntry
+    );
+
+ANSC_STATUS
+CosaDmlFW_V4_IPFilter_SetValues
+    (
+        ULONG         index,
+        ULONG         ins,
+        const char    *alias
+    );
+
+ANSC_STATUS
+CosaDmlFW_V4_IPFilter_AddEntry
+    (
+        COSA_DML_FW_IPFILTER   *pEntry
+    );
+
+ANSC_STATUS
+CosaDmlFW_V4_IPFilter_DelEntry
+    (
+        ULONG ins
+    );
+
+ANSC_STATUS
+CosaDmlFW_V4_IPFilter_GetConf
+    (
+        ULONG                    ins,
+        COSA_DML_FW_IPFILTER     *pEntry
+    );
+
+ANSC_STATUS
+CosaDmlFW_V4_IPFilter_SetConf
+    (
+        ULONG                  ins,
+        COSA_DML_FW_IPFILTER   *pEntry
+    );
+
+ULONG
+CosaDmlFW_V4DayOfWeek_GetNumberOfEntries
+    (
+        void
+    );
+
+ANSC_STATUS
+CosaDmlFW_V4DayOfWeek_GetEntryByIndex
+    (
+        ULONG                       index,
+        COSA_DML_FW_V4_DAYOFWEEK    *pEntry
+    );
+
+ANSC_STATUS
+CosaDmlFW_V4DayOfWeek_SetValues
+    (
+        ULONG         index,
+        ULONG         ins,
+        const char    *alias,
+        char*         bitmask
+    );
+
+ANSC_STATUS
+CosaDmlFW_V4DayOfWeek_GetConf
+    (
+        ULONG                       ins,
+        COSA_DML_FW_V4_DAYOFWEEK    *pEntry
+    );
+
+ANSC_STATUS
+CosaDmlFW_V4DayOfWeek_SetConf
+    (
+        ULONG                       ins,
+        COSA_DML_FW_V4_DAYOFWEEK    *pEntry
+    );
+
+ANSC_STATUS
+CosaDmlFW_V4DayOfWeek_GetBlockTimeBitMask
+    (
+        char*  pMask,
+        ULONG  *pSize
+    );
+
+ANSC_STATUS
+CosaDmlGatewayV6GetFwEnable
+    (
+        BOOL *pValue
+    );
+
+ANSC_STATUS
+CosaDmlGatewayV6SetFwEnable
+    (
+        BOOL bValue
+    );
+
+ANSC_STATUS
+CosaDmlFW_V6DayOfWeek_GetBlockTimeBitMaskType
+    (
+        ULONG  *pulBlockTimeBitMaskType
+    );
+
+ANSC_STATUS
+CosaDmlFW_V6DayOfWeek_SetBlockTimeBitMaskType
+    (
+        ULONG   blockTimeBitMaskType
+    );
+//LGI ADD END
+
 ULONG
 CosaDmlGatewayV6GetBlockFragIPPkts
     (
@@ -191,4 +413,96 @@ CosaDmlGatewayV6SetIPFloodDetect
     (
         BOOL bValue
     );
+
+// LGI ADD START
+ULONG
+CosaDmlFW_V6_IPFilter_GetNumberOfEntries
+    (
+        void
+    );
+
+ANSC_STATUS
+CosaDmlFW_V6_IPFilter_GetEntryByIndex
+    (
+        ULONG                    index,
+        COSA_DML_FW_IPFILTER     *pEntry
+    );
+
+ANSC_STATUS
+CosaDmlFW_V6_IPFilter_SetValues
+    (
+        ULONG           index,
+        ULONG           ins,
+        const char      *alias
+    );
+
+ANSC_STATUS
+CosaDmlFW_V6_IPFilter_AddEntry
+    (
+        COSA_DML_FW_IPFILTER  *pEntry
+    );
+
+ANSC_STATUS
+CosaDmlFW_V6_IPFilter_DelEntry
+    (
+        ULONG ins
+    );
+
+ANSC_STATUS
+CosaDmlFW_V6_IPFilter_GetConf
+    (
+        ULONG                ins,
+        COSA_DML_FW_IPFILTER *pEntry
+    );
+
+ANSC_STATUS
+CosaDmlFW_V6_IPFilter_SetConf
+    (
+        ULONG                   ins,
+        COSA_DML_FW_IPFILTER    *pEntry
+    );
+
+ULONG
+CosaDmlFW_V6DayOfWeek_GetNumberOfEntries
+    (
+        void
+    );
+
+ANSC_STATUS
+CosaDmlFW_V6DayOfWeek_GetEntryByIndex
+    (
+        ULONG                       index,
+        COSA_DML_FW_V6_DAYOFWEEK    *pEntry
+    );
+
+ANSC_STATUS
+CosaDmlFW_V6DayOfWeek_SetValues
+    (
+        ULONG       index,
+        ULONG       ins,
+        const char  *alias,
+        char*       bitmask
+    );
+
+ANSC_STATUS
+CosaDmlFW_V6DayOfWeek_GetConf
+    (
+        ULONG                     ins,
+        COSA_DML_FW_V6_DAYOFWEEK  *pEntry
+    );
+
+ANSC_STATUS
+CosaDmlFW_V6DayOfWeek_SetConf
+    (
+        ULONG                       ins,
+        COSA_DML_FW_V6_DAYOFWEEK    *pEntry
+    );
+
+ANSC_STATUS
+CosaDmlFW_V6DayOfWeek_GetBlockTimeBitMask
+    (
+        char* pMask,
+        ULONG *pSize
+    );
+// LGI ADD END
 #endif
