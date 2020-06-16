@@ -121,3 +121,5 @@ libCcspPandM_middle_layer_src_la_SOURCES = \
     webcfgparam.c
 
 libCcspPandM_middle_layer_src_la_LDFLAGS = -lccsp_common -lmsgpackc -lwebconfig_framework -lhal_platform
+
+libCcspPandM_middle_layer_src_la_SOURCES += cosa_mac_filter_dml.c cosa_mac_filter_internal.c
