@@ -185,6 +185,24 @@ V4_SetParamBoolValue
         BOOL                        bBool
     );
 
+// LGI ADD START
+BOOL
+V4_GetParamUlongValue
+    (
+        ANSC_HANDLE hInsContext,
+        char*       ParamName,
+        ULONG*      puLong
+    );
+
+BOOL
+V4_SetParamUlongValue
+    (
+        ANSC_HANDLE hInsContext,
+        char*       ParamName,
+        ULONG       ulValue
+    );
+// LGI ADD END
+
 BOOL
 V4_Validate
     (
@@ -205,6 +223,169 @@ V4_Rollback
        ANSC_HANDLE                  hInsContext
    );
 
+// LGI ADD START
+//V4 IP Filter----------------------------------------------------------------
+ULONG
+FW_V4_IpFilter_GetEntryCount
+    (
+        ANSC_HANDLE                 hInsContext
+    );
+
+ANSC_HANDLE
+FW_V4_IpFilter_GetEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG                       nIndex,
+        ULONG*                      pInsNumber
+    );
+
+ANSC_HANDLE
+FW_V4_IpFilter_AddEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG*                      pInsNumber
+    );
+
+ULONG
+FW_V4_IpFilter_DelEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ANSC_HANDLE                 hInstance
+    );
+
+BOOL
+FW_V4_IpFilter_GetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL*                       pBool
+    );
+
+ULONG
+FW_V4_IpFilter_GetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pValue,
+        ULONG*                      pUlSize
+    );
+
+BOOL
+FW_V4_IpFilter_GetParamUlongValue(
+        ANSC_HANDLE hInsContext,
+        char *ParamName,
+        ULONG *pUlong);
+
+BOOL
+FW_V4_IpFilter_SetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL                        bValue
+    );
+
+BOOL
+FW_V4_IpFilter_SetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       strValue
+    );
+
+BOOL
+FW_V4_IpFilter_SetParamUlongValue(
+        ANSC_HANDLE hInsContext,
+        char        *ParamName,
+        ULONG       ulValue
+        );
+
+BOOL
+FW_V4_IpFilter_Validate
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       pReturnParamName,
+        ULONG*                      puLength
+    );
+
+ULONG
+FW_V4_IpFilter_Commit
+    (
+        ANSC_HANDLE                 hInsContext
+    );
+
+ULONG
+FW_V4_IpFilter_Rollback
+    (
+        ANSC_HANDLE                 hInsContext
+    );
+
+/***********************************************************************
+
+ APIs for Object:
+
+    Device.Firewall.X_RDKCENTRAL-COM_Security.V4.IPFiltering.DayOfWeek.{i}.
+
+    * V4_IPFilter_DayOfWeek_GetEntryCount
+    * V4_IPFilter_DayOfWeek_GetEntry
+    * V4_IPFilter_DayOfWeek_GetParamStringValue
+    * V4_IPFilter_DayOfWeek_SetParamStringValue
+    * V4_IPFilter_DayOfWeek_Validate
+    * V4_IPFilter_DayOfWeek_Commit
+    * V4_IPFilter_DayOfWeek_Rollback
+
+***********************************************************************/
+ULONG
+V4_IPFilter_DayOfWeek_GetEntryCount
+    (
+         ANSC_HANDLE                 hInsContext
+    );
+
+ANSC_HANDLE
+V4_IPFilter_DayOfWeek_GetEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG                       nIndex,
+        ULONG*                      pInsNumber
+    );
+
+ULONG
+V4_IPFilter_DayOfWeek_GetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pValue,
+        ULONG*                      pUlSize
+    );
+
+BOOL
+V4_IPFilter_DayOfWeek_SetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       strValue
+    );
+
+BOOL
+V4_IPFilter_DayOfWeek_Validate
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       pReturnParamName,
+        ULONG*                      puLength
+    );
+
+ULONG
+V4_IPFilter_DayOfWeek_Commit
+    (
+        ANSC_HANDLE                 hInsContext
+    );
+
+ULONG
+V4_IPFilter_DayOfWeek_Rollback
+    (
+        ANSC_HANDLE                 hInsContext
+    );
+// LGI ADD END
+
 BOOL
 V6_GetParamBoolValue
     (
@@ -220,6 +401,24 @@ V6_SetParamBoolValue
         char*                       ParamName,
         BOOL                        bBool
     );
+
+// LGI ADD START
+BOOL
+V6_GetParamUlongValue
+    (
+        ANSC_HANDLE hInsContext,
+        char*       ParamName,
+        ULONG*      puLong
+    );
+
+BOOL
+V6_SetParamUlongValue
+    (
+        ANSC_HANDLE hInsContext,
+        char*       ParamName,
+        ULONG       ulValue
+    );
+// LGI ADD END
 
 BOOL
 V6_Validate
@@ -241,5 +440,163 @@ V6_Rollback
        ANSC_HANDLE                  hInsContext
    );
 
+// LGI ADD START
+//V6 IP Filter----------------------------------------------------------------
+ULONG
+FW_V6_IpFilter_GetEntryCount
+    (
+        ANSC_HANDLE                 hInsContext
+    );
 
+ANSC_HANDLE
+FW_V6_IpFilter_GetEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG                       nIndex,
+        ULONG*                      pInsNumber
+    );
+
+ANSC_HANDLE
+FW_V6_IpFilter_AddEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG*                      pInsNumber
+    );
+
+ULONG
+FW_V6_IpFilter_DelEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ANSC_HANDLE                 hInstance
+    );
+
+BOOL
+FW_V6_IpFilter_GetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL*                       pBool
+    );
+
+ULONG
+FW_V6_IpFilter_GetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pValue,
+        ULONG*                      pUlSize
+    );
+
+BOOL
+FW_V6_IpFilter_GetParamUlongValue(
+        ANSC_HANDLE hInsContext,
+        char *ParamName,
+        ULONG *pUlong);
+
+BOOL
+FW_V6_IpFilter_SetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL                        bValue
+    );
+
+BOOL
+FW_V6_IpFilter_SetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       strValue
+    );
+
+BOOL
+FW_V6_IpFilter_SetParamUlongValue(
+        ANSC_HANDLE hInsContext,
+        char        *ParamName,
+        ULONG       ulValue
+        );
+
+BOOL
+FW_V6_IpFilter_Validate
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       pReturnParamName,
+        ULONG*                      puLength
+    );
+
+ULONG
+FW_V6_IpFilter_Commit
+    (
+        ANSC_HANDLE                 hInsContext
+    );
+ULONG
+FW_V6_IpFilter_Rollback
+    (
+        ANSC_HANDLE                 hInsContext
+    );
+
+/***********************************************************************
+ APIs for Object:
+
+    Device.Firewall.X_RDKCENTRAL-COM_Security.V6.IPFiltering.DayOfWeek.{i}.
+
+    * V6_IPFilter_DayOfWeek_GetEntryCount
+    * V6_IPFilter_DayOfWeek_GetEntry
+    * V6_IPFilter_DayOfWeek_GetParamStringValue
+    * V6_IPFilter_DayOfWeek_SetParamStringValue
+    * V6_IPFilter_DayOfWeek_Validate
+    * V6_IPFilter_DayOfWeek_Commit
+    * V6_IPFilter_DayOfWeek_Rollback
+***********************************************************************/
+ULONG
+V6_IPFilter_DayOfWeek_GetEntryCount
+    (
+         ANSC_HANDLE                 hInsContext
+    );
+
+ANSC_HANDLE
+V6_IPFilter_DayOfWeek_GetEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG                       nIndex,
+        ULONG*                      pInsNumber
+    );
+
+ULONG
+V6_IPFilter_DayOfWeek_GetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pValue,
+        ULONG*                      pUlSize
+    );
+
+BOOL
+V6_IPFilter_DayOfWeek_SetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       strValue
+    );
+
+BOOL
+V6_IPFilter_DayOfWeek_Validate
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       pReturnParamName,
+        ULONG*                      puLength
+    );
+
+ULONG
+V6_IPFilter_DayOfWeek_Commit
+    (
+        ANSC_HANDLE                 hInsContext
+    );
+
+ULONG
+V6_IPFilter_DayOfWeek_Rollback
+    (
+        ANSC_HANDLE                 hInsContext
+    );
+// LGI ADD END
 #endif
