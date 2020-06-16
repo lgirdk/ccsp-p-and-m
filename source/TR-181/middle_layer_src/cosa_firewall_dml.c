@@ -103,6 +103,10 @@
  }
  
 ***********************************************************************/
+// LGI ADD START
+#define BTMASK_ALWAYS               0
+#define DAYOFWEEK_BT_MASK_LEN       25
+// LGI ADD END
 /***********************************************************************
 
  APIs for Object:
@@ -695,6 +699,13 @@ V4_GetParamBoolValue
       CosaDmlGatewayV4GetIPFloodDetect(pBool);
       return TRUE;
     }
+// LGI  ADD START
+    else if (AnscEqualString(ParamName, "Enable", TRUE)) {
+
+      CosaDmlGatewayV4GetFwEnable(pBool);
+      return TRUE;
+    }
+// LGI  ADD END
     return FALSE;
 }
 
@@ -751,9 +762,114 @@ V4_SetParamBoolValue
       CosaDmlGatewayV4SetIPFloodDetect(bValue);
       return TRUE;
     }
+// LGI ADD START
+    else if (AnscEqualString(ParamName, "Enable", TRUE)) {
 
+      CosaDmlGatewayV4SetFwEnable(bValue);
+      return TRUE;
+    }
+// LGI ADD END
     return FALSE;
 }
+
+// LGI  ADD START
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        V4_GetParamUlongValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                ULONG*                      puLong
+            );
+
+    description:
+
+        This function is called to get ULONG parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                ULONG*                      puLong
+                The buffer of retuned ULONG value;
+
+    return:     TRUE if succeeded.
+
+**********************************************************************/
+BOOL
+V4_GetParamUlongValue
+    (
+        ANSC_HANDLE hInsContext,
+        char*       ParamName,
+        ULONG*      puLong
+    )
+{
+    /* check the parameter name and return the corresponding value */
+    if (AnscEqualString(ParamName, "ScheduleEnable", TRUE)) {
+        if(ANSC_STATUS_SUCCESS == CosaDmlFW_V4DayOfWeek_GetBlockTimeBitMaskType(puLong)) {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        V4_SetParamUlongValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                ULONG                       ulValue
+            );
+
+    description:
+
+        This function is called to set ULONG parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                ULONG                       ulValue
+                The ULONG value updated;
+
+    return:     TRUE if succeeded.
+
+**********************************************************************/
+BOOL
+V4_SetParamUlongValue
+    (
+        ANSC_HANDLE hInsContext,
+        char*       ParamName,
+        ULONG       ulValue
+    )
+{
+    PCOSA_DATAMODEL_FIREWALL        pCosaDMFirewall = (PCOSA_DATAMODEL_FIREWALL)g_pCosaBEManager->hFirewall;
+
+    /* check the parameter name and set the corresponding value */
+    if (AnscEqualString(ParamName, "ScheduleEnable", TRUE)) {
+        if(ANSC_STATUS_SUCCESS != CosaDmlFW_V4DayOfWeek_SetBlockTimeBitMaskType(ulValue)) {
+            return FALSE;
+        }
+        pCosaDMFirewall->V4DayOfWeekBlockTimeBitMaskType = ulValue;
+    }
+    return TRUE;
+}
+// LGI  ADD END
 
 /**********************************************************************
 
@@ -861,6 +977,1080 @@ V4_Rollback
   return ANSC_STATUS_SUCCESS;
 }
 
+// LGI ADD START
+//V4 IP Filter----------------------------------------------------------------
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ULONG
+        FW_V4_IpFilter_GetEntryCount
+            (
+                ANSC_HANDLE                 hInsContext
+            );
+
+    description:
+
+        This function is called to get the entry count in the V4 IP filter table.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+ULONG
+FW_V4_IpFilter_GetEntryCount
+    (
+        ANSC_HANDLE                 hInsContext
+    )
+{
+    COSA_DATAMODEL_FIREWALL   *pCosaDMFirewall = (COSA_DATAMODEL_FIREWALL*)g_pCosaBEManager->hFirewall;
+    return AnscSListQueryDepth(&pCosaDMFirewall->FwV4IpFilterList);
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ANSC_HANDLE
+        FW_V4_IpFilter_GetEntry
+            (
+                ANSC_HANDLE                 hInsContext
+                ULONG                       nIndex,
+                ULONG*                      pInsNumber
+            );
+
+    description:
+
+        This function is called to get new entry in the V4 IP filter table.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+                ULONG                       nIndex,
+                The index number;
+                ULONG*                      pInsNumber
+                The instance number;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+ANSC_HANDLE
+FW_V4_IpFilter_GetEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG                       nIndex,
+        ULONG*                      pInsNumber
+    )
+{
+    COSA_DATAMODEL_FIREWALL   *pCosaDMFirewall = (COSA_DATAMODEL_FIREWALL*)g_pCosaBEManager->hFirewall;
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = NULL;
+    PSINGLE_LINK_ENTRY              pSLinkEntry = NULL;
+
+    pSLinkEntry = AnscQueueGetEntryByIndex((ANSC_HANDLE)&pCosaDMFirewall->FwV4IpFilterList, nIndex);
+
+    if (pSLinkEntry)
+    {
+        pLinkObj = ACCESS_COSA_CONTEXT_LINK_OBJECT(pSLinkEntry);
+        *pInsNumber = pLinkObj->InstanceNumber;
+    }
+
+    return pLinkObj;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ANSC_HANDLE
+        FW_V4_IpFilter_AddEntry
+            (
+                ANSC_HANDLE                 hInsContext
+                ULONG*                      pInsNumber
+            );
+
+    description:
+
+        This function is called to add new entry in the V4 IP filter table.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+                ULONG*                      pInsNumber
+                The instance number;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+ANSC_HANDLE
+FW_V4_IpFilter_AddEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG*                      pInsNumber
+    )
+{
+    COSA_DATAMODEL_FIREWALL   *pCosaDMFirewall = (COSA_DATAMODEL_FIREWALL*)g_pCosaBEManager->hFirewall;
+    PCOSA_CONTEXT_LINK_OBJECT     pLinkObj      = NULL;
+    COSA_DML_FW_IPFILTER          *pFwIpFilter    = NULL;
+
+    pLinkObj = AnscAllocateMemory(sizeof(COSA_CONTEXT_LINK_OBJECT));
+    if (!pLinkObj)
+        return NULL;
+
+    pFwIpFilter = AnscAllocateMemory(sizeof(COSA_DML_FW_IPFILTER));
+    if (!pFwIpFilter)
+    {
+        AnscFreeMemory(pLinkObj);
+        return NULL;
+    }
+
+     /* now we have this link content */
+    pLinkObj->InstanceNumber = pCosaDMFirewall->FwV4IpFilterNextInsNum;
+    pFwIpFilter->InstanceNumber = pCosaDMFirewall->FwV4IpFilterNextInsNum;
+    pCosaDMFirewall->FwV4IpFilterNextInsNum++;
+    if (pCosaDMFirewall->FwV4IpFilterNextInsNum == 0)
+        pCosaDMFirewall->FwV4IpFilterNextInsNum = 1;
+
+    _ansc_sprintf(pFwIpFilter->Alias, "FW-V4IpFilter-%d", (int)pLinkObj->InstanceNumber);
+    pLinkObj->hContext      = (ANSC_HANDLE)pFwIpFilter;
+    pLinkObj->hParentTable  = NULL;
+    pLinkObj->bNew          = TRUE;
+
+    CosaSListPushEntryByInsNum((PSLIST_HEADER)&pCosaDMFirewall->FwV4IpFilterList, pLinkObj);
+    CosaFwReg_V4_IpFilterAddInfo((ANSC_HANDLE)pCosaDMFirewall, (ANSC_HANDLE)pLinkObj);
+
+    *pInsNumber = pLinkObj->InstanceNumber;
+
+    return pLinkObj;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ULONG
+        FW_V4_IpFilter_DelEntry
+            (
+                ANSC_HANDLE                 hInsContext
+                ANSC_HANDLE                 hInstance
+            );
+
+    description:
+
+        This function is called to delete an entry in the V4 IP filter table.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+                ANSC_HANDLE                 hInstance
+                The instance handle to delete;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+ULONG
+FW_V4_IpFilter_DelEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ANSC_HANDLE                 hInstance
+    )
+{
+    ANSC_STATUS                    returnStatus = ANSC_STATUS_SUCCESS;
+    COSA_DATAMODEL_FIREWALL   *pCosaDMFirewall = (COSA_DATAMODEL_FIREWALL*)g_pCosaBEManager->hFirewall;
+    PCOSA_CONTEXT_LINK_OBJECT      pLinkObj     = (PCOSA_CONTEXT_LINK_OBJECT)hInstance;
+    COSA_DML_FW_IPFILTER          *pFwIpFilter  = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+
+   if (pLinkObj->bNew)
+    {
+        /* Set bNew to FALSE to indicate this node is not going to save to SysRegistry */
+        pLinkObj->bNew = FALSE;
+        returnStatus = CosaFwReg_V4_IpFilterDelInfo((ANSC_HANDLE)pCosaDMFirewall, (ANSC_HANDLE)pLinkObj);
+    }
+    else
+    {
+        returnStatus = CosaDmlFW_V4_IPFilter_DelEntry(pLinkObj->InstanceNumber);
+    }
+
+    if ( returnStatus == ANSC_STATUS_SUCCESS )
+    {
+        AnscSListPopEntryByLink((PSLIST_HEADER)&pCosaDMFirewall->FwV4IpFilterList, &pLinkObj->Linkage);
+        AnscFreeMemory(pFwIpFilter);
+        AnscFreeMemory(pLinkObj);
+    }
+    return returnStatus;
+
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        FW_V4_IpFilter_GetParamBoolValue
+            (
+                ANSC_HANDLE                 hInsContext
+                char*                       ParamName,
+                BOOL*                       pBool
+            );
+
+    description:
+
+        This function is called to get bool parameter values.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+                char*                       ParamName,
+                The parameter name;
+                BOOL*                       pBool
+                The buffer to store the parameter value;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+BOOL
+FW_V4_IpFilter_GetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL*                       pBool
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj            = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER            *pFwIpFilter        = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+
+    if (AnscEqualString(ParamName, "Enable", TRUE))
+    {
+        *pBool = pFwIpFilter->Enable;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ULONG
+        FW_V4_IpFilter_GetParamStringValue
+            (
+                ANSC_HANDLE                 hInsContext
+                char*                       ParamName,
+                char*                       pValue,
+                ULONG*                      pUlSize
+            );
+
+    description:
+
+        This function is called to get string parameter values.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+                char*                       ParamName,
+                The parameter name;
+                char*                       pValue,
+                The buffer to store the parameter value;
+                ULONG*                      pUlSize
+                The buffer to check the size of string parameter value;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+ULONG
+FW_V4_IpFilter_GetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pValue,
+        ULONG*                      pUlSize
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj            = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER            *pFwIpFilter        = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+
+    if (AnscEqualString(ParamName, "Description", TRUE))
+    {
+        AnscCopyString(pValue, pFwIpFilter->Description);
+        return 0;
+    }
+    if (AnscEqualString(ParamName, "SrcStartAddr", TRUE))
+    {
+        AnscCopyString(pValue, pFwIpFilter->SrcStartIPAddress);
+        return 0;
+    }
+    if (AnscEqualString(ParamName, "SrcEndAddr", TRUE))
+    {
+        AnscCopyString(pValue, pFwIpFilter->SrcEndIPAddress);
+        return 0;
+    }
+    if (AnscEqualString(ParamName, "DstStartAddr", TRUE))
+    {
+        AnscCopyString(pValue, pFwIpFilter->DstStartIPAddress);
+        return 0;
+    }
+    if (AnscEqualString(ParamName, "DstEndAddr", TRUE))
+    {
+        AnscCopyString(pValue, pFwIpFilter->DstEndIPAddress);
+        return 0;
+    }
+
+    return 1;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        FW_V4_IpFilter_GetParamUlongValue
+            (
+                ANSC_HANDLE                 hInsContext
+                char*                       ParamName,
+                ULONG                       *pUlong
+            );
+
+    description:
+
+        This function is called to get ulong parameter values.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+                char*                       ParamName,
+                The parameter name;
+                ULONG*                      pUlong
+                The buffer to store the parameter value;
+
+
+    return:     The status of the operation.
+
+**********************************************************************/
+BOOL
+FW_V4_IpFilter_GetParamUlongValue
+        (
+        ANSC_HANDLE           hInsContext,
+        char                  *ParamName,
+        ULONG                 *pUlong
+        )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER           *pFwIpFilter   = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+
+    if (AnscEqualString(ParamName, "SrcPortStart", TRUE))
+    {
+        *pUlong = pFwIpFilter->SrcStartPort;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "SrcPortEnd", TRUE))
+    {
+        *pUlong = pFwIpFilter->SrcEndPort;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "DstPortStart", TRUE))
+    {
+        *pUlong = pFwIpFilter->DstStartPort;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "DstPortEnd", TRUE))
+    {
+        *pUlong = pFwIpFilter->DstEndPort;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "Protocol", TRUE))
+    {
+        *pUlong = pFwIpFilter->ProtocolType;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "Action", TRUE))
+    {
+        *pUlong = pFwIpFilter->FilterAction;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "Direction", TRUE))
+    {
+        *pUlong = pFwIpFilter->FilterDirec;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        FW_V4_IpFilter_SetParamBoolValue
+            (
+                ANSC_HANDLE                 hInsContext
+                char*                       ParamName,
+                BOOL                        bValue
+            );
+
+    description:
+
+        This function is called to set bool parameter values.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+                char*                       ParamName,
+                The parameter name;
+                BOOL                        bValue
+                The buffer to update the parameter value;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+BOOL
+FW_V4_IpFilter_SetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL                        bValue
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj            = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER           *pFwIpFilter     = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+
+    if (AnscEqualString(ParamName, "Enable", TRUE))
+    {
+        pFwIpFilter->Enable = bValue;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        FW_V4_IpFilter_SetParamStringValue
+            (
+                ANSC_HANDLE                 hInsContext
+                char*                       ParamName,
+                char*                       strValue
+            );
+
+    description:
+
+        This function is called to set string parameter values.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+                char*                       ParamName,
+                The parameter name;
+                char*                       strValue
+                The buffer to update the parameter value;
+
+
+    return:     The status of the operation.
+
+**********************************************************************/
+BOOL
+FW_V4_IpFilter_SetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       strValue
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj            = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER           *pFwIpFilter     = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+
+    if (AnscEqualString(ParamName, "Description", TRUE))
+    {
+        _ansc_snprintf(pFwIpFilter->Description, sizeof(pFwIpFilter->Description), "%s", strValue);
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "SrcStartAddr", TRUE))
+    {
+        _ansc_snprintf(pFwIpFilter->SrcStartIPAddress, sizeof(pFwIpFilter->SrcStartIPAddress), "%s", strValue);
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "SrcEndAddr", TRUE))
+    {
+        _ansc_snprintf(pFwIpFilter->SrcEndIPAddress, sizeof(pFwIpFilter->SrcEndIPAddress), "%s", strValue);
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "DstStartAddr", TRUE))
+    {
+        _ansc_snprintf(pFwIpFilter->DstStartIPAddress, sizeof(pFwIpFilter->DstStartIPAddress), "%s", strValue);
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "DstEndAddr", TRUE))
+    {
+        _ansc_snprintf(pFwIpFilter->DstEndIPAddress, sizeof(pFwIpFilter->DstEndIPAddress), "%s", strValue);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        FW_V4_IpFilter_SetParamUlongValue
+            (
+                ANSC_HANDLE                 hInsContext
+                char*                       ParamName,
+                ULONG                       ulValue
+            );
+
+    description:
+
+        This function is called to set ulong parameter values.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+                char*                       ParamName,
+                The parameter name;
+                ULONG*                      ulValue
+                The buffer to update the parameter value;
+
+
+    return:     The status of the operation.
+
+**********************************************************************/
+BOOL
+FW_V4_IpFilter_SetParamUlongValue
+        (
+        ANSC_HANDLE          hInsContext,
+        char                 *ParamName,
+        ULONG                ulValue
+        )
+{
+    PCOSA_CONTEXT_LINK_OBJECT     pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER         *pFwIpFilter   = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+
+    if (AnscEqualString(ParamName, "SrcPortStart", TRUE))
+    {
+        pFwIpFilter->SrcStartPort = ulValue;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "SrcPortEnd", TRUE))
+    {
+        pFwIpFilter->SrcEndPort = ulValue;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "DstPortStart", TRUE))
+    {
+        pFwIpFilter->DstStartPort = ulValue;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "DstPortEnd", TRUE))
+    {
+        pFwIpFilter->DstEndPort = ulValue;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "Protocol", TRUE))
+    {
+        pFwIpFilter->ProtocolType= ulValue;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "Action", TRUE))
+    {
+        pFwIpFilter->FilterAction= ulValue;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "Direction", TRUE))
+    {
+        pFwIpFilter->FilterDirec= ulValue;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        FW_V4_IpFilter_Validate
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       pReturnParamName,
+                ULONG*                      puLength
+            );
+
+    description:
+
+        This function is called to finally commit all the update.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       pReturnParamName,
+                The buffer (128 bytes) of parameter name if there's a validation.
+
+                ULONG*                      puLength
+                The output length of the param name.
+
+    return:     TRUE if there's no validation.
+
+**********************************************************************/
+BOOL
+FW_V4_IpFilter_Validate
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       pReturnParamName,
+        ULONG*                      puLength
+    )
+{
+    return TRUE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ULONG
+        FW_V4_IpFilter_Commit
+            (
+                ANSC_HANDLE                 hInsContext
+            );
+
+    description:
+
+        This function is called to finally commit all the update.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+ULONG
+FW_V4_IpFilter_Commit
+    (
+        ANSC_HANDLE                 hInsContext
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj     = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER           *pFwIpFilter  = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+    PCOSA_DATAMODEL_FIREWALL        pCosaDMFirewall = (PCOSA_DATAMODEL_FIREWALL)g_pCosaBEManager->hFirewall;
+
+    if (pLinkObj->bNew)
+    {
+        if (CosaDmlFW_V4_IPFilter_AddEntry(pFwIpFilter) != ANSC_STATUS_SUCCESS)
+            return -1;
+        CosaFwReg_V4_IpFilterDelInfo((ANSC_HANDLE)pCosaDMFirewall, (ANSC_HANDLE)pLinkObj);
+        pLinkObj->bNew = FALSE;
+    }
+    else
+    {
+        if (CosaDmlFW_V4_IPFilter_SetConf(pFwIpFilter->InstanceNumber, pFwIpFilter) != ANSC_STATUS_SUCCESS)
+        {
+            CosaDmlFW_V4_IPFilter_GetConf(pFwIpFilter->InstanceNumber, pFwIpFilter);
+            return -1;
+        }
+        else
+            CosaDmlFW_V4_IPFilter_GetConf(pFwIpFilter->InstanceNumber, pFwIpFilter);
+    }
+    return 0;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ULONG
+        FW_V4_IpFilter_Rollback
+            (
+                ANSC_HANDLE                 hInsContext
+            );
+
+    description:
+
+        This function is called to roll back the update whenever there's a
+        validation found.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+ULONG
+FW_V4_IpFilter_Rollback
+    (
+        ANSC_HANDLE                 hInsContext
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj            = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER           *pFwIpFilter         = (COSA_DML_FW_IPFILTER *)pLinkObj->hContext;
+
+    if (CosaDmlFW_V4_IPFilter_GetConf(pFwIpFilter->InstanceNumber, pFwIpFilter) != ANSC_STATUS_SUCCESS)
+        return -1;
+
+    return 0;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ULONG
+        V4_IPFilter_DayOfWeek_GetEntryCount
+            (
+                ANSC_HANDLE                 hInsContext
+            );
+
+    description:
+
+        This function is called to get the entry count in the DayOfWeek for V4.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+ULONG
+V4_IPFilter_DayOfWeek_GetEntryCount
+    (
+         ANSC_HANDLE                 hInsContext
+    )
+{
+    COSA_DATAMODEL_FIREWALL   *pCosaDMFirewall = (COSA_DATAMODEL_FIREWALL*)g_pCosaBEManager->hFirewall;
+    return AnscSListQueryDepth(&pCosaDMFirewall->V4DayOfWeekList);
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ANSC_HANDLE
+        V4_IPFilter_DayOfWeek_GetEntry
+            (
+                ANSC_HANDLE                 hInsContext
+                ULONG                       nIndex,
+                ULONG*                      pInsNumber
+            );
+
+    description:
+
+        This function is called to get new entry in the DayOfWeek for V4.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+                ULONG                       nIndex,
+                The index number;
+                ULONG*                      pInsNumber
+                The instance number;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+ANSC_HANDLE
+V4_IPFilter_DayOfWeek_GetEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG                       nIndex,
+        ULONG*                      pInsNumber
+    )
+{
+    COSA_DATAMODEL_FIREWALL   *pCosaDMFirewall = (COSA_DATAMODEL_FIREWALL*)g_pCosaBEManager->hFirewall;
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = NULL;
+    PSINGLE_LINK_ENTRY              pSLinkEntry = NULL;
+
+    pSLinkEntry = AnscQueueGetEntryByIndex((ANSC_HANDLE)&pCosaDMFirewall->V4DayOfWeekList, nIndex);
+    if (pSLinkEntry)
+    {
+        pLinkObj = ACCESS_COSA_CONTEXT_LINK_OBJECT(pSLinkEntry);
+        *pInsNumber = pLinkObj->InstanceNumber;
+    }
+    return pLinkObj;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ULONG
+        V4_IPFilter_DayOfWeek_GetParamStringValue
+            (
+                ANSC_HANDLE                 hInsContext
+                char*                       ParamName,
+                char*                       pValue,
+                ULONG*                      pUlSize
+            );
+
+    description:
+
+        This function is called to get string parameter values.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+                char*                       ParamName,
+                The parameter name;
+                char*                       pValue,
+                The buffer to store the parameter value;
+                ULONG*                      pUlSize
+                The buffer to check the size of string parameter value;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+ULONG
+V4_IPFilter_DayOfWeek_GetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pValue,
+        ULONG*                      pUlSize
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj        = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_V4_DAYOFWEEK       *pV4DayOfWeek    = (COSA_DML_FW_V4_DAYOFWEEK*)pLinkObj->hContext;
+
+    if (AnscEqualString(ParamName, "BlockTimeBitMask", TRUE)) {
+        AnscCopyString(pValue, pV4DayOfWeek->V4DayOfWeek_BlockTimeBitMask);
+        return 0;
+    }
+    return 1;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        FW_V4_IpFilter_SetParamStringValue
+            (
+                ANSC_HANDLE                 hInsContext
+                char*                       ParamName,
+                char*                       strValue
+            );
+
+    description:
+
+        This function is called to set string parameter values.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+                char*                       ParamName,
+                The parameter name;
+                char*                       strValue
+                The buffer to update the parameter value;
+
+
+    return:     The status of the operation.
+
+**********************************************************************/
+BOOL
+V4_IPFilter_DayOfWeek_SetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       strValue
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj         = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_V4_DAYOFWEEK       *pV4DayOfWeek    = (COSA_DML_FW_V4_DAYOFWEEK*)pLinkObj->hContext;
+    int iMaskLen = 0;
+    int i = 0;
+
+    /* check the parameter name and set the corresponding value */
+    if (AnscEqualString(ParamName, "BlockTimeBitMask", TRUE))
+    {
+        // Ensure Mask Len is 24 characters
+        iMaskLen = strlen(strValue);
+        if(iMaskLen != (DAYOFWEEK_BT_MASK_LEN - 1))
+        {
+            return FALSE;
+        }
+        // Ensure Mask is a valid Binary String
+        for(i = 0; i < iMaskLen; i++)
+        {
+            if((int)strValue[i] < 48 || (int)strValue[i] > 49)
+            {
+                return FALSE; // Not a Binary character
+            }
+        }
+        _ansc_snprintf(pV4DayOfWeek->V4DayOfWeek_BlockTimeBitMask, sizeof(pV4DayOfWeek->V4DayOfWeek_BlockTimeBitMask), "%s", strValue);
+        return TRUE;
+    }
+    return FALSE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        V4_IPFilter_DayOfWeek_Validate
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       pReturnParamName,
+                ULONG*                      puLength
+            );
+
+    description:
+
+        This function is called to finally commit all the update.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       pReturnParamName,
+                The buffer (128 bytes) of parameter name if there's a validation.
+
+                ULONG*                      puLength
+                The output length of the param name.
+
+    return:     TRUE if there's no validation.
+
+**********************************************************************/
+BOOL
+V4_IPFilter_DayOfWeek_Validate
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       pReturnParamName,
+        ULONG*                      puLength
+    )
+{
+    PCOSA_DATAMODEL_FIREWALL        pCosaDMFirewall = (PCOSA_DATAMODEL_FIREWALL)g_pCosaBEManager->hFirewall;
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj     = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_V4_DAYOFWEEK       *pV4DayOfWeek = (COSA_DML_FW_V4_DAYOFWEEK*)pLinkObj->hContext;
+
+    int iMaskLen = 0;
+    int i = 0;
+
+    if(BTMASK_ALWAYS != pCosaDMFirewall->V4DayOfWeekBlockTimeBitMaskType)
+    {
+        // Ensure Mask Len is 24 characters
+        iMaskLen = strlen(pV4DayOfWeek->V4DayOfWeek_BlockTimeBitMask);
+        if(iMaskLen != (DAYOFWEEK_BT_MASK_LEN - 1))
+        {
+            return FALSE;
+        }
+        // Ensure Mask is a valid Binary String
+        for(i = 0; i < iMaskLen; i++)
+        {
+            if((int)pV4DayOfWeek->V4DayOfWeek_BlockTimeBitMask[i] < 48 || (int)pV4DayOfWeek->V4DayOfWeek_BlockTimeBitMask[i] > 49)
+            {
+                return FALSE; // Not a Binary character
+            }
+        }
+    }
+
+    return TRUE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ULONG
+        V4_IPFilter_DayOfWeek_Commit
+            (
+                ANSC_HANDLE                 hInsContext
+            );
+
+    description:
+
+        This function is called to finally commit all the update.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+ULONG
+V4_IPFilter_DayOfWeek_Commit
+    (
+        ANSC_HANDLE                 hInsContext
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj     = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_V4_DAYOFWEEK       *pV4DayOfWeek = (COSA_DML_FW_V4_DAYOFWEEK*)pLinkObj->hContext;
+
+    if (CosaDmlFW_V4DayOfWeek_SetConf(pV4DayOfWeek->InstanceNumber, pV4DayOfWeek) != ANSC_STATUS_SUCCESS)
+    {
+        CosaDmlFW_V4DayOfWeek_GetConf(pV4DayOfWeek->InstanceNumber, pV4DayOfWeek);
+        return -1;
+    }
+    return 0;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ULONG
+        V4_IPFilter_DayOfWeek_Rollback
+            (
+                ANSC_HANDLE                 hInsContext
+            );
+
+    description:
+
+        This function is called to roll back the update whenever there's a
+        validation found.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+ULONG
+V4_IPFilter_DayOfWeek_Rollback
+    (
+        ANSC_HANDLE                 hInsContext
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_V4_DAYOFWEEK       *pV4DayOfWeek = (COSA_DML_FW_V4_DAYOFWEEK*)pLinkObj->hContext;
+
+    if (CosaDmlFW_V4DayOfWeek_GetConf(pV4DayOfWeek->InstanceNumber, pV4DayOfWeek) != ANSC_STATUS_SUCCESS)
+        return -1;
+
+    return 0;
+}
+// LGI ADD END
+
 /**********************************************************************
 
     caller:     owner of this object
@@ -914,7 +2104,13 @@ V6_GetParamBoolValue
       CosaDmlGatewayV6GetIPFloodDetect(pBool);
       return TRUE;
     }
+// LGI ADD START
+    else if (AnscEqualString(ParamName, "Enable", TRUE)) {
 
+      CosaDmlGatewayV6GetFwEnable(pBool);
+      return TRUE;
+    }
+// LGI ADD END
 
     return FALSE;
 }
@@ -972,9 +2168,54 @@ V6_SetParamBoolValue
       CosaDmlGatewayV6SetIPFloodDetect(bValue);
       return TRUE;
     }
+// LGI ADD START
+    else if (AnscEqualString(ParamName, "Enable", TRUE)) {
+
+      CosaDmlGatewayV6SetFwEnable(bValue);
+      return TRUE;
+    }
+// LGI ADD END
 
     return FALSE;
 }
+
+// LGI ADD START
+BOOL
+V6_GetParamUlongValue
+    (
+        ANSC_HANDLE hInsContext,
+        char*       ParamName,
+        ULONG*      puLong
+    )
+{
+    /* check the parameter name and return the corresponding value */
+    if (AnscEqualString(ParamName, "ScheduleEnable", TRUE)) {
+        if(ANSC_STATUS_SUCCESS == CosaDmlFW_V6DayOfWeek_GetBlockTimeBitMaskType(puLong)) {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+BOOL
+V6_SetParamUlongValue
+    (
+        ANSC_HANDLE hInsContext,
+        char*       ParamName,
+        ULONG       ulValue
+    )
+{
+    PCOSA_DATAMODEL_FIREWALL        pCosaDMFirewall = (PCOSA_DATAMODEL_FIREWALL)g_pCosaBEManager->hFirewall;
+    /* check the parameter name and set the corresponding value */
+    if (AnscEqualString(ParamName, "ScheduleEnable", TRUE)) {
+        if(ANSC_STATUS_SUCCESS != CosaDmlFW_V6DayOfWeek_SetBlockTimeBitMaskType(ulValue)) {
+            return FALSE;
+        }
+        pCosaDMFirewall->V6DayOfWeekBlockTimeBitMaskType = ulValue;
+    }
+    return TRUE;
+}
+// LGI ADD END
 
 /**********************************************************************
 
@@ -1083,4 +2324,1075 @@ V6_Rollback
 
   return 0;
 }
+
+// LGI ADD START
+// V6 IP Filter----------------------------------------------------------------
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ULONG
+        FW_V6_IpFilter_GetEntryCount
+            (
+                ANSC_HANDLE                 hInsContext
+            );
+
+    description:
+
+        This function is called to get the entry count in the V6 IP filter table.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+ULONG
+FW_V6_IpFilter_GetEntryCount
+    (
+        ANSC_HANDLE                 hInsContext
+    )
+{
+    COSA_DATAMODEL_FIREWALL   *pCosaDMFirewall = (COSA_DATAMODEL_FIREWALL*)g_pCosaBEManager->hFirewall;
+    return AnscSListQueryDepth(&pCosaDMFirewall->FwV6IpFilterList);
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ANSC_HANDLE
+        FW_V6_IpFilter_GetEntry
+            (
+                ANSC_HANDLE                 hInsContext
+                ULONG                       nIndex,
+                ULONG*                      pInsNumber
+            );
+
+    description:
+
+        This function is called to get new entry in the V6 IP filter table.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+                ULONG                       nIndex,
+                The index number;
+                ULONG*                      pInsNumber
+                The instance number;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+ANSC_HANDLE
+FW_V6_IpFilter_GetEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG                       nIndex,
+        ULONG*                      pInsNumber
+    )
+{
+    COSA_DATAMODEL_FIREWALL   *pCosaDMFirewall = (COSA_DATAMODEL_FIREWALL*)g_pCosaBEManager->hFirewall;
+    PCOSA_CONTEXT_LINK_OBJECT     pLinkObj    = NULL;
+    PSINGLE_LINK_ENTRY            pSLinkEntry = NULL;
+
+    pSLinkEntry = AnscQueueGetEntryByIndex((ANSC_HANDLE)&pCosaDMFirewall->FwV6IpFilterList, nIndex);
+
+    if (pSLinkEntry)
+    {
+        pLinkObj = ACCESS_COSA_CONTEXT_LINK_OBJECT(pSLinkEntry);
+        *pInsNumber = pLinkObj->InstanceNumber;
+    }
+
+    return pLinkObj;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ANSC_HANDLE
+        FW_V6_IpFilter_AddEntry
+            (
+                ANSC_HANDLE                 hInsContext
+                ULONG*                      pInsNumber
+            );
+
+    description:
+
+        This function is called to add new entry in the V6 IP filter table.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+                ULONG*                      pInsNumber
+                The instance number;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+ANSC_HANDLE
+FW_V6_IpFilter_AddEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG*                      pInsNumber
+    )
+{
+    COSA_DATAMODEL_FIREWALL   *pCosaDMFirewall = (COSA_DATAMODEL_FIREWALL*)g_pCosaBEManager->hFirewall;
+    PCOSA_CONTEXT_LINK_OBJECT      pLinkObj    = NULL;
+    COSA_DML_FW_IPFILTER          *pFwIpFilter   = NULL;
+
+    pLinkObj = AnscAllocateMemory(sizeof(COSA_CONTEXT_LINK_OBJECT));
+    if (!pLinkObj)
+        return NULL;
+
+    pFwIpFilter = AnscAllocateMemory(sizeof(COSA_DML_FW_IPFILTER));
+    if (!pFwIpFilter)
+    {
+        AnscFreeMemory(pLinkObj);
+        return NULL;
+    }
+
+     /* now we have this link content */
+    pLinkObj->InstanceNumber = pCosaDMFirewall->FwV6IpFilterNextInsNum;
+    pFwIpFilter->InstanceNumber = pCosaDMFirewall->FwV6IpFilterNextInsNum;
+    pCosaDMFirewall->FwV6IpFilterNextInsNum++;
+    if (pCosaDMFirewall->FwV6IpFilterNextInsNum == 0)
+        pCosaDMFirewall->FwV6IpFilterNextInsNum = 1;
+
+    _ansc_sprintf(pFwIpFilter->Alias, "FW-V6IpFilter-%d", (int)pLinkObj->InstanceNumber);
+    pLinkObj->hContext      = (ANSC_HANDLE)pFwIpFilter;
+    pLinkObj->hParentTable  = NULL;
+    pLinkObj->bNew          = TRUE;
+
+    CosaSListPushEntryByInsNum((PSLIST_HEADER)&pCosaDMFirewall->FwV6IpFilterList, pLinkObj);
+    CosaFwReg_V6_IpFilterAddInfo((ANSC_HANDLE)pCosaDMFirewall, (ANSC_HANDLE)pLinkObj);
+
+    *pInsNumber = pLinkObj->InstanceNumber;
+
+    return pLinkObj;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ULONG
+        FW_V6_IpFilter_DelEntry
+            (
+                ANSC_HANDLE                 hInsContext
+                ANSC_HANDLE                 hInstance
+            );
+
+    description:
+
+        This function is called to delete an entry in the V6 IP filter table.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+                ANSC_HANDLE                 hInstance
+                The instance handle to delete;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+ULONG
+FW_V6_IpFilter_DelEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ANSC_HANDLE                 hInstance
+    )
+{
+    ANSC_STATUS                    returnStatus = ANSC_STATUS_SUCCESS;
+    COSA_DATAMODEL_FIREWALL   *pCosaDMFirewall = (COSA_DATAMODEL_FIREWALL*)g_pCosaBEManager->hFirewall;
+    PCOSA_CONTEXT_LINK_OBJECT      pLinkObj = (PCOSA_CONTEXT_LINK_OBJECT)hInstance;
+    COSA_DML_FW_IPFILTER          *pFwIpFilter  = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+
+   if (pLinkObj->bNew)
+    {
+        /* Set bNew to FALSE to indicate this node is not going to save to SysRegistry */
+        pLinkObj->bNew = FALSE;
+        returnStatus = CosaFwReg_V6_IpFilterDelInfo((ANSC_HANDLE)pCosaDMFirewall, (ANSC_HANDLE)pLinkObj);
+    }
+    else
+    {
+        returnStatus = CosaDmlFW_V6_IPFilter_DelEntry(pLinkObj->InstanceNumber);
+    }
+
+    if ( returnStatus == ANSC_STATUS_SUCCESS )
+    {
+        AnscSListPopEntryByLink((PSLIST_HEADER)&pCosaDMFirewall->FwV6IpFilterList, &pLinkObj->Linkage);
+        AnscFreeMemory(pFwIpFilter);
+        AnscFreeMemory(pLinkObj);
+    }
+    return returnStatus;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        FW_V6_IpFilter_GetParamBoolValue
+            (
+                ANSC_HANDLE                 hInsContext
+                char*                       ParamName,
+                BOOL*                       pBool
+            );
+
+    description:
+
+        This function is called to get bool parameter values.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+                char*                       ParamName,
+                The parameter name;
+                BOOL*                       pBool
+                The buffer to store the parameter value;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+BOOL
+FW_V6_IpFilter_GetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL*                       pBool
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER            *pFwIpFilter  = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+    if (AnscEqualString(ParamName, "Enable", TRUE))
+    {
+        *pBool = pFwIpFilter->Enable;
+        return TRUE;
+    }
+    return TRUE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ULONG
+        FW_V6_IpFilter_GetParamStringValue
+            (
+                ANSC_HANDLE                 hInsContext
+                char*                       ParamName,
+                char*                       pValue,
+                ULONG*                      pUlSize
+            );
+
+    description:
+
+        This function is called to get string parameter values.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+                char*                       ParamName,
+                The parameter name;
+                char*                       pValue,
+                The buffer to store the parameter value;
+                ULONG*                      pUlSize
+                The buffer to check the size of string parameter value;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+ULONG
+FW_V6_IpFilter_GetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pValue,
+        ULONG*                      pUlSize
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER            *pFwIpFilter  = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+
+    if (AnscEqualString(ParamName, "Description", TRUE))
+    {
+        AnscCopyString(pValue, pFwIpFilter->Description);
+        return 0;
+    }
+    if (AnscEqualString(ParamName, "SrcStartAddr", TRUE))
+    {
+        AnscCopyString(pValue, pFwIpFilter->SrcStartIPAddress);
+        return 0;
+    }
+    if (AnscEqualString(ParamName, "DstStartAddr", TRUE))
+    {
+        AnscCopyString(pValue, pFwIpFilter->DstStartIPAddress);
+        return 0;
+    }
+
+    return 1;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        FW_V6_IpFilter_GetParamUlongValue
+            (
+                ANSC_HANDLE                 hInsContext
+                char*                       ParamName,
+                ULONG                       *pUlong
+            );
+
+    description:
+
+        This function is called to get ulong parameter values.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+                char*                       ParamName,
+                The parameter name;
+                ULONG*                      pUlong
+                The buffer to store the parameter value;
+
+
+    return:     The status of the operation.
+
+**********************************************************************/
+BOOL
+FW_V6_IpFilter_GetParamUlongValue
+        (
+        ANSC_HANDLE hInsContext,
+        char *ParamName,
+        ULONG *pUlong
+        )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER           *pFwIpFilter   = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+
+    if (AnscEqualString(ParamName, "SrcPortStart", TRUE))
+    {
+        *pUlong = pFwIpFilter->SrcStartPort;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "SrcPortEnd", TRUE))
+    {
+        *pUlong = pFwIpFilter->SrcEndPort;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "DstPortStart", TRUE))
+    {
+        *pUlong = pFwIpFilter->DstStartPort;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "DstPortEnd", TRUE))
+    {
+        *pUlong = pFwIpFilter->DstEndPort;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "IPv6SrcPrefixLen", TRUE))
+    {
+        *pUlong = pFwIpFilter->IPv6SrcPrefixLen;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "IPv6DstPrefixLen", TRUE))
+    {
+        *pUlong = pFwIpFilter->IPv6DstPrefixLen;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "Protocol", TRUE))
+    {
+        *pUlong = pFwIpFilter->ProtocolType;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "Action", TRUE))
+    {
+        *pUlong = pFwIpFilter->FilterAction;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "Direction", TRUE))
+    {
+        *pUlong = pFwIpFilter->FilterDirec;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        FW_V6_IpFilter_SetParamBoolValue
+            (
+                ANSC_HANDLE                 hInsContext
+                char*                       ParamName,
+                BOOL                        bValue
+            );
+
+    description:
+
+        This function is called to set bool parameter values.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+                char*                       ParamName,
+                The parameter name;
+                BOOL                        bValue
+                The buffer to update the parameter value;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+BOOL
+FW_V6_IpFilter_SetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL                        bValue
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj        = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER           *pFwIpFilter     = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+    if (AnscEqualString(ParamName, "Enable", TRUE))
+    {
+        pFwIpFilter->Enable = bValue;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        FW_V6_IpFilter_SetParamStringValue
+            (
+                ANSC_HANDLE                 hInsContext
+                char*                       ParamName,
+                char*                       strValue
+            );
+
+    description:
+
+        This function is called to set string parameter values.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+                char*                       ParamName,
+                The parameter name;
+                char*                       strValue
+                The buffer to update the parameter value;
+
+
+    return:     The status of the operation.
+
+**********************************************************************/
+BOOL
+FW_V6_IpFilter_SetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       strValue
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj        = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER           *pFwIpFilter     = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+
+    if (AnscEqualString(ParamName, "Description", TRUE))
+    {
+        _ansc_snprintf(pFwIpFilter->Description, sizeof(pFwIpFilter->Description), "%s", strValue);
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "SrcStartAddr", TRUE))
+    {
+        _ansc_snprintf(pFwIpFilter->SrcStartIPAddress, sizeof(pFwIpFilter->SrcStartIPAddress), "%s", strValue);
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "DstStartAddr", TRUE))
+    {
+        _ansc_snprintf(pFwIpFilter->DstStartIPAddress, sizeof(pFwIpFilter->DstStartIPAddress), "%s", strValue);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        FW_V6_IpFilter_SetParamUlongValue
+            (
+                ANSC_HANDLE                 hInsContext
+                char*                       ParamName,
+                ULONG                       ulValue
+            );
+
+    description:
+
+        This function is called to set ulong parameter values.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+                char*                       ParamName,
+                The parameter name;
+                ULONG*                      ulValue
+                The buffer to update the parameter value;
+
+
+    return:     The status of the operation.
+
+**********************************************************************/
+BOOL
+FW_V6_IpFilter_SetParamUlongValue
+        (
+        ANSC_HANDLE hInsContext,
+        char        *ParamName,
+        ULONG       ulValue
+        )
+{
+    PCOSA_CONTEXT_LINK_OBJECT     pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER         *pFwIpFilter   = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+
+    if (AnscEqualString(ParamName, "SrcPortStart", TRUE))
+    {
+        pFwIpFilter->SrcStartPort = ulValue;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "SrcPortEnd", TRUE))
+    {
+        pFwIpFilter->SrcEndPort = ulValue;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "DstPortStart", TRUE))
+    {
+        pFwIpFilter->DstStartPort = ulValue;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "DstPortEnd", TRUE))
+    {
+        pFwIpFilter->DstEndPort = ulValue;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "IPv6SrcPrefixLen", TRUE))
+    {
+        pFwIpFilter->IPv6SrcPrefixLen = ulValue;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "IPv6DstPrefixLen", TRUE))
+    {
+        pFwIpFilter->IPv6DstPrefixLen = ulValue;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "Protocol", TRUE))
+    {
+        pFwIpFilter->ProtocolType= ulValue;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "Action", TRUE))
+    {
+        pFwIpFilter->FilterAction = ulValue;
+        return TRUE;
+    }
+    if (AnscEqualString(ParamName, "Direction", TRUE))
+    {
+        pFwIpFilter->FilterDirec = ulValue;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        FW_V6_IpFilter_Validate
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       pReturnParamName,
+                ULONG*                      puLength
+            );
+
+    description:
+
+        This function is called to finally commit all the update.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       pReturnParamName,
+                The buffer (128 bytes) of parameter name if there's a validation.
+
+                ULONG*                      puLength
+                The output length of the param name.
+
+    return:     TRUE if there's no validation.
+
+**********************************************************************/
+BOOL
+FW_V6_IpFilter_Validate
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       pReturnParamName,
+        ULONG*                      puLength
+    )
+{
+    return TRUE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ULONG
+        FW_V6_IpFilter_Commit
+            (
+                ANSC_HANDLE                 hInsContext
+            );
+
+    description:
+
+        This function is called to finally commit all the update.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+ULONG
+FW_V6_IpFilter_Commit
+    (
+        ANSC_HANDLE                 hInsContext
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT      pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER           *pFwIpFilter  = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+    PCOSA_DATAMODEL_FIREWALL        pCosaDMFirewall = (PCOSA_DATAMODEL_FIREWALL)g_pCosaBEManager->hFirewall;
+
+    if (pLinkObj->bNew)
+    {
+        if (CosaDmlFW_V6_IPFilter_AddEntry(pFwIpFilter) != ANSC_STATUS_SUCCESS)
+            return -1;
+        CosaFwReg_V6_IpFilterDelInfo((ANSC_HANDLE)pCosaDMFirewall, (ANSC_HANDLE)pLinkObj);
+        pLinkObj->bNew = FALSE;
+    }
+    else
+    {
+        if (CosaDmlFW_V6_IPFilter_SetConf(pFwIpFilter->InstanceNumber, pFwIpFilter) != ANSC_STATUS_SUCCESS)
+        {
+            CosaDmlFW_V6_IPFilter_GetConf(pFwIpFilter->InstanceNumber, pFwIpFilter);
+            return -1;
+        }
+    }
+    return 0;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ULONG
+        FW_V6_IpFilter_Rollback
+            (
+                ANSC_HANDLE                 hInsContext
+            );
+
+    description:
+
+        This function is called to roll back the update whenever there's a
+        validation found.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+ULONG
+FW_V6_IpFilter_Rollback
+    (
+        ANSC_HANDLE                 hInsContext
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj       = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER           *pFwIpFilter    = (COSA_DML_FW_IPFILTER *)pLinkObj->hContext;
+
+    if (CosaDmlFW_V6_IPFilter_GetConf(pFwIpFilter->InstanceNumber, pFwIpFilter) != ANSC_STATUS_SUCCESS)
+        return -1;
+
+    return 0;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ULONG
+        V6_IPFilter_DayOfWeek_GetEntryCount
+            (
+                ANSC_HANDLE                 hInsContext
+            );
+
+    description:
+
+        This function is called to get the entry count in the DayOfWeek for V6.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+ULONG
+V6_IPFilter_DayOfWeek_GetEntryCount
+    (
+         ANSC_HANDLE                 hInsContext
+    )
+{
+    COSA_DATAMODEL_FIREWALL   *pCosaDMFirewall = (COSA_DATAMODEL_FIREWALL*)g_pCosaBEManager->hFirewall;
+    return AnscSListQueryDepth(&pCosaDMFirewall->V6DayOfWeekList);
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ANSC_HANDLE
+        V6_IPFilter_DayOfWeek_GetEntry
+            (
+                ANSC_HANDLE                 hInsContext
+                ULONG                       nIndex,
+                ULONG*                      pInsNumber
+            );
+
+    description:
+
+        This function is called to get new entry in the DayOfWeek for V6.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+                ULONG                       nIndex,
+                The index number;
+                ULONG*                      pInsNumber
+                The instance number;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+ANSC_HANDLE
+V6_IPFilter_DayOfWeek_GetEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG                       nIndex,
+        ULONG*                      pInsNumber
+    )
+{
+    COSA_DATAMODEL_FIREWALL    *pCosaDMFirewall = (COSA_DATAMODEL_FIREWALL*)g_pCosaBEManager->hFirewall;
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = NULL;
+    PSINGLE_LINK_ENTRY              pSLinkEntry = NULL;
+
+    pSLinkEntry = AnscQueueGetEntryByIndex((ANSC_HANDLE)&pCosaDMFirewall->V6DayOfWeekList, nIndex);
+    if (pSLinkEntry)
+    {
+        pLinkObj = ACCESS_COSA_CONTEXT_LINK_OBJECT(pSLinkEntry);
+        *pInsNumber = pLinkObj->InstanceNumber;
+    }
+
+    return pLinkObj;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ULONG
+        V6_IPFilter_DayOfWeek_GetParamStringValue
+            (
+                ANSC_HANDLE                 hInsContext
+                char*                       ParamName,
+                char*                       pValue,
+                ULONG*                      pUlSize
+            );
+
+    description:
+
+        This function is called to get string parameter values.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+                char*                       ParamName,
+                The parameter name;
+                char*                       pValue,
+                The buffer to store the parameter value;
+                ULONG*                      pUlSize
+                The buffer to check the size of string parameter value;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+ULONG
+V6_IPFilter_DayOfWeek_GetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pValue,
+        ULONG*                      pUlSize
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj        = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_V6_DAYOFWEEK       *pV6DayOfWeek    = (COSA_DML_FW_V6_DAYOFWEEK*)pLinkObj->hContext;
+
+    if (AnscEqualString(ParamName, "BlockTimeBitMask", TRUE)) {
+        AnscCopyString(pValue, pV6DayOfWeek->V6DayOfWeek_BlockTimeBitMask);
+        return 0;
+    }
+    return 1;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        FW_V6_IpFilter_SetParamStringValue
+            (
+                ANSC_HANDLE                 hInsContext
+                char*                       ParamName,
+                char*                       strValue
+            );
+
+    description:
+
+        This function is called to set string parameter values.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+                char*                       ParamName,
+                The parameter name;
+                char*                       strValue
+                The buffer to update the parameter value;
+
+
+    return:     The status of the operation.
+
+**********************************************************************/
+BOOL
+V6_IPFilter_DayOfWeek_SetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       strValue
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj        = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_V6_DAYOFWEEK       *pV6DayOfWeek    = (COSA_DML_FW_V6_DAYOFWEEK*)pLinkObj->hContext;
+    int iMaskLen = 0;
+    int i = 0;
+
+    /* check the parameter name and set the corresponding value */
+    if (AnscEqualString(ParamName, "BlockTimeBitMask", TRUE))
+    {
+        // Ensure Mask Len is 24 characters
+        iMaskLen = strlen(strValue);
+        if(iMaskLen != (DAYOFWEEK_BT_MASK_LEN - 1))
+        {
+            return FALSE;
+        }
+        // Ensure Mask is a valid Binary String
+        for(i = 0; i < iMaskLen; i++)
+        {
+            if((int)strValue[i] < 48 || (int)strValue[i] > 49)
+            {
+                return FALSE; // Not a Binary character
+            }
+        }
+        _ansc_snprintf(pV6DayOfWeek->V6DayOfWeek_BlockTimeBitMask, sizeof(pV6DayOfWeek->V6DayOfWeek_BlockTimeBitMask), "%s", strValue);
+        return TRUE;
+    }
+    return FALSE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        V6_IPFilter_DayOfWeek_Validate
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       pReturnParamName,
+                ULONG*                      puLength
+            );
+
+    description:
+
+        This function is called to finally commit all the update.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       pReturnParamName,
+                The buffer (128 bytes) of parameter name if there's a validation.
+
+                ULONG*                      puLength
+                The output length of the param name.
+
+    return:     TRUE if there's no validation.
+
+**********************************************************************/
+BOOL
+V6_IPFilter_DayOfWeek_Validate
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       pReturnParamName,
+        ULONG*                      puLength
+    )
+{
+    PCOSA_DATAMODEL_FIREWALL        pCosaDMFirewall = (PCOSA_DATAMODEL_FIREWALL)g_pCosaBEManager->hFirewall;
+    PCOSA_CONTEXT_LINK_OBJECT      pLinkObj        = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_V6_DAYOFWEEK       *pV6DayOfWeek   = (COSA_DML_FW_V6_DAYOFWEEK*)pLinkObj->hContext;
+
+    int iMaskLen = 0;
+    int i = 0;
+
+    if(BTMASK_ALWAYS != pCosaDMFirewall->V6DayOfWeekBlockTimeBitMaskType)
+    {
+        // Ensure Mask Len is 24 characters
+        iMaskLen = strlen(pV6DayOfWeek->V6DayOfWeek_BlockTimeBitMask);
+        if(iMaskLen != (DAYOFWEEK_BT_MASK_LEN - 1))
+    {
+            return FALSE;
+        }
+        // Ensure Mask is a valid Binary String
+        for(i = 0; i < iMaskLen; i++)
+    {
+            if((int)pV6DayOfWeek->V6DayOfWeek_BlockTimeBitMask[i] < 48 || (int)pV6DayOfWeek->V6DayOfWeek_BlockTimeBitMask[i] > 49)
+            {
+                return FALSE; // Not a Binary character
+            }
+        }
+    }
+
+    return TRUE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ULONG
+        V6_IPFilter_DayOfWeek_Commit
+            (
+                ANSC_HANDLE                 hInsContext
+            );
+
+    description:
+
+        This function is called to finally commit all the update.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+ULONG
+V6_IPFilter_DayOfWeek_Commit
+    (
+        ANSC_HANDLE                 hInsContext
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj     = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_V6_DAYOFWEEK       *pV6DayOfWeek = (COSA_DML_FW_V6_DAYOFWEEK*)pLinkObj->hContext;
+
+    if (CosaDmlFW_V6DayOfWeek_SetConf(pV6DayOfWeek->InstanceNumber, pV6DayOfWeek) != ANSC_STATUS_SUCCESS)
+    {
+        CosaDmlFW_V6DayOfWeek_GetConf(pV6DayOfWeek->InstanceNumber, pV6DayOfWeek);
+        return -1;
+    }
+
+    return 0;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ULONG
+        V6_IPFilter_DayOfWeek_Rollback
+            (
+                ANSC_HANDLE                 hInsContext
+            );
+
+    description:
+
+        This function is called to roll back the update whenever there's a
+        validation found.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+    return:     The status of the operation.
+
+**********************************************************************/
+ULONG
+V6_IPFilter_DayOfWeek_Rollback
+    (
+        ANSC_HANDLE                 hInsContext
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj        = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_V6_DAYOFWEEK       *pV6DayOfWeek    = (COSA_DML_FW_V6_DAYOFWEEK*)pLinkObj->hContext;
+
+    if (CosaDmlFW_V6DayOfWeek_GetConf(pV6DayOfWeek->InstanceNumber, pV6DayOfWeek) != ANSC_STATUS_SUCCESS)
+        return -1;
+    return 0;
+}
+// LGI ADD END
 
