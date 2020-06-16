@@ -137,6 +137,10 @@
 #if CONFIG_CISCO_FILE_TRANSFER
     #include "cosa_x_cisco_com_filetransfer_internal.h"
 #endif
+// LGI ADD - START
+#include "cosa_mac_filter_apis.h"
+#include "cosa_mac_filter_internal.h"
+// LGI ADD - END
 #if  CFG_USE_Common_Util
 #include "cosa_common_util.h"
 #endif
@@ -436,7 +440,10 @@ if(id != 0)
     pMyObject->hFileTransfer  = (ANSC_HANDLE)CosaFileTransferCreate();
     AnscTraceWarning(("  CosaFileTransferCreate done!\n"));
 #endif
-
+// LGI ADD - START
+    pMyObject->hMacFilter    = (ANSC_HANDLE)CosaMacFilterCreate();
+    AnscTraceWarning(("  CosaMacFilterCreate done!\n"));
+// LGI ADD - END
 #if CONFIG_CISCO_TRUE_STATIC_IP
     pMyObject->hTSIP          = (ANSC_HANDLE)CosaTSIPCreate();
     AnscTraceWarning(("  CosaTSIPCreate done!\n"));
@@ -724,7 +731,12 @@ CosaBackEndManagerRemove
         CosaFileTransferRemove((ANSC_HANDLE)pMyObject->hFileTransfer);
     }
 #endif
-
+// LGI ADD - START
+    if ( pMyObject->hMacFilter )
+    {
+        CosaMacFilterRemove((ANSC_HANDLE)pMyObject->hMacFilter);
+    }
+// LGI ADD - END
     /* Remove self */
     AnscFreeMemory((ANSC_HANDLE)pMyObject);
 
