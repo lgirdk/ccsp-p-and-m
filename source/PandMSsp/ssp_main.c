@@ -482,6 +482,44 @@ static int is_core_dump_opened(void)
 int sock = 0;
 #endif
 
+extern char *program_invocation_short_name;
+
+static void dump_maps (void)
+{
+#if defined (DUMP_PROC_MAPS)
+
+    char buf[8192];
+    pid_t pid;
+    int fd;
+
+    pid = getpid();
+
+    fd = open ("/proc/self/maps", O_RDONLY);
+
+    if (fd == -1) {
+        printf ("%s: (%d): Open /proc/self/maps failed\n", program_invocation_short_name, pid);
+    }
+    else {
+        int nread, total = 0;
+        printf ("%s: (%d): /proc/self/maps:\n\n", program_invocation_short_name, pid);
+        while (1)
+        {
+            nread = read (fd, buf, sizeof(buf) - 1);
+            if (nread == 0)
+                break;     
+            buf[nread] = 0;
+            total += nread;
+            if (buf[0] != 0)            
+                printf ("%s", buf);
+        }
+        printf ("\n\n %d bytes total\n", total);
+        close (fd);
+    }
+
+    fflush(NULL);
+
+#endif
+}
 
 int main(int argc, char* argv[])
 {
@@ -674,6 +712,8 @@ if(id != 0)
      CcspTraceError(("exit ERROR %s:%d\n", __FUNCTION__, __LINE__));
      exit(1);
    }
+
+    dump_maps();
 
     // printf("Calling Docsis\n");
 
