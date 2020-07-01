@@ -1168,9 +1168,45 @@ CosaDmlNatGet
     )
 {
     UNREFERENCED_PARAMETER(hContext);
+    UtopiaContext Ctx;
+    char idStr[16];
+
     COSA_DML_NAT_CUSTOM_SET_ENABLEHSPORTMAPPING(pDmlNat, g_NatHSPFEnable);
 	COSA_DML_NAT_CUSTOM_SET_ENABLEPORTMAPPING(pDmlNat, g_NatPFEnable);
     COSA_DML_NAT_CUSTOM_SET_ENABLENATMAPPING(pDmlNat, g_NatOne2OneEnable);
+
+    if (!Utopia_Init(&Ctx))
+    {
+        CcspTraceError(("%s Error initializing context\n", __FUNCTION__));
+        return ANSC_STATUS_FAILURE;
+    }
+
+    if (Utopia_RawGet(&Ctx, NULL, "nat_tcp_timeout", idStr, sizeof(idStr)))
+    {
+        if (idStr[0] != 0)
+        {
+            pDmlNat->X_CISCO_COM_TCPTimeout = atoi(idStr);
+        }
+    }
+
+    if (Utopia_RawGet(&Ctx, NULL, "nat_udp_timeout", idStr, sizeof(idStr)))
+    {
+        if (idStr[0] != 0)
+        {
+            pDmlNat->X_CISCO_COM_UDPTimeout = atoi(idStr);
+        }
+    }
+
+    if (Utopia_RawGet(&Ctx, NULL, "nat_icmp_timeout", idStr, sizeof(idStr)))
+    {
+        if (idStr[0] != 0)
+        {
+            pDmlNat->X_CISCO_COM_ICMPTimeout = atoi(idStr);
+        }
+    }
+
+    Utopia_Free(&Ctx, 0);
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -1205,14 +1241,44 @@ CosaDmlNatSet
     )
 {
     UNREFERENCED_PARAMETER(hContext);
+    char idStr[16];
     UtopiaContext Ctx;
     int pf = -1, hs = -1, nat = -1;
+    BOOL bCommit = 0;
+
     if (!Utopia_Init(&Ctx))
     {
         CcspTraceError(("%s Error initializing context\n", __FUNCTION__));
         return ANSC_STATUS_FAILURE;
     }
     
+    snprintf(idStr, sizeof(idStr), "%u", pDmlNat->X_CISCO_COM_TCPTimeout);
+    if (Utopia_RawSet(&Ctx, NULL, "nat_tcp_timeout", idStr))
+    {
+        char cmd[128];
+        sprintf(cmd, "echo %s > /proc/sys/net/netfilter/nf_conntrack_tcp_timeout_established", idStr);
+        system(cmd);
+        bCommit = 1;
+    }
+
+    snprintf(idStr, sizeof(idStr), "%u", pDmlNat->X_CISCO_COM_UDPTimeout);
+    if (Utopia_RawSet(&Ctx, NULL, "nat_udp_timeout", idStr))
+    {
+        char cmd[128];
+        sprintf(cmd, "echo %s > /proc/sys/net/netfilter/nf_conntrack_udp_timeout", idStr);
+        system(cmd);
+        bCommit = 1;
+    }
+
+    snprintf(idStr, sizeof(idStr), "%u", pDmlNat->X_CISCO_COM_ICMPTimeout);
+    if (Utopia_RawSet(&Ctx, NULL, "nat_icmp_timeout", idStr))
+    {
+        char cmd[128];
+        sprintf(cmd, "echo %s > /proc/sys/net/netfilter/nf_conntrack_icmp_timeout", idStr);
+        system(cmd);
+        bCommit = 1;
+    }
+
     if(COSA_DML_NAT_CUSTOM_GET_ENABLEPORTMAPPING(pDmlNat) != g_NatPFEnable)
     {
         pf = COSA_DML_NAT_CUSTOM_GET_ENABLEPORTMAPPING(pDmlNat);
@@ -1229,13 +1295,14 @@ CosaDmlNatSet
     if(pf != -1 || hs != -1 || nat != -1)
     {
         _Update_NAT_PF_HS_Enable(&Ctx, pf, hs, nat);
-        Utopia_Free(&Ctx, 1);
+        bCommit = 1;
     }
     else
     {
         CcspTraceInfo(("%s nothing to set\n", __FUNCTION__));
-        Utopia_Free(&Ctx, 0);
     }
+
+    Utopia_Free(&Ctx, bCommit);
 
     return ANSC_STATUS_SUCCESS;
 }
