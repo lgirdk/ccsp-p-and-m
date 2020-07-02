@@ -1547,6 +1547,25 @@ static int read_proc_stat(char * line, char * p_cmd, char * p_state, int * p_siz
             /*unit in kBytes*/
             *p_size = *p_size/1024; 
         
+            /*
+               https://man7.org/linux/man-pages/man5/proc.5.html
+
+                 For processes running a real-time scheduling policy (policy
+                 below; see sched_setscheduler(2)), this is the negated
+                 scheduling priority, minus one; that is, a number in the
+                 range -2 to -100, corresponding to real-time priorities 1 to 99.
+                 For processes running under a non-real-time scheduling policy,
+                 this is the raw nice value (setpriority(2)) as represented in
+                 the kernel. The kernel stores nice values as numbers in the
+                 range 0 (high) to 39 (low), corresponding to the
+                 user-visible nice range of -20 to 19.
+
+               This needs to be mapped to the TR069 process priority, which
+               is 0..99 (with 0 being the highest). The simple approach is to
+               map processes with real-time scheduling policy to priority 0.
+            */
+            if (*p_priority < 0)
+                *p_priority = 0;
         }
 
     }
