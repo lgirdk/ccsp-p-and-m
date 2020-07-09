@@ -102,6 +102,8 @@
 #define RFC_DEFAULTS_FILE       "/etc/rfcDefaults.json"
 #define RFC_STORE_FILE       "/opt/secure/RFC/tr181store.json"
 
+#define MAX_PROCESS_NUMBER 200
+
 #if defined(_PLATFORM_IPQ_)
 #include "ccsp_vendor.h"
 #endif
@@ -1250,6 +1252,13 @@ static int read_proc_stat(char * line, char * p_cmd, char * p_state, int * p_siz
         else {
             strncpy(p_cmd, tmp1+1, tmp-tmp1-1);
             
+            if(strlen(p_cmd) == 0)
+            {
+                fprintf(stderr,"\n %s %d p_cmd length is 0 return ",__func__,__LINE__);
+                CcspTraceWarning(("\n %s %d p_cmd length is 0 return",__func__,__LINE__));
+                return -1;
+            }
+
             tmp += 2;
 
             if (sscanf(tmp, "%c %*d %*d %*d %*d %*d %*u %*lu \
@@ -1299,7 +1308,7 @@ void COSADmlGetProcessInfo(PCOSA_DATAMODEL_PROCSTATUS p_info)
     PCOSA_PROCESS_ENTRY         p_proc = NULL;
 
     static ULONG                ProcessTimeStamp;
-    ULONG                       ProcessNumber       = 0;
+    ULONG                       ProcessNumber       = MAX_PROCESS_NUMBER;
     struct dirent               entry;
     struct dirent               *result = NULL;
     DIR                         *dir;
@@ -1315,33 +1324,6 @@ void COSADmlGetProcessInfo(PCOSA_DATAMODEL_PROCSTATUS p_info)
     char                        state[64];
     int                         ret;
 
-    dir = opendir("/proc");
-        
-    if ( !dir )
-    {
-        CcspTraceWarning(("Failed to open /proc!\n"));
-        return ;
-    }
-
-    for(;;)
-    {
-        ret = readdir_r(dir, &entry, &result);
-        if( ret != 0 || result == NULL )
-        {
-            closedir(dir);
-            dir = NULL;
-            break;
-        }
-
-        name = entry.d_name;
-            
-        if ( *name >= '0' && *name <= '9' )
-        {
-            ProcessNumber++;
-        }
-    }
-    /*CcspTraceWarning(("ProcessNumber = %d!\n", ProcessNumber));*/
-        
     p_info->pProcTable = AnscAllocateMemory(sizeof(COSA_PROCESS_ENTRY) * ProcessNumber);  
                 
     if( !p_info->pProcTable )
@@ -1349,7 +1331,6 @@ void COSADmlGetProcessInfo(PCOSA_DATAMODEL_PROCSTATUS p_info)
         return ;
     }
     AnscZeroMemory(p_info->pProcTable, sizeof(COSA_PROCESS_ENTRY) * ProcessNumber);        
-    p_info->ProcessNumberOfEntries = ProcessNumber;
         
     dir = opendir("/proc");
         
@@ -1376,7 +1357,6 @@ void COSADmlGetProcessInfo(PCOSA_DATAMODEL_PROCSTATUS p_info)
         {
             /*CcspTraceWarning(("Begin to parse process %lu!", i));*/
             p_proc = p_info->pProcTable+i;
-            i++;
             pid = atoi(name);
             p_proc->Pid = pid;
             sprintf(status, "/proc/%lu/stat", pid);
@@ -1401,8 +1381,11 @@ void COSADmlGetProcessInfo(PCOSA_DATAMODEL_PROCSTATUS p_info)
             if (read_proc_stat(name, p_proc->Command, &state, &p_proc->Size, &p_proc->Priority, &p_proc->CPUTime ))
             {
                 CcspTraceWarning(("Failed to parse process %d information!\n", pid));
+                fprintf(stderr,"\n %s %d Failed to parse process %d information!\n",__func__,__LINE__,pid);
                 continue;
             }
+            i++;
+	    
             /*CcspTraceWarning((" Cmd:%s, size, priority, cputime %d:%d:%d \n", p_proc->Command, p_proc->Size, p_proc->Priority, p_proc->CPUTime));*/
             name = strchr(p_proc->Command, ')');
                 
@@ -1449,10 +1432,10 @@ void COSADmlGetProcessInfo(PCOSA_DATAMODEL_PROCSTATUS p_info)
     }
 #endif
 	
-    if ( i != p_info->ProcessNumberOfEntries )
-    {
-        p_info->ProcessNumberOfEntries = i;
-    }
+    p_info->ProcessNumberOfEntries = i;
+
+    fprintf(stderr,"\n %s %d  ProcessNumberOfEntries:%d",__func__,__LINE__,p_info->ProcessNumberOfEntries);
+    CcspTraceWarning(("\n %s %d  ProcessNumberOfEntries:%d\n",__func__,__LINE__,p_info->ProcessNumberOfEntries));
 
     if ( dir != NULL )
     {
