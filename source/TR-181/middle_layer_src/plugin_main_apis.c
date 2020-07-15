@@ -125,6 +125,10 @@
 #if  CFG_USE_Common_Util
 #include "cosa_common_util.h"
 #endif
+// LGI ADD START
+#include "cosa_lgi_wol_apis.h"
+#include "cosa_lgi_wol_internal.h"
+// LGI ADD END
 static void CheckAndSetRebootReason();
 
 #if defined(_PLATFORM_RASPBERRYPI_)
@@ -422,6 +426,10 @@ if(id != 0)
     
     AnscTraceWarning(("  Initializing WebConfig Framework done!\n"));
 
+    // LGI ADD START
+    pMyObject->hLgiWoL = (ANSC_HANDLE)CosaLgiWoLCreate();
+    AnscTraceWarning(("  CosaLgiWoLCreate done !\n"));
+    // LGI ADD END
 
     printf("PandM DM initialization done!\n");
     CcspTraceWarning(("RDKB_SYSTEM_BOOT_UP_LOG : PandM DM initialization done!\n"));
@@ -684,6 +692,14 @@ CosaBackEndManagerRemove
         CosaMacFilterRemove((ANSC_HANDLE)pMyObject->hMacFilter);
     }
 // LGI ADD - END
+
+    //LGI ADD START
+    if (pMyObject->hLgiWoL)
+    {
+        CosaLgiWoLRemove((ANSC_HANDLE)pMyObject->hLgiWoL);
+    }
+    //LGI ADD END
+
     /* Remove self */
     AnscFreeMemory((ANSC_HANDLE)pMyObject);
 
