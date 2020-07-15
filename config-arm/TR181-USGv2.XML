@@ -18917,6 +18917,57 @@
       </parameters>
     </object>
 <?endif?>
+<!-- LGI ADD START -->
+    <object>
+      <name>X_LGI-COM_WoL</name>
+
+      <objectType>object</objectType>
+
+        <functions>
+            <func_GetParamUlongValue>LgiWoL_GetParamUlongValue</func_GetParamUlongValue>
+            <func_SetParamUlongValue>LgiWoL_SetParamUlongValue</func_SetParamUlongValue>
+            <func_GetParamStringValue>LgiWoL_GetParamStringValue</func_GetParamStringValue>
+            <func_SetParamStringValue>LgiWoL_SetParamStringValue</func_SetParamStringValue>
+            <func_Validate>LgiWoL_Validate</func_Validate>
+            <func_Commit>LgiWoL_Commit</func_Commit>
+            <func_Rollback>LgiWoL_Rollback</func_Rollback>
+        </functions>
+
+        <parameters>
+          <parameter>
+              <name>MACAddress</name>
+              <description>
+                  WoL/WoWLAN Target MAC. When set, this immediately triggers WoL transmission and initiates
+                  a background WoL schedule only if there are no currently running schedules for the same MAC and there
+                  is a free slot for the schedule.
+                  The value of this parameter is not part of the device configuration and is always the empty string when read.
+              </description>
+              <type>string</type>
+              <syntax>string</syntax>
+              <writable>true</writable>
+          </parameter>
+          <parameter>
+              <name>Interval</name>
+              <description>
+                  Time interval between scheduled magic packets. (units: ms) (default=500)
+              </description>
+              <type>unsignedInt[10:1000]</type>
+              <syntax>uint32</syntax>
+              <writable>true</writable>
+          </parameter>
+          <parameter>
+              <name>Retries</name>
+              <description>
+                  Number of scheduled magic packets to send. (default=3)
+              </description>
+              <type>unsignedInt[1:10]</type>
+              <syntax>uint32</syntax>
+              <writable>true</writable>
+          </parameter>
+        </parameters>
+
+    </object>
+<!-- LGI ADD END -->
 	  </objects>
 
 </dataModelInfo>
