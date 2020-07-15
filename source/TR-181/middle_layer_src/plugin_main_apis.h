@@ -171,6 +171,7 @@ extern COSARegisterCallBackAfterInitDmlProc  g_RegisterCallBackAfterInitDml;
 #endif
 
 #define COSA_DATAMODEL_MAC_FILTER_OID                          123 /* LGI ADD */
+#define COSA_DATAMODEL_LGI_WOL_OID                             134 /* LGI ADD */
 
 /*
  * This is the cosa datamodel backend manager which is used to manager all backend object
@@ -223,6 +224,7 @@ extern COSARegisterCallBackAfterInitDmlProc  g_RegisterCallBackAfterInitDml;
     ANSC_HANDLE                  hLanMngm;                                                  \
     ANSC_HANDLE                  hXpc;                                                    \
     ANSC_HANDLE                  hOnboardLogging;                                                    \
+    ANSC_HANDLE                  hLgiWoL;                        /* LGI ADD             */  \
     PCOSA_PLUGIN_INFO            hCosaPluginInfo;								   		
 
 typedef  struct
