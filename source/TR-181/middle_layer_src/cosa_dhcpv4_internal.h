@@ -90,6 +90,11 @@
 #define  COSA_NAT_ROLLBACK_TEST                            0       /* This is just for test purpose */
 #define  COSA_DML_DHCPV4_ACCESS_INTERVAL_POOLCLIENT        10 /* seconds*/
 
+#define COSA_IREP_FOLDER_NAME_ALLOWED_SUBNET           "LanAllowedSubnet"
+#define COSA_DML_RR_NAME_ALLOWED_SUBNET_Alias          "LanAllowedSubnetAlias"
+#define COSA_DML_RR_NAME_ALLOWED_SUBNET_InsNum         "LanAllowedSubnetInstanceNumber"
+#define COSA_DML_RR_NAME_ALLOWED_SUBNET_NextInsNumber  "LanAllowedSubnetNextInstanceNumber"
+#define COSA_DML_RR_NAME_ALLOWED_SUBNET_NewlyAdded     "LanAllowedSubnetNewlyAdded"
 /*
 *  This struct is only for dhcpc because it have two sub tables.
 *  For the two table, they just use common link struct because they havenot sub tables.
@@ -151,14 +156,19 @@ COSA_CONTEXT_POOL_LINK_OBJECT, *PCOSA_CONTEXT_POOL_LINK_OBJECT;
     SLIST_HEADER                    X_CISCO_COM_StaticAddressList;                        \
     SLIST_HEADER                    ClientList;    /* This is for entry added */          \
     SLIST_HEADER                    PoolList;    /* This is for entry added */            \
+    SLIST_HEADER                    LanBlockedSubnetList;                                 \
+    SLIST_HEADER                    LanAllowedSubnetList;                                 \
+    ULONG                           LanAllowedSubnetNextInsNum;                           \
     ULONG                           maxInstanceX_CISCO_COM_SAddr;                         \
     ULONG                           maxInstanceOfClient;                                  \
     ULONG                           PreviousVisitTime;                                    \
     ULONG                           maxInstanceOfPool;                                    \
+    ULONG                           maxInstanceOfLanBlockedSubnet;                        \
     CHAR                            AliasOfX_CISCO_COM_SAddr[COSA_DML_DHCPV4_ALIAS];      \
     CHAR                            AliasOfClient[COSA_DML_DHCPV4_ALIAS];                 \
     CHAR                            AliasOfPool[COSA_DML_DHCPV4_ALIAS];                   \
     ANSC_HANDLE                     hIrepFolderDhcpv4;                                    \
+    ANSC_HANDLE                     hIrepFolderAllowedSubnet;                             \
     BOOL                            syncStaticClientsTable;                                \
 
 typedef  struct
@@ -350,7 +360,48 @@ CosaDhcpv4GetClientContentbyClient
         ANSC_HANDLE                 hClientContext
     );
 
+BOOL
+CosaLanBlockedSubnetInitialize
+    (
+        ANSC_HANDLE                 hInsContext
+    );
+
+ANSC_STATUS
+CosaBlockedSubnetRemove
+    (
+        ANSC_HANDLE                 hThisObject
+    );
+
+ANSC_STATUS
+CosaLanAllowedSubnetInitialize
+    (
+        ANSC_HANDLE                 hThisObject
+    );
+
+ANSC_STATUS
+CosaAllowedSubnetRemove
+    (
+        ANSC_HANDLE                 hThisObject
+    );
+
+ANSC_STATUS
+CosaLanAllowedSubnetListGetInfo
+    (
+        ANSC_HANDLE                 hThisObject
+    );
+
+ANSC_STATUS
+CosaLanAllowedSubnetListAddInfo
+    (
+        ANSC_HANDLE                 hThisObject,
+        ANSC_HANDLE                 hCosaContext
+    );
+
+ANSC_STATUS
+CosaLanAllowedSubnetListDelInfo
+    (
+        ANSC_HANDLE                 hThisObject,
+        ANSC_HANDLE                 hCosaContext
+    );
 
 #endif
-
-
