@@ -82,6 +82,8 @@
 #include "safec_lib_common.h"
 
 extern void* g_pDslhDmlAgent;
+extern ANSC_HANDLE bus_handle;
+extern char g_Subsystem[32];
 
 extern ULONG g_currentBsUpdate;
 extern char * getRequestorString();
@@ -10707,4 +10709,657 @@ Option2_GetParamStringValue
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return -1;
 }
+
+
+/***********************************************************************
+
+ APIs for Object:
+
+    Device.DHCPv4.Server.Pool.{i}. X_LGI-COM_LanAllowedSubnetTable.{i}.
+
+    *  LanAllowedSubnetTable_GetEntryCount
+    *  LanAllowedSubnetTable_GetEntry
+    *  LanAllowedSubnetTable_AddEntry
+    *  LanAllowedSubnetTable_DelEntry
+    *  LanAllowedSubnetTable_GetParamStringValue
+    *  LanAllowedSubnetTable_SetParamStringValue
+    *  LanAllowedSubnetTable_Commit
+    *  LanAllowedSubnetTable_Validate
+    *  LanAllowedSubnetTable_Rollback
+
+***********************************************************************/
+ULONG
+LanAllowedSubnetTable_GetEntryCount
+    (
+        ANSC_HANDLE                 hInsContext
+    )
+{
+    PCOSA_DATAMODEL_DHCPV4             pLgGw         = (PCOSA_DATAMODEL_DHCPV4)g_pCosaBEManager->hDhcpv4;
+
+    return AnscSListQueryDepth(&pLgGw->LanAllowedSubnetList);
+}
+
+ANSC_HANDLE
+LanAllowedSubnetTable_GetEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG                       nIndex,
+        ULONG*                      pInsNumber
+    )
+{
+    PCOSA_DATAMODEL_DHCPV4     pMyObject         = (PCOSA_DATAMODEL_DHCPV4)g_pCosaBEManager->hDhcpv4;
+    PCOSA_CONTEXT_LINK_OBJECT  pLinkObj          = NULL;
+    PSINGLE_LINK_ENTRY         pSLinkEntry       = NULL;
+
+    pSLinkEntry = AnscSListGetEntryByIndex(&pMyObject->LanAllowedSubnetList, nIndex);
+    if ( pSLinkEntry )
+    {
+        pLinkObj = ACCESS_COSA_CONTEXT_LINK_OBJECT(pSLinkEntry);
+        *pInsNumber   =  pLinkObj->InstanceNumber;
+        pMyObject->LanAllowedSubnetNextInsNum = pLinkObj->InstanceNumber+1;
+    }
+
+    return (ANSC_HANDLE)pLinkObj;
+}
+
+ANSC_HANDLE
+LanAllowedSubnetTable_AddEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG*                      pInsNumber
+    )
+{
+    PCOSA_DATAMODEL_DHCPV4   pMyObject          = (PCOSA_DATAMODEL_DHCPV4)g_pCosaBEManager->hDhcpv4;
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj           = NULL;
+    COSA_DML_LAN_Allowed_Subnet  *pLanAllowedSubnet  = NULL;
+
+    pLinkObj = (PCOSA_CONTEXT_LINK_OBJECT)AnscAllocateMemory(sizeof(COSA_CONTEXT_LINK_OBJECT));
+    if (!pLinkObj)
+    {
+        return NULL;
+    }
+
+    pLanAllowedSubnet = (COSA_DML_LAN_Allowed_Subnet *)AnscAllocateMemory(sizeof(COSA_DML_LAN_Allowed_Subnet));
+
+    if (!pLanAllowedSubnet)
+    {
+        AnscFreeMemory(pLinkObj);
+        return NULL;
+    }
+
+    if (pMyObject->LanAllowedSubnetNextInsNum == 0)
+    {
+        pMyObject->LanAllowedSubnetNextInsNum = 1;
+    }
+    /* now we have this link content */
+    pLinkObj->InstanceNumber = pMyObject->LanAllowedSubnetNextInsNum;
+    pLanAllowedSubnet->InstanceNumber = pMyObject->LanAllowedSubnetNextInsNum;
+    pMyObject->LanAllowedSubnetNextInsNum++;
+
+    _ansc_sprintf(pLanAllowedSubnet->Alias, "LanAllowedSubnet-%d", (int)pLinkObj->InstanceNumber);
+
+    pLinkObj->hContext      = (ANSC_HANDLE)pLanAllowedSubnet;
+    pLinkObj->hParentTable  = NULL;
+    pLinkObj->bNew          = TRUE;
+
+    CosaSListPushEntryByInsNum((PSLIST_HEADER)&pMyObject->LanAllowedSubnetList, pLinkObj);
+    CosaLanAllowedSubnetListAddInfo((ANSC_HANDLE)pMyObject, (ANSC_HANDLE)pLinkObj);
+
+    *pInsNumber = pLinkObj->InstanceNumber;
+    return pLinkObj;
+}
+ULONG
+LanAllowedSubnetTable_DelEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ANSC_HANDLE                 hInstance
+    )
+{
+    PCOSA_DATAMODEL_DHCPV4       pMyObject          = (PCOSA_DATAMODEL_DHCPV4)g_pCosaBEManager->hDhcpv4;
+    PCOSA_CONTEXT_LINK_OBJECT    pLinkObj           = (PCOSA_CONTEXT_LINK_OBJECT)hInstance;
+    COSA_DML_LAN_Allowed_Subnet  *pLanAllowedSubnet = (COSA_DML_LAN_Allowed_Subnet*)pLinkObj->hContext;
+
+    if (CosaDmlLAN_Allowed_Subnet_DelEntry(pLinkObj->InstanceNumber) != ANSC_STATUS_SUCCESS)
+    {
+        return -1;
+    }
+
+    AnscSListPopEntryByLink((PSLIST_HEADER)&pMyObject->LanAllowedSubnetList, &pLinkObj->Linkage);
+
+    if (pLinkObj->bNew)
+    {
+        CosaLanAllowedSubnetListDelInfo((ANSC_HANDLE)pMyObject, (ANSC_HANDLE)pLinkObj);
+    }
+
+    AnscFreeMemory(pLanAllowedSubnet);
+    AnscFreeMemory(pLinkObj);
+    return ANSC_STATUS_SUCCESS;
+}
+
+ULONG
+LanAllowedSubnetTable_GetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pValue,
+        ULONG*                      pUlSize
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj         = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_LAN_Allowed_Subnet *pLanAllowedSubnet = (COSA_DML_LAN_Allowed_Subnet*)pLinkObj->hContext;
+
+    if (strcmp(ParamName, "LanAllowedSubnetIP") == 0)
+    {
+        AnscCopyString(pValue, pLanAllowedSubnet->SubnetIP);
+        return 0;
+    }
+    if (strcmp(ParamName, "LanAllowedSubnetMask") == 0)
+    {
+        AnscCopyString(pValue, pLanAllowedSubnet->SubnetMask);
+        return 0;
+    }
+    if (strcmp(ParamName, "Alias") == 0)
+    {
+        AnscCopyString(pValue, pLanAllowedSubnet->Alias);
+        return 0;
+    }
+
+    return -1;
+}
+
+BOOL
+LanAllowedSubnetTable_SetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pString
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj         = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_LAN_Allowed_Subnet *pLanAllowedSubnet = (COSA_DML_LAN_Allowed_Subnet*)pLinkObj->hContext;
+
+    if (strcmp(ParamName, "LanAllowedSubnetMask") == 0)
+    {
+        _ansc_snprintf(pLanAllowedSubnet->SubnetMask, sizeof(pLanAllowedSubnet->SubnetMask), "%s", pString);
+        return TRUE;
+    }
+    if (strcmp(ParamName, "LanAllowedSubnetIP") == 0)
+    {
+        _ansc_snprintf(pLanAllowedSubnet->SubnetIP, sizeof(pLanAllowedSubnet->SubnetIP), "%s", pString);
+        return TRUE;
+    }
+    if (strcmp(ParamName, "Alias") == 0)
+    {
+        _ansc_snprintf(pLanAllowedSubnet->Alias, sizeof(pLanAllowedSubnet->Alias), "%s", pString);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+BOOL
+LanAllowedSubnetTable_Validate
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       pReturnParamName,
+        ULONG*                      puLength
+    )
+{
+    unsigned int subnetFirstMask = 0, subnetSecondMask = 0, subnetThirdMask = 0, subnetFourthMask = 0;
+    unsigned int noOfAllowedSubnet = 0, index = 0;
+    PCOSA_CONTEXT_LINK_OBJECT    pLinkObj           = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_LAN_Allowed_Subnet  *pLanAllowedSubnet = (COSA_DML_LAN_Allowed_Subnet*)pLinkObj->hContext;
+    COSA_DML_LAN_Allowed_Subnet  LanAllowedSubnetExist;
+    ANSC_IPV4_ADDRESS               lanSubnetBuf;
+
+    if (AnscSizeOfString(pLanAllowedSubnet->SubnetMask))
+    {
+        inet_pton(AF_INET, pLanAllowedSubnet->SubnetMask, &lanSubnetBuf);
+
+        if (!(sscanf(pLanAllowedSubnet->SubnetMask, "%d.%d.%d.%d", &subnetFirstMask, &subnetSecondMask,
+              &subnetThirdMask, &subnetFourthMask) == 4) ||
+              !((subnetFirstMask <= 255) && (subnetSecondMask <= 255) && (subnetThirdMask <= 255) && (subnetFourthMask <= 255)))
+        {
+            return FALSE;
+        }
+
+        if (lanSubnetBuf.Value == 0x000000FE ||  //7
+            lanSubnetBuf.Value == 0x000000FC ||  //6
+            lanSubnetBuf.Value == 0x000000F8 ||  //5
+            lanSubnetBuf.Value == 0x000000F0 ||  //4
+            lanSubnetBuf.Value == 0x000000E0 ||  //3
+            lanSubnetBuf.Value == 0x000000C0 ||  //2
+            lanSubnetBuf.Value == 0x00000080 ||  //1
+            lanSubnetBuf.Value == 0x00000000 ||  //0
+            lanSubnetBuf.Value == 0xFEFFFFFF)
+       {
+            return FALSE;
+       }
+    }
+
+    //   DUPLICATE / OVERLAP Value Check
+    if (AnscSizeOfString(pLanAllowedSubnet->SubnetIP))
+    {
+        noOfAllowedSubnet = CosaDmlLAN_Allowed_Subnet_GetNumberOfEntries();
+        for (index = 0; index < noOfAllowedSubnet; index++)
+        {
+            // Avoid checking overlap entry for same index
+            if (LANAllowedSubnet_InsGetIndex(pLanAllowedSubnet->InstanceNumber) == index)
+            {
+                continue;
+            }
+
+            CosaDmlLAN_Allowed_Subnet_GetEntryByIndex(index, &LanAllowedSubnetExist);
+
+            if ((strncmp(LanAllowedSubnetExist.SubnetIP, pLanAllowedSubnet->SubnetIP, sizeof(LanAllowedSubnetExist.SubnetIP)) == 0))
+            {
+                CcspTraceError(("FUNC - %s: ERROR: Subnet IP %s Already exist\n", __FUNCTION__, pLanAllowedSubnet->SubnetIP));
+                AnscCopyString(pReturnParamName, "LanAllowedSubnetIP");
+                *puLength = AnscSizeOfString("LanAllowedSubnetIP");
+                return FALSE;
+            }
+        }
+
+        //   RANGE IP Check
+        if (sscanf(pLanAllowedSubnet->SubnetIP, "%d.%d.%d.%d", &subnetFirstMask, &subnetSecondMask,
+              &subnetThirdMask, &subnetFourthMask) == 4)
+        {
+            //Range 10.0.0.0   -   10.255.255.255
+            if (subnetFirstMask == 10)
+            {
+                return ((subnetSecondMask <= 255) && (subnetThirdMask <= 255) && (subnetFourthMask <= 253));
+            }
+            //Range 172.16.0.0   -   172.31.255.255
+            else if (subnetFirstMask == 172)
+            {
+                return ((subnetSecondMask >=16 && subnetSecondMask <=31) && (subnetThirdMask <= 255) && (subnetFourthMask <= 253));
+            }
+            //Range 192.168.0.0 – 192.168.255.255
+            else if ((subnetFirstMask == 192) &&(subnetSecondMask == 168))
+            {
+                return ((subnetThirdMask <= 255) && (subnetFourthMask <= 253));
+            }
+        }
+        return FALSE;
+    }
+    return TRUE;
+}
+
+ULONG
+LanAllowedSubnetTable_Commit
+    (
+        ANSC_HANDLE                 hInsContext
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj         = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_LAN_Allowed_Subnet *pLanAllowedSubnet = (COSA_DML_LAN_Allowed_Subnet*)pLinkObj->hContext;
+    PCOSA_DATAMODEL_DHCPV4   pMyObject        = (PCOSA_DATAMODEL_DHCPV4)g_pCosaBEManager->hDhcpv4;
+
+    if (pLinkObj->bNew)
+    {
+        if (CosaDmlLAN_Allowed_Subnet_AddEntry(pLanAllowedSubnet) != ANSC_STATUS_SUCCESS)
+            return -1;
+        CosaLanAllowedSubnetListDelInfo((ANSC_HANDLE)pMyObject, (ANSC_HANDLE)pLinkObj);
+        pLinkObj->bNew = FALSE;
+    }
+    else
+    {
+        if (CosaDmlLAN_Allowed_Subnet_SetConf(pLanAllowedSubnet->InstanceNumber, pLanAllowedSubnet) != ANSC_STATUS_SUCCESS)
+        {
+            CosaDmlLAN_Allowed_Subnet_GetConf(pLanAllowedSubnet->InstanceNumber, pLanAllowedSubnet);
+            return -1;
+        }
+    }
+
+    return 0;
+}
+ULONG
+LanAllowedSubnetTable_Rollback
+    (
+        ANSC_HANDLE                 hInsContext
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj         = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_LAN_Allowed_Subnet *pLanAllowedSubnet = (COSA_DML_LAN_Allowed_Subnet *)pLinkObj->hContext;
+
+    if(CosaDmlLAN_Allowed_Subnet_GetConf(pLanAllowedSubnet->InstanceNumber, pLanAllowedSubnet) != ANSC_STATUS_SUCCESS)
+    {
+        memset(pLanAllowedSubnet->SubnetIP, 0,sizeof(pLanAllowedSubnet->SubnetIP));
+        memset(pLanAllowedSubnet->SubnetMask, 0,sizeof(pLanAllowedSubnet->SubnetMask));
+        return -1;
+    }
+
+    return 0;
+}
+
+
+
+
+/***********************************************************************
+
+ APIs for Object:
+
+    Device.DHCPv4.Server.Pool.{i}. X_LGI-COM_LanBlockedSubnetTable.{i}.
+
+    *  LanBlockedSubnetTable_GetEntryCount
+    *  LanBlockedSubnetTable_GetEntry
+    *  LanBlockedSubnetTable_GetParamUlongValue
+***********************************************************************/
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ULONG
+        LanBlockedSubnetTable_GetEntryCount
+            (
+                ANSC_HANDLE                 hInsContext
+            );
+
+    description:
+
+        This function is called to retrieve the count of the table.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+    return:     The count of the table
+
+**********************************************************************/
+ULONG
+LanBlockedSubnetTable_GetEntryCount
+    (
+        ANSC_HANDLE                 hInsContext
+    )
+{
+    ANSC_STATUS                     returnStatus      = ANSC_STATUS_SUCCESS;
+    PCOSA_DATAMODEL_DHCPV4          pDhcpv4           = (PCOSA_DATAMODEL_DHCPV4)g_pCosaBEManager->hDhcpv4;
+
+    return AnscSListQueryDepth( &pDhcpv4->LanBlockedSubnetList );
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+            LanBlockedSubnetTable_GetGuestNetworkIP
+            (
+                char                 *pValueIP
+            );
+
+    description:
+
+        This function is called to retrieve the guest network ip
+
+    argument:   char                 *pValueIP,
+                buffer to get the ip address;
+
+    return:     TRUE (on success) or FALSE (on failure)
+
+**********************************************************************/
+BOOL
+LanBlockedSubnetTable_GetGuestNetworkIP
+    (
+        char                 *pValueIP
+    )
+{
+    char    *strValue = NULL;
+    int     retPsmGet = CCSP_SUCCESS;
+
+    retPsmGet = PSM_Get_Record_Value2(bus_handle,g_Subsystem, "dmsb.l3net.7.V4Addr", NULL, &strValue);
+    if (retPsmGet == CCSP_SUCCESS) {
+        strncpy(pValueIP, strValue, strlen(strValue));
+
+        ((CCSP_MESSAGE_BUS_INFO *)bus_handle)->freefunc(strValue);
+    } else {
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+            LanBlockedSubnetTable_GetGuestNetworkMask
+            (
+                char                 *pValueMask
+            );
+
+    description:
+
+        This function is called to retrieve the guest network subnet mask
+
+    argument:   char                 *pValueMask,
+                buffer to get the ip subnet mask;
+
+    return:     TRUE (on success) or FALSE (on failure)
+
+**********************************************************************/
+BOOL
+LanBlockedSubnetTable_GetGuestNetworkMask
+    (
+        char                 *pValueMask
+    )
+{
+    char    *strValue = NULL;
+    int     retPsmGet = CCSP_SUCCESS;
+
+    retPsmGet = PSM_Get_Record_Value2(bus_handle,g_Subsystem, "dmsb.l3net.7.V4SubnetMask", NULL, &strValue);
+    if (retPsmGet == CCSP_SUCCESS) {
+        strncpy(pValueMask, strValue, strlen(strValue));
+
+        ((CCSP_MESSAGE_BUS_INFO *)bus_handle)->freefunc(strValue);
+    } else {
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ANSC_HANDLE
+        LanBlockedSubnetTable_GetEntry
+            (
+                ANSC_HANDLE                 hInsContext,
+                ULONG                       nIndex,
+                ULONG*                      pInsNumber
+            );
+
+    description:
+
+        This function is called to retrieve the entry specified by the index.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                ULONG                       nIndex,
+                The index of this entry;
+
+                ULONG*                      pInsNumber
+                The output instance number;
+
+    return:     The handle to identify the entry
+
+**********************************************************************/
+ANSC_HANDLE
+LanBlockedSubnetTable_GetEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG                       nIndex,
+        ULONG*                      pInsNumber
+    )
+{
+    PCOSA_DATAMODEL_DHCPV4          pDhcpv4           = (PCOSA_DATAMODEL_DHCPV4)g_pCosaBEManager->hDhcpv4;
+    PCOSA_CONTEXT_LINK_OBJECT       pCxtLink             = NULL;
+    PSINGLE_LINK_ENTRY              pSListEntry          = NULL;
+
+    pSListEntry = AnscSListGetEntryByIndex(&pDhcpv4->LanBlockedSubnetList, nIndex);
+
+    if ( pSListEntry )
+    {
+        pCxtLink          = ACCESS_COSA_CONTEXT_LINK_OBJECT(pSListEntry);
+        *pInsNumber       = nIndex + 1;
+    }
+
+    return pSListEntry;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        LanBlockedSubnetTable_GetParamUlongValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                ULONG*                      puLong
+            );
+
+    description:
+
+        This function is called to retrieve ULONG parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                ULONG*                      puLong
+                The buffer of returned ULONG value;
+
+    return:     TRUE if succeeded.
+
+**********************************************************************/
+BOOL
+LanBlockedSubnetTable_GetParamUlongValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        ULONG*                      puLong
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pCxtLink             = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    PCOSA_DML_DHCPSV4_LANBLOCKED    pDhcpLanBlockedSubnet= (PCOSA_DML_DHCPSV4_LANBLOCKED)pCxtLink->hContext;
+    ANSC_STATUS                     returnStatus         = ANSC_STATUS_SUCCESS;
+
+    /* check the parameter name and return the corresponding value */
+    if (strcmp(ParamName, "LanBlockedSubnetIP") == 0)
+    {
+        char                        IPAddr[80]={0};
+        ULONG                       ulSize = sizeof(IPAddr);
+
+        if (pCxtLink->InstanceNumber < 5)
+        {
+            // 1st 3 slots are reserved for MTA/CM/Router info
+            if (pCxtLink->InstanceNumber == 1)
+            {
+                // get MTA IP
+                CosaDmlDiGetMTAIPAddress(NULL, IPAddr, &ulSize);
+            }
+            else if (pCxtLink->InstanceNumber == 2)
+            {
+                // get CM IP
+                CosaDmlDiGetCMIPAddress(NULL, IPAddr, &ulSize);
+            }
+            else if (pCxtLink->InstanceNumber == 3)
+            {
+                // get Router IP
+                CosaDmlDiGetRouterIPAddress(NULL, IPAddr, &ulSize);
+            }
+            else if (pCxtLink->InstanceNumber == 4)
+            {
+                // get guest network IP
+                LanBlockedSubnetTable_GetGuestNetworkIP(IPAddr);
+            }
+            sscanf (IPAddr, "%hhu.%hhu.%hhu.%hhu",
+                &pDhcpLanBlockedSubnet->SubnetIP.Dot[0],
+                &pDhcpLanBlockedSubnet->SubnetIP.Dot[1],
+                &pDhcpLanBlockedSubnet->SubnetIP.Dot[2],
+                &pDhcpLanBlockedSubnet->SubnetIP.Dot[3]);
+        }
+
+        *puLong = pDhcpLanBlockedSubnet->SubnetIP.Value;
+
+        return TRUE;
+    }
+    else if (strcmp(ParamName, "LanBlockedSubnetMask") == 0)
+    {
+        char                        IPMask[80]={0};
+        ULONG                       ulSize = sizeof(IPMask);
+        extern ANSC_HANDLE          bus_handle;
+
+        if (pCxtLink->InstanceNumber < 5)
+        {
+            // 1st 3 slots are reserved for MTA/CM/Router info
+            if (pCxtLink->InstanceNumber == 1)
+            {
+                //get MTA SubnetMask
+                parameterValStruct_t    varStruct;
+                int                     size = sizeof(IPMask);
+
+                varStruct.parameterName = "Device.X_CISCO_COM_MTA.SubnetMask";
+                varStruct.parameterValue = IPMask;
+                if (COSAGetParamValueByPathName(bus_handle, &varStruct, &size) != ANSC_STATUS_SUCCESS)
+                {
+                    return FALSE;
+                }
+
+            }
+            else if (pCxtLink->InstanceNumber == 2)
+            {
+                // get CM SubnetMask
+                parameterValStruct_t    varStruct;
+                int                     size = sizeof(IPMask);
+
+                varStruct.parameterName = "Device.X_CISCO_COM_CableModem.SubnetMask";
+                varStruct.parameterValue = IPMask;
+                if (COSAGetParamValueByPathName(bus_handle, &varStruct, &size) != ANSC_STATUS_SUCCESS)
+                {
+                    return FALSE;
+                }
+            }
+            else if (pCxtLink->InstanceNumber == 3)
+            {
+                // get Router SubnetMask
+                commonSyseventGet("ipv4_wan_subnet",IPMask, sizeof(IPMask));
+            }
+            else if (pCxtLink->InstanceNumber == 4)
+            {
+                // get guest network Mask
+                LanBlockedSubnetTable_GetGuestNetworkMask(IPMask);
+            }
+            sscanf (IPMask, "%hhu.%hhu.%hhu.%hhu",
+                &pDhcpLanBlockedSubnet->SubnetMask.Dot[0],
+                &pDhcpLanBlockedSubnet->SubnetMask.Dot[1],
+                &pDhcpLanBlockedSubnet->SubnetMask.Dot[2],
+                &pDhcpLanBlockedSubnet->SubnetMask.Dot[3]);
+        }
+
+        *puLong = pDhcpLanBlockedSubnet->SubnetMask.Value;
+        return TRUE;
+    }
+
+    /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
+    return FALSE;
+}
+
 
