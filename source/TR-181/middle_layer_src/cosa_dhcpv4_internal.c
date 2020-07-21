@@ -180,6 +180,8 @@ CosaDhcpv4Initialize
     pMyObject->maxInstanceOfClient  = 0;
     AnscZeroMemory(pMyObject->AliasOfClient, sizeof(pMyObject->AliasOfClient));
 #endif
+    AnscSListInitializeHeader( &pMyObject->LanBlockedSubnetList );
+    pMyObject->maxInstanceOfLanBlockedSubnet    = 0;
     AnscSListInitializeHeader( &pMyObject->PoolList );
     pMyObject->maxInstanceOfPool    = 0;
     pMyObject->maxInstanceX_CISCO_COM_SAddr = 0;
@@ -240,6 +242,8 @@ CosaDhcpv4Initialize
 
     /* Firstly we create the whole system from backend */
     CosaDhcpv4BackendGetDhcpv4Info((ANSC_HANDLE)pMyObject);
+    CosaLanAllowedSubnetInitialize((ANSC_HANDLE)pMyObject);
+    CosaLanBlockedSubnetInitialize((ANSC_HANDLE)pMyObject);
 
 EXIT:
     
@@ -345,7 +349,9 @@ CosaDhcpv4Remove
     {
         pPoamIrepFoDhcpv4->Remove( (ANSC_HANDLE)pPoamIrepFoDhcpv4);
     }
-    
+   
+     CosaBlockedSubnetRemove((ANSC_HANDLE)pMyObject);
+     CosaAllowedSubnetRemove((ANSC_HANDLE)pMyObject); 
     /* Remove self */
     AnscFreeMemory((ANSC_HANDLE)pMyObject);
     
@@ -3731,3 +3737,590 @@ CosaDhcpv4GetClientContentbyClient
     return (ANSC_HANDLE)pClientContent;
 }
 
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ANSC_STATUS
+        CosaLanBlockedSubnetInitialize
+            (
+                ANSC_HANDLE                 hInsContext
+            );
+
+    description:
+
+        This function is called to initialize the lan blocked subnet
+        list.
+
+    argument:   ANSC_HANDLE                 hInsContext
+                This handle is actually the pointer of dhcpv4
+                itself.
+
+    return:     status of operation.
+
+**********************************************************************/
+
+BOOL
+CosaLanBlockedSubnetInitialize
+    (
+        ANSC_HANDLE                 hInsContext
+    )
+{
+    PCOSA_DATAMODEL_DHCPV4          pDhcpv4              = (PCOSA_DATAMODEL_DHCPV4)hInsContext;
+    PCOSA_CONTEXT_LINK_OBJECT       pCxtLink             = NULL;
+    PCOSA_DML_DHCPSV4_LANBLOCKED    pLanBlockedSubnet    = NULL;
+    int                             iIndex               = 0;
+    int                             iCount               = 0;
+    char                            blockedList[1028];
+    char                            *pValue              = NULL;
+
+    //get the lan blocked subnet list
+    if (syscfg_get (NULL, "dhcp_server_lan_blocked_subnet", blockedList, sizeof(blockedList)) == 0)
+    {
+        int i = 0;
+        PANSC_TOKEN_CHAIN pTokenChain = (PANSC_TOKEN_CHAIN)NULL;
+        PANSC_STRING_TOKEN pToken = (PANSC_STRING_TOKEN)NULL;
+
+        //parse all the values from the list
+        pTokenChain = (PANSC_TOKEN_CHAIN)AnscTcAllocate(blockedList, ",");
+        if (pTokenChain)
+        {
+            iCount = AnscTcGetTokenCount(pTokenChain);
+            if (iCount > 0)
+            {
+                for(i=0; i<iCount; i++)
+                {
+                    pToken = AnscTcUnlinkToken(pTokenChain);
+                    if (pToken != NULL)
+                    {
+                        pLanBlockedSubnet  = (PCOSA_DML_DHCPSV4_LANBLOCKED)AnscAllocateMemory( sizeof(COSA_DML_DHCPSV4_LANBLOCKED) );
+                        if ( !pLanBlockedSubnet )
+                        {
+                            AnscFreeMemory(pToken);
+                            AnscTcFree((ANSC_HANDLE)pTokenChain);
+
+                            return  FALSE;
+                        }
+
+                        pCxtLink = (PCOSA_CONTEXT_LINK_OBJECT)AnscAllocateMemory( sizeof(COSA_CONTEXT_LINK_OBJECT) );
+                        if ( !pCxtLink )
+                        {
+                            AnscFreeMemory(pLanBlockedSubnet);
+                            AnscFreeMemory(pToken);
+                            AnscTcFree((ANSC_HANDLE)pTokenChain);
+
+                            return FALSE;
+                        }
+
+                        pCxtLink->hContext       = (ANSC_HANDLE)pLanBlockedSubnet;
+                        pCxtLink->bNew           = TRUE;
+                        pCxtLink->InstanceNumber = i+1;
+
+                        if ( !++pDhcpv4->maxInstanceOfLanBlockedSubnet )
+                        {
+                            pDhcpv4->maxInstanceOfLanBlockedSubnet = 1;
+                        }
+
+                        //fill the IP address
+                        pValue = strtok(pToken->Name, ":");
+                        sscanf (pValue, "%hhu.%hhu.%hhu.%hhu",
+                            &pLanBlockedSubnet->SubnetIP.Dot[0],
+                            &pLanBlockedSubnet->SubnetIP.Dot[1],
+                            &pLanBlockedSubnet->SubnetIP.Dot[2],
+                            &pLanBlockedSubnet->SubnetIP.Dot[3]);
+
+                        //fill the subnet mask
+                        pValue = strtok(NULL, ":");
+                        sscanf (pValue, "%hhu.%hhu.%hhu.%hhu",
+                            &pLanBlockedSubnet->SubnetMask.Dot[0],
+                            &pLanBlockedSubnet->SubnetMask.Dot[1],
+                            &pLanBlockedSubnet->SubnetMask.Dot[2],
+                            &pLanBlockedSubnet->SubnetMask.Dot[3]);
+
+                        //add to the list
+                        CosaSListPushEntryByInsNum(&pDhcpv4->LanBlockedSubnetList, (PCOSA_CONTEXT_LINK_OBJECT)pCxtLink);
+                    }
+                    AnscFreeMemory(pToken);
+                    pToken = NULL;
+                }
+            }
+            AnscTcFree((ANSC_HANDLE)pTokenChain);
+        }
+    }
+
+    return TRUE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ANSC_STATUS
+        CosaBlockedSubnetRemove
+            (
+                ANSC_HANDLE                 hInsContext
+            );
+
+    description:
+
+        This function is called to remove the lan blocked subnet
+        list.
+
+    argument:   ANSC_HANDLE                 hInsContext
+                This handle is actually the pointer of dhcpv4
+                itself.
+
+    return:     status of operation.
+
+**********************************************************************/
+ANSC_STATUS
+CosaBlockedSubnetRemove
+    (
+        ANSC_HANDLE                 hThisObject
+    )
+{
+    PCOSA_DATAMODEL_DHCPV4     pMyObject      = (PCOSA_DATAMODEL_DHCPV4)hThisObject;
+    PSINGLE_LINK_ENTRY         pLink          = NULL;
+    PCOSA_CONTEXT_LINK_OBJECT  pBlockedSubnet = NULL;
+
+    if (pMyObject)
+    {
+        for( pLink = AnscSListPopEntry(&pMyObject->LanBlockedSubnetList); pLink; )
+        {
+            pBlockedSubnet = (PCOSA_CONTEXT_LINK_OBJECT)ACCESS_COSA_CONTEXT_LINK_OBJECT(pLink);
+            pLink = AnscSListGetNextEntry(pLink);
+
+            AnscFreeMemory(pBlockedSubnet->hContext);
+            AnscFreeMemory(pBlockedSubnet);
+        }
+
+        AnscFreeMemory((ANSC_HANDLE)pMyObject);
+    }
+    return ANSC_STATUS_SUCCESS;
+}
+
+
+ANSC_STATUS
+CosaLanAllowedSubnetInitialize
+    (
+        ANSC_HANDLE                 hThisObject
+    )
+{
+    ANSC_STATUS                     returnStatus              = ANSC_STATUS_FAILURE;
+    PCOSA_DATAMODEL_DHCPV4          pMyObject                 = (PCOSA_DATAMODEL_DHCPV4)hThisObject;
+    PSLAP_VARIABLE                  pSlapVariable             = (PSLAP_VARIABLE)NULL;
+    PPOAM_IREP_FOLDER_OBJECT        pPoamIrepFoCOSA           = NULL;
+    PPOAM_IREP_FOLDER_OBJECT        pPoamIrepFoAllowedSubnet  = NULL;
+    PCOSA_CONTEXT_LINK_OBJECT       pAllowedSubnetLinkObj     = NULL;
+    COSA_DML_LAN_Allowed_Subnet     *pAllowedSubnet           = NULL;
+    ULONG                           ulAllowedSubnetCnt        = 0;
+    ULONG                           ulAllowedSubnetIdx        = 0;
+
+    AnscSListInitializeHeader(&pMyObject->LanAllowedSubnetList);
+    pMyObject->LanAllowedSubnetNextInsNum = 1;
+    pPoamIrepFoCOSA = (PPOAM_IREP_FOLDER_OBJECT)g_GetRegistryRootFolder(g_pDslhDmlAgent);
+    ulAllowedSubnetCnt = CosaDmlLAN_Allowed_Subnet_GetNumberOfEntries();
+
+    if (!pPoamIrepFoCOSA)
+    {
+        return returnStatus;
+    }
+
+    pPoamIrepFoAllowedSubnet = (PPOAM_IREP_FOLDER_OBJECT)pPoamIrepFoCOSA->GetFolder(
+            (ANSC_HANDLE)pPoamIrepFoCOSA,
+            COSA_IREP_FOLDER_NAME_ALLOWED_SUBNET);
+
+    if (!pPoamIrepFoAllowedSubnet)
+    {
+        pPoamIrepFoAllowedSubnet =
+            pPoamIrepFoCOSA->AddFolder(
+                    (ANSC_HANDLE)pPoamIrepFoCOSA,
+                     COSA_IREP_FOLDER_NAME_ALLOWED_SUBNET,
+                    0);
+    }
+
+    if (!pPoamIrepFoAllowedSubnet)
+    {
+        return returnStatus;
+    }
+    else
+    {
+        pMyObject->hIrepFolderAllowedSubnet = pPoamIrepFoAllowedSubnet;
+    }
+
+    pSlapVariable = (PSLAP_VARIABLE)pPoamIrepFoAllowedSubnet->GetRecord(
+             (ANSC_HANDLE)pPoamIrepFoAllowedSubnet,
+             COSA_DML_RR_NAME_ALLOWED_SUBNET_NextInsNumber,
+             NULL);
+
+    if (pSlapVariable)
+    {
+        pMyObject->LanAllowedSubnetNextInsNum = pSlapVariable->Variant.varUint32;
+        SlapFreeVariable(pSlapVariable);
+    }
+
+    for (ulAllowedSubnetIdx = 0; ulAllowedSubnetIdx < ulAllowedSubnetCnt; ulAllowedSubnetIdx++)
+    {
+         pAllowedSubnet  = AnscAllocateMemory(sizeof(COSA_DML_LAN_Allowed_Subnet));
+         if (!pAllowedSubnet)
+         {
+             return returnStatus;
+         }
+
+         returnStatus = CosaDmlLAN_Allowed_Subnet_GetEntryByIndex(ulAllowedSubnetIdx, pAllowedSubnet);
+         if (returnStatus != ANSC_STATUS_SUCCESS)
+         {
+             CcspTraceError(("%s: CosaDmlAllowedSubnet__GetEntryByIndex error\n", __FUNCTION__));
+             AnscFreeMemory(pAllowedSubnet);
+             return returnStatus;
+         }
+
+         pAllowedSubnetLinkObj = (PCOSA_CONTEXT_LINK_OBJECT)AnscAllocateMemory(sizeof(COSA_CONTEXT_LINK_OBJECT));
+         if (!pAllowedSubnetLinkObj)
+         {
+             AnscFreeMemory(pAllowedSubnet);
+             return ANSC_STATUS_FAILURE;
+         }
+
+         if (pAllowedSubnet->InstanceNumber != 0)
+         {
+             if (pMyObject->LanAllowedSubnetNextInsNum <= pAllowedSubnet->InstanceNumber)
+             {
+                 pMyObject->LanAllowedSubnetNextInsNum = pAllowedSubnet->InstanceNumber + 1;
+                 if (pMyObject->LanAllowedSubnetNextInsNum == 0)
+                 {
+                     pMyObject->LanAllowedSubnetNextInsNum = 1;
+                 }
+             }
+         }
+         else
+         {
+             pAllowedSubnet->InstanceNumber = pMyObject->LanAllowedSubnetNextInsNum;
+             pMyObject->LanAllowedSubnetNextInsNum++;
+             if (pMyObject->LanAllowedSubnetNextInsNum == 0)
+             {
+                 pMyObject->LanAllowedSubnetNextInsNum = 1;
+             }
+             _ansc_sprintf(pAllowedSubnet->Alias, "cpe-allowed-subnet-%d", (int)pAllowedSubnet->InstanceNumber);
+             CosaDmlLAN_Allowed_Subnet_SetValues(ulAllowedSubnetIdx, pAllowedSubnet->InstanceNumber, pAllowedSubnet->Alias);
+         }
+
+         pAllowedSubnetLinkObj->InstanceNumber = pAllowedSubnet->InstanceNumber;
+         pAllowedSubnetLinkObj->hContext       = pAllowedSubnet;
+         pAllowedSubnetLinkObj->hParentTable   = NULL;
+         pAllowedSubnetLinkObj->bNew           = FALSE;
+
+         CosaSListPushEntryByInsNum(&pMyObject->LanAllowedSubnetList, pAllowedSubnetLinkObj);
+    }
+    CosaLanAllowedSubnetListGetInfo((ANSC_HANDLE)pMyObject);
+
+    return  returnStatus;
+}
+
+ANSC_STATUS
+CosaAllowedSubnetRemove
+    (
+        ANSC_HANDLE                 hThisObject
+    )
+{
+    PCOSA_DATAMODEL_DHCPV4     pMyObject      = (PCOSA_DATAMODEL_DHCPV4)hThisObject;
+    PSINGLE_LINK_ENTRY         pLink          = NULL;
+    PCOSA_CONTEXT_LINK_OBJECT  pAllowedSubnet = NULL;
+
+    if (pMyObject)
+    {
+        PPOAM_IREP_FOLDER_OBJECT   pPoamIrepFo    = (PPOAM_IREP_FOLDER_OBJECT)pMyObject->hIrepFolderAllowedSubnet;
+
+        for( pLink = AnscSListPopEntry(&pMyObject->LanAllowedSubnetList); pLink; )
+        {
+            pAllowedSubnet = (PCOSA_CONTEXT_LINK_OBJECT)ACCESS_COSA_CONTEXT_LINK_OBJECT(pLink);
+            pLink = AnscSListGetNextEntry(pLink);
+
+            AnscFreeMemory(pAllowedSubnet->hContext);
+            AnscFreeMemory(pAllowedSubnet);
+        }
+
+        if (pPoamIrepFo)
+        {
+            pPoamIrepFo->Remove( (ANSC_HANDLE)pPoamIrepFo);
+        }
+
+        AnscFreeMemory((ANSC_HANDLE)pMyObject);
+    }
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaLanAllowedSubnetListGetInfo
+    (
+        ANSC_HANDLE                 hThisObject
+    )
+{
+    PCOSA_DATAMODEL_DHCPV4          pMyObject                    = (PCOSA_DATAMODEL_DHCPV4)hThisObject;
+    PSLIST_HEADER                   pListHead                    = (PSLIST_HEADER)&pMyObject->LanAllowedSubnetList;
+    PPOAM_IREP_FOLDER_OBJECT        pPoamIrepFoAllowedSubnet     = (PPOAM_IREP_FOLDER_OBJECT)pMyObject->hIrepFolderAllowedSubnet;
+    PPOAM_IREP_FOLDER_OBJECT        pPoamIrepFoAllowedSubnetSlap = (PPOAM_IREP_FOLDER_OBJECT)NULL;
+    COSA_DML_LAN_Allowed_Subnet     *pAllowedSubnetEntry         = (COSA_DML_LAN_Allowed_Subnet *)NULL;
+    PCOSA_CONTEXT_LINK_OBJECT       pCosaContext                 = (PCOSA_CONTEXT_LINK_OBJECT)NULL;
+    PSLAP_VARIABLE                  pSlapVariable                = (PSLAP_VARIABLE)NULL;
+    ULONG                           ulEntryCount                 = 0;
+    ULONG                           ulIndex                      = 0;
+    ULONG                           ulInstanceNumber             = 0;
+    char*                           pFolderName                  = NULL;
+    char*                           pAlias                       = NULL;
+
+    if (!pPoamIrepFoAllowedSubnet)
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+    /* Load the newly added but not yet commited entries */
+
+    ulEntryCount = pPoamIrepFoAllowedSubnet->GetFolderCount((ANSC_HANDLE)pPoamIrepFoAllowedSubnet);
+
+    for (ulIndex = 0; ulIndex < ulEntryCount; ulIndex++)
+    {
+         pFolderName = pPoamIrepFoAllowedSubnet->EnumFolder
+                           (
+                               (ANSC_HANDLE)pPoamIrepFoAllowedSubnet,
+                               ulIndex
+                           );
+
+         if (!pFolderName)
+         {
+             continue;
+         }
+
+         pPoamIrepFoAllowedSubnetSlap = pPoamIrepFoAllowedSubnet->GetFolder
+                           (
+                               (ANSC_HANDLE)pPoamIrepFoAllowedSubnet,
+                               pFolderName
+                           );
+         AnscFreeMemory(pFolderName);
+         pFolderName = NULL;
+
+         if (!pPoamIrepFoAllowedSubnetSlap)
+         {
+             continue;
+         }
+
+         /* Get Instance number for the current folder */
+         pSlapVariable = pPoamIrepFoAllowedSubnetSlap->GetRecord
+                           (
+                               (ANSC_HANDLE)pPoamIrepFoAllowedSubnetSlap,
+                               COSA_DML_RR_NAME_ALLOWED_SUBNET_InsNum,
+                               NULL
+                           );
+
+        if (pSlapVariable)
+        {
+            ulInstanceNumber = pSlapVariable->Variant.varUint32;
+            SlapFreeVariable(pSlapVariable);
+        }
+        else
+        {
+            continue;
+        }
+
+        /* Get Alias name for the current folder */
+         pSlapVariable = pPoamIrepFoAllowedSubnetSlap->GetRecord
+                           (
+                               (ANSC_HANDLE)pPoamIrepFoAllowedSubnetSlap,
+                               COSA_DML_RR_NAME_ALLOWED_SUBNET_Alias,
+                               NULL
+                           );
+
+        if (pSlapVariable)
+        {
+            pAlias = AnscCloneString(pSlapVariable->Variant.varString);
+            SlapFreeVariable(pSlapVariable);
+        }
+
+        /* Also, Handles the case where pSlapVariable = NULL eventually pAlias will also be NULL */
+        if (!pAlias)
+        {
+            continue;
+        }
+
+        pCosaContext = (PCOSA_CONTEXT_LINK_OBJECT)AnscAllocateMemory(sizeof(COSA_CONTEXT_LINK_OBJECT));
+        if (!pCosaContext )
+        {
+            AnscFreeMemory(pAlias);
+            return ANSC_STATUS_RESOURCES;
+        }
+
+        pAllowedSubnetEntry = (COSA_DML_LAN_Allowed_Subnet *)AnscAllocateMemory(sizeof(COSA_DML_LAN_Allowed_Subnet));
+        if (!pAllowedSubnetEntry)
+        {
+            AnscFreeMemory(pAlias);
+            AnscFreeMemory(pCosaContext);
+            return ANSC_STATUS_RESOURCES;
+        }
+
+        pAllowedSubnetEntry->InstanceNumber = ulInstanceNumber;
+        AnscCopyString(pAllowedSubnetEntry->Alias, pAlias ? pAlias : "");
+
+        /*Copy the current entry into COSA_CONTEXT_LINK_OBJECT */
+        pCosaContext->InstanceNumber        = ulInstanceNumber;
+        pCosaContext->bNew                  = TRUE;
+        pCosaContext->hContext              = (ANSC_HANDLE)pAllowedSubnetEntry;
+        pCosaContext->hParentTable          = NULL;
+        pCosaContext->hPoamIrepUpperFo      = (ANSC_HANDLE)pPoamIrepFoAllowedSubnet;
+        pCosaContext->hPoamIrepFo           = (ANSC_HANDLE)pPoamIrepFoAllowedSubnetSlap;
+
+        CosaSListPushEntryByInsNum(pListHead, pCosaContext);
+        AnscFreeMemory(pAlias);
+        pAlias = NULL;
+    }
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaLanAllowedSubnetListAddInfo
+    (
+        ANSC_HANDLE                 hThisObject,
+        ANSC_HANDLE                 hCosaContext
+    )
+{
+    PCOSA_DATAMODEL_DHCPV4       pMyObject                     = (PCOSA_DATAMODEL_DHCPV4)hThisObject;
+    PPOAM_IREP_FOLDER_OBJECT     pPoamIrepFoAllowedSubnet      = (PPOAM_IREP_FOLDER_OBJECT)pMyObject->hIrepFolderAllowedSubnet;
+    PPOAM_IREP_FOLDER_OBJECT     pPoamIrepFoAllowedSubnetSlap  = (PPOAM_IREP_FOLDER_OBJECT)NULL;
+    PCOSA_CONTEXT_LINK_OBJECT    pCosaContext                  = (PCOSA_CONTEXT_LINK_OBJECT)hCosaContext;
+    COSA_DML_LAN_Allowed_Subnet  *pAllowedSubnetEntry          = (COSA_DML_LAN_Allowed_Subnet *)pCosaContext->hContext;
+    PSLAP_VARIABLE               pSlapVariable                 = (PSLAP_VARIABLE)NULL;
+
+    if (!pPoamIrepFoAllowedSubnet)
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    pPoamIrepFoAllowedSubnet->EnableFileSync((ANSC_HANDLE)pPoamIrepFoAllowedSubnet, FALSE);
+
+    /* Allocate SLAP variable */
+    SlapAllocVariable(pSlapVariable);
+
+    if (!pSlapVariable)
+    {
+        pPoamIrepFoAllowedSubnet->EnableFileSync((ANSC_HANDLE)pPoamIrepFoAllowedSubnet, TRUE);
+        return ANSC_STATUS_RESOURCES;
+    }
+
+    /* Delete the Next Instance number Record and Add it with the slap variable */
+    pPoamIrepFoAllowedSubnet->DelRecord
+        (
+            (ANSC_HANDLE)pPoamIrepFoAllowedSubnet,
+            COSA_DML_RR_NAME_ALLOWED_SUBNET_NextInsNumber
+        );
+
+    pSlapVariable->Syntax            = SLAP_VAR_SYNTAX_uint32;
+    pSlapVariable->Variant.varUint32 = pMyObject->LanAllowedSubnetNextInsNum;
+
+    pPoamIrepFoAllowedSubnet->AddRecord
+        (
+            (ANSC_HANDLE)pPoamIrepFoAllowedSubnet,
+            COSA_DML_RR_NAME_ALLOWED_SUBNET_NextInsNumber,
+            SYS_REP_RECORD_TYPE_UINT,
+            SYS_RECORD_CONTENT_DEFAULT,
+            pSlapVariable,
+            0
+        );
+
+    SlapCleanVariable(pSlapVariable);
+    SlapInitVariable (pSlapVariable);
+
+    /* Create sub folder with Alias name */
+    pPoamIrepFoAllowedSubnetSlap =
+        pPoamIrepFoAllowedSubnet->AddFolder
+            (
+                (ANSC_HANDLE)pPoamIrepFoAllowedSubnet,
+                pAllowedSubnetEntry->Alias,
+                0
+            );
+
+    if (!pPoamIrepFoAllowedSubnetSlap)
+    {
+        SlapFreeVariable(pSlapVariable);
+        pPoamIrepFoAllowedSubnet->EnableFileSync((ANSC_HANDLE)pPoamIrepFoAllowedSubnet, TRUE);
+        return ANSC_STATUS_FAILURE;
+    }
+
+    /* Add the Instance number and Alias name to the sub folder with Slap variable */
+    pSlapVariable->Syntax            = SLAP_VAR_SYNTAX_uint32;
+    pSlapVariable->Variant.varUint32 = pAllowedSubnetEntry->InstanceNumber;
+
+    pPoamIrepFoAllowedSubnetSlap->AddRecord
+        (
+            (ANSC_HANDLE)pPoamIrepFoAllowedSubnet,
+            COSA_DML_RR_NAME_ALLOWED_SUBNET_InsNum,
+            SYS_REP_RECORD_TYPE_UINT,
+            SYS_RECORD_CONTENT_DEFAULT,
+            pSlapVariable,
+            0
+        );
+
+    SlapCleanVariable(pSlapVariable);
+    SlapInitVariable (pSlapVariable);
+
+    /* Add alias name */
+    pSlapVariable->Syntax            = SLAP_VAR_SYNTAX_string;
+    pSlapVariable->Variant.varString = AnscCloneString(pAllowedSubnetEntry->Alias);
+
+    pPoamIrepFoAllowedSubnetSlap->AddRecord
+        (
+            (ANSC_HANDLE)pPoamIrepFoAllowedSubnet,
+            COSA_DML_RR_NAME_ALLOWED_SUBNET_Alias,
+            SYS_REP_RECORD_TYPE_UINT,
+            SYS_RECORD_CONTENT_DEFAULT,
+            pSlapVariable,
+            0
+        );
+
+    SlapCleanVariable(pSlapVariable);
+    SlapInitVariable (pSlapVariable);
+
+    /* Update the COSA_CONTEXT_LINK_OBJECT with the Folder created */
+    pCosaContext->hPoamIrepUpperFo = (ANSC_HANDLE)pPoamIrepFoAllowedSubnet;
+    pCosaContext->hPoamIrepFo      = (ANSC_HANDLE)pPoamIrepFoAllowedSubnetSlap;
+
+    /* Enable the File sync and Free the allocated memory for Slap variable */
+    SlapFreeVariable(pSlapVariable);
+    pPoamIrepFoAllowedSubnet->EnableFileSync((ANSC_HANDLE)pPoamIrepFoAllowedSubnet, TRUE);
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaLanAllowedSubnetListDelInfo
+    (
+        ANSC_HANDLE                 hThisObject,
+        ANSC_HANDLE                 hCosaContext
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pCosaContext      = (PCOSA_CONTEXT_LINK_OBJECT)hCosaContext;
+    PPOAM_IREP_FOLDER_OBJECT        pPoamIrepUpperFo  = (PPOAM_IREP_FOLDER_OBJECT )pCosaContext->hPoamIrepUpperFo;
+    PPOAM_IREP_FOLDER_OBJECT        pPoamIrepFo       = (PPOAM_IREP_FOLDER_OBJECT )pCosaContext->hPoamIrepFo;
+
+    if ( !pPoamIrepUpperFo || !pPoamIrepFo )
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    pPoamIrepUpperFo->EnableFileSync((ANSC_HANDLE)pPoamIrepUpperFo, FALSE);
+
+    /*Close and the Delete the sub folder */
+    pPoamIrepFo->Close((ANSC_HANDLE)pPoamIrepFo);
+
+    pPoamIrepUpperFo->DelFolder
+        (
+            (ANSC_HANDLE)pPoamIrepUpperFo,
+            pPoamIrepFo->GetFolderName((ANSC_HANDLE)pPoamIrepFo)
+        );
+
+    pPoamIrepUpperFo->EnableFileSync((ANSC_HANDLE)pPoamIrepUpperFo, TRUE);
+    AnscFreeMemory(pPoamIrepFo);
+
+    return ANSC_STATUS_SUCCESS;
+}
