@@ -35,3 +35,5 @@ libCcspPandM_board_sbapi_la_SOURCES = cosa_bridging_apis.c cosa_bridging_apis_ex
 libCcspPandM_board_sbapi_la_LDFLAGS = -lccsp_common -ltime_conversion -lwebconfig_framework -lmsgpackc
 
 libCcspPandM_board_sbapi_la_SOURCES += cosa_mac_filter_apis.c
+libCcspPandM_board_sbapi_la_SOURCES += cosa_lgi_cloudui_apis.c
+

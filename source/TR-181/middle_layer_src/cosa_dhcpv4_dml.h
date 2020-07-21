@@ -1470,4 +1470,83 @@ Option2_GetParamStringValue
         ULONG*                      pUlSize
     );
 
+/***********************************************************************
+
+ APIs for Object:
+
+    *  LanAllowedSubnetTable_GetEntryCount
+    *  LanAllowedSubnetTable_GetEntry
+    *  LanAllowedSubnetTable_AddEntry
+    *  LanAllowedSubnetTable_DelEntry
+    *  LanAllowedSubnetTable_GetParamStringValue
+    *  LanAllowedSubnetTable_SetParamStringValue
+    *  LanAllowedSubnetTable_Commit
+    *  LanAllowedSubnetTable_Validate
+    *  LanAllowedSubnetTable_Rollback
+
+***********************************************************************/
+
+ULONG
+LanAllowedSubnetTable_GetEntryCount
+    (
+        ANSC_HANDLE                 hInsContext
+    );
+
+ANSC_HANDLE
+LanAllowedSubnetTable_GetEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG                       nIndex,
+        ULONG*                      pInsNumber
+    );
+
+ANSC_HANDLE
+LanAllowedSubnetTable_AddEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG*                      pInsNumber
+    );
+
+ULONG
+LanAllowedSubnetTable_DelEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ANSC_HANDLE                 hInstance
+    );
+
+ULONG
+LanAllowedSubnetTable_GetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pValue,
+        ULONG*                      pUlSize
+    );
+
+BOOL
+LanAllowedSubnetTable_SetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pString
+    );
+BOOL
+LanAllowedSubnetTable_Validate
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       pReturnParamName,
+        ULONG*                      puLength
+    );
+
+ULONG
+LanAllowedSubnetTable_Commit
+    (
+        ANSC_HANDLE                 hInsContext
+    );
+ULONG
+LanAllowedSubnetTable_Rollback
+    (
+        ANSC_HANDLE                 hInsContext
+    );
+
 #endif
