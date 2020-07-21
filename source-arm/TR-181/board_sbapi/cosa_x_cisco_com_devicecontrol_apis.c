@@ -86,6 +86,10 @@
 #include "safec_lib_common.h"
 
 #include "cosa_deviceinfo_apis.h"
+#include "cosa_dhcpv4_apis.h"
+#include "cosa_firewall_apis.h"
+#include "cosa_dhcpv4_apis.h"
+#include "cosa_nat_apis.h"
 #include "ansc_string_util.h"
 
 #if defined (_XB6_PRODUCT_REQ_) || defined (_XB7_PRODUCT_REQ_)
@@ -4110,6 +4114,248 @@ parameterValStruct_t valCommit1[] = {
         return NULL;
 }
 
+static BOOLEAN is_ipaddr_invalid(ULONG gw, ULONG mask, ULONG ipaddr)
+{
+    unsigned int subnet, bcast;
+    subnet = gw & mask;
+    bcast = subnet | (~mask);
+    /*Check if ip addr is subnet or subnet broadcast address, or it is the same as gw*/
+    if((ipaddr<=subnet)||(ipaddr>=bcast)||(ipaddr==gw))
+    {
+        return TRUE;
+    }
+    return FALSE;
+}
+
+static void update_ip_port_filter_table(ULONG lan_ipaddr, ULONG lan_netmask)
+{
+    ULONG count;
+    int index, size = 0;
+    int retCode = CCSP_SUCCESS;
+    char objName[256] = {};
+    char ROOTOBJ[] = "Device.Firewall.X_RDKCENTRAL-COM_Security.V4.IPFiltering.Service";
+    componentStruct_t **ppComponents = NULL;
+    COSA_DML_FW_IPFILTER *pEntry = NULL;
+
+    snprintf(dst_pathname_cr, sizeof(dst_pathname_cr), "%s%s", g_Subsystem, CCSP_DBUS_INTERFACE_CR);
+    snprintf(objName, sizeof(objName), "%s.", ROOTOBJ);
+    retCode = CcspBaseIf_discComponentSupportingNamespace(bus_handle,
+                                                          dst_pathname_cr,
+                                                          objName,
+                                                          g_Subsystem,
+                                                          &ppComponents,
+                                                          &size);
+    if(retCode != CCSP_SUCCESS)
+    {
+        fprintf(stderr, "update_ip_port_filter_table:: No entries in '%s'\n", objName);
+        return;
+    }
+    if(size < 1)
+    {
+        fprintf(stderr, "update_ip_port_filter_table:: (size<1) No entry in '%s'\n", objName);
+        free_componentStruct_t(bus_handle, size, ppComponents);
+        return;
+    }
+
+    pEntry = (COSA_DML_FW_IPFILTER *)AnscAllocateMemory(sizeof(COSA_DML_FW_IPFILTER));
+    if(pEntry)
+    {
+        count = CosaDmlFW_V4_IPFilter_GetNumberOfEntries();
+        for (index = count-1; index >= 0; index--)
+        {
+            memset(pEntry, 0, sizeof(COSA_DML_FW_IPFILTER));
+            CosaDmlFW_V4_IPFilter_GetEntryByIndex(index, pEntry);
+            if(is_ipaddr_invalid(lan_ipaddr, lan_netmask, ntohl(_ansc_inet_addr(pEntry->SrcStartIPAddress))) ||
+               (strcmp(pEntry->SrcEndIPAddress, "0.0.0.0") &&
+                is_ipaddr_invalid(lan_ipaddr, lan_netmask, ntohl(_ansc_inet_addr(pEntry->SrcEndIPAddress)))))
+            {
+                snprintf(objName, sizeof(objName), "%s.%d.", ROOTOBJ, pEntry->InstanceNumber);
+                CcspBaseIf_DeleteTblRow(bus_handle,
+                                        ppComponents[0]->componentName,
+                                        ppComponents[0]->dbusPath,
+                                        0,
+                                        objName);
+            }
+        }
+        AnscFreeMemory(pEntry);
+    }
+    free_componentStruct_t(bus_handle, size, ppComponents);
+}
+
+static void update_port_forward_table(ULONG lan_ipaddr, ULONG lan_netmask)
+{
+    ULONG count;
+    int index, size = 0;
+    int retCode = CCSP_SUCCESS;
+    char objName[256] = {};
+    char ROOTOBJ[] = "Device.NAT.PortMapping";
+    componentStruct_t **ppComponents = NULL;
+    PCOSA_DML_NAT_PMAPPING pNatPMapping = NULL;
+
+    snprintf(dst_pathname_cr, sizeof(dst_pathname_cr), "%s%s", g_Subsystem, CCSP_DBUS_INTERFACE_CR);
+    snprintf(objName, sizeof(objName), "%s.", ROOTOBJ);
+    retCode = CcspBaseIf_discComponentSupportingNamespace(bus_handle,
+                                                          dst_pathname_cr,
+                                                          objName,
+                                                          g_Subsystem,
+                                                          &ppComponents,
+                                                          &size);
+    if(retCode != CCSP_SUCCESS)
+    {
+        fprintf(stderr, "update_port_forward_table:: No entries in '%s'\n", objName);
+        return;
+    }
+    if(size < 1)
+    {
+        fprintf(stderr, "update_port_forward_table:: (size<1) No entry in '%s'\n", objName);
+        free_componentStruct_t(bus_handle, size, ppComponents);
+        return;
+    }
+
+    pNatPMapping = CosaDmlNatGetPortMappings(NULL, &count);
+    if(pNatPMapping)
+    {
+        for (index = count-1; index >= 0; index--)
+        {
+            if(is_ipaddr_invalid(lan_ipaddr, lan_netmask, ntohl(pNatPMapping[index].InternalClient.Value)))
+            {
+                snprintf(objName, sizeof(objName), "%s.%d.", ROOTOBJ, pNatPMapping[index].InstanceNumber);
+                CcspBaseIf_DeleteTblRow(bus_handle,
+                                        ppComponents[0]->componentName,
+                                        ppComponents[0]->dbusPath,
+                                        0,
+                                       objName);
+            }
+        }
+        AnscFreeMemory(pNatPMapping);
+    }
+    free_componentStruct_t(bus_handle, size, ppComponents);
+}
+
+static void update_ip_reservation_table(ULONG lan_ipaddr, ULONG lan_netmask)
+{
+    ULONG count;
+    int index, size = 0;
+    int retCode = CCSP_SUCCESS;
+    char objName[256] = {};
+    char ROOTOBJ[] = "Device.DHCPv4.Server.Pool.1.StaticAddress";
+    componentStruct_t **ppComponents = NULL;
+    PCOSA_DML_DHCPS_SADDR pStaticAddr  = NULL;
+
+    snprintf(dst_pathname_cr, sizeof(dst_pathname_cr), "%s%s", g_Subsystem, CCSP_DBUS_INTERFACE_CR);
+    snprintf(objName, sizeof(objName), "%s.", ROOTOBJ);
+    retCode = CcspBaseIf_discComponentSupportingNamespace(bus_handle,
+                                                          dst_pathname_cr,
+                                                          objName,
+                                                          g_Subsystem,
+                                                          &ppComponents,
+                                                          &size);
+    if(retCode != CCSP_SUCCESS)
+    {
+        fprintf(stderr, "update_ip_reservation_table:: No entries in '%s'\n", objName);
+        return;
+    }
+    if(size < 1)
+    {
+        fprintf(stderr, "update_ip_reservation_table:: (size<1) No entry in '%s'\n", objName);
+        free_componentStruct_t(bus_handle, size, ppComponents);
+        return;
+    }
+
+    count = CosaDmlDhcpsGetNumberOfSaddr(NULL, 1);
+    pStaticAddr  = (PCOSA_DML_DHCPS_SADDR)AnscAllocateMemory(sizeof(COSA_DML_DHCPS_SADDR));
+    if(pStaticAddr)
+    {
+        for (index = count-1; index >= 0; index--)
+        {
+            memset(pStaticAddr, 0, sizeof(COSA_DML_DHCPS_SADDR));
+            CosaDmlDhcpsGetSaddr(NULL, 1, index, pStaticAddr);
+            if(is_ipaddr_invalid(lan_ipaddr, lan_netmask, ntohl(pStaticAddr->Yiaddr.Value)))
+            {
+                snprintf(objName, sizeof(objName), "%s.%d.", ROOTOBJ, pStaticAddr->InstanceNumber);
+                CcspBaseIf_DeleteTblRow(bus_handle,
+                                        ppComponents[0]->componentName,
+                                        ppComponents[0]->dbusPath,
+                                        0,
+                                        objName);
+            }
+        }
+        AnscFreeMemory(pStaticAddr);
+    }
+    free_componentStruct_t(bus_handle, size, ppComponents);
+}
+
+static void update_dmz_table(ULONG lan_ipaddr, ULONG lan_netmask)
+{
+    int size = 0;
+    int retCode = CCSP_SUCCESS;
+    char objName[256] = {};
+    char ROOTOBJ[] = "Device.NAT.X_CISCO_COM_DMZ";
+    char *faultParam = NULL;
+    componentStruct_t **ppComponents = NULL;
+    PCOSA_DML_NAT_DMZ pDmz = NULL;
+
+    snprintf(dst_pathname_cr, sizeof(dst_pathname_cr), "%s%s", g_Subsystem, CCSP_DBUS_INTERFACE_CR);
+    snprintf(objName, sizeof(objName), "%s.", ROOTOBJ);
+    retCode = CcspBaseIf_discComponentSupportingNamespace(bus_handle,
+                                                          dst_pathname_cr,
+                                                          objName,
+                                                          g_Subsystem,
+                                                          &ppComponents,
+                                                          &size);
+    if(retCode != CCSP_SUCCESS)
+    {
+        fprintf(stderr, "update_dmz_table:: No entry in '%s'\n", objName);
+        return;
+    }
+    if(size < 1)
+    {
+        fprintf(stderr, "update_dmz_table:: (size<1) No entry in '%s'\n", objName);
+        free_componentStruct_t(bus_handle, size, ppComponents);
+        return;
+    }
+
+    pDmz = (PCOSA_DML_NAT_DMZ)AnscAllocateMemory( sizeof(COSA_DML_NAT_DMZ) );
+    if(pDmz)
+    {
+        CosaDmlNatGetDmz(NULL, pDmz);
+        if(strcmp(pDmz->InternalIP, "0.0.0.0") &&
+           is_ipaddr_invalid(lan_ipaddr, lan_netmask, ntohl(_ansc_inet_addr(pDmz->InternalIP))))
+        {
+            parameterValStruct_t val[2] = {{ "Device.NAT.X_CISCO_COM_DMZ.Enable", "false", ccsp_boolean},
+                                           { "Device.NAT.X_CISCO_COM_DMZ.InternalIP", "0.0.0.0", ccsp_string}};
+            CcspBaseIf_setParameterValues(bus_handle,
+                                          ppComponents[0]->componentName,
+                                          ppComponents[0]->dbusPath,
+                                          0, 0x0,
+                                          &val,
+                                          2,
+                                          TRUE,
+                                          &faultParam);
+        }
+        AnscFreeMemory(pDmz);
+    }
+    free_componentStruct_t(bus_handle, size, ppComponents);
+}
+
+void* update_iptable_thread(void* arg)
+{
+    if(arg)
+    {
+        ULONG lan_ipaddr  = ntohl(_ansc_inet_addr(((lanSetting_t *)arg)->ipaddr));
+        ULONG lan_netmask = ntohl(_ansc_inet_addr(((lanSetting_t *)arg)->netmask));
+
+
+        update_dmz_table(lan_ipaddr, lan_netmask);
+        update_ip_reservation_table(lan_ipaddr, lan_netmask);
+        update_port_forward_table(lan_ipaddr, lan_netmask);
+        update_ip_port_filter_table(lan_ipaddr, lan_netmask);
+    }
+    return NULL;
+}
+
+
+
 ANSC_STATUS
 CosaDmlLanMngm_SetConf(ULONG ins, PCOSA_DML_LAN_MANAGEMENT pLanMngm)
 {
@@ -4221,6 +4467,7 @@ CosaDmlLanMngm_SetConf(ULONG ins, PCOSA_DML_LAN_MANAGEMENT pLanMngm)
         inet_ntop(AF_INET, &(pLanMngm->LanSubnetMask), str, sizeof(str));
         memcpy(&(lan.netmask), str, sizeof(str));
         Utopia_SetLanSettings(&utctx, &lan);
+        AnscCreateTask(update_iptable_thread, USER_DEFAULT_TASK_STACK_SIZE, USER_DEFAULT_TASK_PRIORITY, (void *)&lan, "UpdateIPTableThread");
 
 #if defined(_COSA_INTEL_USG_ARM_) && !defined(INTEL_PUMA7) && defined(ENABLE_FEATURE_MESHWIFI)
         // Send subnet change message to ATOM so that MESH is notified.
@@ -4876,4 +5123,131 @@ BOOL IsPortInUse(unsigned int port)
     }
 
     return FALSE;
+}
+
+
+static BOOL isNewIpBlocked(unsigned long blockedIP, unsigned long blockedMask, unsigned long newIP, unsigned long newMask)
+{
+    unsigned blockedSubnet, blockedMinIp, blockedMaxIp;
+    unsigned newSubnet, newMinIp, newMaxIp;
+
+    blockedSubnet = (unsigned)(blockedIP & blockedMask);
+    blockedMinIp = ntohl((unsigned)(blockedSubnet | 0x01000000));
+    blockedMaxIp = ntohl((unsigned)(blockedSubnet | ~blockedMask));
+
+    newSubnet = (unsigned)(newIP & newMask);
+    newMinIp = ntohl((unsigned)(newSubnet | 0x01000000));
+    newMaxIp = ntohl((unsigned)(newSubnet | ~newMask));
+
+    /* New IP/mask are NOT blocked if the IP range falls outside the blocked IP range:
+        - New Max is < Min Blocked IP
+          -OR-
+        - New Min is > Max Blocked IP
+                    |-----blocked------|
+        |--ok--|--notok--|--notok--|--notok--|--ok--|
+    */
+    if (newMaxIp < blockedMinIp || (newMinIp > blockedMaxIp))
+        return FALSE;
+
+    return TRUE;
+}
+
+static BOOL isNewIpAllowed(unsigned long allowedIP, unsigned long allowedMask, unsigned long newIP, unsigned long newMask)
+{
+    unsigned allowedSubnet, allowedMinIp, allowedMaxIp;
+    unsigned newSubnet, newMinIp, newMaxIp;
+
+    allowedSubnet = allowedIP & allowedMask;
+    allowedMinIp = ntohl((unsigned)(allowedSubnet | 0x01000000));
+    allowedMaxIp = ntohl((unsigned)(allowedSubnet | ~allowedMask));
+
+    newSubnet = newIP & newMask;
+    newMinIp = ntohl((unsigned)(newSubnet | 0x01000000));
+    newMaxIp = ntohl((unsigned)(newSubnet | ~newMask));
+
+    /* New IP/mask are allowed if the IP range falls inside the allowed IP range:
+        - New Min >= Allowed Min
+          -AND-
+        - New Max <= Allowed Max
+                       |-----allowed------|
+        |--notok--|--notok--|--ok--|--notok--|--notok--|
+    */
+
+    if ((newMinIp >= allowedMinIp) && (newMaxIp <= allowedMaxIp))
+    {
+        return TRUE;
+    }
+    return FALSE;
+}
+
+BOOL validateIPRangeWithSubnetTable(const PCOSA_DML_LAN_MANAGEMENT pLanMngm)
+{
+    COSA_DML_LAN_Allowed_Subnet     LanAllowedSubnetExist;
+    extern ANSC_HANDLE              bus_handle;
+
+    UCHAR        ucEntryParamName[128] = {0}, ucEntryParamName1[128] = {0};
+    UCHAR        validateIPBuf[64] = {0}, validateSubnetBuf[64] = {0};
+    ULONG        size  = sizeof(validateIPBuf);
+    unsigned int index = 0, noOfSubnetEntries = 0 , ulEntryInstanceNum = 0;
+    struct in_addr allowedSubnetIP, blockedSubnetIP, blockedSubnetMask, allowedSubnetMask;
+
+        snprintf(validateIPBuf, sizeof(validateIPBuf), "%d.%d.%d.%d", pLanMngm->LanIPAddress.Dot[0], pLanMngm->LanIPAddress.Dot[1], pLanMngm->LanIPAddress.Dot[2], pLanMngm->LanIPAddress.Dot[3]);
+
+        inet_pton(AF_INET, "192.168.0.1", &allowedSubnetIP);
+        inet_pton(AF_INET, "255.255.255.0", &allowedSubnetMask);
+        if (isNewIpAllowed(allowedSubnetIP.s_addr, allowedSubnetMask.s_addr, pLanMngm->LanIPAddress.Value, pLanMngm->LanSubnetMask.Value))
+        {
+            return TRUE;
+        }
+
+        /* Blocked Subnet Table */
+        noOfSubnetEntries = CosaGetParamValueUlong("Device.DHCPv4.Server.Pool.1.X_LGI-COM_LanBlockedSubnetTableNumberOfEntries");
+        for (index = 0; index < noOfSubnetEntries; index++)
+        {
+            ulEntryInstanceNum = CosaGetInstanceNumberByIndex("Device.DHCPv4.Server.Pool.1.X_LGI-COM_LanBlockedSubnetTable.", index);
+            if (ulEntryInstanceNum)
+            {
+                //Get IP Address
+                _ansc_sprintf(ucEntryParamName, "Device.DHCPv4.Server.Pool.1.X_LGI-COM_LanBlockedSubnetTable.%lu.LanBlockedSubnetIP", ulEntryInstanceNum);
+                _ansc_sprintf(ucEntryParamName1, "Device.DHCPv4.Server.Pool.1.X_LGI-COM_LanBlockedSubnetTable.%lu.LanBlockedSubnetMask", ulEntryInstanceNum);
+
+                if (CosaGetParamValueString(ucEntryParamName, validateIPBuf, &size) == 0 && (CosaGetParamValueString(ucEntryParamName1, validateSubnetBuf, &size) == 0))
+                {
+                    inet_pton(AF_INET, validateIPBuf, &blockedSubnetIP);
+                    inet_pton(AF_INET, validateSubnetBuf, &blockedSubnetMask);
+                    if ((blockedSubnetIP.s_addr == 0) || (blockedSubnetMask.s_addr == 0))
+                    {
+                       // Ignore if "blockedSubnetIP.s_addr and blockedSubnetMask.s_addr are zero.
+                       continue;
+                    }
+                    if (isNewIpBlocked( blockedSubnetIP.s_addr, blockedSubnetMask.s_addr, pLanMngm->LanIPAddress.Value, pLanMngm->LanSubnetMask.Value))
+                    {
+                        CcspTraceWarning(("RDKB_LAN_CONFIG: Modified IP Address is present in Blocked Subnet Table!\n"));
+                        return FALSE;
+                    }
+                }
+            }
+        }
+        /* Allowed Subnet Table */
+        noOfSubnetEntries = CosaDmlLAN_Allowed_Subnet_GetNumberOfEntries();
+
+        for (index = 0; index < noOfSubnetEntries; index++)
+        {
+            CosaDmlLAN_Allowed_Subnet_GetEntryByIndex(index, &LanAllowedSubnetExist);
+
+            inet_pton(AF_INET, LanAllowedSubnetExist.SubnetIP, &allowedSubnetIP);
+            inet_pton(AF_INET, LanAllowedSubnetExist.SubnetMask, &allowedSubnetMask);
+
+            if (isNewIpAllowed(allowedSubnetIP.s_addr, allowedSubnetMask.s_addr, pLanMngm->LanIPAddress.Value, pLanMngm->LanSubnetMask.Value))
+            {
+                break;
+            }
+
+        }
+        if (index == noOfSubnetEntries)
+        {
+            CcspTraceWarning(("RDKB_LAN_CONFIG: Modified IP Address/Subnet Mask doesn't present in the Allowed Subnet Table..\n"))
+            return FALSE;
+        }
+    return TRUE;
 }
