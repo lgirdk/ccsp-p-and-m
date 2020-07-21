@@ -51,3 +51,4 @@ libCcspPandM_middle_layer_src_la_SOURCES += cosa_privacy_protection_dml.c cosa_p
 
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_mac_filter_dml.c cosa_mac_filter_internal.c
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_wol_dml.c cosa_lgi_wol_apis.c cosa_lgi_wol_internal.c
+libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_cloudui_internal.c cosa_lgi_cloudui_dml.c
