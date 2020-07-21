@@ -167,6 +167,7 @@ extern COSARegisterCallBackAfterInitDmlProc  g_RegisterCallBackAfterInitDml;
 #if defined(DDNS_BROADBANDFORUM)
 #define COSA_DATAMODEL_DYNDNS_OID                               43
 #endif
+#define COSA_DATAMODEL_LGI_CLOUDUI_OID                         130
 #define COSA_DATAMODEL_LGI_WOL_OID                             134 /* LGI ADD */
 
 
@@ -221,6 +222,7 @@ extern COSARegisterCallBackAfterInitDmlProc  g_RegisterCallBackAfterInitDml;
     ANSC_HANDLE                  hAdvPC;                                                    \
     ANSC_HANDLE                  hPrivacyProtection;                                        \
     ANSC_HANDLE                  hLanMngm;                                                  \
+    ANSC_HANDLE                  hLgiCloudUi;                                           \
     ANSC_HANDLE                  hXpc;                                                    \
     ANSC_HANDLE                  hOnboardLogging;                                                    \
     ANSC_HANDLE                  hLgiWoL;                        /* LGI ADD             */  \
