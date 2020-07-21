@@ -133,6 +133,9 @@
 #endif
 #include <telemetry_busmessage_sender.h>
 
+#include "cosa_lgi_cloudui_apis.h"
+#include "cosa_lgi_cloudui_internal.h"
+
 #ifdef DSLITE_FEATURE_SUPPORT
 #include "cosa_dslite_apis.h"
 #include "cosa_dslite_internal.h"
@@ -388,6 +391,8 @@ CosaBackEndManagerInitialize
     pMyObject->hDslite         = (ANSC_HANDLE)CosaDsliteCreate();
     AnscTraceWarning(("  CosaDsliteCreate done!\n"));
 #endif
+    pMyObject->hLgiCloudUi = (ANSC_HANDLE)CosaLgiCloudUiCreate();
+    AnscTraceWarning(("  CosaLgiCloudUiCreate done !\n"));
 #if !defined (RESOURCE_OPTIMIZATION)
     pMyObject->hNeighdisc     = (ANSC_HANDLE)CosaNeighdiscCreate();
     AnscTraceWarning(("  CosaNeighdiscCreate done!\n"));
@@ -726,6 +731,11 @@ CosaBackEndManagerRemove
         CosaDsliteRemove((ANSC_HANDLE)pMyObject->hDslite);
     }
 #endif
+
+    if (pMyObject->hLgiCloudUi)
+    {
+        CosaLgiCloudUiRemove((ANSC_HANDLE)pMyObject->hLgiCloudUi);
+    }
 
 #if !defined (RESOURCE_OPTIMIZATION)
     if ( pMyObject->hNeighdisc )

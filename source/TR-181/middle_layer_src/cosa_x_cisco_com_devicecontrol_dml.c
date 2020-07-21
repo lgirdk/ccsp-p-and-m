@@ -2276,6 +2276,13 @@ LanMngm_Validate
         CcspTraceWarning(("RDKB_LAN_CONFIG_CHANGED: Modified LanSubnetMask doesn't meet the conditions,reverting back to old value  ...\n"));
         goto RET_ERR;
     }
+
+    if (!(validateIPRangeWithSubnetTable(pLanMngm)))
+    {
+        CcspTraceWarning(("RDKB_LAN_CONFIG_CHANGED: Modified LanIPAddress doesn't meet the conditions,reverting back to old value  ...\n"));
+        goto RET_ERR;
+    }
+
 #if defined (WIFI_MANAGE_SUPPORTED)
     uiLanIpInHex = ntohl (pLanMngm->LanIPAddress.Value);
     CcspTraceWarning(("%s:%d- Lan Ip in hex : %08X\n", __FUNCTION__,__LINE__, uiLanIpInHex));
