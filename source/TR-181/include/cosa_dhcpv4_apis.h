@@ -269,6 +269,7 @@ _COSA_DML_DHCPS_POOL_FULL_LINK_OBJ
     COSA_DML_DHCPS_POOL_FULL    SPool;
     SLIST_HEADER                StaticAddressList;
     SLIST_HEADER                OptionList;
+    SLIST_HEADER                LanBlockedSubnetList;
 };
 typedef  struct _COSA_DML_DHCPS_POOL_FULL_LINK_OBJ COSA_DML_DHCPS_POOL_FULL_LINK_OBJ, *PCOSA_DML_DHCPS_POOL_FULL_LINK_OBJ;
 
@@ -371,7 +372,23 @@ _COSA_DML_DHCPSV4_CLIENTCONTENT
     ULONG                                    NumberofOption;
 };
 typedef  struct _COSA_DML_DHCPSV4_CLIENTCONTENT COSA_DML_DHCPSV4_CLIENTCONTENT,  *PCOSA_DML_DHCPSV4_CLIENTCONTENT;
+struct
+_COSA_DML_DHCPSV4_LANBLOCKED
+{
+    ANSC_IPV4_ADDRESS               SubnetIP;
+    ANSC_IPV4_ADDRESS               SubnetMask;
+};
+typedef  struct _COSA_DML_DHCPSV4_LANBLOCKED COSA_DML_DHCPSV4_LANBLOCKED,  *PCOSA_DML_DHCPSV4_LANBLOCKED;
 
+ 
+typedef  struct
+_COSA_DML_LAN_Allowed_Subnet
+{
+    ULONG            InstanceNumber;
+    char             SubnetIP[16];
+    char             SubnetMask[16];
+    char             Alias[64];
+} COSA_DML_LAN_Allowed_Subnet;
 
 /**********************************************************************
                 FUNCTION PROTOTYPES
@@ -880,6 +897,15 @@ CosaDmlDhcpsGetLeaseTimeDuration
     (
         PCOSA_DML_DHCPSV4_CLIENT_IPADDRESS    pDhcpsClient
     );
+
+int LANAllowedSubnet_InsGetIndex(ULONG ins);
+ULONG CosaDmlLAN_Allowed_Subnet_GetNumberOfEntries(void);
+ANSC_STATUS CosaDmlLAN_Allowed_Subnet_GetEntryByIndex(ULONG index, COSA_DML_LAN_Allowed_Subnet *pEntry);
+ANSC_STATUS CosaDmlLAN_Allowed_Subnet_SetValues(ULONG index, ULONG ins, const char *alias);
+ANSC_STATUS CosaDmlLAN_Allowed_Subnet_AddEntry(COSA_DML_LAN_Allowed_Subnet *pEntry);
+ANSC_STATUS CosaDmlLAN_Allowed_Subnet_DelEntry(ULONG ins);
+ANSC_STATUS CosaDmlLAN_Allowed_Subnet_GetConf(ULONG ins, COSA_DML_LAN_Allowed_Subnet *pEntry);
+ANSC_STATUS CosaDmlLAN_Allowed_Subnet_SetConf(ULONG ins, COSA_DML_LAN_Allowed_Subnet *pEntry);
 
 extern ANSC_STATUS UpdateJsonParamLegacy
 	(
