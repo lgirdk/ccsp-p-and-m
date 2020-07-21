@@ -88,3 +88,4 @@ endif
 libCcspPandM_board_sbapi_la_LDFLAGS = -lccsp_common -ltime_conversion -lwebconfig_framework -lmsgpackc -lHotspotApi
 
 libCcspPandM_board_sbapi_la_SOURCES += cosa_mac_filter_apis.c
+libCcspPandM_board_sbapi_la_SOURCES += cosa_lgi_cloudui_apis.c
