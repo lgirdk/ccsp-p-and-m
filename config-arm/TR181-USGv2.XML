@@ -396,6 +396,31 @@
     </object>
 <?endif?>
 <?endif?>
+   <object>
+        <name>X_LGI-COM_CloudUI</name>
+
+        <objectType>object</objectType>
+
+          <functions>
+              <func_GetParamBoolValue>LgiCloudUi_GetParamBoolValue</func_GetParamBoolValue>
+              <func_SetParamBoolValue>LgiCloudUi_SetParamBoolValue</func_SetParamBoolValue>
+              <func_Validate>LgiCloudUi_Validate</func_Validate>
+              <func_Commit>LgiCloudUi_Commit</func_Commit>
+              <func_Rollback>LgiCloudUi_Rollback</func_Rollback>
+          </functions>
+
+          <parameters>
+            <parameter>
+                <name>HideCustomerDhcpLanChange</name>
+                <description>
+                    To hide the functionality for customer to choose their own private IPv4 network when set to True
+                </description>
+                <type>boolean</type>
+                <syntax>bool</syntax>
+                <writable>true</writable>
+            </parameter>
+          </parameters>
+    </object>
     <object>
 
       <name>DeviceInfo</name>
@@ -11539,6 +11564,129 @@
 
               <objects>
 
+                 <object>
+
+                     <name>X_LGI-COM_LanAllowedSubnetTable</name>
+
+                     <objectType>writableTable</objectType>
+
+                     <maxInstance>16</maxInstance>
+
+                     <functions>
+
+                          <func_GetEntryCount>LanAllowedSubnetTable_GetEntryCount</func_GetEntryCount>
+
+                          <func_GetEntry>LanAllowedSubnetTable_GetEntry</func_GetEntry>
+
+                          <func_AddEntry>LanAllowedSubnetTable_AddEntry</func_AddEntry>
+
+                          <func_DelEntry>LanAllowedSubnetTable_DelEntry</func_DelEntry>
+
+                          <func_GetParamStringValue>LanAllowedSubnetTable_GetParamStringValue</func_GetParamStringValue>
+
+                          <func_SetParamStringValue>LanAllowedSubnetTable_SetParamStringValue</func_SetParamStringValue>
+
+                          <func_Validate>LanAllowedSubnetTable_Validate</func_Validate>
+
+                          <func_Commit>LanAllowedSubnetTable_Commit</func_Commit>
+
+                          <func_Rollback>LanAllowedSubnetTable_Rollback</func_Rollback>
+
+                     </functions>
+
+                     <parameters>
+
+                         <parameter>
+
+                             <name>LanAllowedSubnetIP</name>
+
+                             <type>string(15)</type>
+
+                             <syntax>string</syntax>
+
+                             <writable>true</writable>
+
+                        </parameter>
+
+                         <parameter>
+
+                             <name>LanAllowedSubnetMask</name>
+
+                             <type>string(15)</type>
+
+                             <syntax>string</syntax>
+
+                             <writable>true</writable>
+
+                        </parameter>
+
+                         <parameter>
+
+                             <name>Alias</name>
+
+                             <description>
+                                 Instance aliasing object for LanAllowedSubnetTable
+                             </description>
+
+                             <type>string(64)</type>
+
+                             <syntax>string</syntax>
+
+                             <writable>true</writable>
+
+                        </parameter>
+
+                    </parameters>
+
+                </object>
+                <!-- ARRIS ADD END CLM-67551 -->
+
+                <object>
+
+                  <name>X_LGI-COM_LanBlockedSubnetTable</name>
+
+                  <objectType>staticTable</objectType>
+
+                  <maxInstance>128</maxInstance>
+
+                  <functions>
+
+                    <func_GetEntryCount>LanBlockedSubnetTable_GetEntryCount</func_GetEntryCount>
+
+                    <func_GetEntry>LanBlockedSubnetTable_GetEntry</func_GetEntry>
+
+                    <func_GetParamUlongValue>LanBlockedSubnetTable_GetParamUlongValue</func_GetParamUlongValue>
+
+                  </functions>
+
+                  <parameters>
+
+              <parameter>
+
+                <name>LanBlockedSubnetIP</name>
+
+                <type>string</type>
+
+                <syntax>uint32/ip4_addr</syntax>
+
+                <writable>false</writable>
+              </parameter>
+
+              <parameter>
+
+                <name>LanBlockedSubnetMask</name>
+
+                <type>string</type>
+
+                <syntax>uint32/ip4_addr</syntax>
+
+                <writable>false</writable>
+
+              </parameter>
+
+                  </parameters>
+
+                </object>
                 <object>
 
                   <name>StaticAddress</name>

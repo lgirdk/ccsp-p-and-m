@@ -95,6 +95,9 @@
 #include <net/if.h>
 #include <netinet/if_ether.h>
 #include <net/if_arp.h>
+#include <utctx/utctx.h>
+#include <utapi/utapi.h>
+#include <utapi/utapi_util.h>
 
 #include <utctx/utctx_api.h>
 #include <ulog/ulog.h>
@@ -4154,6 +4157,243 @@ CosaDhcpInitJournal
          }
          return ANSC_STATUS_SUCCESS;
 }
+
+static int g_NrLanAllowedSubnet =  0;
+
+/*
+    Description:
+        The API is to get the Instance of LAN Allowed Subnet by Index
+*/
+int
+LANAllowedSubnet_InsGetIndex(ULONG ins)
+{
+    int i, ins_num, ret = -1;
+    UtopiaContext ctx;
+
+    if ( 0 == CosaDmlLAN_Allowed_Subnet_GetNumberOfEntries())
+        return ret;
+
+    if (!Utopia_Init(&ctx))
+    {
+        return ret;
+    }
+
+    for (i = 0; i < g_NrLanAllowedSubnet; i++)
+    {
+        Utopia_GetLanAllowedSubnetInsNumByIndex(&ctx, i, &ins_num);
+        if (ins_num == ins)
+        {
+            ret = i;
+            break;
+        }
+    }
+
+    Utopia_Free(&ctx, 0);
+
+    return ret;
+}
+
+/*
+    Description:
+        The API is to get the total number of entries of LAN Allowed subnet
+*/
+ULONG
+CosaDmlLAN_Allowed_Subnet_GetNumberOfEntries(void)
+{
+    UtopiaContext ctx;
+
+    if(!Utopia_Init(&ctx))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    Utopia_GetNumberOfLanAllowedSubnet(&ctx, &g_NrLanAllowedSubnet);
+
+    Utopia_Free(&ctx, 0);
+
+    return g_NrLanAllowedSubnet;
+}
+
+/*
+    Description:
+        The API is to search and get entry values of LAN Allowed subnet table by index
+*/
+ANSC_STATUS
+CosaDmlLAN_Allowed_Subnet_GetEntryByIndex(ULONG index, COSA_DML_LAN_Allowed_Subnet *pEntry)
+{
+    UtopiaContext ctx;
+    lanAllowedSubnet_t LanAllowedSubnet;
+
+    if (index >= g_NrLanAllowedSubnet || !Utopia_Init(&ctx))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    Utopia_GetLanAllowedSubnetByIndex(&ctx, index, &LanAllowedSubnet);
+
+    pEntry->InstanceNumber = LanAllowedSubnet.InstanceNumber;
+    _ansc_strncpy(pEntry->Alias, LanAllowedSubnet.Alias, sizeof(pEntry->Alias)-1);
+    _ansc_strncpy(pEntry->SubnetIP, LanAllowedSubnet.SubnetIP, sizeof(pEntry->SubnetIP)-1);
+    _ansc_strncpy(pEntry->SubnetMask, LanAllowedSubnet.SubnetMask, sizeof(pEntry->SubnetMask)-1);
+
+    Utopia_Free(&ctx, 0);
+    return ANSC_STATUS_SUCCESS;
+}
+
+/*
+    Description:
+        The API is to set values for alias parameter of LAN Allowed subnet table
+*/
+ANSC_STATUS
+CosaDmlLAN_Allowed_Subnet_SetValues(ULONG index, ULONG ins, const char *alias)
+{
+    int rc = -1;
+    UtopiaContext ctx;
+
+    if (index >= g_NrLanAllowedSubnet || !Utopia_Init(&ctx))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    rc = Utopia_SetLanAllowedSubnetInsAndAliasByIndex(&ctx, index, ins, alias);
+
+    Utopia_Free(&ctx, !rc);
+
+    if (rc != 0)
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+    else
+    {
+        return ANSC_STATUS_SUCCESS;
+    }
+}
+
+/*
+    Description:
+        The API is to add new entry for Allowed LAN subnet table
+*/
+ANSC_STATUS
+CosaDmlLAN_Allowed_Subnet_AddEntry(COSA_DML_LAN_Allowed_Subnet *pEntry)
+{
+    int rc = -1;
+    UtopiaContext ctx;
+    lanAllowedSubnet_t LanAllowedSubnet;
+
+    if (!Utopia_Init(&ctx))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    LanAllowedSubnet.InstanceNumber = pEntry->InstanceNumber;
+    _ansc_strncpy(LanAllowedSubnet.Alias, pEntry->Alias, sizeof(pEntry->Alias)-1);
+    _ansc_strncpy(LanAllowedSubnet.SubnetIP, pEntry->SubnetIP, sizeof(pEntry->SubnetIP)-1);
+    _ansc_strncpy(LanAllowedSubnet.SubnetMask, pEntry->SubnetMask, sizeof(pEntry->SubnetMask)-1);
+
+    rc = Utopia_AddLanAllowedSubnet(&ctx, &LanAllowedSubnet);
+
+    Utopia_GetNumberOfLanAllowedSubnet(&ctx, &g_NrLanAllowedSubnet);
+
+    Utopia_Free(&ctx, !rc);
+
+    if (rc != 0)
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    return ANSC_STATUS_SUCCESS;
+
+}
+
+/*
+    Description:
+        The API is to get configuration of Allowed LAN subnet in a table, which contains following information
+        Alias
+        SubnetIP
+        SubnetMask
+*/
+ANSC_STATUS
+CosaDmlLAN_Allowed_Subnet_DelEntry(ULONG ins)
+{
+    int rc = -1;
+    UtopiaContext ctx;
+    if (!Utopia_Init(&ctx))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    rc = Utopia_DelLanAllowedSubnet(&ctx, ins);
+    Utopia_GetNumberOfLanAllowedSubnet(&ctx, &g_NrLanAllowedSubnet);
+    Utopia_Free(&ctx, !rc);
+
+    if (rc != 0)
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    return ANSC_STATUS_SUCCESS;
+
+}
+
+/*
+    Description:
+        The API is to get configuration of Allowed LAN subnet in a table, which contains following information
+        Alias
+        SubnetIP
+        SubnetMask
+*/
+ANSC_STATUS
+CosaDmlLAN_Allowed_Subnet_GetConf(ULONG ins, COSA_DML_LAN_Allowed_Subnet *pEntry)
+{
+    int index;
+
+    if ((index = LANAllowedSubnet_InsGetIndex(ins)) == -1)
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    return CosaDmlLAN_Allowed_Subnet_GetEntryByIndex(index, pEntry);
+}
+
+/*
+    Description:
+        The API is to set configuration of Allowed LAN subnet in a table, which contains following information
+        Alias
+        SubnetIP
+        SubnetMask
+*/
+
+ANSC_STATUS
+CosaDmlLAN_Allowed_Subnet_SetConf(ULONG ins, COSA_DML_LAN_Allowed_Subnet *pEntry)
+{
+    int index;
+    UtopiaContext ctx;
+    lanAllowedSubnet_t LanAllowedSubnet;
+    int rc = -1;
+
+    if ((index = LANAllowedSubnet_InsGetIndex(ins)) == -1 || !Utopia_Init(&ctx))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    index = LANAllowedSubnet_InsGetIndex(ins);
+
+    LanAllowedSubnet.InstanceNumber = pEntry->InstanceNumber;
+    _ansc_strncpy(LanAllowedSubnet.Alias, pEntry->Alias, sizeof(LanAllowedSubnet.Alias)-1);
+    _ansc_strncpy(LanAllowedSubnet.SubnetIP, pEntry->SubnetIP, sizeof(LanAllowedSubnet.SubnetIP)-1);
+    _ansc_strncpy(LanAllowedSubnet.SubnetMask, pEntry->SubnetMask, sizeof(LanAllowedSubnet.SubnetMask)-1);
+
+    rc = Utopia_SetLanAllowedSubnetByIndex(&ctx, index, &LanAllowedSubnet);
+
+    Utopia_Free(&ctx, !rc);
+    if (rc != 0)
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    return ANSC_STATUS_SUCCESS;
+}
+
 
 #endif
 
