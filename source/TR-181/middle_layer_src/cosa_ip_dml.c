@@ -75,6 +75,7 @@
 #include "cosa_ip_dml.h"
 #include "cosa_ip_internal.h"
 #include "safec_lib_common.h"
+#include "cosa_apis_busutil.h"
 
 static ULONG last_tick;
 #define REFRESH_INTERVAL 120
@@ -1703,14 +1704,9 @@ Interface2_SetParamStringValue
         else
         {
             ULONG                           ulIndex;
-            CHAR                           ucEntryParamName[256]       = {0};
-            CHAR                           ucEntryNameValue[256]       = {0};
-#if defined (MULTILAN_FEATURE)
-            ULONG                           ulEntryNameLen = 256;
-#else
-      	    ULONG                           size;
-            parameterValStruct_t            varStruct;
-#endif
+            CHAR                            ucEntryParamName[256];
+            CHAR                            ucEntryNameValue[256]       = {0};
+            ULONG                           ulEntryNameLen;
  
            AnscTraceWarning
                 ((
@@ -1760,16 +1756,8 @@ Interface2_SetParamStringValue
 
                 /* Retrieve LinkName */
                 _ansc_sprintf(ucEntryParamName, "%s.%s", pString, "Name");
-#if defined (MULTILAN_FEATURE)
                 ulEntryNameLen = sizeof(ucEntryNameValue);
                 if ( 0 == CosaGetParamValueString(ucEntryParamName, ucEntryNameValue, &ulEntryNameLen))
-#else
-		varStruct.parameterName  = ucEntryParamName;
-                varStruct.parameterValue = ucEntryNameValue;
-
-                if ( ANSC_STATUS_SUCCESS == 
-                        COSAGetParamValueByPathName(&varStruct, &size) )
-#endif
                 {
                     AnscCopyString(pIPInterface->Cfg.LinkName, ucEntryNameValue);
                 }
