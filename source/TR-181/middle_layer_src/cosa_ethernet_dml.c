@@ -68,6 +68,8 @@
 
 #include "dml_tr181_custom_cfg.h"
 #include "cosa_ethernet_dml.h"
+#include "cosa_apis_busutil.h"
+
 #ifdef _HUB4_PRODUCT_REQ_
 #include <sys/sysinfo.h>
 #define WAN_INTERFACE_LEN 8
@@ -2533,14 +2535,10 @@ Link_SetParamStringValue
     if( AnscEqualString(ParamName, "LowerLayers", TRUE))
     {
         ULONG                           ulIndex;
-        CHAR                            ucEntryParamName[256]       = {0};
+        CHAR                            ucEntryParamName[256];
         CHAR                            ucEntryNameValue[256]       = {0};
-#if defined (MULTILAN_FEATURE)
-        ULONG                           ulEntryNameLen = 256;
-#else
-        ULONG                             size;
-        parameterValStruct_t            varStruct;
-#endif
+        ULONG                           ulEntryNameLen;
+
         if ( _ansc_strlen(pString) == 0 )
         {
             pEntry->Cfg.LinkType    = COSA_DML_LINK_TYPE_LAST;
@@ -2579,16 +2577,8 @@ Link_SetParamStringValue
 
             /* Retrieve LinkName */
             _ansc_sprintf(ucEntryParamName, "%s.%s", pString, "Name");
-#if defined (MULTILAN_FEATURE)
             ulEntryNameLen = sizeof(ucEntryNameValue);
             if ( 0 == CosaGetParamValueString(ucEntryParamName, ucEntryNameValue, &ulEntryNameLen))
-#else
-	    varStruct.parameterName  = ucEntryParamName;
-            varStruct.parameterValue = ucEntryNameValue;
-
-            if ( ANSC_STATUS_SUCCESS == 
-                    COSAGetParamValueByPathName(&varStruct, &size) )
-#endif
             {
                 AnscCopyString(pEntry->Cfg.LinkName, ucEntryNameValue);
             }
