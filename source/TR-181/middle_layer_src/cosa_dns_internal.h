@@ -106,6 +106,7 @@
     SLIST_HEADER                    ForwardList;                             \
     ULONG                           ulNextForwardInsNum;                      \
     ULONG                           PreVisitForwardTime;                     \
+    COSA_DML_DNS_RELAY              Relay;                                   \
 
 typedef  struct
 _COSA_DATAMODEL_DNS                                              
