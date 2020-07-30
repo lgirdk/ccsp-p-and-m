@@ -97,13 +97,15 @@ DSLite_SetParamBoolValue
     /* check the parameter name and set the corresponding value */
     if (strcmp(ParamName, "Enable") == 0)
     {
+        int rc;
+
         /* save update to backup */
         if (CosaDmlSetDsliteEnable(NULL, (BOOLEAN)bValue) == ANSC_STATUS_FAILURE)
         {
               return FALSE;
         }
-	v_secure_system("/bin/sh /etc/utopia/service.d/set_resolv_conf.sh");
-        return TRUE;
+        rc = v_secure_system("/bin/sh /etc/utopia/service.d/set_resolv_conf.sh");
+        return (rc == 0) ? TRUE : FALSE;
     }
     return FALSE;
 }
