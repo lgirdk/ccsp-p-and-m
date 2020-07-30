@@ -256,6 +256,9 @@ CosaDNSInitialize
         pMyObject->hIrepFolderServerHA = (ANSC_HANDLE)pPoamIrepFoServerHA;
     }
 
+    /* Sync with backend */
+    CosaDmlIpDnsGetRelayStatus(NULL, &pMyObject->Relay);
+
     /* Retrieve the next Instance Number for DNS server */
     
     if ( TRUE )
@@ -301,6 +304,7 @@ CosaDNSInitialize
 
     /* local variable, tmp memory, need to free it in this routine */
     pDnsServer = CosaDmlDnsClientGetServers(NULL, (PULONG)&ulEntryCount);
+    PCOSA_DML_DNS_CLIENT_SERVER pDnsServer2 = NULL;
     
     if ( !pDnsServer || (ulEntryCount ==0))
     {
@@ -364,10 +368,15 @@ CosaDNSInitialize
                 );
             }
 
-            pCosaContext->hContext      =  (ANSC_HANDLE)AnscAllocateMemory(
-		    sizeof(pDnsServer[ulIndex]));
-            memcpy(pCosaContext->hContext, (ANSC_HANDLE)&pDnsServer[ulIndex],
-			sizeof(pDnsServer[ulIndex]));
+            pDnsServer2 = AnscAllocateMemory(sizeof(COSA_DML_DNS_CLIENT_SERVER));
+            if (!pDnsServer2)
+            {
+                AnscFreeMemory(pDnsServer);
+                returnStatus = ANSC_STATUS_RESOURCES;
+                goto  EXIT;
+            }
+            *pDnsServer2 = pDnsServer[ulIndex];
+            pCosaContext->hContext      = (ANSC_HANDLE)pDnsServer2;
             pCosaContext->hParentTable  = NULL;            
             pCosaContext->bNew          = FALSE;
 
@@ -376,9 +385,8 @@ CosaDNSInitialize
 
         /* Update refresh timestamp */
         pMyObject->PreVisitSrvTime = AnscGetTickInSeconds();        
+        AnscFreeMemory(pDnsServer);
     }
-
-    AnscFreeMemory(pDnsServer);
 
     /* Retrieve the next Instance Number for  Device.DNS.Relay.Forwarding.{i}. */
     if ( TRUE )
@@ -422,6 +430,7 @@ CosaDNSInitialize
     
      /* Initialize middle layer for Device.DNS.Relay.Forwarding.{i}. */
     pForward = CosaDmlDnsRelayGetServers(NULL, (PULONG)&ulEntryCount2);
+    PCOSA_DML_DNS_RELAY_ENTRY pForward2 = NULL;
 
     if ( !pForward )
     {
@@ -482,7 +491,15 @@ CosaDNSInitialize
                 );
             }                
 
-            pCosaContext2->hContext     = (ANSC_HANDLE)&pForward[ulIndex2];
+            pForward2 = AnscAllocateMemory(sizeof(COSA_DML_DNS_RELAY_ENTRY));
+            if ( !pForward2 )
+            {
+                AnscFreeMemory(pForward);
+                returnStatus = ANSC_STATUS_RESOURCES;
+                goto  EXIT;
+            }
+            *pForward2 = pForward[ulIndex2];
+            pCosaContext2->hContext     = (ANSC_HANDLE)pForward2;
             pCosaContext2->hParentTable = NULL;
             pCosaContext2->bNew         = FALSE;
 
@@ -491,6 +508,7 @@ CosaDNSInitialize
         
         /* Update refresh timestamp */
         pMyObject->PreVisitForwardTime = AnscGetTickInSeconds();        
+        AnscFreeMemory(pForward);
     }
        
 
