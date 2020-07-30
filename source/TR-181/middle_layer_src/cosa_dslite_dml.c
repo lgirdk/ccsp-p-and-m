@@ -93,7 +93,7 @@ DSLite_SetParamBoolValue
         /* save update to backup */
         CosaDmlSetDsliteEnable(NULL, (BOOLEAN)bValue);
         rc = vsystem(UPDATE_RESOLV_CMD);
-        return TRUE;
+	return (rc == 0) ? TRUE : FALSE;
     }
 #endif
     return FALSE;
