@@ -67,6 +67,7 @@
 #include "cosa_dns_internal.h"
 #include "safec_lib_common.h"
 
+#define  SYSCFG_DNS_SERVER_ENABLE_KEY           "dhcp_dns_server_enable_%lu"  //LGI ADD
 
 #if (defined(_COSA_SIM_))
 
@@ -947,8 +948,82 @@ CosaDmlDnsRelayGetServer
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include "cosa_x_cisco_com_devicecontrol_apis.h"
+#include <utapi/utapi_dns.h>
 
+static const char *DEFAULT_WAN_INTERFACE = "Device.IP.Interface.1";
+static const char *DEFAULT_LAN_INTERFACE = "Device.IP.Interface.3";
+static const char *DNS_RESOLV_CONF = "/etc/resolv.conf";
+static const char *DNS_RELAY_RESOLV_CONF = "/var/dnsrelay-resolv.conf";
+static const char *DHCP_OPTIONS = "/var/dhcp_options";
+static const char *DHCPV6_OPTIONS = "/etc/dibbler/server.conf";
+static const char *DNS_KEY_RESOLVCONF = "nameserver";
+static const char *DNS_KEY_DHCPOPS = "option:dns-server";
+static const char *DNS_KEY_DHCPV6OPS = "option dns-server";
+static const char *UPDATE_RESOLV_CMD = "/bin/sh /etc/utopia/service.d/set_resolv_conf.sh";
+static const int DHCP_DNS_NUMBER = 3;
+static boolean_t g_DnsRelayEnabled = FALSE;
+extern int CosaDmlDHCPv6sTriggerRestart(BOOL OnlyTrigger);
 
+static int GetWanDhcpDns(DNS_Client_t *dns)
+{
+    int dns_count = 0;
+    token_t se_token;
+    char dns_list[512] = {0};
+    int se_fd = -1;
+    char * ip = NULL;
+
+    se_fd = s_sysevent_connect(&se_token);
+    if (se_fd < 0)
+    {
+        return 0;
+    }
+
+    // Get IPv4 DNS IPs.
+    sysevent_get(se_fd, se_token, "wan_dhcp_dns", dns_list, sizeof(dns_list) - 1);
+    ip = strtok(dns_list, " ");
+    while (dns_count < DHCP_DNS_NUMBER)
+    {
+        if (ip)
+        {
+            AnscCopyString(dns->dns_server[dns_count], ip);
+            ip = strtok(NULL, " ");
+        }
+        else
+        {
+            AnscCopyString(dns->dns_server[dns_count], "0.0.0.0");
+        }
+        dns_count++;
+    }
+
+    // Get IPv6 DNS IPs.
+    sysevent_get(se_fd, se_token, "ipv6_nameserver", dns_list, sizeof(dns_list) - 1);
+    ip = strtok(dns_list, " ");
+    while (dns_count < DHCP_DNS_NUMBER * 2)
+    {
+        if (ip)
+        {
+            AnscCopyString(dns->dns_server[dns_count], ip);
+            ip = strtok(NULL, " ");
+        }
+        else
+        {
+            AnscCopyString(dns->dns_server[dns_count], "::");
+        }
+        dns_count++;
+    }
+
+    return dns_count;
+}
+
+static int RestartPlatform(boolean_t doIpv6Restart)
+{
+    int rc = system(UPDATE_RESOLV_CMD);
+    if ((rc == 0) && (doIpv6Restart == TRUE))
+    {
+        rc = CosaDmlDHCPv6sTriggerRestart(FALSE);
+    }
+    return rc;
+}
 /**********************************************************************
 
     caller:     self
@@ -1081,6 +1156,57 @@ static int CHECK_V4_V6(char *str){
     return DNS_FAMILY_NONE;
 }
 
+static COSA_DML_DNS_STATUS GetDnsServerStatus(const char *ip, const char *interface)
+{
+    COSA_DML_DNS_STATUS status = COSA_DML_DNS_STATUS_Disabled;
+    FILE *fd = NULL;
+    char buff[256] = {};
+    struct stat fs = {};
+    const char *resolvConf = NULL;
+    const char *dnsKey = DNS_KEY_RESOLVCONF;
+
+    // Evaluate active config file for the specific interface.
+    if (strcmp(interface, DEFAULT_WAN_INTERFACE) == 0)
+    {
+        if ((stat(DNS_RESOLV_CONF, &fs) == 0) && (fs.st_size > 0))
+        {
+            resolvConf = DNS_RESOLV_CONF;
+        }
+    }
+    else if (strcmp(interface, DEFAULT_LAN_INTERFACE) == 0)
+    {
+        if ((stat(DNS_RELAY_RESOLV_CONF, &fs) == 0) && (fs.st_size > 0))
+        {
+            resolvConf = DNS_RELAY_RESOLV_CONF;
+        }
+        else if ((stat(DHCP_OPTIONS, &fs) == 0) && (fs.st_size > 0) && (CHECK_V4_V6(ip) == DNS_FAMILY_IPV4))
+        {
+            resolvConf = DHCP_OPTIONS;
+            dnsKey = DNS_KEY_DHCPOPS;
+        }
+        else if ((stat(DHCPV6_OPTIONS, &fs) == 0) && (fs.st_size > 0) && (CHECK_V4_V6(ip) == DNS_FAMILY_IPV6))
+        {
+            resolvConf = DHCPV6_OPTIONS;
+            dnsKey = DNS_KEY_DHCPV6OPS;
+        }
+    }
+
+    if (resolvConf)
+    {
+        snprintf(buff, sizeof(buff) - 1, "cat %s | grep '%s' | grep -c -E '( |,)%s(,|$)' >&1", resolvConf, dnsKey, ip);
+        fd = popen(buff, "r");
+        if (fd)
+        {
+            if ((EOF != fgets(buff, sizeof(buff), fd)) && (0 != strncmp(buff, "0", 1)))
+            {
+                status = COSA_DML_DNS_STATUS_Enabled;
+            }
+            pclose(fd);
+        }
+    }
+    return status;
+}
+
 /**********************************************************************
 
     caller:     self
@@ -1112,6 +1238,7 @@ CosaDmlDnsClientGetServers
         PULONG                      pulCount
     )
 {
+#if 0
     DNS_Client_t dns;
     UNREFERENCED_PARAMETER(hContext);
     UtopiaContext ctx;
@@ -1166,6 +1293,103 @@ CosaDmlDnsClientGetServers
         Utopia_Free(&ctx, 0);
     }
     return pServer;
+#else
+    PCOSA_DML_DNS_CLIENT_SERVER pServer = NULL;
+    DNS_Client_t dhcpcDns = {0};
+    UtopiaContext ctx = {};
+    int i = 0;
+    int dnsCount = 0;
+    int dhcpDnsCount = 0;
+    int staticDnsCount = 0;
+    *pulCount = 0;
+    char server_enable[sizeof(SYSCFG_DNS_SERVER_ENABLE_KEY) + 1] = {0};
+    char buf[3] = {0};
+
+    if (!Utopia_Init(&ctx))
+    {
+        return NULL;
+    }
+
+    dhcpDnsCount = GetWanDhcpDns(&dhcpcDns);
+    staticDnsCount = Utopia_GetNumberOfDnsServers(&ctx);
+
+    dnsCount = dhcpDnsCount + staticDnsCount;
+    if (dnsCount == 0)
+    {
+        Utopia_Free(&ctx, 0);
+        return NULL;
+    }
+
+    pServer = (PCOSA_DML_DNS_CLIENT_SERVER)AnscAllocateMemory(dnsCount * sizeof(COSA_DML_DNS_CLIENT_SERVER));
+    if (!pServer)
+    {
+        Utopia_Free(&ctx, 0);
+        return NULL;
+    }
+    *pulCount = dnsCount;
+    int af = DNS_FAMILY_NONE;
+    for (i = 0; i < dhcpDnsCount; i++)
+    {
+        pServer[i].InstanceNumber = i + 1;
+        pServer[i].Order = pServer[i].InstanceNumber;
+        sprintf(pServer[i].Alias, "Server%d", pServer[i].InstanceNumber);
+        AnscCopyString(pServer[i].DNSServer, dhcpcDns.dns_server[i]);
+        AnscCopyString(pServer[i].Interface, DEFAULT_WAN_INTERFACE);
+        snprintf(server_enable, sizeof(server_enable), SYSCFG_DNS_SERVER_ENABLE_KEY, pServer[i].InstanceNumber);
+        syscfg_get(NULL, server_enable, buf, sizeof(buf));
+        pServer[i].bEnabled = ((strcmp(pServer[i].DNSServer, "0.0.0.0") == 0) || (strcmp(pServer[i].DNSServer, "::") == 0) ? FALSE :
+                                buf[0] != '\0' ? atoi(buf) : TRUE );
+        /*If the DNS IP is 0.0.0.0 or if the user sets it to FALSE, the enable will be FALSE Otherwise the Enable will be TRUE   */
+
+        if (pServer[i].bEnabled == TRUE)
+        {
+            pServer[i].Status = GetDnsServerStatus(pServer[i].DNSServer, pServer[i].Interface);
+        }
+        else
+        {
+            pServer[i].Status = COSA_DML_DNS_STATUS_Disabled;
+        }
+
+        af = CHECK_V4_V6(dhcpcDns.dns_server[i]);
+        switch (af)
+        {
+        case DNS_FAMILY_IPV4:
+            pServer[i].Type = COSA_DML_DNS_ADDR_SRC_DHCPV4;
+            break;
+        case DNS_FAMILY_IPV6:
+            pServer[i].Type = COSA_DML_DNS_ADDR_SRC_DHCPV6;
+            break;
+        default:
+            break;
+        }
+    }
+
+    PCOSA_DML_DNS_CLIENT_SERVER pStaticServer = pServer + dhcpDnsCount;
+    for (i = 0; i < staticDnsCount; i++)
+    {
+        dns_server_t dns = {};
+        Utopia_GetDnsServerByIndex(&ctx, i, &dns);
+
+        pStaticServer[i].InstanceNumber = dns.ins_num;
+        pStaticServer[i].Order = pServer[i].InstanceNumber;
+        AnscCopyString(pStaticServer[i].Alias, dns.alias);
+        AnscCopyString(pStaticServer[i].DNSServer, dns.ip_address);
+        AnscCopyString(pStaticServer[i].Interface, dns.interface);
+        pStaticServer[i].bEnabled = dns.enable;
+        if (pStaticServer[i].bEnabled == TRUE)
+        {
+            pStaticServer[i].Status = GetDnsServerStatus(pStaticServer[i].DNSServer, pStaticServer[i].Interface);
+        }
+        else
+        {
+            pStaticServer[i].Status = COSA_DML_DNS_STATUS_Disabled;
+        }
+        pStaticServer[i].Type = COSA_DML_DNS_ADDR_SRC_Static;
+    }
+
+    Utopia_Free(&ctx, 0);
+    return pServer;
+#endif
 }
 
 /**********************************************************************
@@ -1211,6 +1435,8 @@ CosaDmlDnsClientSetServerValues
 {
     UNREFERENCED_PARAMETER(hContext);
     UNREFERENCED_PARAMETER(pAlias);
+
+#if 0
     char inst_str[10];
     char inst_num[32];
     errno_t safec_rc = -1;
@@ -1232,7 +1458,8 @@ CosaDmlDnsClientSetServerValues
         Utopia_RawSet(&ctx, NULL, inst_num, inst_str);
         Utopia_Free(&ctx, 1); 
     }
-       
+#endif
+
     return SUCCESS;
 }
 
@@ -1269,7 +1496,30 @@ CosaDmlDnsClientAddServer
 {
     UNREFERENCED_PARAMETER(hContext);
     UNREFERENCED_PARAMETER(pEntry);
-    return ANSC_STATUS_FAILURE;
+    int rc = -1;
+    UtopiaContext ctx = {};
+
+    if (!Utopia_Init(&ctx))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    dns_server_t dns = {};
+    dns.ins_num = pEntry->InstanceNumber;
+    dns.enable = pEntry->bEnabled;
+    AnscCopyString(dns.alias, pEntry->Alias);
+    AnscCopyString(dns.ip_address, pEntry->DNSServer);
+    AnscCopyString(dns.interface, (strlen(pEntry->Interface) > 0) ? pEntry->Interface : DEFAULT_WAN_INTERFACE);
+    AnscCopyString(dns.type, "Static");
+
+    rc = Utopia_AddDnsServer(&ctx, &dns);
+    Utopia_Free(&ctx, !rc);
+
+    if (rc == 0)
+    {
+        rc = RestartPlatform((CHECK_V4_V6(dns.ip_address) == DNS_FAMILY_IPV6) ? TRUE : FALSE);
+    }
+    return (rc == 0) ? ANSC_STATUS_SUCCESS : ANSC_STATUS_FAILURE;
 }
 
 /**********************************************************************
@@ -1304,7 +1554,28 @@ CosaDmlDnsClientDelServer
 {
     UNREFERENCED_PARAMETER(hContext);
     UNREFERENCED_PARAMETER(ulInstanceNumber);
-    return ANSC_STATUS_FAILURE;
+    int rc = -1;
+    UtopiaContext ctx = {};
+
+    if (!Utopia_Init(&ctx))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    int index = 0;
+    dns_server_t dns = {};
+    Utopia_GetDnsServerIndexByInsNum(&ctx, ulInstanceNumber, &index);
+    Utopia_GetDnsServerByIndex(&ctx, index, &dns);
+    boolean_t doIpv6Restart = (CHECK_V4_V6(dns.ip_address) == DNS_FAMILY_IPV6) ? TRUE : FALSE;
+
+    rc = Utopia_RemoveDnsServer(&ctx, ulInstanceNumber);
+    Utopia_Free(&ctx, !rc);
+
+    if (rc == 0)
+    {
+        rc = RestartPlatform(doIpv6Restart);
+    }
+    return (rc == 0) ? ANSC_STATUS_SUCCESS : ANSC_STATUS_FAILURE;
 }
 
 /**********************************************************************
@@ -1338,11 +1609,50 @@ CosaDmlDnsClientSetServer
     )
 {
     UNREFERENCED_PARAMETER(hContext);
+#if 0
     ULONG ipAddr;
 
     inet_pton(AF_INET, pEntry->DNSServer, &ipAddr);
 	
     return CosaDmlDcSetWanNameServer(NULL, ipAddr, pEntry->InstanceNumber);
+#else
+    int rc = -1;
+    UtopiaContext ctx = {};
+    dns_server_t dns = {};
+    int index = 0;
+    boolean_t doIpv6Restart = FALSE;
+    char server_enable[sizeof(SYSCFG_DNS_SERVER_ENABLE_KEY) + 1] = {0};
+    if (!Utopia_Init(&ctx))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+    if (pEntry->InstanceNumber <= DHCP_DNS_NUMBER * 2) //This checking is done to set the value for type DHCP separately
+    {
+         snprintf(server_enable, sizeof(server_enable), SYSCFG_DNS_SERVER_ENABLE_KEY, pEntry->InstanceNumber);
+         syscfg_set(NULL, server_enable, pEntry->bEnabled ? "1" : "0");
+         return ANSC_STATUS_SUCCESS;        
+    }
+
+    Utopia_GetDnsServerIndexByInsNum(&ctx, pEntry->InstanceNumber, &index);
+    rc = Utopia_GetDnsServerByIndex(&ctx, index, &dns);
+
+    if (rc == 0)
+    {
+        doIpv6Restart = ((CHECK_V4_V6(dns.ip_address) == DNS_FAMILY_IPV6) || (CHECK_V4_V6(pEntry->DNSServer) == DNS_FAMILY_IPV6)) ? TRUE : FALSE;
+        dns.enable = pEntry->bEnabled;
+        AnscCopyString(dns.alias, pEntry->Alias);
+        AnscCopyString(dns.ip_address, pEntry->DNSServer);
+        AnscCopyString(dns.interface, pEntry->Interface);
+        rc = Utopia_SetDnsServerByIndex(&ctx, index, &dns);
+    }
+    Utopia_Free(&ctx, !rc);
+
+    if (rc == 0)
+    {
+        rc = RestartPlatform(doIpv6Restart);
+    }
+    return (rc == 0) ? ANSC_STATUS_SUCCESS : ANSC_STATUS_FAILURE;
+#endif
 }
 
 
@@ -1382,6 +1692,7 @@ CosaDmlDnsClientGetServer
 
 {
     UNREFERENCED_PARAMETER(hContext);
+#if 0
     ULONG count;
     PCOSA_DML_DNS_CLIENT_SERVER pTable;
     pTable = CosaDmlDnsClientGetServers(hContext, &count);
@@ -1397,7 +1708,29 @@ CosaDmlDnsClientGetServer
     }
 
     AnscFreeMemory(pTable);/*RDKB-6837, CID-33471, free unused resource before exit*/
-    return ret;
+#else
+    UtopiaContext ctx = {};
+    dns_server_t dns = {};
+    int index = 0;
+
+    if (!Utopia_Init(&ctx))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    Utopia_GetDnsServerIndexByInsNum(&ctx, pEntry->InstanceNumber, &index);
+    Utopia_GetDnsServerByIndex(&ctx, index, &dns);
+
+    pEntry->bEnabled = dns.enable;
+    AnscCopyString(pEntry->Alias, dns.alias);
+    AnscCopyString(pEntry->DNSServer, dns.ip_address);
+    AnscCopyString(pEntry->Interface, dns.interface);
+    pEntry->Type = COSA_DML_DNS_ADDR_SRC_Static;
+    pEntry->Status = (dns.enable == TRUE) ? COSA_DML_DNS_STATUS_Enabled : COSA_DML_DNS_STATUS_Disabled;
+
+    Utopia_Free(&ctx, 0);
+#endif
+    return ANSC_STATUS_SUCCESS;
 }
 
 /*
@@ -1436,7 +1769,37 @@ CosaDmlDnsEnableRelay
 {
     UNREFERENCED_PARAMETER(hContext);
     UNREFERENCED_PARAMETER(bEnabled);
-    return ANSC_STATUS_FAILURE;
+    UtopiaContext ctx = {};
+
+    if (!Utopia_Init(&ctx))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    boolean_t doRestart = (g_DnsRelayEnabled == bEnabled) ? FALSE : TRUE;
+    g_DnsRelayEnabled = bEnabled;
+    int rc = Utopia_SetDnsRelayEnabled(&ctx, g_DnsRelayEnabled);
+    Utopia_Free(&ctx, !rc);
+
+    if ((rc == 0) && (doRestart == TRUE))
+    {
+        rc = RestartPlatform(TRUE);
+
+        if (rc == 0)
+        {
+            PCOSA_DATAMODEL_DNS    pDns = (PCOSA_DATAMODEL_DNS)g_pCosaBEManager->hDNS;
+
+            if (pDns != NULL)
+            {
+                PCOSA_DML_DNS_RELAY    pRelay = &pDns->Relay;
+
+                //update the status based on enabled state
+                pRelay->Status = (g_DnsRelayEnabled) ? COSA_DML_DNS_STATUS_Enabled : COSA_DML_DNS_STATUS_Disabled;
+            }
+        }
+ 
+    }
+    return (rc == 0) ? ANSC_STATUS_SUCCESS : ANSC_STATUS_FAILURE;
 }
 
 
@@ -1465,11 +1828,41 @@ CosaDmlDnsEnableRelay
 COSA_DML_DNS_STATUS
 CosaDmlIpDnsGetRelayStatus
     (
+        ANSC_HANDLE                 hContext,
+        PCOSA_DML_DNS_RELAY         pRelay
+    )
+{
+    COSA_DML_DNS_STATUS status = COSA_DML_DNS_STATUS_Error;
+    boolean_t dslite_enable = false;
+    UtopiaContext ctx = {};
+    if (!Utopia_Init(&ctx))
+    {
+        return status;
+    }
+
+    int rc = Utopia_GetDnsRelayEnabled(&ctx, &g_DnsRelayEnabled);
+    if (rc == 0)
+    {
+        Utopia_GetDsliteEnable(&ctx, &dslite_enable);
+        status = ((g_DnsRelayEnabled | dslite_enable) == TRUE) ? COSA_DML_DNS_STATUS_Enabled : COSA_DML_DNS_STATUS_Disabled;
+        pRelay->Status = status;
+        pRelay->bEnabled = g_DnsRelayEnabled;
+    }
+    Utopia_Free(&ctx, 0);
+    return status;
+}
+COSA_DML_DNS_STATUS
+CosaDmlIpDnsGetRelayEnable
+    (
         ANSC_HANDLE                 hContext
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-    return ANSC_STATUS_FAILURE;
+    char buf[64];
+
+    syscfg_get( NULL, "dns_relay_enable", buf, sizeof(buf));
+
+    return strcmp(buf, "1") == 0 ? COSA_DML_DNS_STATUS_Enabled : COSA_DML_DNS_STATUS_Disabled;
 }
 
 /*
@@ -1508,7 +1901,51 @@ CosaDmlDnsRelayGetServers
 {
     UNREFERENCED_PARAMETER(hContext);
     UNREFERENCED_PARAMETER(pulCount);
-    return NULL;
+    PCOSA_DML_DNS_RELAY_ENTRY pForward = NULL;
+    UtopiaContext ctx = {};
+    int forwardCount = 0;
+    *pulCount = 0;
+
+    if (!Utopia_Init(&ctx))
+    {
+        return NULL;
+    }
+
+    forwardCount = Utopia_GetNumberOfDnsForwards(&ctx);
+
+    pForward = (PCOSA_DML_DNS_CLIENT_SERVER)AnscAllocateMemory(forwardCount * sizeof(COSA_DML_DNS_CLIENT_SERVER));
+    if (!pForward)
+    {
+        Utopia_Free(&ctx, 0);
+        return NULL;
+    }
+
+    *pulCount = forwardCount;
+
+    int i = 0;
+    for (; i < forwardCount; i++)
+    {
+        relay_forward_t forward = {};
+        Utopia_GetDnsForwardByIndex(&ctx, i, &forward);
+
+        pForward[i].InstanceNumber = forward.ins_num;
+        AnscCopyString(pForward[i].Alias, forward.alias);
+        AnscCopyString(pForward[i].DNSServer, forward.ip_address);
+        AnscCopyString(pForward[i].Interface, forward.interface);
+        pForward[i].bEnabled = forward.enable;
+        if (pForward[i].bEnabled == TRUE)
+        {
+            pForward[i].Status = GetDnsServerStatus(pForward[i].DNSServer, pForward[i].Interface);
+        }
+        else
+        {
+            pForward[i].Status = COSA_DML_DNS_STATUS_Disabled;
+        }
+        pForward[i].Type = COSA_DML_DNS_ADDR_SRC_Static;
+    }
+
+    Utopia_Free(&ctx, 0);
+    return pForward;
 }
 
 
@@ -1596,7 +2033,29 @@ CosaDmlDnsRelayAddServer
 {
     UNREFERENCED_PARAMETER(hContext);
     UNREFERENCED_PARAMETER(pEntry);
-    return ANSC_STATUS_FAILURE;
+    UtopiaContext ctx = {};
+
+    if (!Utopia_Init(&ctx))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    relay_forward_t forward = {};
+    forward.ins_num = pEntry->InstanceNumber;
+    forward.enable = pEntry->bEnabled;
+    AnscCopyString(forward.alias, pEntry->Alias);
+    AnscCopyString(forward.ip_address, pEntry->DNSServer);
+    AnscCopyString(forward.interface, (strlen(pEntry->Interface) > 0) ? pEntry->Interface : DEFAULT_LAN_INTERFACE);
+    AnscCopyString(forward.type, "Static");
+
+    int rc = Utopia_AddDnsForward(&ctx, &forward);
+    Utopia_Free(&ctx, !rc);
+
+    if ((rc == 0) && (g_DnsRelayEnabled == TRUE))
+    {
+        rc = RestartPlatform((CHECK_V4_V6(forward.ip_address) == DNS_FAMILY_IPV6) ? TRUE : FALSE);
+    }
+    return (rc == 0) ? ANSC_STATUS_SUCCESS : ANSC_STATUS_FAILURE;
 }
 
 /**********************************************************************
@@ -1632,7 +2091,27 @@ CosaDmlDnsRelayDelServer
 {
     UNREFERENCED_PARAMETER(hContext);
     UNREFERENCED_PARAMETER(ulInstanceNumber);
-    return ANSC_STATUS_FAILURE;
+    UtopiaContext ctx = {};
+
+    if (!Utopia_Init(&ctx))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    int index = 0;
+    relay_forward_t forward = {};
+    Utopia_GetDnsForwardIndexByInsNum(&ctx, ulInstanceNumber, &index);
+    Utopia_GetDnsForwardByIndex(&ctx, index, &forward);
+    boolean_t doIpv6Restart = (CHECK_V4_V6(forward.ip_address) == DNS_FAMILY_IPV6) ? TRUE : FALSE;
+
+    int rc = Utopia_RemoveDnsForward(&ctx, ulInstanceNumber);
+    Utopia_Free(&ctx, !rc);
+
+    if ((rc == 0) && (g_DnsRelayEnabled == TRUE))
+    {
+        rc = RestartPlatform(doIpv6Restart);
+    }
+    return (rc == 0) ? ANSC_STATUS_SUCCESS : ANSC_STATUS_FAILURE;
 }
 /**********************************************************************
 
@@ -1667,7 +2146,37 @@ CosaDmlDnsRelaySetServer
 {
     UNREFERENCED_PARAMETER(hContext);
     UNREFERENCED_PARAMETER(pEntry);
-    return ANSC_STATUS_FAILURE;
+    int rc = -1;
+    UtopiaContext ctx = {};
+    relay_forward_t forward = {};
+    int index = 0;
+    boolean_t doIpv6Restart = FALSE;
+
+    if (!Utopia_Init(&ctx))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    Utopia_GetDnsForwardIndexByInsNum(&ctx, pEntry->InstanceNumber, &index);
+    rc = Utopia_GetDnsForwardByIndex(&ctx, index, &forward);
+
+    if (rc == 0)
+    {
+        doIpv6Restart = ((CHECK_V4_V6(forward.ip_address) == DNS_FAMILY_IPV6) || (CHECK_V4_V6(pEntry->DNSServer) == DNS_FAMILY_IPV6)) ? TRUE : FALSE;
+        forward.enable = pEntry->bEnabled;
+        AnscCopyString(forward.alias, pEntry->Alias);
+        AnscCopyString(forward.ip_address, pEntry->DNSServer);
+        AnscCopyString(forward.interface, pEntry->Interface);
+        rc = Utopia_SetDnsForwardByIndex(&ctx, index, &forward);
+    }
+
+    Utopia_Free(&ctx, !rc);
+
+    if ((rc == 0) && (g_DnsRelayEnabled == TRUE))
+    {
+        rc = RestartPlatform(doIpv6Restart);
+    }
+    return (rc == 0) ? ANSC_STATUS_SUCCESS : ANSC_STATUS_FAILURE;
 }
 
 
@@ -1710,8 +2219,27 @@ CosaDmlDnsRelayGetServer
 {
     UNREFERENCED_PARAMETER(hContext);
     UNREFERENCED_PARAMETER(pEntry);
-    return ANSC_STATUS_FAILURE;
+    UtopiaContext ctx = {};
+    relay_forward_t forward = {};
+    int index = 0;
 
+    if (!Utopia_Init(&ctx))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    Utopia_GetDnsForwardIndexByInsNum(&ctx, pEntry->InstanceNumber, &index);
+    Utopia_GetDnsForwardByIndex(&ctx, index, &forward);
+
+    pEntry->bEnabled = forward.enable;
+    AnscCopyString(pEntry->Alias, forward.alias);
+    AnscCopyString(pEntry->DNSServer, forward.ip_address);
+    AnscCopyString(pEntry->Interface, forward.interface);
+    pEntry->Type = COSA_DML_DNS_ADDR_SRC_Static;
+    pEntry->Status = (forward.enable == TRUE) ? COSA_DML_DNS_STATUS_Enabled : COSA_DML_DNS_STATUS_Disabled;
+
+    Utopia_Free(&ctx, 0);
+    return ANSC_STATUS_SUCCESS;
 }
 #endif
 
