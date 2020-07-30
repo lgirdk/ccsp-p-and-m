@@ -117,6 +117,17 @@ _COSA_DML_DNS_CLIENT_SERVER
 COSA_DML_DNS_CLIENT_SERVER,  *PCOSA_DML_DNS_CLIENT_SERVER;
 
 
+//LGI ADD Start
+typedef struct
+_COSA_DML_DNS_RELAY
+{
+    BOOLEAN                         bEnabled;
+    COSA_DML_DNS_STATUS             Status;
+}
+COSA_DML_DNS_RELAY, *PCOSA_DML_DNS_RELAY;
+//LGI ADD END
+
+
 typedef  struct
 _COSA_DML_DNS_RELAY_ENTRY
 {
@@ -125,7 +136,8 @@ _COSA_DML_DNS_RELAY_ENTRY
 
     BOOLEAN                         bEnabled;
     COSA_DML_DNS_STATUS             Status;
-    ANSC_IPV4_ADDRESS               DNSServer;
+    //In order to be compatible with Ipv6
+    char                            DNSServer[64]; // LGI MOD
     char                            Interface[COSA_DML_ALIAS_NAME_LENGTH]; /* IP interface name */
     COSA_DML_DNS_ADDR_SRC           Type;
 }
@@ -219,7 +231,10 @@ CosaDmlDnsEnableRelay
 COSA_DML_DNS_STATUS
 CosaDmlIpDnsGetRelayStatus
     (
-        ANSC_HANDLE                 hContext
+        //LGI MOD Start
+        ANSC_HANDLE                 hContext,
+        PCOSA_DML_DNS_RELAY         pRelay
+        //LGI MOD End
     );
 
 /*
