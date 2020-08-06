@@ -10311,6 +10311,18 @@
 
           <parameter>
 
+            <name>X_RDKCENTRAL_InternalPortEndRange</name>
+
+            <type>unsignedInt[0:65535]</type>
+
+            <syntax>uint32</syntax>
+
+            <writable>true</writable>
+
+          </parameter>
+
+          <parameter>
+
             <name>X_RDKCENTRAL_RuleSource</name>
 
             <type>string(32)</type>
