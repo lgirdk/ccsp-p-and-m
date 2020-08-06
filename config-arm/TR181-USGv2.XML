@@ -13867,6 +13867,18 @@
           <writable>true</writable>
 
         </parameter>
+
+        <parameter>
+
+           <name>BlockPingMessages</name>
+
+           <type>boolean</type>
+
+           <syntax>bool</syntax>
+
+           <writable>true</writable>
+
+        </parameter>
         
         <parameter>
 
