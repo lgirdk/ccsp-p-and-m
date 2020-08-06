@@ -3663,7 +3663,7 @@ VLAN_GetParamStringValue
     {
         /* collect value */
         AnscCopyString(pValue, pVLAN->Info.Name);
-        return -1;
+        return 0;
     }
 
 
@@ -3717,9 +3717,9 @@ VLAN_SetParamBoolValue
     {
         /* save update to backup */
         //$HL 07/2/2013
-        //pVLAN->Cfg.bEnabled = bValue;
+        pVLAN->Cfg.bEnabled = bValue;
 
-        return FALSE;
+        return TRUE;
     }
 
 
@@ -3877,7 +3877,8 @@ VLAN_SetParamStringValue
     if( AnscEqualString(ParamName, "Name", TRUE) )
     {
         /* save update to backup */
-        return FALSE;
+        AnscCopyString(pVLAN->Info.Name, pString);
+        return TRUE;
     }
 
 
