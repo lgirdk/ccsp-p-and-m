@@ -3881,7 +3881,7 @@ VLAN_GetParamStringValue
            ERR_CHK(rc);
            return -1;
         }
-        return -1;
+        return 0;
     }
 
 
@@ -3935,11 +3935,11 @@ VLAN_SetParamBoolValue
     {
         /* save update to backup */
         //$HL 07/2/2013
-        //PCOSA_CONTEXT_LINK_OBJECT       pCosaContext     = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
-        //PCOSA_DML_BRG_VLAN_FULL         pVLAN            = (PCOSA_DML_BRG_VLAN_FULL  )pCosaContext->hContext;
-        //pVLAN->Cfg.bEnabled = bValue;
+        PCOSA_CONTEXT_LINK_OBJECT pCosaContext = (PCOSA_CONTEXT_LINK_OBJECT) hInsContext;
+        PCOSA_DML_BRG_VLAN_FULL pVLAN = (PCOSA_DML_BRG_VLAN_FULL) pCosaContext->hContext;
+        pVLAN->Cfg.bEnabled = bValue;
 
-        return FALSE;
+        return TRUE;
     }
 
 
@@ -4106,7 +4106,8 @@ VLAN_SetParamStringValue
     if (strcmp(ParamName, "Name") == 0)
     {
         /* save update to backup */
-        return FALSE;
+        AnscCopyString(pVLAN->Info.Name, pString);
+        return TRUE;
     }
 
 
