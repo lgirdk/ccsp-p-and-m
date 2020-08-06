@@ -140,6 +140,7 @@ _COSA_DML_NAT_PMAPPING
     USHORT                          ExternalPort;
     USHORT                          ExternalPortEndRange;
     USHORT                          InternalPort;
+    USHORT                          X_RDKCENTRAL_InternalPortEndRange;
     UCHAR                           Protocol;                           /* IP protocol number for TCP, UDP */
     ANSC_IPV4_ADDRESS               InternalClient;
     char                            Description[256];
