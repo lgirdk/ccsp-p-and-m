@@ -10210,6 +10210,18 @@
 
           <parameter>
 
+            <name>X_RDKCENTRAL_InternalPortEndRange</name>
+
+            <type>unsignedInt[0:65535]</type>
+
+            <syntax>uint32</syntax>
+
+            <writable>true</writable>
+
+          </parameter>
+
+          <parameter>
+
             <name>Protocol</name>
 
             <type>string: TCP(1),UDP(2),BOTH(3)</type>
