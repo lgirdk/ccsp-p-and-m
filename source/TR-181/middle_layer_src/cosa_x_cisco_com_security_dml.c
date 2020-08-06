@@ -223,6 +223,26 @@ X_CISCO_COM_Security_GetParamBoolValue
         return TRUE;
     }
 
+    if( AnscEqualString(ParamName, "BlockPingMessages", TRUE))
+    {
+        /* Collect Value */
+        char buf[5] = {0};
+
+        syscfg_get( NULL, "block_ping", buf, sizeof(buf));
+
+        if(buf != NULL)
+         {
+             if (strcmp(buf,"1") == 0)
+             {
+                 *pBool = TRUE;
+                 return TRUE;
+             }
+         }
+         *pBool = FALSE;
+
+         return TRUE;
+    }
+
     if( AnscEqualString(ParamName, "CleanLog", TRUE))
     {
         /* collect value */
@@ -582,6 +602,32 @@ X_CISCO_COM_Security_SetParamBoolValue
         /* save update to backup */
         pSecurityCfg->ApplyFirewallSettings = bValue;
 
+        return TRUE;
+    }
+
+    if( AnscEqualString(ParamName, "BlockPingMessages", TRUE))
+    {
+        char buf[5];
+        int value;
+
+        syscfg_get( NULL, "block_ping" , buf, sizeof(buf));
+        value = atoi(buf);
+        if(value != bValue)
+        {
+            syscfg_set(NULL, "block_ping", bValue == TRUE ? "1" : "0");
+            syscfg_set(NULL, "block_pingv6", bValue == TRUE ? "1" : "0");
+
+            if (syscfg_commit() != 0)
+            {
+                AnscTraceWarning(("Firewall - syscfg_commit BlockPingMessages failed!\n"));
+            }
+            else
+            {
+                //Restart firewall to apply BlockPingMessages setting
+                //commonSyseventSet("firewall-restart", ""); In Current code the sysevent method will not restart firewall , Uncomment once the issue is resolved.
+                system("firewall restart");
+            }
+        }
         return TRUE;
     }
 
