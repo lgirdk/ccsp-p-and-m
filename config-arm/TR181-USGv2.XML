@@ -10420,6 +10420,18 @@
 
           <parameter>
 
+            <name>InternalPortEndRange</name>
+
+            <type>unsignedInt[0:65535]</type>
+
+            <syntax>uint32</syntax>
+
+            <writable>true</writable>
+
+          </parameter>
+
+          <parameter>
+
             <name>RuleSource</name>
 
             <type>string(32)</type>
