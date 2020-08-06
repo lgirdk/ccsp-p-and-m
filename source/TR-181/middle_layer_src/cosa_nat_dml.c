@@ -1984,6 +1984,13 @@ PortMapping_GetParamUlongValue
         return TRUE;
     }
 
+    if (strcmp(ParamName, "InternalPortEndRange") == 0)
+    {
+        /* collect value */
+        *puLong  = pNatPMapping->InternalPortEndRange;
+        return TRUE;
+    }
+
     if (strcmp(ParamName, "Protocol") == 0)
     {
         /* collect value */
@@ -2413,9 +2420,23 @@ PortMapping_SetParamUlongValue
     if (strcmp(ParamName, "InternalPort") == 0)
     {
         /* save update to backup */
-        pNatPMapping->InternalPort = (USHORT)uValue;
+        if ( uValue != 0 )
+        {
+                        pNatPMapping->InternalPort = (USHORT)uValue;
+                        return TRUE;
+        }
+        return FALSE;
+    }
 
-        return TRUE;
+    if (strcmp(ParamName, "InternalPortEndRange") == 0)
+    {
+       /* save update to backup */
+       if ( uValue != 0 )
+       {
+                        pNatPMapping->InternalPortEndRange = (USHORT)uValue;
+                        return TRUE;
+       }
+       return FALSE;
     }
 
     if (strcmp(ParamName, "Protocol") == 0)
@@ -2623,12 +2644,10 @@ PortMapping_Validate
 #if defined (MULTILAN_FEATURE)
     if( pPortMapping->bEnabled && (
         !_Check_PF_parameter(pPortMapping) ||
-        !CosaDmlChkDesp(pPortMapping->Description) ||
         !CosaDmlNatChkPortMappingMaxRuleNum(pPortMapping) ||
         !CosaDmlNatChkEnableFlg(pPortMapping)))
 #else
     if( !_Check_PF_parameter(pPortMapping) ||
-        !CosaDmlChkDesp(pPortMapping->Description) ||
         !CosaDmlNatChkPortMappingMaxRuleNum(pPortMapping) ||
         !CosaDmlNatChkEnableFlg(pPortMapping))
 #endif
