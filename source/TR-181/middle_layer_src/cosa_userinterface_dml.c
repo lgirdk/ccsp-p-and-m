@@ -291,6 +291,17 @@ UserInterface_GetParamUlongValue
         *puLong = pMyObject->UserInterfaceCfg.PasswordLockoutTime;
         return TRUE;
     }
+    if( AnscEqualString(ParamName, "MaxPasswordLockoutTimes", TRUE))
+    {
+        *puLong = pMyObject->UserInterfaceCfg.MaxPasswordLockoutTimes;
+        return TRUE;
+    }
+
+    if( AnscEqualString(ParamName, "LoginFailureWindow", TRUE))
+    {
+        *puLong = pMyObject->UserInterfaceCfg.LoginFailureWindow;
+        return TRUE;
+    }
   return FALSE;
 }
 
@@ -345,6 +356,17 @@ UserInterface_SetParamUlongValue
     if( AnscEqualString(ParamName, "PasswordLockoutTime", TRUE))
     {
         pMyObject->UserInterfaceCfg.PasswordLockoutTime = uValue;
+        return TRUE;
+    }
+    if( AnscEqualString(ParamName, "MaxPasswordLockoutTimes", TRUE))
+    {
+        pMyObject->UserInterfaceCfg.MaxPasswordLockoutTimes = uValue;
+        return TRUE;
+    }
+
+    if( AnscEqualString(ParamName, "LoginFailureWindow", TRUE))
+    {
+        pMyObject->UserInterfaceCfg.LoginFailureWindow = uValue;
         return TRUE;
     }
  return FALSE;
