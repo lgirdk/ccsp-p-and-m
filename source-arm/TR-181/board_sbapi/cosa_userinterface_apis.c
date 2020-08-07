@@ -392,6 +392,16 @@ CosaDmlUserInterfaceGetCfg
                pCfg->bHTTPSecurityHeaderEnable = FALSE;
        }
 
+        if (syscfg_get (NULL, "LoginFailureWindow", buf, sizeof(buf)) == 0)
+        {
+            pCfg->LoginFailureWindow = atoi(buf);
+        }
+
+        if (syscfg_get (NULL, "MaxPasswordLockoutTimes", buf, sizeof(buf)) == 0)
+        {
+            pCfg->MaxPasswordLockoutTimes = atoi(buf);
+        }
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -432,6 +442,16 @@ sprintf(buf, "%lu",  pCfg->PasswordLockoutTime);
 	 if (syscfg_set(NULL, "PasswordLockoutTime", buf) != 0) {
                      AnscTraceWarning(("%s : PasswordLockoutTime syscfg_set failed\n",__FUNCTION__));
 	}
+
+        sprintf(buf, "%d",  pCfg->MaxPasswordLockoutTimes);
+        if (syscfg_set(NULL, "MaxPasswordLockoutTimes", buf) != 0) {
+            AnscTraceWarning(("%s : MaxPasswordLockoutTimes syscfg_set failed\n",__FUNCTION__));
+        }
+
+        sprintf(buf, "%d",  pCfg->LoginFailureWindow);
+        if (syscfg_set(NULL, "LoginFailureWindow", buf) != 0) {
+            AnscTraceWarning(("%s : LoginFailureWindow syscfg_set failed\n",__FUNCTION__));
+        }
 
          if (syscfg_commit() != 0) {
                            AnscTraceWarning(("syscfg_commit failed\n"));
