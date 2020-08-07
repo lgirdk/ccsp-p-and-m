@@ -357,42 +357,59 @@ CosaDmlUserInterfaceGetCfg
 {
 
         char buf[10];
+        int rc;
 	memset(buf,0,sizeof(buf));
-        syscfg_get( NULL, "PasswordLockoutEnable", buf, sizeof(buf));
+        rc = syscfg_get( NULL, "PasswordLockoutEnable", buf, sizeof(buf));
 
-        if( buf != NULL )
-       {
-                  if (strcmp(buf,"true") == 0)
-                       pCfg->bPasswordLockoutEnable = TRUE;
-                  else
-                       pCfg->bPasswordLockoutEnable = FALSE;
-      }
+        if(rc == 0)
+        {
+            if (strcmp(buf,"true") == 0)
+                pCfg->bPasswordLockoutEnable = TRUE;
+            else
+                pCfg->bPasswordLockoutEnable = FALSE;
+        }
 	memset(buf,0,sizeof(buf));
-        syscfg_get( NULL, "PasswordLockoutAttempts", buf, sizeof(buf));
+        rc = syscfg_get( NULL, "PasswordLockoutAttempts", buf, sizeof(buf));
 
-        if( buf != NULL )
-       {
-			pCfg->PasswordLockoutAttempts=atoi(buf);
-       }
+        if((rc == 0) && (buf[0] != '\0'))
+        {
+            pCfg->PasswordLockoutAttempts=atoi(buf);
+        }
 
 	memset(buf,0,sizeof(buf));
-        syscfg_get( NULL, "PasswordLockoutTime", buf, sizeof(buf));
+        rc = syscfg_get( NULL, "PasswordLockoutTime", buf, sizeof(buf));
 
-        if( buf != NULL )
-       {
-			pCfg->PasswordLockoutTime=atoi(buf);
-       }
+        if((rc == 0) && (buf[0] != '\0'))
+        {
+            pCfg->PasswordLockoutTime=atoi(buf);
+        }
 
-       memset(buf,0,sizeof(buf));
-       syscfg_get( NULL, "HTTPSecurityHeaderEnable", buf, sizeof(buf));
+        memset(buf,0,sizeof(buf));
+        rc = syscfg_get( NULL, "LoginFailureWindow", buf, sizeof(buf));
 
-       if( buf != NULL )
-       {
-          if (strcmp(buf,"true") == 0)
-               pCfg->bHTTPSecurityHeaderEnable = TRUE;
-          else
-               pCfg->bHTTPSecurityHeaderEnable = FALSE;
-       }
+        if((rc == 0) && (buf[0] != '\0'))
+        {
+            pCfg->LoginFailureWindow=atoi(buf);
+        }
+
+        memset(buf,0,sizeof(buf));
+        rc = syscfg_get( NULL, "MaxPasswordLockoutTimes", buf, sizeof(buf));
+
+        if((rc == 0) && (buf[0] != '\0'))
+        {
+            pCfg->MaxPasswordLockoutTimes=atoi(buf);
+        }
+
+        memset(buf,0,sizeof(buf));
+        rc = syscfg_get( NULL, "HTTPSecurityHeaderEnable", buf, sizeof(buf));
+
+        if(rc == 0)
+        {
+            if (strcmp(buf,"true") == 0)
+                pCfg->bHTTPSecurityHeaderEnable = TRUE;
+            else
+                pCfg->bHTTPSecurityHeaderEnable = FALSE;
+        }
 
     return ANSC_STATUS_SUCCESS;
 }
@@ -434,6 +451,18 @@ sprintf(buf, "%d",  pCfg->PasswordLockoutTime);
 	 if (syscfg_set(NULL, "PasswordLockoutTime", buf) != 0) {
                      AnscTraceWarning(("%s : PasswordLockoutTime syscfg_set failed\n",__FUNCTION__));
 	}
+
+        memset(buf,0,sizeof(buf));
+        sprintf(buf, "%d",  pCfg->MaxPasswordLockoutTimes);
+        if (syscfg_set(NULL, "MaxPasswordLockoutTimes", buf) != 0) {
+            AnscTraceWarning(("%s : MaxPasswordLockoutTimes syscfg_set failed\n",__FUNCTION__));
+        }
+
+        memset(buf,0,sizeof(buf));
+        sprintf(buf, "%d",  pCfg->LoginFailureWindow);
+        if (syscfg_set(NULL, "LoginFailureWindow", buf) != 0) {
+            AnscTraceWarning(("%s : LoginFailureWindow syscfg_set failed\n",__FUNCTION__));
+        }
 
          if (syscfg_commit() != 0) {
                            AnscTraceWarning(("syscfg_commit failed\n"));
