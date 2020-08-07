@@ -4175,6 +4175,28 @@
           </parameter>
           <parameter>
 
+            <name>MaxPasswordLockoutTimes</name>
+
+            <type>unsignedInt</type>
+
+            <syntax>uint32</syntax>
+
+            <writable>true</writable>
+
+          </parameter>
+          <parameter>
+
+            <name>LoginFailureWindow</name>
+
+            <type>unsignedInt</type>
+
+            <syntax>uint32</syntax>
+
+            <writable>true</writable>
+
+          </parameter>
+          <parameter>
+
             <name>PasswordLockoutAttempts</name>
 
             <type>unsignedInt</type>
