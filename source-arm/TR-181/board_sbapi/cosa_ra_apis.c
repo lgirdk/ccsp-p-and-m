@@ -198,10 +198,14 @@ static int ParseZebraRaConf(ZebraRaConf_t *conf)
 
     while (fgets(line, sizeof(line), fp) != NULL) {
         /* only support one interface for now */
+        trim_leading_space(line);
+
+        /* Skip the commented entries */
+        if (line[0] == '#')
+            continue;
         if (strncmp(line, RA_CONF_IF, strlen(RA_CONF_IF)) == 0)
             break;
 
-        trim_leading_space(line);
         if (strstr(line, "prefix") != NULL) {
             if (conf->preCnt == MAX_PREF)
                 continue;
@@ -453,6 +457,11 @@ CosaDmlRaIfSetCfg
 	unsigned int  managedFlag = 0;
 	unsigned int  otherFlag   = 0;
     unsigned int  mtu   = 0;
+    enum {
+        DHCPV6_SERVER_TYPE_STATEFUL  =1,
+        DHCPV6_SERVER_TYPE_STATELESS
+    };
+    ULONG dhcpv6ServerType = DHCPV6_SERVER_TYPE_STATEFUL;
 	
     fprintf(stderr, "%s: Only support O/M flags. NOT SUPPORTED other flags FOR NOW!!\n", __FUNCTION__);
 	
@@ -489,8 +498,13 @@ CosaDmlRaIfSetCfg
         memset(out, 0, sizeof(out));
 
 		Utopia_Free(&utctx,1);
-		
-		system("sysevent set zebra-restart");
+
+		/*
+		 * When RA M/O flags are changed, we need to restart DHCPv6 service(Dibbler) as Device.DHCPv6.Server.X_CISCO_COM_Type did.
+		 * Also need to set correct server type for Dibbler config file in order to respond Solicit sent from LAN CPE when M flag = 1
+		 */
+		dhcpv6ServerType = pCfg->bAdvManagedFlag ? DHCPV6_SERVER_TYPE_STATEFUL : DHCPV6_SERVER_TYPE_STATELESS;
+		CosaDmlDhcpv6sRestartOnRaChanged(dhcpv6ServerType);
 		
 	    return ANSC_STATUS_SUCCESS;
 
