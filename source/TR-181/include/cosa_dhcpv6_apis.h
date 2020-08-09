@@ -195,6 +195,7 @@ _COSA_DML_DHCPCV6_RECV
 {
     SINGLE_LINK_ENTRY               Link;
     ULONG                           Tag;
+    ULONG                           Opt_len;
     UCHAR                           Server[255];
     UCHAR                           Value[1024];
 };
@@ -574,7 +575,8 @@ CosaDmlDhcpv6sGetClient
         ANSC_HANDLE                 hContext,
         ULONG                       ulPoolInstanceNumber,
         PCOSA_DML_DHCPSV6_CLIENT   *ppEntry,
-        PULONG                      pSize
+        PULONG                      pSize,
+        char                       *pInterface
     );
 
 ANSC_STATUS
@@ -766,3 +768,4 @@ void configureIpv6Route(uint32_t DeviceMode);
 
 #endif
 
+void CosaDmlDhcpv6sRestartOnRaChanged(ULONG dhcpv6ServerType);

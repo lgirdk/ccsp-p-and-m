@@ -1091,7 +1091,8 @@ extern COSARepopulateTableProc            g_COSARepopulateTable;
 
 enum {
     DHCPV6_SERVER_TYPE_STATEFUL  =1,
-    DHCPV6_SERVER_TYPE_STATELESS
+    DHCPV6_SERVER_TYPE_STATELESS = 2,
+    DHCPV6_SERVER_TYPE_CONCURRENT = 3,
 };
 
 #if defined(CISCO_CONFIG_DHCPV6_PREFIX_DELEGATION) && defined(_COSA_BCM_MIPS_)
@@ -1535,6 +1536,8 @@ BOOL g_lan_ready = FALSE;
 BOOL g_dhcpv6_server_prefix_ready = FALSE;
 ULONG g_dhcpv6s_restart_count = 0;
 ULONG g_dhcpv6s_refresh_count = 0;
+
+static BOOL isRaFlagSet = FALSE;
 
 #if defined (_HUB4_PRODUCT_REQ_)
     #define DHCPV6S_SERVER_PID_FILE   "/etc/dibbler/server.pid"
@@ -1993,6 +1996,40 @@ CosaDmlDhcpv6Init
     GETI_FROM_UTOPIA(DHCPV6S_NAME,    "", 0, "", 0, "servertype",   g_dhcpv6_server_type)
     GETI_FROM_UTOPIA(DHCPV6S_NAME,  "", 0, "", 0, "poolnumber", uDhcpv6ServerPoolNum)
 
+    if (g_dhcpv6_server == 1)
+    {
+        if (g_dhcpv6_server_type == DHCPV6_SERVER_TYPE_STATEFUL)
+        {   
+            /* DHCPv6 is used for both addresses and other configuration settings.
+            This combination is known as DHCPv6 stateful, in which DHCPv6 is assigning stateful addresses to IPv6 hosts. */
+            Utopia_RawSet(&utctx, NULL, "router_managed_flag", "1");
+            Utopia_RawSet(&utctx, NULL, "router_autonomous_flag", "0");
+        }
+        else if (g_dhcpv6_server_type == DHCPV6_SERVER_TYPE_STATELESS)
+        {
+            /* DHCPv6 is not used to assign addresses, only to assign other configuration settings.
+            Neighboring routers are configured to advertise non-link-local address prefixes from which IPv6 hosts derive stateless addresses.
+            This combination is known as DHCPv6 stateless: DHCPv6 is not assigning stateful addresses to IPv6 hosts, but stateless configuration settings.*/
+            Utopia_RawSet(&utctx, NULL, "router_managed_flag", "0");
+            Utopia_RawSet(&utctx, NULL, "router_autonomous_flag", "1");
+        }
+        else
+        {
+            /* Hosts use both stateless and stateful address configuration concurrently. */
+            Utopia_RawSet(&utctx, NULL, "router_managed_flag", "1");
+            Utopia_RawSet(&utctx, NULL, "router_autonomous_flag", "1");
+        }
+        Utopia_RawSet(&utctx, NULL, "router_other_flag", "1");
+    }
+    else
+    {
+        /* This combination corresponds to a network without a DHCPv6 infrastructure.
+        Hosts use router advertisements for non-link-local addresses and other methods (such as manual configuration) to configure other settings. */
+        Utopia_RawSet(&utctx, NULL, "router_managed_flag", "0");
+        Utopia_RawSet(&utctx, NULL, "router_other_flag", "0");
+        Utopia_RawSet(&utctx, NULL, "router_autonomous_flag", "1");
+    }
+
     if (uDhcpv6ServerPoolNum > DHCPV6S_POOL_NUM) {
         uDhcpv6ServerPoolNum = DHCPV6S_POOL_NUM;
 		bIsChangesHappened = TRUE;
@@ -2006,6 +2043,7 @@ CosaDmlDhcpv6Init
         g_dhcpv6_server_type = 1;
         Utopia_RawSet(&utctx,NULL,"router_other_flag","1");
         Utopia_RawSet(&utctx,NULL,"router_managed_flag","1");
+        Utopia_RawSet(&utctx, NULL, "router_autonomous_flag", "0");
         SETI_INTO_UTOPIA(DHCPV6S_NAME,  "", 0, "", 0, "servertype", g_dhcpv6_server_type)
 
         v_secure_system("sysevent set zebra-restart");
@@ -2770,7 +2808,8 @@ CosaDmlDhcpv6cGetInfo
 
     if (pDhcpc)
     {
-        if (pDhcpc->Cfg.bEnabled)
+        /* We are reading the current value of dhcpv6 enable and updating the Status value */
+        if (CosaDmlDhcpv6cGetEnabled(NULL))
             g_dhcpv6_client.Info.Status = pDhcpc->Info.Status = COSA_DML_DHCP_STATUS_Enabled;
         else 
             g_dhcpv6_client.Info.Status = pDhcpc->Info.Status = COSA_DML_DHCP_STATUS_Disabled;
@@ -3365,6 +3404,7 @@ CosaDmlDhcpv6cGetReceivedOptionCfg
                 continue;
             }
 
+            p_rcv->Opt_len = opt_len;
             /*don't trust opt_len record in file, calculate by self*/
             if ((p = strrchr(buf, ' ')))
             {
@@ -3434,14 +3474,42 @@ CosaDmlDhcpv6cGetReceivedOptionCfg
 
 int CosaDmlDHCPv6sTriggerRestart(BOOL OnlyTrigger)
 {
+    int fd = 0;
+    char str[32] = "restart";
+    UtopiaContext utctx = {0};
     
     DHCPVS_DEBUG_PRINT
   #if defined(CISCO_CONFIG_DHCPV6_PREFIX_DELEGATION) && ! defined(DHCPV6_PREFIX_FIX) 
     UNREFERENCED_PARAMETER(OnlyTrigger);
     commonSyseventSet("dhcpv6_server-restart", "");
   #else
-    int fd = 0;
-    char str[32] = "restart";
+
+    if (isRaFlagSet == FALSE)
+    {
+        if (Utopia_Init(&utctx))
+        {
+            // update managed flag based on the type
+            if (g_dhcpv6_server_type == DHCPV6_SERVER_TYPE_STATEFUL)
+            {
+                Utopia_RawSet(&utctx, NULL, "router_managed_flag", "1");
+                Utopia_RawSet(&utctx, NULL, "router_autonomous_flag", "0");
+            }
+            else if (g_dhcpv6_server_type == DHCPV6_SERVER_TYPE_STATELESS)
+            {
+                Utopia_RawSet(&utctx, NULL, "router_managed_flag", "0");
+                Utopia_RawSet(&utctx, NULL, "router_autonomous_flag", "1");
+            }
+            else
+            {
+                Utopia_RawSet(&utctx, NULL, "router_managed_flag", "1");
+                Utopia_RawSet(&utctx, NULL, "router_autonomous_flag", "1");
+            }
+            Utopia_RawSet(&utctx, NULL, "router_other_flag", "1");
+            Utopia_Free(&utctx, 1);
+         }
+
+    }
+  
     //not restart really.we only need trigger pthread to check whether there is pending action.
     if ( !OnlyTrigger ) {
         g_dhcpv6s_restart_count++;
@@ -3462,6 +3530,14 @@ int CosaDmlDHCPv6sTriggerRestart(BOOL OnlyTrigger)
     return 0;
 }
 
+void CosaDmlDhcpv6sRestartOnRaChanged(ULONG dhcpv6ServerType)
+{
+    g_dhcpv6_server_type = dhcpv6ServerType;
+    isRaFlagSet = TRUE;
+    CosaDmlDHCPv6sTriggerRestart(FALSE);
+}
+
+
 /*SKYH4-3227 : variable to check if process is started already*/
 #if defined (_HUB4_PRODUCT_REQ_)
     BOOL  g_dhcpv6_server_started = FALSE;
@@ -3475,8 +3551,11 @@ static int _dibbler_server_operation(char * arg)
     char cmd[256] = {0};	
     ULONG Index  = 0;
     int fd = 0;
-    
+    struct stat filestat;
+    UtopiaContext utctx = {0};
+
     CcspTraceInfo(("%s:%d\n",__FUNCTION__, __LINE__));
+
     if (!strncmp(arg, "stop", 4))
     {
         /*stop the process only if it is started*/
@@ -3493,6 +3572,25 @@ static int _dibbler_server_operation(char * arg)
             //v_secure_system(SERVER_BIN " stop >/dev/null");
 	    snprintf(cmd,sizeof(cmd), "%s stop >/dev/null", SERVER_BIN);
 	    executeCmd(cmd);
+
+            if (isRaFlagSet == TRUE)
+            {
+                /* RA Managed/OtherConfig flags are already set, just restart zebra service. */
+                system("sysevent set zebra-restart");
+            }
+            else
+            {
+                if (Utopia_Init(&utctx))
+                {
+                    Utopia_RawSet(&utctx, NULL, "router_managed_flag", "0");
+                    Utopia_RawSet(&utctx, NULL, "router_other_flag", "0");
+                    Utopia_RawSet(&utctx, NULL, "router_autonomous_flag", "1");
+                    Utopia_Free(&utctx, 1);
+
+                    system("sysevent set zebra-restart");
+                }
+            }
+
             close(fd);
         }else{
             //this should not happen.
@@ -3535,6 +3633,13 @@ static int _dibbler_server_operation(char * arg)
             CcspTraceInfo(("%s:%d start dibbler %d\n",__FUNCTION__, __LINE__,g_dhcpv6_server));
             //fprintf(stderr, "%s -- %d start %d\n", __FUNCTION__, __LINE__, g_dhcpv6_server);
 
+            if (stat("/tmp/dibbler", &filestat) < 0)
+            {
+                /* If the path doesn't exist, create it */
+                if (errno == ENOENT)
+                    mkdir("/tmp/dibbler", 0755);
+            }
+
             #if defined (_HUB4_PRODUCT_REQ_)
                 g_dhcpv6_server_started = TRUE;
             #endif
@@ -3542,6 +3647,37 @@ static int _dibbler_server_operation(char * arg)
             //v_secure_system(SERVER_BIN " start");
 	    snprintf(cmd,sizeof(cmd), "%s start", SERVER_BIN);
 	    executeCmd(cmd);
+
+            commonSyseventSet("lan-restart", "1");/*Trigger the lan_handler.sh to configure the global IPv6 addres for brlan0*/
+            if (isRaFlagSet == TRUE)
+            {
+                /* RA Managed/OtherConfig flags are already set, just restart zebra service. */
+                system("sysevent set zebra-restart");
+            }
+            else
+            {
+                if (Utopia_Init(&utctx))
+                {
+                    if (g_dhcpv6_server_type == DHCPV6_SERVER_TYPE_STATEFUL)
+                    {
+                        Utopia_RawSet(&utctx, NULL, "router_managed_flag", "1");
+                        Utopia_RawSet(&utctx, NULL, "router_autonomous_flag", "0");
+                    }
+                    else if (g_dhcpv6_server_type == DHCPV6_SERVER_TYPE_STATELESS)
+                    {
+                        Utopia_RawSet(&utctx, NULL, "router_managed_flag", "0");
+                        Utopia_RawSet(&utctx, NULL, "router_autonomous_flag", "1");
+                    }
+                    else
+                    {
+                        Utopia_RawSet(&utctx, NULL, "router_managed_flag", "1");
+                        Utopia_RawSet(&utctx, NULL, "router_autonomous_flag", "1");
+                    }
+                    Utopia_RawSet(&utctx, NULL, "router_other_flag", "1");
+                    Utopia_Free(&utctx, 1);
+                    system("sysevent set zebra-restart");
+                }
+            }
         }
     }
     else if (!strncmp(arg, "restart", 7))
@@ -4205,22 +4341,25 @@ void __cosa_dhcpsv6_refresh_config()
     ULONG  T2 = 0;
     int Index4 = 0;
     struct stat check_ConfigFile;
+    UtopiaContext utctx = {0};
+    char isLgi[4] = {0};
     errno_t rc = -1;
 
     if (!fp)
         goto EXIT;
 
+    if (!Utopia_Init(&utctx))
+        goto EXIT;
+
     /*Begin write configuration */
-    fprintf(fp, "log-level 4\n");
+    fprintf(fp, "log-level 8\n");
+    fprintf(fp, "log-mode syslog\n");
 	
     //Intel Proposed RDKB Generic Bug Fix from XB6 SDK
     fprintf(fp, "reconfigure-enabled 1\n");
 
     //strict RFC compliance rfc3315 Section 13
     fprintf(fp, "drop-unicast\n");
-
-    if ( g_dhcpv6_server_type != DHCPV6_SERVER_TYPE_STATEFUL )
-        fprintf(fp, "stateless\n");
 
     for ( Index = 0; Index < uDhcpv6ServerPoolNum; Index++ )
     {
@@ -4229,9 +4368,6 @@ void __cosa_dhcpsv6_refresh_config()
             continue;
 
         fprintf(fp, "iface %s {\n", COSA_DML_DHCPV6_SERVER_IFNAME);
-
-        if (g_dhcpv6_server_type != DHCPV6_SERVER_TYPE_STATEFUL ) 
-            goto OPTIONS;
 
         if ( sDhcpv6ServerPool[Index].Cfg.RapidEnable ){
             fprintf(fp, "   rapid-commit yes\n");
@@ -4339,8 +4475,32 @@ void __cosa_dhcpsv6_refresh_config()
 				sscanf(s_iapd_pretm, "%lu", &iapd_pretm);
 				sscanf(s_iapd_vldtm, "%lu", &iapd_vldtm);
 				
-				if (sDhcpv6ServerPool[Index].Cfg.LeaseTime <= -1 ) {
-					T1 = T2 = preferedTime = validTime = 0xFFFFFFFF;
+				if (sDhcpv6ServerPool[Index].Cfg.LeaseTime <= 0) {
+					token_t se_token;
+					int se_fd = -1;
+					char preferred_lft[32] = {0};
+					char valid_lft[32] = {0};
+
+					se_fd = s_sysevent_connect(&se_token);
+
+					if (se_fd < 0)
+					{
+						AnscTraceFlow(("%s: preferred_lft = syseventerror\n", __FUNCTION__));
+						AnscCopyString(preferred_lft, "syseventError");
+						preferedTime = 0;
+						validTime = 0;
+					}
+					else
+					{
+						/* Get the lease time, valid time of the prefix delegation */
+						sysevent_get(se_fd, se_token, "ipv6_prefix_prdtime", preferred_lft, sizeof(preferred_lft));
+						sysevent_get(se_fd, se_token, "ipv6_prefix_vldtime", valid_lft, sizeof(valid_lft));
+						preferedTime = atoi(preferred_lft);
+						validTime = atoi(valid_lft);
+					}
+
+					T1 = preferedTime/2;
+					T2 = preferedTime*8/10;
 				}else{
 					T1           = iapd_pretm/2;
 					T2           = (ULONG)(iapd_pretm*80.0/100);
@@ -4976,9 +5136,7 @@ OPTIONS:
         fprintf(fp, "}\n");
     }
     
-    if(fp != NULL)
-      fclose(fp);
-
+    Utopia_Free(&utctx,1);
 
 #if (!defined _COSA_INTEL_USG_ARM_) && (!defined _COSA_BCM_MIPS_)
     /*we will copy the updated conf file at once*/
@@ -4996,8 +5154,12 @@ else {
         commonSyseventSet("dibbler_server_conf-status","ready");
 }
 
+    system("/bin/sh /etc/utopia/service.d/set_ipv6_dns.sh dibbler");
 
 EXIT:
+
+    if(fp != NULL)
+      fclose(fp);
 
     return;
 }
@@ -5602,6 +5764,9 @@ CosaDmlDhcpv6sSetType
     
     SETI_INTO_UTOPIA(DHCPV6S_NAME,  "", 0, "", 0, "servertype", g_dhcpv6_server_type)
 
+    // lets update managed flag based on the type
+    isRaFlagSet = FALSE;
+
     Utopia_Free(&utctx,1);
 
     /* Stateful address is not effecting for clients whenever pool range is changed.
@@ -6186,8 +6351,8 @@ CosaDmlDhcpv6sGetPoolInfo
     return ANSC_STATUS_SUCCESS;
 }
 
-
-#define DHCPS6V_CLIENT_FILE "/var/lib/dibbler/server-client.txt"
+#define DHCPSV6_SERVER_FILE "/tmp/dibbler/server-AddrMgr.xml"
+#define DHCPSV6_CLIENT_FILE "/tmp/dibbler/server-client.txt"
 ULONG   g_dhcps6v_client_num  = 0;
 PCOSA_DML_DHCPSV6_CLIENT        g_dhcps6v_client        = NULL;
 PCOSA_DML_DHCPSV6_CLIENTCONTENT g_dhcps6v_clientcontent = NULL;
@@ -6206,6 +6371,239 @@ BOOL tagPermitted(int tag)
         return true;
     else
         return false;
+}
+
+/*
+The file:/var/lib/dibbler/server-client.txt was not generated by default
+Hence we could not use the existing _cosa_dhcpsv6_get_client api for DHCPv6 clients.
+
+The below API is for parsing /tmp/dibbler/server-AddrMgr.xml
+to get the DHCPv6 client information and forming '/tmp/dibbler/server-client.txt' file.
+*/
+
+#define DUID_STR_LEN 17
+
+BOOL get_interface_name(char *paramNames, char *interface)
+{
+    char name[64] = {0};
+    char param_val[64] = {0};
+    ULONG val_len = 0;
+
+    sprintf(name,  "%sName", paramNames);
+    val_len = sizeof(param_val);
+    if( 0 == g_GetParamValueString(g_pDslhDmlAgent, name, param_val, &val_len))
+    {
+        strcpy(interface, param_val);
+        return TRUE;
+    }
+    return FALSE;
+}
+
+int cosa_dhcpv6_client_info(char *pInterface)
+{
+    char *buffer = 0;
+    char *start_buf = 0;
+    char *ptr = 0;
+    int  i, mac_index = 0;
+    int  client_num = 0;
+    int  s_len;
+    long buffer_len = 0;
+    char duid[64], ip6_addr[40], time_stamp[32], preferred_lifetime[32], unicast[128], prefix[32], valid_lifetime[32], ifacename[32];
+    FILE * fp = fopen(DHCPSV6_SERVER_FILE, "r");
+    FILE * serverclient = NULL;
+    char *interface = NULL;
+    BOOL ret = 0;
+
+    if (fp)
+    {
+        fseek(fp, 0, SEEK_END);
+        buffer_len = ftell(fp);
+        fseek(fp, 0, SEEK_SET);
+        buffer = malloc(buffer_len + 1);
+
+        if (buffer)
+        {
+            start_buf = buffer; //Storing the buffer starting address to free in the end
+
+            i = fread(buffer, 1, buffer_len, fp);
+            buffer[i] = 0;
+        }
+        else
+        {
+           fclose(fp);
+           return ANSC_STATUS_FAILURE;
+        }
+        fclose(fp);
+    }
+    else
+    {
+       return ANSC_STATUS_FAILURE;
+    }
+
+    serverclient = fopen(DHCPSV6_CLIENT_FILE,"w");
+    if(serverclient)
+    {
+        // Added the client number text with reserved spaces which will be replaced later with actual client number
+        fprintf(serverclient, "ClientNum:0  \n");
+        while(buffer)
+        {
+            buffer = strstr(buffer, "<AddrIA");
+            if (buffer != NULL)
+            {
+                interface = (char *) malloc(16);
+                memset(interface, '\0', 16);
+                buffer += strlen("<AddrIA");
+
+                //read Interface
+                ptr = strstr(buffer, "ifacename=\"");
+                if(ptr !=NULL)
+                {
+                   s_len = strlen("ifacename=\"");
+                   ptr += s_len;
+                   i = 0;
+                   while(*ptr != '"')
+                   {
+                       ifacename[i++] = *ptr++;
+                   }
+                   ifacename[i] = '\0';
+                   ret = get_interface_name(pInterface, interface);
+               }
+               if( AnscEqualString(interface, ifacename, TRUE))
+               {
+                   client_num++;
+                   // read DUID
+                   ptr = strstr(buffer, "duid length=\"");
+                   if(ptr !=NULL)
+                   {
+                       ptr += DUID_STR_LEN;
+                       i = 0;
+                       while(*ptr != '<')
+                       {
+                           duid[i++] = *ptr++;
+                       }
+                       duid[i] = '\0';
+                       fprintf(serverclient, "DUID:%s\n", duid);
+                   }
+
+                   // read Unicast
+                   ptr = strstr(buffer, "unicast=\"");
+                   if(ptr !=NULL)
+                   {
+                       s_len = strlen("unicast=\"");
+                       ptr += s_len;
+                       i = 0;
+                       while(*ptr != '"')
+                       {
+                           unicast[i++] = *ptr++;
+                       }
+                       unicast[i] = '\0';
+                       fprintf(serverclient, "Unicast:%s\n", unicast);
+                   }
+
+                   // read the prefix
+                   ip6_addr[0] = 0;
+                   ptr = strstr(buffer, "prefix=\"");
+                   if(ptr !=NULL)
+                   {
+                       s_len = strlen("prefix=\"");
+                       ptr += s_len;
+                       i = 0;
+                       while(*ptr != '"')
+                       {
+                           prefix[i++] = *ptr++;
+                       }
+                       prefix[i] = '\0';
+
+                       // read IPv6Addr
+                       s_len = strlen(">\"");
+                       ptr += s_len;
+                       i = 0;
+                       while(*ptr != '<')
+                       {
+                           ip6_addr[i++] = *ptr++;
+                       }
+                       ip6_addr[i] = '\0';
+                       fprintf(serverclient, "Addr:%s\n", ip6_addr);
+                   }
+
+                   // read the timestamp
+                   ptr = strstr(buffer, "timestamp=\"");
+                   if(ptr !=NULL)
+                   {
+                       s_len = strlen("timestamp=\"");
+                       ptr += s_len;
+                       i = 0;
+                       while(*ptr != '"')
+                       {
+                           time_stamp[i++] = *ptr++;
+                       }
+                       time_stamp[i] = '\0';
+                       fprintf(serverclient, "Timestamp:%s\n", time_stamp);
+                   }
+
+                   // read the PreferredLifetime
+                   ptr = strstr(buffer, "pref=\"");
+                   if(ptr !=NULL)
+                   {
+                       s_len = strlen("pref=\"");
+                       ptr += s_len;
+                       i = 0;
+                       while(*ptr != '"')
+                       {
+                           preferred_lifetime[i++] = *ptr++;
+                       }
+                       preferred_lifetime[i] = '\0';
+                       fprintf(serverclient, "Prefered:%s\n", preferred_lifetime);
+                   }
+
+                   //read ValidLifetime
+                   ptr = strstr(buffer, "valid=\"");
+                   if(ptr !=NULL)
+                   {
+                       s_len = strlen("valid=\"");
+                       ptr += s_len;
+                       i = 0;
+                       while(*ptr != '"')
+                       {
+                           valid_lifetime[i++] = *ptr++;
+                       }
+                       valid_lifetime[i] = '\0';
+                       fprintf(serverclient, "Valid:%s\n", valid_lifetime);
+                   }
+
+                   // get the mac address
+
+                   if (ip6_addr[0])
+                   {
+                       FILE *cfp;
+                       char mac_addr[18 + 4];   /* add extra bytes since it's not clear that _get_shell_output() handles exact sizes correctly... */
+
+                       cfp = v_secure_popen("r","ip neigh | grep %s | awk '{print $5}'", ip6_addr);
+                       _get_shell_output(cfp, mac_addr, sizeof(mac_addr));
+                       fprintf(serverclient, "MAC:%s\n", mac_addr);
+                   }
+
+                }
+                buffer = strstr(buffer, "<AddrIA");
+                if (interface != NULL)
+                {
+                    free(interface);
+                    interface = NULL;
+                }
+            }
+        }
+
+        //setting back the starting postion of File for writing the Client Number
+        fseek(serverclient, 0, SEEK_SET);
+        fprintf(serverclient, "ClientNum:%d", client_num);
+        fclose(serverclient);
+    }
+    buffer = start_buf; //Moving the buffer to the starting address
+    if (buffer != NULL)
+    {
+        free(buffer);
+    }
+    return 0;
 }
 
 /* 
@@ -6234,7 +6632,7 @@ option:8:0000
 void _cosa_dhcpsv6_get_client()
 {
     ULONG i = 0;
-    FILE * fp = fopen(DHCPS6V_CLIENT_FILE, "r");
+    FILE * fp = fopen(DHCPSV6_CLIENT_FILE, "r");
     CHAR  oneLine[256] = {0};
     PCHAR pTmp1 = NULL;
     PCHAR pTmp2 = NULL;
@@ -6649,12 +7047,14 @@ CosaDmlDhcpv6sGetClient
         ANSC_HANDLE                 hContext,
         ULONG                       ulPoolInstanceNumber,
         PCOSA_DML_DHCPSV6_CLIENT   *ppEntry,
-        PULONG                      pSize
+        PULONG                      pSize,
+        char                       *pInterface
     )
 {
     UNREFERENCED_PARAMETER(hContext);
     UNREFERENCED_PARAMETER(ulPoolInstanceNumber); 
-    /* We don't support this table currently */
+
+    cosa_dhcpv6_client_info(pInterface);
     _cosa_dhcpsv6_get_client();
     
     *pSize = g_dhcps6v_client_num;
@@ -8708,7 +9108,7 @@ dhcpv6c_dbg_thrd(void * in)
                         ret = dhcpv6_assign_global_ip(v6pref, COSA_DML_DHCPV6_SERVER_IFNAME, globalIP);
 #else
                         /*We need get a global ip addres */
-                        ret = dhcpv6_assign_global_ip(v6pref, "l2sd0", globalIP);
+                        ret = dhcpv6_assign_global_ip(v6pref, "brlan0", globalIP);
 #endif
                         CcspTraceWarning(("%s: globalIP %s globalIP2 %s\n", __func__,
                             globalIP, globalIP2));
@@ -8952,7 +9352,7 @@ dhcpv6c_dbg_thrd(void * in)
 #elif defined _COSA_BCM_MIPS_
                         ret = dhcpv6_assign_global_ip(v6pref, COSA_DML_DHCPV6_SERVER_IFNAME, globalIP);
 #else
-                        ret = dhcpv6_assign_global_ip(v6pref, "l2sd0", globalIP);
+                        ret = dhcpv6_assign_global_ip(v6pref, "brlan0", globalIP);
 #endif
                         CcspTraceWarning(("%s: globalIP %s globalIP2 %s\n", __func__,
                             globalIP, globalIP2));
