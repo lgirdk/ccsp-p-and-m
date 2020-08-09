@@ -402,6 +402,29 @@
     </object>
 <?endif?>
 <?endif?>
+    <object>
+        <name>X_LGI-COM_Gateway</name>
+        <objectType>object</objectType>
+          <functions>
+              <func_GetParamUlongValue>LgiGateway_GetParamUlongValue</func_GetParamUlongValue>
+              <func_SetParamUlongValue>LgiGateway_SetParamUlongValue</func_SetParamUlongValue>
+              <func_GetParamBoolValue>LgiGateway_GetParamBoolValue</func_GetParamBoolValue>
+              <func_SetParamBoolValue>LgiGateway_SetParamBoolValue</func_SetParamBoolValue>
+              <func_GetParamStringValue>LgiGateway_GetParamStringValue</func_GetParamStringValue>
+              <func_SetParamStringValue>LgiGateway_SetParamStringValue</func_SetParamStringValue>
+              <func_Validate>LgiGateway_Validate</func_Validate>
+              <func_Commit>LgiGateway_Commit</func_Commit>
+              <func_Rollback>LgiGateway_Rollback</func_Rollback>
+          </functions>
+          <parameters>
+            <parameter>
+                <name>IPv6LANMode</name>
+                <type>string: Stateful(1),Stateless(2)</type>
+                <syntax>uint32/mapped</syntax>
+                <writable>true</writable>
+            </parameter>
+          </parameters>
+    </object>
    <object>
         <name>X_LGI-COM_CloudUI</name>
 
