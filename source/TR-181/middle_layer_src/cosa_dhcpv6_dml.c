@@ -6008,6 +6008,7 @@ Client4_Synchronize
 {
     ANSC_STATUS                       returnStatus    = ANSC_STATUS_SUCCESS;    
     PCOSA_CONTEXT_POOLV6_LINK_OBJECT  pCxtLink        = (PCOSA_CONTEXT_POOLV6_LINK_OBJECT)hInsContext;
+    PCOSA_DML_DHCPSV6_POOL_FULL       pPool             = (PCOSA_DML_DHCPSV6_POOL_FULL)pCxtLink->hContext;
     PCOSA_DML_DHCPSV6_CLIENT          pDhcpsClient    = NULL;
     PCOSA_DML_DHCPSV6_CLIENTCONTENT   pClientContentList = NULL;
     ULONG                             uIndex           = 0;
@@ -6054,7 +6055,8 @@ Client4_Synchronize
                         NULL,
                         pCxtLink->InstanceNumber,
                         &pDhcpsClient,
-                        &count
+                        &count,
+                        pPool->Cfg.Interface
                     );
 
     if ( (returnStatus == ANSC_STATUS_SUCCESS) && count)
