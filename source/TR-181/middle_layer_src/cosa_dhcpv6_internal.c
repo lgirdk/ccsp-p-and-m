@@ -908,7 +908,8 @@ CosaDhcpv6BackendGetDhcpv6Info
                             NULL,
                             pPool->Cfg.InstanceNumber,
                             &pPoolClient,
-                            &count1
+                            &count1,
+                            pPool->Cfg.Interface
                         );
         if ( returnStatus == ANSC_STATUS_SUCCESS )
         {
