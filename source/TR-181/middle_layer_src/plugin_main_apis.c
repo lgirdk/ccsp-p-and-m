@@ -143,6 +143,8 @@
 // LGI ADD - START
 #include "cosa_mac_filter_apis.h"
 #include "cosa_mac_filter_internal.h"
+#include "cosa_x_lgi_com_gateway_apis.h"
+#include "cosa_x_lgi_com_gateway_internal.h"
 // LGI ADD - END
 #if  CFG_USE_Common_Util
 #include "cosa_common_util.h"
@@ -452,6 +454,8 @@ if(id != 0)
 // LGI ADD - START
     pMyObject->hMacFilter    = (ANSC_HANDLE)CosaMacFilterCreate();
     AnscTraceWarning(("  CosaMacFilterCreate done!\n"));
+    pMyObject->hLgiIPv6LANMode    = (ANSC_HANDLE)CosaLgiIPv6LANModeCreate();
+    AnscTraceWarning(("  CosaLgiIPv6LANModeCreate done!\n"));
 // LGI ADD - END
 #if CONFIG_CISCO_TRUE_STATIC_IP
     pMyObject->hTSIP          = (ANSC_HANDLE)CosaTSIPCreate();
@@ -752,6 +756,10 @@ CosaBackEndManagerRemove
     if ( pMyObject->hMacFilter )
     {
         CosaMacFilterRemove((ANSC_HANDLE)pMyObject->hMacFilter);
+    }
+    if ( pMyObject->hLgiIPv6LANMode )
+    {
+        CosaLgiIPv6LANModeRemove((ANSC_HANDLE)pMyObject->hLgiIPv6LANMode);
     }
 // LGI ADD - END
 

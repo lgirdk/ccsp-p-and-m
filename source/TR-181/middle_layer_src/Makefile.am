@@ -123,3 +123,4 @@ libCcspPandM_middle_layer_src_la_LDFLAGS = -lccsp_common -lmsgpackc -lwebconfig_
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_mac_filter_dml.c cosa_mac_filter_internal.c
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_wol_dml.c cosa_lgi_wol_apis.c cosa_lgi_wol_internal.c
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_cloudui_internal.c cosa_lgi_cloudui_dml.c
+libCcspPandM_middle_layer_src_la_SOURCES += cosa_x_lgi_com_gateway_apis.c cosa_x_lgi_com_gateway_dml.c cosa_x_lgi_com_gateway_internal.c
