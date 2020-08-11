@@ -70,10 +70,11 @@
 /***********************************
     Actual definition declaration
 ************************************/
-#define  COSA_IREP_FOLDER_NAME_NAT                       "NAT"
+#define  COSA_IREP_FOLDER_NAME_NAT                       "NATPassthrough" //LG ADD CR14
 #define  COSA_IREP_FOLDER_NAME_PORTMAPPING               "PORTMAPPING"
 #define  COSA_IREP_FOLDER_NAME_PORTTRIGGER               "PORTTRIGGER"
 #define  COSA_DML_RR_NAME_NATNextInsNumber               "NextInstanceNumber"
+#define  COSA_DML_RR_NAME_NATInsNumber                   "InstanceNumber"   //LG ADD CR14
 #define  COSA_DML_RR_NAME_NATAlias                       "Alias"
 #define  COSA_DML_RR_NAME_NATbNew                        "bNew"
 
@@ -95,6 +96,12 @@
     UCHAR                           AliasOfPortMapping[64];                                 \
     ANSC_HANDLE                     hIrepFolderNat;                                         \
     ANSC_HANDLE                     hIrepFolderNatPt;                                       \
+ /* LG NATPassthrough */                                                                    \
+    ANSC_HANDLE                     hIrepFolderMACCOSA;                                     \
+    SLIST_HEADER                    NATPassthroughList;                                     \
+    ULONG                           NATPassthroughNextInsNum;                               \
+    ANSC_HANDLE                     hIrepFolderFwNATPassthrough;                            \
+    /* LG NATPassthrough */                                                                 \
 
 typedef  struct
 _COSA_DATAMODEL_NAT
@@ -192,17 +199,20 @@ CosaNatSyncPortTrigger              /* Sync middle layer with backend on P&M loa
         ANSC_HANDLE                 hThisObject
     );
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+//LG ADD START CR14
+ANSC_STATUS
+CosaFwReg_NATPassthroughGetInfo(
+        ANSC_HANDLE                 hThisObject
+    );
+ANSC_STATUS
+CosaFwReg_NATPassthroughAddInfo(
+        ANSC_HANDLE                 hThisObject,
+        ANSC_HANDLE                 hCosaContext
+    );
+ANSC_STATUS
+CosaFwReg_NATPassthroughDelInfo(
+        ANSC_HANDLE                 hThisObject,
+        ANSC_HANDLE                 hCosaContext
+    );
+//LG ADD END CR14
 #endif

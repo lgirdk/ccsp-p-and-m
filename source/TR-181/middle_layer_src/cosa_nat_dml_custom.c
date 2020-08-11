@@ -154,7 +154,15 @@ NAT_GetParamBoolValue_Custom
         *pBool = COSA_DML_NAT_CUSTOM_GET_ENABLENATMAPPING(pNat);
         return TRUE;
     }
-
+    /* LG ADD Start CR14 */
+    if (strcmp(ParamName, "X_LGI-COM_NATPassthroughFunctionEnable") == 0)
+    {
+        char buf[8] = {0};
+        syscfg_get(NULL, "natPassthrough_enable", buf, sizeof(buf));
+        *pBool = atoi(buf) ? TRUE : FALSE;
+        return TRUE;
+    }
+    /* LG ADD End CR14 */
     return FALSE;
 }
 
@@ -195,6 +203,16 @@ NAT_SetParamBoolValue_Custom
         return TRUE;
     }
 
+ /* LG ADD Start CR14 */
+    if (strcmp(ParamName, "X_LGI-COM_NATPassthroughFunctionEnable") == 0)
+    {
+        if(syscfg_set_commit(NULL, "natPassthrough_enable", bValue?"1":"0") == 0)
+        {
+            system("/etc/utopia/nat_passthrough.sh restart");
+            return TRUE;
+        }
+    }
+ /* LG ADD End  CR14 */
     return FALSE;    
 }
 
