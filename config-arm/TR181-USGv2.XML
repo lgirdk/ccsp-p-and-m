@@ -10294,9 +10294,71 @@
 
         </parameter>
 
+<!--LG ADD START CR14 -->
+        <parameter>
+          <name>X_LGI-COM_NATPassthroughFunctionEnable</name>
+          <type>boolean</type>
+          <syntax>bool</syntax>
+          <writable>true</writable>
+        </parameter>
+<!--LG ADD END CR14 -->
+
       </parameters>
 
       <objects>
+
+<!--LG  ADD START CR14 -->
+        <object>
+          <name>X_LGI-COM_NATPassthrough</name>
+          <objectType>writableTable</objectType>
+          <maxInstance>128</maxInstance>
+          <functions>
+            <func_GetEntryCount>NATPassthrough_GetEntryCount</func_GetEntryCount>
+            <func_GetEntry>NATPassthrough_GetEntry</func_GetEntry>
+            <func_AddEntry>NATPassthrough_AddEntry</func_AddEntry>
+            <func_DelEntry>NATPassthrough_DelEntry</func_DelEntry>
+            <func_GetParamBoolValue>NATPassthrough_GetParamBoolValue</func_GetParamBoolValue>
+            <func_GetParamStringValue>NATPassthrough_GetParamStringValue</func_GetParamStringValue>
+            <func_SetParamBoolValue>NATPassthrough_SetParamBoolValue</func_SetParamBoolValue>
+            <func_SetParamStringValue>NATPassthrough_SetParamStringValue</func_SetParamStringValue>
+            <func_Validate>NATPassthrough_Validate</func_Validate>
+            <func_Commit>NATPassthrough_Commit</func_Commit>
+            <func_Rollback>NATPassthrough_Rollback</func_Rollback>
+          </functions>
+          <parameters>
+            <parameter>
+              <name>Enable</name>
+              <type>boolean</type>
+              <syntax>bool</syntax>
+              <writable>true</writable>
+            </parameter>
+            <parameter>
+              <name>Alias</name>
+              <type>string(64)</type>
+              <syntax>string</syntax>
+              <writable>true</writable>
+            </parameter>
+            <parameter>
+              <name>MACAddr</name>
+              <type>string(64)</type>
+              <syntax>string</syntax>
+              <writable>true</writable>
+            </parameter>
+            <parameter>
+              <name>MACMask</name>
+              <type>string(64)</type>
+              <syntax>string</syntax>
+              <writable>true</writable>
+            </parameter>
+            <parameter>
+              <name>Status</name>
+              <type>string(10)</type>
+              <syntax>string</syntax>
+              <writable>false</writable>
+            </parameter>
+          </parameters>
+        </object>
+<!-- LG ADD END CR14 -->
 	  
 	    <object>
 
