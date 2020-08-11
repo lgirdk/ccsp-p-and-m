@@ -168,6 +168,25 @@ _COSA_DML_NAT_PTRIGGER
 }
 COSA_DML_NAT_PTRIGGER,  *PCOSA_DML_NAT_PTRIGGER;
 
+/*
+ * Device.NAT.X_LGI-COM_NATPassthrough.
+ */
+
+//LG ADD START CR14
+
+typedef struct
+_COSA_DML_NATPASS
+{
+   ULONG          InstanceNumber;
+   char           Alias[256];
+   char           Status[64];
+   char           MACAddress[64];
+   char           MACMask[64];
+   BOOL           Enable;
+}
+COSA_DML_NATPASS;
+// LG ADD END CR14
+
 #define COSA_DML_NAT_PTRIGGER_INIT(pPortTrigger)                                            \
 {                                                                                           \
     (pPortTrigger)->bEnabled                 = FALSE;                                       \
@@ -383,6 +402,15 @@ CosaDmlChkDesp(char *desp);
 
 BOOL 
 CosaDmlNatChkEnableFlg(PCOSA_DML_NAT_PMAPPING pPortMapping);
+//LG ADD START CR14
+ULONG CosaDmlFW_NATPassthrough_GetNumberOfEntries(void);
+ANSC_STATUS CosaDmlFW_NATPassthrough_GetEntryByIndex(ULONG index, COSA_DML_NATPASS *pEntry);
+ANSC_STATUS CosaDmlFW_NATPassthrough_SetValues(ULONG index, ULONG ins, const char *alias);
+ANSC_STATUS CosaDmlFW_NATPassthrough_AddEntry(COSA_DML_NATPASS *pEntry);
+ANSC_STATUS CosaDmlFW_NATPassthrough_DelEntry(ULONG ins);
+ANSC_STATUS CosaDmlFW_NATPassthrough_GetConf(ULONG ins, COSA_DML_NATPASS *pEntry);
+ANSC_STATUS CosaDmlFW_NATPassthrough_SetConf(ULONG ins, COSA_DML_NATPASS *pEntry);
+//LG ADD END CR14
 
 int 
 _Check_PF_parameter(PCOSA_DML_NAT_PMAPPING pPortMapping);
