@@ -4542,5 +4542,213 @@ int CosaDmlChkDesp(char *desp)
         return FALSE;
     return TRUE;
 } 
+//LG ADD START CR14
+
+static int g_NrFwNATPassthrough =  0;
+
+static int
+FW_NATPassthrough_InsGetIndex(ULONG ins)
+{
+    int i, ins_num, ret = -1;
+    UtopiaContext ctx;
+
+    if(CosaDmlFW_NATPassthrough_GetNumberOfEntries() == ANSC_STATUS_FAILURE)
+    {
+       return ret;
+    }
+
+    if (!Utopia_Init(&ctx))
+    {
+        return ret;
+    }
+
+    for (i = 0; i < g_NrFwNATPassthrough; i++)
+    {
+        Utopia_GetNATPassthroughInsNumByIndex(&ctx, i, &ins_num);
+        if (ins_num == ins)
+        {
+            ret = i;
+            break;
+        }
+    }
+
+    Utopia_Free(&ctx, 0);
+
+    return ret;
+}
+
+ULONG
+CosaDmlFW_NATPassthrough_GetNumberOfEntries()
+{
+    UtopiaContext ctx;
+
+    if(!Utopia_Init(&ctx))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    Utopia_GetNumberOfNATPassthrough(&ctx, &g_NrFwNATPassthrough);
+
+    Utopia_Free(&ctx, 0);
+    return g_NrFwNATPassthrough;
+}
+
+ANSC_STATUS
+CosaDmlFW_NATPassthrough_GetEntryByIndex(ULONG index, COSA_DML_NATPASS *pEntry)
+{
+    UtopiaContext ctx;
+    fwNATPassthrough_t NATPassthrough;
+
+    if (index >= g_NrFwNATPassthrough || !Utopia_Init(&ctx)|| pEntry==NULL)
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    Utopia_GetNATPassthroughByIndex(&ctx, index, &NATPassthrough);
+
+    pEntry->InstanceNumber = NATPassthrough.InstanceNumber;
+    pEntry->Enable = NATPassthrough.Enable;
+
+    _ansc_strncpy(pEntry->Alias, NATPassthrough.Alias, sizeof(pEntry->Alias));
+    _ansc_strncpy(pEntry->Status, NATPassthrough.Status, sizeof(pEntry->Status));
+    _ansc_strncpy(pEntry->MACAddress, NATPassthrough.MACAddress, sizeof(pEntry->MACAddress));
+
+    Utopia_Free(&ctx, 0);
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaDmlFW_NATPassthrough_SetValues(ULONG index, ULONG ins, const char *alias)
+{
+    int rc = -1;
+    UtopiaContext ctx;
+    if (index >= g_NrFwNATPassthrough || !Utopia_Init(&ctx))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    rc = Utopia_SetNATPassthroughInsAndAliasByIndex(&ctx, index, ins, alias);
+
+    Utopia_Free(&ctx, !rc);
+
+    if (rc != 0)
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+    else
+    {
+        return ANSC_STATUS_SUCCESS;
+    }
+}
+
+ANSC_STATUS
+CosaDmlFW_NATPassthrough_AddEntry(COSA_DML_NATPASS *pEntry)
+{
+    int rc = -1;
+    UtopiaContext ctx;
+    fwNATPassthrough_t NATPassthrough;
+
+    if (!Utopia_Init(&ctx)|| pEntry == NULL )
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    NATPassthrough.InstanceNumber = pEntry->InstanceNumber;
+    NATPassthrough.Enable = pEntry->Enable;
+
+    _ansc_strncpy(NATPassthrough.Alias, pEntry->Alias, sizeof(NATPassthrough.Alias));
+    _ansc_strncpy(NATPassthrough.Status, pEntry->Status, sizeof(NATPassthrough.Status));
+    _ansc_strncpy(NATPassthrough.MACAddress, pEntry->MACAddress, sizeof(NATPassthrough.MACAddress));
+    rc = Utopia_AddNATPassthrough(&ctx, &NATPassthrough);
+
+    Utopia_GetNumberOfNATPassthrough(&ctx, &g_NrFwNATPassthrough);
+
+    Utopia_Free(&ctx, !rc);
+    if (rc != 0)
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+    else
+    {
+        system("/etc/utopia/nat_passthrough.sh restart");
+        return ANSC_STATUS_SUCCESS;
+    }
+
+}
+
+ANSC_STATUS
+CosaDmlFW_NATPassthrough_DelEntry(ULONG ins)
+{
+    int rc = -1;
+    UtopiaContext ctx;
+    if (!Utopia_Init(&ctx))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+    rc = Utopia_DelNATPassthrough(&ctx, ins);
+    Utopia_GetNumberOfNATPassthrough(&ctx, &g_NrFwNATPassthrough);
+
+    Utopia_Free(&ctx, !rc);
+
+    if (rc != 0)
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+    else
+    {
+        system("/etc/utopia/nat_passthrough.sh restart");
+        return ANSC_STATUS_SUCCESS;
+    }
+}
+
+ANSC_STATUS
+CosaDmlFW_NATPassthrough_GetConf(ULONG ins, COSA_DML_NATPASS *pEntry)
+{
+    int index;
+
+    if ((index = FW_NATPassthrough_InsGetIndex(ins)) == -1)
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    return CosaDmlFW_NATPassthrough_GetEntryByIndex(index, pEntry);
+}
+
+ANSC_STATUS
+CosaDmlFW_NATPassthrough_SetConf(ULONG ins, COSA_DML_NATPASS *pEntry)
+{
+    int index;
+    UtopiaContext ctx;
+    fwNATPassthrough_t NATPassthrough;
+    int rc = -1;
+
+    if ((index = FW_NATPassthrough_InsGetIndex(ins)) == -1 || !Utopia_Init(&ctx) || pEntry == NULL)
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    NATPassthrough.InstanceNumber = pEntry->InstanceNumber;
+    NATPassthrough.Enable = pEntry->Enable;
+
+    _ansc_strncpy(NATPassthrough.Alias, pEntry->Alias, sizeof(NATPassthrough.Alias));
+    _ansc_strncpy(NATPassthrough.Status, pEntry->Status, sizeof(NATPassthrough.Status));
+    _ansc_strncpy(NATPassthrough.MACAddress, pEntry->MACAddress, sizeof(NATPassthrough.MACAddress));
+
+    rc = Utopia_SetNATPassthroughByIndex(&ctx, index, &NATPassthrough);
+
+    Utopia_Free(&ctx, !rc);
+
+    if (rc != 0)
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+    else
+    {
+         system("/etc/utopia/nat_passthrough.sh restart");
+        return ANSC_STATUS_SUCCESS;
+    }
+
+}
+//LG ADD END CR14
 #endif
 
