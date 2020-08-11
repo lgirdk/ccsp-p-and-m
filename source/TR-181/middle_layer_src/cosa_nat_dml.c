@@ -4127,3 +4127,269 @@ PortTrigger_Rollback
     return returnStatus;
 
 }
+
+//LG ADD START CR14
+ULONG
+NATPassthrough_GetEntryCount
+    (
+        ANSC_HANDLE                 hInsContext
+    )
+{
+    PCOSA_DATAMODEL_NAT             pNat         = (PCOSA_DATAMODEL_NAT)g_pCosaBEManager->hNat;
+    return AnscSListQueryDepth(&pNat->NATPassthroughList);
+}
+
+ANSC_HANDLE
+NATPassthrough_GetEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG                       nIndex,
+        ULONG*                      pInsNumber
+    )
+{
+    PCOSA_DATAMODEL_NAT             pMyObject         = (PCOSA_DATAMODEL_NAT)g_pCosaBEManager->hNat;
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = NULL;
+    PSINGLE_LINK_ENTRY              pSLinkEntry = NULL;
+
+    pSLinkEntry = AnscSListGetEntryByIndex((ANSC_HANDLE)&pMyObject->NATPassthroughList, nIndex);
+    if (pSLinkEntry)
+    {
+        pLinkObj = ACCESS_COSA_CONTEXT_LINK_OBJECT(pSLinkEntry);
+        *pInsNumber = pLinkObj->InstanceNumber;
+        pMyObject->NATPassthroughNextInsNum = pLinkObj->InstanceNumber+1;
+    }
+    return (ANSC_HANDLE)pLinkObj;
+}
+
+ANSC_HANDLE
+NATPassthrough_AddEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG*                      pInsNumber
+    )
+{
+    PCOSA_DATAMODEL_NAT            pMyObject          = (PCOSA_DATAMODEL_NAT)g_pCosaBEManager->hNat;
+    PCOSA_CONTEXT_LINK_OBJECT      pLinkObj           = NULL;
+    COSA_DML_NATPASS               *pNATPassthrough   = NULL;
+
+    pLinkObj = AnscAllocateMemory(sizeof(COSA_CONTEXT_LINK_OBJECT));
+    if (!pLinkObj)
+    {
+        return NULL;
+    }
+
+    pNATPassthrough = AnscAllocateMemory(sizeof(COSA_DML_NATPASS));
+
+    if (!pNATPassthrough)
+    {
+        AnscFreeMemory(pLinkObj);
+        return NULL;
+    }
+     /* now we have this link content */
+    pLinkObj->InstanceNumber = pMyObject->NATPassthroughNextInsNum;
+    pNATPassthrough->InstanceNumber = pMyObject->NATPassthroughNextInsNum;
+    pMyObject->NATPassthroughNextInsNum++;
+
+    if (pMyObject->NATPassthroughNextInsNum == 0)
+    {
+        pMyObject->NATPassthroughNextInsNum = 1;
+    }
+
+    _ansc_sprintf(pNATPassthrough->Alias, "NATPassthrough-%d", (int)pLinkObj->InstanceNumber);
+    _ansc_sprintf(pNATPassthrough->Status, "Disabled");
+    pLinkObj->hContext      = (ANSC_HANDLE)pNATPassthrough;
+    pLinkObj->hParentTable  = NULL;
+    pLinkObj->bNew          = TRUE;
+
+    CosaSListPushEntryByInsNum((PSLIST_HEADER)&pMyObject->NATPassthroughList, pLinkObj);
+    CosaFwReg_NATPassthroughAddInfo((ANSC_HANDLE)pMyObject, (ANSC_HANDLE)pLinkObj);
+
+    *pInsNumber = pLinkObj->InstanceNumber;
+    return pLinkObj;
+}
+
+ULONG
+NATPassthrough_DelEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ANSC_HANDLE                 hInstance
+    )
+{
+    PCOSA_DATAMODEL_NAT            pMyObject          = (PCOSA_DATAMODEL_NAT)g_pCosaBEManager->hNat;
+    PCOSA_CONTEXT_LINK_OBJECT      pLinkObj           = (PCOSA_CONTEXT_LINK_OBJECT)hInstance;
+    COSA_DML_NATPASS          *pNATPassthrough        = (COSA_DML_NATPASS*)pLinkObj->hContext;
+
+    if (CosaDmlFW_NATPassthrough_DelEntry(pLinkObj->InstanceNumber) != ANSC_STATUS_SUCCESS)
+    {
+        return -1;
+    }
+
+    AnscSListPopEntryByLink((PSLIST_HEADER)&pMyObject->NATPassthroughList, &pLinkObj->Linkage);
+
+    if (pLinkObj->bNew)
+    {
+        CosaFwReg_NATPassthroughDelInfo((ANSC_HANDLE)pMyObject, (ANSC_HANDLE)pLinkObj);
+    }
+    if (!pNATPassthrough)
+    {
+    AnscFreeMemory(pNATPassthrough);
+    AnscFreeMemory(pLinkObj);
+    }
+    return 0;
+}
+BOOL
+NATPassthrough_GetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL*                       pBool
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_NATPASS          *pNATPassthrough  = (COSA_DML_NATPASS*)pLinkObj->hContext;
+
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+        *pBool = pNATPassthrough->Enable;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+ULONG
+NATPassthrough_GetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pValue,
+        ULONG*                      pUlSize
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_NATPASS            *pNATPassthrough  = (COSA_DML_NATPASS*)pLinkObj->hContext;
+
+    if (strcmp(ParamName, "Status") == 0)
+    {
+        AnscCopyString(pValue, pNATPassthrough->Status);
+        return 0;
+    }
+    if (strcmp(ParamName, "MACAddr") == 0)
+    {
+        AnscCopyString(pValue, pNATPassthrough->MACAddress);
+        return 0;
+    }
+    if (strcmp(ParamName, "MACMask") == 0)
+    {
+        AnscCopyString(pValue, pNATPassthrough->MACMask);
+        return 0;
+    }
+    if (strcmp(ParamName, "Alias") == 0)
+    {
+        AnscCopyString(pValue, pNATPassthrough->Alias);
+        return 0;
+    }
+    return -1;
+}
+
+BOOL
+NATPassthrough_SetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL                        pBool
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_NATPASS          *pNATPassthrough  = (COSA_DML_NATPASS*)pLinkObj->hContext;
+
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+        pNATPassthrough->Enable = pBool;
+        _ansc_snprintf(pNATPassthrough->Status, sizeof(pNATPassthrough->Status), "%s", ((pBool) ? "Enabled" : "Disabled"));
+        return TRUE;
+    }
+    return FALSE;
+}
+BOOL
+NATPassthrough_SetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       strValue
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_NATPASS           *pNATPassthrough     = (COSA_DML_NATPASS*)pLinkObj->hContext;
+
+    if (strcmp(ParamName, "MACAddr") == 0)
+    {
+        _ansc_snprintf(pNATPassthrough->MACAddress, sizeof(pNATPassthrough->MACAddress), "%s", strValue);
+        return TRUE;
+    }
+    if (strcmp(ParamName, "MACMask") == 0)
+    {
+        _ansc_snprintf(pNATPassthrough->MACMask, sizeof(pNATPassthrough->MACMask), "%s", strValue);
+        return TRUE;
+    }
+    if (strcmp(ParamName, "Alias") == 0)
+    {
+        _ansc_snprintf(pNATPassthrough->Alias, sizeof(pNATPassthrough->Alias), "%s", strValue);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+BOOL
+NATPassthrough_Validate
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       pReturnParamName,
+        ULONG*                      puLength
+    )
+{
+    return TRUE;
+}
+
+ULONG
+NATPassthrough_Commit
+    (
+        ANSC_HANDLE                 hInsContext
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_NATPASS           *pNATPassthrough   = (COSA_DML_NATPASS*)pLinkObj->hContext;
+    PCOSA_DATAMODEL_NAT   pMyObject               = (PCOSA_DATAMODEL_NAT)g_pCosaBEManager->hNat;
+
+    if (pLinkObj->bNew)
+    {
+        if (CosaDmlFW_NATPassthrough_AddEntry(pNATPassthrough) != ANSC_STATUS_SUCCESS)
+            return -1;
+        CosaFwReg_NATPassthroughDelInfo((ANSC_HANDLE)pMyObject, (ANSC_HANDLE)pLinkObj);
+        pLinkObj->bNew = FALSE;
+    }
+    else
+    {
+        if (CosaDmlFW_NATPassthrough_SetConf(pNATPassthrough->InstanceNumber, pNATPassthrough) != ANSC_STATUS_SUCCESS)
+        {
+            CosaDmlFW_NATPassthrough_GetConf(pNATPassthrough->InstanceNumber, pNATPassthrough);
+            return -1;
+        }
+    }
+    return 0;
+}
+
+ULONG
+NATPassthrough_Rollback
+    (
+        ANSC_HANDLE                 hInsContext
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_NATPASS           *pNATPassthrough    = (COSA_DML_NATPASS *)pLinkObj->hContext;
+
+    if (CosaDmlFW_NATPassthrough_GetConf(pNATPassthrough->InstanceNumber, pNATPassthrough) != ANSC_STATUS_SUCCESS)
+        return -1;
+
+    return 0;
+}
+//LG ADD END CR14
