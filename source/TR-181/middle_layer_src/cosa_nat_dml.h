@@ -505,5 +505,85 @@ NatPortTrigger_SetParamBoolValue
         BOOL                        bValue
     );
 
+ULONG
+NATPassthrough_GetEntryCount
+    (
+         ANSC_HANDLE                 hInsContext
+    );
 
+ANSC_HANDLE
+NATPassthrough_GetEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG                       nIndex,
+        ULONG*                      pInsNumber
+    );
+
+ANSC_HANDLE
+NATPassthrough_AddEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG*                      pInsNumber
+    );
+
+ULONG
+NATPassthrough_DelEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ANSC_HANDLE                 hInstance
+    );
+
+BOOL
+NATPassthrough_GetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL*                       pBool
+    );
+ULONG
+NATPassthrough_GetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pValue,
+        ULONG*                      pUlSize
+    );
+
+BOOL
+NATPassthrough_SetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL                        pBool
+    );
+
+BOOL
+NATPassthrough_SetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       strValue
+    );
+
+BOOL
+NATPassthrough_Validate
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       pReturnParamName,
+        ULONG*                      puLength
+    );
+
+ULONG
+NATPassthrough_Commit
+    (
+        ANSC_HANDLE                 hInsContext
+    );
+
+
+ULONG
+NATPassthrough_Rollback
+    (
+        ANSC_HANDLE                 hInsContext
+    );
+//LG ADD END CR14
 #endif
