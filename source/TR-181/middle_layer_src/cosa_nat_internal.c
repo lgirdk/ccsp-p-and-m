@@ -167,6 +167,13 @@ CosaNatInitialize
     PPOAM_IREP_FOLDER_OBJECT        pPoamIrepFoCOSA  = NULL;
     PPOAM_IREP_FOLDER_OBJECT        pPoamIrepFoNat   = NULL;
     PPOAM_IREP_FOLDER_OBJECT        pPoamIrepFoNatPt = NULL;
+    //LG ADD START CR14
+    ULONG                           ulFwNATPassthroughCnt = 0;
+    ULONG                           ulFwNATPassthroughIdx = 0;
+    PPOAM_IREP_FOLDER_OBJECT        pPoamIrepFoFwNATPassthrough = NULL;
+    COSA_DML_NATPASS                *pFwNATPassthrough;
+    PCOSA_CONTEXT_LINK_OBJECT       pFwNATPassthroughLinkObj = NULL;
+    //LG ADD END CR14
 
     /* Call Initiation */
     returnStatus = CosaDmlNatInit(NULL, NULL, CosaNatGen);
@@ -292,7 +299,110 @@ CosaNatInitialize
             was created. Moreover, we also need get delay-added entry and put them
             into our tree. */
     CosaNatRegGetNatInfo((ANSC_HANDLE)pMyObject);
+    //NATPassthrough_init
 
+      //LG ADD START CR14
+      ulFwNATPassthroughCnt = CosaDmlFW_NATPassthrough_GetNumberOfEntries();
+      pSlapVariable    = NULL;
+      pPoamIrepFoCOSA  = NULL;
+      AnscSListInitializeHeader(&pMyObject->NATPassthroughList);
+      pMyObject->NATPassthroughNextInsNum = 1;
+      pMyObject->hIrepFolderMACCOSA = g_GetRegistryRootFolder(g_pDslhDmlAgent);
+
+      pPoamIrepFoCOSA = (PPOAM_IREP_FOLDER_OBJECT)pMyObject->hIrepFolderMACCOSA;
+      if (!pPoamIrepFoCOSA)
+      {
+          return ANSC_STATUS_FAILURE;
+      }
+
+      pPoamIrepFoFwNATPassthrough = (PPOAM_IREP_FOLDER_OBJECT)pPoamIrepFoCOSA->GetFolder(
+              (ANSC_HANDLE)pPoamIrepFoCOSA,
+              COSA_IREP_FOLDER_NAME_NAT);
+
+      if (!pPoamIrepFoFwNATPassthrough)
+      {
+          pPoamIrepFoFwNATPassthrough =
+              pPoamIrepFoCOSA->AddFolder(
+                      (ANSC_HANDLE)pPoamIrepFoCOSA,
+                       COSA_IREP_FOLDER_NAME_NAT,
+                      0);
+      }
+
+      if (!pPoamIrepFoFwNATPassthrough)
+      {
+          return ANSC_STATUS_FAILURE;
+      }
+      else
+      {
+          pMyObject->hIrepFolderFwNATPassthrough = pPoamIrepFoFwNATPassthrough;
+      }
+	 pSlapVariable = (PSLAP_VARIABLE)pPoamIrepFoFwNATPassthrough->GetRecord(
+              (ANSC_HANDLE)pPoamIrepFoFwNATPassthrough,
+              COSA_DML_RR_NAME_NATNextInsNumber,
+              NULL);
+
+      if (pSlapVariable)
+      {
+          pMyObject->NATPassthroughNextInsNum = pSlapVariable->Variant.varUint32;
+          SlapFreeVariable(pSlapVariable);
+      }
+
+      for (ulFwNATPassthroughIdx = 0; ulFwNATPassthroughIdx < ulFwNATPassthroughCnt; ulFwNATPassthroughIdx++)
+      {
+          pFwNATPassthrough = AnscAllocateMemory(sizeof(COSA_DML_NATPASS));
+          if (!pFwNATPassthrough) {
+              return ANSC_STATUS_FAILURE;
+          }
+          if (CosaDmlFW_NATPassthrough_GetEntryByIndex(ulFwNATPassthroughIdx, pFwNATPassthrough) != ANSC_STATUS_SUCCESS)
+          {
+              CcspTraceError(("%s: CosaDmlFW_NATPassthrough_GetEntryByIndex error\n", __FUNCTION__));
+              AnscFreeMemory(pFwNATPassthrough);
+              return ANSC_STATUS_FAILURE;
+          }
+
+          pFwNATPassthroughLinkObj = AnscAllocateMemory(sizeof(COSA_CONTEXT_LINK_OBJECT));
+          if (!pFwNATPassthroughLinkObj)
+          {
+              AnscFreeMemory(pFwNATPassthrough);
+              return ANSC_STATUS_FAILURE;
+          }
+
+          if (pFwNATPassthrough->InstanceNumber != 0)
+          {
+              if (pMyObject->NATPassthroughNextInsNum <= pFwNATPassthrough->InstanceNumber)
+              {
+                  pMyObject->NATPassthroughNextInsNum = pFwNATPassthrough->InstanceNumber + 1;
+                  if (pMyObject->NATPassthroughNextInsNum == 0)
+                  {
+			  pMyObject->NATPassthroughNextInsNum = 1;
+                  }
+              }
+          }
+          else
+          {
+              pFwNATPassthrough->InstanceNumber = pMyObject->NATPassthroughNextInsNum;
+
+              pMyObject->NATPassthroughNextInsNum++;
+              if (pMyObject->NATPassthroughNextInsNum == 0)
+              {
+                  pMyObject->NATPassthroughNextInsNum = 1;
+              }
+		printf("cosa_nat_internal.c pFwNATPassthrough->InstanceNumber =%d  \n",pFwNATPassthrough->InstanceNumber);
+
+              _ansc_sprintf(pFwNATPassthrough->Alias, "cpe-NATPassthrough-%d", (int)pFwNATPassthrough->InstanceNumber);
+              CosaDmlFW_NATPassthrough_SetValues(ulFwNATPassthroughIdx, pFwNATPassthrough->InstanceNumber, pFwNATPassthrough->Alias);
+          }
+
+          pFwNATPassthroughLinkObj->InstanceNumber  = pFwNATPassthrough->InstanceNumber;
+          pFwNATPassthroughLinkObj->hContext        = pFwNATPassthrough;
+          pFwNATPassthroughLinkObj->hParentTable    = NULL;
+          pFwNATPassthroughLinkObj->bNew            = FALSE;
+
+          CosaSListPushEntryByInsNum(&pMyObject->NATPassthroughList, pFwNATPassthroughLinkObj);
+
+      }
+      CosaFwReg_NATPassthroughGetInfo((ANSC_HANDLE)pMyObject);
+      //LG ADD END CR14
     /* Intialixing cache first time */
 
     clear_pf_cache(pf_cache);
@@ -1270,3 +1380,302 @@ EXIT1:
 
     return returnStatus;
 }
+//LG ADD START CR14
+ANSC_STATUS
+CosaFwReg_NATPassthroughGetInfo(
+        ANSC_HANDLE                 hThisObject
+    )
+{
+    PCOSA_DATAMODEL_NAT   pMyObject               = (PCOSA_DATAMODEL_NAT)hThisObject;
+    PSLIST_HEADER                   pListHead               = (PSLIST_HEADER            )&pMyObject->NATPassthroughList;
+    PPOAM_IREP_FOLDER_OBJECT        pPoamIrepFoNATPassthrough     = (PPOAM_IREP_FOLDER_OBJECT )pMyObject->hIrepFolderFwNATPassthrough;
+    PPOAM_IREP_FOLDER_OBJECT        pPoamIrepFoNATPassthroughSp   = (PPOAM_IREP_FOLDER_OBJECT )NULL;
+    COSA_DML_NATPASS           *pEntry                  = (COSA_DML_NATPASS    *)NULL;
+    PCOSA_CONTEXT_LINK_OBJECT       pCosaContext            = (PCOSA_CONTEXT_LINK_OBJECT)NULL;
+    PSLAP_VARIABLE                  pSlapVariable           = (PSLAP_VARIABLE           )NULL;
+    ULONG                           ulEntryCount            = 0;
+    ULONG                           ulIndex                 = 0;
+    ULONG                           ulInstanceNumber        = 0;
+    char*                           pFolderName             = NULL;
+    char*                           pAlias;
+
+    if ( !pPoamIrepFoNATPassthrough )
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+    /* Load the newly added but not yet commited entries */
+
+    ulEntryCount = pPoamIrepFoNATPassthrough->GetFolderCount((ANSC_HANDLE)pPoamIrepFoNATPassthrough);
+
+    for ( ulIndex = 0; ulIndex < ulEntryCount; ulIndex++ )
+    {
+        pFolderName =
+            pPoamIrepFoNATPassthrough->EnumFolder
+                (
+                    (ANSC_HANDLE)pPoamIrepFoNATPassthrough,
+                    ulIndex
+                );
+
+        if ( !pFolderName )
+        {
+            continue;
+        }
+        pPoamIrepFoNATPassthroughSp = pPoamIrepFoNATPassthrough->GetFolder((ANSC_HANDLE)pPoamIrepFoNATPassthrough, pFolderName);
+
+        AnscFreeMemory(pFolderName);
+
+        if ( !pPoamIrepFoNATPassthroughSp )
+        {
+            continue;
+        }
+
+        pSlapVariable =
+            (PSLAP_VARIABLE)pPoamIrepFoNATPassthroughSp->GetRecord
+                (
+                    (ANSC_HANDLE)pPoamIrepFoNATPassthroughSp,
+                    COSA_DML_RR_NAME_NATInsNumber,
+                    NULL
+                );
+
+        if ( pSlapVariable )
+        {
+            ulInstanceNumber = pSlapVariable->Variant.varUint32;
+
+            SlapFreeVariable(pSlapVariable);
+        }
+
+        pSlapVariable =
+            (PSLAP_VARIABLE)pPoamIrepFoNATPassthroughSp->GetRecord
+                (
+                    (ANSC_HANDLE)pPoamIrepFoNATPassthroughSp,
+                    COSA_DML_RR_NAME_NATAlias,
+                    NULL
+                );
+
+        if ( pSlapVariable )
+        {
+            pAlias = AnscCloneString(pSlapVariable->Variant.varString);
+
+            SlapFreeVariable(pSlapVariable);
+        }
+        else
+        {
+            pAlias = NULL;
+        }
+
+        pCosaContext = (PCOSA_CONTEXT_LINK_OBJECT)AnscAllocateMemory(sizeof(COSA_CONTEXT_LINK_OBJECT));
+
+        if ( !pCosaContext )
+        {
+            AnscFreeMemory(pAlias);
+
+            return ANSC_STATUS_RESOURCES;
+        }
+
+        pEntry = (COSA_DML_NATPASS*)AnscAllocateMemory(sizeof(COSA_DML_NATPASS));
+
+        if ( !pEntry )
+        {
+            AnscFreeMemory(pAlias);
+            AnscFreeMemory(pCosaContext);
+
+            return ANSC_STATUS_RESOURCES;
+        }
+
+        if (pAlias)
+        {
+            /*
+               Note that AnscAllocateMemory() zero's memory, so there's no need
+               to do anything to initialise pEntry->Alias if pAlias is NULL.
+            */
+            AnscCopyString(pEntry->Alias, pAlias);
+            AnscFreeMemory(pAlias);
+            pAlias = NULL;
+        }
+
+        pEntry->InstanceNumber = ulInstanceNumber;
+
+        pCosaContext->InstanceNumber        = ulInstanceNumber;
+        pCosaContext->bNew                  = TRUE;
+        pCosaContext->hContext              = (ANSC_HANDLE)pEntry;
+        pCosaContext->hParentTable          = NULL;
+        pCosaContext->hPoamIrepUpperFo      = (ANSC_HANDLE)pPoamIrepFoNATPassthrough;
+        pCosaContext->hPoamIrepFo           = (ANSC_HANDLE)pPoamIrepFoNATPassthroughSp;
+
+        CosaSListPushEntryByInsNum(pListHead, pCosaContext);
+    }
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaFwReg_NATPassthroughAddInfo(
+        ANSC_HANDLE                 hThisObject,
+        ANSC_HANDLE                 hCosaContext
+    )
+{
+    ANSC_STATUS                     returnStatus            = ANSC_STATUS_SUCCESS;
+    PCOSA_DATAMODEL_NAT   pMyObject               = (PCOSA_DATAMODEL_NAT   )hThisObject;
+    PPOAM_IREP_FOLDER_OBJECT        pPoamIrepFoNATPassthrough      = (PPOAM_IREP_FOLDER_OBJECT )pMyObject->hIrepFolderFwNATPassthrough;
+    PPOAM_IREP_FOLDER_OBJECT        pPoamIrepFoNATPassthroughSp   = (PPOAM_IREP_FOLDER_OBJECT )NULL;
+    PCOSA_CONTEXT_LINK_OBJECT       pCosaContext            = (PCOSA_CONTEXT_LINK_OBJECT)hCosaContext;
+    COSA_DML_NATPASS           *pEntry                  = (COSA_DML_NATPASS *   )pCosaContext->hContext;
+    PSLAP_VARIABLE                  pSlapVariable           = (PSLAP_VARIABLE           )NULL;
+
+    if ( !pPoamIrepFoNATPassthrough )
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+    else
+    {
+        pPoamIrepFoNATPassthrough->EnableFileSync((ANSC_HANDLE)pPoamIrepFoNATPassthrough, FALSE);
+    }
+
+    if ( TRUE )
+    {
+        SlapAllocVariable(pSlapVariable);
+
+        if ( !pSlapVariable )
+        {
+            returnStatus = ANSC_STATUS_RESOURCES;
+
+            goto  EXIT1;
+        }
+    }
+
+    if ( TRUE )
+    {
+        returnStatus =
+            pPoamIrepFoNATPassthrough->DelRecord
+                (
+                    (ANSC_HANDLE)pPoamIrepFoNATPassthrough,
+                    COSA_DML_RR_NAME_NATNextInsNumber
+                );
+
+        pSlapVariable->Syntax            = SLAP_VAR_SYNTAX_uint32;
+        pSlapVariable->Variant.varUint32 = pMyObject->NATPassthroughNextInsNum;
+
+        returnStatus =
+            pPoamIrepFoNATPassthrough->AddRecord
+                (
+                    (ANSC_HANDLE)pPoamIrepFoNATPassthrough,
+                    COSA_DML_RR_NAME_NATNextInsNumber,
+                    SYS_REP_RECORD_TYPE_UINT,
+                    SYS_RECORD_CONTENT_DEFAULT,
+                    pSlapVariable,
+                    0
+                );
+
+        SlapCleanVariable(pSlapVariable);
+        SlapInitVariable (pSlapVariable);
+    }
+
+    if ( TRUE )
+    {
+        pPoamIrepFoNATPassthroughSp =
+            pPoamIrepFoNATPassthrough->AddFolder
+                (
+                    (ANSC_HANDLE)pPoamIrepFoNATPassthrough,
+                    pEntry->Alias,
+                    0
+                );
+
+        if ( !pPoamIrepFoNATPassthroughSp )
+        {
+            returnStatus = ANSC_STATUS_FAILURE;
+
+            goto  EXIT1;
+        }
+
+        if ( TRUE )
+        {
+            pSlapVariable->Syntax            = SLAP_VAR_SYNTAX_uint32;
+            pSlapVariable->Variant.varUint32 = pEntry->InstanceNumber;
+
+            returnStatus =
+                pPoamIrepFoNATPassthroughSp->AddRecord
+                    (
+                        (ANSC_HANDLE)pPoamIrepFoNATPassthroughSp,
+                        COSA_DML_RR_NAME_NATInsNumber,
+                        SYS_REP_RECORD_TYPE_UINT,
+                        SYS_RECORD_CONTENT_DEFAULT,
+                        pSlapVariable,
+                        0
+                    );
+
+            SlapCleanVariable(pSlapVariable);
+            SlapInitVariable (pSlapVariable);
+        }
+
+        if ( TRUE )
+        {
+            pSlapVariable->Syntax            = SLAP_VAR_SYNTAX_string;
+            pSlapVariable->Variant.varString = AnscCloneString(pEntry->Alias);
+
+            returnStatus =
+                pPoamIrepFoNATPassthroughSp->AddRecord
+                    (
+                        (ANSC_HANDLE)pPoamIrepFoNATPassthroughSp,
+                        COSA_DML_RR_NAME_NATAlias,
+                        SYS_REP_RECORD_TYPE_ASTR,
+                        SYS_RECORD_CONTENT_DEFAULT,
+                        pSlapVariable,
+                        0
+                    );
+
+            SlapCleanVariable(pSlapVariable);
+            SlapInitVariable (pSlapVariable);
+        }
+
+        pCosaContext->hPoamIrepUpperFo = (ANSC_HANDLE)pPoamIrepFoNATPassthrough;
+        pCosaContext->hPoamIrepFo      = (ANSC_HANDLE)pPoamIrepFoNATPassthroughSp;
+    }
+
+EXIT1:
+
+    if ( pSlapVariable )
+    {
+        SlapFreeVariable(pSlapVariable);
+    }
+
+    pPoamIrepFoNATPassthrough->EnableFileSync((ANSC_HANDLE)pPoamIrepFoNATPassthrough, TRUE);
+
+    return returnStatus;
+}
+
+
+ANSC_STATUS
+CosaFwReg_NATPassthroughDelInfo(
+        ANSC_HANDLE                 hThisObject,
+        ANSC_HANDLE                 hCosaContext
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT       pCosaContext      = (PCOSA_CONTEXT_LINK_OBJECT)hCosaContext;
+    PPOAM_IREP_FOLDER_OBJECT        pPoamIrepUpperFo  = (PPOAM_IREP_FOLDER_OBJECT )pCosaContext->hPoamIrepUpperFo;
+    PPOAM_IREP_FOLDER_OBJECT        pPoamIrepFo       = (PPOAM_IREP_FOLDER_OBJECT )pCosaContext->hPoamIrepFo;
+    if ( !pPoamIrepUpperFo || !pPoamIrepFo )
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+    else
+    {
+        pPoamIrepUpperFo->EnableFileSync((ANSC_HANDLE)pPoamIrepUpperFo, FALSE);
+    }
+
+    if ( TRUE )
+    {
+        pPoamIrepFo->Close((ANSC_HANDLE)pPoamIrepFo);
+
+        pPoamIrepUpperFo->DelFolder
+            (
+                (ANSC_HANDLE)pPoamIrepUpperFo,
+                pPoamIrepFo->GetFolderName((ANSC_HANDLE)pPoamIrepFo)
+            );
+
+        pPoamIrepUpperFo->EnableFileSync((ANSC_HANDLE)pPoamIrepUpperFo, TRUE);
+
+        AnscFreeMemory(pPoamIrepFo);
+    }
+    return ANSC_STATUS_SUCCESS;
+}
+//LG ADD END CR14
