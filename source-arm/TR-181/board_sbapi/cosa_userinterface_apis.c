@@ -414,6 +414,14 @@ CosaDmlUserInterfaceGetCfg
                 pCfg->bHTTPSecurityHeaderEnable = FALSE;
         }
 
+       /* LGI ADD - For DNS settings page */
+       memset(buf,0,sizeof(buf));
+       rc = syscfg_get( NULL, "dns_config_page_show", buf, sizeof(buf));
+       if(rc == 0)
+       {
+           pCfg->bShowDNSConfigPage = (!strcmp(buf, "true")) ? TRUE : FALSE;
+       }
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -498,6 +506,27 @@ sprintf(buf, "%d",  pCfg->PasswordLockoutTime);
 
         system("/bin/sh /etc/webgui.sh &");
     }
+    /* LGI ADD START - Public DNS (DNS override) feature */
+    if ( TRUE == pCfg->bShowDNSConfigPage )
+    {
+        if (syscfg_set(NULL, "dns_config_page_show", "true") != 0)
+        {
+            AnscTraceWarning(("%s : ShowDNSConfigPage syscfg_set failed\n",__FUNCTION__));
+        }
+    }
+    else
+    {
+        if (syscfg_set(NULL, "dns_config_page_show", "false") != 0)
+        {
+            AnscTraceWarning(("%s : ShowDNSConfigPage syscfg_set failed\n",__FUNCTION__));
+        }
+    }
+    if (syscfg_commit() != 0)
+    {
+        AnscTraceWarning(("%s syscfg_commit failed \n",__FUNCTION__));
+        return ANSC_STATUS_FAILURE;
+    }
+    /* LGI ADD END */
 
     return ANSC_STATUS_SUCCESS;
 }
