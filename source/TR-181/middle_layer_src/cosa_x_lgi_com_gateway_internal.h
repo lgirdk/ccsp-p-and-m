@@ -14,43 +14,48 @@
  * limitations under the License.
  **********************************************************************/
 
-#ifndef  _COSA_LGI_IPV6LAN_MODE_INTERNAL_H
-#define  _COSA_LGI_IPV6LAN_MODE_INTERNAL_H 
+#ifndef  _COSA_LGI_GATEWAY_INTERNAL_H
+#define  _COSA_LGI_GATEWAY_INTERNAL_H
 
 #include "cosa_apis.h"
 #include "plugin_main_apis.h"
 #include "cosa_x_lgi_com_gateway_apis.h"
 
-#define  COSA_DATAMODEL_LGI_IPV6LAN_MODE_CLASS_CONTENT    \
+#define  COSA_DATAMODEL_LGI_GATEWAY_CLASS_CONTENT      \
     /* duplication of the base object class content */ \
     COSA_BASE_CONTENT                                  \
 
 typedef  struct
-_COSA_DATAMODEL_LGI_IPV6LAN_MODE_CLASS_CONTENT
+_COSA_DATAMODEL_LGI_GATEWAY_CLASS_CONTENT
 {
-    COSA_DATAMODEL_LGI_IPV6LAN_MODE_CLASS_CONTENT
+    COSA_DATAMODEL_LGI_GATEWAY_CLASS_CONTENT
     /* start of LGI Gateway object class content */
     ULONG                           ipv6LanMode;
+    BOOL                            dns_override;
+    char                            dns_ipv4_preferred[16];
+    char                            dns_ipv4_alternate[16];
+    char                            dns_ipv6_preferred[64];
+    char                            dns_ipv6_alternate[64];
 }
-COSA_DATAMODEL_LGI_IPV6LAN_MODE, *PCOSA_DATAMODEL_LGI_IPV6LAN_MODE;
+COSA_DATAMODEL_LGI_GATEWAY, *PCOSA_DATAMODEL_LGI_GATEWAY;
 
 /*
     Standard function declaration
 */
 ANSC_HANDLE
-CosaLgiIPv6LANModeCreate
+CosaLgiGatewayCreate
     (
         VOID
     );
 
 ANSC_STATUS
-CosaLgiIPv6LANModeInitialize
+CosaLgiGatewayInitialize
     (
         ANSC_HANDLE                 hThisObject
     );
 
 ANSC_STATUS
-CosaLgiIPv6LANModeRemove
+CosaLgiGatewayRemove
     (
         ANSC_HANDLE                 hThisObject
     );
