@@ -14,8 +14,8 @@
  * limitations under the License.
  **********************************************************************/
 
-#ifndef  _COSA_LGI_IPV6LAN_MODE_APIS_H 
-#define  _COSA_LGI_IPV6LAN_MODE_APIS_H 
+#ifndef  _COSA_LGI_GATEWAY_APIS_H
+#define  _COSA_LGI_GATEWAY_APIS_H
 
 #include "../middle_layer_src/cosa_apis.h"
 
@@ -36,5 +36,48 @@ CosaDmlLgiGwSetIpv6LanMode
     ULONG                       ulValue
 );
 
-ULONG CosaDmlLgiGwSaveSettings();
+
+int
+CosaDmlLgiGwGetDnsOverride
+(
+    BOOL                        *pValue
+);
+
+int
+CosaDmlLgiGwSetDnsOverride
+(
+    BOOL                        bValue
+);
+
+
+int
+CosaDmlLgiGwGetDnsIpv4Preferred
+(
+    char                        *pValue,
+    ULONG                       *pUlSize
+);
+
+int
+CosaDmlLgiGwGetDnsIpv4Alternate
+(
+    char                        *pValue,
+    ULONG                       *pUlSize
+);
+
+int
+CosaDmlLgiGwGetDnsIpv6Preferred
+(
+    char                        *pValue,
+    ULONG                       *pUlSize
+);
+
+int
+CosaDmlLgiGwGetDnsIpv6Alternate
+(
+    char                        *pValue,
+    ULONG                       *pUlSize
+);
+
+void CosaDmlDNSOverride();
+
 #endif
