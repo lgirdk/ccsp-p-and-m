@@ -46,11 +46,208 @@ CosaDmlLgiGwSetIpv6LanMode
     return CosaDmlDhcpv6sSetType((ANSC_HANDLE)NULL, ulValue);
 }
 
-ULONG CosaDmlLgiGwSaveSettings()
+int
+CosaDmlLgiGwGetDnsOverride
+    (
+        BOOL                        *pValue
+    )
 {
+    char buf[8];
+    memset(buf, 0, sizeof(buf));
+
     if(syscfg_init() == 0)
     {
-        return syscfg_commit();
+        syscfg_get( NULL, "dns_override", buf, sizeof(buf));
     }
-    return ANSC_STATUS_FAILURE;
+    else
+    {
+        CcspTraceError(("syscfg_init failed in %s\n",__FUNCTION__));
+    }
+    *pValue = (strcmp(buf, "true") == 0);
+    return 0;
 }
+
+int
+CosaDmlLgiGwSetDnsOverride
+    (
+        BOOL                        bValue
+    )
+{
+    char buffer[6] = "true";
+    pthread_t tid;
+    int retVal = 0;
+
+    if (syscfg_init() == 0)
+    {
+        if (!bValue)
+        {
+            strcpy(buffer,"false");
+        }
+        syscfg_set(NULL, "dns_override", buffer);
+        syscfg_commit();
+
+        pthread_create(&tid, NULL, &CosaDmlDNSOverride, NULL); 
+    }
+    else
+    {
+        CcspTraceError(("syscfg_init failed in %s\n",__FUNCTION__));
+        retVal = -1;
+    }
+ 
+    return retVal;
+}
+
+int
+CosaDmlLgiGwGetDnsIpv4Preferred
+    (
+        char                        *pValue,
+        ULONG                       *pUlSize
+    )
+{
+    char buf[64];
+    memset(buf, 0, sizeof(buf));
+
+    if(syscfg_init() == 0)
+    {
+        syscfg_get( NULL, "dns_ipv4_preferred", buf, sizeof(buf));
+        if(AnscSizeOfString(buf) == 0)
+        {
+            AnscCopyString(pValue, "0.0.0.0");
+            return 0;
+        }
+        else if(AnscSizeOfString(buf) < *pUlSize)
+        {
+            AnscCopyString(pValue, buf);
+            return 0;
+        }
+        else
+        {
+            *pUlSize = AnscSizeOfString(buf);
+            return 1;
+        }
+    }
+    else
+    {
+        CcspTraceError(("syscfg_init failed in %s\n",__FUNCTION__));
+    }
+
+    return -1;
+}
+
+int
+CosaDmlLgiGwGetDnsIpv4Alternate
+    (
+        char                        *pValue,
+        ULONG                       *pUlSize
+    )
+{
+    char buf[64];
+    memset(buf, 0, sizeof(buf));
+
+    if(syscfg_init() == 0)
+    {
+        syscfg_get( NULL, "dns_ipv4_alternate", buf, sizeof(buf));
+        if(AnscSizeOfString(buf) == 0)
+        {
+            AnscCopyString(pValue, "0.0.0.0");
+            return 0;
+        }
+        else if(AnscSizeOfString(buf) < *pUlSize)
+        {
+            AnscCopyString(pValue, buf);
+            return 0;
+        }
+        else
+        {
+            *pUlSize = AnscSizeOfString(buf);
+            return 1;
+        }
+    }
+    else
+    {
+        CcspTraceError(("syscfg_init failed in %s\n",__FUNCTION__));
+    }
+    return -1;
+}
+
+int
+CosaDmlLgiGwGetDnsIpv6Preferred
+    (
+        char                        *pValue,
+        ULONG                       *pUlSize
+    )
+{
+    char buf[64];
+    memset(buf, 0, sizeof(buf));
+
+    if(syscfg_init() == 0)
+    {
+        syscfg_get( NULL, "dns_ipv6_preferred", buf, sizeof(buf));
+        if(AnscSizeOfString(buf) == 0)
+        {
+            AnscCopyString(pValue, "0:0:0:0:0:0:0:0");
+            return 0;
+        }
+        else if(AnscSizeOfString(buf) < *pUlSize)
+        {
+            AnscCopyString(pValue, buf);
+            return 0;
+        }
+        else
+        {
+            *pUlSize = AnscSizeOfString(buf);
+            return 1;
+        }
+    }
+    else
+    {
+        CcspTraceError(("syscfg_init failed in %s\n",__FUNCTION__));
+    }
+    return -1;
+}
+
+int
+CosaDmlLgiGwGetDnsIpv6Alternate
+    (
+        char                        *pValue,
+        ULONG                       *pUlSize
+    )
+{
+    char buf[64];
+    memset(buf, 0, sizeof(buf));
+
+    if(syscfg_init() == 0)
+    {
+        syscfg_get( NULL, "dns_ipv6_alternate", buf, sizeof(buf));
+        if(AnscSizeOfString(buf) == 0)
+        {
+            AnscCopyString(pValue, "0:0:0:0:0:0:0:0");
+            return 0;
+        }
+        else if(AnscSizeOfString(buf) < *pUlSize)
+        {
+            AnscCopyString(pValue, buf);
+            return 0;
+        }
+        else
+        {
+            *pUlSize = AnscSizeOfString(buf);
+            return 1;
+        }
+    }
+    else
+    {
+        CcspTraceError(("syscfg_init failed in %s\n",__FUNCTION__));
+    }
+    return -1;
+}
+
+void CosaDmlDNSOverride()
+{
+    pthread_detach(pthread_self());
+
+    system(UPDATE_RESOLV_CMD);
+
+    CosaDmlDHCPv6sTriggerRestart(TRUE);
+}
+
