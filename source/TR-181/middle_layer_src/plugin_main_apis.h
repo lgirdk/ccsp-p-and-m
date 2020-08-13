@@ -164,7 +164,7 @@ extern COSARegisterCallBackAfterInitDmlProc  g_RegisterCallBackAfterInitDml;
 #define COSA_DATAMODEL_LANMANAGEMENT_OID                        42
 #define COSA_DATAMODEL_LGI_CLOUDUI_OID                         130
 #define COSA_DATAMODEL_LGI_WOL_OID                             134 /* LGI ADD */
-#define COSA_DATAMODEL_LGI_IPV6LAN_MODE_OID                    127 /* LGI ADD */
+#define COSA_DATAMODEL_LGI_GATEWAY_OID                         127 /* LGI ADD */
 
 
 /*
@@ -213,7 +213,7 @@ extern COSARegisterCallBackAfterInitDmlProc  g_RegisterCallBackAfterInitDml;
     ANSC_HANDLE                  hTSIP;                                                     \
     ANSC_HANDLE                  hFileTransfer;                                             \
     ANSC_HANDLE                  hMacFilter;                     /* LGI ADD */              \
-    ANSC_HANDLE                  hLgiIPv6LANMode;                /* LGI ADD */              \
+    ANSC_HANDLE                  hLgiGateway;                    /* LGI ADD */              \
     ANSC_HANDLE                  hRabid;                                                    \
     ANSC_HANDLE                  hAdvPC;                                                    \
     ANSC_HANDLE                  hPrivacyProtection;                                        \
