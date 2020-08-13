@@ -26,4 +26,12 @@
 ANSC_STATUS CosaDmlLgiGwGetIpv6LanMode ( ANSC_HANDLE hContext, ULONG *pValue );
 ULONG CosaDmlLgiGwSetIpv6LanMode ( ANSC_HANDLE hContext, ULONG ulValue );
 
+int CosaDmlLgiGwGetDnsOverride ( BOOL *pValue );
+int CosaDmlLgiGwSetDnsOverride ( BOOL bValue );
+
+int CosaDmlLgiGwGetDnsIpv4Preferred ( char *pValue, ULONG *pUlSize );
+int CosaDmlLgiGwGetDnsIpv4Alternate ( char *pValue, ULONG *pUlSize );
+int CosaDmlLgiGwGetDnsIpv6Preferred ( char *pValue, ULONG *pUlSize );
+int CosaDmlLgiGwGetDnsIpv6Alternate ( char *pValue, ULONG *pUlSize );
+
 #endif
