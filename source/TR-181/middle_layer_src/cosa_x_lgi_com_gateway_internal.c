@@ -14,7 +14,7 @@
  * limitations under the License.
  **********************************************************************/
 
-#include <syscfg/syscfg.h>
+
 #include "cosa_x_lgi_com_gateway_internal.h"
 
 /**********************************************************************
@@ -24,7 +24,7 @@
     prototype:
 
         ANSC_HANDLE
-        CosaLgiIPv6LANModeCreate
+        CosaLgiGatewayCreate
             (
             );
 
@@ -39,17 +39,17 @@
 **********************************************************************/
 
 ANSC_HANDLE
-CosaLgiIPv6LANModeCreate
+CosaLgiGatewayCreate
     (
         VOID
     )
 {
-    PCOSA_DATAMODEL_LGI_IPV6LAN_MODE  pMyObject    = (PCOSA_DATAMODEL_LGI_IPV6LAN_MODE)NULL;
+    PCOSA_DATAMODEL_LGI_GATEWAY  pMyObject    = (PCOSA_DATAMODEL_LGI_GATEWAY)NULL;
 
     /*
      * We create object by first allocating memory for holding the variables and member functions.
      */
-    pMyObject = (PCOSA_DATAMODEL_LGI_IPV6LAN_MODE)AnscAllocateMemory(sizeof(COSA_DATAMODEL_LGI_IPV6LAN_MODE));
+    pMyObject = (PCOSA_DATAMODEL_LGI_GATEWAY)AnscAllocateMemory(sizeof(COSA_DATAMODEL_LGI_GATEWAY));
 
     if ( !pMyObject )
     {
@@ -59,10 +59,10 @@ CosaLgiIPv6LANModeCreate
     /*
      * Initialize the common variables and functions for a container object.
      */
-    pMyObject->Oid               = COSA_DATAMODEL_LGI_IPV6LAN_MODE_OID;
-    pMyObject->Create            = CosaLgiIPv6LANModeCreate;
-    pMyObject->Remove            = CosaLgiIPv6LANModeRemove;
-    pMyObject->Initialize        = CosaLgiIPv6LANModeInitialize;
+    pMyObject->Oid               = COSA_DATAMODEL_LGI_GATEWAY_OID;
+    pMyObject->Create            = CosaLgiGatewayCreate;
+    pMyObject->Remove            = CosaLgiGatewayRemove;
+    pMyObject->Initialize        = CosaLgiGatewayInitialize;
 
     pMyObject->Initialize   ((ANSC_HANDLE)pMyObject);
 
@@ -76,7 +76,7 @@ CosaLgiIPv6LANModeCreate
     prototype:
 
         ANSC_STATUS
-        CosaLgiIPv6LANModeInitialize
+        CosaLgiGatewayInitialize
             (
                 ANSC_HANDLE                 hThisObject
             );
@@ -94,17 +94,27 @@ CosaLgiIPv6LANModeCreate
 **********************************************************************/
 
 ANSC_STATUS
-CosaLgiIPv6LANModeInitialize
+CosaLgiGatewayInitialize
     (
         ANSC_HANDLE                 hThisObject
     )
 {
     ANSC_STATUS                        returnStatus = ANSC_STATUS_SUCCESS;
-    PCOSA_DATAMODEL_LGI_IPV6LAN_MODE   pMyObject    = (PCOSA_DATAMODEL_LGI_IPV6LAN_MODE)hThisObject;
+    PCOSA_DATAMODEL_LGI_GATEWAY        pMyObject    = (PCOSA_DATAMODEL_LGI_GATEWAY)hThisObject;
     ULONG                              size;
 
     /* Initiation all functions */
     CosaDmlLgiGwGetIpv6LanMode(NULL, &pMyObject->ipv6LanMode);
+
+	size = sizeof(pMyObject->dns_ipv4_preferred);
+    CosaDmlLgiGwGetDnsIpv4Preferred(pMyObject->dns_ipv4_preferred, &size);
+    size = sizeof(pMyObject->dns_ipv4_alternate);
+    CosaDmlLgiGwGetDnsIpv4Alternate(pMyObject->dns_ipv4_alternate, &size);
+    size = sizeof(pMyObject->dns_ipv6_preferred);
+    CosaDmlLgiGwGetDnsIpv6Preferred(pMyObject->dns_ipv6_preferred, &size);
+    size = sizeof(pMyObject->dns_ipv6_alternate);
+    CosaDmlLgiGwGetDnsIpv6Alternate(pMyObject->dns_ipv6_alternate, &size);
+    CosaDmlLgiGwGetDnsOverride(&(pMyObject->dns_override));
 
     return returnStatus;
 }
@@ -116,7 +126,7 @@ CosaLgiIPv6LANModeInitialize
     prototype:
 
         ANSC_STATUS
-        CosaLgiIPv6LANModeRemove
+        CosaLgiGatewayRemove
             (
                 ANSC_HANDLE                 hThisObject
             );
@@ -134,13 +144,13 @@ CosaLgiIPv6LANModeInitialize
 **********************************************************************/
 
 ANSC_STATUS
-CosaLgiIPv6LANModeRemove
+CosaLgiGatewayRemove
     (
         ANSC_HANDLE                 hThisObject
     )
 {
     ANSC_STATUS                        returnStatus = ANSC_STATUS_SUCCESS;
-    PCOSA_DATAMODEL_LGI_IPV6LAN_MODE   pMyObject    = (PCOSA_DATAMODEL_LGI_IPV6LAN_MODE)hThisObject;
+    PCOSA_DATAMODEL_LGI_GATEWAY        pMyObject    = (PCOSA_DATAMODEL_LGI_GATEWAY)hThisObject;
 
     /* Remove necessary resources */
 
