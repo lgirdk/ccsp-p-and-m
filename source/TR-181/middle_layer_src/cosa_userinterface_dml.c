@@ -188,6 +188,13 @@ UserInterface_GetParamBoolValue
         *pBool = pMyObject->UserInterfaceCfg.bHTTPSecurityHeaderEnable;
         return TRUE;
     }
+    /* LGI ADD START - Public DNS*/
+    if( AnscEqualString(ParamName, "X_LGI-COM_ShowDNSConfigPage", TRUE))
+    {
+        *pBool = pMyObject->UserInterfaceCfg.bShowDNSConfigPage;
+        return TRUE;
+    }
+    /* LGI ADD END */
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
@@ -232,6 +239,13 @@ UserInterface_SetParamBoolValue
         pMyObject->UserInterfaceCfg.bHTTPSecurityHeaderEnable = bValue;
         return TRUE;
     }
+    /* LGI ADD START - Public DNS */
+    if( AnscEqualString(ParamName, "X_LGI-COM_ShowDNSConfigPage", TRUE))
+    {
+        pMyObject->UserInterfaceCfg.bShowDNSConfigPage = bValue;
+        return TRUE;
+    }
+    /* LGI ADD END */
 
     return FALSE;
 }
