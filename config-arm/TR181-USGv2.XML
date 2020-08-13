@@ -417,6 +417,54 @@
                 <syntax>uint32/mapped</syntax>
                 <writable>true</writable>
             </parameter>
+            <parameter>
+                <name>DNS_Override</name>
+                <description>
+                    This object is used to Enable or Disable DNS override.
+                    If DNS override is false (0), the DNS IP addresses assigned by the service provider will be assigned to the clients on the LAN.
+                    If DNS override is true (1), the DNS IP addresses configured by the customer (IPv4 and IPv6 ones) will be assigned to the clients on the LAN.
+                    This object will automatically reflect the status of the UI radio buttons in the DNS UI page.
+                </description>
+                <type>boolean</type>
+                <syntax>bool</syntax>
+                <writable>true</writable>
+            </parameter>
+            <parameter>
+                <name>DNS_IPv4Preferred</name>
+                <description>
+                    Preferred IPv4 DNS server
+                </description>
+                <type>string(15)</type>
+                <syntax>string</syntax>
+                <writable>true</writable>
+            </parameter>
+            <parameter>
+                <name>DNS_IPv4Alternate</name>
+                <description>
+                    Alternate IPv4 DNS server
+                </description>
+                <type>string(15)</type>
+                <syntax>string</syntax>
+                <writable>true</writable>
+            </parameter>
+            <parameter>
+                <name>DNS_IPv6Preferred</name>
+                <description>
+                    Preferred IPv6 DNS server
+                </description>
+                <type>string(45)</type>
+                <syntax>string</syntax>
+                <writable>true</writable>
+            </parameter>
+            <parameter>
+                <name>DNS_IPv6Alternate</name>
+                <description>
+                    Alternate IPv6 DNS server
+                </description>
+                <type>string(45)</type>
+                <syntax>string</syntax>
+                <writable>true</writable>
+            </parameter>
           </parameters>
     </object>
    <object>
@@ -4872,6 +4920,23 @@
             <writable>true</writable>
 
           </parameter>
+          <!-- LGI ADD START -->
+          <parameter>
+
+            <name>X_LGI-COM_ShowDNSConfigPage</name>
+
+            <description>
+                This object allows to configure if the DNS configuration page will be visible or hidden to the customer.
+            </description>
+
+            <type>boolean</type>
+
+            <syntax>bool</syntax>
+
+            <writable>true</writable>
+
+          </parameter>
+          <!-- LGI ADD END -->
 
 		</parameters>
 
