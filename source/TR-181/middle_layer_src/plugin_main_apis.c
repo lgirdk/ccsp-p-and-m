@@ -454,8 +454,8 @@ if(id != 0)
 // LGI ADD - START
     pMyObject->hMacFilter    = (ANSC_HANDLE)CosaMacFilterCreate();
     AnscTraceWarning(("  CosaMacFilterCreate done!\n"));
-    pMyObject->hLgiIPv6LANMode    = (ANSC_HANDLE)CosaLgiIPv6LANModeCreate();
-    AnscTraceWarning(("  CosaLgiIPv6LANModeCreate done!\n"));
+    pMyObject->hLgiGateway    = (ANSC_HANDLE) CosaLgiGatewayCreate();
+    AnscTraceWarning(("  CosaLgiGatewayCreate done!\n"));
 // LGI ADD - END
 #if CONFIG_CISCO_TRUE_STATIC_IP
     pMyObject->hTSIP          = (ANSC_HANDLE)CosaTSIPCreate();
@@ -761,9 +761,9 @@ CosaBackEndManagerRemove
     {
         CosaMacFilterRemove((ANSC_HANDLE)pMyObject->hMacFilter);
     }
-    if ( pMyObject->hLgiIPv6LANMode )
+    if ( pMyObject->hLgiGateway )
     {
-        CosaLgiIPv6LANModeRemove((ANSC_HANDLE)pMyObject->hLgiIPv6LANMode);
+        CosaLgiGatewayRemove((ANSC_HANDLE)pMyObject->hLgiGateway);
     }
 // LGI ADD - END
 
