@@ -20,6 +20,7 @@
 
 extern ULONG CosaDmlDhcpv6sGetType(ANSC_HANDLE hContext);
 extern ANSC_STATUS CosaDmlDhcpv6sSetType(ANSC_HANDLE hContext, ULONG type);
+extern int CosaDmlDHCPv6sTriggerRestart(BOOL OnlyTrigger);
 
 ANSC_STATUS CosaDmlLgiGwGetIpv6LanMode ( ANSC_HANDLE hContext, ULONG *pValue )
 {
@@ -31,4 +32,131 @@ ANSC_STATUS CosaDmlLgiGwGetIpv6LanMode ( ANSC_HANDLE hContext, ULONG *pValue )
 ULONG CosaDmlLgiGwSetIpv6LanMode ( ANSC_HANDLE hContext, ULONG ulValue )
 {
     return CosaDmlDhcpv6sSetType((ANSC_HANDLE)NULL, ulValue);
+}
+
+static void CosaDmlDNSOverride (void)
+{
+    pthread_detach(pthread_self());
+
+    system("/bin/sh /etc/utopia/service.d/set_resolv_conf.sh");
+
+    CosaDmlDHCPv6sTriggerRestart(TRUE);
+}
+
+int CosaDmlLgiGwGetDnsOverride ( BOOL *pValue )
+{
+    char buf[8];
+
+    syscfg_get(NULL, "dns_override", buf, sizeof(buf));
+
+    *pValue = (strcmp(buf, "true") == 0);
+
+    return 0;
+}
+
+int CosaDmlLgiGwSetDnsOverride ( BOOL bValue )
+{
+    pthread_t tid;
+
+    syscfg_set_commit(NULL, "dns_override", bValue ? "true" : "false");
+
+    pthread_create(&tid, NULL, &CosaDmlDNSOverride, NULL); 
+ 
+    return 0;
+}
+
+int CosaDmlLgiGwGetDnsIpv4Preferred ( char *pValue, ULONG *pUlSize )
+{
+    char buf[64];
+
+    syscfg_get(NULL, "dns_ipv4_preferred", buf, sizeof(buf));
+
+    if (AnscSizeOfString(buf) == 0)
+    {
+        AnscCopyString(pValue, "0.0.0.0");
+        return 0;
+    }
+
+    if (AnscSizeOfString(buf) < *pUlSize)
+    {
+        AnscCopyString(pValue, buf);
+        return 0;
+    }
+    else
+    {
+        *pUlSize = AnscSizeOfString(buf);
+        return 1;
+    }
+}
+
+int CosaDmlLgiGwGetDnsIpv4Alternate ( char *pValue, ULONG *pUlSize )
+{
+    char buf[64];
+
+    syscfg_get(NULL, "dns_ipv4_alternate", buf, sizeof(buf));
+
+    if (AnscSizeOfString(buf) == 0)
+    {
+        AnscCopyString(pValue, "0.0.0.0");
+        return 0;
+    }
+
+    if (AnscSizeOfString(buf) < *pUlSize)
+    {
+        AnscCopyString(pValue, buf);
+        return 0;
+    }
+    else
+    {
+        *pUlSize = AnscSizeOfString(buf);
+        return 1;
+    }
+}
+
+int CosaDmlLgiGwGetDnsIpv6Preferred ( char *pValue, ULONG *pUlSize )
+{
+    char buf[64];
+
+    syscfg_get(NULL, "dns_ipv6_preferred", buf, sizeof(buf));
+
+    if (AnscSizeOfString(buf) == 0)
+    {
+        AnscCopyString(pValue, "0:0:0:0:0:0:0:0");
+        return 0;
+    }
+
+    if (AnscSizeOfString(buf) < *pUlSize)
+    {
+        AnscCopyString(pValue, buf);
+        return 0;
+    }
+    else
+    {
+        *pUlSize = AnscSizeOfString(buf);
+        return 1;
+    }
+}
+
+int CosaDmlLgiGwGetDnsIpv6Alternate ( char *pValue, ULONG *pUlSize )
+{
+    char buf[64];
+
+    syscfg_get( NULL, "dns_ipv6_alternate", buf, sizeof(buf));
+
+    if (AnscSizeOfString(buf) == 0)
+    {
+        AnscCopyString(pValue, "0:0:0:0:0:0:0:0");
+        return 0;
+    }
+
+    if (AnscSizeOfString(buf) < *pUlSize)
+    {
+        AnscCopyString(pValue, buf);
+        return 0;
+    }
+    else
+    {
+        *pUlSize = AnscSizeOfString(buf);
+        return 1;
+    }
 }

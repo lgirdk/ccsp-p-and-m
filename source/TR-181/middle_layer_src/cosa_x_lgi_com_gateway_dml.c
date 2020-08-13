@@ -19,8 +19,6 @@
 #include "cosa_x_lgi_com_gateway_internal.h"
 #include <syscfg/syscfg.h>
 
-extern int CosaDmlDHCPv6sTriggerRestart(BOOL OnlyTrigger);
-
 /***********************************************************************
  *
  *  APIs for Object:
@@ -66,7 +64,7 @@ LgiGateway_SetParamUlongValue
         ULONG                       uValuepUlong
     )
 {
-    PCOSA_DATAMODEL_LGI_IPV6LAN_MODE  pMyObject = (PCOSA_DATAMODEL_LGI_IPV6LAN_MODE)g_pCosaBEManager->hLgiIPv6LANMode;
+    PCOSA_DATAMODEL_LGI_GATEWAY  pMyObject = (PCOSA_DATAMODEL_LGI_GATEWAY)g_pCosaBEManager->hLgiGateway;
     
     if (strcmp(ParamName, "IPv6LANMode") == 0)
     {
@@ -86,7 +84,26 @@ LgiGateway_GetParamStringValue
         ULONG*                      pUlSize
     )
 {
-    return -1;
+    ULONG retVal = -1;
+    /* check the parameter name and return the corresponding value */
+    if (strcmp(ParamName, "DNS_IPv4Preferred") == 0)
+    {
+        retVal = (ULONG) CosaDmlLgiGwGetDnsIpv4Preferred(pValue, pUlSize);
+    }
+    else if (strcmp(ParamName, "DNS_IPv4Alternate") == 0)
+    {
+        retVal =  (ULONG) CosaDmlLgiGwGetDnsIpv4Alternate(pValue, pUlSize);
+    }
+    else if (strcmp(ParamName, "DNS_IPv6Preferred") == 0)
+    {
+        retVal =  (ULONG) CosaDmlLgiGwGetDnsIpv6Preferred(pValue, pUlSize);
+    }
+    else if (strcmp(ParamName, "DNS_IPv6Alternate") == 0)
+    {
+        retVal =  (ULONG) CosaDmlLgiGwGetDnsIpv6Alternate(pValue, pUlSize);
+    }
+
+    return retVal;
 }
 
 BOOL
@@ -97,9 +114,29 @@ LgiGateway_SetParamStringValue
         char*                       strValue
     )
 {
-    PCOSA_DATAMODEL_LGI_IPV6LAN_MODE  pMyObject = (PCOSA_DATAMODEL_LGI_IPV6LAN_MODE)g_pCosaBEManager->hLgiIPv6LANMode;
+    PCOSA_DATAMODEL_LGI_GATEWAY  pMyObject = (PCOSA_DATAMODEL_LGI_GATEWAY)g_pCosaBEManager->hLgiGateway;
 
     /* check the parameter name and return the corresponding value */
+    if (strcmp(ParamName, "DNS_IPv4Preferred") == 0)
+    {
+        AnscCopyString(pMyObject->dns_ipv4_preferred, strValue);
+        return TRUE;
+    }
+    if (strcmp(ParamName, "DNS_IPv4Alternate") == 0)
+    {
+        AnscCopyString(pMyObject->dns_ipv4_alternate, strValue);
+        return TRUE;
+    }
+    if (strcmp(ParamName, "DNS_IPv6Preferred") == 0)
+    {
+        AnscCopyString(pMyObject->dns_ipv6_preferred, strValue);
+        return TRUE;
+    }
+    if (strcmp(ParamName, "DNS_IPv6Alternate") == 0)
+    {
+        AnscCopyString(pMyObject->dns_ipv6_alternate, strValue);
+        return TRUE;
+    }
     return FALSE;
 }
 
@@ -111,6 +148,11 @@ LgiGateway_GetParamBoolValue
         BOOL*                       pBool
     )
 {
+    if (strcmp(ParamName, "DNS_Override") == 0)
+    {
+        CosaDmlLgiGwGetDnsOverride(pBool);
+        return TRUE;
+    }
     return FALSE;
 }
 
@@ -122,9 +164,14 @@ LgiGateway_SetParamBoolValue
         BOOL                        bValue
     )
 {
-    PCOSA_DATAMODEL_LGI_IPV6LAN_MODE  pMyObject = (PCOSA_DATAMODEL_LGI_IPV6LAN_MODE)g_pCosaBEManager->hLgiIPv6LANMode;
+    PCOSA_DATAMODEL_LGI_GATEWAY  pMyObject = (PCOSA_DATAMODEL_LGI_GATEWAY)g_pCosaBEManager->hLgiGateway;
 
     /* check the parameter name and return the corresponding value */
+    if (strcmp(ParamName, "DNS_Override") == 0)
+    {
+        pMyObject->dns_override = bValue;
+        return TRUE;
+    }
     return FALSE;
 }
 
@@ -136,8 +183,34 @@ LgiGateway_Validate
         ULONG*                      puLength
   )
 {
-    PCOSA_DATAMODEL_LGI_IPV6LAN_MODE  pMyObject = (PCOSA_DATAMODEL_LGI_IPV6LAN_MODE)g_pCosaBEManager->hLgiIPv6LANMode;
+    PCOSA_DATAMODEL_LGI_GATEWAY  pMyObject = (PCOSA_DATAMODEL_LGI_GATEWAY)g_pCosaBEManager->hLgiGateway;
     char buf[64];
+    /* Validate DNS IPv4 address */
+    if(inet_pton(AF_INET, pMyObject->dns_ipv4_preferred, buf) < 1)
+    {
+        CcspTraceWarning(("DNS_IPv4Preferred validation failed"));
+        AnscCopyString(pReturnParamName,"DNS_IPv4Preferred");
+        return FALSE;
+    }
+    if(inet_pton(AF_INET, pMyObject->dns_ipv4_alternate, buf) < 1)
+    {
+        CcspTraceWarning(("DNS_IPv4Preferred validation failed"));
+        AnscCopyString(pReturnParamName,"DNS_IPv4Alternate");
+        return FALSE;
+    }
+    /* Validate DNS IPv6 address */
+    if(inet_pton(AF_INET6, pMyObject->dns_ipv6_preferred, buf) < 1)
+    {
+        CcspTraceWarning(("DNS_IPv6Preferred validation failed"));
+        AnscCopyString(pReturnParamName,"DNS_IPv6Preferred");
+        return FALSE;
+    }
+    if(inet_pton(AF_INET6, pMyObject->dns_ipv6_alternate, buf) < 1)
+    {
+        CcspTraceWarning(("DNS_IPv6Preferred validation failed"));
+        AnscCopyString(pReturnParamName,"DNS_IPv6Alternate");
+        return FALSE;
+    }
     return TRUE;
 }
 
@@ -147,12 +220,18 @@ LgiGateway_Commit
         ANSC_HANDLE                 hInsContext
     )
 {
-    PCOSA_DATAMODEL_LGI_IPV6LAN_MODE  pMyObject = (PCOSA_DATAMODEL_LGI_IPV6LAN_MODE)g_pCosaBEManager->hLgiIPv6LANMode;
+    ULONG ret;
+    PCOSA_DATAMODEL_LGI_GATEWAY  pMyObject = (PCOSA_DATAMODEL_LGI_GATEWAY)g_pCosaBEManager->hLgiGateway;
     CosaDmlLgiGwSetIpv6LanMode(NULL, pMyObject->ipv6LanMode);
-    syscfg_commit();
-    system("/bin/sh /etc/utopia/service.d/set_resolv_conf.sh");
-    CosaDmlDHCPv6sTriggerRestart(TRUE);
-    return 0;
+
+    syscfg_set(NULL, "dns_ipv4_preferred", pMyObject->dns_ipv4_preferred);
+    syscfg_set(NULL, "dns_ipv4_alternate", pMyObject->dns_ipv4_alternate);
+    syscfg_set(NULL, "dns_ipv6_preferred", pMyObject->dns_ipv6_preferred);
+    syscfg_set(NULL, "dns_ipv6_alternate", pMyObject->dns_ipv6_alternate);
+
+    ret = (ULONG) CosaDmlLgiGwSetDnsOverride(pMyObject->dns_override);
+
+    return ret;
 }
 
 ULONG
@@ -161,6 +240,15 @@ LgiGateway_Rollback
         ANSC_HANDLE                 hInsContext
     )
 {
-    PCOSA_DATAMODEL_LGI_IPV6LAN_MODE  pMyObject = (PCOSA_DATAMODEL_LGI_IPV6LAN_MODE)g_pCosaBEManager->hLgiIPv6LANMode;
+    PCOSA_DATAMODEL_LGI_GATEWAY  pMyObject = (PCOSA_DATAMODEL_LGI_GATEWAY)g_pCosaBEManager->hLgiGateway;
+    ULONG size;
+    size = sizeof(pMyObject->dns_ipv4_preferred);
+    CosaDmlLgiGwGetDnsIpv4Preferred(pMyObject->dns_ipv4_preferred, &size);
+    size = sizeof(pMyObject->dns_ipv4_alternate);
+    CosaDmlLgiGwGetDnsIpv4Alternate(pMyObject->dns_ipv4_alternate, &size);
+    size = sizeof(pMyObject->dns_ipv6_preferred);
+    CosaDmlLgiGwGetDnsIpv6Preferred(pMyObject->dns_ipv6_preferred, &size);
+    size = sizeof(pMyObject->dns_ipv6_alternate);
+    CosaDmlLgiGwGetDnsIpv6Alternate(pMyObject->dns_ipv6_alternate, &size);
     return 0;
 }
