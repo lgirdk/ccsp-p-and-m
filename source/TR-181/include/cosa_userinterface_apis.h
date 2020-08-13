@@ -121,6 +121,7 @@ _COSA_DML_USERINTERFACE_CFG
     ULONG                           PasswordLockoutTime;
     ULONG                           MaxPasswordLockoutTimes;
     ULONG                           LoginFailureWindow;
+    BOOLEAN                         bShowDNSConfigPage;
 }
 COSA_DML_USERINTERFACE_CFG,  *PCOSA_DML_USERINTERFACE_CFG;
 
