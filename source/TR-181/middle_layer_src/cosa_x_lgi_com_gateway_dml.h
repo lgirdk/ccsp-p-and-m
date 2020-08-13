@@ -14,8 +14,8 @@
  * limitations under the License.
  **********************************************************************/
 
-#ifndef  _COSA_LGI_IPV6LAN_MODE_DML_H
-#define  _COSA_LGI_IPV6LAN_MODE_DML_H
+#ifndef   _COSA_LGI_GATEWAY_DML_H
+#define   _COSA_LGI_GATEWAY_DML_H
 
 #include "cosa_x_lgi_com_gateway_apis.h"
 
