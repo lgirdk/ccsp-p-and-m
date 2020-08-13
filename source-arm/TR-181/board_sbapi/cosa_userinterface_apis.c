@@ -393,6 +393,11 @@ CosaDmlUserInterfaceGetCfg
                pCfg->bHTTPSecurityHeaderEnable = FALSE;
        }
 
+        if (syscfg_get (NULL, "dns_config_page_show", buf, sizeof(buf)) == 0)
+        {
+            pCfg->bShowDNSConfigPage = (strcmp(buf, "true") == 0) ? TRUE : FALSE;
+        }
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -433,6 +438,11 @@ CosaDmlUserInterfaceSetCfg
         }
 
         system("/bin/sh /etc/webgui.sh &");
+    }
+
+    if (syscfg_set(NULL, "dns_config_page_show", (pCfg->bShowDNSConfigPage == TRUE) ? "true" : "false") != 0)
+    {
+        AnscTraceWarning(("%s : ShowDNSConfigPage syscfg_set failed\n",__FUNCTION__));
     }
 
     if (syscfg_commit() != 0)
