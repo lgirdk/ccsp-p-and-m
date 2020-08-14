@@ -590,12 +590,17 @@ CosaDmlDiGetManufacturerOUI
             return ANSC_STATUS_FAILURE;
         }
 #else
-        rc = sprintf_s(pValue, *pulSize, "%06X%c", CONFIG_VENDOR_ID, '\0');
-        if(rc < EOK)
+        char *param_name = DMSB_TR181_PSM_DeviceInfo_Root DMSB_TR181_PSM_DeviceInfo_ManufacturerOUI ;
+
+        if (PsmGet(param_name, pValue, *pulSize) != 0)
         {
-            ERR_CHK(rc);
-            *pulSize = 0;
-            return ANSC_STATUS_FAILURE;
+            rc = sprintf_s(pValue, *pulSize, "%06X%c", CONFIG_VENDOR_ID, '\0');
+            if(rc < EOK)
+            {
+                ERR_CHK(rc);
+                *pulSize = 0;
+                return ANSC_STATUS_FAILURE;
+            }
         }
 #endif
         return ANSC_STATUS_SUCCESS;
@@ -689,6 +694,7 @@ CosaDmlDiGetProductClass
         return ANSC_STATUS_SUCCESS;
     }
 */
+/*
 #if defined(_CBR_PRODUCT_REQ_)
 	{
                 rc = strcpy_s(pValue, *pulSize, "CBR");
@@ -770,6 +776,18 @@ CosaDmlDiGetProductClass
                 }
 	}
 #endif
+*/
+    char *param_name = DMSB_TR181_PSM_DeviceInfo_Root DMSB_TR181_PSM_DeviceInfo_ProductClass ;
+
+    if ((PsmGet(param_name, pValue, *pulSize) != 0) ||
+        (pValue[0] == '\0') ||
+        (strcmp(pValue, "<ModelName>") == 0))
+    {
+        if (platform_hal_GetModelName(pValue) != RETURN_OK)
+        {
+            return ANSC_STATUS_FAILURE;
+        }
+    }
 
     return ANSC_STATUS_SUCCESS;
 }
