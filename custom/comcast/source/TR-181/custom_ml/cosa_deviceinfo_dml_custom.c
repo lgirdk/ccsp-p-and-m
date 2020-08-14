@@ -386,7 +386,17 @@ DeviceInfo_GetParamStringValue_Custom
 	   return 0;
 	}
 #endif
+        if (strcmp(ParamName, "X_LGI-COM_WANAddress") == 0)
+        {
+            CosaDmlDiGetRouterIPAddress(NULL, pValue, pulSize);
 
+            // If the IPv4 address is not set (i.e. "0.0.0.0"), then use the IPv6 address instead.
+            if (strcmp(pValue, "0.0.0.0") == 0)
+            {
+                CosaDmlDiGetRouterIPv6Address(NULL, pValue, pulSize);
+            }
+            return 0;
+        }
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return -1;
 }
