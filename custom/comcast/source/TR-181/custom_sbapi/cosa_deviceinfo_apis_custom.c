@@ -82,7 +82,7 @@
 
 #define _ERROR_ "NOT SUPPORTED"
 
-#define CAPTIVEPORTAL_EANBLE     "CaptivePortal_Enable"
+#define CAPTIVEPORTAL_ENABLE     "CaptivePortal_Enable"
 
 extern void* g_pDslhDmlAgent;
 
@@ -482,8 +482,8 @@ CosaDmlGetCaptivePortalEnable
         BOOL *pValue
     )
 {
-	char buf[5];
-        syscfg_get( NULL, CAPTIVEPORTAL_EANBLE , buf, sizeof(buf));
+	char buf[80];
+        syscfg_get( NULL, CAPTIVEPORTAL_ENABLE , buf, sizeof(buf));
 
     	if( buf != NULL )
     		{
@@ -508,8 +508,8 @@ CosaDmlSetCaptivePortalEnable
     )
 {
 
-	char buf[10];
-	char cmd[50];
+	char buf[80];
+	char cmd[80];
 	memset(buf,0,sizeof(buf));
 	memset(cmd,0,sizeof(cmd));
 	if (value)
@@ -522,7 +522,7 @@ CosaDmlSetCaptivePortalEnable
 		CcspTraceWarning(("CaptivePortal: Disabling Captive Portal switch ...\n"));		
 		strcpy(buf,"false");
 	}
-	if (syscfg_set(NULL, CAPTIVEPORTAL_EANBLE , buf) != 0) {
+	if (syscfg_set(NULL, CAPTIVEPORTAL_ENABLE , buf) != 0) {
                      CcspTraceWarning(("syscfg_set failed to enable/disable captive portal\n"));
 		     return ANSC_STATUS_FAILURE;
              } else {
@@ -549,7 +549,7 @@ ANSC_STATUS
 	)
 {
 	int rc;
-    char buf[5];
+    char buf[80];
 
 	memset(buf, 0, sizeof(buf));
 	rc = syscfg_get( NULL, "cloud_capable_flag", buf, sizeof(buf));

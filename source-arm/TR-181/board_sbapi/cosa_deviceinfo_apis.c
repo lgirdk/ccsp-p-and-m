@@ -362,7 +362,7 @@ CosaDmlDiGetManufacturerOUI
         ULONG*                      pulSize
     )
 {
-
+    char param_name[256] = {0};
  /*
     UCHAR strMaceMG[128];
     memset(strMaceMG,0,128);
@@ -403,7 +403,10 @@ CosaDmlDiGetManufacturerOUI
 #if defined(_COSA_BCM_ARM_)
         sprintf(pValue, "%s%c", CONFIG_VENDOR_ID, '\0');
 #else
+    if (PsmGet(param_name, pValue, *pulSize) != 0)
+    {
         sprintf(pValue, "%06X%c", CONFIG_VENDOR_ID, '\0');
+    }
 #endif
         *pulSize = AnscSizeOfString(pValue);
         return ANSC_STATUS_SUCCESS;
@@ -509,6 +512,7 @@ CosaDmlDiGetProductClass
         return ANSC_STATUS_SUCCESS;
     }
 */
+/*
 #if defined(_CBR_PRODUCT_REQ_)
 	{
 		AnscCopyString(pValue, "CBR");
@@ -534,7 +538,22 @@ CosaDmlDiGetProductClass
 		AnscCopyString(pValue, "XB3");
 	}
 #endif
+*/
+    char param_name[256] = {0};
 
+    _ansc_sprintf(param_name, "%s%s", DMSB_TR181_PSM_DeviceInfo_Root, DMSB_TR181_PSM_DeviceInfo_ProductClass);
+    if ((PsmGet(param_name, pValue, *pulSize) != 0) ||
+        (pValue[0] == '\0') ||
+        (strcmp(pValue, "<ModelName>") == 0))
+    {
+        memset(pValue, 0, *pulSize);
+        if (platform_hal_GetModelName(pValue) != RETURN_OK)
+        {
+            pValue[0] = '\0';
+            *pulSize = 0;
+            return ANSC_STATUS_FAILURE;
+        }
+    }
     *pulSize = AnscSizeOfString(pValue);
     return ANSC_STATUS_SUCCESS;
 }
@@ -651,8 +670,15 @@ CosaDmlDiGetProvisioningCode
     AnscCopyString(pValue,temp);
     *pulSize = AnscSizeOfString(pValue);
 #endif
-
+    char temp[64];
 // Provisioning Code sent to ACS is Serial Number of the device
+    if(AnscSizeOfString(temp))
+    {
+        AnscCopyString(pValue,temp);
+        *pulSize = AnscSizeOfString(pValue);
+    }
+    else
+    {
 #ifdef _COSA_DRG_TPG_
     plat_GetFlashValue("unitsn", unitsn);
     sprintf(pValue, "%c%c%c%c%c%c%c",unitsn[0],unitsn[1],unitsn[2],unitsn[3],unitsn[4],unitsn[5],unitsn[6]);
@@ -662,6 +688,7 @@ CosaDmlDiGetProvisioningCode
         return ANSC_STATUS_FAILURE;
 #endif
     *pulSize = AnscSizeOfString(pValue);
+    }
     return ANSC_STATUS_SUCCESS; 
 }
 
