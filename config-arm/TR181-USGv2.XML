@@ -1150,6 +1150,14 @@
         </parameter>
 <?endif?>
 <?endif?>
+
+        <parameter>
+            <name>X_LGI-COM_WANAddress</name>
+            <type>string(45)</type>
+            <syntax>string</syntax>
+            <writable>false</writable>
+        </parameter>
+
         </parameters>
 
       <objects>
