@@ -406,43 +406,7 @@ CosaDmlDiGetManufacturerOUI
 {
     UNREFERENCED_PARAMETER(hContext);
     errno_t rc = -1;
- /*
-    UCHAR strMaceMG[128];
-    memset(strMaceMG,0,128);
-#ifdef _COSA_DRG_TPG_
-    plat_GetFlashValue("macmgwan", strMaceMG);
-#elif (_COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_)
-    //    SaPermanentDb_GetFactoryId(pValue);
-    ProdDb_GetCmMacAddress(strMaceMG);
-#if 0
-    UtopiaContext ctx;
-    int rc = -1;
-    if (!Utopia_Init(&ctx)) return ERR_UTCTX_INIT;
-    rc = Utopia_Get_Mac_MgWan(&ctx,strMaceMG); // As MAC address is stored in syscfg in CNS 
-    Utopia_Free(&ctx,0); 
-#endif
-#endif
-    sprintf(pValue, "%02X%02X%02X",strMaceMG[0],strMaceMG[1],strMaceMG[2]);
-    *pulSize = AnscSizeOfString(pValue);
-    return ANSC_STATUS_SUCCESS;
-*/
-/*
-    char val[64] = {0};
-    char param_name[256] = {0};
 
-    _ansc_sprintf(param_name, "%s%s", DMSB_TR181_PSM_DeviceInfo_Root, DMSB_TR181_PSM_DeviceInfo_ManufacturerOUI);        
-
-    if (PsmGet(param_name, val, sizeof(val)) != 0) {
-        pValue[0] = '\0';
-        *pulSize = 0;
-        return ANSC_STATUS_FAILURE;
-    }
-    else {
-        AnscCopyString(pValue, val);
-        *pulSize = AnscSizeOfString(pValue);
-        return ANSC_STATUS_SUCCESS;
-    }
-*/
 #if defined(_COSA_BCM_ARM_) || defined(_PLATFORM_TURRIS_)
         rc = sprintf_s(pValue, *pulSize, "%s%c", CONFIG_VENDOR_ID, '\0');
         if(rc < EOK)
@@ -452,12 +416,17 @@ CosaDmlDiGetManufacturerOUI
             return ANSC_STATUS_FAILURE;
         }
 #else
-        rc = sprintf_s(pValue, *pulSize, "%06X%c", CONFIG_VENDOR_ID, '\0');
-        if(rc < EOK)
+        char *param_name = DMSB_TR181_PSM_DeviceInfo_Root DMSB_TR181_PSM_DeviceInfo_ManufacturerOUI ;
+
+        if (PsmGet(param_name, pValue, *pulSize) != 0)
         {
-            ERR_CHK(rc);
-            *pulSize = 0;
-            return ANSC_STATUS_FAILURE;
+            rc = sprintf_s(pValue, *pulSize, "%06X%c", CONFIG_VENDOR_ID, '\0');
+            if(rc < EOK)
+            {
+                ERR_CHK(rc);
+                *pulSize = 0;
+                return ANSC_STATUS_FAILURE;
+            }
         }
 #endif
         *pulSize = AnscSizeOfString(pValue)+1;
@@ -587,6 +556,7 @@ CosaDmlDiGetProductClass
         return ANSC_STATUS_SUCCESS;
     }
 */
+/*
 #if defined(_CBR_PRODUCT_REQ_)
 	{
                 rc = strcpy_s(pValue, *pulSize, "CBR");
@@ -644,6 +614,18 @@ CosaDmlDiGetProductClass
                 }
 	}
 #endif
+*/
+    char *param_name = DMSB_TR181_PSM_DeviceInfo_Root DMSB_TR181_PSM_DeviceInfo_ProductClass ;
+
+    if ((PsmGet(param_name, pValue, *pulSize) != 0) ||
+        (pValue[0] == '\0') ||
+        (strcmp(pValue, "<ModelName>") == 0))
+    {
+        if (platform_hal_GetModelName(pValue) != RETURN_OK)
+        {
+            return ANSC_STATUS_FAILURE;
+        }
+    }
 
     *pulSize = AnscSizeOfString(pValue) +1;
     return ANSC_STATUS_SUCCESS;
