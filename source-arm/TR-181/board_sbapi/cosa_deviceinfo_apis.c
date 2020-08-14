@@ -373,7 +373,7 @@ CosaDmlDiGetManufacturerOUI
         ULONG*                      pulSize
     )
 {
-
+    char param_name[256] = {0};
  /*
     UCHAR strMaceMG[128];
     memset(strMaceMG,0,128);
@@ -414,7 +414,10 @@ CosaDmlDiGetManufacturerOUI
 #if defined(_COSA_BCM_ARM_)
         sprintf(pValue, "%s%c", CONFIG_VENDOR_ID, '\0');
 #else
+    if (PsmGet(param_name, pValue, *pulSize) != 0)
+    {
         sprintf(pValue, "%06X%c", CONFIG_VENDOR_ID, '\0');
+    }
 #endif
         *pulSize = AnscSizeOfString(pValue);
         return ANSC_STATUS_SUCCESS;
@@ -520,6 +523,7 @@ CosaDmlDiGetProductClass
         return ANSC_STATUS_SUCCESS;
     }
 */
+/*
 #if defined(_CBR_PRODUCT_REQ_)
 	{
 		AnscCopyString(pValue, "CBR");
@@ -545,8 +549,21 @@ CosaDmlDiGetProductClass
 		AnscCopyString(pValue, "XB3");
 	}
 #endif
+*/
+    char *param_name = DMSB_TR181_PSM_DeviceInfo_Root DMSB_TR181_PSM_DeviceInfo_ProductClass ;
 
-    *pulSize = AnscSizeOfString(pValue);
+    if ((PsmGet(param_name, pValue, *pulSize) != 0) ||
+        (pValue[0] == '\0') ||
+        (strcmp(pValue, "<ModelName>") == 0))
+    {
+        if (platform_hal_GetModelName(pValue) != RETURN_OK)
+        {
+            return ANSC_STATUS_FAILURE;
+        }
+    }
+
+    *pulSize = strlen(pValue);
+
     return ANSC_STATUS_SUCCESS;
 }
 
