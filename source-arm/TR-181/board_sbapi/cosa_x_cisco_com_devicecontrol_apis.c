@@ -1595,26 +1595,30 @@ CosaDmlDcSetRebootDevice
             	fprintf(stderr, "Device is going to reboot in %d seconds\n", delay_time);
 		CcspTraceWarning(("RebootDevice:Device is going to reboot after taking log backups \n"));
             	//system("(sleep 5 && reboot) &");
-            	CosaDmlDcSaveWiFiHealthStatusintoNVRAM( );
+                //CosaDmlDcSaveWiFiHealthStatusintoNVRAM( ); //The settings to be saved for WiFi or any module needs to be handled, if required, while implementing reset functionality
             	sleep (delay_time);
             	system("/fss/gw/rdklogger/backupLogs.sh &");
+                system("(sleep 5 && reboot) &");
         	}
         	else
             {
                 fprintf(stderr, "Device is going to reboot in 5 seconds\n");
 		CcspTraceWarning(("RebootDevice:Device is going to reboot after taking log backups \n"));
                 //system("(sleep 5 && reboot) &");
-				CosaDmlDcSaveWiFiHealthStatusintoNVRAM( );
+				//CosaDmlDcSaveWiFiHealthStatusintoNVRAM( ); //The settings to be saved for WiFi or any module needs to be handled, 
+									     //if required, while implementing reset functionality
 				sleep(5);
 				system("/fss/gw/rdklogger/backupLogs.sh &");
+				system("reboot");
             }
 		}
 		else {
 	        fprintf(stderr, "Device is going to reboot now\n");
 			CcspTraceWarning(("RebootDevice:Device is going to reboot after taking log backups \n"));
 	         //system("reboot");
- 			 CosaDmlDcSaveWiFiHealthStatusintoNVRAM( );
+		 //CosaDmlDcSaveWiFiHealthStatusintoNVRAM( ); //The settings to be saved for WiFi or any module needs to be handled, if required, while implementing reset functionality
 	         system("/fss/gw/rdklogger/backupLogs.sh &");
+                 system("reboot");
 	    }
     }
 
