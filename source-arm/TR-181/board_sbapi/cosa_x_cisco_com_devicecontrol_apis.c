@@ -1607,6 +1607,7 @@ CosaDmlDcSetRebootDevice
             	CosaDmlDcSaveWiFiHealthStatusintoNVRAM( );
             	sleep (delay_time);
             	system("/rdklogger/backupLogs.sh &");
+            	system("(sleep 5 && reboot) &");  /* Workaround to try to ensure we really reboot - to be reviewed */
         	}
         	else
             {
@@ -1616,6 +1617,7 @@ CosaDmlDcSetRebootDevice
 				CosaDmlDcSaveWiFiHealthStatusintoNVRAM( );
 				sleep(5);
 				system("/rdklogger/backupLogs.sh &");
+				system("(sleep 5 && reboot) &");  /* Workaround to try to ensure we really reboot - to be reviewed */
             }
 		}
 		else {
@@ -1624,6 +1626,7 @@ CosaDmlDcSetRebootDevice
 	         //system("reboot");
  			 CosaDmlDcSaveWiFiHealthStatusintoNVRAM( );
 	         system("/rdklogger/backupLogs.sh &");
+	         system("(sleep 5 && reboot) &");  /* Workaround to try to ensure we really reboot - to be reviewed */
 	    }
     }
 
