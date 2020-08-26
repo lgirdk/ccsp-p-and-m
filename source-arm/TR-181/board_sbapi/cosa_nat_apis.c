@@ -2070,7 +2070,7 @@ static inline void _sent_syslog_pm_sb(char *opt, UCHAR protocol, USHORT external
     else
         sprintf(extPort, "ExternelPort(s) %d~%d", external, external_end);
     
-    if(internal == 0)
+    if(internal_end == 0)
         sprintf(intPort, "InternelPort %d",internal); 
     else
         sprintf(intPort, "InternelPort(s) %d~%d", internal, internal_end);
@@ -2697,6 +2697,7 @@ CosaDmlNatGetPortMappings
             pNatPMapping[ulIndex].ExternalPort = rangeInfo[i].start_port;
             pNatPMapping[ulIndex].ExternalPortEndRange = rangeInfo[i].end_port;
             pNatPMapping[ulIndex].InternalPort = rangeInfo[i].internal_port;
+            pNatPMapping[ulIndex].X_RDKCENTRAL_InternalPortEndRange = (rangeInfo[i].internal_port +  rangeInfo[i].internal_port_range_size);
             pNatPMapping[ulIndex].LeaseDuration = 0;
             pNatPMapping[ulIndex].Protocol = U_2_SB_PF_PROTOCOL(rangeInfo[i].protocol);
             pNatPMapping[ulIndex].RemoteHost.Value = 0;
