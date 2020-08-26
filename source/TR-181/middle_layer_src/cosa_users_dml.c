@@ -770,7 +770,7 @@ User_GetParamStringValue
     {
         /* collect value */
         /* This is a hidden parameter, so return EMPTY */
-        AnscCopyString(pValue,"");
+        AnscCopyString(pValue,"XXXXXXXX");
         return 0;
     }
 
