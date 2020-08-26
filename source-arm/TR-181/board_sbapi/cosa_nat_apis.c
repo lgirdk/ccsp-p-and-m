@@ -1758,7 +1758,7 @@ CosaDmlNatGetDmz
         if (strlen(pDmz->dest_ipv6)){
             AnscCopyString(pDmlDmz->IPv6Host, pDmz->dest_ipv6);
         }else{
-            AnscCopyString(pDmlDmz->IPv6Host, "0.0.0.0.0.0.0.0");
+            AnscZeroMemory(pDmlDmz->IPv6Host, sizeof(pDmlDmz->IPv6Host));
         }
 
         //AnscFreeMemory(pInternalIPStr);
