@@ -4021,9 +4021,11 @@ MACsecRequired_GetParamBoolValue
         }
         return TRUE;
     }
-#endif
 
     return FALSE;
+#else
+    return TRUE;
+#endif
 }
 
 /**********************************************************************
@@ -7621,6 +7623,59 @@ Control_SetParamUlongValue
     prototype:
 
         BOOL
+        Control_GetParamBoolValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                BOOL*                       bValue
+            );
+
+    description:
+
+        This function is called to set BOOL parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                BOOL*                       bValue
+                The updated BOOL value;
+
+    return:     TRUE if succeeded.
+
+**********************************************************************/
+BOOL
+Control_GetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL*                       bValue
+    )
+{
+    if( AnscEqualString(ParamName, "ClearDB", TRUE))
+    {
+	*bValue = g_clearDB;
+        return TRUE;
+    }
+
+    if( AnscEqualString(ParamName, "ClearDBEnd", TRUE))
+    {
+        *bValue = !g_clearDB;
+	return TRUE;
+    }
+
+    return FALSE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
         Control_SetParamBoolValue
             (
                 ANSC_HANDLE                 hInsContext,
@@ -7727,9 +7782,8 @@ Control_GetParamStringValue
            {
                 AnscCopyString(pValue,  buff);
                 *pulSize = AnscSizeOfString( pValue );
-                return 0;
            }
-           return -1;
+           return 0;
     }
 
     /* check the "XconfUrl" parameter name and return the corresponding value */
@@ -7743,9 +7797,8 @@ Control_GetParamStringValue
            {
                 AnscCopyString(pValue,  buff);
                 *pulSize = AnscSizeOfString( pValue );
-                return 0;
            }
-           return -1;
+           return 0;
     }
 
     return -1;
@@ -10453,12 +10506,12 @@ WANLinkHeal_GetParamBoolValue
              else
                  *pBool = FALSE;
         }
-        return TRUE;
       }
       else
       {
 	CcspTraceError(("syscfg_get failed for WanLinkHeal\n"));
       }
+      return TRUE;
     }
   return FALSE;
 }
@@ -10881,6 +10934,8 @@ WiFiInterworking_GetParamBoolValue
     }
 
     return FALSE;
+#else
+    return TRUE;
 #endif
 }
 
@@ -11003,6 +11058,8 @@ WiFiPasspoint_GetParamBoolValue
     }
 
     return FALSE;
+#else
+    return TRUE;
 #endif
 }
 
@@ -12394,7 +12451,6 @@ CredDwnld_GetParamBoolValue
         if(syscfg_get(NULL, "CredDwnld_Enable", buf, sizeof(buf)) != 0 )
         {
             CcspTraceError(("syscfg_get failed\n"));
-            return FALSE;
         }
         else
         {
@@ -12406,8 +12462,8 @@ CredDwnld_GetParamBoolValue
             {
                 *pBool = FALSE;
             }
-            return TRUE;
         }
+        return TRUE;
     }
     return FALSE;
 }
@@ -12465,16 +12521,15 @@ CredDwnld_GetParamStringValue
         if( syscfg_get( NULL, "CredDwnld_Use", buf, sizeof(buf)) != 0)
         {
              CcspTraceError(("syscfg_get failed\n"));
-             return FALSE;
         }
         else
         {
             AnscCopyString(pValue, buf);
             *pulSize = AnscSizeOfString(pValue);
-            return TRUE;
         }
+        return 0;
     }
-    return FALSE;
+    return -1;
 }
 
 /**********************************************************************
@@ -13018,8 +13073,11 @@ SwitchToDibbler_GetParamBoolValue
 
         return TRUE;
     }
-#endif
+
     return FALSE;
+#else
+    return TRUE;
+#endif
 }
 
 void dhcpSwitchThread(void* vptr_value)
@@ -13668,8 +13726,10 @@ SwitchToUDHCPC_GetParamBoolValue
 
         return TRUE;
     }
-#else
+
     return FALSE;
+#else
+    return TRUE;
 #endif
 
 }
@@ -16418,9 +16478,9 @@ xBlueTooth_GetParamBoolValue
                   if (!strncasecmp(buf, "true", 4))
                   {
                       *pBool = TRUE;
-                      return TRUE;
                   }
                }
+               return TRUE;
            }
         return FALSE;
 }
@@ -17680,10 +17740,10 @@ Telemetry_GetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName, BOOL* pB
                  else
                      *pBool = FALSE;
             }
-            return TRUE;
         } else {
             CcspTraceError(("syscfg_get failed for MessageBusSource\n"));
         }
+        return TRUE;
     }
     return FALSE;
 }
@@ -18077,8 +18137,11 @@ CaptivePortalForNoCableRF_GetParamBoolValue
 	 return TRUE;
 
     }
-#endif
+
   return FALSE;
+#else
+    return TRUE;
+#endif
 }
 
 
@@ -18331,9 +18394,8 @@ ULONG
         if( buf != NULL )
         {
             AnscCopyString(pValue, buf);
-            return 0;
         }
-        return -1;
+        return 0;
     }
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return -1;
@@ -18643,10 +18705,10 @@ mTlsLogUpload_GetParamBoolValue
                 else
                     *pBool = FALSE;
             }
-            return TRUE;
         } else {
               CcspTraceError(("syscfg_get failed for MessageBusSource\n"));
           }
+          return TRUE;
         }
     return FALSE;
 }
@@ -18752,8 +18814,11 @@ XHFW_GetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName, BOOL* pBool)
             CcspTraceError(("syscfg_get failed for XHFW.Enable\n"));
         }
     }
-#endif
+
     return FALSE;
+#else
+    return TRUE;
+#endif
 }
 
 /**********************************************************************
