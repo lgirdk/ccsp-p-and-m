@@ -1713,6 +1713,7 @@
                 	<func_SetParamStringValue>Control_SetParamStringValue</func_SetParamStringValue>
 	                <func_GetParamStringValue>Control_GetParamStringValue</func_GetParamStringValue>
                         <func_SetParamBoolValue>Control_SetParamBoolValue</func_SetParamBoolValue>
+                        <func_GetParamBoolValue>Control_GetParamBoolValue</func_GetParamBoolValue>
                     </functions>
 
                     <parameters>
