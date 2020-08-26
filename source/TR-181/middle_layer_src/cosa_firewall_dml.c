@@ -66,10 +66,12 @@
 
 **************************************************************************/
 
+#include <arpa/inet.h>
 #include "ansc_platform.h"
 #include "cosa_firewall_dml.h"
 #include "cosa_firewall_internal.h"
 #include "safec_lib_common.h"
+
 /***********************************************************************
  IMPORTANT NOTE:
 
@@ -1147,6 +1149,7 @@ BOOL FW_V4_IpFilter_SetParamStringValue ( ANSC_HANDLE hInsContext, char* ParamNa
 {
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj            = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_FW_IPFILTER           *pFwIpFilter     = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+    unsigned char buf[sizeof(struct in_addr)];
 
     if (AnscEqualString(ParamName, "Description", TRUE))
     {
@@ -1165,8 +1168,11 @@ BOOL FW_V4_IpFilter_SetParamStringValue ( ANSC_HANDLE hInsContext, char* ParamNa
     }
     if (AnscEqualString(ParamName, "DstStartAddr", TRUE))
     {
-        _ansc_snprintf(pFwIpFilter->DstStartIPAddress, sizeof(pFwIpFilter->DstStartIPAddress), "%s", strValue);
-        return TRUE;
+       if(inet_pton(AF_INET,strValue,buf))
+       {
+               _ansc_snprintf(pFwIpFilter->DstStartIPAddress, sizeof(pFwIpFilter->DstStartIPAddress), "%s", strValue);
+               return TRUE;
+       }
     }
     if (AnscEqualString(ParamName, "DstEndAddr", TRUE))
     {
@@ -1839,6 +1845,7 @@ BOOL FW_V6_IpFilter_SetParamStringValue ( ANSC_HANDLE hInsContext, char* ParamNa
 {
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj        = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_FW_IPFILTER           *pFwIpFilter     = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+    unsigned char buf[sizeof(struct in6_addr)];
 
     if (AnscEqualString(ParamName, "Description", TRUE))
     {
@@ -1852,8 +1859,12 @@ BOOL FW_V6_IpFilter_SetParamStringValue ( ANSC_HANDLE hInsContext, char* ParamNa
     }
     if (AnscEqualString(ParamName, "DstStartAddr", TRUE))
     {
-        _ansc_snprintf(pFwIpFilter->DstStartIPAddress, sizeof(pFwIpFilter->DstStartIPAddress), "%s", strValue);
-        return TRUE;
+       if(inet_pton(AF_INET6,strValue,buf))
+       {
+               _ansc_snprintf(pFwIpFilter->DstStartIPAddress, sizeof(pFwIpFilter->DstStartIPAddress), "%s", strValue);
+               return TRUE;
+       }
+
     }
 
     return FALSE;
