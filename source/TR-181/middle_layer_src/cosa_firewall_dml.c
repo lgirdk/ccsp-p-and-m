@@ -2898,8 +2898,11 @@ FW_V6_IpFilter_SetParamUlongValue
     }
     if (AnscEqualString(ParamName, "IPv6SrcPrefixLen", TRUE))
     {
-        pFwIpFilter->IPv6SrcPrefixLen = ulValue;
-        return TRUE;
+       if(ulValue>64 && ulValue<=127)
+        {
+            pFwIpFilter->IPv6SrcPrefixLen = ulValue;
+            return TRUE;
+        }
     }
     if (AnscEqualString(ParamName, "IPv6DstPrefixLen", TRUE))
     {
