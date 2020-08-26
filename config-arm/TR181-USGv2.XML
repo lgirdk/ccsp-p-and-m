@@ -1825,6 +1825,7 @@
                         <func_GetParamBoolValue>Control_GetParamBoolValue</func_GetParamBoolValue>
 <?endif?>
                         <func_SetParamBoolValue>Control_SetParamBoolValue</func_SetParamBoolValue>
+                        <func_GetParamBoolValue>Control_GetParamBoolValue</func_GetParamBoolValue>
                     </functions>
 
                     <parameters>
