@@ -8202,12 +8202,21 @@ Control_GetParamBoolValue
         }
         return TRUE;
     }
-#else
-    UNREFERENCED_PARAMETER(ParamName);
-    UNREFERENCED_PARAMETER(pBool);
 #endif //FEATURE_HOSTAP_AUTHENTICATOR
 
-    return TRUE;
+    if( AnscEqualString(ParamName, "ClearDB", TRUE))
+    {
+	*pBool = g_clearDB;
+        return TRUE;
+    }
+
+    if( AnscEqualString(ParamName, "ClearDBEnd", TRUE))
+    {
+        *pBool = !g_clearDB;
+	return TRUE;
+    }
+
+    return FALSE;
 }
 
 /**********************************************************************
@@ -8328,19 +8337,10 @@ Control_GetParamStringValue
         /* collect value */
            char buff[XCONF_SELECTOR_SIZE]={'\0'};
 
-           /* CID: 108145 Array compared against 0
-             CID: 108121 Logically dead code*/
-          if(!syscfg_get( NULL, "XconfSelector", buff, sizeof(buff))) {
-           rc = strcpy_s(pValue, *pulSize, buff);
-           if(rc != EOK)
-           {
-               ERR_CHK(rc);
-               return -1;
-           }
-           *pulSize = AnscSizeOfString( pValue )+1;
-           return 0;
-          }
-          return -1;
+        syscfg_get( NULL, "XconfSelector", buff, sizeof(buff));
+        AnscCopyString(pValue,  buff);
+        *pulSize = AnscSizeOfString( pValue );
+        return 0;
     }
 
     /* check the "XconfUrl" parameter name and return the corresponding value */
@@ -8349,19 +8349,10 @@ Control_GetParamStringValue
         /* collect value */
            char buff[XCONF_URL_SIZE]={'\0'};
 
-         if(!syscfg_get( NULL, "XconfUrl", buff, sizeof(buff)))
-         {
-          /*CID: 108145 Array compared against 0*/
-          rc = strcpy_s(pValue, *pulSize, buff);
-          if(rc != EOK)
-          {
-              ERR_CHK(rc);
-              return -1;
-          }
-          *pulSize = AnscSizeOfString( pValue )+1;
-          return 0;
-         }
-         return -1;
+        syscfg_get( NULL, "XconfUrl", buff, sizeof(buff));
+        AnscCopyString(pValue,  buff);
+        *pulSize = AnscSizeOfString( pValue );
+        return 0;
     }
 
     return -1;
@@ -12112,12 +12103,12 @@ WANLinkHeal_GetParamBoolValue
              else
                  *pBool = FALSE;
         }
-        return TRUE;
       }
       else
       {
 	CcspTraceError(("syscfg_get failed for WanLinkHeal\n"));
       }
+      return TRUE;
     }
   return FALSE;
 }
@@ -13484,11 +13475,11 @@ IPv6onPOD_GetParamBoolValue
 		            *pBool = FALSE;
 		    }
 		    ((CCSP_MESSAGE_BUS_INFO *)bus_handle)->freefunc(Inf_name);
-		    return TRUE;
 	        }
             }
             else
             *pBool = FALSE;
+            return TRUE;
         }
 
     return FALSE;
@@ -14884,7 +14875,6 @@ CredDwnld_GetParamBoolValue
         if(syscfg_get(NULL, "CredDwnld_Enable", buf, sizeof(buf)) != 0 )
         {
             CcspTraceError(("syscfg_get failed\n"));
-            return FALSE;
         }
         else
         {
@@ -14896,8 +14886,8 @@ CredDwnld_GetParamBoolValue
             {
                 *pBool = FALSE;
             }
-            return TRUE;
         }
+        return TRUE;
     }
     return FALSE;
 }
@@ -14956,7 +14946,6 @@ CredDwnld_GetParamStringValue
         if( syscfg_get( NULL, "CredDwnld_Use", buf, sizeof(buf)) != 0)
         {
              CcspTraceError(("syscfg_get failed\n"));
-             return FALSE;
         }
         else
         {
@@ -14967,10 +14956,10 @@ CredDwnld_GetParamStringValue
                return -1;
             }
             *pulSize = AnscSizeOfString(pValue)+1;
-            return TRUE;
         }
+        return 0;
     }
-    return FALSE;
+    return -1;
 }
 
 /**********************************************************************
@@ -18888,9 +18877,9 @@ xBlueTooth_GetParamBoolValue
                   if (!strncasecmp(buf, "true", 4))
                   {
                       *pBool = TRUE;
-                      return TRUE;
                   }
                }
+               return TRUE;
            }
         return FALSE;
 }
@@ -20601,10 +20590,10 @@ Telemetry_GetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName, BOOL* pB
 			*pBool = TRUE;
 		else
 			*pBool = FALSE;
-		return TRUE;
 	} else {
             CcspTraceError(("syscfg_get failed for MessageBusSource\n"));
         }
+        return TRUE;
     }
     return FALSE;
 }
@@ -21276,9 +21265,8 @@ ULONG
                ERR_CHK(rc);
                return -1;
             }
-            return 0;
         }
-        return -1;
+        return 0;
     }
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return -1;
@@ -21486,11 +21474,10 @@ mTlsLogUpload_GetParamBoolValue
                  *pBool = TRUE;
             else
                  *pBool = FALSE;
-
-            return TRUE;
         } else {
               CcspTraceError(("syscfg_get failed for MessageBusSource\n"));
           }
+          return TRUE;
         }
     return FALSE;
 }
