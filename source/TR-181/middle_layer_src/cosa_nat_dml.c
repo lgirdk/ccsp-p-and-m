@@ -847,11 +847,6 @@ X_CISCO_COM_DMZ_SetParamBoolValue
     {
         /* save update to backup */
         pDmz->bEnabled     = bValue;
-        if (bValue == FALSE) {
-            AnscCopyString(pDmz->InternalIP, "0.0.0.0");  /* keep sync between webui and snmp */
-            //CISCOXB3-5927 : ip6 table is not getting restored
-            memset(pDmz->IPv6Host ,0 ,sizeof(pDmz->IPv6Host));
-        }
     #if CFG_USE_CCSP_SYSLOG
         /* Bad practice to use platform dependent and will be rectified -- CCSP_TRACE should be used */
         syslog_systemlog("DMZ", LOG_NOTICE, "%s", (bValue==TRUE)?"Enabled":"Disabled");
@@ -1064,7 +1059,6 @@ X_CISCO_COM_DMZ_SetParamStringValue
                 return FALSE;   /* dmz host not in local lan network */
             }else{
                 AnscCopyString( pDmz->InternalIP, pString );
-                pDmz->bEnabled = TRUE;
             }
         }
 
