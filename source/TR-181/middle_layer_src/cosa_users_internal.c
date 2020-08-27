@@ -399,6 +399,16 @@ CosaUsersBackendGetUserInfo
 	     }
            }
         }
+        if (ulIndex == 3)
+        {
+           char buff[128];
+
+           syscfg_get (NULL, "user_password_4", buff, sizeof(buff));
+           if (buff[0] != '\0')
+           {
+              syscfg_set_commit(NULL, "user_password_4", "");
+           }
+        }
 #if defined(_COSA_FOR_BCI_)
         if (ulIndex == 1)
         {
