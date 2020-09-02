@@ -68,6 +68,7 @@ CosaDmlSetMACAddress
     ULONG retries = 0;
     int i = 0;
 
+    strncpy(if_name, INTERFACE, IF_NAME_SIZE-1);
     sscanf(pValue, "%x:%x:%x:%x:%x:%x", &mac_address[0], &mac_address[1], &mac_address[2], &mac_address[3], &mac_address[4], &mac_address[5]);
     for(i = 0; i < MAC_ADDR_LEN ; i++)
     {
@@ -78,13 +79,12 @@ CosaDmlSetMACAddress
     {
         if( (wol_queue[i].in_use == TRUE) && (memcmp(wol_queue[i].mac, mac, MAC_ADDR_LEN) == 0) )
         {
-            CcspTraceError(("This MAC address already exist is schedular queue no need to add it again in the queue\n"));
-            return ANSC_STATUS_FAILURE;
+            /* If Mac address is already in schedule, send only one packet. */
+            sendWolEtherPacket(if_name, mac);
+            return ANSC_STATUS_SUCCESS;
         }
         if(wol_queue[i].in_use == FALSE)
         {
-            memset(&if_name, 0, sizeof(if_name));
-            strncpy(if_name, INTERFACE, IF_NAME_SIZE-1);
             sendWolEtherPacket(if_name, mac);
             CosaDmlGetInterval(NULL, &interval);
             CosaDmlGetRetries(NULL, &retries);
