@@ -126,6 +126,22 @@ static int writeToJson(char *data, char *file);
 #include "ccsp_vendor.h"
 #endif
 
+#ifdef _PUMA6_ARM_
+#define CONFIG_TI_GW_DESCRIPTION "DOCSIS 3.0 Cable Modem"
+#else
+#define CONFIG_TI_GW_DESCRIPTION "DOCSIS 3.1 Cable Modem Gateway Device"
+#endif
+
+/*
+   Temp fallback definitions - not expected to be used.
+*/
+#ifndef CONFIG_VENDOR_NAME
+#define CONFIG_VENDOR_NAME "Liberty Global"
+#endif
+#ifndef CONFIG_VENDOR_ID
+#define CONFIG_VENDOR_ID "123456"
+#endif
+
 #ifdef _COSA_SIM_
 
 // this file is in integration_src.intel_usg_arm directory
