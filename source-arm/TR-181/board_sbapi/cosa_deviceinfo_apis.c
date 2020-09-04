@@ -118,6 +118,15 @@
 #include "ccsp_vendor.h"
 #endif
 
+/*
+   Temp fallback definitions - not expected to be used.
+*/
+#ifndef CONFIG_VENDOR_NAME
+#define CONFIG_VENDOR_NAME "Liberty Global"
+#define CONFIG_VENDOR_ID "0xFFFFFFFF"
+#define CONFIG_TI_GW_DESCRIPTION "Cable Modem"
+#endif
+
 #ifdef _COSA_SIM_
 
 // this file is in integration_src.intel_usg_arm directory
