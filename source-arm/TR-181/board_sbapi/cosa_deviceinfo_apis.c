@@ -947,6 +947,13 @@ CosaDmlDiSetProvisioningCode
 
     Utopia_Free(&ctx,!rc);
 
+    /*
+     * Since ACS Discovery feature is supported for LAN side, the DUT have to update
+     * config file dnsmasq.conf and restart dnsmasq after the related TR69 values
+     * (ProvisioningCode, ACS URL, CWMPRetryMinimumWaitInterval, CWMPRetryIntervalMultiplier) are changed.
+     */
+     system("sysevent set dhcp_server-restart");
+
     return ANSC_STATUS_SUCCESS;
 }
 
