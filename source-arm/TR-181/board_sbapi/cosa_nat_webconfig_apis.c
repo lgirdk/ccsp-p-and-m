@@ -18,6 +18,7 @@
  */
 
 #include "cosa_webconfig_api.h"
+#include "cosa_nat_webconfig_apis.h"
 #include "webconfig_framework.h"
 
 #include "cosa_nat_apis.h"
