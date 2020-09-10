@@ -774,8 +774,6 @@ static void deleteDHCPv4ServerPoolOptionPSM(ULONG poolInstanceNumber, ULONG inst
     //else{
         //printf("%s -- delete PSM records, return successful %d", __FUNCTION__, retPsmSet);
     //}
-    
-    return  CCSP_SUCCESS;
 }
 
 static void deleteDHCPv4ServerPoolPSM(ULONG instanceNumber)
@@ -792,8 +790,6 @@ static void deleteDHCPv4ServerPoolPSM(ULONG instanceNumber)
     {
         AnscTraceFlow(("%s -- failed to delete PSM records, error code %d", __FUNCTION__, retPsmSet));
     }
-    
-    return  CCSP_SUCCESS;
 }
  
 static BOOLEAN writeDHCPv4ServerPoolOptionToPSM(ULONG tblInstancenum, PCOSA_DML_DHCPSV4_OPTION pNewOption, PCOSA_DML_DHCPSV4_OPTION pOldOption)
