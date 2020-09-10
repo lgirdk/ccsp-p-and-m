@@ -648,6 +648,6 @@ CosaDmlDiUniqueTelemetryIdInit
 
 void ConvertTime(int time, char day[], char hour[], char mins[]);
 
-void UniqueTelemetryCronJob(enable, timeInterval, tagString);
+void UniqueTelemetryCronJob(BOOL enable, int timeInterval, char *tagString);
 
 #endif

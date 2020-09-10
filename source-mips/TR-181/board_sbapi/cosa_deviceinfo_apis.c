@@ -2481,7 +2481,8 @@ void ConvertTime(int time, char day[], char hour[], char mins[]) {
 }
 
 //Handle UniqueTelemetry Cron Job
-void UniqueTelemetryCronJob(enable, timeInterval, tagString) {
+void UniqueTelemetryCronJob(BOOL enable, int timeInterval, char *tagString)
+{
         char command[256] = {0};
         char day[5] = {0}, hour[5]={0}, mins[5] = {0};
 
