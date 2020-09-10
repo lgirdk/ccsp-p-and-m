@@ -454,7 +454,7 @@ CosaDmlDiGetModelName
     UCHAR model[128];
     char temp[2];
 
-    memset(model,0,128);
+    memset(model,0,sizeof(model));
     plat_GetFlashValue("model", model);
     
     sprintf(temp, "%x%x",model[0],model[1]);
@@ -548,7 +548,7 @@ CosaDmlDiGetSerialNumber
     )
 {
     UCHAR unitsn[128];
-    memset(unitsn,0,128);
+    memset(unitsn,0,sizeof(unitsn));
 
 #ifdef _COSA_DRG_TPG_
     plat_GetFlashValue("unitsn", unitsn);
@@ -583,7 +583,7 @@ CosaDmlDiGetHardwareVersion
 #elif _COSA_DRG_TPG_
 //Replace this with syscfg if we are pulling this from Cable modem later on 
     UCHAR hwVersion[128];
-    memset(hwVersion,0,128);    
+    memset(hwVersion,0,sizeof(hwVersion));
     plat_GetFlashValue("hwid", hwVersion);
     sprintf(pValue, "%X%X",hwVersion[0],hwVersion[1]);
     *pulSize = AnscSizeOfString(pValue);
@@ -972,7 +972,7 @@ CosaDmlGetTCPImplementation
     FILE *fp;
 
     AnscCopyString(pValue, _ERROR_);
-    memset(value,0,10);
+    memset(value,0,sizeof(value));
 
     fp = popen("cat /proc/sys/net/ipv4/tcp_congestion_control", "r");
     if (fp == NULL)
@@ -981,7 +981,7 @@ CosaDmlGetTCPImplementation
         return ANSC_STATUS_FAILURE;
     }
    
-    while(fgets(value, 25, fp) != NULL)
+    while(fgets(value, sizeof(value), fp) != NULL)
     {
         AnscCopyString(pValue ,value);
     }
@@ -1058,7 +1058,7 @@ CosaDmlDiGetFirmwareUpgradeStartTime
     }
     else
     {
-        while(fgets(value, 25, fp) != NULL)
+        while(fgets(value, sizeof(value), fp) != NULL)
         {
             AnscCopyString(pValue ,value);
         }
@@ -1085,14 +1085,14 @@ CosaDmlDiGetFirmwareUpgradeStartTime
     char value[25];
     FILE *fp;
     AnscCopyString(pValue, _ERROR_);
-    memset(value,0,10);
+    memset(value,0,sizeof(value));
     fp = popen("cat /nvram/.FirmwareUpgradeStartTime", "r");
     if (fp == NULL)
     {
         CcspTraceError(("ERROR '%s'\n","ERROR"));
         return ANSC_STATUS_FAILURE;
     }
-    while(fgets(value, 25, fp) != NULL)
+    while(fgets(value, sizeof(value), fp) != NULL)
     {
         AnscCopyString(pValue ,value);
     }
@@ -1123,7 +1123,7 @@ CosaDmlDiGetFirmwareUpgradeEndTime
     }
     else
     {
-        while(fgets(value, 25, fp) != NULL)
+        while(fgets(value, sizeof(value), fp) != NULL)
         {
             AnscCopyString(pValue ,value);
         }
@@ -1149,14 +1149,14 @@ CosaDmlDiGetFirmwareUpgradeEndTime
     char value[25];
     FILE *fp;
     AnscCopyString(pValue, _ERROR_);
-    memset(value,0,10);
+    memset(value,0,sizeof(value));
     fp = popen("cat /nvram/.FirmwareUpgradeEndTime", "r");
     if (fp == NULL)
     {
         CcspTraceError(("ERROR '%s'\n","ERROR"));
         return ANSC_STATUS_FAILURE;
     }
-    while(fgets(value, 25, fp) != NULL)
+    while(fgets(value, sizeof(value), fp) != NULL)
     {
         AnscCopyString(pValue ,value);
     }
@@ -1528,7 +1528,7 @@ int COSADmlSetMemoryStatus(char * ParamName, ULONG val)
     if(AnscEqualString(ParamName, "X_RDKCENTRAL-COM_FreeMemThreshold", TRUE))
      {
             char buf[10];
-	    memset(buf,sizeof(buf),0);
+	    memset(buf,0,sizeof(buf));
 	    snprintf(buf,sizeof(buf),"%d",val);            		    
 	    if ((syscfg_set(NULL, "MinMemoryThreshold_Value", buf) != 0)) 
 	    {
@@ -1624,7 +1624,7 @@ ULONG COSADmlGetMemoryStatus(char * ParamName)
      else if(AnscEqualString(ParamName, "X_RDKCENTRAL-COM_FreeMemThreshold", TRUE))
      {
 	char buf[10];
-	memset(buf,sizeof(buf),0);
+	memset(buf,0,sizeof(buf));
         syscfg_get( NULL, "MinMemoryThreshold_Value", buf, sizeof(buf));
         if( buf != NULL )
         {
@@ -1645,7 +1645,7 @@ ULONG COSADmlGetMaxWindowSize()
     ULONG winSize = 0;
     char value[10];
 
-    memset(value,0,10);
+    memset(value,0,sizeof(value));
     fp = popen("cat /proc/sys/net/core/wmem_max", "r");
     if (fp == NULL)
     {
@@ -1691,7 +1691,7 @@ CosaDmlDiGetProcessorSpeed
     FILE *fp;
     int status;
 
-    memset(line, 0, MAX_LINE_SIZE);
+    memset(line, 0, sizeof(line));
 
 #ifdef _COSA_BCM_ARM_
 
