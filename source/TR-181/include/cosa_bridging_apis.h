@@ -479,7 +479,7 @@ CosaDmlBrgVlanDelEntry
     (
         ANSC_HANDLE                 hContext,
         ULONG                       ulBrgInstanceNumber,
-        ULONG                       ulVLANInsNum;
+        ULONG                       ulVLANInsNum
     );
 
 ULONG
