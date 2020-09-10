@@ -1809,7 +1809,7 @@ void resetWiFi()
 	if (ppComponents == NULL && initWifiComp())
 	{
 		CcspTraceError(("FactoryReset:%s Restoring WiFi to factory defaults returned error  ...\n",__FUNCTION__));     
-		return ANSC_STATUS_FAILURE;
+		return /* ANSC_STATUS_FAILURE */;
 	}
 	parameterValStruct_t	val = { "Device.WiFi.X_CISCO_COM_FactoryReset", "true", ccsp_boolean};
 
@@ -4170,7 +4170,7 @@ static void configBridgeMode(int bEnable) {
         if (ppComponents == NULL && initWifiComp()) {
             syslog_systemlog("Local Network", LOG_NOTICE, "Bridge mode transition: Failed to acquire wifi component.");
             AnscFreeMemory( pnotifypara ); /*RDKB-6845, CID-33015, free unused resource before return */
-            return ANSC_STATUS_SUCCESS;
+            return /* ANSC_STATUS_SUCCESS */;
         }
         totalticket += 1;
         pnotifypara->flag = brmode[0] == '3' ? 3 : bEnable;
