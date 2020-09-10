@@ -234,7 +234,7 @@ void LanManager_Free
 )
 {
     //return AnscFreeMemoryCountSize(pComponentName, p);
-    return AnscFreeMemory(p);
+    AnscFreeMemory(p);
     //if(p) return free(p);
 }
 
