@@ -109,7 +109,7 @@ _COSA_DML_DDNS_SERVICE
     char                            ServiceName[32];
     char                            Username[65];
     char                            Password[65];
-    char                            Domain[65];
+    char                            Domain[129];
     char                            AssociatedConnection[257];   /* IP interface name */
     COSA_DML_DDNS_STATE             ConnectionState;
     char                            Mail_exch[129];
