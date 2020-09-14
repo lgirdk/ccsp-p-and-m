@@ -12868,7 +12868,7 @@
 
           <name>FilterWebTraffic</name>
 
-          <type>string</type>
+          <type>string(63)</type>
 
           <syntax>string</syntax>
 
@@ -12880,7 +12880,7 @@
 
           <name>TrafficDetect</name>
 
-          <type>string</type>
+          <type>string(63)</type>
 
           <syntax>string</syntax>
 
@@ -12892,7 +12892,7 @@
 
           <name>FilterLanTraffic</name>
 
-          <type>string</type>
+          <type>string(63)</type>
 
           <syntax>string</syntax>
 
@@ -12904,7 +12904,7 @@
 
           <name>AllowPassthrough</name>
 
-          <type>string</type>
+          <type>string(63)</type>
 
           <syntax>string</syntax>
 
@@ -12928,7 +12928,7 @@
 
           <name>EmailSendTo</name>
 
-          <type>string</type>
+          <type>string(63)</type>
 
           <syntax>string</syntax>
 
@@ -12940,7 +12940,7 @@
 
           <name>EmailServer</name>
 
-          <type>string</type>
+          <type>string(63)</type>
 
           <syntax>string</syntax>
 
@@ -12952,7 +12952,7 @@
 
           <name>EmailUserName</name>
 
-          <type>string</type>
+          <type>string(63)</type>
 
           <syntax>string</syntax>
 
@@ -12964,7 +12964,7 @@
 
           <name>EmailPassword</name>
 
-          <type>string</type>
+          <type>string(63)</type>
 
           <syntax>string</syntax>
 
@@ -12976,7 +12976,7 @@
 
           <name>EmailFromAddress</name>
 
-          <type>string</type>
+          <type>string(63)</type>
 
           <syntax>string</syntax>
 
