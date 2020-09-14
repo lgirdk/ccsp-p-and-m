@@ -92,6 +92,7 @@
 **************************************************************************/
 #define _GNU_SOURCE
 #include <string.h>
+#include <stdlib.h>
 #include <syscfg/syscfg.h>
 #include "cosa_deviceinfo_apis.h"
 #include "cosa_deviceinfo_apis_custom.h"
@@ -675,23 +676,32 @@ CosaDmlDiGetSerialNumber
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-    UNREFERENCED_PARAMETER(pulSize);
-    UCHAR unitsn[128];
-    memset(unitsn,0,sizeof(unitsn));
 
-#if   (_COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_)
+    /*
+       On Puma6 ARM, platform_hal_GetSerialNumber() may return upto 256 bytes.
+    */
+    if (*pulSize <= 255) {
+        *pulSize = 255 + 1;
+        return 1;
+    }
 
-    if (platform_hal_GetSerialNumber(pValue) != RETURN_OK )
-        return ANSC_STATUS_FAILURE;
+    if (platform_hal_GetSerialNumber(pValue) != RETURN_OK)
+        return -1;
 
-    /* Remove trailing newline from Serial Number retrieved */
-    int len = strlen(pValue);
-    if ((len > 0) && (pValue[len-1] == '\n'))
-    {
-        pValue[len-1] = '\0';
+#if 1
+    /*
+       Apparently this check was needed at some point, but if it ever triggers
+       then something is badly wrong. If the HAL returns a serial number with a
+       trailing newline then the HAL is broken and needs to be fixed.
+    */
+    size_t len = strlen(pValue);
+    if ((len > 0) && (pValue[len-1] == '\n')) {
+        fprintf(stderr, "platform_hal_GetSerialNumber() returned bogus result\n");
+        exit(-1);
     }
 #endif
-    return ANSC_STATUS_SUCCESS;
+
+    return 0;
 }
 
 ANSC_STATUS
