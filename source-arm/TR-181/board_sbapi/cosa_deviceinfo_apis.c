@@ -89,6 +89,7 @@
 **************************************************************************/
 #define _GNU_SOURCE
 #include <string.h>
+#include <stdlib.h>
 #include <syscfg/syscfg.h>
 #include "cosa_deviceinfo_apis.h"
 #include "cosa_deviceinfo_apis_custom.h"
@@ -781,17 +782,19 @@ CosaDmlDiGetSerialNumber
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-    UNREFERENCED_PARAMETER(pulSize);
-    UCHAR unitsn[128];
-    memset(unitsn,0,sizeof(unitsn));
 
-#if   (_COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_)
+    /*
+       On Puma6 ARM, platform_hal_GetSerialNumber() may return upto 256 bytes.
+    */
+    if (*pulSize <= 255) {
+        *pulSize = 255 + 1;
+        return 1;
+    }
 
-    if (platform_hal_GetSerialNumber(pValue) != RETURN_OK )
-        return ANSC_STATUS_FAILURE;
+    if (platform_hal_GetSerialNumber(pValue) != RETURN_OK)
+        return -1;
 
-#endif
-    return ANSC_STATUS_SUCCESS;
+    return 0;
 }
 
 ANSC_STATUS
