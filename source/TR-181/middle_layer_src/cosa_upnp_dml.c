@@ -867,12 +867,14 @@ Capabilities_GetParamUlongValue
     if( AnscEqualString(ParamName, "UPnPArchitecture", TRUE))
     {
         /* collect value */
+        *puLong = pMyObject->uMajorVer;
         return TRUE;
     }
 
     if( AnscEqualString(ParamName, "UPnPArchitectureMinorVer", TRUE))
     {
         /* collect value */
+        *puLong = pMyObject->uMinorVer;
         return TRUE;
     }
 
