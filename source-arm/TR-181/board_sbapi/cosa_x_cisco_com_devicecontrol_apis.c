@@ -4644,6 +4644,7 @@ static void configBridgeMode(int bEnable) {
         char primarybrp[5];
         char brpdm[50];
         char brmode[5];
+        void *handle;
         PCOSA_NOTIFY_WIFI pnotifypara = (PCOSA_NOTIFY_WIFI)AnscAllocateMemory(sizeof(COSA_NOTIFY_WIFI)); /*RDKB-6845, CID-32969, free unused resource before return */
 	if(pnotifypara == NULL)
 	{
@@ -4684,7 +4685,8 @@ static void configBridgeMode(int bEnable) {
         totalticket += 1;
         pnotifypara->flag = brmode[0] == '3' ? 3 : bEnable;
         pnotifypara->ticket = totalticket;
-        AnscCreateTask(bridge_mode_wifi_notifier_thread, USER_DEFAULT_TASK_STACK_SIZE, USER_DEFAULT_TASK_PRIORITY, (void *)pnotifypara, "BridgeModeWifiNotifierThread");
+        handle = AnscCreateTask(bridge_mode_wifi_notifier_thread, USER_DEFAULT_TASK_STACK_SIZE, USER_DEFAULT_TASK_PRIORITY, (void *)pnotifypara, "BridgeModeWifiNotifierThread");
+        pthread_detach((pthread_t)handle);
 }
 
 ANSC_STATUS
