@@ -812,6 +812,13 @@ DeviceInfo_GetParamStringValue
         return 0;
     }
 
+    /* This parameter always returns the actual serial number */
+    if( AnscEqualString(ParamName, "X_LGI-COM_SerialNumber", TRUE))
+    {
+        CosaDmlDiGetSerialNumber(NULL, pValue, pulSize);
+        return 0;
+    }
+
     if( AnscEqualString(ParamName, "HardwareVersion", TRUE))
     {
         /* collect value */
