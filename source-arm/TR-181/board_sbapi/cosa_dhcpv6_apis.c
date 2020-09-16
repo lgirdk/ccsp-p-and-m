@@ -5355,7 +5355,7 @@ CosaDmlDhcpv6sGetState
     /*
     char cmd[256] = {0};
     char out[256] = {0};
-    sprintf(cmd, "ps -A|grep %s", SERVER_BIN);
+    sprintf(cmd, "ps |grep %s|grep -v grep", SERVER_BIN);
     _get_shell_output(cmd, out, sizeof(out));
     if (strstr(out, SERVER_BIN))
     {
@@ -5924,7 +5924,7 @@ CosaDmlDhcpv6sGetPoolInfo
 
 #ifdef OVERCOMMIT_DISABLED
     int ret = 0;
-    ret = v_secure_system("ps -A|grep %s > " WRAPPER_LOGFILE, SERVER_BIN);
+    ret = v_secure_system("ps |grep %s|grep -v grep > " WRAPPER_LOGFILE, SERVER_BIN);
     if(ret != 0) {
         CcspTraceWarning(("%s Failure in executing command via v_secure_system. ret:[%d] ; LINE : %d \n", __FUNCTION__, ret, __LINE__));
         }
@@ -5932,7 +5932,7 @@ CosaDmlDhcpv6sGetPoolInfo
         fp = fopen (WRAPPER_LOGFILE, "r");
     }
 #else
-    fp = v_secure_popen("r","ps -A|grep %s", SERVER_BIN);
+    fp = v_secure_popen("r","ps |grep %s|grep -v grep", SERVER_BIN);
 #endif
     _get_shell_output(fp, out, sizeof(out));
     if ( (strstr(out, SERVER_BIN)) && sDhcpv6ServerPool[Index].Cfg.bEnabled )
