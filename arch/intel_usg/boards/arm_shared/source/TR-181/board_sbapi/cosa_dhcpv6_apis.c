@@ -2134,7 +2134,7 @@ static int _dibbler_client_operation(char * arg)
     
         sleep(2);
     
-        sprintf(cmd, "ps -A|grep %s", CLIENT_BIN);
+        sprintf(cmd, "ps |grep %s|grep -v grep", CLIENT_BIN);
         _get_shell_output(cmd, out, sizeof(out));
         if (strstr(out, CLIENT_BIN))
         {
@@ -3540,7 +3540,7 @@ CosaDmlDhcpv6sGetState
     char out[256] = {0};
 
     /*
-    sprintf(cmd, "ps -A|grep %s", SERVER_BIN);
+    sprintf(cmd, "ps |grep %s|grep -v grep", SERVER_BIN);
     _get_shell_output(cmd, out, sizeof(out));
     if (strstr(out, SERVER_BIN))
     {
@@ -3923,7 +3923,7 @@ CosaDmlDhcpv6sGetPoolInfo
             break;
     }
 
-    sprintf(cmd, "ps -A|grep %s", SERVER_BIN);
+    sprintf(cmd, "ps |grep %s|grep -v grep", SERVER_BIN);
     _get_shell_output(cmd, out, sizeof(out));
 
     if ( (strstr(out, SERVER_BIN)) && sDhcpv6ServerPool[Index].Cfg.bEnabled )
