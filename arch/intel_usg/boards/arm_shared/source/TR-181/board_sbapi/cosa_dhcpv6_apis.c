@@ -2134,7 +2134,7 @@ static int _dibbler_client_operation(char * arg)
     
         sleep(2);
     
-        sprintf(cmd, "ps |grep %s|grep -v grep", CLIENT_BIN);
+        sprintf(cmd, "busybox ps |grep %s|grep -v grep", CLIENT_BIN);
         _get_shell_output(cmd, out, sizeof(out));
         if (strstr(out, CLIENT_BIN))
         {
@@ -2312,7 +2312,7 @@ CosaDmlDhcpv6cGetEnabled
     BOOL bEnabled = FALSE;
     char out[256] = {0};
 
-    FILE *fp = popen("ps |grep -i ti_dhcp6c | grep erouter0 | grep -v grep", "r");
+    FILE *fp = popen("busybox ps |grep -i ti_dhcp6c | grep erouter0 | grep -v grep", "r");
 
     if ( fp != NULL){
         if ( fgets(out, sizeof(out), fp) != NULL )
@@ -3540,7 +3540,7 @@ CosaDmlDhcpv6sGetState
     char out[256] = {0};
 
     /*
-    sprintf(cmd, "ps |grep %s|grep -v grep", SERVER_BIN);
+    sprintf(cmd, "busybox ps |grep %s|grep -v grep", SERVER_BIN);
     _get_shell_output(cmd, out, sizeof(out));
     if (strstr(out, SERVER_BIN))
     {
@@ -3923,7 +3923,7 @@ CosaDmlDhcpv6sGetPoolInfo
             break;
     }
 
-    sprintf(cmd, "ps |grep %s|grep -v grep", SERVER_BIN);
+    sprintf(cmd, "busybox ps |grep %s|grep -v grep", SERVER_BIN);
     _get_shell_output(cmd, out, sizeof(out));
 
     if ( (strstr(out, SERVER_BIN)) && sDhcpv6ServerPool[Index].Cfg.bEnabled )
@@ -4915,7 +4915,7 @@ void CosaDmlDhcpv6sRebootServer()
             return;
 
         //make sure it's not in a bad status
-        sprintf(cmd, "ps|grep %s|grep -v grep", SERVER_BIN);
+        sprintf(cmd, "busybox ps |grep %s|grep -v grep", SERVER_BIN);
         _get_shell_output(cmd, out, sizeof(out));
         if (strstr(out, SERVER_BIN))
         {
