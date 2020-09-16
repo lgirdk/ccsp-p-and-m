@@ -426,7 +426,7 @@ static int TelnetdConfig(int enable)
     if (enable)
     {
         /* start the server if service not started */
-        if (system("ps | grep telnetd | grep -v grep") != 0)
+        if (system("busybox ps | grep telnetd | grep -v grep") != 0)
             if (system("/usr/sbin/telnetd -l /usr/sbin/cli") != 0)
                 return -1;
     }
@@ -445,7 +445,7 @@ static int SshdConfig(int enable)
     if (enable)
     {
         /* start the server if service not started */
-        if (system("ps | grep dropbear | grep -v grep") != 0)
+        if (system("busybox ps | grep dropbear | grep -v grep") != 0)
             if (system("dropbear -r /etc/rsa_key.priv") != 0)
                 return -1;
     }
@@ -466,7 +466,7 @@ static int detect_process(char *process_name)
     char buff[512];
     char ps[128];
 
-    sprintf(ps, "ps | grep -v grep | grep -c %s", process_name);
+    sprintf(ps, "busybox ps | grep -v grep | grep -c %s", process_name);
 
     if ((ptr=popen(ps, "r"))!=NULL)
     {
