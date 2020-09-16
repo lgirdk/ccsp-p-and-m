@@ -2527,10 +2527,10 @@ CosaDmlDhcpv6cGetEnabled
 
 #if defined (_HUB4_PRODUCT_REQ_)
     // For HUB4, check dhcp6c process status
-    FILE *fp = popen("ps |grep -i dhcp6c | grep -v grep", "r");
+    FILE *fp = popen("busybox ps |grep -i dhcp6c | grep -v grep", "r");
 
 #elif defined (_COSA_BCM_ARM_)
-    FILE *fp = popen("ps |grep -i dibbler-client | grep -v grep", "r");
+    FILE *fp = popen("busybox ps |grep -i dibbler-client | grep -v grep", "r");
 
 #elif defined (_XF3_PRODUCT_REQ_)
    FILE *fp = popen("/usr/sbin/dibbler-client status |grep  client", "r");
@@ -2539,9 +2539,9 @@ CosaDmlDhcpv6cGetEnabled
 	FILE *fp;
 	// For XB3, AXB6 if dibbler flag enabled, check dibbler-client process status
 	if(dibblerEnabled)
-		fp = popen("ps |grep -i dibbler-client | grep -v grep", "r");
+		fp = popen("busybox ps |grep -i dibbler-client | grep -v grep", "r");
 	else
-    		fp = popen("ps |grep -i ti_dhcp6c | grep erouter0 | grep -v grep", "r");
+		fp = popen("busybox ps |grep -i ti_dhcp6c | grep erouter0 | grep -v grep", "r");
 #endif
 
     if ( fp != NULL){
@@ -5291,7 +5291,7 @@ CosaDmlDhcpv6sGetState
     char out[256] = {0};
 
     /*
-    sprintf(cmd, "ps |grep %s|grep -v grep", SERVER_BIN);
+    sprintf(cmd, "busybox ps |grep %s|grep -v grep", SERVER_BIN);
     _get_shell_output(cmd, out, sizeof(out));
     if (strstr(out, SERVER_BIN))
     {
@@ -5849,7 +5849,7 @@ CosaDmlDhcpv6sGetPoolInfo
         return ANSC_STATUS_FAILURE;
     }
 
-    fp = v_secure_popen("r","ps |grep %s|grep -v grep", SERVER_BIN);
+    fp = v_secure_popen("r","busybox ps |grep %s|grep -v grep", SERVER_BIN);
     _get_shell_output(fp, out, sizeof(out));
 
     if ( (strstr(out, SERVER_BIN)) && sDhcpv6ServerPool[Index].Cfg.bEnabled )
@@ -6869,7 +6869,7 @@ void CosaDmlDhcpv6sRebootServer()
             return;
 
         //make sure it's not in a bad status
-        fp = v_secure_popen("r","ps|grep %s|grep -v grep", SERVER_BIN);
+        fp = v_secure_popen("r","busybox ps|grep %s|grep -v grep", SERVER_BIN);
         _get_shell_output(fp, out, sizeof(out));
         if (strstr(out, SERVER_BIN))
         {
