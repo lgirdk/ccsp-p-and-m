@@ -88,3 +88,4 @@ libCcspPandM_board_sbapi_la_LDFLAGS = -lccsp_common -ltime_conversion -lwebconfi
 
 libCcspPandM_board_sbapi_la_SOURCES += cosa_mac_filter_apis.c
 libCcspPandM_board_sbapi_la_SOURCES += cosa_lgi_cloudui_apis.c
+libCcspPandM_board_sbapi_la_SOURCES += cosa_lgi_general_apis.c
