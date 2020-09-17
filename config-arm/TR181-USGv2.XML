@@ -500,6 +500,179 @@
     </object>
     <object>
 
+        <name>X_LGI-COM_General</name>
+
+        <objectType>object</objectType>
+
+        <functions>
+
+            <func_GetParamBoolValue>LgiGeneral_GetParamBoolValue</func_GetParamBoolValue>
+            <func_GetParamUlongValue>LgiGeneral_GetParamUlongValue</func_GetParamUlongValue>
+            <func_GetParamStringValue>LgiGeneral_GetParamStringValue</func_GetParamStringValue>
+            <func_SetParamBoolValue>LgiGeneral_SetParamBoolValue</func_SetParamBoolValue>
+            <func_SetParamUlongValue>LgiGeneral_SetParamUlongValue</func_SetParamUlongValue>
+            <func_SetParamStringValue>LgiGeneral_SetParamStringValue</func_SetParamStringValue>
+            <func_Validate>LgiGeneral_Validate</func_Validate>
+            <func_Commit>LgiGeneral_Commit</func_Commit>
+            <func_Rollback>LgiGeneral_Rollback</func_Rollback>
+
+        </functions>
+
+        <parameters>
+
+             <parameter>
+
+                <name>CustomerId</name>
+
+                <type>unsignedInt</type>
+
+                <syntax>uint32</syntax>
+
+                <writable>true</writable>
+
+             </parameter>
+
+             <parameter>
+
+                <name>FirstInstallWizardEnable</name>
+
+                <description>
+                  Whether the First Install Wizard is offered upon First Install.
+                  If Cloud UI is enabled, the local First Install Wizard cannot be active.
+                </description>
+
+                <type>boolean</type>
+
+                <syntax>bool</syntax>
+
+                <writable>true</writable>
+
+            </parameter>
+            <parameter>
+
+                <name>FirstInstallState</name>
+
+                <description>
+                  Whether the modem is in First Install state.
+                  Once First Install wizard is completed modem is no longer in First Install state
+                </description>
+
+                <type>boolean</type>
+
+                <syntax>bool</syntax>
+
+                <writable>true</writable>
+
+            </parameter>
+            <parameter>
+
+                <name>TroubleshootWizardEnable</name>
+
+                <description>
+                  Toggle local troubleshooting UI designed for cloud UI solution when modem/eRouter is disconnected from Internet.
+                  HTTP sessions are redirected to this page.
+                </description>
+
+                <type>boolean</type>
+
+                <syntax>bool</syntax>
+
+                <writable>true</writable>
+
+            </parameter>
+         </parameters>
+         <objects>
+            <object>
+
+                <name>CloudUITroubleshootPage</name>
+
+                <objectType>object</objectType>
+
+                <functions>
+
+                    <func_GetParamStringValue>LgiGeneral_GetParamStringValue</func_GetParamStringValue>
+
+                    <func_SetParamStringValue>LgiGeneral_SetParamStringValue</func_SetParamStringValue>
+
+                    <func_Validate>LgiGeneral_Validate</func_Validate>
+
+                    <func_Commit>LgiGeneral_Commit</func_Commit>
+
+                    <func_Rollback>LgiGeneral_Rollback</func_Rollback>
+
+                </functions>
+
+                <parameters>
+
+                    <parameter>
+
+                        <name>CAppName</name>
+
+                        <description>
+                          Corresponds to the string (Country_C-App_Name) on the Local Troubleshooting page of the Cloud UI.
+                          If set to an empty string the entire line for the download instructions MUST NOT be displayed.
+                        </description>
+
+                        <type>string</type>
+
+                        <syntax>string</syntax>
+
+                        <writable>true</writable>
+
+                    </parameter>
+
+                    <parameter>
+
+                        <name>WebsiteHelpURL</name>
+
+                        <description>
+                          Corresponds to the string (Country_Care_website_Help_URL) on the Local Troubleshooting page of the Cloud UI.
+                          If set to an empty string the entire line for the help pages MUST NOT be displayed.
+                        </description>
+
+                        <type>string</type>
+
+                        <syntax>string</syntax>
+
+                        <writable>true</writable>
+
+                    </parameter>
+
+                 </parameters>
+
+            </object>
+            <object>
+                <name>CPE</name>
+                <objectType>object</objectType>
+                <functions>
+                    <func_GetParamStringValue>LgiGeneral_GetParamStringValue</func_GetParamStringValue>
+                </functions>
+                <parameters>
+                    <parameter>
+
+                        <name>DataModelVersion</name>
+
+                        <description>
+                          A number used to control the version of the Liberty DataModel definition. Any update Liberty applies to its CPE data model will be reflected by a change of this number.
+                          The CPE device MUST show the version number of the definition used for implementation. The number format can be:
+                          [major].[minor].[patch]
+                        </description>
+
+                        <type>string(32)</type>
+
+                        <syntax>string</syntax>
+
+                        <writable>false</writable>
+
+                    </parameter>
+                </parameters>
+            </object>
+          </objects>
+
+    </object>
+
+    <object>
+
       <name>DeviceInfo</name>
 
       <objectType>object</objectType>
