@@ -129,6 +129,8 @@
 
 #include "cosa_lgi_cloudui_apis.h"
 #include "cosa_lgi_cloudui_internal.h"
+#include "cosa_lgi_general_apis.h"
+#include "cosa_lgi_general_internal.h"
 
 #ifdef DSLITE_FEATURE_SUPPORT
 #include "cosa_dslite_apis.h"
@@ -370,6 +372,8 @@ CosaBackEndManagerInitialize
 #endif
     pMyObject->hLgiCloudUi = (ANSC_HANDLE)CosaLgiCloudUiCreate();
     AnscTraceWarning(("  CosaLgiCloudUiCreate done !\n"));
+    pMyObject->hLgiGeneral = (ANSC_HANDLE)CosaLgiGeneralCreate();
+    AnscTraceWarning(("  CosaLgiGeneralCreate done !\n"));
     pMyObject->hNeighdisc     = (ANSC_HANDLE)CosaNeighdiscCreate();
     AnscTraceWarning(("  CosaNeighdiscCreate done!\n"));
     pMyObject->hMld           = (ANSC_HANDLE)CosaMldCreate();
