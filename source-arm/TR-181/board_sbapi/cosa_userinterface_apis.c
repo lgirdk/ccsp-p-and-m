@@ -156,12 +156,17 @@ CosaDmlRaSetCfg
 
     /* SSH access */
 
-    /*
     if (pCfg->SSHEnable)
+    {
         Utopia_RawSet(&ctx, NULL, "mgmt_wan_sshaccess", "1");
+        system("sysevent set sshd-start");
+    }
     else
+    {
         Utopia_RawSet(&ctx, NULL, "mgmt_wan_sshaccess", "0");
-    */
+        system("sysevent set sshd-stop");
+    }
+
 
     snprintf(sVal, sizeof(sVal), "%lu", pCfg->SSHPort);
     Utopia_RawSet(&ctx, NULL, "mgmt_wan_sshport", sVal);
