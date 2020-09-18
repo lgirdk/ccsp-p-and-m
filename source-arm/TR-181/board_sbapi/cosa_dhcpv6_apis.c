@@ -3846,7 +3846,8 @@ int CosaDmlDHCPv6sGetDNS(char* Dns, char* output, int outputLen)
 
     return 0;
 }
-int format_dibbler_option(char *option)
+
+static int format_dibbler_option(char *option)
 {
     if (option == NULL)
         return -1;
@@ -4879,6 +4880,46 @@ OPTIONS:
                     }
                 }
 #else
+
+                //default basic options if there is no recv. options/config available
+                if ( (g_recv_option_num == 0) && (Index2 == 0) )
+                { 
+                    char tmpstr[256];
+                    token_t se_token;
+                    int se_fd;
+
+                    se_fd = s_sysevent_connect(&se_token);
+
+                    if (se_fd >= 0)
+                    {
+                        tmpstr[0] = 0;
+                        sysevent_get(se_fd, se_token, "ipv6_nameserver", tmpstr, sizeof(tmpstr));
+                        if (tmpstr[0] != '\0') 
+                        { 
+                          format_dibbler_option(tmpstr);
+                          fprintf(fp, "option dns-server %s\n", tmpstr);
+                        }
+
+                        tmpstr[0] = 0;
+                        sysevent_get(se_fd, se_token, "wan6_domain", tmpstr, sizeof(tmpstr));
+                        if (tmpstr[0] != '\0') 
+                        { 
+                          format_dibbler_option(tmpstr);
+                          fprintf(fp, "option domain %s\n", tmpstr);
+                        }
+
+                        tmpstr[0] = 0;
+                        sysevent_get(se_fd, se_token, "wan6_ntp_srv", tmpstr, sizeof(tmpstr));
+                        if (tmpstr[0] != '\0') 
+                        {
+                          format_dibbler_option(tmpstr);
+                          fprintf(fp, "option ntp-server %s\n", tmpstr);
+                        }
+
+                        fprintf(fp, "\n");
+                    }
+                }
+
                 for ( Index4 = 0; Index4 < g_recv_option_num; Index4++ )
                 {
                     if ( g_recv_options[Index4].Tag != sDhcpv6ServerPoolOption[Index][Index2].Tag  )
