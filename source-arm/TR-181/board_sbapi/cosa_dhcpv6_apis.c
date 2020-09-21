@@ -6324,6 +6324,113 @@ CosaDmlDhcpv6sSetPoolCfg
     return ANSC_STATUS_SUCCESS;
 }
 
+static char **string_split(char *string_to_split, char *delim_to_split)
+{
+    PANSC_TOKEN_CHAIN pTokenChain;
+    PANSC_STRING_TOKEN pToken;
+    char **result = NULL;
+    int token_count;
+    int i, idx = 0;
+
+    pTokenChain = (PANSC_TOKEN_CHAIN) AnscTcAllocate(string_to_split, delim_to_split);
+    if (pTokenChain == NULL)
+    {
+        return NULL;
+    }
+
+    token_count = AnscTcGetTokenCount(pTokenChain);
+    if (token_count > 0)
+    {
+        result = AnscAllocateMemory(sizeof(char *) * (token_count + 1));
+
+        for (i = 0; i < token_count; i++)
+        {
+            pToken = AnscTcUnlinkToken(pTokenChain);
+            if (pToken)
+            {
+                result[idx++] = strdup(pToken->Name);
+                AnscFreeMemory(pToken);
+                pToken = NULL;
+            }
+        }
+
+        result[idx] = NULL;
+    }
+
+    AnscTcFree((ANSC_HANDLE)pTokenChain);
+
+    return result;
+}
+
+ANSC_STATUS
+CosaDmlDhcpv6sMaxClient
+    (
+        ANSC_HANDLE                 hContext,
+        ULONG                       ulInstanceNumber,
+        ULONG                       *puLong
+    )
+{
+    ULONG Index;
+    ANSC_STATUS ret_Val = ANSC_STATUS_SUCCESS;
+    char **prefixrangebegin, **prefixrangeend;
+    int i;
+
+    for (Index = 0; (Index < uDhcpv6ServerPoolNum) && (Index < DHCPV6S_POOL_NUM); Index++)
+    {
+        if (sDhcpv6ServerPool[Index].Cfg.InstanceNumber == ulInstanceNumber)
+        {
+            break;
+        }
+    }
+
+    if ((Index >= DHCPV6S_POOL_NUM) || (Index >= uDhcpv6ServerPoolNum))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    prefixrangebegin = string_split(sDhcpv6ServerPool[Index].Cfg.PrefixRangeBegin, ":");
+    prefixrangeend = string_split(sDhcpv6ServerPool[Index].Cfg.PrefixRangeEnd, ":");
+
+    if (prefixrangebegin && prefixrangeend)
+    {
+        unsigned long count = 0;
+
+        for (i = 0; prefixrangebegin[i] && prefixrangeend[i]; i++)
+        {
+            unsigned long begin = strtoul(prefixrangebegin[i], NULL, 16);
+            unsigned long end = strtoul(prefixrangeend[i], NULL, 16);
+
+            count += (end - begin);
+        }
+
+        *puLong = count + 1;
+    }
+    else
+    {
+        ret_Val = ANSC_STATUS_FAILURE;
+    }
+
+    if (prefixrangebegin)
+    {
+        for (i = 0; prefixrangebegin[i]; i++)
+        {
+            AnscFreeMemory(prefixrangebegin[i]);
+        }
+        AnscFreeMemory(prefixrangebegin);
+    }
+
+    if (prefixrangeend)
+    {
+        for (i = 0; prefixrangeend[i]; i++)
+        {
+            AnscFreeMemory(prefixrangeend[i]);
+        }
+        AnscFreeMemory(prefixrangeend);
+    }
+
+    return ret_Val;
+}
+
 ANSC_STATUS
 CosaDmlDhcpv6sGetPoolCfg
     (
