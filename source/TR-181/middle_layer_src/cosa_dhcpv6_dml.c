@@ -4538,6 +4538,15 @@ Pool1_GetParamUlongValue
         return TRUE;
     }
 
+    if( AnscEqualString(ParamName, "X_LGI-COM_MaxClients", TRUE) )
+    {
+        /* collect value */
+        returnStatus = CosaDmlDhcpv6sMaxClient( NULL, pPool->Cfg.InstanceNumber, puLong);
+        if (returnStatus == ANSC_STATUS_SUCCESS)
+            return TRUE;
+        else
+            return FALSE;
+    }
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
 }
