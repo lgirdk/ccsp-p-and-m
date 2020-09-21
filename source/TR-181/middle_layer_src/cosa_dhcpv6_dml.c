@@ -4522,6 +4522,12 @@ Pool1_GetParamUlongValue
         return TRUE;
     }
 
+    if (strcmp(ParamName, "MaxClients") == 0)
+    {
+        CosaDmlDhcpv6sMaxClient(NULL, pPool->Cfg.InstanceNumber, puLong);
+        return TRUE;
+    }
+
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
 }
