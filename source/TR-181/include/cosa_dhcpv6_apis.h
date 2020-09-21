@@ -562,6 +562,14 @@ CosaDmlDhcpv6sGetPoolCfg
     );
 
 ANSC_STATUS
+CosaDmlDhcpv6sMaxClient
+    (
+        ANSC_HANDLE                 hContext,
+        ULONG                       ulInstanceNumber,
+        ULONG                       *puLong
+    );
+
+ANSC_STATUS
 CosaDmlDhcpv6sGetPoolInfo
     (
         ANSC_HANDLE                 hContext,
