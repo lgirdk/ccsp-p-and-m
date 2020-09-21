@@ -13049,6 +13049,13 @@
               <syntax>string</syntax>
             </parameter>
             <parameter>
+              <name>X_LGI-COM_MaxClients</name>
+              <description>Maximum number of DHCP clients allowed</description>
+              <type>unsignedInt</type>
+              <syntax>uint32</syntax>
+              <writable>false</writable>
+            </parameter>
+            <parameter>
               <name>IAPDAddLength</name>
               <type>unsignedInt[:64]</type>
               <syntax>uint32</syntax>
