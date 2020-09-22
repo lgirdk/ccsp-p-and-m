@@ -77,7 +77,7 @@
 #include "utctx/utctx_api.h"
 
 #define MAX_PREF        8       /* according to TR-181 */
-#define ZEBRA_CONF      "/etc/zebra.conf"
+#define ZEBRA_CONF      "/var/zebra.conf"
 
 #define RA_CONF_START   "# Based on prefix"
 #define RA_CONF_IF      "interface"
@@ -148,7 +148,7 @@ static void trim_leading_space(char *line)
 }
 
 /*
- * # cat /etc/zebra.conf 
+ * # cat /var/zebra.conf 
  * hostname zebra
  * password zebra
  * !enable password admin
