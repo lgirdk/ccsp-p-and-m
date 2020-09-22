@@ -403,6 +403,11 @@ CosaDmlUserInterfaceGetCfg
             pCfg->bShowDNSConfigPage = (strcmp(buf, "true") == 0) ? TRUE : FALSE;
         }
 
+        if (syscfg_get (NULL, "local_ui_enable", buf, sizeof(buf)) == 0)
+        {
+            pCfg->bLocalUiEnable = (strcmp(buf, "true") == 0) ? TRUE : FALSE;
+        }
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -450,11 +455,19 @@ CosaDmlUserInterfaceSetCfg
         AnscTraceWarning(("%s : ShowDNSConfigPage syscfg_set failed\n",__FUNCTION__));
     }
 
+    if (syscfg_set(NULL, "local_ui_enable", (pCfg->bLocalUiEnable == TRUE) ? "true" : "false") != 0)
+    {
+        AnscTraceWarning(("%s : local_ui_enable syscfg_set failed\n",__FUNCTION__));
+    }
+
     if (syscfg_commit() != 0)
     {
         AnscTraceWarning(("%s syscfg_commit failed\n",__FUNCTION__));
         return ANSC_STATUS_FAILURE;
     }
+
+    /* Fixme: this should be conditional on local_ui_enable value being changed */
+    system("/bin/sh /etc/start_lighttpd.sh restart");
 
     return ANSC_STATUS_SUCCESS;
 }
