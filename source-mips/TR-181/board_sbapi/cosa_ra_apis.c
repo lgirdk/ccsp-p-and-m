@@ -148,7 +148,7 @@ static void trim_leading_space(char *line)
 }
 
 /*
- * # cat /etc/zebra.conf 
+ * # cat /var/zebra.conf 
  * hostname zebra
  * password zebra
  * !enable password admin
