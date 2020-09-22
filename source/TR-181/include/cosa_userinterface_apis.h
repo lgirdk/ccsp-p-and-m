@@ -120,6 +120,7 @@ _COSA_DML_USERINTERFACE_CFG
     ULONG                           PasswordLockoutAttempts;
     ULONG                           PasswordLockoutTime;
     BOOLEAN                         bShowDNSConfigPage;
+    BOOLEAN                         bLocalUiEnable;
 }
 COSA_DML_USERINTERFACE_CFG,  *PCOSA_DML_USERINTERFACE_CFG;
 
