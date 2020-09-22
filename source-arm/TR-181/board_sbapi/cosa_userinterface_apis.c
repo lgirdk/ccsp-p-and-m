@@ -427,6 +427,16 @@ CosaDmlUserInterfaceGetCfg
            pCfg->bShowDNSConfigPage = (!strcmp(buf, "true")) ? TRUE : FALSE;
        }
 
+	memset(buf,0,sizeof(buf));
+	rc = syscfg_get( NULL, "local_ui_enable", buf, sizeof(buf));
+	if(rc == 0)
+	{
+		if (strcmp(buf,"true") == 0)
+			pCfg->bLocalUiEnable = TRUE;
+		else
+			pCfg->bLocalUiEnable = FALSE;
+	}
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -532,6 +542,30 @@ sprintf(buf, "%d",  pCfg->PasswordLockoutTime);
         return ANSC_STATUS_FAILURE;
     }
     /* LGI ADD END */
+	memset(buf,0,sizeof(buf));
+	if ( TRUE == pCfg->bLocalUiEnable )
+	{
+		if (syscfg_set(NULL, "local_ui_enable", "true") != 0)
+		{
+			AnscTraceWarning(("%s : local_ui_enable syscfg_set failed\n",__FUNCTION__));
+		}
+	}
+	else
+	{
+		if (syscfg_set(NULL, "local_ui_enable", "false") != 0)
+		{
+			AnscTraceWarning(("%s : local_ui_enable syscfg_set failed\n",__FUNCTION__));
+		}
+	}
+	if (syscfg_commit() != 0)
+	{
+		AnscTraceWarning(("%s syscfg_commit failed for local_ui_enable\n",__FUNCTION__));
+		return ANSC_STATUS_FAILURE;
+	}
+	else
+	{
+		system("/bin/sh /etc/start_lighttpd.sh restart");
+	}
 
     return ANSC_STATUS_SUCCESS;
 }
