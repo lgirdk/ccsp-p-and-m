@@ -3669,11 +3669,11 @@ PortTrigger_Validate
     PCOSA_DML_NAT_PTRIGGER          pPortTrigger2     = NULL;
     BOOL                            bFound            = FALSE;
 
-#if defined (MULTILAN_FEATURE)
+//#if defined (MULTILAN_FEATURE)
     /* Don't validate all fields here if entry is not enabled */
     if( !pPortTrigger->bEnabled )
         return TRUE;
-#endif
+//#endif
 
     if( ! _Check_PT_parameter(pPortTrigger) || 
         (FALSE == CosaDmlNatChkPortRange(pPortTrigger->InstanceNumber, pPortTrigger->bEnabled, pPortTrigger->ForwardPortStart, pPortTrigger->ForwardPortEnd, pPortTrigger->ForwardProtocol, 1 )) ||
