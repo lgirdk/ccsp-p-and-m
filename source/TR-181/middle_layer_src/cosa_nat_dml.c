@@ -3911,11 +3911,9 @@ PortTrigger_Validate
     BOOL                            bFound            = FALSE;
     errno_t                         rc                = -1;
 
-#if defined (MULTILAN_FEATURE)
     /* Don't validate all fields here if entry is not enabled */
     if( !pPortTrigger->bEnabled )
         return TRUE;
-#endif
 
     if( ! _Check_PT_parameter(pPortTrigger) || 
         (FALSE == CosaDmlNatChkPortRange(pPortTrigger->InstanceNumber, pPortTrigger->bEnabled, pPortTrigger->ForwardPortStart, pPortTrigger->ForwardPortEnd, pPortTrigger->ForwardProtocol, 1 )) ||
