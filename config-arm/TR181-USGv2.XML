@@ -5158,6 +5158,17 @@
 
           </parameter>
           <!-- LGI ADD END -->
+          <parameter>
+
+           <name>Enable</name>
+
+           <type>boolean</type>
+
+           <syntax>bool</syntax>
+
+           <writable>true</writable>
+
+          </parameter>
 
 		</parameters>
 
