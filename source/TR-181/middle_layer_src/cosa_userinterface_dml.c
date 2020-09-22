@@ -188,6 +188,13 @@ UserInterface_GetParamBoolValue
         *pBool = pMyObject->UserInterfaceCfg.bHTTPSecurityHeaderEnable;
         return TRUE;
     }
+
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+        *pBool = pMyObject->UserInterfaceCfg.bLocalUiEnable;
+        return TRUE;
+    }
+
     /* LGI ADD START - Public DNS*/
     if (strcmp(ParamName, "X_LGI-COM_ShowDNSConfigPage") == 0)
     {
@@ -240,6 +247,13 @@ UserInterface_SetParamBoolValue
         pMyObject->UserInterfaceCfg.bHTTPSecurityHeaderEnable = bValue;
         return TRUE;
     }
+
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+        pMyObject->UserInterfaceCfg.bLocalUiEnable = bValue;
+        return TRUE;
+    }
+
     /* LGI ADD START - Public DNS */
     if (strcmp(ParamName, "X_LGI-COM_ShowDNSConfigPage") == 0)
     {
