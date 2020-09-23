@@ -763,6 +763,13 @@ DeviceInfo_GetParamStringValue
     errno_t                         rc        = -1;
     
     /* check the parameter name and return the corresponding value */
+    if( AnscEqualString(ParamName, "DeviceCategory", TRUE))
+    {
+        /* collect value */
+        CosaDmlDiGetDeviceCategory(NULL,pValue,pulSize);
+        return 0;
+    }
+
     if( AnscEqualString(ParamName, "Manufacturer", TRUE))
     {
         /* collect value */
