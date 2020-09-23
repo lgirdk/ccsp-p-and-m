@@ -46,6 +46,7 @@
         This file implementes back-end apis for the COSA Data Model Library
 
         *  CosaDmlDiInit
+        *  CosaDmlDiGetDeviceCategory
         *  CosaDmlDiGetManufacturer
         *  CosaDmlDiGetManufacturerOUI
         *  CosaDmlDiGetModelName
@@ -157,6 +158,19 @@ CosaDmlDiInit
         return ANSC_STATUS_FAILURE;
     else
         return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaDmlDiGetDeviceCategory
+    (
+        ANSC_HANDLE                 hContext,
+        char*                       pValue,
+        ULONG*                      pulSize
+    )
+{
+    pValue[0] = '\0';
+    *pulSize = AnscSizeOfString(pValue);
+    return ANSC_STATUS_SUCCESS;
 }
 
 ANSC_STATUS
