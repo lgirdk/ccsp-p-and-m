@@ -736,6 +736,16 @@
 
         <parameter>
 
+          <name>DeviceCategory</name>
+
+          <type>string</type>
+
+          <syntax>string</syntax>
+
+        </parameter>
+
+        <parameter>
+
           <name>Manufacturer</name>
 
           <type>string(64)</type>
