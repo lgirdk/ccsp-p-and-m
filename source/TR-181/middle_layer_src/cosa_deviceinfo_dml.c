@@ -764,6 +764,16 @@ DeviceInfo_GetParamStringValue
     errno_t                         rc        = -1;
     
     /* check the parameter name and return the corresponding value */
+
+    if (strcmp(ParamName, "DeviceCategory") == 0)
+    {
+#if defined (FEATURE_GPON)
+        return update_pValue (pValue, pulSize, "Fiber_Gateway");
+#else
+        return update_pValue (pValue, pulSize, "DOCSIS_Gateway");
+#endif
+    }
+
     if (strcmp(ParamName, "Manufacturer") == 0)
     {
         /* collect value */
