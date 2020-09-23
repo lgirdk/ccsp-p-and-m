@@ -788,6 +788,8 @@ if(id != 0)
     }
 #endif
 
+    system("print_uptime 'boot_to_PnM_uptime'");
+
     printf("Entering P&M loop\n");
     CcspTraceWarning(("RDKB_SYSTEM_BOOT_UP_LOG : Entering P&M loop... \n"));
 
