@@ -335,6 +335,14 @@ CosaDmlDiInit
     );
 
 ANSC_STATUS
+CosaDmlDiGetDeviceCategory
+    (
+        ANSC_HANDLE                 hContext,
+        char*                       pValue,
+        ULONG*                      pulSize
+    );
+
+ANSC_STATUS
 CosaDmlDiGetManufacturer
     (
         ANSC_HANDLE                 hContext,
