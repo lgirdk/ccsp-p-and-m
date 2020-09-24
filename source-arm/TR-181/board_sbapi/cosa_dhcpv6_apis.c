@@ -2035,7 +2035,7 @@ CosaDmlDhcpv6Init
 		bIsChangesHappened = TRUE;
     }
 
-#ifndef _HUB4_PRODUCT_REQ_
+#if !defined(_HUB4_PRODUCT_REQ_) && !defined(_DHCPV6_DEFAULT_STATELESS_) //the macro _DHCPV6_DEFAULT_STATELESS_ allows us to skip the following code to ensure default mode stays Stateless
     /*This logic code is used to change default behavior to stateful dhcpv6 server */
     Utopia_RawGet(&utctx,NULL, "router_statefuldhcpv6_DoOnce",value,sizeof(value));
     if ( value[0]!= '1'  && g_dhcpv6_server_type == 2 )
