@@ -106,6 +106,10 @@ void *Ipv6ModeHandler_thrd(void *data);
 #define SYSEVENT_FIELD_IPV6_ULA_ADDRESS   "ula_address"
 #endif
 
+#if defined (_HUB4_PRODUCT_REQ_)
+#define _DHCPV6_DEFAULT_STATELESS_
+#endif
+
 #if defined(RDKB_EXTENDER_ENABLED) || defined(WAN_FAILOVER_SUPPORTED)
 typedef enum deviceMode
 {
@@ -1998,7 +2002,12 @@ CosaDmlDhcpv6Init
 		bIsChangesHappened = TRUE;
     }
 
-#ifndef _HUB4_PRODUCT_REQ_
+    /*
+       The _DHCPV6_DEFAULT_STATELESS_ macro should be defined on platforms
+       such as HUB4 where the default mode should be Stateless.
+    */
+
+#if !defined(_DHCPV6_DEFAULT_STATELESS_)
     /*This logic code is used to change default behavior to stateful dhcpv6 server */
     Utopia_RawGet(&utctx,NULL, "router_statefuldhcpv6_DoOnce",value,sizeof(value));
     if ( value[0]!= '1'  && g_dhcpv6_server_type == 2 )
