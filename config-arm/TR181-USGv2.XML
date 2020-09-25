@@ -531,6 +531,41 @@
                 <writable>true</writable>
 
              </parameter>
+            <parameter>
+
+                <name>AvailableLanguages</name>
+
+                <type>string</type>
+
+                <syntax>string</syntax>
+
+                <writable>false</writable>
+
+            </parameter>
+
+            <parameter>
+
+                <name>LanHostname</name>
+
+                <type>string</type>
+
+                <syntax>string</syntax>
+
+                <writable>false</writable>
+
+            </parameter>
+
+            <parameter>
+
+                <name>CurrentLanguage</name>
+
+                <type>string</type>
+
+                <syntax>string</syntax>
+
+                <writable>true</writable>
+
+            </parameter>
 
              <parameter>
 
