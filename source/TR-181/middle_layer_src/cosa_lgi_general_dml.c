@@ -14,12 +14,17 @@
  * limitations under the License.
  **********************************************************************/
 
+#include <unistd.h>
+
 #include "ansc_platform.h"
 #include "cosa_lgi_general_apis.h"
 #include "cosa_lgi_general_dml.h"
 #include "cosa_lgi_general_internal.h"
 #include "ccsp/platform_hal.h"
 #include <syscfg/syscfg.h>
+
+#define MAX_HOSTNAME_SIZE 64
+
 /***********************************************************************
  IMPORTANT NOTE:
 
@@ -222,6 +227,36 @@ LgiGeneral_GetParamStringValue
 
     PCOSA_DATAMODEL_LGI_GENERAL  pMyObject = (PCOSA_DATAMODEL_LGI_GENERAL)g_pCosaBEManager->hLgiGeneral;
 
+    if (strcmp(ParamName, "AvailableLanguages") == 0)
+    {
+        return CosaDmlGiGetAvailableLanguages(NULL, pValue, pulSize);
+    }
+
+    if (strcmp(ParamName, "CurrentLanguage") == 0)
+    {
+        if (AnscSizeOfString(pMyObject->CurrentLanguage) < *pulSize){
+          AnscCopyString(pValue, pMyObject->CurrentLanguage);
+          return 0;
+        }
+        else
+        {
+          *pulSize = AnscSizeOfString(pMyObject->CurrentLanguage);
+          return 1;
+        }
+    }
+
+    if (strcmp(ParamName, "LanHostname") == 0)
+    {
+        if (*pulSize <= MAX_HOSTNAME_SIZE) {
+            *pulSize = MAX_HOSTNAME_SIZE + 1;
+            return 1;
+        }
+
+        gethostname(pValue, *pulSize);
+
+        return 0;
+    }
+
     if (strcmp(ParamName, "CAppName") == 0)
     {
         if (AnscSizeOfString(pMyObject->CAppName) < *pulSize){
@@ -321,6 +356,28 @@ LgiGeneral_SetParamStringValue
 
     PCOSA_DATAMODEL_LGI_GENERAL  pMyObject = (PCOSA_DATAMODEL_LGI_GENERAL)g_pCosaBEManager->hLgiGeneral;
 
+    if (strcmp(ParamName, "CurrentLanguage") == 0)
+    {
+        /*Before SPV CurrentLanguage should be checked with the Available_Languages List present.*/
+        char buf[128];
+        char *token;
+
+        syscfg_get (NULL, "Available_Languages", buf, sizeof(buf));
+
+        token = strtok (buf, ",");
+
+        while (token != NULL)
+        {
+            if(!strcmp (token, strValue))
+            {
+                AnscCopyString(pMyObject->CurrentLanguage, strValue);
+                return TRUE;
+            }
+            token = strtok (NULL, ",");
+        }
+        return FALSE;
+    }
+
     if (strcmp(ParamName, "CAppName") == 0)
     {
         AnscCopyString(pMyObject->CAppName, strValue);
@@ -356,6 +413,7 @@ LgiGeneral_Commit
 {
     PCOSA_DATAMODEL_LGI_GENERAL  pMyObject = (PCOSA_DATAMODEL_LGI_GENERAL)g_pCosaBEManager->hLgiGeneral;
 
+    CosaDmlGiSetCurrentLanguage(NULL, pMyObject->CurrentLanguage);
     CosaDmlGiSetFirstInstallWizardEnable(NULL, pMyObject->FirstInstallWizardEnable);
     CosaDmlGiSetCAppName(NULL, pMyObject->CAppName);
     CosaDmlGiSetWebsiteHelpURL(NULL, pMyObject->WebsiteHelpURL);
