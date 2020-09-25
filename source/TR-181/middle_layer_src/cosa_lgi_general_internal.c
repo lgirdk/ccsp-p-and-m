@@ -116,6 +116,8 @@ CosaLgiGeneralInitialize
     CosaDmlGiGetFirstInstallState(NULL, &pMyObject->FirstInstallState);
     CosaDmlGiGetTroubleshootWizardEnable(NULL, &pMyObject->TroubleshootWizardEnable);
 
+    CosaDmlGiGetCurrentLanguage(NULL, pMyObject->CurrentLanguage, sizeof(pMyObject->CurrentLanguage));
+
     /*Initializing the DataModelVersion with default value 1.01.01.
     Further implementation of this parameter is still under design discussion*/
     AnscCopyString(pMyObject->DataModelVersion, "1.01.01");
