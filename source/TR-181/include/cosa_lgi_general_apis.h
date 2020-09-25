@@ -107,4 +107,27 @@ CosaDmlGiSetTroubleshootWizardEnable
     ANSC_HANDLE                 hContext,
     BOOL                        bValue
 );
+
+ANSC_STATUS
+CosaDmlGiGetCurrentLanguage
+(
+    ANSC_HANDLE                 hContext,
+    char                        *pValue,
+    size_t                      len
+);
+
+CosaDmlGiGetAvailableLanguages
+(
+    ANSC_HANDLE                 hContext,
+    char                        *pValue,
+    ULONG                       *pUlSize
+);
+
+ULONG
+CosaDmlGiSetCurrentLanguage
+(   
+    ANSC_HANDLE                 hContext,
+    char                        *pValue
+);
+
 #endif
