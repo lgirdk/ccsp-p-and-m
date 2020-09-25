@@ -177,3 +177,54 @@ CosaDmlGiSetTroubleshootWizardEnable
 
     return ANSC_STATUS_SUCCESS;
 }
+
+ANSC_STATUS
+CosaDmlGiGetCurrentLanguage
+    (
+        ANSC_HANDLE                 hContext,
+        char                        *pValue,
+        size_t                      len
+    )
+{
+    syscfg_get (NULL, "Current_Language", pValue, len);
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ULONG
+CosaDmlGiGetAvailableLanguages
+    (
+        ANSC_HANDLE                 hContext,
+        char                        *pValue,
+        ULONG                       *pUlSize
+    )
+{
+    char buf[128];
+    size_t len;
+
+    syscfg_get (NULL, "Available_Languages", buf, sizeof(buf));
+
+    len = strlen (buf);
+
+    if (len < *pUlSize)
+    {
+        memcpy (pValue, buf, len + 1);
+        return 0;
+    }
+
+    *pUlSize = len + 1;
+
+    return 1;
+}
+
+ULONG
+CosaDmlGiSetCurrentLanguage
+    (
+        ANSC_HANDLE                 hContext,
+        char                        *pValue
+    )
+{
+    syscfg_set (NULL, "Current_Language", pValue);
+
+    return ANSC_STATUS_SUCCESS;
+}
