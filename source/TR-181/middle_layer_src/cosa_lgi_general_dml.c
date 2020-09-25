@@ -222,6 +222,29 @@ LgiGeneral_GetParamStringValue
 
     PCOSA_DATAMODEL_LGI_GENERAL  pMyObject = (PCOSA_DATAMODEL_LGI_GENERAL)g_pCosaBEManager->hLgiGeneral;
 
+    if( AnscEqualString(ParamName, "AvailableLanguages", TRUE))
+    {
+        return CosaDmlGiGetAvailableLanguages(NULL, pValue, pulSize);
+    }
+
+    if( AnscEqualString(ParamName, "CurrentLanguage", TRUE))
+    {
+        if (AnscSizeOfString(pMyObject->CurrentLanguage) < *pulSize){
+          AnscCopyString(pValue, pMyObject->CurrentLanguage);
+          return 0;
+        }
+        else
+        {
+          *pulSize = AnscSizeOfString(pMyObject->CurrentLanguage);
+          return 1;
+        }
+    }
+
+    if( AnscEqualString(ParamName, "LanHostname", TRUE))
+    {
+        return CosaDmlGiGetLanHostname(NULL, pValue, pulSize);
+    }
+
     if( AnscEqualString(ParamName, "CAppName", TRUE))
     {
         if (AnscSizeOfString(pMyObject->CAppName) < *pulSize){
@@ -321,6 +344,28 @@ LgiGeneral_SetParamStringValue
 
     PCOSA_DATAMODEL_LGI_GENERAL  pMyObject = (PCOSA_DATAMODEL_LGI_GENERAL)g_pCosaBEManager->hLgiGeneral;
 
+    if( AnscEqualString(ParamName, "CurrentLanguage", TRUE))
+    {
+        /*Before SPV CurrentLanguage should be checked with the Available_Languages List present.*/
+        char buf[128];
+        char *token;
+
+        syscfg_get (NULL, "Available_Languages", buf, sizeof(buf));
+
+        token = strtok (buf, ",");
+
+        while (token != NULL)
+        {
+            if(!strcmp (token, strValue))
+            {
+                AnscCopyString(pMyObject->CurrentLanguage, strValue);
+                return TRUE;
+            }
+            token = strtok (NULL, ",");
+        }
+        return FALSE;
+    }
+
     if( AnscEqualString(ParamName, "CAppName", TRUE))
     {
         AnscCopyString(pMyObject->CAppName, strValue);
@@ -356,6 +401,7 @@ LgiGeneral_Commit
 {
     PCOSA_DATAMODEL_LGI_GENERAL  pMyObject = (PCOSA_DATAMODEL_LGI_GENERAL)g_pCosaBEManager->hLgiGeneral;
 
+    CosaDmlGiSetCurrentLanguage(NULL, pMyObject->CurrentLanguage);
     CosaDmlGiSetFirstInstallWizardEnable(NULL, pMyObject->FirstInstallWizardEnable);
     CosaDmlGiSetCAppName(NULL, pMyObject->CAppName);
     CosaDmlGiSetWebsiteHelpURL(NULL, pMyObject->WebsiteHelpURL);
