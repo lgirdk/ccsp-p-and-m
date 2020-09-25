@@ -209,3 +209,90 @@ CosaDmlGiSetTroubleshootWizardEnable
     return ANSC_STATUS_SUCCESS;
 }
 
+ANSC_STATUS
+CosaDmlGiGetCurrentLanguage
+    (
+        ANSC_HANDLE                 hContext,
+        char                        *pValue
+    )
+{
+    char buf[8];
+    memset(buf, 0, sizeof(buf));
+    if(syscfg_init() == 0)
+    {
+        syscfg_get( NULL, "Current_Language", buf, sizeof(buf));
+    }
+    AnscCopyString(pValue, buf);
+    return ANSC_STATUS_SUCCESS;
+}
+
+#define MAX_HOSTNAME_SIZE 128
+ULONG
+CosaDmlGiGetLanHostname
+    (
+        ANSC_HANDLE                 hContext,
+        char                        *pValue,
+        ULONG                       *pUlSize
+    )
+{
+    char hostname[MAX_HOSTNAME_SIZE];
+    memset(hostname, 0, sizeof(hostname));
+    if(syscfg_init() == 0)
+    {
+        syscfg_get( NULL, "hostname", hostname, sizeof(hostname));
+        if(AnscSizeOfString(hostname) < *pUlSize)
+        {
+            AnscCopyString(pValue, hostname);
+            return 0;
+        }
+        else
+        {
+            *pUlSize = AnscSizeOfString(hostname);
+            return 1;
+        }
+    }
+    return -1;
+}
+
+ULONG
+CosaDmlGiGetAvailableLanguages
+    (
+        ANSC_HANDLE                 hContext,
+        char                        *pValue,
+        ULONG                       *pUlSize
+    )
+{
+    char buf[128];
+
+    memset(buf, 0, sizeof(buf));
+    if(syscfg_init() == 0)
+    {
+        syscfg_get( NULL, "Available_Languages", buf, sizeof(buf));
+        if(AnscSizeOfString(buf) < *pUlSize)
+        {
+            AnscCopyString(pValue, buf);
+            return 0;
+        }
+        else
+        {
+            *pUlSize = AnscSizeOfString(buf);
+            return 1;
+        }
+    }
+    return -1;
+}
+
+ULONG
+CosaDmlGiSetCurrentLanguage
+    (
+        ANSC_HANDLE                 hContext,
+        char                        *pValue
+    )
+{
+    if(syscfg_init() == 0)
+    {
+        syscfg_set(NULL, "Current_Language", pValue);
+    }
+    return ANSC_STATUS_SUCCESS;
+}
+
