@@ -119,6 +119,12 @@ CosaDmlGiGetCustomerId
         ULONG                       *pValue
     )
 {
+    char buf[12];
+
+    syscfg_get (NULL, "Customer_Index", buf, sizeof(buf));
+
+    *pValue = (ULONG)atoi(buf);
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -129,6 +135,51 @@ CosaDmlGiSetCustomerId
     ULONG                       ulValue
 )
 {
+    char buf[12];
+    char cust_file[45];
+    ULONG id = 0;
+
+    CosaDmlGiGetCustomerId(NULL, &id);
+    
+    /* compare the new value with the current customer ID */
+    if (id != ulValue)
+    {
+        snprintf(cust_file, sizeof(cust_file), CUSTOMER_SYSCFG_FILE, (int) ulValue);
+
+        /* Load customer specific syscfg file to memory */
+        if (syscfg_load_from_file(cust_file) == 0)
+        {
+            /* Set customer-index-changed as true in syscfg. This will be used to
+            remove bbhm files from nvram on next boot. */
+            if (syscfg_set(NULL, "customer-index-changed", "true") == 0)
+            {
+                /* If all previous steps are successful then change the Customer_Index in syscfg
+                and reboot the box */
+                snprintf (buf, sizeof(buf), "%d", (int) ulValue);
+                if (syscfg_set (NULL, "Customer_Index", buf) == 0){
+                    if (syscfg_commit() == 0){
+                        CosaDmlDcSetRebootDevice(NULL, "Device");
+                    }
+                    else{
+                        CcspTraceError(("syscfg_commit Customer_Index failed\n"));
+                    }
+                }
+                else{
+                    CcspTraceError(("syscfg_set Customer_Index failed\n"));
+                }
+            }
+            else{
+                CcspTraceError(("syscfg_set customer-index-changed failed\n"));
+            }
+        }
+        else{
+            CcspTraceError(("Unable to load customer specific file - %s\n", cust_file));
+        }
+    }
+    else{
+        CcspTraceInfo(("Customer id didn't change. Customer_Index - %d\n",(int)ulValue));
+    }
+
     return ANSC_STATUS_SUCCESS;
 }
 
