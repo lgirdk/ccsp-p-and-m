@@ -19,6 +19,8 @@
 
 #include "../middle_layer_src/cosa_apis.h"
 
+#define CUSTOMER_SYSCFG_FILE "/etc/utopia/defaults/lg_syscfg_cust_%d.db"
+
 /**********************************************************************
                 FUNCTION PROTOTYPES
 **********************************************************************/
