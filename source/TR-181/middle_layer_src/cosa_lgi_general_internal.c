@@ -107,7 +107,7 @@ CosaLgiGeneralInitialize
     memset(pMyObject->WebUISkin, 0, size_webuiskin);
     CosaDmlGiGetWebUISkin(NULL, pMyObject->WebUISkin, &size_webuiskin);
 
-    pMyObject->CustomerId = 0; //FIXME: Assign the right value 
+    CosaDmlGiGetCustomerId(NULL, &pMyObject->CustomerId);
 
     CosaDmlGiGetFirstInstallWizardEnable(NULL, &pMyObject->FirstInstallWizardEnable);
 
