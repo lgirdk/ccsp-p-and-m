@@ -119,6 +119,12 @@ CosaDmlGiGetCustomerId
         ULONG                       *pValue
     )
 {
+    char buf[12];
+
+    syscfg_get (NULL, "Customer_Index", buf, sizeof(buf));
+
+    *pValue = (ULONG)atoi(buf);
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -129,6 +135,37 @@ CosaDmlGiSetCustomerId
     ULONG                       ulValue
 )
 {
+    ULONG id = 0;
+
+    CosaDmlGiGetCustomerId(NULL, &id);
+    
+    /* compare the new value with the current customer ID */
+    if (id != ulValue)
+    {
+        /*
+            This logic is only for testing multiple customer indexes.
+            In the field customer index won't change.
+            Customer specific file will be loaded in syscfg db from
+            syscfg_create on the next boot.
+        */
+        FILE *fpt = fopen("/nvram/bootconfig_custindex", "w");
+        if(fpt)
+        {
+            fprintf(fpt, "%d\n", (int)ulValue);
+            fclose(fpt);
+            CcspTraceInfo(("Customer id Changed from %d to %d\n", id, (int)ulValue));
+            CosaDmlDcSetRebootDevice(NULL, "Device");
+        }
+        else
+        {
+            CcspTraceError(("Not able to open file in %s\n", __func__));
+        }
+    }
+    else
+    {
+        CcspTraceInfo(("Customer id didn't change. Customer_Index - %d\n",(int)ulValue));
+    }
+
     return ANSC_STATUS_SUCCESS;
 }
 
