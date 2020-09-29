@@ -1251,7 +1251,7 @@ User_SetParamStringValue
     {
         syscfg_get(NULL, "user_name_4", csr_user_name, sizeof(csr_user_name));
         if( AnscEqualString(pUser->Username, csr_user_name, TRUE)
-            || AnscEqualString(pUser->Username, "upccsr", TRUE))
+            || AnscEqualString(pUser->Username, "mso", TRUE))
         {
                 unsigned int ret=0;
 
@@ -1284,7 +1284,6 @@ User_SetParamStringValue
                 unsigned int ret=0;
                 char resultBuffer[32]= {'\0'};
                 user_hashandsavepwd(NULL,pString,pUser);
-                AnscCopyString(pUser->HashedPassword, pString);
                 CcspTraceInfo(("WebUi admin password is changed\n"));
         }
 #if defined(_COSA_FOR_BCI_)
@@ -1300,7 +1299,7 @@ User_SetParamStringValue
         else
         {
                 /* save update to backup */
-                 AnscCopyString(pUser->Password, pString);
+                user_hashandsavepwd(NULL,pString,pUser);
         }
     #if CFG_USE_CCSP_SYSLOG
         /* Bad practice to use platform dependent and will be rectified -- CCSP_TRACE should be used */
