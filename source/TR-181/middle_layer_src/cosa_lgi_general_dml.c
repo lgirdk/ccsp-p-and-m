@@ -435,9 +435,20 @@ LgiGeneral_Validate
         ULONG*                      puLength
   )
 {
-    PCOSA_DATAMODEL_LGI_GENERAL  pMyObject = (PCOSA_DATAMODEL_LGI_GENERAL)g_pCosaBEManager->hLgiGeneral;
-    //FIXME : add code here if any specific validation required in dml context
-    return TRUE;
+    PCOSA_DATAMODEL_LGI_GENERAL pMyObject = (PCOSA_DATAMODEL_LGI_GENERAL)g_pCosaBEManager->hLgiGeneral;
+    ULONG cusid = pMyObject->CustomerId;
+
+    /*
+    Check that a config file matching the customer ID is present in the filesystem.
+    */
+    char cust_file[45];
+    snprintf(cust_file,sizeof(cust_file), CUSTOMER_SYSCFG_FILE, (int)cusid);
+    if (access(cust_file, F_OK) == 0)
+    {
+        return true;
+    }
+
+    return false;
 }
 
 
@@ -470,6 +481,7 @@ LgiGeneral_Rollback
     PCOSA_DATAMODEL_LGI_GENERAL  pMyObject = (PCOSA_DATAMODEL_LGI_GENERAL)g_pCosaBEManager->hLgiGeneral;
 
     /* restore any parameters that can fail in Validate function */
+    CosaDmlGiGetCustomerId(NULL, &pMyObject->CustomerId);
     return 0;
 }
 
