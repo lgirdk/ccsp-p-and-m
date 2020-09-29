@@ -364,8 +364,16 @@ LgiGeneral_SetParamUlongValue
     PCOSA_DATAMODEL_LGI_GENERAL  pMyObject = (PCOSA_DATAMODEL_LGI_GENERAL)g_pCosaBEManager->hLgiGeneral;
     if (strcmp(ParamName, "CustomerId") == 0)
     {
-        pMyObject->CustomerId = uValuepUlong;
-        return TRUE;
+        /*
+        Check that a config file matching the customer ID is present in the filesystem.
+        */
+        char cust_file[45];
+        snprintf(cust_file,sizeof(cust_file), CUSTOMER_SYSCFG_FILE, (int)uValuepUlong);
+        if (access(cust_file, F_OK) == 0)
+        {
+            pMyObject->CustomerId = uValuepUlong;
+            return TRUE;
+        }
     }
     return FALSE;
 }
@@ -435,9 +443,7 @@ LgiGeneral_Validate
         ULONG*                      puLength
   )
 {
-    PCOSA_DATAMODEL_LGI_GENERAL  pMyObject = (PCOSA_DATAMODEL_LGI_GENERAL)g_pCosaBEManager->hLgiGeneral;
-    //FIXME : add code here if any specific validation required in dml context
-    return TRUE;
+    return true;
 }
 
 
@@ -470,6 +476,7 @@ LgiGeneral_Rollback
     PCOSA_DATAMODEL_LGI_GENERAL  pMyObject = (PCOSA_DATAMODEL_LGI_GENERAL)g_pCosaBEManager->hLgiGeneral;
 
     /* restore any parameters that can fail in Validate function */
+    CosaDmlGiGetCustomerId(NULL, &pMyObject->CustomerId);
     return 0;
 }
 
