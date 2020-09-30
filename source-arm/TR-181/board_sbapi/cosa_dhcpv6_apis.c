@@ -5180,7 +5180,14 @@ OPTIONS:
 
         fprintf(fp, "}\n");
     }
-    
+
+    /* Close the file pointer before calling set_ipv6_dns.sh as it is getting updated again there. */
+    if (fp != NULL)
+    {
+        fclose(fp);
+        fp = NULL;
+    }
+
     Utopia_Free(&utctx,1);
 
 #if (!defined _COSA_INTEL_USG_ARM_) && (!defined _COSA_BCM_MIPS_)
