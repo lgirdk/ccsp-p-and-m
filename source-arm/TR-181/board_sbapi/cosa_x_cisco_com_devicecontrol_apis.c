@@ -1597,7 +1597,7 @@ CosaDmlDcSetRebootDevice
             	//system("(sleep 5 && reboot) &");
                 //CosaDmlDcSaveWiFiHealthStatusintoNVRAM( ); //The settings to be saved for WiFi or any module needs to be handled, if required, while implementing reset functionality
             	sleep (delay_time);
-            	system("/fss/gw/rdklogger/backupLogs.sh &");
+            	system("/rdklogger/backupLogs.sh &");
                 system("(sleep 5 && reboot) &");
         	}
         	else
@@ -1608,7 +1608,7 @@ CosaDmlDcSetRebootDevice
 				//CosaDmlDcSaveWiFiHealthStatusintoNVRAM( ); //The settings to be saved for WiFi or any module needs to be handled, 
 									     //if required, while implementing reset functionality
 				sleep(5);
-				system("/fss/gw/rdklogger/backupLogs.sh &");
+				system("/rdklogger/backupLogs.sh &");
 				system("reboot");
             }
 		}
@@ -1617,7 +1617,7 @@ CosaDmlDcSetRebootDevice
 			CcspTraceWarning(("RebootDevice:Device is going to reboot after taking log backups \n"));
 	         //system("reboot");
 		 //CosaDmlDcSaveWiFiHealthStatusintoNVRAM( ); //The settings to be saved for WiFi or any module needs to be handled, if required, while implementing reset functionality
-	         system("/fss/gw/rdklogger/backupLogs.sh &");
+	         system("/rdklogger/backupLogs.sh &");
                  system("reboot");
 	    }
     }
@@ -1725,9 +1725,9 @@ void restoreAllDBs()
             {
                 // we are the child
 #ifdef ARRIS_XB3_PLATFORM_CHANGES
-                char *args[] = {"/fss/gw/usr/bin/rpcclient", urlPtr, "/bin/rm -f /nvram/syscfg.db /nvram/.keys/vyinerkyo.wyr", (char *) 0 };
+                char *args[] = {"rpcclient", urlPtr, "/bin/rm -f /nvram/syscfg.db /nvram/.keys/vyinerkyo.wyr", (char *) 0 };
 #else
-                char *args[] = {"/fss/gw/usr/bin/rpcclient", urlPtr, "/bin/rm -f /nvram/syscfg.db", (char *) 0 };
+                char *args[] = {"rpcclient", urlPtr, "/bin/rm -f /nvram/syscfg.db", (char *) 0 };
 #endif
                 execv(args[0], args);
                 _exit(EXIT_FAILURE);   // exec never returns
@@ -1802,7 +1802,7 @@ void backuplogs(void *thread)
 	}
 	pthread_detach(pthread_self());
 
-	system("/fss/gw/rdklogger/backupLogs.sh &");
+	system("/rdklogger/backupLogs.sh &");
 }
 
 void resetWiFi()
@@ -2492,7 +2492,7 @@ CosaDmlDcSetIGMPProxyEnable
     {
         if ( detect_process("igmpproxy") == 0 )
         {
-            vsystem("/fss/gw/bin/igmpproxy &");
+            vsystem("igmpproxy &");
         }
     }
     else
@@ -2533,7 +2533,7 @@ CosaDmlDcSetDNSProxyEnable
     {
         if ( detect_process("dnsproxy") == 0 )
         {
-            vsystem("/fss/gw/bin/dnsproxy &");
+            vsystem("dnsproxy &");
         }
     }
     else
@@ -4091,7 +4091,7 @@ CosaDmlLanMngm_SetConf(ULONG ins, PCOSA_DML_LAN_MANAGEMENT pLanMngm)
                     CcspTraceInfo(("Sending subnet_change notification to ATOM IP %s \n", urlPtr));
                     sprintf(cmd, "/usr/bin/sysevent set subnet_change \"RDK|%s|%s\"",
                             lan.ipaddr,lan.netmask);
-                    char *args[] = {"/fss/gw/usr/bin/rpcclient", urlPtr, cmd, (char *) 0 };
+                    char *args[] = {"rpcclient", urlPtr, cmd, (char *) 0 };
                     execv(args[0], args);
                     _exit(EXIT_FAILURE);   // exec never returns
                 }
