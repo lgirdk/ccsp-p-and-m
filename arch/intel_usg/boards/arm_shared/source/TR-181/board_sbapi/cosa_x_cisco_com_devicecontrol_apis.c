@@ -1409,7 +1409,7 @@ CosaDmlDcSetRebootDevice
 		CcspTraceWarning(("RebootDevice:Device is going to reboot after taking log backups \n"));
             	//system("(sleep 5 && reboot) &");
             	sleep (delay_time);
-            	system("/fss/gw/rdklogger/backupLogs.sh");
+            	system("/rdklogger/backupLogs.sh");
         	}
         	else
             {
@@ -1417,14 +1417,14 @@ CosaDmlDcSetRebootDevice
 		CcspTraceWarning(("RebootDevice:Device is going to reboot after taking log backups \n"));
                 //system("(sleep 5 && reboot) &");
 				sleep(5);
-				system("/fss/gw/rdklogger/backupLogs.sh");
+				system("/rdklogger/backupLogs.sh");
             }
 		}
 		else {
 	        fprintf(stderr, "Device is going to reboot now\n");
 			CcspTraceWarning(("RebootDevice:Device is going to reboot after taking log backups \n"));
 	         //system("reboot");
-	         system("/fss/gw/rdklogger/backupLogs.sh");
+	         system("/rdklogger/backupLogs.sh");
 	    }
     }
 
@@ -1569,7 +1569,7 @@ CosaDmlDcSetFactoryReset
 		
 		Utopia_Free(&utctx,1);
 		//system("reboot");
-		system("/fss/gw/rdklogger/backupLogs.sh");
+		system("/rdklogger/backupLogs.sh");
 	} else if (factory_reset_mask & FR_WIFI) {
 		/*TODO: SEND EVENT TO WIFI PAM  Device.WiFi.X_CISCO_COM_FactoryReset*/
         int                         ret;
@@ -1978,7 +1978,7 @@ CosaDmlDcSetIGMPProxyEnable
     {
         if ( detect_process("igmpproxy") == 0 )
         {
-            vsystem("/fss/gw/bin/igmpproxy &");
+            vsystem("igmpproxy &");
         }
     }
     else
@@ -2019,7 +2019,7 @@ CosaDmlDcSetDNSProxyEnable
     {
         if ( detect_process("dnsproxy") == 0 )
         {
-            vsystem("/fss/gw/bin/dnsproxy &");
+            vsystem("dnsproxy &");
         }
     }
     else
