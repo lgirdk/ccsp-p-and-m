@@ -471,6 +471,32 @@
                 <syntax>string</syntax>
                 <writable>true</writable>
             </parameter>
+            <parameter>
+                <name>ErouterModeControl</name>
+                <description>
+                  When this object is set to ipDisabled(1), the eRouter is instructed to transparently bridge all traffic and can overrule TLV202.
+                  When this object is set to ipv4Only(2), the eRouter is instructed to switch to IPv4 Protocol Enabled Mode and can overrule TLV202.
+                  When this object is set to ipv6Only(3), the eRouter is instructed to switch to IPv6 Protocol Enabled Mode and can overrule TLV202.
+                  When this object is set to ipv4AndIpv6(4), the eRouter is instructed to switch to Dual IP Protocol Enabled Mode and can overrule TLV202.
+                  When this object is set to honoreRouterInitMode(5), the eRouter is instructed to honor the eRouter Initialization Mode Encoding encapsulated in the eCM Config File underTLV 202.
+                </description>
+                <type>string: ipDisabled(1),ipv4Only(2),ipv6Only(3),ipv4AndIpv6(4),honoreRouterInitMode(5)</type>
+                <syntax>uint32/mapped</syntax>
+                <writable>true</writable>
+            </parameter>
+            <parameter>
+                <name>IPv6LeaseTimeRemaining</name>
+                <description>
+                  DHCPv6 lease time remaining in seconds. A value of -1 indicates an infinite lease. The value MUST be 0 (zero) if the AddressSource is not DHCP.
+                </description>
+                <type>unsignedInt</type>
+                <syntax>uint32</syntax>
+            </parameter>
+            <parameter>
+                <name>IPv6Router</name>
+                <type>string</type>
+                <syntax>string</syntax>
+            </parameter>
           </parameters>
     </object>
    <object>
