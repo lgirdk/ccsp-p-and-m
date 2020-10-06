@@ -69,6 +69,7 @@ CosaDmlSetDsliteEnable
     int rc = -1;
     UtopiaContext ctx;
     boolean_t read_dslite_enable;
+    BOOL dns_override = FALSE;
 
     if (bEnabled == TRUE)
     {
@@ -89,6 +90,12 @@ CosaDmlSetDsliteEnable
     {
         rc = Utopia_SetDsliteEnable(&ctx, bEnabled);
         Utopia_Free(&ctx,!rc);
+        CosaDmlLgiGwGetDnsOverride(&dns_override);
+        if(dns_override)
+        {
+            //Disable the DNS override when switching between IP provisioning modes (DSLite and RG)
+            CosaDmlLgiGwSetDnsOverride(FALSE);
+        }
         commonSyseventSet("wan-restart", "");
         system("service_dslite restart &");
         return ANSC_STATUS_SUCCESS;
