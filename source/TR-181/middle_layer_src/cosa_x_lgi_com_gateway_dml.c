@@ -45,11 +45,30 @@ LgiGateway_GetParamUlongValue
         ULONG*                      puLong
     )
 {
+    PCOSA_DATAMODEL_LGI_GATEWAY  pMyObject = (PCOSA_DATAMODEL_LGI_GATEWAY)g_pCosaBEManager->hLgiGateway;
+    
     /* check the parameter name and return the corresponding value */
 
     if (strcmp(ParamName, "IPv6LANMode") == 0)
     {
         CosaDmlLgiGwGetIpv6LanMode(NULL, puLong);
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "ErouterModeControl") == 0)
+    {
+        if (CosaDml_Gateway_GetErouterInitMode(&pMyObject->ErouterInitMode) == ANSC_STATUS_SUCCESS)
+        {
+            *puLong = pMyObject->ErouterInitMode;
+            return TRUE;
+        }
+
+        return FALSE;
+    }
+
+    if (strcmp(ParamName, "IPv6LeaseTimeRemaining") == 0)
+    {
+        CosaDml_Gateway_GetIPv6LeaseTimeRemaining(puLong);
         return TRUE;
     }
 
@@ -69,6 +88,12 @@ LgiGateway_SetParamUlongValue
     if (strcmp(ParamName, "IPv6LANMode") == 0)
     {
         pMyObject->ipv6LanMode = uValuepUlong;
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "ErouterModeControl") == 0)
+    {
+        pMyObject->ErouterInitMode = uValuepUlong;
         return TRUE;
     }
 
@@ -101,6 +126,14 @@ LgiGateway_GetParamStringValue
     else if (strcmp(ParamName, "DNS_IPv6Alternate") == 0)
     {
         retVal =  (ULONG) CosaDmlLgiGwGetDnsIpv6Alternate(pValue, pUlSize);
+    }
+    else if (strcmp(ParamName, "IPv6Router") == 0)
+    {
+        if(CosaDml_Gateway_GetIPv6Router(NULL, pValue, pUlSize) == ANSC_STATUS_SUCCESS)
+        {
+            *pUlSize = AnscSizeOfString(pValue)+1;
+            retVal = 0;
+        }
     }
 
     return retVal;
@@ -211,6 +244,13 @@ LgiGateway_Validate
         AnscCopyString(pReturnParamName,"DNS_IPv6Alternate");
         return FALSE;
     }
+    if (pMyObject->ErouterInitMode && ((pMyObject->ErouterInitMode < 1) || (pMyObject->ErouterInitMode > 5)))
+    {
+        CcspTraceWarning(("ErouterModeControl validation failed"));
+        AnscCopyString(pReturnParamName,"ErouterModeControl");
+        return FALSE;
+    }
+
     return TRUE;
 }
 
@@ -220,7 +260,7 @@ LgiGateway_Commit
         ANSC_HANDLE                 hInsContext
     )
 {
-    ULONG ret;
+    ULONG ret = ANSC_STATUS_FAILURE;
     PCOSA_DATAMODEL_LGI_GATEWAY  pMyObject = (PCOSA_DATAMODEL_LGI_GATEWAY)g_pCosaBEManager->hLgiGateway;
     CosaDmlLgiGwSetIpv6LanMode(NULL, pMyObject->ipv6LanMode);
 
@@ -230,6 +270,7 @@ LgiGateway_Commit
     syscfg_set(NULL, "dns_ipv6_alternate", pMyObject->dns_ipv6_alternate);
 
     ret = (ULONG) CosaDmlLgiGwSetDnsOverride(pMyObject->dns_override);
+    ret |= (ULONG) CosaDml_Gateway_SetErouterInitMode(pMyObject->ErouterInitMode);
 
     return ret;
 }
