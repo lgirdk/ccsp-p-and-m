@@ -2307,11 +2307,29 @@ CosaDmlDcSetFactoryReset
                     }
                 }
 #endif
+
+#ifdef _PUMA6_ARM_
+                if ((syscfg_set(NULL, "X_RDKCENTRAL-COM_LastRebootCounter", "1") != 0))
+                {
+                        AnscTraceWarning(("syscfg_set failed\n"));
+                        return -1;
+                }
+
+                /*
+                   Unset the syscfg variable Customer_Index (which is used by
+                   the WiFi module to unset the Customer index in Atom side)
+                   otherwise the Atom applies the Customer Specific changes
+                   immediately, before reboot.
+                */
+                syscfg_unset (NULL, "Customer_Index");
+                syscfg_commit();
+#else
                 if ((syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_LastRebootCounter", "1") != 0))
                 {
                         AnscTraceWarning(("syscfg_set failed\n"));
                         return -1;
                 }
+#endif
 	}
 	if (factory_reset_mask & FR_WIFI) {
            
