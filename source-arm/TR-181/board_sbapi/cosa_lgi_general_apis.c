@@ -154,6 +154,15 @@ CosaDmlGiSetCustomerId
             fprintf(fpt, "%d\n", (int)ulValue);
             fclose(fpt);
             CcspTraceInfo(("Customer id Changed from %d to %d\n", id, (int)ulValue));
+
+#ifdef _PUMA6_ARM_
+            {
+                char rpcCmd[64];
+                /* set the customer index value in atom for wifi module */
+                sprintf (rpcCmd, "rpcclient2 'apply_customer_index.sh %u'", (unsigned int) ulValue);
+                system (rpcCmd);
+            }
+#endif
             CosaDmlDcSetRebootDevice(NULL, "Device");
         }
         else
