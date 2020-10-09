@@ -783,6 +783,13 @@ DeviceInfo_GetParamStringValue
         return 0;
     }
 
+    if (strcmp(ParamName, "ModelNumber") == 0)
+    {
+        /* collect value */
+        CosaDmlDiGetModelName(NULL,pValue,pulSize);
+        return 0;
+    }
+
     if (strcmp(ParamName, "Description") == 0)
     {
         /* collect value */
