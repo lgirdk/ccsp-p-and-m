@@ -359,7 +359,7 @@ CosaDmlDiGetDeviceCategory
         ULONG*                      pulSize
     )
 {
-    pValue[0] = '\0';
+    AnscCopyString(pValue, "DOCSIS_Gateway");
     *pulSize = AnscSizeOfString(pValue);
     return ANSC_STATUS_SUCCESS;
 }
