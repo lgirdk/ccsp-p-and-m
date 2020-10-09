@@ -3507,6 +3507,16 @@ Server_GetParamBoolValue
         return TRUE;
     }
 
+    else if(AnscEqualString(ParamName, "X_LGI-COM_DAD", TRUE))
+    {
+        char strBuf[8] = {0};
+        if((!syscfg_init()) && (!syscfg_get(NULL, "dhcp_disable_ip_conflict_det", strBuf, sizeof(strBuf))))
+        {
+            *pBool = (strcmp(strBuf, "0") == 0);
+            return TRUE;
+        }
+    }
+
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
 }
@@ -3719,6 +3729,28 @@ Server_SetParamBoolValue
             return FALSE;
         }
         
+        return TRUE;
+    }
+
+    else if(AnscEqualString(ParamName, "X_LGI-COM_DAD", TRUE))
+    {
+        if(!syscfg_init())
+        {
+            if (syscfg_set(NULL, "dhcp_disable_ip_conflict_det",  bValue ? "0" : "1") != 0)
+            {
+                CcspTraceWarning(("syscfg_set failed\n"));
+                return -1;
+            }
+            else
+            {
+                if (syscfg_commit() != 0)
+                {
+                    CcspTraceWarning(("syscfg_commit failed\n"));
+                    return -1;
+                }
+            }
+            system("sysevent set dhcp_server-restart");
+        }
         return TRUE;
     }
 
