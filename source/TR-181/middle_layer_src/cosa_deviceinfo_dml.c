@@ -780,7 +780,8 @@ DeviceInfo_GetParamStringValue
         return 0;
     }
 
-    if (strcmp(ParamName, "ModelName") == 0)
+    if ((strcmp(ParamName, "ModelName") == 0) ||
+        (strcmp(ParamName, "ModelNumber") == 0))
     {
         if (*pulSize <= 64) {
             *pulSize = 64 + 1;
