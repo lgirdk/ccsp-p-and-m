@@ -436,8 +436,7 @@ CosaDmlDiGetDeviceCategory
         ULONG*                      pulSize
     )
 {
-    pValue[0] = '\0';
-    *pulSize = AnscSizeOfString(pValue);
+    snprintf(pValue, *pulSize, "%s", "DOCSIS_Gateway");
     return ANSC_STATUS_SUCCESS;
 }
 
