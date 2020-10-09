@@ -791,6 +791,13 @@ DeviceInfo_GetParamStringValue
         return 0;
     }
 
+    if( AnscEqualString(ParamName, "ModelNumber", TRUE))
+    {
+        /* collect value */
+        CosaDmlDiGetModelName(NULL,pValue,pulSize);
+        return 0;
+    }
+
     if( AnscEqualString(ParamName, "Description", TRUE))
     {
         /* collect value */
