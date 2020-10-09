@@ -11806,6 +11806,18 @@
 
           </parameter>
 
+          <parameter>
+ 
+            <name>X_LGI-COM_DAD</name>
+
+            <type>boolean</type>
+
+            <syntax>bool</syntax>
+
+            <writable>true</writable>
+
+          </parameter>
+
           </parameters>
 
           <objects>
