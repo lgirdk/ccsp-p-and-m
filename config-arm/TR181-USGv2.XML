@@ -1128,6 +1128,18 @@
 
         <parameter>
 
+          <name>ModelNumber</name>
+
+          <type>string(64)</type>
+
+          <syntax>string</syntax>
+
+          <notify>off</notify>
+
+        </parameter>
+
+        <parameter>
+
           <name>Description</name>
 
           <type>string(256)</type>
