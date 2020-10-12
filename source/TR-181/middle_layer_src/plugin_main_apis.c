@@ -479,6 +479,8 @@ if(id != 0)
     // LGI ADD START
     pMyObject->hLgiWoL = (ANSC_HANDLE)CosaLgiWoLCreate();
     AnscTraceWarning(("  CosaLgiWoLCreate done !\n"));
+    pMyObject->hTemperatureStatus    = (ANSC_HANDLE)CosaTemperatureStatusCreate();
+    AnscTraceWarning(("  CosaTemperatureStatusCreate done!\n"));
     // LGI ADD END
 
     printf("PandM DM initialization done!\n");
@@ -767,6 +769,11 @@ CosaBackEndManagerRemove
     if (pMyObject->hLgiPlume)
     {
         CosaLgiPlumeRemove((ANSC_HANDLE)pMyObject->hLgiPlume);
+    }
+
+    if (pMyObject->hTemperatureStatus)
+    {
+        COSADmlRemoveTemperatureInfo((ANSC_HANDLE)pMyObject->hTemperatureStatus);
     }
 
     /* Remove self */
