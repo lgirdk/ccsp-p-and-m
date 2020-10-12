@@ -9774,6 +9774,18 @@
 
           <parameter>
 
+            <name>RuleSource</name>
+
+            <type>string(32)</type>
+
+            <syntax>string</syntax>
+
+            <writable>false</writable>
+
+          </parameter>
+
+          <parameter>
+
             <name>Protocol</name>
 
             <type>string: TCP(1),UDP(2),BOTH(3)</type>
