@@ -1690,6 +1690,7 @@ ANSC_STATUS _AddPortMapping(
         singleInfo.rule_id = pEntry->InstanceNumber;
         //AnscCopyString(singleInfo.name, pEntry->Description);
         strncpy(singleInfo.name, pEntry->Description, sizeof(singleInfo.name));
+        snprintf(singleInfo.rule_source, sizeof(singleInfo.rule_source), (strlen(pEntry->RuleSource) != 0) ? pEntry->RuleSource : "Manual");
         strncpy(singleInfo.dest_ipv6, pEntry->X_CISCO_COM_InternalClientV6, sizeof(singleInfo.dest_ipv6));
         
         rc = Utopia_AddPortForwarding(pCtx, &singleInfo);
@@ -1729,6 +1730,7 @@ ANSC_STATUS _AddPortMapping(
         rangeInfo.internal_port_range_size = 0;
         //AnscCopyString(rangeInfo.name, pEntry->Description);
         strncpy(rangeInfo.name, pEntry->Description, sizeof(rangeInfo.name));
+        snprintf(rangeInfo.rule_source, sizeof(rangeInfo.rule_source), (strlen(pEntry->RuleSource) != 0) ? pEntry->RuleSource : "Manual");
         /* CID 163037 fix */
 	strncpy(rangeInfo.dest_ipv6, pEntry->X_CISCO_COM_InternalClientV6, (sizeof(rangeInfo.dest_ipv6)-1));
 
@@ -2210,6 +2212,8 @@ CosaDmlNatGetPortMapping
         pNatPMapping->InstanceNumber = rangeInfo.rule_id;
         safec_rc = strcpy_s(pNatPMapping->Description,sizeof(pNatPMapping->Description), rangeInfo.name);
         ERR_CHK(safec_rc);
+        safec_rc = strcpy_s(pNatPMapping->RuleSource, sizeof(pNatPMapping->RuleSource), rangeInfo.rule_source);
+        ERR_CHK(safec_rc);
         pNatPMapping->X_CISCO_COM_Origin = COSA_DML_NAT_PMAPPING_Origin_Static;
         Utopia_Free(&Ctx, 0);
         return ANSC_STATUS_SUCCESS;
@@ -2232,6 +2236,8 @@ CosaDmlNatGetPortMapping
         pNatPMapping->InternalClient.Value = inet_addr(singleInfo.dest_ip);
         pNatPMapping->InstanceNumber = singleInfo.rule_id;
         safec_rc = strcpy_s(pNatPMapping->Description,sizeof(pNatPMapping->Description), singleInfo.name);
+        ERR_CHK(safec_rc);
+        safec_rc = strcpy_s(pNatPMapping->RuleSource, sizeof(pNatPMapping->RuleSource), singleInfo.rule_source);
         ERR_CHK(safec_rc);
         pNatPMapping->X_CISCO_COM_Origin = COSA_DML_NAT_PMAPPING_Origin_Static;
         Utopia_Free(&Ctx, 0);
@@ -2309,6 +2315,7 @@ CosaDmlNatGetPortMapping
                     }
                 }
                 AnscCopyString(pNatPMapping->Description, dynInfo.name);
+                AnscCopyString(pNatPMapping->RuleSource, dynInfo.rule_source);
                 pNatPMapping->X_CISCO_COM_Origin = COSA_DML_NAT_PMAPPING_Origin_Dynamic;
                 Utopia_Free(&Ctx, 0);
                 return ANSC_STATUS_SUCCESS;
@@ -2493,6 +2500,8 @@ CosaDmlNatGetPortMappings
             ERR_CHK(safec_rc);
             safec_rc = strcpy_s(pNatPMapping[ulIndex].X_CISCO_COM_InternalClientV6,sizeof(pNatPMapping[ulIndex].X_CISCO_COM_InternalClientV6), singleInfo[i].dest_ipv6);
             ERR_CHK(safec_rc);
+            safec_rc = strcpy_s(pNatPMapping[ulIndex].RuleSource, sizeof(pNatPMapping[ulIndex].RuleSource), singleInfo[i].rule_source);
+            ERR_CHK(safec_rc);
         }
         free(singleInfo);
         singleInfo = NULL;
@@ -2518,6 +2527,8 @@ CosaDmlNatGetPortMappings
             safec_rc = strcpy_s(pNatPMapping[ulIndex].Description,sizeof(pNatPMapping[ulIndex].Description), rangeInfo[i].name);
             ERR_CHK(safec_rc);
             safec_rc = strcpy_s(pNatPMapping[ulIndex].X_CISCO_COM_InternalClientV6,sizeof(pNatPMapping[ulIndex].X_CISCO_COM_InternalClientV6), rangeInfo[i].dest_ipv6);
+            ERR_CHK(safec_rc);
+            safec_rc = strcpy_s(pNatPMapping[ulIndex].RuleSource, sizeof(pNatPMapping[ulIndex].RuleSource), rangeInfo[i].rule_source);
             ERR_CHK(safec_rc);
 #ifdef _BWG_PRODUCT_REQ_
             //CGWTDETS-8737 : Usable Statics will no longer support 1-1 NAT :: START
@@ -2593,6 +2604,7 @@ CosaDmlNatGetPortMappings
             }
 
             AnscCopyString(pNatPMapping[ulIndex].Description, dynInfo.name);
+            AnscCopyString(pNatPMapping[ulIndex].RuleSource, dynInfo.rule_source);
 
             rc = loadID
             (
