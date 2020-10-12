@@ -333,6 +333,11 @@ void CosaDmlDiCheckAndEnableMoCA( void )
        }
 }
 
+#define ABSOLUTE_ZERO_TEMPERATURE   -274
+#define UNKNOWN_TIME                "0001-01-01T00:00:00Z"
+
+static pthread_t gPoll_threadId[MAX_TEMPSENSOR_INSTANCE];
+
 static const int OK = 1 ;
 static const int NOK = 0 ;
 static char reverseSSHArgs[256];
@@ -2277,6 +2282,318 @@ CosaDmlDiGetProcessorSpeed
     *pulSize = AnscSizeOfString(pValue);
     if(pValue[*pulSize-1] == '\n') pValue[--(*pulSize)] = '\0';
     return ANSC_STATUS_SUCCESS; 
+}
+
+static void getLocalTime (char *pValue, int len)
+{
+    time_t t = time(NULL);
+    struct tm *pLocalTime = localtime(&t);
+
+    snprintf(pValue, len, "%.4u-%.2u-%.2uT%.2u:%.2u:%.2uZ",
+             pLocalTime->tm_year + 1900,
+             pLocalTime->tm_mon + 1,
+             pLocalTime->tm_mday,
+             pLocalTime->tm_hour,
+             pLocalTime->tm_min,
+             pLocalTime->tm_sec);
+}
+
+static int getCurrentTemperature (int index)
+{
+    int cpu_temp = ABSOLUTE_ZERO_TEMPERATURE;
+
+    /*
+       Sanity check - there's only one temperature sensor and its index is 1
+    */
+    if (index != 1)
+    {
+        return 25;
+    }
+
+    /*
+       Read temperature using platform specific code.
+       Fixme: there should be a HAL API for this!
+    */
+    cpu_temp = 30;
+
+    if (cpu_temp == ABSOLUTE_ZERO_TEMPERATURE)
+    {
+        AnscTraceError(("Unable to read CPU temperature\n"));
+    }
+
+    return cpu_temp;
+}
+
+static int pollTemperature_oneshot (PCOSA_DATAMODEL_TEMPERATURE_STATUS pTempStatus, int index, char *currTime, int frompollingthread)
+{
+    PCOSA_TEMPERATURE_SENSOR_ENTRY pTempSensor = &pTempStatus->TemperatureSensorEntry[index-1];
+    int PollingInterval;
+    int currTemp;
+
+    /*
+       Warning: This function may be called from a thread which may be killed
+       via pthread_cancel(). In that case it must not call any functions which
+       may be Cancellation Points (see "man 7 pthreads") while holding the mutex
+       The mutex should only be held (and must be held) while accessing the
+       pTempStatus structure. The mutex should be dropped before doing anything
+       else (reading the temperature, sleeping, outputting debug, etc, etc) and
+       reacquired again afterwards or before returning.
+       If this function is _NOT_ called from the polling thread, then the caller
+       should take care of acquiring the mutex before calling this function (and
+       in that context it's safe to hold the mutex while getting the
+       temperature).
+    */
+
+    currTemp = getCurrentTemperature (index);
+
+    if (frompollingthread)
+    {
+        pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
+    }
+
+    if (currTemp != ABSOLUTE_ZERO_TEMPERATURE)
+    {
+        pTempSensor->Value = currTemp;
+        strcpy(pTempSensor->LastUpdate, currTime);
+
+        if ((pTempSensor->MinValue == ABSOLUTE_ZERO_TEMPERATURE) || (currTemp < pTempSensor->MinValue))
+        {
+            pTempSensor->MinValue = currTemp;
+            strcpy(pTempSensor->MinTime, currTime);
+        }
+
+        if ((pTempSensor->MaxValue == ABSOLUTE_ZERO_TEMPERATURE) || (currTemp > pTempSensor->MaxValue))
+        {
+            pTempSensor->MaxValue = currTemp;
+            strcpy(pTempSensor->MaxTime, currTime);
+        }
+
+        if ((pTempSensor->LowAlarmValue != ABSOLUTE_ZERO_TEMPERATURE) &&
+            (currTemp <= pTempSensor->LowAlarmValue) &&
+            (strcmp(pTempSensor->LowAlarmTime, UNKNOWN_TIME) == 0))
+        {
+            strcpy(pTempSensor->LowAlarmTime, currTime);
+        }
+
+        if ((pTempSensor->HighAlarmValue != ABSOLUTE_ZERO_TEMPERATURE) &&
+            (currTemp >= pTempSensor->HighAlarmValue) &&
+            (strcmp(pTempSensor->HighAlarmTime, UNKNOWN_TIME) == 0))
+        {
+            strcpy(pTempSensor->HighAlarmTime, currTime);
+        }
+    }
+    else
+    {
+        pTempSensor->Status = COSA_DML_TEMPERATURE_SENSOR_STATUS_Error;
+    }
+
+    /*
+       As a convienience for the polling thread, read and return the polling
+       interval here, since the mutex is already held.
+    */
+    PollingInterval = pTempSensor->PollingInterval;
+
+    if (frompollingthread)
+    {
+        pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
+    }
+
+    return PollingInterval;
+}
+
+static void *pollTemperature (void *arg)
+{
+    PCOSA_DATAMODEL_TEMPERATURE_STATUS pTempStatus = (PCOSA_DATAMODEL_TEMPERATURE_STATUS) g_pCosaBEManager->hTemperatureStatus;
+    int index = (int) arg;
+    int PollingInterval;
+    char currTime[64];
+
+    /*
+       Warning: This thread may be killed via pthread_cancel(). It must not call
+       any functions which may be Cancellation Points (see "man 7 pthreads")
+       while holding the mutex. The mutex should only be held (and must be held)
+       while accessing the pTempStatus structure. The mutex should be dropped
+       before doing anything else (reading the temperature, sleeping, outputting
+       debug, etc, etc).
+    */
+
+    while (1)
+    {
+        struct timeval tv;
+
+        getLocalTime(currTime, sizeof(currTime));
+
+        PollingInterval = pollTemperature_oneshot (pTempStatus, index, currTime, 1);
+
+        if (PollingInterval == 0)
+            break;
+
+        tv.tv_sec = PollingInterval;
+        tv.tv_usec = 0;
+
+        select (0, NULL, NULL, NULL, &tv);
+    }
+
+    return NULL;
+}
+
+void CosaTemperatureSensorReset (BOOL isEnable, PCOSA_TEMPERATURE_SENSOR_ENTRY pTempSensor)
+{
+    PCOSA_DATAMODEL_TEMPERATURE_STATUS pTempStatus = (PCOSA_DATAMODEL_TEMPERATURE_STATUS)g_pCosaBEManager->hTemperatureStatus;
+    int index = pTempSensor->InstanceNumber;
+    char currTime[64];
+
+    getLocalTime(currTime, sizeof(currTime));
+
+    pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
+
+    if (isEnable)
+    {
+        pTempSensor->Value = ABSOLUTE_ZERO_TEMPERATURE;
+        pTempSensor->MinValue = ABSOLUTE_ZERO_TEMPERATURE;
+        pTempSensor->MaxValue = ABSOLUTE_ZERO_TEMPERATURE;
+
+        strcpy(pTempSensor->ResetTime, currTime);
+        strcpy(pTempSensor->LastUpdate, UNKNOWN_TIME);
+        strcpy(pTempSensor->MinTime, UNKNOWN_TIME);
+        strcpy(pTempSensor->MaxTime, UNKNOWN_TIME);
+        strcpy(pTempSensor->LowAlarmTime, UNKNOWN_TIME);
+        strcpy(pTempSensor->HighAlarmTime, UNKNOWN_TIME);
+
+        if (pTempSensor->PollingInterval == 0)
+        {
+            pollTemperature_oneshot (pTempStatus, index, currTime, 0);
+        }
+        pTempSensor->Status = COSA_DML_TEMPERATURE_SENSOR_STATUS_Enabled;
+    }
+    else
+    {
+        if (pTempSensor->PollingInterval != 0)
+        {
+            pthread_cancel(gPoll_threadId[index-1]);
+            pthread_join(gPoll_threadId[index-1], NULL);
+        }
+        pTempSensor->Status = COSA_DML_TEMPERATURE_SENSOR_STATUS_Disabled;
+    }
+
+    pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
+}
+
+void CosaTemperatureSensorSetPollingTime (ULONG pollingInterval, PCOSA_TEMPERATURE_SENSOR_ENTRY pTempSensor)
+{
+    PCOSA_DATAMODEL_TEMPERATURE_STATUS pTempStatus = (PCOSA_DATAMODEL_TEMPERATURE_STATUS)g_pCosaBEManager->hTemperatureStatus;
+    int index = pTempSensor->InstanceNumber;
+
+    pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
+
+    if (pollingInterval != 0)
+    {
+        if (pTempSensor->PollingInterval == 0)
+        {
+            pthread_create(&gPoll_threadId[index-1], NULL, pollTemperature, (void *) index);
+        }
+    }
+    else
+    {
+        if (pTempSensor->PollingInterval != 0)
+        {
+            pthread_cancel(gPoll_threadId[index-1]);
+            pthread_join(gPoll_threadId[index-1], NULL);
+        }
+    }
+
+    /*
+       It's safe to set this after starting the polling thread since the polling
+       thread can not begin to access anything in the pTempStatus struct until
+       the mutex is released below.
+    */
+    pTempSensor->PollingInterval = pollingInterval;
+
+    pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
+}
+
+void CosaTemperatureSensorSetLowAlarm (int lowAlarmValue, PCOSA_TEMPERATURE_SENSOR_ENTRY pTempSensor)
+{
+    PCOSA_DATAMODEL_TEMPERATURE_STATUS pTempStatus = (PCOSA_DATAMODEL_TEMPERATURE_STATUS)g_pCosaBEManager->hTemperatureStatus;
+    int index = pTempSensor->InstanceNumber;
+
+    pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
+    pTempSensor->LowAlarmValue = lowAlarmValue;
+    strcpy(pTempSensor->LowAlarmTime, UNKNOWN_TIME);
+    pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
+}
+
+void CosaTemperatureSensorSetHighAlarm (int highAlarmValue, PCOSA_TEMPERATURE_SENSOR_ENTRY pTempSensor)
+{
+    PCOSA_DATAMODEL_TEMPERATURE_STATUS pTempStatus = (PCOSA_DATAMODEL_TEMPERATURE_STATUS)g_pCosaBEManager->hTemperatureStatus;
+    int index = pTempSensor->InstanceNumber;
+
+    pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
+    pTempSensor->HighAlarmValue = highAlarmValue;
+    strcpy(pTempSensor->HighAlarmTime, UNKNOWN_TIME);
+    pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
+}
+
+ANSC_HANDLE CosaTemperatureStatusCreate (void)
+{
+    int index;
+    PCOSA_DATAMODEL_TEMPERATURE_STATUS pTempStatus;
+    char currTime[64];
+
+    pTempStatus = calloc(1, sizeof(COSA_DATAMODEL_TEMPERATURE_STATUS));
+    pTempStatus->TemperatureSensorNumberOfEntries = MAX_TEMPSENSOR_INSTANCE;
+
+    getLocalTime(currTime, sizeof(currTime));
+
+    for (index = 1; index <= MAX_TEMPSENSOR_INSTANCE; index++)
+    {
+        PCOSA_TEMPERATURE_SENSOR_ENTRY pTempSensor = &pTempStatus->TemperatureSensorEntry[index-1];
+
+        pthread_mutex_init(&(pTempStatus->rwLock[index-1]), NULL);
+
+        sprintf (pTempSensor->Alias, "cpe-TemperatureSensor_%d", index);
+
+        if (index == 1)
+            strcpy(pTempSensor->Name, "CPU");
+        else
+            sprintf (pTempSensor->Name, "TEMPERATURE_SENSOR_%d", index);            
+
+        pTempSensor->Enable = TRUE;
+        pTempSensor->Status = COSA_DML_TEMPERATURE_SENSOR_STATUS_Enabled;
+        pTempSensor->InstanceNumber = index;
+        pTempSensor->Value = ABSOLUTE_ZERO_TEMPERATURE;
+        pTempSensor->MinValue = ABSOLUTE_ZERO_TEMPERATURE;
+        pTempSensor->MaxValue = ABSOLUTE_ZERO_TEMPERATURE;
+        pTempSensor->LowAlarmValue = ABSOLUTE_ZERO_TEMPERATURE;
+        pTempSensor->HighAlarmValue = ABSOLUTE_ZERO_TEMPERATURE;
+        pTempSensor->PollingInterval = 0;
+
+        strcpy(pTempSensor->ResetTime, currTime);
+        strcpy(pTempSensor->LastUpdate, UNKNOWN_TIME);
+        strcpy(pTempSensor->MinTime, UNKNOWN_TIME);
+        strcpy(pTempSensor->MaxTime, UNKNOWN_TIME);
+        strcpy(pTempSensor->LowAlarmTime, UNKNOWN_TIME);
+        strcpy(pTempSensor->HighAlarmTime, UNKNOWN_TIME);
+
+        /*
+           Don't call pthread_create() to start pollTemperature() here since
+           pollTemperature() expects to obtain the pointer to pTempStatus via
+           g_pCosaBEManager->hTemperatureStatus, which is not initialised until
+           this function returns.
+           Calling pollTemperature_oneshot() is safe because the pointer to
+           pTempStatus is passed as an argument to the function (and so does not
+           rely on g_pCosaBEManager->hTemperatureStatus being initialised).
+        */
+
+        pollTemperature_oneshot (pTempStatus, index, currTime, 0);
+    }
+
+    return pTempStatus;
+}
+
+void COSADmlRemoveTemperatureInfo (PCOSA_DATAMODEL_TEMPERATURE_STATUS pObj)
+{
+    free(pObj);
 }
 
 ANSC_STATUS
