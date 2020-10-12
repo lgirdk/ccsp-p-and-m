@@ -2028,6 +2028,12 @@ PortMapping_GetParamStringValue
         }
     }
 
+    if( AnscEqualString(ParamName, "X_RDKCENTRAL_RuleSource", TRUE))
+    {
+        AnscCopyString(pValue, pNatPMapping->X_RDKCENTRAL_RuleSource);
+        return 0;
+    }
+
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return -1;
 }
@@ -2370,6 +2376,12 @@ PortMapping_SetParamStringValue
         /* save update to backup */
         AnscCopyString( pNatPMapping->X_CISCO_COM_InternalClientV6, pString );
 
+        return TRUE;
+    }
+
+    if( AnscEqualString(ParamName, "X_RDKCENTRAL_RuleSource", TRUE))
+    {
+        AnscCopyString( pNatPMapping->X_RDKCENTRAL_RuleSource, pString );
         return TRUE;
     }
 
