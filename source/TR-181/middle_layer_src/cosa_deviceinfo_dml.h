@@ -1043,6 +1043,103 @@ Process_GetParamStringValue
 
  APIs for Object:
 
+    DeviceInfo.TemperatureStatus.TemperatureSensor.{i}.
+
+    *  TemperatureSensor_GetEntryCount
+    *  TemperatureSensor_GetEntry
+    *  TemperatureSensor_GetParamBoolValue
+    *  TemperatureSensor_GetParamIntValue
+    *  TemperatureSensor_GetParamUlongValue
+    *  TemperatureSensor_GetParamStringValue
+    *  TemperatureSensor_SetParamBoolValue
+    *  TemperatureSensor_SetParamIntValue
+    *  TemperatureSensor_SetParamUlongValue
+    *  TemperatureSensor_SetParamStringValue
+
+***********************************************************************/
+ULONG
+TemperatureSensor_GetEntryCount
+    (
+        ANSC_HANDLE                 hInsContext
+    );
+
+ANSC_HANDLE
+TemperatureSensor_GetEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG                       nIndex,
+        ULONG*                      pInsNumber
+    );
+
+BOOL
+TemperatureSensor_GetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL*                       pBool
+    );
+
+BOOL
+TemperatureSensor_GetParamIntValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        int*                        pInt
+    );
+
+BOOL
+TemperatureSensor_GetParamUlongValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        ULONG*                      puLong
+    );
+
+ULONG
+TemperatureSensor_GetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pValue,
+        ULONG*                      pUlSize
+    );
+
+BOOL
+TemperatureSensor_SetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL                        bValue
+    );
+
+BOOL
+TemperatureSensor_SetParamIntValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        int                         bValue
+    );
+
+BOOL
+TemperatureSensor_SetParamUlongValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        ULONG                       uValue
+    );
+
+BOOL
+TemperatureSensor_SetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pString
+    );
+
+/***********************************************************************
+
+ APIs for Object:
+
     DeviceInfo.NetworkProperties.
 
     *  NetworkProperties_GetParamBoolValue
