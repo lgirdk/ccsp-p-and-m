@@ -230,6 +230,7 @@ extern COSARegisterCallBackAfterInitDmlProc  g_RegisterCallBackAfterInitDml;
     ANSC_HANDLE                  hXpc;                                                    \
     ANSC_HANDLE                  hOnboardLogging;                                                    \
     ANSC_HANDLE                  hLgiWoL;                        /* LGI ADD             */  \
+    ANSC_HANDLE                  hTemperatureStatus;                                        \
     PCOSA_PLUGIN_INFO            hCosaPluginInfo;								   		
 
 typedef  struct
