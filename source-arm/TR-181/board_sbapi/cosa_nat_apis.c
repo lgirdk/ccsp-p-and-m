@@ -2037,6 +2037,14 @@ ANSC_STATUS _AddPortMapping(
         singleInfo.rule_id = pEntry->InstanceNumber;
         //AnscCopyString(singleInfo.name, pEntry->Description);
         strncpy(singleInfo.name, pEntry->Description, sizeof(singleInfo.name));
+        if ( strcmp (pEntry->X_RDKCENTRAL_RuleSource, "") )
+        {
+            strncpy(singleInfo.rule_source, pEntry->X_RDKCENTRAL_RuleSource, sizeof(singleInfo.rule_source));
+        }
+        else
+        {
+            strncpy(singleInfo.rule_source, "Manual", sizeof(singleInfo.rule_source));
+        }
         strncpy(singleInfo.dest_ipv6, pEntry->X_CISCO_COM_InternalClientV6, sizeof(singleInfo.dest_ipv6));
         
         rc = Utopia_AddPortForwarding(pCtx, &singleInfo);
@@ -2080,6 +2088,14 @@ ANSC_STATUS _AddPortMapping(
         }
         //AnscCopyString(rangeInfo.name, pEntry->Description);
         strncpy(rangeInfo.name, pEntry->Description, sizeof(rangeInfo.name));
+        if ( strcmp (pEntry->X_RDKCENTRAL_RuleSource, "") )
+        {
+            strncpy(rangeInfo.rule_source, pEntry->X_RDKCENTRAL_RuleSource, sizeof(rangeInfo.rule_source));
+        }
+        else
+        {
+            strncpy(rangeInfo.rule_source, "Manual", sizeof(rangeInfo.rule_source));
+        }
         strncpy(rangeInfo.dest_ipv6, pEntry->X_CISCO_COM_InternalClientV6, sizeof(rangeInfo.dest_ipv6));
 
         rc = Utopia_AddPortForwardingRange(pCtx, &rangeInfo);
@@ -2582,6 +2598,7 @@ CosaDmlNatGetPortMapping
         pNatPMapping->InstanceNumber = rangeInfo.rule_id;
         safec_rc = strcpy_s(pNatPMapping->Description,sizeof(pNatPMapping->Description), rangeInfo.name);
         ERR_CHK(safec_rc);
+        AnscCopyString(pNatPMapping->X_RDKCENTRAL_RuleSource, rangeInfo.rule_source);
         pNatPMapping->X_CISCO_COM_Origin = COSA_DML_NAT_PMAPPING_Origin_Static;
         Utopia_Free(&Ctx, 0);
         return ANSC_STATUS_SUCCESS;
@@ -2606,6 +2623,7 @@ CosaDmlNatGetPortMapping
         pNatPMapping->InstanceNumber = singleInfo.rule_id;
         safec_rc = strcpy_s(pNatPMapping->Description,sizeof(pNatPMapping->Description), singleInfo.name);
         ERR_CHK(safec_rc);
+        AnscCopyString(pNatPMapping->X_RDKCENTRAL_RuleSource, singleInfo.rule_source);
         pNatPMapping->X_CISCO_COM_Origin = COSA_DML_NAT_PMAPPING_Origin_Static;
         Utopia_Free(&Ctx, 0);
         return ANSC_STATUS_SUCCESS;
@@ -2683,6 +2701,7 @@ CosaDmlNatGetPortMapping
                     }
                 }
                 AnscCopyString(pNatPMapping->Description, dynInfo.name);
+                AnscCopyString(pNatPMapping->X_RDKCENTRAL_RuleSource, dynInfo.rule_source);
                 pNatPMapping->X_CISCO_COM_Origin = COSA_DML_NAT_PMAPPING_Origin_Dynamic;
                 Utopia_Free(&Ctx, 0);
                 return ANSC_STATUS_SUCCESS;
@@ -2860,6 +2879,7 @@ CosaDmlNatGetPortMappings
             ERR_CHK(safec_rc);
             safec_rc = strcpy_s(pNatPMapping[ulIndex].X_CISCO_COM_InternalClientV6,sizeof(pNatPMapping[ulIndex].X_CISCO_COM_InternalClientV6), singleInfo[i].dest_ipv6);
             ERR_CHK(safec_rc);
+            AnscCopyString(pNatPMapping[ulIndex].X_RDKCENTRAL_RuleSource, singleInfo[i].rule_source);
         }
         free(singleInfo);
         singleInfo = NULL;
@@ -2887,6 +2907,7 @@ CosaDmlNatGetPortMappings
             ERR_CHK(safec_rc);
             safec_rc = strcpy_s(pNatPMapping[ulIndex].X_CISCO_COM_InternalClientV6,sizeof(pNatPMapping[ulIndex].X_CISCO_COM_InternalClientV6), rangeInfo[i].dest_ipv6);
             ERR_CHK(safec_rc);
+            AnscCopyString(pNatPMapping[ulIndex].X_RDKCENTRAL_RuleSource, rangeInfo[i].rule_source);
         }
         free(rangeInfo);
         rangeInfo = NULL;
@@ -2951,6 +2972,7 @@ CosaDmlNatGetPortMappings
             }
 
             AnscCopyString(pNatPMapping[ulIndex].Description, dynInfo.name);
+            AnscCopyString(pNatPMapping[ulIndex].X_RDKCENTRAL_RuleSource, dynInfo.rule_source);
 
             rc = loadID
             (
