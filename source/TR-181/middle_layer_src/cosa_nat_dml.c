@@ -2136,6 +2136,12 @@ PortMapping_GetParamStringValue
         }
     }
 
+    if (strcmp(ParamName, "X_RDKCENTRAL_RuleSource") == 0)
+    {
+        AnscCopyString(pValue, pNatPMapping->X_RDKCENTRAL_RuleSource);
+        return 0;
+    }
+
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return -1;
 }
@@ -2501,6 +2507,12 @@ PortMapping_SetParamStringValue
             ERR_CHK(rc);
             return FALSE;
         }
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "X_RDKCENTRAL_RuleSource") == 0)
+    {
+        AnscCopyString( pNatPMapping->X_RDKCENTRAL_RuleSource, pString );
         return TRUE;
     }
 
