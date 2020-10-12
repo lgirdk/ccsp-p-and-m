@@ -6737,6 +6737,685 @@ Process_GetParamStringValue
 }
 
 
+/***********************************************************************
+
+ APIs for Object:
+
+    DeviceInfo.TemperatureStatus.TemperatureSensor.{i}.
+
+    *  TemperatureSensor_GetEntryCount
+    *  TemperatureSensor_GetEntry
+    *  TemperatureSensor_IsUpdated
+    *  TemperatureSensor_Synchronize
+    *  TemperatureSensor_GetParamBoolValue
+    *  TemperatureSensor_GetParamIntValue
+    *  TemperatureSensor_GetParamUlongValue
+    *  TemperatureSensor_GetParamStringValue
+    *  TemperatureSensor_SetParamBoolValue
+    *  TemperatureSensor_SetParamIntValue
+    *  TemperatureSensor_SetParamUlongValue
+    *  TemperatureSensor_SetParamStringValue
+
+***********************************************************************/
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ULONG
+        TemperatureSensor_GetEntryCount
+            (
+                ANSC_HANDLE                 hInsContext
+            );
+
+    description:
+
+        This function is called to retrieve the count of the table.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+    return:     The count of the table
+
+**********************************************************************/
+ULONG
+TemperatureSensor_GetEntryCount
+    (
+        ANSC_HANDLE                 hInsContext
+    )
+{
+    PCOSA_DATAMODEL_TEMPERATURE_STATUS      pTempStatus     = (PCOSA_DATAMODEL_TEMPERATURE_STATUS)g_pCosaBEManager->hTemperatureStatus;
+
+    return pTempStatus->TemperatureSensorNumberOfEntries;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ANSC_HANDLE
+        TemperatureSensor_GetEntry
+            (
+                ANSC_HANDLE                 hInsContext,
+                ULONG                       nIndex,
+                ULONG*                      pInsNumber
+            );
+
+    description:
+
+        This function is called to retrieve the entry specified by the index.
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                ULONG                       nIndex,
+                The index of this entry;
+
+                ULONG*                      pInsNumber
+                The output instance number;
+
+    return:     The handle to identify the entry
+
+**********************************************************************/
+ANSC_HANDLE
+TemperatureSensor_GetEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG                       nIndex,
+        ULONG*                      pInsNumber
+    )
+{
+    PCOSA_DATAMODEL_TEMPERATURE_STATUS      pTempStatus     = (PCOSA_DATAMODEL_TEMPERATURE_STATUS)g_pCosaBEManager->hTemperatureStatus;
+
+    *pInsNumber  = nIndex + 1;
+
+    if (nIndex < pTempStatus->TemperatureSensorNumberOfEntries)
+    {
+        return pTempStatus->TemperatureSensorEntry+nIndex;
+    }
+
+    return NULL; /* return the handle */
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        TemperatureSensor_GetParamBoolValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                BOOL*                       pBool
+            );
+
+    description:
+
+        This function is called to retrieve Boolean parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                BOOL*                       pBool
+                The buffer of returned boolean value;
+
+    return:     TRUE if succeeded.
+
+**********************************************************************/
+BOOL
+TemperatureSensor_GetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL*                       pBool
+    )
+{
+    PCOSA_TEMPERATURE_SENSOR_ENTRY          PTempSensorEntry = (PCOSA_TEMPERATURE_SENSOR_ENTRY)hInsContext;
+
+    /* check the parameter name and return the corresponding value */
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+        *pBool = PTempSensorEntry->Enable;
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "Reset") == 0)
+    {
+        *pBool = FALSE;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        TemperatureSensor_GetParamIntValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                int*                        pInt
+            );
+
+    description:
+
+        This function is called to retrieve integer parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                int*                        pInt
+                The buffer of returned integer value;
+
+    return:     TRUE if succeeded.
+
+**********************************************************************/
+BOOL
+TemperatureSensor_GetParamIntValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        int*                        pInt
+    )
+{
+    PCOSA_TEMPERATURE_SENSOR_ENTRY          PTempSensorEntry = (PCOSA_TEMPERATURE_SENSOR_ENTRY)hInsContext;
+    PCOSA_DATAMODEL_TEMPERATURE_STATUS      pTempStatus = (PCOSA_DATAMODEL_TEMPERATURE_STATUS)g_pCosaBEManager->hTemperatureStatus;
+    int                                     index = PTempSensorEntry->InstanceNumber;
+
+    /* check the parameter name and return the corresponding value */
+    if (strcmp(ParamName, "Value") == 0)
+    {
+        pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
+        *pInt = PTempSensorEntry->Value;
+        pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "MinValue") == 0)
+    {
+        pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
+        *pInt = PTempSensorEntry->MinValue;
+        pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "MaxValue") == 0)
+    {
+        pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
+        *pInt = PTempSensorEntry->MaxValue;
+        pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "LowAlarmValue") == 0)
+    {
+        pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
+        *pInt = PTempSensorEntry->LowAlarmValue;
+        pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "HighAlarmValue") == 0)
+    {
+        pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
+        *pInt = PTempSensorEntry->HighAlarmValue;
+        pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        TemperatureSensor_GetParamUlongValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                ULONG*                      puLong
+            );
+
+    description:
+
+        This function is called to retrieve ULONG parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                ULONG*                      puLong
+                The buffer of returned ULONG value;
+
+    return:     TRUE if succeeded.
+
+**********************************************************************/
+BOOL
+TemperatureSensor_GetParamUlongValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        ULONG*                      puLong
+    )
+{
+    PCOSA_TEMPERATURE_SENSOR_ENTRY          PTempSensorEntry = (PCOSA_TEMPERATURE_SENSOR_ENTRY)hInsContext;
+
+    /* check the parameter name and return the corresponding value */
+    if (strcmp(ParamName, "Status") == 0)
+    {
+        *puLong = PTempSensorEntry->Status;
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "PollingInterval") == 0)
+    {
+        *puLong = PTempSensorEntry->PollingInterval;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ULONG
+        TemperatureSensor_GetParamStringValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                char*                       pValue,
+                ULONG*                      pUlSize
+            );
+
+    description:
+
+        This function is called to retrieve string parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                char*                       pValue,
+                The string value buffer;
+
+                ULONG*                      pUlSize
+                The buffer of length of string value;
+                Usually size of 1023 will be used.
+                If it's not big enough, put required size here and return 1;
+
+    return:     0 if succeeded;
+                1 if short of buffer size; (*pUlSize = required size)
+                -1 if not supported.
+
+**********************************************************************/
+ULONG
+TemperatureSensor_GetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pValue,
+        ULONG*                      pUlSize
+    )
+{
+    PCOSA_TEMPERATURE_SENSOR_ENTRY          PTempSensorEntry = (PCOSA_TEMPERATURE_SENSOR_ENTRY)hInsContext;
+    PCOSA_DATAMODEL_TEMPERATURE_STATUS      pTempStatus = (PCOSA_DATAMODEL_TEMPERATURE_STATUS)g_pCosaBEManager->hTemperatureStatus;
+    int                                     index = PTempSensorEntry->InstanceNumber;
+
+    /* check the parameter name and return the corresponding value */
+    if (strcmp(ParamName, "Alias") == 0)
+    {
+        if (*pUlSize < AnscSizeOfString(PTempSensorEntry->Alias))
+        {
+            *pUlSize = AnscSizeOfString(PTempSensorEntry->Alias);
+            return 1;
+        }
+        AnscCopyString(pValue,  PTempSensorEntry->Alias);
+        return 0;
+    }
+
+    if (strcmp(ParamName, "ResetTime") == 0)
+    {
+        if (*pUlSize < AnscSizeOfString(PTempSensorEntry->ResetTime))
+        {
+            *pUlSize = AnscSizeOfString(PTempSensorEntry->ResetTime);
+            return 1;
+        }
+        pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
+        AnscCopyString(pValue,  PTempSensorEntry->ResetTime);
+        pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
+        return 0;
+    }
+
+    if (strcmp(ParamName, "Name") == 0)
+    {
+        if (*pUlSize < AnscSizeOfString(PTempSensorEntry->Name))
+        {
+            *pUlSize = AnscSizeOfString(PTempSensorEntry->Name);
+            return 1;
+        }
+        AnscCopyString(pValue,  PTempSensorEntry->Name);
+        return 0;
+    }
+
+    if (strcmp(ParamName, "LastUpdate") == 0)
+    {
+        if (*pUlSize < AnscSizeOfString(PTempSensorEntry->LastUpdate))
+        {
+            *pUlSize = AnscSizeOfString(PTempSensorEntry->LastUpdate);
+            return 1;
+        }
+        pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
+        AnscCopyString(pValue,  PTempSensorEntry->LastUpdate);
+        pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
+        return 0;
+    }
+
+    if (strcmp(ParamName, "MinTime") == 0)
+    {
+        if (*pUlSize < AnscSizeOfString(PTempSensorEntry->MinTime))
+        {
+            *pUlSize = AnscSizeOfString(PTempSensorEntry->MinTime);
+            return 1;
+        }
+        pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
+        AnscCopyString(pValue,  PTempSensorEntry->MinTime);
+        pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
+        return 0;
+    }
+
+    if (strcmp(ParamName, "MaxTime") == 0)
+    {
+        if (*pUlSize < AnscSizeOfString(PTempSensorEntry->MaxTime))
+        {
+            *pUlSize = AnscSizeOfString(PTempSensorEntry->MaxTime);
+            return 1;
+        }
+        pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
+        AnscCopyString(pValue,  PTempSensorEntry->MaxTime);
+        pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
+        return 0;
+    }
+
+    if (strcmp(ParamName, "LowAlarmTime") == 0)
+    {
+        if (*pUlSize < AnscSizeOfString(PTempSensorEntry->LowAlarmTime))
+        {
+            *pUlSize = AnscSizeOfString(PTempSensorEntry->LowAlarmTime);
+            return 1;
+        }
+        pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
+        AnscCopyString(pValue,  PTempSensorEntry->LowAlarmTime);
+        pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
+        return 0;
+    }
+
+    if (strcmp(ParamName, "HighAlarmTime") == 0)
+    {
+        if (*pUlSize < AnscSizeOfString(PTempSensorEntry->HighAlarmTime))
+        {
+            *pUlSize = AnscSizeOfString(PTempSensorEntry->HighAlarmTime);
+            return 1;
+        }
+        pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
+        AnscCopyString(pValue,  PTempSensorEntry->HighAlarmTime);
+        pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
+        return 0;
+    }
+
+    return -1;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        TemperatureSensor_SetParamBoolValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                BOOL                        bValue
+            );
+
+    description:
+
+        This function is called to set BOOL parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                BOOL                        bValue
+                The updated BOOL value;
+
+    return:     TRUE if succeeded.
+
+**********************************************************************/
+
+BOOL
+TemperatureSensor_SetParamBoolValue
+
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL                        bValue
+    )
+{
+    PCOSA_TEMPERATURE_SENSOR_ENTRY          pTempSensorEntry = (PCOSA_TEMPERATURE_SENSOR_ENTRY)hInsContext;
+
+    /* check the parameter name and set the corresponding value */
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+        if (pTempSensorEntry->Enable != bValue)
+        {
+            CosaTemperatureSensorReset(bValue, pTempSensorEntry);
+            pTempSensorEntry->Enable = bValue;
+        }
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "Reset") == 0)
+    {
+        CosaTemperatureSensorReset(pTempSensorEntry->Enable, pTempSensorEntry);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        TemperatureSensor_SetParamIntValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                int                         bValue
+            );
+
+    description:
+
+        This function is called to set BOOL parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                int                        bValue
+                The updated int value;
+
+    return:     TRUE if succeeded.
+
+**********************************************************************/
+BOOL
+TemperatureSensor_SetParamIntValue
+
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        int                         bValue
+    )
+{
+    PCOSA_TEMPERATURE_SENSOR_ENTRY          pTempSensorEntry = (PCOSA_TEMPERATURE_SENSOR_ENTRY)hInsContext;
+
+    /* check the parameter name and set the corresponding value */
+    if (strcmp(ParamName, "LowAlarmValue") == 0)
+    {
+        CosaTemperatureSensorSetLowAlarm(bValue, pTempSensorEntry);
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "HighAlarmValue") == 0)
+    {
+        CosaTemperatureSensorSetHighAlarm(bValue, pTempSensorEntry);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        TemperatureSensor_SetParamUlongValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                ULONG                       uValue
+            );
+
+    description:
+
+        This function is called to set ULONG parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                ULONG                       uValue
+                The updated ULONG value;
+
+    return:     TRUE if succeeded.
+
+**********************************************************************/
+BOOL
+TemperatureSensor_SetParamUlongValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        ULONG                       uValue
+    )
+{
+    PCOSA_TEMPERATURE_SENSOR_ENTRY          pTempSensorEntry = (PCOSA_TEMPERATURE_SENSOR_ENTRY)hInsContext;
+
+    /* check the parameter name and set the corresponding value */
+    if (strcmp(ParamName, "PollingInterval") == 0)
+    {
+        if (pTempSensorEntry->PollingInterval != uValue)
+        {
+            CosaTemperatureSensorSetPollingTime(uValue, pTempSensorEntry);
+        }
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        TemperatureSensor_SetParamStringValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                char*                       pString
+            );
+
+    description:
+
+        This function is called to set string parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                char*                       pString
+                The updated string value;
+
+    return:     TRUE if succeeded.
+
+**********************************************************************/
+BOOL
+TemperatureSensor_SetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pString
+    )
+{
+    PCOSA_TEMPERATURE_SENSOR_ENTRY          PTempSensorEntry = (PCOSA_TEMPERATURE_SENSOR_ENTRY)hInsContext;
+
+    /* check the parameter name and set the corresponding value */
+    if (strcmp(ParamName, "Alias") == 0)
+    {
+        AnscCopyString(PTempSensorEntry->Alias, pString);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+
 /* HTTPS config download can be enabled/disabled for bci routers */
 /**********************************************************************
 
