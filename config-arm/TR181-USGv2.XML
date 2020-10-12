@@ -10201,7 +10201,7 @@
 
           <parameter>
 
-            <name>X_RDKCENTRAL_RuleSource</name>
+            <name>RuleSource</name>
 
             <type>string(32)</type>
 
