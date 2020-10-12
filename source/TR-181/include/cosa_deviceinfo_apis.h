@@ -346,6 +346,59 @@ typedef struct
 }
 COSA_HHT_PTR;
 
+#if defined(_LG_MV2_PLUS_) || defined(_LG_MV3_)
+#define MAX_TEMPSENSOR_INSTANCE 3
+#else
+#define MAX_TEMPSENSOR_INSTANCE 1
+#endif
+
+typedef  enum
+_COSA_DML_TEMPERATURE_SENSOR_STATUS
+{
+    COSA_DML_TEMPERATURE_SENSOR_STATUS_Enabled     = 1,
+    COSA_DML_TEMPERATURE_SENSOR_STATUS_Disabled,
+    COSA_DML_TEMPERATURE_SENSOR_STATUS_Error
+}
+COSA_DML_TEMPERATURE_SENSOR_STATUS, *PCOSA_DML_TEMPERATURE_SENSOR_STATUS;
+
+typedef  struct
+_COSA_TEMPERATURE_SENSOR_ENTRY
+{
+    char                                    Alias[64];
+    int                                     InstanceNumber;
+    COSA_DML_TEMPERATURE_SENSOR_STATUS      Status;
+    BOOL                                    Enable;
+    char                                    ResetTime[64];
+    char                                    Name[256];
+    int                                     Value;
+    char                                    LastUpdate[64];
+    int                                     MinValue;
+    char                                    MinTime[64];
+    int                                     MaxValue;
+    char                                    MaxTime[64];
+    int                                     LowAlarmValue;
+    char                                    LowAlarmTime[64];
+    int                                     HighAlarmValue;
+    unsigned long                           PollingInterval;
+    char                                    HighAlarmTime[64];
+    BOOL                                    CutOutTempExceeded;
+}
+COSA_TEMPERATURE_SENSOR_ENTRY, *PCOSA_TEMPERATURE_SENSOR_ENTRY;
+
+#define  COSA_DATAMODEL_TEMPERATURE_CLASS_CONTENT                                           \
+    /* duplication of the base object class content */                                      \
+    COSA_BASE_CONTENT                                                                       \
+    ULONG                                      TemperatureSensorNumberOfEntries;            \
+    COSA_TEMPERATURE_SENSOR_ENTRY              TemperatureSensorEntry[MAX_TEMPSENSOR_INSTANCE];
+
+typedef  struct
+_COSA_DATAMODEL_TEMPERATURE
+{
+    COSA_DATAMODEL_TEMPERATURE_CLASS_CONTENT
+    pthread_mutex_t rwLock[MAX_TEMPSENSOR_INSTANCE];
+}
+COSA_DATAMODEL_TEMPERATURE_STATUS, *PCOSA_DATAMODEL_TEMPERATURE_STATUS;
+
 /**********************************************************************
                 FUNCTION PROTOTYPES
 **********************************************************************/
@@ -379,6 +432,14 @@ ULONG COSADmlGetProcessNumberOfEntries();
 #endif
 ULONG COSADmlGetMemoryStatus(char * ParamName);
 ULONG COSADmlGetMaxWindowSize();
+
+void CosaTemperatureStartPolling (void);
+ANSC_HANDLE CosaTemperatureStatusCreate (void);
+void COSADmlRemoveTemperatureInfo (PCOSA_DATAMODEL_TEMPERATURE_STATUS pObj);
+ANSC_STATUS CosaTemperatureSensorSetLowAlarm (int lowAlarmValue, PCOSA_TEMPERATURE_SENSOR_ENTRY pTempSensor);
+ANSC_STATUS CosaTemperatureSensorSetHighAlarm (int highAlarmValue, PCOSA_TEMPERATURE_SENSOR_ENTRY pTempSensor);
+void CosaTemperatureSensorSetPollingTime (ULONG pollingInterval, PCOSA_TEMPERATURE_SENSOR_ENTRY pTempSensor);
+void CosaTemperatureSensorReset (BOOL isEnable, PCOSA_TEMPERATURE_SENSOR_ENTRY pTempSensor);
 
 ANSC_STATUS
 CosaDmlDiInit
