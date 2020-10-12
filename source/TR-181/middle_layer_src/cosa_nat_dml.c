@@ -2179,6 +2179,25 @@ PortMapping_GetParamStringValue
         }
     }
 
+    if (strcmp(ParamName, "X_RDKCENTRAL_RuleSource") == 0)
+    {
+        if ( AnscSizeOfString(pNatPMapping->X_RDKCENTRAL_RuleSource) < *pUlSize)
+        {
+            rc = strcpy_s(pValue, *pUlSize, pNatPMapping->X_RDKCENTRAL_RuleSource);
+            if (rc != EOK)
+            {
+                ERR_CHK(rc);
+                return -1;
+            }
+            return 0;
+        }
+        else
+        {
+            *pUlSize = AnscSizeOfString(pNatPMapping->X_RDKCENTRAL_RuleSource)+1;
+            return 1;
+        }
+    }
+
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return -1;
 }
@@ -2531,6 +2550,17 @@ PortMapping_SetParamStringValue
     {
         /* save update to backup */
         rc = STRCPY_S_NOCLOBBER( pNatPMapping->X_CISCO_COM_InternalClientV6, sizeof(pNatPMapping->X_CISCO_COM_InternalClientV6), pString );
+        if (rc != EOK)
+        {
+            ERR_CHK(rc);
+            return FALSE;
+        }
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "X_RDKCENTRAL_RuleSource") == 0)
+    {
+        rc = STRCPY_S_NOCLOBBER( pNatPMapping->X_RDKCENTRAL_RuleSource, sizeof(pNatPMapping->X_RDKCENTRAL_RuleSource), pString );
         if (rc != EOK)
         {
             ERR_CHK(rc);
