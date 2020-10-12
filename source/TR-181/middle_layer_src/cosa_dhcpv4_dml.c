@@ -10793,11 +10793,6 @@ LanAllowedSubnetTable_DelEntry
     PCOSA_CONTEXT_LINK_OBJECT    pLinkObj           = (PCOSA_CONTEXT_LINK_OBJECT)hInstance;
     COSA_DML_LAN_Allowed_Subnet  *pLanAllowedSubnet = (COSA_DML_LAN_Allowed_Subnet*)pLinkObj->hContext;
 
-    if (CosaDmlLAN_Allowed_Subnet_DelEntry(pLinkObj->InstanceNumber) != ANSC_STATUS_SUCCESS)
-    {
-        return -1;
-    }
-
     AnscSListPopEntryByLink((PSLIST_HEADER)&pMyObject->LanAllowedSubnetList, &pLinkObj->Linkage);
 
     if (pLinkObj->bNew)
