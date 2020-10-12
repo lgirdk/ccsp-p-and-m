@@ -4774,6 +4774,254 @@
 
         <object>
 
+            <name>TemperatureStatus</name>
+
+            <objectType>object</objectType>
+
+            <parameters>
+
+                <parameter>
+
+                    <name>TemperatureSensorNumberOfEntries</name>
+
+                    <type>unsignedInt</type>
+
+                    <syntax>uint32</syntax>
+
+                </parameter>
+
+            </parameters>
+
+            <objects>
+
+                <object>
+
+                    <name>TemperatureSensor</name>
+
+                    <objectType>staticTable</objectType>
+
+                    <maxInstance>2</maxInstance>
+
+                    <functions>
+
+                        <func_GetEntryCount>TemperatureSensor_GetEntryCount</func_GetEntryCount>
+
+                        <func_GetEntry>TemperatureSensor_GetEntry</func_GetEntry>
+
+                        <func_GetParamBoolValue>TemperatureSensor_GetParamBoolValue</func_GetParamBoolValue>
+
+                        <func_GetParamIntValue>TemperatureSensor_GetParamIntValue</func_GetParamIntValue>
+
+                        <func_GetParamUlongValue>TemperatureSensor_GetParamUlongValue</func_GetParamUlongValue>
+
+                        <func_GetParamStringValue>TemperatureSensor_GetParamStringValue</func_GetParamStringValue>
+
+                        <func_SetParamBoolValue>TemperatureSensor_SetParamBoolValue</func_SetParamBoolValue>
+
+                        <func_SetParamIntValue>TemperatureSensor_SetParamIntValue</func_SetParamIntValue>
+
+                        <func_SetParamUlongValue>TemperatureSensor_SetParamUlongValue</func_SetParamUlongValue>
+
+                        <func_SetParamStringValue>TemperatureSensor_SetParamStringValue</func_SetParamStringValue>
+
+                    </functions>
+
+                    <parameters>
+
+                        <parameter>
+
+                            <name>Alias</name>
+
+                            <type>string(64)</type>
+
+                            <syntax>string</syntax>
+
+                            <writable>true</writable>
+
+                        </parameter>
+
+                        <parameter>
+
+                            <name>Enable</name>
+
+                            <type>boolean</type>
+
+                            <syntax>bool</syntax>
+
+                            <writable>true</writable>
+
+                        </parameter>
+
+                        <parameter>
+
+                            <name>Status</name>
+
+                            <type>string: Enabled(1),Disabled(2),Error(3)</type>
+
+                            <syntax>uint32/mapped</syntax>
+
+                        </parameter>
+
+                        <parameter>
+
+                            <name>Reset</name>
+
+                            <type>boolean</type>
+
+                            <syntax>bool</syntax>
+
+                            <writable>true</writable>
+
+                        </parameter>
+
+                        <parameter>
+
+                            <name>ResetTime</name>
+
+                            <type>dateTime</type>
+
+                            <syntax>string</syntax>
+
+                            <notify>off</notify>
+
+                        </parameter>
+
+                        <parameter>
+
+                            <name>Name</name>
+
+                            <type>string(256)</type>
+
+                            <syntax>string</syntax>
+
+                        </parameter>
+
+                        <parameter>
+
+                            <name>Value</name>
+
+                            <type>int[-274:]</type>
+
+                            <syntax>int</syntax>
+
+                        </parameter>
+
+                        <parameter>
+
+                            <name>LastUpdate</name>
+
+                            <type>dateTime</type>
+
+                            <syntax>string</syntax>
+
+                        </parameter>
+
+                        <parameter>
+
+                            <name>MinValue</name>
+
+                            <type>int[-274:]</type>
+
+                            <syntax>int</syntax>
+
+                        </parameter>
+
+                        <parameter>
+
+                            <name>MinTime</name>
+
+                            <type>dateTime</type>
+
+                            <syntax>string</syntax>
+
+                        </parameter>
+
+                        <parameter>
+
+                            <name>MaxValue</name>
+
+                            <type>int[-274:]</type>
+
+                            <syntax>int</syntax>
+
+                        </parameter>
+
+                        <parameter>
+
+                            <name>MaxTime</name>
+
+                            <type>dateTime</type>
+
+                            <syntax>string</syntax>
+
+                        </parameter>
+
+                        <parameter>
+
+                            <name>LowAlarmValue</name>
+
+                            <type>int[-274:]</type>
+
+                            <syntax>int</syntax>
+
+                            <writable>true</writable>
+
+                        </parameter>
+
+                        <parameter>
+
+                            <name>LowAlarmTime</name>
+
+                            <type>dateTime</type>
+
+                            <syntax>string</syntax>
+
+                        </parameter>
+
+                        <parameter>
+
+                            <name>HighAlarmValue</name>
+
+                            <type>int[-274:]</type>
+
+                            <syntax>int</syntax>
+
+                            <writable>true</writable>
+
+                        </parameter>
+
+                        <parameter>
+
+                            <name>PollingInterval</name>
+
+                            <type>unsignedInt</type>
+
+                            <syntax>uint32</syntax>
+
+                            <writable>true</writable>
+
+                        </parameter>
+
+                        <parameter>
+
+                            <name>HighAlarmTime</name>
+
+                            <type>dateTime</type>
+
+                            <syntax>string</syntax>
+
+                        </parameter>
+
+                    </parameters>
+
+                </object>
+
+            </objects>
+
+        </object>
+
+        <object>
+
           <name>NetworkProperties</name>
 
           <objectType>object</objectType>
