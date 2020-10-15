@@ -4279,9 +4279,11 @@ Pool1_AddEntry
     PCOSA_CONTEXT_POOLV6_LINK_OBJECT  pCxtLink          = NULL;
     PCOSA_DML_DHCPSV6_POOL_FULL       pPool             = NULL;
     CHAR                              tmpBuff[64]       = {0};
+#if 0
 #ifndef MULTILAN_FEATURE
         /* We just have one Pool. Not permit to add/delete. */
         return NULL;
+#endif
 #endif
 #if defined _COSA_DRG_CNS_  || defined _COSA_DRG_TPG_
     return NULL;
@@ -4372,9 +4374,11 @@ Pool1_DelEntry
     PCOSA_DATAMODEL_DHCPV6            pDhcpv6           = (PCOSA_DATAMODEL_DHCPV6)g_pCosaBEManager->hDhcpv6;
     PCOSA_CONTEXT_POOLV6_LINK_OBJECT  pCxtLink          = (PCOSA_CONTEXT_POOLV6_LINK_OBJECT)hInstance;
     PCOSA_DML_DHCPSV6_POOL_FULL       pPool             = (PCOSA_DML_DHCPSV6_POOL_FULL)pCxtLink->hContext;
+#if 0
 #ifndef MULTILAN_FEATURE
 	/* We just have one Pool. Not permit to add/delete. */
 	return ANSC_STATUS_FAILURE;
+#endif
 #endif
 #if defined _COSA_DRG_CNS_  || defined _COSA_DRG_TPG_
     return ANSC_STATUS_FAILURE;
