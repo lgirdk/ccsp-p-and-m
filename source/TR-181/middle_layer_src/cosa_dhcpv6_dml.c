@@ -4179,9 +4179,11 @@ Pool1_AddEntry
     PCOSA_CONTEXT_POOLV6_LINK_OBJECT  pCxtLink          = NULL;
     PCOSA_DML_DHCPSV6_POOL_FULL       pPool             = NULL;
     errno_t                           rc                = -1;
+#if 0
 #ifndef MULTILAN_FEATURE
         /* We just have one Pool. Not permit to add/delete. */
         return NULL;
+#endif
 #endif
     
     pPool  = (PCOSA_DML_DHCPSV6_POOL_FULL)AnscAllocateMemory( sizeof(COSA_DML_DHCPSV6_POOL_FULL) );
@@ -4278,9 +4280,11 @@ Pool1_DelEntry
 
     UNREFERENCED_PARAMETER(hInsContext);
 
+#if 0
 #ifndef MULTILAN_FEATURE
 	/* We just have one Pool. Not permit to add/delete. */
 	return ANSC_STATUS_FAILURE;
+#endif
 #endif
 
     /* Normally, two sublinks are empty because our framework will firstly 
