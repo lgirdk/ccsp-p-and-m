@@ -200,6 +200,11 @@ BOOL GreTunnel_GetParamUlongValue ( ANSC_HANDLE hInsContext, char* ParamName, UL
         *pUlong = pGreTu->KeepAlivePolicy;
         return TRUE;
     }
+    if (strcmp(ParamName, "GreTransportInterface") == 0)
+    {
+        *pUlong = pGreTu->GreTransportInterface;
+        return TRUE;
+    }
     if (strcmp(ParamName, "RemoteEndpointHealthCheckPingInterval") == 0)
     {
         *pUlong = pGreTu->RemoteEndpointHealthCheckPingInterval;
@@ -418,6 +423,15 @@ BOOL GreTunnel_SetParamUlongValue ( ANSC_HANDLE  hInsContext, char* ParamName, U
     {
         pGreTu->KeepAlivePolicy = uValue;
         pGreTu->ChangeFlag |= GRETU_CF_KEEPPOL;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "GreTransportInterface") == 0)
+    {
+        if (pGreTu->GreTransportInterface == uValue)
+            return TRUE;
+
+        pGreTu->GreTransportInterface = uValue;
+        pGreTu->ChangeFlag |= GRETU_CF_GREINTERFACE;
         return TRUE;
     }
     if (strcmp(ParamName, "RemoteEndpointHealthCheckPingInterval") == 0)
@@ -642,6 +656,11 @@ ULONG GreTunnel_Commit ( ANSC_HANDLE hInsContext ) {
         if (CosaDml_GreTunnelSetDSCPMarkPolicy(ins, pGreTu->DSCPMarkPolicy) != ANSC_STATUS_SUCCESS)
             goto rollback;
     }
+    if (pGreTu->ChangeFlag & GRETU_CF_GREINTERFACE)
+    {
+        if (CosaDml_GreTunnelSetGreTransportInterface(ins, pGreTu->GreTransportInterface) != ANSC_STATUS_SUCCESS)
+            goto rollback;
+    }
     
     if (pGreTu->ChangeFlag & GRETU_CF_KEEPPOL)
     {
@@ -761,6 +780,8 @@ ULONG GreTunnel_Rollback( ANSC_HANDLE hInsContext) {
         return ANSC_STATUS_FAILURE;
     if (CosaDml_GreTunnelGetDSCPMarkPolicy(ins, &pGreTu->DSCPMarkPolicy) != ANSC_STATUS_SUCCESS)
         return ANSC_STATUS_FAILURE;		
+    if (CosaDml_GreTunnelGetGreTransportInterface(ins, &pGreTu->GreTransportInterface) != ANSC_STATUS_SUCCESS)
+        return ANSC_STATUS_FAILURE;
     if (CosaDml_GreTunnelGetKeepAlivePolicy(ins, &pGreTu->KeepAlivePolicy) != ANSC_STATUS_SUCCESS)
         return ANSC_STATUS_FAILURE;
     if (CosaDml_GreTunnelGetKeepAliveInterval(ins, &pGreTu->RemoteEndpointHealthCheckPingInterval) != ANSC_STATUS_SUCCESS)
