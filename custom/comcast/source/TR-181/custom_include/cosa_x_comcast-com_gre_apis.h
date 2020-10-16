@@ -106,6 +106,7 @@ _COSA_DML_GRE_TUNNEL_CHANGE_FLAG
     GRETU_CF_DHCPCIRID      = 0x01<<15,
     GRETU_CF_DHCPRMID       = 0x01<<16,
     GRETU_CF_GRETU          = 0x01<<19,
+    GRETU_CF_GREINTERFACE   = 0x01<<20,
 }
 COSA_DML_GRE_TUNNEL_CHANGE_FLAG;
 
@@ -157,6 +158,7 @@ _COSA_DML_GRE_TUNNEL
     BOOL                        UseChecksum;
     
 	INT                         DSCPMarkPolicy;
+	INT                         GreTransportInterface;
 	
     COSA_DML_KEEPALIVE_POLICY   KeepAlivePolicy;
 	ULONG                       RemoteEndpointHealthCheckPingInterval;
