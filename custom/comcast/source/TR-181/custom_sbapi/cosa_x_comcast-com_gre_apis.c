@@ -98,6 +98,7 @@ printf a;            \
 #define GRETU_PARAM_USESEQ        	GRE_OBJ_GRETU "%lu.UseSeqNum"
 #define GRETU_PARAM_USECSUM       	GRE_OBJ_GRETU "%lu.UseCheckSum"
 #define GRETU_PARAM_DSCPPOL 	    GRE_OBJ_GRETU "%lu.DSCPMarkPolicy"
+#define GRETU_PARAM_GRETRANSPORTINTERFACE GRE_OBJ_GRETU "%d.GreTransportInterface"
 #define GRETU_PARAM_KAPOL 	    	GRE_OBJ_GRETU "%lu.KeepAlivePolicy"
 #define GRETU_PARAM_KAITVL 	    	GRE_OBJ_GRETU "%lu.RemoteEndpointHealthCheckPingInterval"		
 #define GRETU_PARAM_KATHRE	    	GRE_OBJ_GRETU "%lu.RemoteEndpointHealthCheckPingFailThreshold"		
@@ -557,6 +558,8 @@ CosaDml_GreTunnelGetEntryByIndex(ULONG ins, COSA_DML_GRE_TUNNEL *greTu)
     if (GrePsmGetBool(GRETU_PARAM_USECSUM, ins, &greTu->UseChecksum) != 0)
         return ANSC_STATUS_FAILURE;
     if (GrePsmGetInt(GRETU_PARAM_DSCPPOL, ins, &greTu->DSCPMarkPolicy) != 0)
+        return ANSC_STATUS_FAILURE;
+    if (GrePsmGetInt(GRETU_PARAM_GRETRANSPORTINTERFACE, ins, &greTu->GreTransportInterface) != 0)
         return ANSC_STATUS_FAILURE;
     if (GrePsmGetInt(GRETU_PARAM_KAPOL, ins, (int *)&greTu->KeepAlivePolicy) != 0)
         return ANSC_STATUS_FAILURE;
@@ -1382,6 +1385,35 @@ CosaDml_GreTunnelGetDSCPMarkPolicy(ULONG tuIns, INT *dscp)
     return ANSC_STATUS_SUCCESS;
 }
 
+ANSC_STATUS
+CosaDml_GreTunnelGetGreTransportInterface(ULONG tuIns, INT *ifId)
+{
+    if (!ifId)
+        return ANSC_STATUS_FAILURE;
+
+    if (GrePsmGetInt(GRETU_PARAM_GRETRANSPORTINTERFACE, tuIns, ifId) != 0)
+        return ANSC_STATUS_FAILURE;
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaDml_GreTunnelSetGreTransportInterface(ULONG tuIns, INT ifId)
+{
+    char psmRec[MAX_GRE_PSM_REC + 1];
+    char psmVal[16];
+
+    if (tuIns != 1)
+        return ANSC_STATUS_FAILURE;
+
+    /* save to PSM */
+    snprintf(psmRec, sizeof(psmRec), GRETU_PARAM_GRETRANSPORTINTERFACE, tuIns);
+    snprintf(psmVal, sizeof(psmVal), "%d", ifId);
+    if (GrePsmSet(psmRec, psmVal) != 0)
+        return ANSC_STATUS_FAILURE;
+
+    return ANSC_STATUS_SUCCESS;
+}
 
 ANSC_STATUS
 CosaDml_GreTunnelSetDSCPMarkPolicy(ULONG tuIns, INT dscp)
@@ -1909,6 +1941,7 @@ ANSC_STATUS CosaDml_GreTunnelHotspotReset(COSA_DML_GRE_TUNNEL *pGreTu)
 
 	/*Set the default values to paramaeters*/
 	pGreTu->DSCPMarkPolicy=44;
+	pGreTu->GreTransportInterface=0;
 	rc = STRCPY_S_NOCLOBBER(pGreTu->PrimaryRemoteEndpoint, sizeof(pGreTu->PrimaryRemoteEndpoint), "0.0.0.0");
 	ERR_CHK(rc);
 	rc = STRCPY_S_NOCLOBBER(pGreTu->SecondaryRemoteEndpoint, sizeof(pGreTu->SecondaryRemoteEndpoint), "0.0.0.0");
