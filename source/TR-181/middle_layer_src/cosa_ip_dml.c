@@ -2189,14 +2189,7 @@ IPv4Address_AddEntry
     PCOSA_CONTEXT_LINK_OBJECT       pSubCosaContext  = (PCOSA_CONTEXT_LINK_OBJECT)NULL;
     PCOSA_DML_IP_V4ADDR             pIPv4Addr        = (PCOSA_DML_IP_V4ADDR)NULL;
     errno_t                         rc               = -1;
-#ifndef MULTILAN_FEATURE
-#ifndef _COSA_SIM_
-    if (!CosaIpifGetSetSupported("ipv4addr_addentry"))
-    {
-        return NULL;
-    }
-#endif
-#endif
+
     pIPv4Addr = (PCOSA_DML_IP_V4ADDR)AnscAllocateMemory(sizeof(COSA_DML_IP_V4ADDR));
 
     if ( !pIPv4Addr )
@@ -2295,14 +2288,7 @@ IPv4Address_DelEntry
     PCOSA_DML_IP_IF_FULL2           pIPInterface    = (PCOSA_DML_IP_IF_FULL2)pCosaContext->hContext;
     PCOSA_CONTEXT_LINK_OBJECT       pSubCosaContext = (PCOSA_CONTEXT_LINK_OBJECT)hInstance;
     PCOSA_DML_IP_V4ADDR             pIPv4Addr       = (PCOSA_DML_IP_V4ADDR)pSubCosaContext->hContext;
-#ifndef MULTILAN_FEATURE
-#ifndef _COSA_SIM_
-    if (!CosaIpifGetSetSupported("ipv4addr_delentry"))
-    {
-        return ANSC_STATUS_FAILURE;
-    }
-#endif
-#endif
+
     CosaDmlIpIfDelV4Addr(pMyObject->hSbContext, pIPInterface->Cfg.InstanceNumber, pIPv4Addr);
 
     AnscSListPopEntryByLink((PSLIST_HEADER)&pIPInterface->IPV4List, &pSubCosaContext->Linkage);
