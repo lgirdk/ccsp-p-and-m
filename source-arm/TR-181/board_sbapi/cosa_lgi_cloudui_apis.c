@@ -34,3 +34,21 @@ ULONG CosaDmlSetDhcpLanChangeHide ( ANSC_HANDLE hContext, BOOL bValue )
 
     return ANSC_STATUS_SUCCESS;
 }
+
+ANSC_STATUS CosaDmlGetSmartWifiSectionHide ( ANSC_HANDLE hContext, BOOL *pBool )
+{
+    char buf[8];
+
+    syscfg_get(NULL, "smart_wifi_hide", buf, sizeof(buf));
+
+    *pBool = (atoi(buf) == 0) ? 0 : 1;
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ULONG CosaDmlSetSmartWifiSectionHide ( ANSC_HANDLE hContext, BOOL bValue )
+{
+    syscfg_set_commit(NULL, "smart_wifi_hide", bValue ? "1" : "0");
+
+    return ANSC_STATUS_SUCCESS;
+}
