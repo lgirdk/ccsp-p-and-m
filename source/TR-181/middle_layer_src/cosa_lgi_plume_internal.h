@@ -14,45 +14,54 @@
  * limitations under the License.
  **********************************************************************/
 
-#ifndef  _COSA_LGI_CLOUDUI_INTERNAL_H
-#define  _COSA_LGI_CLOUDUI_INTERNAL_H
+#ifndef  _COSA_LGI_PLUME_INTERNAL_H
+#define  _COSA_LGI_PLUME_INTERNAL_H
 
 #include "cosa_apis.h"
 #include "plugin_main_apis.h"
 
-#define  COSA_DATAMODEL_LGI_CLOUDUI_CLASS_CONTENT      \
+#define  COSA_DATAMODEL_LGI_PLUME_CLASS_CONTENT      \
     /* duplication of the base object class content */ \
     COSA_BASE_CONTENT                                  \
 
+#define URL_LEN 128
+
 typedef  struct
-_COSA_DATAMODEL_LGI_CLOUDUI_CLASS_CONTENT
+_COSA_DATAMODEL_LGI_PLUME_CLASS_CONTENT
 {
-    COSA_DATAMODEL_LGI_CLOUDUI_CLASS_CONTENT
+    COSA_DATAMODEL_LGI_PLUME_CLASS_CONTENT
     /* start of LGI CloudUi object class content */
-    BOOL hideDhcpLanChange;
-    BOOL hideSmartWifi;
+    BOOL plumeAdminStatus;
+    BOOL plumeOperationalStatus;
+    char plumeUrl[URL_LEN];
+    BOOL plumeDFSEnable;
+    BOOL plumeNativeAtmBsControl;
+    BOOL bNeedPlumeServiceRestart;
+    BOOL bPlumeUrlChanged;
+    BOOL bPlumeNativeAtmBsControlChanged;
 }
-COSA_DATAMODEL_LGI_CLOUDUI, *PCOSA_DATAMODEL_LGI_CLOUDUI;
+COSA_DATAMODEL_LGI_PLUME, *PCOSA_DATAMODEL_LGI_PLUME;
 
 /*
     Standard function declaration
 */
 ANSC_HANDLE
-CosaLgiCloudUiCreate
+CosaLgiPlumeCreate
     (
         VOID
     );
 
 ANSC_STATUS
-CosaLgiCloudUiInitialize
+CosaLgiPlumeInitialize
     (
         ANSC_HANDLE                 hThisObject
     );
 
 ANSC_STATUS
-CosaLgiCloudUiRemove
+CosaLgiPlumeRemove
     (
         ANSC_HANDLE                 hThisObject
     );
 
 #endif
+
