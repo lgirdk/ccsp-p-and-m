@@ -14,8 +14,8 @@
  * limitations under the License.
  **********************************************************************/
 
-#ifndef  _COSA_LGI_CLOUDUI_APIS_H
-#define  _COSA_LGI_CLOUDUI_APIS_H
+#ifndef  _COSA_LGI_PLUME_APIS_H
+#define  _COSA_LGI_PLUME_APIS_H
 
 #include "../middle_layer_src/cosa_apis.h"
 
@@ -23,30 +23,69 @@
                 FUNCTION PROTOTYPES
 **********************************************************************/
 ANSC_STATUS
-CosaDmlGetDhcpLanChangeHide
+CosaDmlGetPlumeUrl
 (
     ANSC_HANDLE                 hContext,
-    BOOL                        *pBool
+    char                        *pValue,
+    ULONG                       *pUlSize
 );
 
 ULONG
-CosaDmlSetDhcpLanChangeHide
+CosaDmlSetPlumeUrl
 (
     ANSC_HANDLE                 hContext,
-    BOOL                        bValue
+    char                        *pValue
 );
 
-ANSC_STATUS
-CosaDmlGetSmartWifiSectionHide
+BOOL
+CosaDmlGetPlumeAdminStatus
 (
     ANSC_HANDLE                 hContext,
-    BOOL                        *pBool
+    BOOL                        *pValue
 );
 
-ULONG
-CosaDmlSetSmartWifiSectionHide
+BOOL
+CosaDmlSetPlumeAdminStatus
 (
     ANSC_HANDLE                 hContext,
-    BOOL                        bValue
+    BOOL                        value
+);
+
+BOOL
+CosaDmlGetPlumeOperationalStatus
+(
+    ANSC_HANDLE                 hContext,
+    BOOL                        *pValue
+);
+
+BOOL
+CosaDmlSetPlumeOperationalStatus
+(
+    ANSC_HANDLE                 hContext,
+    BOOL                        value
+);
+BOOL
+CosaDmlGetPlumeDFSEnable
+(
+    ANSC_HANDLE                 hContext,
+    BOOL                        *pValue
+);
+BOOL
+CosaDmlSetPlumeDFSEnable
+(
+    ANSC_HANDLE                 hContext,
+    BOOL                        value
+);
+BOOL
+CosaDmlGetPlumeNativeAtmBsControl
+(
+    ANSC_HANDLE                 hContext,
+    BOOL                        *pValue
+);
+BOOL
+CosaDmlSetPlumeNativeAtmBsControl
+(
+    ANSC_HANDLE                 hContext,
+    BOOL                        value
 );
 #endif
