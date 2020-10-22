@@ -372,6 +372,8 @@ CosaBackEndManagerInitialize
 #endif
     pMyObject->hLgiCloudUi = (ANSC_HANDLE)CosaLgiCloudUiCreate();
     AnscTraceWarning(("  CosaLgiCloudUiCreate done !\n"));
+    pMyObject->hLgiPlume = (ANSC_HANDLE)CosaLgiPlumeCreate();
+    AnscTraceWarning(("  CosaArrisPlumeCreate done !\n"));
     pMyObject->hLgiGeneral = (ANSC_HANDLE)CosaLgiGeneralCreate();
     AnscTraceWarning(("  CosaLgiGeneralCreate done !\n"));
     pMyObject->hNeighdisc     = (ANSC_HANDLE)CosaNeighdiscCreate();
@@ -777,6 +779,11 @@ CosaBackEndManagerRemove
         CosaLgiWoLRemove((ANSC_HANDLE)pMyObject->hLgiWoL);
     }
     //LGI ADD END
+
+    if (pMyObject->hLgiPlume)
+    {
+        CosaLgiPlumeRemove((ANSC_HANDLE)pMyObject->hLgiPlume);
+    }
 
     /* Remove self */
     AnscFreeMemory((ANSC_HANDLE)pMyObject);

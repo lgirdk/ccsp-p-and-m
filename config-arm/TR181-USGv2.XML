@@ -516,6 +516,15 @@
                 <syntax>bool</syntax>
                 <writable>true</writable>
             </parameter>
+            <parameter>
+                <name>HideSmartWifiSection</name>
+                <description>
+                    To hide the Smart Wi-Fi section on Wireless Signal page if set to True.
+                </description>
+                <type>boolean</type>
+                <syntax>bool</syntax>
+                <writable>true</writable>
+            </parameter>
           </parameters>
     </object>
     <object>
@@ -745,6 +754,63 @@
             </object>
           </objects>
 
+    </object>
+
+    <object>
+        <name>X_LGI-COM_SON</name>
+        <objectType>object</objectType>
+        <functions>
+            <func_GetParamBoolValue>LgiPlume_GetParamBoolValue</func_GetParamBoolValue>
+            <func_SetParamBoolValue>LgiPlume_SetParamBoolValue</func_SetParamBoolValue>
+            <func_GetParamStringValue>LgiPlume_GetParamStringValue</func_GetParamStringValue>
+            <func_SetParamStringValue>LgiPlume_SetParamStringValue</func_SetParamStringValue>
+            <func_Validate>LgiPlume_Validate</func_Validate>
+            <func_Commit>LgiPlume_Commit</func_Commit>
+            <func_Rollback>LgiPlume_Rollback</func_Rollback>
+        </functions>
+        <parameters>
+            <parameter>
+                <name>SONAdminStatus</name>
+                <description>PLUME Control SON Admin Status Data Model</description>
+                <type>boolean</type>
+                <syntax>bool</syntax>
+                <writable>true</writable>
+            </parameter>
+            <parameter>
+                <name>SONOperationalStatus</name>
+                <description>PLUME Control SON Operational Status Data Model</description>
+                <type>boolean</type>
+                <syntax>bool</syntax>
+                <writable>true</writable>
+            </parameter>
+            <parameter>
+                <name>SONURL</name>
+                <description>
+                    TR181 object to set Plume Cloud URL. Syntax follow this example: ssl:hostname:port.
+                    Example would be “ssl:cuillin.plumenet.io:443”.
+                </description>
+                <type>string(128)</type>
+                <syntax>string</syntax>
+                <writable>true</writable>
+            </parameter>
+            <parameter>
+                <name>SONDFSEnable</name>
+                <description>PLUME Control SON DFS Enable Data Model</description>
+                <type>boolean</type>
+                <syntax>bool</syntax>
+                <writable>true</writable>
+            </parameter>
+            <parameter>
+                <name>NativeAtmBsControl</name>
+                <description>
+                    When set to False(0), ONLY Plume level 1 (Channel Optimisation) is active on the device or the Plume agent is completely disabled.
+                    When set to True(1), levels 2 and/or 3 are also active. This is a control object and is not being actively reported by the CPE.
+                </description>
+                <type>boolean</type>
+                <syntax>bool</syntax>
+                <writable>true</writable>
+            </parameter>
+        </parameters>
     </object>
 
     <object>

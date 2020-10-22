@@ -14,8 +14,10 @@
  * limitations under the License.
  **********************************************************************/
 
-#include "cosa_lgi_cloudui_internal.h"
-#include "cosa_lgi_cloudui_apis.h"
+#include "cosa_lgi_plume_internal.h"
+#include "cosa_lgi_plume_apis.h"
+
+//#define URL_LEN 256
 
 /**********************************************************************
 
@@ -24,32 +26,32 @@
     prototype:
 
         ANSC_HANDLE
-        CosaLgiCloudUiCreate
+        CosaLgiPlumeCreate
             (
             );
 
     description:
 
-        This function constructs cosa LgiCloudUi object and return handle.
+        This function constructs cosaLgiPlume object and return handle.
 
     argument:
 
-    return:     newly created LgiCloudUi object.
+    return:     newly created LgiPlume object.
 
 **********************************************************************/
 
 ANSC_HANDLE
-CosaLgiCloudUiCreate
+CosaLgiPlumeCreate
     (
         VOID
     )
 {
-    PCOSA_DATAMODEL_LGI_CLOUDUI  pMyObject    = (PCOSA_DATAMODEL_LGI_CLOUDUI)NULL;
+    PCOSA_DATAMODEL_LGI_PLUME  pMyObject    = (PCOSA_DATAMODEL_LGI_PLUME)NULL;
 
     /*
      * We create object by first allocating memory for holding the variables and member functions.
      */
-    pMyObject = (PCOSA_DATAMODEL_LGI_CLOUDUI)AnscAllocateMemory(sizeof(COSA_DATAMODEL_LGI_CLOUDUI));
+    pMyObject = (PCOSA_DATAMODEL_LGI_PLUME)AnscAllocateMemory(sizeof(COSA_DATAMODEL_LGI_PLUME));
 
     if ( !pMyObject )
     {
@@ -59,10 +61,10 @@ CosaLgiCloudUiCreate
     /*
      * Initialize the common variables and functions for a container object.
      */
-    pMyObject->Oid               = COSA_DATAMODEL_LGI_CLOUDUI_OID;
-    pMyObject->Create            = CosaLgiCloudUiCreate;
-    pMyObject->Remove            = CosaLgiCloudUiRemove;
-    pMyObject->Initialize        = CosaLgiCloudUiInitialize;
+    pMyObject->Oid               = COSA_DATAMODEL_LGI_PLUME_OID;
+    pMyObject->Create            = CosaLgiPlumeCreate;
+    pMyObject->Remove            = CosaLgiPlumeRemove;
+    pMyObject->Initialize        = CosaLgiPlumeInitialize;
 
     pMyObject->Initialize   ((ANSC_HANDLE)pMyObject);
 
@@ -76,14 +78,14 @@ CosaLgiCloudUiCreate
     prototype:
 
         ANSC_STATUS
-        CosaLgiCloudUiInitialize
+        CosaLgiPlumeInitialize
             (
                 ANSC_HANDLE                 hThisObject
             );
 
     description:
 
-        This function initiate  cosa LgiCloudUi object and return handle.
+        This function initiate  cosa LgiPlume object and return handle.
 
     argument:   ANSC_HANDLE                 hThisObject
             This handle is actually the pointer of this object
@@ -94,17 +96,24 @@ CosaLgiCloudUiCreate
 **********************************************************************/
 
 ANSC_STATUS
-CosaLgiCloudUiInitialize
+CosaLgiPlumeInitialize
     (
         ANSC_HANDLE                 hThisObject
     )
 {
-    ANSC_STATUS                        returnStatus = ANSC_STATUS_SUCCESS;
-    PCOSA_DATAMODEL_LGI_CLOUDUI        pMyObject    = (PCOSA_DATAMODEL_LGI_CLOUDUI)hThisObject;
+    ANSC_STATUS                     returnStatus = ANSC_STATUS_SUCCESS;
+    PCOSA_DATAMODEL_LGI_PLUME       pMyObject    = (PCOSA_DATAMODEL_LGI_PLUME)hThisObject;
+    ULONG ulSize = URL_LEN;
 
     /* Initiation all functions */
-    CosaDmlGetDhcpLanChangeHide(NULL, &pMyObject->hideDhcpLanChange);
-    CosaDmlGetSmartWifiSectionHide(NULL, &pMyObject->hideSmartWifi);
+    CosaDmlGetPlumeUrl(NULL, pMyObject->plumeUrl, &ulSize);
+    CosaDmlGetPlumeAdminStatus(NULL, &pMyObject->plumeAdminStatus);
+    CosaDmlGetPlumeOperationalStatus(NULL, &pMyObject->plumeOperationalStatus);
+    CosaDmlGetPlumeDFSEnable(NULL, &pMyObject->plumeDFSEnable);
+    CosaDmlGetPlumeNativeAtmBsControl(NULL, &pMyObject->plumeNativeAtmBsControl);
+    pMyObject->bNeedPlumeServiceRestart = 0;
+    pMyObject->bPlumeUrlChanged = 0;
+    pMyObject->bPlumeNativeAtmBsControlChanged = 0;
 
     return returnStatus;
 }
@@ -116,14 +125,12 @@ CosaLgiCloudUiInitialize
     prototype:
 
         ANSC_STATUS
-        CosaLgiCloudUiRemove
+        CosaLgiPlumeRemove
             (
                 ANSC_HANDLE                 hThisObject
             );
 
     description:
-
-        This function initiate  cosa LgiCloudUi object and return handle.
 
     argument:   ANSC_HANDLE                 hThisObject
             This handle is actually the pointer of this object
@@ -134,13 +141,13 @@ CosaLgiCloudUiInitialize
 **********************************************************************/
 
 ANSC_STATUS
-CosaLgiCloudUiRemove
+CosaLgiPlumeRemove
     (
         ANSC_HANDLE                 hThisObject
     )
 {
-    ANSC_STATUS                        returnStatus = ANSC_STATUS_SUCCESS;
-    PCOSA_DATAMODEL_LGI_CLOUDUI        pMyObject    = (PCOSA_DATAMODEL_LGI_CLOUDUI)hThisObject;
+    ANSC_STATUS                     returnStatus = ANSC_STATUS_SUCCESS;
+    PCOSA_DATAMODEL_LGI_PLUME       pMyObject    = (PCOSA_DATAMODEL_LGI_PLUME)hThisObject;
 
     /* Remove necessary resources */
 
@@ -149,3 +156,4 @@ CosaLgiCloudUiRemove
 
     return returnStatus;
 }
+
