@@ -46,6 +46,11 @@ LgiCloudUi_GetParamBoolValue
         CosaDmlGetDhcpLanChangeHide(NULL, pBool);
         return TRUE;
     }
+    if (strcmp(ParamName, "HideSmartWifiSection") == 0)
+    {
+        CosaDmlGetSmartWifiSectionHide(NULL, pBool);
+        return TRUE;
+    }
 
     return FALSE;
 }
@@ -64,6 +69,11 @@ LgiCloudUi_SetParamBoolValue
     if (strcmp(ParamName, "HideCustomerDhcpLanChange") == 0)
     {
         pMyObject->hideDhcpLanChange = bValue;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "HideSmartWifiSection") == 0)
+    {
+        pMyObject->hideSmartWifi = bValue;
         return TRUE;
     }
 
@@ -90,6 +100,7 @@ LgiCloudUi_Commit
 {
     PCOSA_DATAMODEL_LGI_CLOUDUI  pMyObject = (PCOSA_DATAMODEL_LGI_CLOUDUI)g_pCosaBEManager->hLgiCloudUi;
     CosaDmlSetDhcpLanChangeHide(NULL, pMyObject->hideDhcpLanChange);
+    CosaDmlSetSmartWifiSectionHide(NULL, pMyObject->hideSmartWifi);
     return 0;
 }
 
@@ -101,6 +112,7 @@ LgiCloudUi_Rollback
 {
     PCOSA_DATAMODEL_LGI_CLOUDUI  pMyObject = (PCOSA_DATAMODEL_LGI_CLOUDUI)g_pCosaBEManager->hLgiCloudUi;
     CosaDmlGetDhcpLanChangeHide(NULL, &pMyObject->hideDhcpLanChange);
+    CosaDmlGetSmartWifiSectionHide(NULL, &pMyObject->hideSmartWifi);
     return 0;
 }
 
