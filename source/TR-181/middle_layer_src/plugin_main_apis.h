@@ -173,6 +173,7 @@ extern COSARegisterCallBackAfterInitDmlProc  g_RegisterCallBackAfterInitDml;
 #define COSA_DATAMODEL_MAC_FILTER_OID                          123 /* LGI ADD */
 #define COSA_DATAMODEL_LGI_GATEWAY_OID                         127 /* LGI ADD */
 #define COSA_DATAMODEL_LGI_CLOUDUI_OID                         130
+#define COSA_DATAMODEL_LGI_PLUME_OID                           132
 #define COSA_DATAMODEL_LGI_WOL_OID                             134 /* LGI ADD */
 #define COSA_DATAMODEL_LGI_GENERAL_OID                         140
 
@@ -228,6 +229,7 @@ extern COSARegisterCallBackAfterInitDmlProc  g_RegisterCallBackAfterInitDml;
     ANSC_HANDLE                  hLgiGeneral;                    /* LGI ADD */              \
     ANSC_HANDLE                  hLanMngm;                                                  \
     ANSC_HANDLE                  hLgiCloudUi;                                           \
+    ANSC_HANDLE                  hLgiPlume;                                             \
     ANSC_HANDLE                  hXpc;                                                    \
     ANSC_HANDLE                  hOnboardLogging;                                                    \
     ANSC_HANDLE                  hLgiWoL;                        /* LGI ADD             */  \

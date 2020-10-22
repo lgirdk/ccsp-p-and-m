@@ -26,4 +26,7 @@
 ANSC_STATUS CosaDmlGetDhcpLanChangeHide ( ANSC_HANDLE hContext, BOOL *pBool );
 ULONG CosaDmlSetDhcpLanChangeHide ( ANSC_HANDLE hContext, BOOL bValue );
 
+ANSC_STATUS CosaDmlGetSmartWifiSectionHide ( ANSC_HANDLE hContext, BOOL *pBool );
+ULONG CosaDmlSetSmartWifiSectionHide ( ANSC_HANDLE hContext, BOOL bValue );
+
 #endif
