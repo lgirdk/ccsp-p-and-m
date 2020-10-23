@@ -21,6 +21,7 @@ extern ULONG CosaDmlDhcpv6sGetType(ANSC_HANDLE hContext);
 extern ANSC_STATUS CosaDmlDhcpv6sSetType(ANSC_HANDLE hContext, ULONG type);
 extern int CosaDmlDHCPv6sTriggerRestart(BOOL OnlyTrigger);
 static const char *UPDATE_RESOLV_CMD = "/bin/sh /etc/utopia/service.d/set_resolv_conf.sh";
+#define CUSTOM_DATA_MODEL_ENABLED "custom_data_model_enabled"
 
 /* Static func */
 static ANSC_STATUS getIPv6PreferredLifetime(char * fn, int * p_prefer, ipv6_addr_info_t * p_addr);
@@ -548,3 +549,34 @@ CosaDml_Gateway_GetIPv6Router
     }
     return ANSC_STATUS_SUCCESS;
 }
+
+ULONG
+CosaDmlGiGetCustomDataModelEnabled
+    (
+        ANSC_HANDLE                 hContext,
+        BOOL                        *pValue
+    )
+{
+    char buf[16];
+
+    syscfg_get (NULL, CUSTOM_DATA_MODEL_ENABLED, buf, sizeof(buf));
+
+    *pValue = (strcmp(buf, "1") == 0);
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ULONG
+CosaDmlGiSetCustomDataModelEnabled
+    (
+        ANSC_HANDLE                 hContext,
+        BOOL                        bValue
+    )
+{
+    syscfg_set (NULL, CUSTOM_DATA_MODEL_ENABLED, bValue ? "1" : "0");
+
+    system ("killall CcspTr069PaSsp ; cd /usr/ccsp/tr069pa ; /usr/bin/CcspTr069PaSsp -subsys eRT. &");
+
+    return ANSC_STATUS_SUCCESS;
+}
+

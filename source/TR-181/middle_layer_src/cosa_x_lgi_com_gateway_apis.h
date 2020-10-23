@@ -105,4 +105,19 @@ ANSC_STATUS CosaDml_Gateway_GetIPv6Router
         char*                       pValue,
         ULONG*                      pulSize
     );
+
+ULONG
+CosaDmlGiGetCustomDataModelEnabled
+(
+    ANSC_HANDLE                 hContext,
+    BOOL                        *pValue
+);
+
+ULONG
+CosaDmlGiSetCustomDataModelEnabled
+(
+    ANSC_HANDLE                 hContext,
+    BOOL                        bValue
+);
+
 #endif
