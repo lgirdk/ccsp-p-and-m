@@ -2156,6 +2156,7 @@ int _Check_PF_parameter(PCOSA_DML_NAT_PMAPPING pPortMapping)
 	{
 		CcspTraceWarning(("Wrong Port Mapping parameter internal Port %d ~ %d\n", \
 		pPortMapping->InternalPort, pPortMapping->X_RDKCENTRAL_InternalPortEndRange));
+		return FALSE;
         }
 
 	if( pPortMapping->InternalClient.Value != 0 )
