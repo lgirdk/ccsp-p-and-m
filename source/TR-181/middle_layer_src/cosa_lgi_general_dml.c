@@ -119,6 +119,11 @@ LgiGeneral_GetParamBoolValue
         CosaDmlGiGetTroubleshootWizardEnable(NULL, pBool);
         return TRUE;
     }
+    if (AnscEqualString(ParamName, "CustomDataModelEnabled", TRUE))
+    {
+	CosaDmlGiGetCustomDataModelEnabled(NULL, pBool);
+	return TRUE;
+    }
     // LGI ADD END
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
@@ -313,6 +318,11 @@ LgiGeneral_SetParamBoolValue
         pMyObject->TroubleshootWizardEnable = bValue;
         return TRUE;
     }
+    if( AnscEqualString(ParamName, "CustomDataModelEnabled", TRUE))
+    {
+	pMyObject->CustomDataModelEnabled = bValue;
+	return TRUE;
+    }
     return FALSE;
 }
 
@@ -407,6 +417,7 @@ LgiGeneral_Commit
     CosaDmlGiSetWebsiteHelpURL(NULL, pMyObject->WebsiteHelpURL);
     CosaDmlGiSetFirstInstallState(NULL, pMyObject->FirstInstallState);
     CosaDmlGiSetTroubleshootWizardEnable(NULL, pMyObject->TroubleshootWizardEnable);
+    CosaDmlGiSetCustomDataModelEnabled(NULL, pMyObject->CustomDataModelEnabled);
     CosaDmlGiSetCustomerId(NULL, pMyObject->CustomerId);
     CosaDmlGiSaveSettings();
     return 0;
