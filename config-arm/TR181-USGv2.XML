@@ -626,6 +626,14 @@
                 <writable>true</writable>
 
             </parameter>
+            <parameter>
+               <name>CustomDataModelEnabled</name>
+               <description>Parameter to control the Custom Data model </description>
+               <type>boolean</type>
+               <syntax>bool</syntax>
+               <writable>true</writable>
+            </parameter>
+
          </parameters>
          <objects>
             <object>
