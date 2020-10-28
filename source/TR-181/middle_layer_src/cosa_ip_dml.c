@@ -1703,7 +1703,8 @@ Interface2_SetParamStringValue
         }
         else
         {
-            ULONG                           ulIndex;
+            size_t                          len;
+            int                             index;
             CHAR                            ucEntryParamName[256];
             CHAR                            ucEntryNameValue[256]       = {0};
             ULONG                           ulEntryNameLen;
@@ -1718,7 +1719,9 @@ Interface2_SetParamStringValue
                     pString
                 ));
 
-            if ( _ansc_strlen(pString) == 0 )
+            len = strlen(pString);
+
+            if ( len == 0 )
             {
                 pIPInterface->Cfg.LinkType    = COSA_DML_LINK_TYPE_LAST;
                 pIPInterface->Cfg.LinkInstNum = 0;
@@ -1729,25 +1732,28 @@ Interface2_SetParamStringValue
                 pIPInterface->Cfg.LinkType = CosaUtilGetLinkTypeFromPath(pString);
 
                 /* Normalize the LowerLayer string -- remove the '.' at the end */
-                if ( pString[_ansc_strlen(pString) - 1] == '.' )
+                /* Warning: this modifies the string passed in by the caller */
+                if ( pString[len - 1] == '.' )
                 {
-                    pString[_ansc_strlen(pString) - 1] = '\0';   
+                    pString[len - 1] = '\0';   
+                    len--;
                 }
 
                 /* Extract Instance Number */
-                ulIndex = _ansc_strlen(pString) - 1;
-                while ( (ulIndex != 0) && (pString[ulIndex -1] != '.') )
+                index = len - 1;
+                while ( (index > 0) && (pString[index - 1] != '.') )
                 {
-                    ulIndex--;
+                    index--;
                 }
 
-                if ( ulIndex == 0 )
+                if ( index <= 0 )
                 {
+                    /* Parse error (no '.' found before the instance number) */
                     pIPInterface->Cfg.LinkInstNum = 0;
                 }
                 else
                 {
-                    pIPInterface->Cfg.LinkInstNum = (ULONG)AnscString2Int(&pString[ulIndex]);
+                    pIPInterface->Cfg.LinkInstNum = (ULONG)AnscString2Int(&pString[index]);
                 }
 
                 /* Retrieve LinkName */
