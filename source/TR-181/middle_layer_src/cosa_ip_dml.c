@@ -1796,11 +1796,7 @@ Interface2_SetParamStringValue
 
                 /* Extract Instance Number */
                 ulIndex = _ansc_strlen(pString) - 1;
-#if defined (MULTILAN_FEATURE)
                 while ( (ulIndex != 0) && (pString[ulIndex -1] != '.') )
-#else
-		while ( (ulIndex != 0) && (pString[ulIndex] != '.') )
-#endif
                 {
                     ulIndex--;
                 }
