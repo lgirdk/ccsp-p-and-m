@@ -629,6 +629,24 @@
                 <writable>true</writable>
 
             </parameter>
+            <parameter>
+                <name>MaxLoginAttempts</name>
+                <type>unsignedInt[3:100]</type>
+                <syntax>uint32</syntax>
+                <writable>true</writable>
+            </parameter>
+            <parameter>
+                <name>LockoutPeriod</name>
+                <type>unsignedInt[1:1440]</type>
+                <syntax>uint32</syntax>
+                <writable>true</writable>
+            </parameter>
+            <parameter>
+                <name>MaxLockoutPeriods</name>
+                <type>unsignedInt[10:30]</type>
+                <syntax>uint32</syntax>
+                <writable>true</writable>
+            </parameter>
          </parameters>
          <objects>
             <object>
