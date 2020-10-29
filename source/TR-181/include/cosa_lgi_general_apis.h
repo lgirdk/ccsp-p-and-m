@@ -139,4 +139,20 @@ CosaDmlGiSetCurrentLanguage
     char                        *pValue
 );
 
+ANSC_STATUS
+CosaDmlGiGetLoginSecurity
+(
+    ANSC_HANDLE                 hContext,
+    ULONG                       *pValue,
+    char                        *lValue
+);
+
+ULONG
+CosaDmlGiSetLoginSecurity
+(
+    ANSC_HANDLE                 hContext,
+    ULONG                       data,
+    char                        *lValue
+);
+
 #endif
