@@ -39,6 +39,9 @@ _COSA_DATAMODEL_LGI_GENERAL_CLASS_CONTENT
     char                            DataModelVersion[32];
     BOOL                            FirstInstallWizardEnable;
     BOOL                            CustomDataModelEnabled;
+    ULONG                           max_failed_login_attempts;
+    ULONG                           lockout_period;
+    ULONG                           max_lockout_periods;
 }
 COSA_DATAMODEL_LGI_GENERAL, *PCOSA_DATAMODEL_LGI_GENERAL;
 
