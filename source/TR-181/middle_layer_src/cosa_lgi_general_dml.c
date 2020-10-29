@@ -174,7 +174,21 @@ LgiGeneral_GetParamUlongValue
         CosaDmlGiGetCustomerId(NULL, puLong);
         return TRUE;
     }
-    
+    else if( AnscEqualString(ParamName, "MaxLoginAttempts", TRUE))
+    {
+        CosaDmlGiGetLoginSecurity(NULL, puLong, "max_failed_login_attempts");
+        return TRUE;
+    }
+    else if( AnscEqualString(ParamName, "LockoutPeriod", TRUE))
+    {
+        CosaDmlGiGetLoginSecurity(NULL, puLong, "lockout_period");
+        return TRUE;
+    }
+    else if( AnscEqualString(ParamName, "MaxLockoutPeriods", TRUE))
+    {
+        CosaDmlGiGetLoginSecurity(NULL, puLong, "max_lockout_periods");
+        return TRUE;
+    }
     return FALSE;
 }
 /**********************************************************************
@@ -341,6 +355,21 @@ LgiGeneral_SetParamUlongValue
         pMyObject->CustomerId = uValuepUlong;
         return TRUE;
     }
+    else if( AnscEqualString(ParamName, "MaxLoginAttempts", TRUE))
+    {
+        pMyObject->max_failed_login_attempts = uValuepUlong;
+        return TRUE;
+    }
+    else if( AnscEqualString(ParamName, "LockoutPeriod", TRUE))
+    {
+        pMyObject->lockout_period = uValuepUlong;
+        return TRUE;
+    }
+    else if( AnscEqualString(ParamName, "MaxLockoutPeriods", TRUE))
+    {
+        pMyObject->max_lockout_periods = uValuepUlong;
+        return TRUE;
+    }
     return FALSE;
 }
 BOOL
@@ -419,6 +448,9 @@ LgiGeneral_Commit
     CosaDmlGiSetTroubleshootWizardEnable(NULL, pMyObject->TroubleshootWizardEnable);
     CosaDmlGiSetCustomDataModelEnabled(NULL, pMyObject->CustomDataModelEnabled);
     CosaDmlGiSetCustomerId(NULL, pMyObject->CustomerId);
+    CosaDmlGiSetLoginSecurity(NULL, pMyObject->max_failed_login_attempts, "max_failed_login_attempts");
+    CosaDmlGiSetLoginSecurity(NULL, pMyObject->lockout_period, "lockout_period");
+    CosaDmlGiSetLoginSecurity(NULL, pMyObject->max_lockout_periods, "max_lockout_periods");
     CosaDmlGiSaveSettings();
     return 0;
 }
