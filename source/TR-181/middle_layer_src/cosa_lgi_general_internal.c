@@ -118,6 +118,10 @@ CosaLgiGeneralInitialize
 
     CosaDmlGiGetCurrentLanguage(NULL, pMyObject->CurrentLanguage, sizeof(pMyObject->CurrentLanguage));
 
+    CosaDmlGiGetLoginSecurity(NULL, &pMyObject->max_failed_login_attempts, "max_failed_login_attempts");
+    CosaDmlGiGetLoginSecurity(NULL, &pMyObject->lockout_period, "lockout_period");
+    CosaDmlGiGetLoginSecurity(NULL, &pMyObject->max_lockout_periods, "max_lockout_periods");
+
     /*Initializing the DataModelVersion with default value 1.01.01.
     Further implementation of this parameter is still under design discussion*/
     AnscCopyString(pMyObject->DataModelVersion, "1.01.01");

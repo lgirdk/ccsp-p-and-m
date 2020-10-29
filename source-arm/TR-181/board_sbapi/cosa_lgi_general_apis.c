@@ -255,3 +255,42 @@ CosaDmlGiSetCurrentLanguage
 
     return ANSC_STATUS_SUCCESS;
 }
+
+ANSC_STATUS
+CosaDmlGiGetLoginSecurity
+    (
+        ANSC_HANDLE                 hContext,
+        ULONG                       *pValue,
+        char                        *lValue
+    )
+{
+    char buf[12];
+
+    syscfg_get (NULL, lValue, buf, sizeof(buf));
+
+    if (strlen(buf) > 0)
+    {
+        *pValue = (ULONG)atoi(buf);
+    }
+
+    *pValue = 0;
+
+    return ANSC_STATUS_FAILURE;
+}
+
+ULONG
+CosaDmlGiSetLoginSecurity
+    (
+        ANSC_HANDLE                 hContext,
+        ULONG                       data,
+        char                        *lValue
+    )
+{
+    char value[32];
+
+    snprintf (value, sizeof(value), "%lu", data);
+
+    syscfg_set (NULL, lValue, value);
+
+    return ANSC_STATUS_SUCCESS;
+}
