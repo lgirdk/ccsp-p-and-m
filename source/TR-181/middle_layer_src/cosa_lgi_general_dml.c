@@ -296,6 +296,18 @@ LgiGeneral_GetParamStringValue
           return 1;
         }
     }
+    if (strcmp(ParamName, "WebUISkin") == 0)
+    {
+        if (AnscSizeOfString(pMyObject->WebUISkin) < *pulSize){
+          AnscCopyString(pValue, pMyObject->WebUISkin);
+          return 0;
+        }
+        else
+        {
+          *pulSize = AnscSizeOfString(pMyObject->WebUISkin);
+          return 1;
+        }
+    }
     // LGI ADD END
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return -1;
@@ -405,6 +417,18 @@ LgiGeneral_SetParamStringValue
         AnscCopyString(pMyObject->WebsiteHelpURL, strValue);
         return TRUE;
     }
+    if (strcmp(ParamName, "WebUISkin") == 0)
+    {
+        if( AnscSizeOfString(strValue) < sizeof(pMyObject->WebUISkin))
+        {
+            AnscCopyString(pMyObject->WebUISkin, strValue);
+            return TRUE;
+        }
+        else
+        {
+            return FALSE;
+        }
+    }
     return FALSE;
 }
 
@@ -436,6 +460,7 @@ LgiGeneral_Commit
     CosaDmlGiSetWebsiteHelpURL(NULL, pMyObject->WebsiteHelpURL);
     CosaDmlGiSetFirstInstallState(NULL, pMyObject->FirstInstallState);
     CosaDmlGiSetTroubleshootWizardEnable(NULL, pMyObject->TroubleshootWizardEnable);
+    CosaDmlGiSetWebUISkin(NULL, pMyObject->WebUISkin);
     CosaDmlGiSetCustomerId(NULL, pMyObject->CustomerId);
     CosaDmlGiSetLoginSecurity(NULL, pMyObject->max_failed_login_attempts, "max_failed_login_attempts");
     CosaDmlGiSetLoginSecurity(NULL, pMyObject->lockout_period, "lockout_period");
