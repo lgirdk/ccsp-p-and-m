@@ -38,6 +38,7 @@ _COSA_DATAMODEL_LGI_GENERAL_CLASS_CONTENT
     BOOL                            TroubleshootWizardEnable;
     char                            DataModelVersion[32];
     BOOL                            FirstInstallWizardEnable;
+    char                            WebUISkin[16];
     ULONG                           max_failed_login_attempts;
     ULONG                           lockout_period;
     ULONG                           max_lockout_periods;
