@@ -171,7 +171,7 @@ CosaUsersInitialize
     errno_t safec_rc = -1;
     int res;
     
-    #if defined(_HUB4_PRODUCT_REQ_) || defined(_PLATFORM_RASPBERRYPI_) || defined(_PLATFORM_TURRIS_)
+    #if defined(_HUB4_PRODUCT_REQ_) || defined(_PLATFORM_RASPBERRYPI_) || defined(_PLATFORM_TURRIS_) || 1
         //No need to remove any hardcoded passwords
     #else
         /* Remove hardcoded passwords*/
