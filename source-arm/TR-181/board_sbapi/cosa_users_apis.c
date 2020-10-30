@@ -652,7 +652,7 @@ user_validatepwd
 
    if(fromDB[0] == '\0')
    {
-     #if defined(_HUB4_PRODUCT_REQ_) || defined(INTEL_PUMA7) && defined(_XB7_PRODUCT_REQ_) || defined(_PLATFORM_RASPBERRYPI_)
+     #if defined(_HUB4_PRODUCT_REQ_) || defined(INTEL_PUMA7) && defined(_XB7_PRODUCT_REQ_) || defined(_PLATFORM_RASPBERRYPI_) || 1
          user_hashandsavepwd(hContext,pEntry->Password,pEntry);
      #else
          FILE *ptr;
@@ -835,7 +835,7 @@ CosaDmlUserResetPassword
    
    if(!strcmp(pEntry->Username,"admin"))
    {
-     #if defined(_HUB4_PRODUCT_REQ_) || defined(INTEL_PUMA7) && defined(_XB7_PRODUCT_REQ_) || defined(_PLATFORM_RASPBERRYPI_)
+     #if defined(_HUB4_PRODUCT_REQ_) || defined(INTEL_PUMA7) && defined(_XB7_PRODUCT_REQ_) || defined(_PLATFORM_RASPBERRYPI_) || 1
          //TODO: Avoid the hardcoded password . This change will be done as part of CMXB7-1766
          strcpy(defPassword,"password");
      #else
