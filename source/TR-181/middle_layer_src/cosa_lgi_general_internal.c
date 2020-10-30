@@ -103,6 +103,10 @@ CosaLgiGeneralInitialize
 
     /* Initiation all functions */
 
+    ULONG size_webuiskin = sizeof(pMyObject->WebUISkin);
+    memset(pMyObject->WebUISkin, 0, size_webuiskin);
+    CosaDmlGiGetWebUISkin(NULL, pMyObject->WebUISkin, &size_webuiskin);
+
     pMyObject->CustomerId = 0; //FIXME: Assign the right value 
 
     CosaDmlGiGetFirstInstallWizardEnable(NULL, &pMyObject->FirstInstallWizardEnable);

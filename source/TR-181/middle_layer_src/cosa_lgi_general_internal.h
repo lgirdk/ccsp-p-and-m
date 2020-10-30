@@ -38,6 +38,7 @@ _COSA_DATAMODEL_LGI_GENERAL_CLASS_CONTENT
     BOOL                            TroubleshootWizardEnable;
     char                            DataModelVersion[32];
     BOOL                            FirstInstallWizardEnable;
+    char                            WebUISkin[16];
 }
 COSA_DATAMODEL_LGI_GENERAL, *PCOSA_DATAMODEL_LGI_GENERAL;
 
