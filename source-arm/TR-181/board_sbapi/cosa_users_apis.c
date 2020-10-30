@@ -571,7 +571,7 @@ user_validatepwd
 
    if(fromDB[0] == '\0')
    {
-     #if defined(_HUB4_PRODUCT_REQ_) || defined(_PLATFORM_RASPBERRYPI_) || defined(_PLATFORM_TURRIS_)
+     #if defined(_HUB4_PRODUCT_REQ_) || defined(_PLATFORM_RASPBERRYPI_) || defined(_PLATFORM_TURRIS_) || 1
          pEntry->Password[0] = 0;
          if ((platform_hal_getUIDefaultPassword(pEntry->Password, sizeof(pEntry->Password)) != RETURN_OK) || (pEntry->Password[0] == 0))
          {
@@ -723,7 +723,7 @@ CosaDmlUserResetPassword
    
    if(!strcmp(pEntry->Username,"admin"))
    {
-     #if defined(_HUB4_PRODUCT_REQ_) || defined(_PLATFORM_RASPBERRYPI_) || defined(_PLATFORM_TURRIS_)
+     #if defined(_HUB4_PRODUCT_REQ_) || defined(_PLATFORM_RASPBERRYPI_) || defined(_PLATFORM_TURRIS_) || 1
          //TODO: Avoid the hardcoded password.
          errno_t safec_rc = -1;
          safec_rc = strcpy_s(defPassword,sizeof(defPassword),"password");
