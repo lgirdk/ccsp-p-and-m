@@ -562,7 +562,17 @@
                 <writable>false</writable>
 
             </parameter>
+            <parameter>
 
+                <name>WebUISkin</name>
+
+                <type>string</type>
+
+                <syntax>string</syntax>
+
+                <writable>true</writable>
+
+            </parameter>
             <parameter>
 
                 <name>LanHostname</name>
