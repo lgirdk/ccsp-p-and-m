@@ -117,6 +117,21 @@ CosaDmlGiGetCurrentLanguage
 );
 
 ULONG
+CosaDmlGiGetWebUISkin
+(
+    ANSC_HANDLE                 hContext,
+    char                        *pValue,
+    ULONG                       *pUlSize
+);
+
+ULONG
+CosaDmlGiSetWebUISkin
+(
+    ANSC_HANDLE                 hContext,
+    char                        *pValue
+);
+
+ULONG
 CosaDmlGiGetLanHostname
 (
     ANSC_HANDLE                 hContext,
