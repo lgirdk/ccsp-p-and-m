@@ -256,6 +256,47 @@ CosaDmlGiSetCurrentLanguage
     return ANSC_STATUS_SUCCESS;
 }
 
+ULONG
+CosaDmlGiGetWebUISkin
+    (
+        ANSC_HANDLE                 hContext,
+        char                        *pValue,
+        ULONG                       *pUlSize
+    )
+{
+    char buf[16];
+    memset(buf, 0, sizeof(buf));
+    if(syscfg_init() == 0)
+    {
+        syscfg_get( NULL, "Web_UI_Skin", buf, sizeof(buf));
+        if(AnscSizeOfString(buf) < *pUlSize)
+        {
+            AnscCopyString(pValue, buf);
+            return 0;
+        }
+        else
+        {
+            *pUlSize = AnscSizeOfString(buf);
+            return 1;
+        }
+    }
+    return -1;
+}
+
+ULONG
+CosaDmlGiSetWebUISkin
+    (
+        ANSC_HANDLE                 hContext,
+        char                        *pValue
+    )
+{
+    if(syscfg_init() == 0)
+    {
+        syscfg_set(NULL, "Web_UI_Skin", pValue);
+    }
+    return ANSC_STATUS_SUCCESS;
+}
+
 ANSC_STATUS
 CosaDmlGiGetLoginSecurity
     (
