@@ -38,7 +38,7 @@
 #define RDKB_ETHAGENT_COMPONENT_NAME                  "com.cisco.spvtg.ccsp.ethagent"
 #define RDKB_ETHAGENT_DBUS_PATH                       "/com/cisco/spvtg/ccsp/ethagent"
 
-pthread_mutex_t device_mac_mutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t device_mac_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 typedef struct _notify_params
 {
