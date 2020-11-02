@@ -37,13 +37,14 @@
 #include "dml_tr181_custom_cfg.h"
 #include "ccsp_trace.h"
 
-BOOL videoServiceEnable = FALSE;
-BOOL videoServiceEnableInProgress = FALSE;
-pthread_mutex_t     g_videoservice_mutex = PTHREAD_MUTEX_INITIALIZER;
+static BOOL videoServiceEnable = FALSE;
+static BOOL videoServiceEnableInProgress = FALSE;
+static pthread_mutex_t g_videoservice_mutex = PTHREAD_MUTEX_INITIALIZER;
+
 extern void* g_pDslhDmlAgent;
 extern ANSC_HANDLE bus_handle;
 
-void SetVideoServiceConfig();
+static void *SetVideoServiceConfig(void *arg);
 
 BOOL
 VideoService_GetParamBoolValue
@@ -110,6 +111,7 @@ VideoService_SetParamBoolValue
                 if (pthread_create(&videoServiceThread, NULL, &SetVideoServiceConfig, NULL))
                 {
                     CcspTraceError(("RDK_LOG_ERROR, CcspPandM %s : Failed to Start Thread to start SetVideoServiceConfig  \n", __FUNCTION__ ));
+                    pthread_mutex_unlock(&g_videoservice_mutex);
                     return FALSE;
                 }
 
@@ -144,7 +146,7 @@ VideoService_SetParamBoolValue
 
 }
 
-void SetVideoServiceConfig()
+static void *SetVideoServiceConfig(void *arg)
 {
     int ret = ANSC_STATUS_SUCCESS;
     BOOL isBridgeMode = FALSE;
@@ -164,7 +166,7 @@ void SetVideoServiceConfig()
         videoServiceEnableInProgress = FALSE;   
         pthread_mutex_unlock(&g_videoservice_mutex);
         AnscTraceError(("[%s] VideoService : Fail to get Firewall Level \n", __FUNCTION__));
-        return;
+        return NULL;
     } 
 
     if(!strcmp(FirewallLevel, "High"))
@@ -176,7 +178,7 @@ void SetVideoServiceConfig()
             videoServiceEnableInProgress = FALSE;   
             pthread_mutex_unlock(&g_videoservice_mutex);
             AnscTraceError(("[%s] VideoService : Fail to set Firewall Level to Medium\n", __FUNCTION__));
-            return;
+            return NULL;
         }
         else
         {
@@ -196,7 +198,7 @@ void SetVideoServiceConfig()
                 videoServiceEnableInProgress = FALSE;   
                 pthread_mutex_unlock(&g_videoservice_mutex);
                 AnscTraceError(("[%s] VideoService : Fail to set Disable Bridge Mode \n", __FUNCTION__));
-                return;
+                return NULL;
             }
             else
             {
@@ -210,7 +212,7 @@ void SetVideoServiceConfig()
         videoServiceEnableInProgress = FALSE;   
         pthread_mutex_unlock(&g_videoservice_mutex);
         AnscTraceError(("[%s] VideoService : Fail to query bridge mode \n", __FUNCTION__));
-        return;
+        return NULL;
     }
 
 
@@ -250,7 +252,7 @@ void SetVideoServiceConfig()
                 videoServiceEnableInProgress = FALSE;   
                 pthread_mutex_unlock(&g_videoservice_mutex);
                 CcspTraceError(("RDK_LOG_ERROR,  [%s] VideoService MoCA Enable FAILED: Failed ret %d\n",__FUNCTION__,ret1));
-                return;
+                return NULL;
             }
             else
             {
@@ -262,6 +264,8 @@ void SetVideoServiceConfig()
     pthread_mutex_lock(&g_videoservice_mutex);
     videoServiceEnableInProgress = FALSE;                          
     pthread_mutex_unlock(&g_videoservice_mutex);
+
+    return NULL;
 }
 
 
