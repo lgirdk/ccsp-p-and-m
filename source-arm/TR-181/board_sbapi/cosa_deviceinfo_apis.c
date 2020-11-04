@@ -731,40 +731,45 @@ CosaDmlDiGetProvisioningCode
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if 0
     UtopiaContext ctx;
-    int rc = -1;
-    char temp[64];
-    errno_t rc = -1;
+
+    /*
+       Utopia_Get_Prov_Code() expects a buffer of NAME_SZ bytes, so verify that
+       the buffer being passed to this function is big enough before passing it
+       on. Note that whether *pulSize is the size of the string or the size of
+       the buffer is not well defined... so for now be cautious and assume it's
+       the size of the buffer (ie max length of the string should be one less).
+    */
+    if (*pulSize <= NAME_SZ)
+        return ANSC_STATUS_FAILURE;
 
     if (!Utopia_Init(&ctx))
         return ERR_UTCTX_INIT;
 
-    rc = Utopia_Get_Prov_Code(&ctx,temp);
+    pValue[0] = 0;
+    Utopia_Get_Prov_Code(&ctx, pValue);
+    Utopia_Free(&ctx, 0);
 
-    Utopia_Free(&ctx,0);
-    AnscCopyString(pValue,temp);
-    *pulSize = AnscSizeOfString(pValue);
-#endif
-
-// Provisioning Code sent to ACS is Serial Number of the device
-#ifdef _COSA_DRG_TPG_
-    plat_GetFlashValue("unitsn", unitsn);
-    rc = sprintf_s(pValue, *pulSize, "%c%c%c%c%c%c%c",unitsn[0],unitsn[1],unitsn[2],unitsn[3],unitsn[4],unitsn[5],unitsn[6]);
-    if(rc < EOK)
+    /*
+       If Utopia_Get_Prov_Code() returns a non-empty string then use it. If it
+       returns an empty string (which will be the default if no provisioning
+       code has been set via SPV to Device.DeviceInfo.ProvisioningCode) then
+       use the serial number as a fallback.
+    */
+    if (pValue[0] != 0)
     {
-        ERR_CHK(rc);
+        /* Use string returned by Utopia_Get_Prov_Code() */
+    }
+    else if (platform_hal_GetSerialNumber(pValue) == RETURN_OK)
+    {
+        /* Use string returned by platform_hal_GetSerialNumber() */
+    }
+    else
+    {
         return ANSC_STATUS_FAILURE;
     }
-#elif (_COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_)
 
-    UNREFERENCED_PARAMETER (pulSize);
-    if (platform_hal_GetSerialNumber(pValue) != RETURN_OK )
-        return ANSC_STATUS_FAILURE;
-#else
-    UNREFERENCED_PARAMETER (pulSize);
-#endif
-    return ANSC_STATUS_SUCCESS; 
+    return ANSC_STATUS_SUCCESS;
 }
 
 ANSC_STATUS
