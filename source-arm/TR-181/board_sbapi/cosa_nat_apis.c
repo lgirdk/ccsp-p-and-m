@@ -2537,11 +2537,8 @@ CosaDmlNatGetPortMapping
     int                    PortFwdDynCount = 0;
     ULONG                  rc;
     errno_t                safec_rc = -1;
-/*  portMapDyn_t           dynInfo ={0};
-    ANSC_IPV4_ADDRESS      nat_lan;  
-    COSA_DML_NAT_PMAPPING  tmp ={0};
-    lanSetting_t           lan;
-    ULONG                  ulIndex = 0;*/
+//  ANSC_IPV4_ADDRESS      nat_lan;
+//  lanSetting_t           lan;
 
     if (pNatPMapping == NULL)
     {
@@ -2636,15 +2633,14 @@ CosaDmlNatGetPortMapping
         PortFwdDynCount = 0;
         CcspTraceWarning(("Utopia_GetDynPortMappingCount failed rc %d in %s\n", rc, __FUNCTION__));
     }
-     else
-     {
-        CcspTraceWarning(("DynPortMappingCount is %d, we are not adding entry to TR-181/database since these are dynamic entries %s\n", PortFwdDynCount, __FUNCTION__));
-     }
 
-#if 0
-    errno_t safec_rc = -1;
     if ( PortFwdDynCount != 0 )
     {
+        portMapDyn_t dynInfo = { 0 };
+        COSA_DML_NAT_PMAPPING tmp = { 0 };
+        ULONG ulIndex = 0;
+        int i;
+
         for (i = 0; i < PortFwdDynCount; i++, ulIndex++)
         {
             rc = Utopia_GetDynPortMapping(i + 1, &dynInfo);
@@ -2710,7 +2706,6 @@ CosaDmlNatGetPortMapping
             }
         }
     }
-#endif
     Utopia_Free(&Ctx, 0);
     return ANSC_STATUS_FAILURE;
 }
@@ -2749,7 +2744,7 @@ CosaDmlNatGetPortMappings
     PCOSA_DML_NAT_PMAPPING pNatPMapping = NULL;
     portFwdSingle_t         *singleInfo = NULL;
     portFwdRange_t           *rangeInfo = NULL;
-//    portMapDyn_t                dynInfo;
+    portMapDyn_t                dynInfo;
 //    lanSetting_t                    lan;
     ULONG                       ulIndex = 0;
     int            PortFwdSingleCount = 0;
@@ -2818,12 +2813,8 @@ CosaDmlNatGetPortMappings
         PortFwdDynCount = 0;
         CcspTraceWarning(("Utopia_GetDynPortMappingCount failed rc %d in %s\n", rc, __FUNCTION__));
     }
-     else
-     {
-        CcspTraceWarning(("DynPortMappingCount is %d, we are not adding entry to TR-181/database since these are dynamic entries %s\n", PortFwdDynCount, __FUNCTION__));
-     }
 
-    allCount = PortFwdSingleCount + PortFwdRangeCount ;
+    allCount = PortFwdSingleCount + PortFwdRangeCount + PortFwdDynCount;
     if (allCount == 0)
     {
         Utopia_Free(&Ctx, 0);
@@ -2836,14 +2827,12 @@ CosaDmlNatGetPortMappings
         return NULL;
     }
 
-// Commenting out DynCount as we are not going to show dynamic rules added as part of PartMapping table in TR-181
-#if 0
     if ( g_NatPortFwdDynInstanceNum )
     {
         AnscFreeMemory(g_NatPortFwdDynInstanceNum);
         g_NatPortFwdDynInstanceNum = NULL;
     }
-#endif
+    
     pNatPMapping = AnscAllocateMemory(sizeof(COSA_DML_NAT_PMAPPING)*(allCount));
     if(pNatPMapping == NULL)
     {
@@ -2915,8 +2904,6 @@ CosaDmlNatGetPortMappings
         rangeInfo = NULL;
     }
 
-// Commenting out Dynamic Portmappings as we are not going to show dynamic rules added as part of PartMapping table in TR-181
-#if 0
     if ( PortFwdDynCount != 0 )
     {
         g_NatPortFwdDynInstanceNum = AnscAllocateMemory(sizeof(ULONG)*PortFwdDynCount);
@@ -3001,7 +2988,6 @@ CosaDmlNatGetPortMappings
             g_NatPortFwdDynInstanceNum[i] = pNatPMapping[ulIndex].InstanceNumber;
         }
     }
-#endif
     if(rangeInfo) /*RDKB-6842, CID-33473, free unused resource before exit*/
         free(rangeInfo);
 
@@ -3395,6 +3381,9 @@ CosaDmlNatDelPortMapping
     UtopiaContext                   Ctx;
     portFwdSingle_t          singleInfo;
     portFwdRange_t            rangeInfo;
+    portMapDyn_t                dynInfo = {0};
+    ULONG                       ulIndex = 0;
+    int                 PortFwdDynCount = 0;
 
     ULONG                            rc = 0;
    
@@ -3476,10 +3465,6 @@ CosaDmlNatDelPortMapping
         }
     }
 
-#if 0
-    ULONG                       ulIndex = 0;
-    portMapDyn_t                dynInfo = {0};
-    int                         PortFwdDynCount = 0;
     Utopia_GetDynPortMappingCount((int*)&PortFwdDynCount);
     PortFwdDynCount = (PortFwdDynCount < g_NatPortFwdDynInstanceNumCount ? PortFwdDynCount : g_NatPortFwdDynInstanceNumCount);
 
@@ -3519,7 +3504,7 @@ CosaDmlNatDelPortMapping
         Utopia_Free(&Ctx, 1);
         return ANSC_STATUS_SUCCESS;
     }
-#endif
+
     CcspTraceInfo(("Nothing to delete in %s\n", __FUNCTION__));
     Utopia_Free(&Ctx, 0);
     return ANSC_STATUS_FAILURE;
