@@ -4712,6 +4712,8 @@ void* set_mesh_disabled(void* arg)
 
 void CosaDmlDcSaveWiFiHealthStatusintoNVRAM( void  )
 {
+#if ! defined (_DISABLE_WIFI_HEALTH_STATS_TO_NVRAM_)
+
 	char acBoxType[ 16 ] = { 0 };
 
 	// Get BOX TYPE from device properties
@@ -4763,6 +4765,8 @@ void CosaDmlDcSaveWiFiHealthStatusintoNVRAM( void  )
 			v_secure_system( "sh /usr/ccsp/wifi/wifivAPPercentage.sh" );
 		}
 	}
+
+#endif
 }
 
 /* CheckAndGetDevicePropertiesEntry() */
