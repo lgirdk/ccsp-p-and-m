@@ -3524,6 +3524,9 @@ void* bridge_mode_wifi_notifier_thread(void* arg) {
 
     checkTicket(pNotify->ticket);
 
+    openCommonSyseventConnection();
+    sysevent_set(commonSyseventFd, commonSyseventToken, "wifi-notifier-done", "0" , 0);
+
 	/* 
 	  * Configure Bridge Static Mode Configuration 
 	  * if BridgeStaticMode then "Advanced Bridge" 2 then COSA_DML_LanMode_BridgeStatic
@@ -3541,7 +3544,7 @@ void* bridge_mode_wifi_notifier_thread(void* arg) {
 		case BRIDGE_MODE_STATIC:
 		{
 			memset( acSetRadioString, 0 ,sizeof( acSetRadioString ) );
-			sprintf( acSetRadioString, "%s", "true" );
+			sprintf( acSetRadioString, "%s", "false" );
 
 			memset( acSetSSIDString, 0 ,sizeof( acSetSSIDString ) );
 			sprintf( acSetSSIDString, "%s", "false" );
@@ -3551,7 +3554,7 @@ void* bridge_mode_wifi_notifier_thread(void* arg) {
 		case BRIDGE_MODE_FULL_STATIC:
 		{
 			memset( acSetRadioString, 0 ,sizeof( acSetRadioString ) );
-			sprintf( acSetRadioString, "%s", "false" );
+			sprintf( acSetRadioString, "%s", "true" );
 
 			memset( acSetSSIDString, 0 ,sizeof( acSetSSIDString ) );
 			sprintf( acSetSSIDString, "%s", "false" );
@@ -3711,9 +3714,10 @@ parameterValStruct_t valCommit1[] = {
                 }
         }
 
-        curticket++;
-        AnscFreeMemory(arg);
-        return NULL;
+    curticket++;
+    AnscFreeMemory(arg);
+    sysevent_set(commonSyseventFd, commonSyseventToken, "wifi-notifier-done", "1" , 0); //ARRIS ADD
+    return NULL;
 }
 
 static BOOLEAN is_ipaddr_invalid(ULONG gw, ULONG mask, ULONG ipaddr)
