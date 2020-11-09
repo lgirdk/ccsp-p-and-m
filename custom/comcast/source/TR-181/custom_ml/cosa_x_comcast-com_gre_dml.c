@@ -267,11 +267,13 @@ ULONG GreTunnel_GetParamStringValue ( ANSC_HANDLE  hInsContext, char* ParamName,
 
     if (strcmp(ParamName, "PrimaryRemoteEndpoint") == 0)
     {
+        CosaDml_GreTunnelGetPrimaryEndpoint(ins, pGreTu->PrimaryRemoteEndpoint, sizeof(pGreTu->PrimaryRemoteEndpoint));
         snprintf(pValue, *pUlSize, "%s", pGreTu->PrimaryRemoteEndpoint);
         return 0;
     }
 	if (strcmp(ParamName, "SecondaryRemoteEndpoint") == 0)
     {
+        CosaDml_GreTunnelGetSecondaryEndpoint(ins, pGreTu->SecondaryRemoteEndpoint, sizeof(pGreTu->SecondaryRemoteEndpoint));
         snprintf(pValue, *pUlSize, "%s", pGreTu->SecondaryRemoteEndpoint);
         return 0;
     }
@@ -289,6 +291,12 @@ ULONG GreTunnel_GetParamStringValue ( ANSC_HANDLE  hInsContext, char* ParamName,
     if (strcmp(ParamName, "GRENetworkTunnel") == 0)
     {
         snprintf(pValue, *pUlSize, "%s", pGreTu->GRENetworkTunnel);
+        return 0;
+    }
+    /* LGI Add */
+    if (strcmp(ParamName, "RemoteEndpoints") == 0)
+    {
+        snprintf(pValue, *pUlSize, "%s", pGreTu->RemoteEndpoints);
         return 0;
     }
 
@@ -501,6 +509,13 @@ BOOL GreTunnel_SetParamStringValue ( ANSC_HANDLE hInsContext, char*  ParamName, 
         pGreTu->ChangeFlag |= GRETU_CF_GRETU;
         return TRUE;
     }
+    /* LGI Add */
+    if (strcmp(ParamName, "RemoteEndpoints") == 0)
+    {
+        snprintf(pGreTu->RemoteEndpoints, sizeof(pGreTu->RemoteEndpoints), "%s", strValue);
+        pGreTu->ChangeFlag |= GRETU_CF_GRERMEP;
+        return TRUE;
+    }
 
     return FALSE;
 }
@@ -700,6 +715,12 @@ ULONG GreTunnel_Commit ( ANSC_HANDLE hInsContext ) {
         if (CosaDml_GreTunnelGetGRETunnel(ins, pGreTu->GRENetworkTunnel, sizeof(pGreTu->GRENetworkTunnel)) != ANSC_STATUS_SUCCESS)
             goto rollback;
     }
+    /* LGI Add */
+    if (pGreTu->ChangeFlag & GRETU_CF_GRERMEP)
+    {
+        if (CosaDml_GreTunnelSetEndpoints(ins, pGreTu->RemoteEndpoints) != ANSC_STATUS_SUCCESS)
+            goto rollback;
+    }
 
     pGreTu->ChangeFlag = 0;
     return ANSC_STATUS_SUCCESS;
@@ -791,6 +812,8 @@ ULONG GreTunnel_Rollback( ANSC_HANDLE hInsContext) {
     if (CosaDml_GreTunnelGetDhcpRemoteId(ins, &pGreTu->EnableRemoteID) != ANSC_STATUS_SUCCESS)
         return ANSC_STATUS_FAILURE;
     if (CosaDml_GreTunnelGetGRETunnel(ins, pGreTu->GRENetworkTunnel, sizeof(pGreTu->GRENetworkTunnel)) != ANSC_STATUS_SUCCESS)
+        return ANSC_STATUS_FAILURE;
+    if (CosaDml_GreTunnelGetEndpoints(ins, pGreTu->RemoteEndpoints, sizeof(pGreTu->RemoteEndpoints)) != ANSC_STATUS_SUCCESS)
         return ANSC_STATUS_FAILURE;
 
     return ANSC_STATUS_SUCCESS;

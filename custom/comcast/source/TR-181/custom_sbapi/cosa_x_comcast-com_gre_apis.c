@@ -93,6 +93,7 @@ printf a;            \
 #define GRETU_PARAM_ENABLE        	GRE_OBJ_GRETU "%lu.Enable"
 #define GRETU_PARAM_PRI_ENDPOINT 	GRE_OBJ_GRETU "%lu.PrimaryRemoteEndpoint"
 #define GRETU_PARAM_SEC_ENDPOINT 	GRE_OBJ_GRETU "%lu.SecondaryRemoteEndpoint"
+#define GRETU_PARAM_ENDPOINTS		GRE_OBJ_GRETU "%lu.Endpoints"
 #define GRETU_PARAM_KEYGENPOL     	GRE_OBJ_GRETU "%lu.KeyIDGenPolicy"
 #define GRETU_PARAM_KEYID         	GRE_OBJ_GRETU "%lu.KeyID"
 #define GRETU_PARAM_USESEQ        	GRE_OBJ_GRETU "%lu.UseSeqNum"
@@ -579,6 +580,9 @@ CosaDml_GreTunnelGetEntryByIndex(ULONG ins, COSA_DML_GRE_TUNNEL *greTu)
         return ANSC_STATUS_FAILURE;
     if (GrePsmGetStr(GRETU_PARAM_GRETU, ins, greTu->GRENetworkTunnel, sizeof(greTu->GRENetworkTunnel)) != 0)
         return ANSC_STATUS_FAILURE;
+    if (GrePsmGetStr(GRETU_PARAM_ENDPOINTS, ins, greTu->RemoteEndpoints, sizeof(greTu->RemoteEndpoints)) != 0)
+        return ANSC_STATUS_FAILURE;
+
     greTu->HotSpotReset = FALSE;
     return ANSC_STATUS_SUCCESS;
 }
@@ -1166,6 +1170,65 @@ CosaDml_GreTunnelSetSecondaryEndpoints(ULONG tuIns, const char *sec)
 			}
 		}
     }		
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaDml_GreTunnelGetEndpoints(ULONG ins, char *eps, ULONG size)
+{
+    if (ins != 1 || !eps)
+        return ANSC_STATUS_FAILURE;
+
+    memset(eps, 0, size);
+    if (GrePsmGetStr(GRETU_PARAM_ENDPOINTS, ins, eps, size) != 0)
+            return ANSC_STATUS_FAILURE;
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaDml_GreTunnelSetEndpoints(ULONG ins, const char *eps)
+{
+    char psmRec[MAX_GRE_PSM_REC + 1];
+    char buf[1025];
+    char *pri, *sec;
+
+    if (ins != 1 || !eps)
+        return ANSC_STATUS_FAILURE;
+
+    snprintf(buf, sizeof(buf), "%s", eps);
+    pri = buf;
+    if ((sec = strchr(buf, ',')) != NULL)
+        *sec++ = '\0';
+
+    if (pri && strlen(pri)) {
+        if (sysevent_set(sysevent_fd, sysevent_token, kHotspotfd_primary, pri, 0) != 0) {
+            AnscTraceError(("Fail to set sysevent: %s to %s\n", kHotspotfd_primary, pri));
+            return ANSC_STATUS_FAILURE;
+        }
+    }
+
+    if (sec && strlen(sec)) {
+        if (sysevent_set(sysevent_fd, sysevent_token, khotspotfd_secondary, sec, 0) != 0) {
+            AnscTraceError(("Fail to set sysevent: %s to %s\n", khotspotfd_secondary, sec));
+            return ANSC_STATUS_FAILURE;
+        }
+    }
+
+    /* save to PSM */
+    snprintf(psmRec, sizeof(psmRec), GRETU_PARAM_ENDPOINTS, ins);
+    if (GrePsmSet(psmRec, eps) != 0)
+        return ANSC_STATUS_FAILURE;
+
+    /* Set Primary and Secondary Remote end points */
+    snprintf(psmRec, sizeof(psmRec), GRETU_PARAM_PRI_ENDPOINT, ins);
+    if (GrePsmSet(psmRec, pri) != 0)
+        return ANSC_STATUS_FAILURE;
+
+    snprintf(psmRec, sizeof(psmRec), GRETU_PARAM_SEC_ENDPOINT, ins);
+    if (GrePsmSet(psmRec, sec) != 0)
+        return ANSC_STATUS_FAILURE;
 
     return ANSC_STATUS_SUCCESS;
 }
