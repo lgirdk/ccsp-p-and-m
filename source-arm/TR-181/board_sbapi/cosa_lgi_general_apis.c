@@ -335,3 +335,20 @@ CosaDmlGiSetLoginSecurity
 
     return ANSC_STATUS_SUCCESS;
 }
+
+ULONG
+CosaDmlGiGetDefaultAdminPassword
+    (
+        ANSC_HANDLE                 hContext,
+        char                        *pValue,
+        ULONG                       *pUlSize
+    )
+{
+    if(syscfg_init() == 0)
+    {
+        syscfg_get( NULL, "Default_Admin_Password", pValue, *pUlSize);
+        return ANSC_STATUS_SUCCESS;
+    }
+
+    return ANSC_STATUS_FAILURE;
+}
