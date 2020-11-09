@@ -73,6 +73,8 @@
 #include "cosa_ra_internal.h"
 #include "safec_lib_common.h"
 
+static int ulIndex = 0;
+
 /***********************************************************************
  IMPORTANT NOTE:
 
@@ -792,6 +794,7 @@ InterfaceSetting1_GetEntry
     {
         pCosaContext = ACCESS_COSA_CONTEXT_LINK_OBJECT(pLink);
         *pInsNumber = pCosaContext->InstanceNumber;
+        ulIndex = pCosaContext->InstanceNumber - 1;
     }
     
     return pCosaContext;
@@ -1001,9 +1004,11 @@ InterfaceSetting1_GetParamBoolValue
     PCOSA_DML_RA_IF_FULL2           pRAInterface = (PCOSA_DML_RA_IF_FULL2)pCosaContext->hContext;
     static ULONG                    time         = 0;;
 
+    ulIndex = pCosaContext->InstanceNumber - 1;
+
     if ( !time || ( AnscGetTickInSeconds() - time ) > 2 )
     {
-        CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg);
+        CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg, ulIndex);
         time = AnscGetTickInSeconds();
     }
 
@@ -1137,6 +1142,7 @@ InterfaceSetting1_GetParamUlongValue
 {
     PCOSA_CONTEXT_LINK_OBJECT       pCosaContext = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     PCOSA_DML_RA_IF_FULL2           pRAInterface = (PCOSA_DML_RA_IF_FULL2)pCosaContext->hContext;
+    ulIndex = pCosaContext->InstanceNumber - 1;
 
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "Status") == 0)
@@ -1144,8 +1150,8 @@ InterfaceSetting1_GetParamUlongValue
         /* collect value */
         CosaDmlRaIfGetInfo
             (
-                pRAInterface, 
-                pRAInterface->Cfg.InstanceNumber, 
+                pRAInterface,
+                ulIndex,
                 (PCOSA_DML_RA_IF_INFO)&pRAInterface->Info
             );
 
@@ -1155,8 +1161,7 @@ InterfaceSetting1_GetParamUlongValue
 
     if (strcmp(ParamName, "MaxRtrAdvInterval") == 0)
     {
-        CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg);
-
+        CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg, ulIndex);
         /* collect value */
         *puLong = pRAInterface->Cfg.MaxRtrAdvInterval;
         return TRUE;
@@ -1164,7 +1169,7 @@ InterfaceSetting1_GetParamUlongValue
 
     if (strcmp(ParamName, "MinRtrAdvInterval") == 0)
     {
-        CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg);
+        CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg, ulIndex);
 
         /* collect value */
         *puLong = pRAInterface->Cfg.MinRtrAdvInterval;
@@ -1173,7 +1178,7 @@ InterfaceSetting1_GetParamUlongValue
 
     if (strcmp(ParamName, "AdvDefaultLifetime") == 0)
     {
-        CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg);
+        CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg, ulIndex);
 
         /* collect value */
         *puLong = pRAInterface->Cfg.AdvDefaultLifetime;
@@ -1182,7 +1187,7 @@ InterfaceSetting1_GetParamUlongValue
 
     if (strcmp(ParamName, "AdvPreferredRouterFlag") == 0)
     {
-        CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg);
+        CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg, ulIndex);
 
         /* collect value */
         *puLong = pRAInterface->Cfg.AdvPreferredRouterFlag;
@@ -1191,7 +1196,7 @@ InterfaceSetting1_GetParamUlongValue
 
     if (strcmp(ParamName, "AdvLinkMTU") == 0)
     {
-        CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg);
+        CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg, ulIndex);
 
         /* collect value */
         *puLong = pRAInterface->Cfg.AdvLinkMTU;
@@ -1200,7 +1205,7 @@ InterfaceSetting1_GetParamUlongValue
 
     if (strcmp(ParamName, "AdvReachableTime") == 0)
     {
-        CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg);
+        CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg, ulIndex);
 
         /* collect value */
         *puLong = pRAInterface->Cfg.AdvReachableTime;
@@ -1209,7 +1214,7 @@ InterfaceSetting1_GetParamUlongValue
 
     if (strcmp(ParamName, "AdvRetransTimer") == 0)
     {
-        CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg);
+        CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg, ulIndex);
 
         /* collect value */
         *puLong = pRAInterface->Cfg.AdvRetransTimer;
@@ -1218,7 +1223,7 @@ InterfaceSetting1_GetParamUlongValue
 
     if (strcmp(ParamName, "AdvCurHopLimit") == 0)
     {
-        CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg);
+        CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg, ulIndex);
 
         /* collect value */
         *puLong = pRAInterface->Cfg.AdvCurHopLimit;
@@ -1282,10 +1287,12 @@ InterfaceSetting1_GetParamStringValue
     errno_t                         rc                      = -1;
 
     UNREFERENCED_PARAMETER(pUlSize);
+    ulIndex = pCosaContext->InstanceNumber - 1;
+
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "Alias") == 0)
     {
-        CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg);
+        CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg, ulIndex);
         /* collect value */
         rc = strcpy_s(pValue, *pUlSize, pRAInterface->Cfg.Alias);
         if ( rc != EOK)
@@ -1300,7 +1307,7 @@ InterfaceSetting1_GetParamStringValue
     {
         /* collect value */
 
-        CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg);
+        CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg, ulIndex);
         rc = strcpy_s(pValue, *pUlSize, pRAInterface->Cfg.Interface);
         if ( rc != EOK)
         {
@@ -1312,7 +1319,7 @@ InterfaceSetting1_GetParamStringValue
 
     if (strcmp(ParamName, "ManualPrefixes") == 0)
     {
-        CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg);
+        CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg, ulIndex);
         /* collect value */
         rc = strcpy_s(pValue, *pUlSize, pRAInterface->Cfg.ManualPrefixes);
         if ( rc != EOK)
@@ -1328,8 +1335,8 @@ InterfaceSetting1_GetParamStringValue
         /* collect value */
         CosaDmlRaIfGetInfo
             (
-                pRAInterface, 
-                pRAInterface->Cfg.InstanceNumber, 
+                pRAInterface,
+                ulIndex,
                 (PCOSA_DML_RA_IF_INFO)&pRAInterface->Info
             );
         rc = strcpy_s(pValue, *pUlSize, pRAInterface->Info.Prefixes);
@@ -1823,9 +1830,10 @@ InterfaceSetting1_Rollback
 {
     PCOSA_CONTEXT_LINK_OBJECT       pCosaContext = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     PCOSA_DML_RA_IF_FULL2           pRAInterface = (PCOSA_DML_RA_IF_FULL2)pCosaContext->hContext;
+    ulIndex = pCosaContext->InstanceNumber - 1;
 
-    CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg);
-    CosaDmlRaIfGetInfo(pRAInterface, pRAInterface->Cfg.InstanceNumber, (PCOSA_DML_RA_IF_INFO)&pRAInterface->Info);
+    CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg, ulIndex);
+    CosaDmlRaIfGetInfo(pRAInterface, ulIndex, (PCOSA_DML_RA_IF_INFO)&pRAInterface->Info);
 
     return 0;
 }
