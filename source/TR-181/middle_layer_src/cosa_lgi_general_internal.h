@@ -32,6 +32,7 @@ _COSA_DATAMODEL_LGI_GENERAL_CLASS_CONTENT
     /* start of LgiGeneral object class content */
     ULONG                           CustomerId;
     char                            CurrentLanguage[6];
+    char                            DefaultAdminPassword[64];
     char                            CAppName[128];
     char                            WebsiteHelpURL[128];
     BOOL                            FirstInstallState;
