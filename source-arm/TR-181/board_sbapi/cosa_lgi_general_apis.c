@@ -18,6 +18,8 @@
 
 #include "cosa_lgi_general_apis.h"
 
+#include <platform_hal.h>
+
 ULONG
 CosaDmlGiGetFirstInstallWizardEnable
     (
@@ -250,6 +252,25 @@ ULONG CosaDmlGiGetWebUISkin ( ANSC_HANDLE hContext, char *pValue, ULONG *pUlSize
 ULONG CosaDmlGiSetWebUISkin ( ANSC_HANDLE hContext, char *pValue )
 {
     syscfg_set (NULL, "Web_UI_Skin", pValue);
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ULONG CosaDmlGiGetDefaultAdminPassword ( ANSC_HANDLE hContext, char *pValue, ULONG *pUlSize )
+{
+    if (platform_hal_getUIDefaultPassword (pValue, *pUlSize) == RETURN_OK)
+    {
+        /*
+           If the HAL returns an empty string it's bug in the HAL (it
+           should return an error instead), but try to handle it anyway.
+        */
+        if (strlen (pValue) > 0)
+        {
+            return ANSC_STATUS_SUCCESS;
+        }
+    }
+
+    strcpy (pValue, "password");
 
     return ANSC_STATUS_SUCCESS;
 }
