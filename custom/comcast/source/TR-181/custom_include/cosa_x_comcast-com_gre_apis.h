@@ -107,6 +107,7 @@ _COSA_DML_GRE_TUNNEL_CHANGE_FLAG
     GRETU_CF_DHCPRMID       = 0x01<<16,
     GRETU_CF_GRETU          = 0x01<<19,
     GRETU_CF_GREINTERFACE   = 0x01<<20,
+    GRETU_CF_GRERMEP        = 0x01<<21,
 }
 COSA_DML_GRE_TUNNEL_CHANGE_FLAG;
 
@@ -176,6 +177,7 @@ _COSA_DML_GRE_TUNNEL
 	COSA_DML_GRE_TUNNEL_IF 		GreTunnelIf[MAX_GRE_TUIF];
 	BOOL                        HotSpotReset;
     char                        TunnelStatus[32];
+	char                        RemoteEndpoints[257];
 } 
 COSA_DML_GRE_TUNNEL;
 
@@ -357,6 +359,12 @@ CosaDml_GreTunnelHotspotReset(COSA_DML_GRE_TUNNEL *pGreTu ); //
 
 int GreTunnel_hotspot_update_circuit_ids(ULONG tuIns, int queuestart);//
 int GreTunnelIf_hotspot_update_circuit_id(ULONG tuIns, int ins, int queuestart); //
+
+ANSC_STATUS
+CosaDml_GreTunnelGetEndpoints(ULONG ins, char *eps, ULONG size);//
+
+ANSC_STATUS
+CosaDml_GreTunnelSetEndpoints(ULONG ins, const char *eps);//
 
 #endif
 #endif
