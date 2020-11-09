@@ -306,6 +306,18 @@ LgiGeneral_GetParamStringValue
           return 1;
         }
     }
+    if (strcmp(ParamName, "DefaultAdminPassword") == 0)
+    {
+        if (AnscSizeOfString(pMyObject->DefaultAdminPassword) < *pulSize){
+          AnscCopyString(pValue, pMyObject->DefaultAdminPassword);
+          return 0;
+        }
+        else
+        {
+          *pulSize = AnscSizeOfString(pMyObject->DefaultAdminPassword);
+          return 1;
+        }
+    }
     // LGI ADD END
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return -1;
