@@ -162,4 +162,11 @@ CosaDmlGiSetLoginSecurity
     char                        *lValue
 );
 
+ULONG
+CosaDmlGiGetDefaultAdminPassword
+(
+    ANSC_HANDLE                 hContext,
+    char                        *pValue,
+    ULONG                       *pUlSize
+);
 #endif
