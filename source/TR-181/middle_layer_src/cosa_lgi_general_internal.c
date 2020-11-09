@@ -122,6 +122,10 @@ CosaLgiGeneralInitialize
 
     CosaDmlGiGetCurrentLanguage(NULL, pMyObject->CurrentLanguage, sizeof(pMyObject->CurrentLanguage));
 
+    ULONG size_DefaultAdminPassword = sizeof(pMyObject->DefaultAdminPassword);
+    memset(pMyObject->DefaultAdminPassword, 0, size_DefaultAdminPassword);
+    CosaDmlGiGetDefaultAdminPassword(NULL, pMyObject->DefaultAdminPassword, &size_DefaultAdminPassword);
+
     CosaDmlGiGetLoginSecurity(NULL, &pMyObject->max_failed_login_attempts, "max_failed_login_attempts");
     CosaDmlGiGetLoginSecurity(NULL, &pMyObject->lockout_period, "lockout_period");
     CosaDmlGiGetLoginSecurity(NULL, &pMyObject->max_lockout_periods, "max_lockout_periods");
