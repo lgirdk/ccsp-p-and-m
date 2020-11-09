@@ -77,6 +77,7 @@
 #include <utctx/utctx_api.h>
 
 #define MAX_PREF        8       /* according to TR-181 */
+#define INTERFACE_COUNT 2       /*supported for brlan0 & brlan7*/
 #define ZEBRA_CONF      "/var/zebra.conf"
 
 #define RA_CONF_START   "# Based on prefix"
@@ -113,21 +114,23 @@ typedef struct ZebraRaConf_s {
 #else
 static void DumpZebraRaConf(const ZebraRaConf_t *conf)
 {
-    int i;
+    int i , j = 0;
 
-    fprintf(stderr, "------- Zebra RA Config -------\n");
-    fprintf(stderr, "%s %s\n", "Interface", conf->interface);
-    for (i = 0; i < conf->preCnt; i++) {
-        fprintf(stderr, "  prefix[%d]\n    %s length %d valid %d prefer %d\n", 
-                i + 1, conf->prefixes[i].prefix, 
-                conf->prefixes[i].preLen, 
-                conf->prefixes[i].validLifetime, 
-                conf->prefixes[i].preferLifetime);
-        fprintf(stderr, "  interval %d\n", conf->interval);
-        fprintf(stderr, "  lifetime %d\n", conf->lifetime);
-        fprintf(stderr, "  preference %d\n", conf->preference);
+    for ( j = 0; j < INTERFACE_COUNT; j++)
+    {
+        fprintf(stderr, "------- Zebra RA Config -------\n");
+        fprintf(stderr, "%s %s\n", "Interface", conf[j].interface);
+        for (i = 0; i < conf[j].preCnt; i++) {
+            fprintf(stderr, "  prefix[%d]\n    %s length %d valid %d prefer %d\n",
+                i + 1, conf[j].prefixes[i].prefix,
+                conf[j].prefixes[i].preLen,
+                conf[j].prefixes[i].validLifetime,
+                conf[j].prefixes[i].preferLifetime);
+            fprintf(stderr, "  interval %d\n", conf[j].interval);
+            fprintf(stderr, "  lifetime %d\n", conf[j].lifetime);
+            fprintf(stderr, "  preference %d\n", conf[j].preference);
+        }
     }
-
     return;
 }
 #endif
@@ -174,8 +177,10 @@ static int ParseZebraRaConf(ZebraRaConf_t *conf)
     char line[256];
     RaPrefix_t *prefix;
     char sVal[2][64];
+    char prev_interface[8] = {}, curr_interface[8] = {};
+    int i = -1, ret;
 
-    memset(conf, 0, sizeof(ZebraRaConf_t));
+    memset(conf, 0, (INTERFACE_COUNT * sizeof(ZebraRaConf_t)));
 
     if (access(ZEBRA_CONF, F_OK) != 0) {
         return -1;
@@ -191,26 +196,37 @@ static int ParseZebraRaConf(ZebraRaConf_t *conf)
             && strncmp(line, RA_CONF_START, strlen(RA_CONF_START)) != 0)
         continue;
 
-    /* the first "interface" line */
-    if (fgets(line, sizeof(line), fp) == NULL
-            || sscanf(line, "interface %s", conf->interface) != 1)
-        goto BAD_FORMAT;
-
     while (fgets(line, sizeof(line), fp) != NULL) {
-        /* only support one interface for now */
         trim_leading_space(line);
 
         /* Skip the commented entries */
         if (line[0] == '#')
             continue;
-        if (strncmp(line, RA_CONF_IF, strlen(RA_CONF_IF)) == 0)
-            break;
 
-        if (strstr(line, "prefix") != NULL) {
-            if (conf->preCnt == MAX_PREF)
+        //Updating Interface
+        if (strstr(line, "interface") != NULL)
+        {
+            ret = sscanf(line, "interface %s", curr_interface);
+
+            if (ret != 1)
+            {
+                goto BAD_FORMAT;
+            }
+
+            //To avoid Interface duplicates
+            if ((curr_interface) && (strncmp(prev_interface, curr_interface, strlen(curr_interface)) != 0))
+            {
+                snprintf(prev_interface, sizeof(curr_interface), "%s", curr_interface);
+                snprintf(conf[++i].interface, sizeof(curr_interface), "%s", curr_interface);
+            }
+            continue;
+        }
+
+        if (strstr(line, " prefix") != NULL) {
+            if (conf[i].preCnt == MAX_PREF)
                 continue;
 
-            prefix = &conf->prefixes[conf->preCnt];
+            prefix = &conf[i].prefixes[conf[i].preCnt];
 
             if (sscanf(line, "ipv6 nd prefix %s %s %s", 
                         prefix->prefix, sVal[0], sVal[1]) != 3)
@@ -230,30 +246,30 @@ static int ParseZebraRaConf(ZebraRaConf_t *conf)
                         sVal[0], &prefix->preLen) != 2)
                 goto BAD_FORMAT;
 
-            conf->preCnt++;
+            conf[i].preCnt++;
         } else if (strstr(line, "ra-interval") != NULL) {
-            if (sscanf(line, "ipv6 nd ra-interval %d", &conf->interval) != 1)
+            if (sscanf(line, "ipv6 nd ra-interval %d", &conf[i].interval) != 1)
                 goto BAD_FORMAT;
         } else if (strstr(line, "ra-lifetime") != NULL) {
-            if (sscanf(line, "ipv6 nd ra-lifetime %d", &conf->lifetime) != 1)
+            if (sscanf(line, "ipv6 nd ra-lifetime %d", &conf[i].lifetime) != 1)
                 goto BAD_FORMAT;
 		} else if (strstr(line, "managed-config-flag") != NULL) {
-			conf->managedFlag = 1;
+			conf[i].managedFlag = 1;
 		} else if (strstr(line, "other-config-flag") != NULL) {
-			conf->otherFlag = 1;
+			conf[i].otherFlag = 1;
         } else if (strstr(line, "mtu") != NULL) {
-            if (sscanf(line, "ipv6 nd mtu %d", &conf->mtu) != 1)
+            if (sscanf(line, "ipv6 nd mtu %d", &conf[i].mtu) != 1)
                 goto BAD_FORMAT;
         } else if (strstr(line, "router-preference") != NULL) {
             if (sscanf(line, "ipv6 nd router-preference %s", sVal[0]) != 1)
                 goto BAD_FORMAT;
 
             if (strcmp(sVal[0], "high") == 0)
-                conf->preference = RT_PREFER_HIGH;
+                conf[i].preference = RT_PREFER_HIGH;
             else if (strcmp(sVal[0], "medium") == 0)
-                conf->preference = RT_PREFER_MEDIUM;
+                conf[i].preference = RT_PREFER_MEDIUM;
             else if (strcmp(sVal[0], "low") == 0)
-                conf->preference = RT_PREFER_LOW;
+                conf[i].preference = RT_PREFER_LOW;
             else
                 goto BAD_FORMAT;
         }
@@ -269,13 +285,14 @@ BAD_FORMAT:
     return -1;
 }
 
-static int LoadRaInterface(PCOSA_DML_RA_IF_FULL raif)
+static int LoadRaInterface(PCOSA_DML_RA_IF_FULL raif, ULONG ulIndex)
 {
-    ZebraRaConf_t raConf;
+    ZebraRaConf_t raConf[INTERFACE_COUNT];
     int left, i;
+    RaPrefix_t *prefix;
     char *fmt;
-    
-    if (ParseZebraRaConf(&raConf) != 0)
+   
+    if (ParseZebraRaConf(raConf) != 0) 
         return -1;
 
     memset(raif, 0, sizeof(COSA_DML_RA_IF_FULL));
@@ -283,24 +300,24 @@ static int LoadRaInterface(PCOSA_DML_RA_IF_FULL raif)
     /* 
      * XXX: hard-coded the configs not support for now 
      */
-    raif->Cfg.InstanceNumber        = 1;
+    raif->Cfg.InstanceNumber        = ulIndex + 1;
     raif->Cfg.bEnabled              = TRUE;
     raif->Cfg.ManualPrefixes[0]     = '\0';
-    raif->Cfg.MaxRtrAdvInterval     = raConf.interval * 2;
-    raif->Cfg.MinRtrAdvInterval     = raConf.interval;
-    raif->Cfg.AdvDefaultLifetime    = raConf.lifetime;
-    raif->Cfg.bAdvManagedFlag       = raConf.managedFlag;
-    raif->Cfg.bAdvOtherConfigFlag   = raConf.otherFlag;
+    raif->Cfg.MaxRtrAdvInterval     = raConf[ulIndex].interval * 2;
+    raif->Cfg.MinRtrAdvInterval     = raConf[ulIndex].interval;
+    raif->Cfg.AdvDefaultLifetime    = raConf[ulIndex].lifetime;
+    raif->Cfg.bAdvManagedFlag       = raConf[ulIndex].managedFlag;
+    raif->Cfg.bAdvOtherConfigFlag   = raConf[ulIndex].otherFlag;
     raif->Cfg.bAdvMobileAgentFlag   = FALSE;
     raif->Cfg.bAdvNDProxyFlag       = FALSE;
-    raif->Cfg.AdvLinkMTU            = raConf.mtu;
+    raif->Cfg.AdvLinkMTU            = raConf[ulIndex].mtu;
     raif->Cfg.AdvReachableTime      = 0;
     raif->Cfg.AdvRetransTimer       = 0;
     raif->Cfg.AdvCurHopLimit        = 0;
-    snprintf(raif->Cfg.Alias, sizeof(raif->Cfg.Alias), "cpe-RA-Interface-1");
-    snprintf(raif->Cfg.Interface, sizeof(raif->Cfg.Interface), "%s", raConf.interface);
+    snprintf(raif->Cfg.Alias, sizeof(raif->Cfg.Alias), "cpe-RA-Interface-%d",raif->Cfg.InstanceNumber);
+    snprintf(raif->Cfg.Interface, sizeof(raif->Cfg.Interface), "%s", raConf[ulIndex].interface);
 
-    switch (raConf.preference) {
+    switch (raConf[ulIndex].preference) {
     case RT_PREFER_HIGH:
         raif->Cfg.AdvPreferredRouterFlag = COSA_DML_RA_PREFER_ROUTER_High;
         break;
@@ -317,14 +334,16 @@ static int LoadRaInterface(PCOSA_DML_RA_IF_FULL raif)
 
     raif->Info.Prefixes[0] = '\0';
     left = sizeof(raif->Info.Prefixes);
-    for (i = 0; i < raConf.preCnt && left > 0; i++) {
+
+    for (i = 0; i < raConf[ulIndex].preCnt && left > 0; i++) {
         if (i == 0)
             fmt = "%s";
         else
             fmt = ",%s";
 
-        left -= snprintf(raif->Info.Prefixes + strlen(raif->Info.Prefixes), 
-                left, fmt, raConf.prefixes[i].prefix);
+        prefix = &raConf[ulIndex].prefixes[i];
+        left -= snprintf(raif->Info.Prefixes + strlen(raif->Info.Prefixes),
+                left, fmt, raConf[ulIndex].prefixes[i].prefix);
     }
 
     return 0;
@@ -353,7 +372,7 @@ CosaDmlRAGetEnabled
     if (!pEnabled)
         return ANSC_STATUS_FAILURE;
 
-    if (LoadRaInterface(&raif) != 0)
+    if (LoadRaInterface(&raif, 0) != 0)
         return ANSC_STATUS_FAILURE;
 
     *pEnabled = raif.Cfg.bEnabled;
@@ -379,7 +398,8 @@ CosaDmlRaIfGetNumberOfEntries
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-    return 1;
+
+    return INTERFACE_COUNT;
 }
 
 ANSC_STATUS
@@ -391,11 +411,11 @@ CosaDmlRaIfGetEntry
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-    /* only one instance */
-    if (ulIndex != 0 || !pEntry)
+
+    if (!pEntry)
         return ANSC_STATUS_FAILURE;
 
-    if (LoadRaInterface(pEntry) != 0)
+    if (LoadRaInterface(pEntry, ulIndex) != 0)
         return ANSC_STATUS_FAILURE;
 
     return ANSC_STATUS_SUCCESS;
@@ -517,7 +537,8 @@ ANSC_STATUS
 CosaDmlRaIfGetCfg
     (
         ANSC_HANDLE                 hContext,
-        PCOSA_DML_RA_IF_CFG         pCfg
+        PCOSA_DML_RA_IF_CFG         pCfg,
+        ULONG                       ulInstanceNumber
     )
 {
     UNREFERENCED_PARAMETER(hContext);
@@ -526,7 +547,7 @@ CosaDmlRaIfGetCfg
     if (!pCfg)
         return ANSC_STATUS_FAILURE;
 
-    if (LoadRaInterface(&raif) != 0)
+    if (LoadRaInterface(&raif, ulInstanceNumber) != 0)
         return ANSC_STATUS_FAILURE;
 
     memcpy(pCfg, &raif.Cfg, sizeof(COSA_DML_RA_IF_CFG));
@@ -549,7 +570,7 @@ CosaDmlRaIfGetInfo
     if (!pInfo)
         return ANSC_STATUS_FAILURE;
 
-    if (LoadRaInterface(&raif) != 0)
+    if (LoadRaInterface(&raif, ulInstanceNumber) != 0)
         return ANSC_STATUS_FAILURE;
 
     memcpy(pInfo, &raif.Info, sizeof(COSA_DML_RA_IF_INFO));
