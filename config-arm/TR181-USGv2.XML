@@ -19048,6 +19048,12 @@
                         <syntax>string</syntax>
                         <writable>true</writable>
                     </parameter>
+                    <parameter>
+                        <name>RemoteEndpoints</name>
+                        <type>string(256)</type>
+                        <syntax>string</syntax>
+                        <writable>true</writable>
+                    </parameter>
 					<parameter>
 						<name>InterfaceNumberOfEntries</name>
 						<type>unsignedInt</type>
