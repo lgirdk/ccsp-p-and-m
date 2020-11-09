@@ -233,7 +233,8 @@ ANSC_STATUS
 CosaDmlRaIfGetCfg
     (
         ANSC_HANDLE                 hContext,
-        PCOSA_DML_RA_IF_CFG        pCfg        /* Identified by InstanceNumber */
+        PCOSA_DML_RA_IF_CFG         pCfg,        /* Identified by InstanceNumber */
+        ULONG                       ulInstanceNumber
     );
 
 ANSC_STATUS
