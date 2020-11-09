@@ -1536,14 +1536,12 @@ CosaDmlDcResetBr0(char *ip, char *sub) {
 	return ANSC_STATUS_SUCCESS;
 }
 
-#ifdef _XF3_PRODUCT_REQ_
 static int openCommonSyseventConnection() {
     if (commonSyseventFd == -1) {
         commonSyseventFd = s_sysevent_connect(&commonSyseventToken);
     }
     return 0;
 }
-#endif
 
 void* CosaDmlDcRestartRouter(void* arg)
 {
@@ -3874,6 +3872,9 @@ void* bridge_mode_wifi_notifier_thread(void* arg) {
     
     checkTicket(pNotify->ticket);
 
+    openCommonSyseventConnection();
+    sysevent_set(commonSyseventFd, commonSyseventToken, "wifi-notifier-done", "0" , 0);
+
 	/* 
 	  * Configure Bridge Static Mode Configuration 
 	  * if BridgeStaticMode then "Advanced Bridge" 2 then COSA_DML_LanMode_BridgeStatic
@@ -4113,6 +4114,9 @@ parameterValStruct_t valCommit1[] = {
 
         curticket++;
         AnscFreeMemory(arg);
+
+        sysevent_set(commonSyseventFd, commonSyseventToken, "wifi-notifier-done", "1" , 0);
+
         return NULL;
 }
 
