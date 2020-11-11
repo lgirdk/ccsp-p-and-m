@@ -518,16 +518,13 @@ Device_SetParamUlongValue
     UNREFERENCED_PARAMETER(hInsContext);
     PCOSA_DATAMODEL_UPNP            pMyObject    = (PCOSA_DATAMODEL_UPNP)g_pCosaBEManager->hUpnp;
     #define MIN 1
-    #define TTL_MAX 99
-    #define AD_MAX 59940
-    #define SEC 60    //seconds conversion
+    #define TTL_MAX 255
+    #define AD_MAX 86400
 
     /* check the parameter name and set the corresponding value */
     if (strcmp(ParamName, "X_CISCO_COM_IGD_AdvertisementPeriod") == 0)
     {
-        if(uValue == 0)
-            return FALSE;
-        if(((uValue%SEC)==0) && (uValue<=AD_MAX))
+        if((uValue >= MIN) && (uValue <= AD_MAX))
         {
             /* save update to backup */
             pMyObject->AdvertisementPeriod = uValue;
