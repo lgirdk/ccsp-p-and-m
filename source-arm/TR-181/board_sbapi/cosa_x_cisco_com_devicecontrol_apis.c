@@ -4564,7 +4564,7 @@ CosaDmlLanMngm_SetConf(ULONG ins, PCOSA_DML_LAN_MANAGEMENT pLanMngm)
             syslog_systemlog("Local Network", LOG_NOTICE, "Status change: Bridge mode");
 #ifndef _XF3_PRODUCT_REQ_
             // stop lan when it is bridge mode
-		    commonSyseventSet("lan-stop", "");
+	    // gw_prov will decicde the lan/bridge mode based on the order of predence.
 #endif
 #ifdef _XF3_PRODUCT_REQ_
             bEnable = 3;
