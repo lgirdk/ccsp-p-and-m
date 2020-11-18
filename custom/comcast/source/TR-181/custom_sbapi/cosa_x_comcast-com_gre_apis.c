@@ -122,7 +122,7 @@ printf a;            \
 #endif
 #define GRETUIF_PARAM_ASSOBRS      	GRE_OBJ_GRETUIF "%lu.AssociatedBridges"		//AssociatedBridges: Device.Bridging.Bridge.3.,Device.Bridging.Bridge.4.
 #define GRETUIF_PARAM_ASSOBRSWFP   	GRE_OBJ_GRETUIF "%lu.AssociatedBridgesWiFiPort"	//AssociatedBridgesWiFiPort: Device.Bridging.Bridge.3.Port.2.,Device.Bridging.Bridge.4.Port.2.
-
+#define GRETUIF_PARAM_XLGISSID  	GRE_OBJ_GRETUIF "%lu.X_LGI_SSID"
 static int sysevent_fd;
 static token_t sysevent_token;
 static hotspotfd_statistics_s *g_hsfdStat = NULL;
@@ -607,7 +607,9 @@ CosaDml_GreTunnelIfGetEntryByIndex(ULONG tuIns, ULONG ins, COSA_DML_GRE_TUNNEL_I
         return ANSC_STATUS_FAILURE;
     if (GreTunnelIfPsmGetStr(GRETUIF_PARAM_ASSOBRSWFP, tuIns, ins, greTuIf->AssociatedBridgesWiFiPort, sizeof(greTuIf->AssociatedBridgesWiFiPort)) != 0)
         return ANSC_STATUS_FAILURE;
-
+    if (GreTunnelIfPsmGetStr(GRETUIF_PARAM_XLGISSID, tuIns, ins, greTuIf->X_LGI_SSID, sizeof(greTuIf->X_LGI_SSID)) != 0)
+        return ANSC_STATUS_FAILURE;
+ 
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -1941,6 +1943,33 @@ CosaDml_GreTunnelIfSetAssociatedBridgesWiFiPort(ULONG tuIns, ULONG ins, const ch
 
     snprintf(psmRec, sizeof(psmRec), GRETUIF_PARAM_ASSOBRSWFP, ins, tuIns);
     if (GrePsmSet(psmRec, brswfp) != 0)
+        return ANSC_STATUS_FAILURE;
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaDml_GreTunnelIfGetXLGISSID(ULONG tuIns, ULONG ins, char *ssid, ULONG size)
+{
+    if (!ssid)
+        return ANSC_STATUS_FAILURE;
+
+    if (GreTunnelIfPsmGetStr(GRETUIF_PARAM_XLGISSID, tuIns, ins, ssid, size) != 0)
+        return ANSC_STATUS_FAILURE;
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaDml_GreTunnelIfSetXLGISSID(ULONG tuIns, ULONG ins, const char *ssid)
+{
+    char psmRec[MAX_GRE_PSM_REC + 1];
+
+    if (!ssid)
+        return ANSC_STATUS_FAILURE;
+
+    snprintf(psmRec, sizeof(psmRec), GRETUIF_PARAM_XLGISSID, tuIns, ins);
+    if (GrePsmSet(psmRec, ssid) != 0)
         return ANSC_STATUS_FAILURE;
 
     return ANSC_STATUS_SUCCESS;
