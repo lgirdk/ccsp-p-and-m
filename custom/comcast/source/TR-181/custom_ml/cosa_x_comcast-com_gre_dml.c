@@ -315,6 +315,12 @@ ULONG GreTunnelIf_GetParamStringValue ( ANSC_HANDLE  hInsContext, char* ParamNam
         snprintf(pValue, *pUlSize, "%s", pGreTuIf->AssociatedBridgesWiFiPort);
         return 0;
     }
+    /* LGI ADD - RDKB-4931 - Link SSID with GRE tunnel interface */
+    if (AnscEqualString(ParamName, "X_LGI-COM_SSID", TRUE))
+    {
+        snprintf(pValue, *pUlSize, "%s", pGreTuIf->X_LGI_SSID);
+        return 0;
+    }
 
 	return -1;
 }
@@ -534,6 +540,12 @@ BOOL GreTunnelIf_SetParamStringValue ( ANSC_HANDLE hInsContext, char*  ParamName
         pGreTuIf->ChangeFlag |= GRETUIF_CF_ASSOBRWFP;
         return TRUE;
     }
+    if (AnscEqualString(ParamName, "X_LGI-COM_SSID", TRUE))
+    {
+        snprintf(pGreTuIf->X_LGI_SSID, sizeof(pGreTuIf->X_LGI_SSID), "%s", strValue);
+        pGreTuIf->ChangeFlag |= GRETUIF_CF_XLGISSID;
+        return TRUE;
+    }
 	return FALSE;
 }
 
@@ -724,6 +736,11 @@ ULONG GreTunnelIf_Commit ( ANSC_HANDLE hInsContext ) {
     if (pGreTuIf->ChangeFlag & GRETUIF_CF_ASSOBRWFP)
     {
         if (CosaDml_GreTunnelIfSetAssociatedBridgesWiFiPort(1, ins, pGreTuIf->AssociatedBridgesWiFiPort) != ANSC_STATUS_SUCCESS)
+            goto rollback;
+    }
+    if (pGreTuIf->ChangeFlag & GRETUIF_CF_XLGISSID)
+    {
+        if (CosaDml_GreTunnelIfSetXLGISSID(1, ins, pGreTuIf->X_LGI_SSID) != ANSC_STATUS_SUCCESS)
             goto rollback;
     }
 	 pGreTuIf->ChangeFlag = 0;
