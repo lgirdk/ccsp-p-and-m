@@ -19159,6 +19159,12 @@
 								<syntax>string</syntax>
 								<writable>true</writable>
 							</parameter>
+							<parameter>
+								<name>X_LGI-COM_SSID</name>
+								<type>string(22)</type>
+								<syntax>string</syntax>
+								<writable>true</writable>
+							</parameter>
 						</parameters>	
 					</object>
 					
