@@ -119,6 +119,7 @@ _COSA_DML_GRE_TUNNEL_IF_CHANGE_FLAG
     GRETUIF_CF_VLANID         = 0x01<<2,
     GRETUIF_CF_ASSOBR         = 0x01<<3,
     GRETUIF_CF_ASSOBRWFP      = 0x01<<4,
+    GRETUIF_CF_XLGISSID       = 0x01<<5,
 }
 COSA_DML_GRE_TUNNEL_IF_CHANGE_FLAG;
 
@@ -136,6 +137,8 @@ _COSA_DML_GRE_TUNNEL_IF
 
     char                        AssociatedBridges[256];
     char                        AssociatedBridgesWiFiPort[256];
+    /* LGI ADD */
+    char                        X_LGI_SSID[23];
 } 
 COSA_DML_GRE_TUNNEL_IF;
 
@@ -365,6 +368,12 @@ CosaDml_GreTunnelGetEndpoints(ULONG ins, char *eps, ULONG size);//
 
 ANSC_STATUS
 CosaDml_GreTunnelSetEndpoints(ULONG ins, const char *eps);//
+
+ANSC_STATUS
+CosaDml_GreTunnelIfGetXLGISSID(ULONG tuIns, ULONG ins, char *ssid, ULONG size);
+
+ANSC_STATUS
+CosaDml_GreTunnelIfSetXLGISSID(ULONG tuIns, ULONG ins, const char *ssid);
 
 #endif
 #endif
