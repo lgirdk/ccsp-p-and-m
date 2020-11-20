@@ -99,7 +99,10 @@ CosaGreTunnelInitialize
 			
     if (CosaDml_GreTunnelInit() != ANSC_STATUS_SUCCESS)		//only init tunnel
         return ANSC_STATUS_FAILURE;
-	
+
+    if (CosaDml_GreGetHealthCheckParams(&(gre->GreHealth)) != ANSC_STATUS_SUCCESS)
+        return ANSC_STATUS_FAILURE;
+
     memset(gre->GreTu, 0, sizeof(COSA_DML_GRE_TUNNEL) * MAX_GRE_TU);
     tuCnt = CosaDml_GreTunnelGetNumberOfEntries();
     //nextIns = 1;
