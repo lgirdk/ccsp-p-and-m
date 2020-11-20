@@ -87,6 +87,14 @@ _COSA_DML_GRE_TUNNEL_STATS
 COSA_DML_GRE_TUNNEL_STATS;
 
 typedef enum
+_COSA_DML_GRE_CHANGE_FLAG
+{
+    GRE_CF_KEEPITVL         = 0x01<<0,
+    GRE_CF_KEEPFAILITVL     = 0x01<<1,
+}
+COSA_DML_GRE_CHANGE_FLAG;
+
+typedef enum
 _COSA_DML_GRE_TUNNEL_CHANGE_FLAG
 {
     GRETU_CF_ENABLE         = 0x01<<0,
@@ -142,6 +150,15 @@ _COSA_DML_GRE_TUNNEL_IF
 } 
 COSA_DML_GRE_TUNNEL_IF;
 
+typedef struct
+_COSA_DML_GRE_HEALTH
+{
+    ULONG                       RemoteEndpointHealthCheckPingInterval;
+    ULONG                       RemoteEndpointHealthCheckPingIntervalInFailure;
+    COSA_DML_GRE_CHANGE_FLAG    ChangeFlag;
+}
+COSA_DML_GRE_HEALTH;
+
 typedef struct 
 _COSA_DML_GRE_TUNNEL
 {
@@ -182,6 +199,15 @@ _COSA_DML_GRE_TUNNEL
 	char                        RemoteEndpoints[257];
 } 
 COSA_DML_GRE_TUNNEL;
+
+ANSC_STATUS
+CosaDml_GreGetHealthCheckParams(COSA_DML_GRE_HEALTH *pGreHealth);
+
+ANSC_STATUS
+CosaDml_GreHealthlSetKeepAliveInterval(ULONG val);
+
+ANSC_STATUS
+CosaDml_GreHealthSetKeepAliveFailInterval(ULONG val);
 
 ANSC_STATUS 
 CosaDml_GreTunnelFinalize(void);	//
