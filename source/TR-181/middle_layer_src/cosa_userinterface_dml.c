@@ -70,6 +70,8 @@
 #include "ansc_string_util.h"
 #include "safec_lib_common.h"
 
+extern ANSC_HANDLE bus_handle;
+extern char g_Subsystem[32];
 
 /***********************************************************************
  IMPORTANT NOTE:
@@ -419,7 +421,35 @@ UserInterface_Validate
     UNREFERENCED_PARAMETER(hInsContext);
     UNREFERENCED_PARAMETER(pReturnParamName);
     UNREFERENCED_PARAMETER(puLength);
-    return TRUE;
+    PCOSA_DATAMODEL_USERINTERFACE   pMyObject = (PCOSA_DATAMODEL_USERINTERFACE)g_pCosaBEManager->hUserinterface;
+    PCOSA_DML_USERINTERFACE_CFG     pUserCfg = (PCOSA_DML_USERINTERFACE_CFG)&pMyObject->UserInterfaceCfg;
+    BOOL retVal = TRUE;
+    char *stringValue = NULL;
+
+    if (pUserCfg->bShowDNSConfigPage)
+    {
+        PSM_Get_Record_Value2(bus_handle, g_Subsystem, "lgi.com.DNSConfigPageEnable", NULL, &stringValue);
+        if (stringValue == NULL || !AnscEqualString(stringValue, "True", FALSE))
+        {
+            AnscCopyString(pReturnParamName, "X_LGI-COM_ShowDNSConfigPage");
+            *puLength = AnscSizeOfString("X_LGI-COM_ShowDNSConfigPage");
+
+            retVal = FALSE;
+        }
+
+        if (stringValue != NULL)
+            ((CCSP_MESSAGE_BUS_INFO *)bus_handle)->freefunc(stringValue);
+    }
+    return retVal;
+}
+
+ULONG UserInterface_Rollback (ANSC_HANDLE hInsContext)
+{
+    PCOSA_DATAMODEL_USERINTERFACE   pMyObject = (PCOSA_DATAMODEL_USERINTERFACE)g_pCosaBEManager->hUserinterface;
+
+    CosaDmlUserInterfaceGetCfg(NULL, &pMyObject->UserInterfaceCfg);
+
+    return 0;
 }
 
 /**********************************************************************  
