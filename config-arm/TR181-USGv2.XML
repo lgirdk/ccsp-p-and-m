@@ -4999,7 +4999,7 @@
             <func_GetParamUlongValue>UserInterface_GetParamUlongValue</func_GetParamUlongValue>
             <func_SetParamUlongValue>UserInterface_SetParamUlongValue</func_SetParamUlongValue>
             <func_Validate>UserInterface_Validate</func_Validate>
-
+            <func_Rollback>UserInterface_Rollback</func_Rollback>
             <func_Commit>UserInterface_Commit</func_Commit>
         </functions>
 		<parameters>
