@@ -89,6 +89,10 @@ printf a;            \
 
 #define GRE_DM_BR_TEMP          "Device.Bridging.Bridge.%d."
 
+#define GRE_OBJ_GRE             "dmsb.hotspot."
+#define GRE_PARAM_KAITVL        GRE_OBJ_GRE "RemoteEndpointHealthCheckPingInterval"
+#define GRE_PARAM_KAFAILITVL    GRE_OBJ_GRE "RemoteEndpointHealthCheckPingIntervalInFailure"
+
 #define GRE_OBJ_GRETU           "dmsb.hotspot.tunnel."
 #define GRETU_PARAM_ENABLE        	GRE_OBJ_GRETU "%lu.Enable"
 #define GRETU_PARAM_PRI_ENDPOINT 	GRE_OBJ_GRETU "%lu.PrimaryRemoteEndpoint"
@@ -465,6 +469,98 @@ CosaDml_GreTunnelInit(void)
     AnscCreateTask(GreTunnel_circuit_id_init_thread, USER_DEFAULT_TASK_STACK_SIZE, USER_DEFAULT_TASK_PRIORITY, params, "CircuitIDInitThread");
 
     AnscTraceDebug(("Init Hotspot GRE Done\n"));
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+static int
+GreHealthPsmGetUlong(const char *param, ULONG *value)
+{
+    char val[1024];
+
+    if (GrePsmGet(param, val, sizeof(val)) != 0)
+        return -1;
+
+    sscanf(val, "%lu", value);
+
+    return 0;
+}
+
+
+ANSC_STATUS
+CosaDml_GreGetHealthCheckParams(COSA_DML_GRE_HEALTH *pGreHealth)
+{
+    if (!pGreHealth)
+        return ANSC_STATUS_FAILURE;
+
+    if (GreHealthPsmGetUlong(GRE_PARAM_KAITVL, &(pGreHealth->RemoteEndpointHealthCheckPingInterval)) != 0)
+        return ANSC_STATUS_FAILURE;
+
+    if (GreHealthPsmGetUlong(GRE_PARAM_KAFAILITVL, &(pGreHealth->RemoteEndpointHealthCheckPingIntervalInFailure)) != 0)
+        return ANSC_STATUS_FAILURE;
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaDml_GreHealthlSetKeepAliveInterval(ULONG val)
+{
+    char str_value[12];
+    char psmRec[MAX_GRE_PSM_REC + 1];
+    char psmVal[16];
+    ULONG tuIns = 1;
+
+    snprintf(str_value, sizeof(str_value), "%d", val);
+    if(sysevent_set(sysevent_fd, sysevent_token, khotspotfd_keep_alive, str_value, 0)) {
+        AnscTraceError(("sysevent set %s failed\n", khotspotfd_keep_alive));
+    } else {
+        AnscTraceWarning(("sysevent set %s to %s\n", khotspotfd_keep_alive, str_value));
+    }
+
+    g_hsfdStat->keepAliveInterval = val;
+
+    /* save to PSM */
+    snprintf(psmRec, sizeof(psmRec), GRE_PARAM_KAITVL);
+    snprintf(psmVal, sizeof(psmVal), "%lu", val);
+    if (GrePsmSet(psmRec, psmVal) != 0)
+        return ANSC_STATUS_FAILURE;
+
+    /* save to PSM -- Need to remove from GRE TUNNEL */
+    snprintf(psmRec, sizeof(psmRec), GRETU_PARAM_KAITVL, tuIns);
+    snprintf(psmVal, sizeof(psmVal), "%lu", val);
+    if (GrePsmSet(psmRec, psmVal) != 0)
+        return ANSC_STATUS_FAILURE;
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+
+ANSC_STATUS
+CosaDml_GreHealthSetKeepAliveFailInterval(ULONG val)
+{
+    char str_value[12];
+    char psmRec[MAX_GRE_PSM_REC + 1];
+    char psmVal[16];
+    ULONG tuIns = 1;
+
+    snprintf(str_value, sizeof(str_value), "%d", val);
+    if (sysevent_set(sysevent_fd, sysevent_token, khotspotfd_dead_interval, str_value, 0)) {
+        AnscTraceError(("sysevent set %s failed\n", khotspotfd_dead_interval));
+    } else{
+        AnscTraceWarning(("sysevent set %s to %s\n", khotspotfd_dead_interval, str_value));
+    }
+
+    /* save to PSM */
+    snprintf(psmRec, sizeof(psmRec), GRE_PARAM_KAFAILITVL);
+    snprintf(psmVal, sizeof(psmVal), "%lu", val);
+    if (GrePsmSet(psmRec, psmVal) != 0)
+        return ANSC_STATUS_FAILURE;
+
+    /* save to PSM -- Need to remove from GRE TUNNEL */
+    snprintf(psmRec, sizeof(psmRec), GRETU_PARAM_KAFAILITVL, tuIns);
+    snprintf(psmVal, sizeof(psmVal), "%lu", val);
+    if (GrePsmSet(psmRec, psmVal) != 0)
+        return ANSC_STATUS_FAILURE;
 
     return ANSC_STATUS_SUCCESS;
 }
