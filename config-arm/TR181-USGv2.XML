@@ -18768,7 +18768,27 @@
 	<object>
         <name>X_COMCAST-COM_GRE</name>
         <objectType>object</objectType>
-
+        <functions>
+            <func_GetParamUlongValue>GRE_GetParamUlongValue</func_GetParamUlongValue>
+            <func_SetParamUlongValue>GRE_SetParamUlongValue</func_SetParamUlongValue>
+            <func_Validate>GRE_Validate</func_Validate>
+            <func_Commit>GRE_Commit</func_Commit>
+            <func_Rollback>GRE_Rollback</func_Rollback>
+        </functions>
+        <parameters>
+            <parameter>
+                <name>RemoteEndpointHealthCheckPingInterval</name>
+                <type>unsignedInt</type>
+                <syntax>uint32</syntax>
+                <writable>true</writable>
+            </parameter>
+            <parameter>
+                <name>RemoteEndpointHealthCheckPingIntervalInFailure</name>
+                <type>unsignedInt</type>
+                <syntax>uint32</syntax>
+                <writable>true</writable>
+            </parameter>
+        </parameters>
         <objects>
             <object>
                 <name>XfinityHealthCheck</name>
