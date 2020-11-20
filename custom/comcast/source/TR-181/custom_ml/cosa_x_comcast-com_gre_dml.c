@@ -105,6 +105,86 @@ void* hotspot_thread(void* arg)
     return NULL;
 }
 
+BOOL GRE_GetParamUlongValue ( ANSC_HANDLE hInsContext, char* ParamName, ULONG* pUlong)
+{
+    COSA_DATAMODEL_GRE2 *pMyObject  = (COSA_DATAMODEL_GRE2 *)g_pCosaBEManager->hTGRE;
+    COSA_DML_GRE_HEALTH *pGreHealth = (COSA_DML_GRE_HEALTH *)&(pMyObject->GreHealth);
+
+    if (strcmp(ParamName, "RemoteEndpointHealthCheckPingInterval") == 0)
+    {
+        *pUlong = pGreHealth->RemoteEndpointHealthCheckPingInterval;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "RemoteEndpointHealthCheckPingIntervalInFailure") == 0)
+    {
+        *pUlong = pGreHealth->RemoteEndpointHealthCheckPingIntervalInFailure;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+BOOL GRE_SetParamUlongValue ( ANSC_HANDLE  hInsContext, char* ParamName, ULONG  uValue)
+{
+    COSA_DATAMODEL_GRE2 *pMyObject  = (COSA_DATAMODEL_GRE2 *)g_pCosaBEManager->hTGRE;
+    COSA_DML_GRE_HEALTH *pGreHealth = (COSA_DML_GRE_HEALTH *)&(pMyObject->GreHealth);
+
+    if (strcmp(ParamName, "RemoteEndpointHealthCheckPingInterval") == 0)
+    {
+        pGreHealth->RemoteEndpointHealthCheckPingInterval = uValue;
+        pGreHealth->ChangeFlag |= GRE_CF_KEEPITVL;
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "RemoteEndpointHealthCheckPingIntervalInFailure") == 0)
+    {
+        pGreHealth->RemoteEndpointHealthCheckPingIntervalInFailure = uValue;
+        pGreHealth->ChangeFlag |= GRE_CF_KEEPFAILITVL;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+BOOL GRE_Validate ( ANSC_HANDLE hInsContext, char* pReturnParamName, ULONG* puLength)
+{
+    return TRUE;
+}
+
+ULONG GRE_Rollback (ANSC_HANDLE hInsContext)
+{
+    COSA_DML_GRE_HEALTH *pGreHealth = (COSA_DML_GRE_HEALTH *)hInsContext;
+
+    if (CosaDml_GreGetHealthCheckParams(pGreHealth) != ANSC_STATUS_SUCCESS)
+        return ANSC_STATUS_FAILURE;
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ULONG GRE_Commit ( ANSC_HANDLE hInsContext, char* pReturnParamName, ULONG* puLength)
+{
+    COSA_DATAMODEL_GRE2 *pMyObject  = (COSA_DATAMODEL_GRE2 *)g_pCosaBEManager->hTGRE;
+    COSA_DML_GRE_HEALTH *pGreHealth = (COSA_DML_GRE_HEALTH *)&(pMyObject->GreHealth);
+
+    if (pGreHealth->ChangeFlag & GRE_CF_KEEPITVL)
+    {
+        if (CosaDml_GreHealthlSetKeepAliveInterval(pGreHealth->RemoteEndpointHealthCheckPingInterval) != ANSC_STATUS_SUCCESS)
+            goto rollback;
+    }
+    if (pGreHealth->ChangeFlag & GRE_CF_KEEPFAILITVL)
+    {
+        if (CosaDml_GreHealthSetKeepAliveFailInterval(pGreHealth->RemoteEndpointHealthCheckPingIntervalInFailure) != ANSC_STATUS_SUCCESS)
+            goto rollback;
+    }
+    pGreHealth->ChangeFlag = 0;
+    return ANSC_STATUS_SUCCESS;
+
+rollback:
+    pGreHealth->ChangeFlag = 0;
+    GRE_Rollback((ANSC_HANDLE)pGreHealth);
+    return ANSC_STATUS_FAILURE;
+}
+
 BOOL GreTunnel_GetParamBoolValue ( ANSC_HANDLE hInsContext, char*  ParamName, BOOL*  pBool) {
 	COSA_DML_GRE_TUNNEL                 *pGreTu      = (COSA_DML_GRE_TUNNEL *)hInsContext;
     //ULONG                           ins = pGreTu->InstanceNumber;
