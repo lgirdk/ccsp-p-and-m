@@ -132,6 +132,12 @@ UserInterface_Validate
     );
 
 ULONG
+UserInterface_Rollback
+    (
+        ANSC_HANDLE                 hInsContext
+    );
+
+ULONG
 UserInterface_Commit
     (
         ANSC_HANDLE                 hInsContext
