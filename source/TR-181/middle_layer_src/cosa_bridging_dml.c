@@ -1836,15 +1836,21 @@ Port_GetParamIntValue
 {
     PCOSA_CONTEXT_LINK_OBJECT       pCosaContext     = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     PCOSA_DML_BRG_FULL_ALL          pDmlBridge       = (PCOSA_DML_BRG_FULL_ALL   )pCosaContext->hParentTable;
+    int retval = ANSC_STATUS_SUCCESS;
 
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "PVID") == 0)
     {
         //$HL 7/3/2013
         /* collect value */
-        //PCOSA_DML_BRG_PORT_FULL         pPort            = (PCOSA_DML_BRG_PORT_FULL  )pCosaContext->hContext;
+        PCOSA_DML_BRG_PORT_FULL pPort = (PCOSA_DML_BRG_PORT_FULL) pCosaContext->hContext;
         //*pInt = pPort->Cfg.PVID;
-        *pInt = CosaDmlBrgGetVLANID(pDmlBridge->Cfg.InstanceNumber);
+        retval = CosaDmlPortGetVLANID(pDmlBridge->Cfg.InstanceNumber, pPort->Cfg.InstanceNumber);
+        if (retval != ANSC_STATUS_CANT_FIND)
+            *pInt = retval;
+        else
+            return FALSE;
+
         return TRUE;
     }
 
