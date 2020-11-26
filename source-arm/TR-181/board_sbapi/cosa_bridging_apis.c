@@ -1388,6 +1388,26 @@ int CosaDmlBrgGetVLANID
 #endif
 }
 
+int CosaDmlPortGetVLANID
+    (
+        ULONG                       uBridgeInstanceNumber,
+        ULONG                       uPortInstanceNumber
+    )
+{
+#if defined _COSA_DRG_TPG_ || _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+    AnscTraceFlow(("<HL> %s\n",__FUNCTION__));
+    PBRIDGE pBridge = getBridge(uBridgeInstanceNumber);
+    if (!pBridge) {
+        return ANSC_STATUS_CANT_FIND;
+    }
+    PBRIDGE_PORT pBPort = getBPort(pBridge, uPortInstanceNumber);
+    if(pBPort)
+        return pBPort->pvid;
+    else
+        return ANSC_STATUS_CANT_FIND;
+#endif
+}
+
 char * CosaDmlBrgGetName
     (
         ULONG                       ulInstanceNumber
@@ -1768,8 +1788,7 @@ CosaDmlBrgPortSetCfg
     pBPort->bMgt = pCfg->bManagementPort;
     pBPort->bPriTag = pCfg->bPriorityTagging;
     pBPort->linkType = pCfg->LinkType;
-    //pBPort->pvid = pCfg->PVID;
-    pBPort->pvid = pBridge->vlanid;
+    pBPort->pvid = pCfg->PVID;
     pBPort->mode = pCfg->mode;
     pBPort->bUpstream = pCfg->bUpstream;
     pBPort->bEnabled = pCfg->bEnabled;
