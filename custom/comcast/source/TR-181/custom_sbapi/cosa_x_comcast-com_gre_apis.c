@@ -1644,12 +1644,76 @@ CosaDml_GreTunnelIfGetVlanId(ULONG tuIns, ULONG ins, INT *vlanId)
     return ANSC_STATUS_SUCCESS;
 }
 
+static void *setGreVlan(void *arg)
+{
+    //One interface can be associated only with one bridge, mutilple bridges is practiaclly not possible
+    //And bridge can have only one gre vlan.
+    pthread_detach(pthread_self());
+    int i;
+    char *bridgeDM = NULL;
+    char bridgePortDM[256], name[64], insNumberStr[8];
+    int brinstance = 0;
+    int PortNumberOfEntries = 0;
+    int vid = 0;
+    ULONG size = sizeof(name);
+
+    if(!arg)
+        return NULL;
+
+    COSA_DML_BRIDGE_GET_PARM *param = (COSA_DML_BRIDGE_GET_PARM *)arg;
+
+    if ((bridgeDM = GetTunnelIfAssoBridge(param->tuIns, param->ifIns)) == NULL)
+    {
+        AnscFreeMemory(param);
+        return NULL;
+    }
+
+    snprintf(bridgePortDM,sizeof(bridgePortDM),"%sPortNumberOfEntries",bridgeDM);   //Device.Bridging.Bridge.{i}.PortNumberOfEntries
+
+    PortNumberOfEntries = g_GetParamValueUlong(g_pDslhDmlAgent,bridgePortDM);
+
+    for(i = 1; i <= PortNumberOfEntries ; i++)
+    {
+        snprintf(bridgePortDM,sizeof(bridgePortDM),"%sPort.%d.Name",bridgeDM,i);
+
+        if (g_GetParamValueString(g_pDslhDmlAgent, bridgePortDM, name, &size) == 0) {
+
+            if(strstr(name,"gre")) //Name will have gretap0
+            {
+                snprintf(bridgePortDM,sizeof(bridgePortDM),"%sPort.%d.PVID",bridgeDM,i);
+                vid = g_GetParamValueInt(g_pDslhDmlAgent,bridgePortDM);
+                if(vid != param->VLANID){
+                    g_SetParamValueInt(bridgePortDM, param->VLANID);
+                    sscanf(bridgePortDM,"Device.Bridging.Bridge.%d.", &brinstance);
+                    _ansc_itoa(brinstance, insNumberStr, 10);
+                    if(sysevent_set(sysevent_fd, sysevent_token, "multinet-restart", insNumberStr, 0)) {
+                        CcspTraceError(("sysevent set multinet-restart %s failed\n",insNumberStr));
+                    } else {
+                        CcspTraceError(("sysevent set multinet-restart to %s\n",insNumberStr));
+                    }
+                }
+                break;
+            }
+        }
+
+    }
+
+    if(bridgeDM)
+        free(bridgeDM);
+
+    if(param)
+        AnscFreeMemory(param);
+
+    return NULL;
+}
 
 ANSC_STATUS
 CosaDml_GreTunnelIfSetVlanId(ULONG tuIns, ULONG ins, INT vlanId)
 {
     char psmRec[MAX_GRE_PSM_REC + 1];
     char psmVal[16];
+
+    PCOSA_DML_BRIDGE_GET_PARM param = NULL;
 
     if (tuIns != 1)
         return ANSC_STATUS_FAILURE;
@@ -1659,6 +1723,22 @@ CosaDml_GreTunnelIfSetVlanId(ULONG tuIns, ULONG ins, INT vlanId)
     snprintf(psmVal, sizeof(psmVal), "%d", vlanId);
     if (GrePsmSet(psmRec, psmVal) != 0)
         return ANSC_STATUS_FAILURE;
+
+    param = (PCOSA_DML_BRIDGE_GET_PARM)AnscAllocateMemory(sizeof(COSA_DML_BRIDGE_GET_PARM));
+
+    if(!param)
+        return ANSC_STATUS_FAILURE;
+
+    param->tuIns = tuIns;
+    param->ifIns = ins;
+    param->VLANID = vlanId;
+
+    pthread_t setvlan;
+    if(pthread_create(&setvlan, NULL, &setGreVlan, (void *)param))
+    {
+        AnscFreeMemory(param);
+        return ANSC_STATUS_FAILURE;
+    }
 
     return ANSC_STATUS_SUCCESS;
 }
