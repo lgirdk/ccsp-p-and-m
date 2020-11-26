@@ -324,6 +324,12 @@ int CosaDmlBrgGetVLANID
         ULONG                       ulInstanceNumber
     );
 
+int CosaDmlPortGetVLANID
+    (
+        ULONG                       uBridgeInstanceNumber,
+        ULONG                       uPortInstanceNumber
+    );
+
 char * CosaDmlBrgGetName
     (
         ULONG                       ulInstanceNumber
