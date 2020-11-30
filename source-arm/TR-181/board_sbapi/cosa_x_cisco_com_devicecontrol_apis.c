@@ -76,6 +76,7 @@
 #include "dml_tr181_custom_cfg.h" 
 #include "ccsp_dm_api.h"
 #include <arpa/inet.h>
+#include "cm_hal.h"
 #include "platform_hal.h"
 #ifdef _MACSEC_SUPPORT_
 #include "ccsp_hal_ethsw.h"
@@ -2396,6 +2397,8 @@ CosaDmlDcSetFactoryReset
 		pthread_create(&logs, NULL, &backuplogs, (void*)wifiThread);
 	      }else
 		pthread_create(&logs, NULL, &backuplogs, NULL);
+
+	   cm_hal_Set_ErouterModeControl(CM_INIT_MODE_CONTROL_HONOR); //Reset to default mode as per MVXREQ-356.
 	}
 #ifdef RDK_ONEWIFI
 	if( (factory_reset_mask & FR_ROUTER) && (factory_reset_mask & FR_WIFI)){
