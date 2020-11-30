@@ -76,6 +76,7 @@
 #include "ccsp_dm_api.h"
 #include <arpa/inet.h>
 #include "platform_hal.h"
+#include "cm_hal.h"
 
 #include "cosa_dhcpv4_apis.h"
 #include "cosa_firewall_apis.h"
@@ -2173,6 +2174,8 @@ CosaDmlDcSetFactoryReset
 		pthread_create(&logs, NULL, &backuplogs, (void*)wifiThread);
 	      }else
 		pthread_create(&logs, NULL, &backuplogs, NULL);
+
+	   cm_hal_Set_ErouterModeControl(CM_INIT_MODE_CONTROL_HONOR); //Reset to default mode as per MVXREQ-356.
 	}
     return ANSC_STATUS_SUCCESS;
 }
