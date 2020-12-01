@@ -1482,6 +1482,7 @@ CosaDmlNatGetDmz
     ULONG                           rc              = 0;
     /*ANSC_IPV4_ADDRESS               InternalIP      = {0};
       char*                           pInternalIPStr  = NULL;*/
+    lanSetting_t                    lan;
     UtopiaContext                   Ctx;
     errno_t                         safec_rc        = -1;
     if ( !pDmlDmz )
@@ -1566,8 +1567,17 @@ CosaDmlNatGetDmz
             safec_rc = strcpy_s(pDmlDmz->InternalIP,sizeof(pDmlDmz->InternalIP), pDmz->dest_ip);  /* Todo Get Lan !!!!!!  */
             ERR_CHK(safec_rc);
         }else{
-            safec_rc = strcpy_s(pDmlDmz->InternalIP,sizeof(pDmlDmz->InternalIP), "0.0.0.0");
-            ERR_CHK(safec_rc);
+            rc = Utopia_GetLanSettings(&Ctx, &lan);
+            if ( rc == SUCCESS) {                                /* Default Internal IP subnet should same as LAN subnet */
+                AnscCopyString(pDmlDmz->InternalIP, lan.ipaddr);
+
+                char *pPos = strrchr(pDmlDmz->InternalIP, '.') + 1;
+                *pPos++ = '0';
+                *pPos = '\0';
+            } else {
+                safec_rc = strcpy_s(pDmlDmz->InternalIP,sizeof(pDmlDmz->InternalIP), "0.0.0.0");
+                ERR_CHK(safec_rc);
+            }
         }
 
         if (strlen(pDmz->dest_ipv6)){
