@@ -98,7 +98,6 @@ extern char g_Subsystem[32];
 extern void* g_pDslhDmlAgent;
 static BOOL g_clearDB = false;
 
-#define SERIALNUMBERFORMAT "X_LGI_COM_SerialNumberFormat"
 #define GENERATEOUIFROMMAC "X_LGI_COM_OuiFromMAC"
 #define MAX_ALLOWABLE_STRING_LEN  256
 
@@ -719,26 +718,7 @@ DeviceInfo_GetParamStringValue
     if( AnscEqualString(ParamName, "SerialNumber", TRUE))
     {
         /* collect value */
-        char buf[16] = {0};
-        char outputStr[18] = {0};
-        unsigned char macByte[6] = {0};
-        syscfg_init();
-        syscfg_get(NULL, SERIALNUMBERFORMAT, buf, sizeof(buf));
-        if(strcmp(buf,"cm_mac") == 0)
-        {
-           // get the CM MAC 
-           ULONG len = sizeof(outputStr);
-           CosaDmlDiGetBaseMacAddress(NULL, outputStr, &len);
-           // convert the MAC in the proper format 
-           sscanf(outputStr,"%02X:%02X:%02X:%02X:%02X:%02X",&macByte[0], &macByte[1], &macByte[2], &macByte[3],&macByte[4],&macByte[5]);
-           sprintf(outputStr, "%02X%02X%02X%02X%02X%02X", macByte[0],macByte[1], macByte[2], macByte[3], macByte[4], macByte[5]);
-           AnscCopyString(pValue, outputStr);
-           *pulSize = AnscSizeOfString(pValue);
-        }
-        else
-        {
-            CosaDmlDiGetSerialNumber(NULL, pValue, pulSize);
-        } 
+        CosaDmlDiGetRouterMacAddress(NULL, pValue, pulSize);
         return 0;
     }
 
