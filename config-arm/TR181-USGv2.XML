@@ -4570,8 +4570,6 @@
 
             <syntax>uint32</syntax>
 
-            <notify>off</notify>
-
           </parameter>
 
           <parameter>
@@ -4645,8 +4643,6 @@
               <type>unsignedInt</type>
 
               <syntax>uint32</syntax>
-
-              <notify>off</notify>
 
             </parameter>
 
