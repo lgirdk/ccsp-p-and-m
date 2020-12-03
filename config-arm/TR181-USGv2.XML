@@ -486,11 +486,6 @@
                 <type>unsignedInt</type>
                 <syntax>uint32</syntax>
             </parameter>
-            <parameter>
-                <name>IPv6Router</name>
-                <type>string</type>
-                <syntax>string</syntax>
-            </parameter>
           </parameters>
     </object>
    <object>
@@ -1287,6 +1282,12 @@
 
           <writable>false</writable>
 
+        </parameter>
+
+        <parameter>
+          <name>X_LGI-COM_GW_IPv6</name>
+          <type>string</type>
+          <syntax>string</syntax>
         </parameter>
 
         <parameter>
