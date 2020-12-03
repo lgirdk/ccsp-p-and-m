@@ -109,6 +109,16 @@
 #define RFC_STORE_FILE       "/opt/secure/RFC/tr181store.json"
 #define MAX_TIME_FORMAT     5
 
+#define EROUTER_IF_NAME "erouter0"
+#define RTF_UP 0x0001
+#define RTF_GATEWAY 0x0002
+#define PATH_ROUTE6  "/proc/net/ipv6_route"
+
+#define ADDR_ISNONZERO( ipaddr, len ) ( ((char*)ipaddr)[0] | ((char*)ipaddr)[1] | \
+                                        ((char*)ipaddr)[(len)-2] | ((char*)ipaddr)[(len)-1] )
+#define IP_TO_STR_GEN( address, str, family ) \
+    inet_ntop( family, address, str, INET6_ADDRSTRLEN )
+
 #define MAX_PROCESS_NUMBER 300
 
 static int writeToJson(char *data, char *file);
@@ -698,6 +708,110 @@ CosaDmlDiGetSerialNumber
 #endif
 
     return 0;
+}
+
+static unsigned int parseHex(const char *strAddr, unsigned char  *inetAddr)
+{
+    unsigned int len=0;
+    const char *p = NULL;
+    if(NULL == (p = strAddr) )
+    {
+        return 0;
+    }
+    while (*p)
+    {
+        int tmp;
+        if (p[1] == 0)
+        {
+            return 0;
+        }
+        if (sscanf(p, "%02x", &tmp) != 1)
+        {
+            return 0;
+        }
+        inetAddr[len] = tmp;
+        len++;
+        p += 2;
+    }
+    return len;
+}
+
+static ANSC_STATUS getInterfaceGWIAddr(const char *ifname, unsigned char  *defGwAddr)
+{
+    FILE *fp ;
+    int  prefix_len, slen;
+    int  metric, refcnt, use, ifflag;
+    signed char  buff[4*INET6_ADDRSTRLEN];
+    char iface[IF_NAMESIZE];
+    char dstNet[INET6_ADDRSTRLEN];
+    char srcNetSrc[INET6_ADDRSTRLEN];
+    char nextHopSrc[INET6_ADDRSTRLEN];
+    unsigned char  inet_dst[INET6_ADDRLEN];
+
+    if ( (defGwAddr == NULL) || (ifname == NULL) )
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    if ( NULL == (fp = fopen(PATH_ROUTE6, "r")) )
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    while ( fgets( (char*)buff, 4*INET6_ADDRSTRLEN, fp) )
+    {
+        sscanf( (const char*)buff, "%s %02x %s %02x %s %x %x %x %x %s\n",
+               dstNet, &prefix_len, srcNetSrc, &slen, nextHopSrc, &metric, &use, &refcnt, &ifflag, iface);
+
+        if ( strlen(iface) != strlen(ifname) || strncmp(iface, ifname, strlen(iface)) )
+        {
+            continue;
+        }
+        if ( prefix_len )
+        {
+            continue;
+        }
+        parseHex(dstNet, inet_dst);
+        if ( ADDR_ISNONZERO( inet_dst, INET6_ADDRLEN ) )
+        {
+            continue;
+        }
+        if ( !(ifflag & (RTF_UP | RTF_GATEWAY | RTF_ADDRCONF | RTF_DEFAULT | RTF_EXPIRES)) )
+        {
+            continue;
+        }
+        fclose(fp);
+        parseHex(nextHopSrc, inet_dst);
+        memcpy(defGwAddr, inet_dst, INET6_ADDRLEN);
+        return ANSC_STATUS_SUCCESS;
+    }
+
+    fclose(fp);
+    return ANSC_STATUS_FAILURE;
+}
+
+ANSC_STATUS
+CosaDmlDiGetGW_IPv6
+    (
+        ANSC_HANDLE                 hContext,
+        char*                       pValue,
+        ULONG*                      pulSize
+    )
+{
+    unsigned char gwAddr6[INET6_ADDRLEN] = {0};
+    char ipStr[INET6_ADDRSTRLEN] = {0};
+
+    if (getInterfaceGWIAddr(EROUTER_IF_NAME, gwAddr6) == ANSC_STATUS_SUCCESS)
+    {
+        IP_TO_STR_GEN(gwAddr6, ipStr, AF_INET6);
+        AnscCopyString(pValue, ipStr);
+    }
+    else
+    {
+        AnscCopyString(pValue, "::");
+    }
+
+    return ANSC_STATUS_SUCCESS;
 }
 
 ANSC_STATUS
