@@ -827,6 +827,12 @@ DeviceInfo_GetParamStringValue
         return CosaDmlDiGetSerialNumber(NULL, pValue, pulSize);
     }
 
+    if (strcmp(ParamName, "X_LGI-COM_GW_IPv6") == 0)
+    {
+        CosaDmlDiGetGW_IPv6(NULL, pValue, pulSize);
+        return 0;
+    }
+
     if (strcmp(ParamName, "HardwareVersion") == 0)
     {
         CosaDmlDiGetHardwareVersion(NULL, pValue, pulSize);
