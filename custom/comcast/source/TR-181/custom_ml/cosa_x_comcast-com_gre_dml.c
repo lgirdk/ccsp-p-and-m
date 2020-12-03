@@ -238,7 +238,7 @@ BOOL GreTunnel_GetParamBoolValue ( ANSC_HANDLE hInsContext, char*  ParamName, BO
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "X_LGI-COM_EnableVendorClassID", TRUE))
+    if (strcmp(ParamName, "X_LGI-COM_EnableVendorClassID") == 0)
     {
         *pBool = pGreTu->EnableVendorClassID;
         return TRUE;
@@ -489,7 +489,7 @@ BOOL GreTunnel_SetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName, BOO
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "X_LGI-COM_EnableVendorClassID", TRUE))
+    if (strcmp(ParamName, "X_LGI-COM_EnableVendorClassID") == 0)
     {
         pGreTu->EnableVendorClassID = bValue;
         pGreTu->ChangeFlag |= GRETU_CF_DHCPOPTION60;
