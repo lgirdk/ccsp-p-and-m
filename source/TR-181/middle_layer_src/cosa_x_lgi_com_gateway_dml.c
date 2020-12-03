@@ -122,14 +122,6 @@ LgiGateway_GetParamStringValue
     {
         retVal =  (ULONG) CosaDmlLgiGwGetDnsIpv6Alternate(pValue, pUlSize);
     }
-    else if (strcmp(ParamName, "IPv6Router") == 0)
-    {
-        if(CosaDml_Gateway_GetIPv6Router(NULL, pValue, pUlSize) == ANSC_STATUS_SUCCESS)
-        {
-            *pUlSize = AnscSizeOfString(pValue)+1;
-            retVal = 0;
-        }
-    }
 
     return retVal;
 }

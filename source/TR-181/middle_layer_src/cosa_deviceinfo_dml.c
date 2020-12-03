@@ -810,6 +810,11 @@ DeviceInfo_GetParamStringValue
         CosaDmlDiGetSerialNumber(NULL,pValue,pulSize);
         return 0;
     }
+    if (strcmp(ParamName, "X_LGI-COM_GW_IPv6") == 0)
+    {
+        CosaDmlDiGetGW_IPv6(NULL, pValue, pulSize);
+        return 0;
+    }
 
     /* This parameter always returns the actual serial number */
     if (strcmp(ParamName, "X_LGI-COM_SerialNumber") == 0)
