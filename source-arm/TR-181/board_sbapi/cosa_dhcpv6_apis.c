@@ -3481,12 +3481,10 @@ int CosaDmlDHCPv6sGetDNS(char* Dns, char* output, int outputLen)
 #if defined(_XB6_PRODUCT_REQ_) && defined(_COSA_BCM_ARM_)
 static int format_dibbler_option(char *option)
 {
-    if (option == NULL)
-        return -1;
-
     int i;
+    size_t len = strlen(option);
 
-    for (i = 0; i < strlen(option); i++) {
+    for (i = 0; i < len; i++) {
         if(option[i] == ' ')
             option[i] = ',';
     }
