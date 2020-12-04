@@ -124,6 +124,7 @@ CosaDmlDhcpsARPing
 #define WEEKS 604800
 #define MINSECS 120
 #define MAXSECS 999
+#define DEFAULT_LAN_SUBNET_INST 1
 
 /***********************************************************************
  IMPORTANT NOTE:
@@ -10818,11 +10819,21 @@ LanAllowedSubnetTable_DelEntry
     PCOSA_CONTEXT_LINK_OBJECT    pLinkObj           = (PCOSA_CONTEXT_LINK_OBJECT)hInstance;
     COSA_DML_LAN_Allowed_Subnet  *pLanAllowedSubnet = (COSA_DML_LAN_Allowed_Subnet*)pLinkObj->hContext;
 
+    if (pLinkObj->InstanceNumber == DEFAULT_LAN_SUBNET_INST)
+    {
+        /* MVXREQ-675: Default LAN subnet shouldn't be deleted */
+        return ANSC_STATUS_FAILURE;
+    }
+
     AnscSListPopEntryByLink((PSLIST_HEADER)&pMyObject->LanAllowedSubnetList, &pLinkObj->Linkage);
 
     if (pLinkObj->bNew)
     {
         CosaLanAllowedSubnetListDelInfo((ANSC_HANDLE)pMyObject, (ANSC_HANDLE)pLinkObj);
+    }
+    else
+    {
+        CosaDmlLAN_Allowed_Subnet_DelEntry(pLinkObj->InstanceNumber);
     }
 
     AnscFreeMemory(pLanAllowedSubnet);
@@ -10871,6 +10882,12 @@ LanAllowedSubnetTable_SetParamStringValue
 {
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj         = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_LAN_Allowed_Subnet *pLanAllowedSubnet = (COSA_DML_LAN_Allowed_Subnet*)pLinkObj->hContext;
+
+    if (pLinkObj->InstanceNumber == DEFAULT_LAN_SUBNET_INST)
+    {
+        /* MVXREQ-675: Default LAN subnet is read-only */
+        return FALSE;
+    }
 
     if (strcmp(ParamName, "LanAllowedSubnetMask") == 0)
     {
