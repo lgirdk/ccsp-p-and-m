@@ -4260,6 +4260,9 @@ void __cosa_dhcpsv6_refresh_config()
     //Intel Proposed RDKB Generic Bug Fix from XB6 SDK
     fprintf(fp, "reconfigure-enabled 1\n");
 
+    //strict RFC compliance rfc3315 Section 13
+    fprintf(fp, "drop-unicast\n");
+
     if ( g_dhcpv6_server_type != DHCPV6_SERVER_TYPE_STATEFUL )
         fprintf(fp, "stateless\n");
 
@@ -5138,6 +5141,9 @@ void __cosa_dhcpsv6_refresh_config()
 
     //Intel Proposed RDKB Generic Bug Fix from XB6 SDK
     fprintf(fp, "reconfigure-enabled 1\n");
+
+    //strict RFC compliance rfc3315 Section 13
+    fprintf(fp, "drop-unicast\n");
 
     if ( g_dhcpv6_server_type != DHCPV6_SERVER_TYPE_STATEFUL )
         fprintf(fp, "stateless\n");
