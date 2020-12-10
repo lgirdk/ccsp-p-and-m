@@ -4088,6 +4088,8 @@ static void __cosa_dhcpsv6_refresh_config()
     ULONG  T2 = 0;
     UtopiaContext utctx = {0};
     char   isLgi[4] = {0};
+    char relayStr[1024];
+    int  Cnt = 0;
 
     if (!fp)
         goto EXIT;
@@ -4104,7 +4106,9 @@ static void __cosa_dhcpsv6_refresh_config()
 
     //strict RFC compliance rfc3315 Section 13
     fprintf(fp, "drop-unicast\n");
-
+    //support relay
+    fprintf(fp, "guess-mode\n");
+    
     for ( Index = 0; Index < uDhcpv6ServerPoolNum; Index++ )
     {
         /* We need get interface name according to Interface field*/
@@ -4112,9 +4116,11 @@ static void __cosa_dhcpsv6_refresh_config()
             continue;
 
         fprintf(fp, "iface %s {\n", COSA_DML_DHCPV6_SERVER_IFNAME);
-
+        Cnt += sprintf(relayStr+Cnt,"iface  relay1 {\n");
+        Cnt += sprintf(relayStr+Cnt,"   relay %s\n",  COSA_DML_DHCPV6_SERVER_IFNAME);  
         if ( sDhcpv6ServerPool[Index].Cfg.RapidEnable ){
             fprintf(fp, "   rapid-commit yes\n");
+            Cnt += sprintf(relayStr+Cnt,"   rapid-commit yes\n");
         }
 
 #ifdef CONFIG_CISCO_DHCP6S_REQUIREMENT_FROM_DPC3825
@@ -4130,7 +4136,7 @@ static void __cosa_dhcpsv6_refresh_config()
 
         /* on GUI, we will limit the order to be [1-256]*/
         fprintf(fp, "   preference %d\n", 255); /*256-(sDhcpv6ServerPool[Index].Cfg.Order%257));*/
-
+        Cnt += sprintf(relayStr+Cnt,"   preference %d\n", 255);
         /*begin class
                     fc00:1:0:0:4::/80,fc00:1:0:0:5::/80,fc00:1:0:0:6::/80
                 */
@@ -4156,7 +4162,7 @@ static void __cosa_dhcpsv6_refresh_config()
                 }
 
                 fprintf(fp, "   class {\n");
-
+                Cnt += sprintf(relayStr+Cnt,"   class {\n");
 #ifdef CONFIG_CISCO_DHCP6S_REQUIREMENT_FROM_DPC3825
                 /*When enable EUI64, the pool prefix value must use xxx/64 format*/
                 if ( sDhcpv6ServerPool[Index].Cfg.EUI64Enable){
@@ -4202,6 +4208,7 @@ static void __cosa_dhcpsv6_refresh_config()
                 }
 
                 fprintf(fp, "       pool %s%s - %s%s\n", prefixValue, sDhcpv6ServerPool[Index].Cfg.PrefixRangeBegin, prefixValue, sDhcpv6ServerPool[Index].Cfg.PrefixRangeEnd );
+                Cnt += sprintf(relayStr+Cnt,"       pool %s%s - %s%s\n", prefixValue, sDhcpv6ServerPool[Index].Cfg.PrefixRangeBegin, prefixValue, sDhcpv6ServerPool[Index].Cfg.PrefixRangeEnd );
 #endif
 
                 /*we need get two time values */
@@ -4245,9 +4252,14 @@ static void __cosa_dhcpsv6_refresh_config()
                     fprintf(fp, "       T2 %u\n", T2);
                     fprintf(fp, "       prefered-lifetime %u\n", preferedTime);
                     fprintf(fp, "       valid-lifetime %u\n", validTime);
+                    Cnt += sprintf(relayStr+Cnt, "       T1 %u\n", T1);
+                    Cnt += sprintf(relayStr+Cnt, "       T2 %u\n", T2);
+                    Cnt += sprintf(relayStr+Cnt, "       prefered-lifetime %u\n", preferedTime);
+                    Cnt += sprintf(relayStr+Cnt, "       valid-lifetime %u\n", validTime);
                 }
                 
                 fprintf(fp, "   }\n");
+                Cnt += sprintf(relayStr+Cnt, "   }\n");
             }
 
             AnscFreeMemory(pTmp3);
@@ -4659,6 +4671,7 @@ OPTIONS:
                         { 
                           format_dibbler_option(tmpstr);
                           fprintf(fp, "option dns-server %s\n", tmpstr);
+                          Cnt += sprintf(relayStr+Cnt, "option dns-server %s\n", tmpstr);
                         }
 
                         tmpstr[0] = 0;
@@ -4667,6 +4680,7 @@ OPTIONS:
                         { 
                           format_dibbler_option(tmpstr);
                           fprintf(fp, "option domain %s\n", tmpstr);
+                          Cnt += sprintf(relayStr+Cnt, "option domain %s\n", tmpstr);
                         }
 
                         tmpstr[0] = 0;
@@ -4675,9 +4689,11 @@ OPTIONS:
                         {
                           format_dibbler_option(tmpstr);
                           fprintf(fp, "option ntp-server %s\n", tmpstr);
+                          Cnt += sprintf(relayStr+Cnt, "option ntp-server %s\n", tmpstr);
                         }
 
                         fprintf(fp, "\n");
+                        Cnt += sprintf(relayStr+Cnt, "\n");
                     }
                 }
 
@@ -4931,7 +4947,11 @@ OPTIONS:
         }     
 
         fprintf(fp, "}\n");
+        Cnt += sprintf(relayStr+Cnt, "}\n");
     }
+
+    fprintf(fp, "\n\n");
+    fprintf(fp, "%s",relayStr);
 
     /* Close the file pointer before calling set_ipv6_dns.sh as it is getting updated again there. */
     if (fp != NULL)
