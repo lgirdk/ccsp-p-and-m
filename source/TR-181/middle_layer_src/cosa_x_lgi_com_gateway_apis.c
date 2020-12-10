@@ -77,27 +77,31 @@ CosaDmlLgiGwSetDnsOverride
         BOOL                        bValue
     )
 {
-    char buffer[6] = "true";
-    pthread_t tid;
-    int retVal = 0;
+    char customer_db_dns_enabled[6];
+    int retVal = ANSC_STATUS_FAILURE;
 
-    if (syscfg_init() == 0)
+    // Public DNS allows to configure a set of preferred DNS servers different than the ones offered by your internet service provider.
+    // This is part of CR039. Allow updates only if already defined in syscfg DB(), ie if it's not already present then it can't be set.
+
+    if (syscfg_get(NULL, "dns_override", customer_db_dns_enabled, sizeof(customer_db_dns_enabled)) == 0)
     {
-        if (!bValue)
-        {
-            strcpy(buffer,"false");
-        }
-        syscfg_set(NULL, "dns_override", buffer);
-        syscfg_commit();
+        pthread_t tid;
+        char *nv = bValue ? "true" : "false";
 
-        pthread_create(&tid, NULL, &CosaDmlDNSOverride, NULL); 
+        if (strcmp(customer_db_dns_enabled, nv) != 0)
+        {
+            syscfg_set(NULL, "dns_override", nv);
+            syscfg_commit();
+        }
+
+        pthread_create(&tid, NULL, &CosaDmlDNSOverride, NULL);
+        retVal = ANSC_STATUS_SUCCESS;
     }
     else
     {
-        CcspTraceError(("syscfg_init failed in %s\n",__FUNCTION__));
-        retVal = -1;
+        CcspTraceError(("dns_override not present in syscfg db %s\n",__FUNCTION__));
     }
- 
+
     return retVal;
 }
 
