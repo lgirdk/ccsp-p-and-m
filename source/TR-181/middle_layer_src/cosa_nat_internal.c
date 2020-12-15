@@ -1376,7 +1376,7 @@ CosaFwReg_NATPassthroughGetInfo(
     ULONG                           ulIndex                 = 0;
     ULONG                           ulInstanceNumber        = 0;
     char*                           pFolderName             = NULL;
-    char*                           pAlias                  = NULL;
+    char*                           pAlias;
 
     if ( !pPoamIrepFoNATPassthrough )
     {
@@ -1407,41 +1407,41 @@ CosaFwReg_NATPassthroughGetInfo(
         {
             continue;
         }
-        if ( TRUE )
+
+        pSlapVariable =
+            (PSLAP_VARIABLE)pPoamIrepFoNATPassthroughSp->GetRecord
+                (
+                    (ANSC_HANDLE)pPoamIrepFoNATPassthroughSp,
+                    COSA_DML_RR_NAME_NATInsNumber,
+                    NULL
+                );
+
+        if ( pSlapVariable )
         {
-            pSlapVariable =
-                (PSLAP_VARIABLE)pPoamIrepFoNATPassthroughSp->GetRecord
-                    (
-                        (ANSC_HANDLE)pPoamIrepFoNATPassthroughSp,
-                        COSA_DML_RR_NAME_NATInsNumber,
-                        NULL
-                    );
+            ulInstanceNumber = pSlapVariable->Variant.varUint32;
 
-            if ( pSlapVariable )
-            {
-                ulInstanceNumber = pSlapVariable->Variant.varUint32;
-
-                SlapFreeVariable(pSlapVariable);
-            }
+            SlapFreeVariable(pSlapVariable);
         }
 
-        if ( TRUE )
+        pSlapVariable =
+            (PSLAP_VARIABLE)pPoamIrepFoNATPassthroughSp->GetRecord
+                (
+                    (ANSC_HANDLE)pPoamIrepFoNATPassthroughSp,
+                    COSA_DML_RR_NAME_NATAlias,
+                    NULL
+                );
+
+        if ( pSlapVariable )
         {
-            pSlapVariable =
-                (PSLAP_VARIABLE)pPoamIrepFoNATPassthroughSp->GetRecord
-                    (
-                        (ANSC_HANDLE)pPoamIrepFoNATPassthroughSp,
-                        COSA_DML_RR_NAME_NATAlias,
-                        NULL
-                    );
+            pAlias = AnscCloneString(pSlapVariable->Variant.varString);
 
-            if ( pSlapVariable )
-            {
-                pAlias = AnscCloneString(pSlapVariable->Variant.varString);
-
-                SlapFreeVariable(pSlapVariable);
-            }
+            SlapFreeVariable(pSlapVariable);
         }
+        else
+        {
+            pAlias = NULL;
+        }
+
         pCosaContext = (PCOSA_CONTEXT_LINK_OBJECT)AnscAllocateMemory(sizeof(COSA_CONTEXT_LINK_OBJECT));
 
         if ( !pCosaContext )
@@ -1461,7 +1461,16 @@ CosaFwReg_NATPassthroughGetInfo(
             return ANSC_STATUS_RESOURCES;
         }
 
-        AnscCopyString(pEntry->Alias, pAlias);
+        if (pAlias)
+        {
+            /*
+               Note that AnscAllocateMemory() zero's memory, so there's no need
+               to do anything to initialise pEntry->Alias if pAlias is NULL.
+            */
+            AnscCopyString(pEntry->Alias, pAlias);
+            AnscFreeMemory(pAlias);
+            pAlias = NULL;
+        }
 
         pEntry->InstanceNumber = ulInstanceNumber;
 
@@ -1473,14 +1482,7 @@ CosaFwReg_NATPassthroughGetInfo(
         pCosaContext->hPoamIrepFo           = (ANSC_HANDLE)pPoamIrepFoNATPassthroughSp;
 
         CosaSListPushEntryByInsNum(pListHead, pCosaContext);
-        if ( pAlias )
-        {
-            AnscFreeMemory(pAlias);
-
-            pAlias = NULL;
-        }
     }
-
 
     return ANSC_STATUS_SUCCESS;
 }
