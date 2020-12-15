@@ -2162,6 +2162,8 @@ Port_GetParamStringValue
                     if (pLowerLayer && strlen(pLowerLayer) != 0) {
                         strcat(lowerLayer, pLowerLayer);
                         strcat(lowerLayer, ",");
+                    }
+                    if (pLowerLayer) {
                         AnscFreeMemory(pLowerLayer);
                     }
                 }
@@ -2178,33 +2180,121 @@ Port_GetParamStringValue
             case COSA_DML_BRG_LINK_TYPE_EthVlan:
             case COSA_DML_BRG_LINK_TYPE_Eth:
                 pLowerLayer = CosaUtilGetLowerLayers("Device.Ethernet.Interface.", pPort->Cfg.LinkName);
-                AnscCopyString(pValue, pLowerLayer);
-                AnscFreeMemory(pLowerLayer);
+                if (pLowerLayer)
+                {
+                    int result = 0;
+                    size_t len = strlen (pLowerLayer);
+
+                    if (len >= *pUlSize) {
+                        *pUlSize = len;
+                        result = 1;
+                    }
+                    else {
+                        memcpy (pValue, pLowerLayer, len + 1);
+                    }
+                    AnscFreeMemory (pLowerLayer);
+                    return result;
+                }
+                else
+                {
+                    pValue[0] = 0;
+                    return 0;
+                }
                 break;
             #ifndef _CBR_PRODUCT_REQ_
             case COSA_DML_BRG_LINK_TYPE_Moca:
                 pLowerLayer = CosaUtilGetLowerLayers("Device.MoCA.Interface.", pPort->Cfg.LinkName);
-                //AnscTraceFlow(("<HL>%s moca lowerlayer=%s\n",__FUNCTION__,pLowerLayer ));
-                AnscCopyString(pValue, pLowerLayer);
-                AnscFreeMemory(pLowerLayer);
+                if (pLowerLayer)
+                {
+                    int result = 0;
+                    size_t len = strlen (pLowerLayer);
+
+                    if (len >= *pUlSize) {
+                        *pUlSize = len;
+                        result = 1;
+                    }
+                    else {
+                        memcpy (pValue, pLowerLayer, len + 1);
+                    }
+                    AnscFreeMemory (pLowerLayer);
+                    return result;
+                }
+                else
+                {
+                    pValue[0] = 0;
+                    return 0;
+                }
                 break;
             #endif
             case COSA_DML_BRG_LINK_TYPE_WiFiSsid:
                 pLowerLayer = CosaUtilGetLowerLayers("Device.WiFi.SSID.", pPort->Cfg.LinkName);
                 //AnscTraceFlow(("<HL>%s wifi lowerlayer=%s\n",__FUNCTION__,pLowerLayer ));
-                AnscCopyString(pValue, pLowerLayer);
-                AnscFreeMemory(pLowerLayer);
+                if (pLowerLayer)
+                {
+                    int result = 0;
+                    size_t len = strlen (pLowerLayer);
+
+                    if (len >= *pUlSize) {
+                        *pUlSize = len;
+                        result = 1;
+                    }
+                    else {
+                        memcpy (pValue, pLowerLayer, len + 1);
+                    }
+                    AnscFreeMemory (pLowerLayer);
+                    return result;
+                }
+                else
+                {
+                    pValue[0] = 0;
+                    return 0;
+                }
                 break;
             case COSA_DML_BRG_LINK_TYPE_Bridge:
                 pLowerLayer = CosaUtilGetLowerLayers("Device.Bridging.Bridge.", pPort->Cfg.LinkName);
-                AnscCopyString(pValue, pLowerLayer);
-                AnscFreeMemory(pLowerLayer);
+                if (pLowerLayer)
+                {
+                    int result = 0;
+                    size_t len = strlen (pLowerLayer);
+
+                    if (len >= *pUlSize) {
+                        *pUlSize = len;
+                        result = 1;
+                    }
+                    else {
+                        memcpy (pValue, pLowerLayer, len + 1);
+                    }
+                    AnscFreeMemory (pLowerLayer);
+                    return result;
+                }
+                else
+                {
+                    pValue[0] = 0;
+                    return 0;
+                }
                 break;
             case COSA_DML_BRG_LINK_TYPE_Gre: //$HL 07/15/2013
                 pLowerLayer = CosaUtilGetLowerLayers("Device.X_CISCO_COM_GRE.Interface.", pPort->Cfg.LinkName);
-                //AnscTraceFlow(("<HL>%s Gre lowerlayer=%s\n",__FUNCTION__,pLowerLayer ));
-                AnscCopyString(pValue, pLowerLayer);
-                AnscFreeMemory(pLowerLayer);
+                if (pLowerLayer)
+                {
+                    int result = 0;
+                    size_t len = strlen (pLowerLayer);
+
+                    if (len >= *pUlSize) {
+                        *pUlSize = len;
+                        result = 1;
+                    }
+                    else {
+                        memcpy (pValue, pLowerLayer, len + 1);
+                    }
+                    AnscFreeMemory (pLowerLayer);
+                    return result;
+                }
+                else
+                {
+                    pValue[0] = 0;
+                    return 0;
+                }
                 break;
             case COSA_DML_BRG_LINK_TYPE_Usb:
             case COSA_DML_BRG_LINK_TYPE_Hpna:
