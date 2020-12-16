@@ -4029,11 +4029,7 @@ static int get_iapd_info(ia_pd_t *iapd)
 #ifdef _COSA_INTEL_USG_ARM_
 void __cosa_dhcpsv6_refresh_config()
 {
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
     FILE * fp = fopen(SERVER_CONF_LOCATION, "w+");
-#else
-    FILE * fp = fopen(TMP_SERVER_CONF, "w+");
-#endif
     char   line[256] = {0};
     PUCHAR pTmp1 = NULL;
     PUCHAR pTmp2 = NULL;
