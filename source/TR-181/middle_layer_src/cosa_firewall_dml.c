@@ -2908,7 +2908,7 @@ FW_V6_IpFilter_SetParamUlongValue
     }
     if (AnscEqualString(ParamName, "IPv6SrcPrefixLen", TRUE))
     {
-       if(ulValue >= 64 && ulValue <= 128)
+        if((ulValue == 0) || (ulValue >= 64 && ulValue <= 128))
         {
             pFwIpFilter->IPv6SrcPrefixLen = ulValue;
             return TRUE;
