@@ -949,78 +949,13 @@ CosaDml_GreTunnelIfGetLastchange(ULONG tuIns, ULONG ins, ULONG *time)
 ANSC_STATUS
 CosaDml_GreTunnelIfGetLocalInterfaces(ULONG tuIns, ULONG ins, char *ifs, ULONG size)
 {
-	char *brlist, *br, *delim, *start, *sp;
-    ULONG ptInsList[16], ptInsCnt = 16;
-    char dm[1024], dmval[1024 + 1];
-    ULONG dmsize;
-    unsigned int i;
-
     if (!ifs)
         return ANSC_STATUS_FAILURE;
 
-    memset(ifs, 0, size);
-
-    if ((brlist = GetTunnelIfAssoBridge(tuIns, ins)) == NULL)
+    if (GreTunnelIfPsmGetStr(GRETUIF_PARAM_LOCALIFS, tuIns, ins, ifs, size) != 0)
         return ANSC_STATUS_FAILURE;
-
-    /* for each bridge */
-    for (start = brlist, delim = ",";
-            (br = strtok_r(start, delim, &sp)) != NULL;
-            start = NULL) {
-
-        AnscTraceDebug(("Bridge: %s\n", br));
-
-        /* for each port */
-        snprintf(dm, sizeof(dm), "%sPort.", br);
-        if (g_GetInstanceNumbers(dm, ptInsList, &ptInsCnt) != ANSC_STATUS_SUCCESS) {
-            AnscTraceError(("Fail to get port tuIns numbers\n"));
-            continue;
-        }
-
-        AnscTraceDebug(("  Port Num: %lu\n", ptInsCnt));
-
-        for (i = 0; i < ptInsCnt; i++) {
-            /* skip management port */
-            snprintf(dm, sizeof(dm), "%sPort.%lu.ManagementPort", br, ptInsList[i]);
-            if (g_GetParamValueBool(g_pDslhDmlAgent, dm)) {
-                AnscTraceDebug(("  Skip Port[%lu], it's a management port\n", ptInsList[i]));
-                continue;
-            }
-
-            /* skip upstream port (GRE IF) */
-            dmsize = sizeof(dmval) - 1;
-            snprintf(dm, sizeof(dm), "%sPort.%lu.LowerLayers", br, ptInsList[i]);
-            if (g_GetParamValueString(g_pDslhDmlAgent, dm, dmval, &dmsize) != 0 
-                    || strstr(dmval, "Device.WiFi.SSID") == NULL) {
-                AnscTraceDebug(("  Skip Port[%lu]: %s\n", ptInsList[i], dmval));
-                continue;
-            }
-
-            /* XXX: MultiLAN DM do not use "." for object path */
-            if (strlen(dmval) && dmval[strlen(dmval) - 1] != '.' && strlen(dmval) < sizeof(dmval) - 1) {
-                //AnscTraceDebug(("  Adding '.' to local if path\n"));
-                strcat(dmval, ".");
-            }
-
-            /* add it to list */
-            AnscTraceDebug(("  Add Port[%lu] `%s/%s` to Local IF\n", ptInsList[i], dm, dmval));
-            //if (strlen(ifs)) {
-            if (!start || strlen(ifs)) { /* Local If and Bridge are 1:1 mapping, we need "," */
-                snprintf(ifs +  strlen(ifs), size - strlen(ifs), ",%s", dmval);
-            } else {
-                snprintf(ifs +  strlen(ifs), size - strlen(ifs), "%s", dmval);
-            }
-        }
-    }
-
-    free(brlist);
-
-    AnscTraceDebug(("  Local IFs: %s\n", ifs));
-
-    //if (GrePsmGetStr(GRE_PARAM_LOCALIFS, ins, ifs, size) != 0)
-    //    return ANSC_STATUS_FAILURE;
-
-    return ANSC_STATUS_SUCCESS;
+    else
+        return ANSC_STATUS_SUCCESS;
 }
 
 ANSC_STATUS
@@ -1648,7 +1583,9 @@ static void *setGreVlan(void *arg)
 {
     //One interface can be associated only with one bridge, mutilple bridges is practiaclly not possible
     //And bridge can have only one gre vlan.
+
     pthread_detach(pthread_self());
+
     int i;
     char *bridgeDM = NULL;
     char bridgePortDM[256], name[64], insNumberStr[8];
@@ -1686,10 +1623,15 @@ static void *setGreVlan(void *arg)
                     g_SetParamValueInt(bridgePortDM, param->VLANID);
                     sscanf(bridgePortDM,"Device.Bridging.Bridge.%d.", &brinstance);
                     _ansc_itoa(brinstance, insNumberStr, 10);
-                    if(sysevent_set(sysevent_fd, sysevent_token, "multinet-restart", insNumberStr, 0)) {
-                        CcspTraceError(("sysevent set multinet-restart %s failed\n",insNumberStr));
-                    } else {
-                        CcspTraceError(("sysevent set multinet-restart to %s\n",insNumberStr));
+                    //Restart multinet only if tunnel is enabled
+                    snprintf(bridgePortDM,sizeof(bridgePortDM),"Device.X_COMCAST-COM_GRE.Tunnel.%d.Enable",param->tuIns);
+                    if(g_GetParamValueBool(g_pDslhDmlAgent, bridgePortDM))
+                    {
+                        if(sysevent_set(sysevent_fd, sysevent_token, "multinet-restart", insNumberStr, 0)) {
+                            CcspTraceError(("sysevent set multinet-restart %s failed\n",insNumberStr));
+                        } else {
+                            CcspTraceError(("sysevent set multinet-restart to %s\n",insNumberStr));
+                        }
                     }
                 }
                 break;
