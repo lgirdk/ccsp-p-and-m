@@ -111,7 +111,8 @@ printf a;            \
 #define GRETU_PARAM_KAFAILITVL 		GRE_OBJ_GRETU "%lu.RemoteEndpointHealthCheckPingIntervalInFailure"		
 #define GRETU_PARAM_RECONNPRI    	GRE_OBJ_GRETU "%lu.ReconnectToPrimaryRemoteEndpoint"		
 #define GRETU_PARAM_DHCPCIRSSID	    GRE_OBJ_GRETU "%lu.EnableCircuitID"		
-#define GRETU_PARAM_DHCPRMID 	    GRE_OBJ_GRETU "%lu.EnableRemoteID"		
+#define GRETU_PARAM_DHCPRMID 	    GRE_OBJ_GRETU "%lu.EnableRemoteID"
+#define GRETU_PARAM_DHCPOPTION60    GRE_OBJ_GRETU "%lu.EnableVendorClassID"		
 //#define GRETU_PARAM_GREIF        	GRE_OBJ_GRETU "%lu.GRENetworkInterface"		//GRENetworkInterface: Device.X_CISCO_COM_GRE.Interface.1.
 //TODO: remove the reference to Cisco GRE: Device.X_CISCO_COM_GRE.Interface.1.
 #define GRETU_PARAM_GRETU        	GRE_OBJ_GRETU "%lu.GRENetworkTunnel"
@@ -673,6 +674,8 @@ CosaDml_GreTunnelGetEntryByIndex(ULONG ins, COSA_DML_GRE_TUNNEL *greTu)
     if (GrePsmGetBool(GRETU_PARAM_DHCPCIRSSID, ins, &greTu->EnableCircuitID) != 0)
         return ANSC_STATUS_FAILURE;
     if (GrePsmGetBool(GRETU_PARAM_DHCPRMID, ins, &greTu->EnableRemoteID) != 0)
+        return ANSC_STATUS_FAILURE;
+    if (GrePsmGetBool(GRETU_PARAM_DHCPOPTION60, ins, &greTu->EnableVendorClassID) != 0)
         return ANSC_STATUS_FAILURE;
     if (GrePsmGetStr(GRETU_PARAM_GRETU, ins, greTu->GRENetworkTunnel, sizeof(greTu->GRENetworkTunnel)) != 0)
         return ANSC_STATUS_FAILURE;
@@ -1655,6 +1658,45 @@ CosaDml_GreTunnelIfSetVlanId(ULONG tuIns, ULONG ins, INT vlanId)
     snprintf(psmRec, sizeof(psmRec), GRETUIF_PARAM_VLANID, tuIns, ins);
     snprintf(psmVal, sizeof(psmVal), "%d", vlanId);
     if (GrePsmSet(psmRec, psmVal) != 0)
+        return ANSC_STATUS_FAILURE;
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaDml_GreTunnelGetDhcpOption60(ULONG tuIns, BOOL *enable)
+{
+    if (!enable)
+        return ANSC_STATUS_FAILURE;
+
+    if (GrePsmGetBool(GRETU_PARAM_DHCPOPTION60, tuIns, enable) != 0)
+        return ANSC_STATUS_FAILURE;
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+
+ANSC_STATUS
+CosaDml_GreTunnelSetDhcpOption60(ULONG tuIns, BOOL enable)
+{
+    char psmRec[MAX_GRE_PSM_REC + 1];
+    char val[64];
+
+    if (tuIns != 1)
+        return ANSC_STATUS_FAILURE;
+
+    snprintf(val, sizeof(val), "%d", enable ? 1 : 0);
+    if(sysevent_set(sysevent_fd, sysevent_token,
+                kSnooper_option60_enable, val, 0) != 0) {
+        AnscTraceError(("Fail to set sysevent %s\n", kSnooper_option60_enable));
+        return ANSC_STATUS_FAILURE;
+    } else {
+        AnscTraceDebug(("Set sysevent %s OK\n", kSnooper_option60_enable));
+    }
+
+    /* save to PSM */
+    snprintf(psmRec, sizeof(psmRec), GRETU_PARAM_DHCPOPTION60, tuIns );
+    if (GrePsmSet(psmRec, enable ? "1" : "0") != 0)
         return ANSC_STATUS_FAILURE;
 
     return ANSC_STATUS_SUCCESS;
