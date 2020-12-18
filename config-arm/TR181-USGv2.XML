@@ -18774,7 +18774,13 @@
                         <syntax>bool</syntax>
                         <writable>true</writable>
                     </parameter>
-					<parameter>
+                    <parameter>
+                        <name>X_LGI-COM_EnableVendorClassID</name>
+                        <type>boolean</type>
+                        <syntax>bool</syntax>
+                        <writable>true</writable>
+                    </parameter>
+                    <parameter>
                         <name>GRENetworkTunnel</name>
                         <type>string(255)</type>
                         <syntax>string</syntax>
