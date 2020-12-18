@@ -238,6 +238,12 @@ BOOL GreTunnel_GetParamBoolValue ( ANSC_HANDLE hInsContext, char*  ParamName, BO
         return TRUE;
     }
 
+    if (strcmp(ParamName, "X_LGI-COM_EnableVendorClassID") == 0)
+    {
+        *pBool = pGreTu->EnableVendorClassID;
+        return TRUE;
+    }
+
     return FALSE;
 }
 
@@ -480,6 +486,13 @@ BOOL GreTunnel_SetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName, BOO
     {
         pGreTu->EnableRemoteID = bValue;
         pGreTu->ChangeFlag |= GRETU_CF_DHCPRMID;
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "X_LGI-COM_EnableVendorClassID") == 0)
+    {
+        pGreTu->EnableVendorClassID = bValue;
+        pGreTu->ChangeFlag |= GRETU_CF_DHCPOPTION60;
         return TRUE;
     }
 
@@ -796,6 +809,11 @@ ULONG GreTunnel_Commit ( ANSC_HANDLE hInsContext ) {
         if (CosaDml_GreTunnelSetDhcpCircuitSsid(ins, pGreTu->EnableCircuitID) != ANSC_STATUS_SUCCESS)
             goto rollback;
     }
+    if (pGreTu->ChangeFlag & GRETU_CF_DHCPOPTION60)
+    {
+        if (CosaDml_GreTunnelSetDhcpOption60(ins, pGreTu->EnableVendorClassID) != ANSC_STATUS_SUCCESS)
+            goto rollback;
+    }
     if (pGreTu->ChangeFlag & GRETU_CF_DHCPRMID)
     {
         if (CosaDml_GreTunnelSetDhcpRemoteId(ins, pGreTu->EnableRemoteID) != ANSC_STATUS_SUCCESS)
@@ -907,6 +925,8 @@ ULONG GreTunnel_Rollback( ANSC_HANDLE hInsContext) {
     if (CosaDml_GreTunnelGetDhcpCircuitSsid(ins, &pGreTu->EnableCircuitID) != ANSC_STATUS_SUCCESS)
         return ANSC_STATUS_FAILURE;
     if (CosaDml_GreTunnelGetDhcpRemoteId(ins, &pGreTu->EnableRemoteID) != ANSC_STATUS_SUCCESS)
+        return ANSC_STATUS_FAILURE;
+    if (CosaDml_GreTunnelGetDhcpOption60(ins, &pGreTu->EnableVendorClassID) != ANSC_STATUS_SUCCESS)
         return ANSC_STATUS_FAILURE;
     if (CosaDml_GreTunnelGetGRETunnel(ins, pGreTu->GRENetworkTunnel, sizeof(pGreTu->GRENetworkTunnel)) != ANSC_STATUS_SUCCESS)
         return ANSC_STATUS_FAILURE;
