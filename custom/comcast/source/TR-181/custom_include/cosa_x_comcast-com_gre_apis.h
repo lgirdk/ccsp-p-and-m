@@ -116,6 +116,7 @@ _COSA_DML_GRE_TUNNEL_CHANGE_FLAG
     GRETU_CF_GRETU          = 0x01<<19,
     GRETU_CF_GREINTERFACE   = 0x01<<20,
     GRETU_CF_GRERMEP        = 0x01<<21,
+    GRETU_CF_DHCPOPTION60   = 0x01<<22,
 }
 COSA_DML_GRE_TUNNEL_CHANGE_FLAG;
 
@@ -189,6 +190,7 @@ _COSA_DML_GRE_TUNNEL
  	ULONG                       ReconnectToPrimaryRemoteEndpoint;	
  	BOOL                        EnableCircuitID;
  	BOOL                        EnableRemoteID;
+	BOOL                        EnableVendorClassID;
 	char                        GRENetworkTunnel[256];	//GRENetworkInterface[256];
 
 	COSA_DML_GRE_TUNNEL_STATS       TuStats;
@@ -359,6 +361,12 @@ CosaDml_GreTunnelGetDhcpRemoteId(ULONG ins, BOOL *enable); //
 
 ANSC_STATUS
 CosaDml_GreTunnelSetDhcpRemoteId(ULONG ins, BOOL enable); //
+
+ANSC_STATUS
+CosaDml_GreTunnelGetDhcpOption60(ULONG tuIns, BOOL *enable); //
+
+ANSC_STATUS
+CosaDml_GreTunnelSetDhcpOption60(ULONG tuIns, BOOL enable); //
 
 ANSC_STATUS
 CosaDml_GreTunnelIfGetAssociatedBridges(ULONG tuIns, ULONG ins, char *brs, ULONG size); //
