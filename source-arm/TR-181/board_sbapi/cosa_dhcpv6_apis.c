@@ -5459,7 +5459,7 @@ void __cosa_dhcpsv6_refresh_config()
                         T1           = (sDhcpv6ServerPool[Index].Cfg.LeaseTime)/2;
                         T2           = (ULONG)((sDhcpv6ServerPool[Index].Cfg.LeaseTime)*80.0/100);
                         preferedTime = (sDhcpv6ServerPool[Index].Cfg.LeaseTime);
-                        validTime    = (sDhcpv6ServerPool[Index].Cfg.LeaseTime);
+                        validTime    = (sDhcpv6ServerPool[Index].Cfg.ValidLeaseTime);
                     }
 
                     fprintf(fp, "       T1 %lu\n", T1);
@@ -9161,7 +9161,6 @@ dhcpv6c_dbg_thrd(void * in)
                         commonSyseventSet(COSA_DML_DHCPV6C_PREF_VLDTM_SYSEVENT_NAME, iapd_vldtm);
 						}
 
-#if defined (MULTILAN_FEATURE)
                         ULONG idx = 0;
                         for ( idx=0; idx<uDhcpv6ServerPoolNum; idx++)
                         {
@@ -9170,8 +9169,9 @@ dhcpv6c_dbg_thrd(void * in)
                                   sDhcpv6ServerPool[idx].Cfg.LeaseTime = atoi(iapd_pretm);
                                   setpool_into_utopia((PUCHAR)DHCPV6S_NAME, (PUCHAR)"pool", idx, &sDhcpv6ServerPool[idx]);
                               }
+                              sDhcpv6ServerPool[idx].Cfg.ValidLeaseTime = atoi(iapd_vldtm);
                         }
-#endif
+
                         if(pString)
                         {
                             snprintf(objName, sizeof(objName)-1, "%sIPv6Prefix.", pString);
