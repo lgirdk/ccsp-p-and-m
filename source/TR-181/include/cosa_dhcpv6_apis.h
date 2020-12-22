@@ -232,7 +232,8 @@ _COSA_DML_DHCPSV6_POOL_CFG
     UCHAR                           PrefixRangeBegin[64];
     UCHAR                           PrefixRangeEnd[64];
     UCHAR                           StartAddress[64];
-    signed long                     LeaseTime;
+    signed long                     LeaseTime;                                     /* Considering it as DHCPv6 Preferred Lease Time */
+    signed long                     ValidLeaseTime;
     ULONG                           IAPDAddLength;
     ULONG                           IANAAmount;
     UCHAR                           DUID[131];
