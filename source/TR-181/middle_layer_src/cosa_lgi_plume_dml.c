@@ -178,9 +178,11 @@ LgiPlume_Commit
     if(pMyObject->bNeedPlumeServiceRestart)
     {
 #ifdef _PUMA6_ARM_
-        system("rpcclient2 '/etc/plume_init.sh restart'");
+        /* Use WiFi lock when running the plume agent to avoid running it when WiFi is down*/
+        system("rpcclient2 '(flock 200; (exec 200>&-; /etc/plume_init.sh restart;) ) 200> /var/run/lock/resetlock-wlan'");
 #else
-        system("/etc/plume_init.sh restart");
+        /* Use WiFi lock when running the plume agent to avoid running it when WiFi is down*/
+        system("(flock 200; (exec 200>&-; /etc/plume_init.sh restart;) ) 200> /var/run/lock/resetlock-wlan");
 #endif
     }
     if(pMyObject->bPlumeUrlChanged)
