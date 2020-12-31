@@ -179,7 +179,8 @@ LgiPlume_Commit
     }
     if(pMyObject->bNeedPlumeServiceRestart)
     {
-        system("rpcclient " ATOM_IP_ADDRESS " '/etc/plume_init.sh restart'");
+        /* Use WiFi lock when running the plume agent to avoid running it when WiFi is down*/
+        system("rpcclient " ATOM_IP_ADDRESS " '(flock 200; (exec 200>&-; /etc/plume_init.sh restart;) ) 200> /var/run/lock/resetlock-wlan'");
     }
     if(pMyObject->bPlumeUrlChanged)
     {
