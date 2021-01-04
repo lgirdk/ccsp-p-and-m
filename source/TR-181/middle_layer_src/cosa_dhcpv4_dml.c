@@ -11242,7 +11242,7 @@ LanBlockedSubnetTable_GetGuestNetworkIP
     char    *strValue = NULL;
     int     retPsmGet = CCSP_SUCCESS;
 
-    retPsmGet = PSM_Get_Record_Value2(bus_handle,g_Subsystem, "dmsb.l3net.7.V4Addr", NULL, &strValue);
+    retPsmGet = PSM_Get_Record_Value2(bus_handle,g_Subsystem, "dmsb.l3net.6.V4Addr", NULL, &strValue);
     if (retPsmGet == CCSP_SUCCESS) {
         strncpy(pValueIP, strValue, strlen(strValue));
 
@@ -11285,7 +11285,7 @@ LanBlockedSubnetTable_GetGuestNetworkMask
     char    *strValue = NULL;
     int     retPsmGet = CCSP_SUCCESS;
 
-    retPsmGet = PSM_Get_Record_Value2(bus_handle,g_Subsystem, "dmsb.l3net.7.V4SubnetMask", NULL, &strValue);
+    retPsmGet = PSM_Get_Record_Value2(bus_handle,g_Subsystem, "dmsb.l3net.6.V4SubnetMask", NULL, &strValue);
     if (retPsmGet == CCSP_SUCCESS) {
         strncpy(pValueMask, strValue, strlen(strValue));
 
