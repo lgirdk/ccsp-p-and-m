@@ -108,10 +108,10 @@ CosaLgiGeneralInitialize
     CosaDmlGiGetFirstInstallWizardEnable(NULL, &pMyObject->FirstInstallWizardEnable);
 
     memset(pMyObject->CAppName, 0, sizeof(pMyObject->CAppName));
-    CosaDmlGiGetCAppName(NULL, pMyObject->CAppName);
+    CosaDmlGiGetCAppName(NULL, pMyObject->CAppName, sizeof(pMyObject->CAppName));
 
     memset(pMyObject->WebsiteHelpURL, 0, sizeof(pMyObject->WebsiteHelpURL));
-    CosaDmlGiGetWebsiteHelpURL(NULL, pMyObject->WebsiteHelpURL);
+    CosaDmlGiGetWebsiteHelpURL(NULL, pMyObject->WebsiteHelpURL, sizeof(pMyObject->WebsiteHelpURL));
 
     CosaDmlGiGetFirstInstallState(NULL, &pMyObject->FirstInstallState);
     CosaDmlGiGetTroubleshootWizardEnable(NULL, &pMyObject->TroubleshootWizardEnable);
