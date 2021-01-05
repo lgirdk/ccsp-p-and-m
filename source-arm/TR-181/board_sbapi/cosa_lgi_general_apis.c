@@ -14,8 +14,9 @@
  * limitations under the License.
  **********************************************************************/
 
-#include "cosa_lgi_general_apis.h"
 #include <syscfg/syscfg.h>
+
+#include "cosa_lgi_general_apis.h"
 
 ULONG
 CosaDmlGiGetFirstInstallWizardEnable
@@ -24,13 +25,12 @@ CosaDmlGiGetFirstInstallWizardEnable
         BOOL                        *pValue
     )
 {
-    char buf[64];
-    memset(buf, 0, sizeof(buf));
-    if(syscfg_init() == 0)
-    {
-        syscfg_get( NULL, "FirstInstallWizard_Enable", buf, sizeof(buf));
-    }
+    char buf[16];
+
+    syscfg_get (NULL, "FirstInstallWizard_Enable", buf, sizeof(buf));
+
     *pValue = (strcmp(buf, "true") == 0);
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -41,38 +41,27 @@ CosaDmlGiSetFirstInstallWizardEnable
         BOOL                        bValue
     )
 {
-    if(syscfg_init() == 0)
-    {
-        syscfg_set(NULL, "FirstInstallWizard_Enable", bValue ? "true" : "false");
-    }
+    syscfg_set (NULL, "FirstInstallWizard_Enable", bValue ? "true" : "false");
+
     return ANSC_STATUS_SUCCESS;
 }
 
 ULONG
 CosaDmlGiSaveSettings()
 {
-    if(syscfg_init() == 0)
-    {
-        return syscfg_commit();
-    }
-    return ANSC_STATUS_FAILURE;
+    return syscfg_commit();
 }
 
 ANSC_STATUS
 CosaDmlGiGetCAppName
     (
         ANSC_HANDLE                 hContext,
-        char                        *pValue
+        char                        *pValue,
+        size_t                      len
     )
 {
-    char buf[128];
-    memset(buf, 0, sizeof(buf));
-    if(syscfg_init() == 0)
-    {
-        syscfg_get( NULL, "CApp_Name", buf, sizeof(buf));
-    }
-    if( buf[0] != '\0')
-       AnscCopyString(pValue, buf);
+    syscfg_get (NULL, "CApp_Name", pValue, len);
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -80,17 +69,12 @@ ANSC_STATUS
 CosaDmlGiGetWebsiteHelpURL
     (
         ANSC_HANDLE                 hContext,
-        char                        *pValue
+        char                        *pValue,
+        size_t                      len
     )
 {
-    char buf[128];
-    memset(buf, 0, sizeof(buf));
-    if(syscfg_init() == 0)
-    {
-        syscfg_get( NULL, "Website_HelpURL", buf, sizeof(buf));
-    }
-    if( buf[0] != '\0')
-       AnscCopyString(pValue, buf);
+    syscfg_get (NULL, "Website_HelpURL", pValue, len);
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -101,15 +85,12 @@ CosaDmlGiGetFirstInstallState
         BOOL                        *pValue
     )
 {
-    char buf[64];
-    char first_install_enable_buf[64];
-    int islgi_customer = 0;
-    memset(buf, 0, sizeof(buf));
-    if(syscfg_init() == 0)
-    {
-       syscfg_get( NULL, "FirstInstall_State", buf, sizeof(buf));
-    }
+    char buf[16];
+
+    syscfg_get (NULL, "FirstInstall_State", buf, sizeof(buf));
+
     *pValue = (strcmp(buf, "true") == 0);
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -120,13 +101,12 @@ CosaDmlGiGetTroubleshootWizardEnable
         BOOL                        *pValue
     )
 {
-    char buf[64];
-    memset(buf, 0, sizeof(buf));
-    if(syscfg_init() == 0)
-    {
-        syscfg_get( NULL, "troubleshoot_wizard_enable", buf, sizeof(buf));
-    }
+    char buf[16];
+
+    syscfg_get( NULL, "troubleshoot_wizard_enable", buf, sizeof(buf));
+
     *pValue = (strcmp(buf, "1") == 0);
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -137,8 +117,7 @@ CosaDmlGiGetCustomerId
         ULONG                       *pValue
     )
 {
-      //FIXME : it is just a palce holder for customer index retrival 
-      return ANSC_STATUS_SUCCESS;
+    return ANSC_STATUS_SUCCESS;
 }
 
 ULONG
@@ -148,8 +127,6 @@ CosaDmlGiSetCustomerId
     ULONG                       ulValue
 )
 {
-    
-     //FIXME : it is just a palce holder for customer index set logic  
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -160,10 +137,8 @@ CosaDmlGiSetCAppName
         char                        *pValue
     )
 {
-    if(syscfg_init() == 0)
-    {
-        syscfg_set(NULL, "CApp_Name", pValue);
-    }
+    syscfg_set (NULL, "CApp_Name", pValue);
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -174,10 +149,8 @@ CosaDmlGiSetWebsiteHelpURL
         char                        *pValue
     )
 {
-    if(syscfg_init() == 0)
-    {
-        syscfg_set(NULL, "Website_HelpURL", pValue);
-    }
+    syscfg_set (NULL, "Website_HelpURL", pValue);
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -188,10 +161,8 @@ CosaDmlGiSetFirstInstallState
         BOOL                        bValue
     )
 {
-    if(syscfg_init() == 0)
-    {
-        syscfg_set(NULL, "FirstInstall_State", bValue ? "true" : "false");
-    }
+    syscfg_set (NULL, "FirstInstall_State", bValue ? "true" : "false");
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -202,10 +173,7 @@ CosaDmlGiSetTroubleshootWizardEnable
         BOOL                        bValue
     )
 {
-    if(syscfg_init() == 0)
-    {
-        syscfg_set(NULL, "troubleshoot_wizard_enable", bValue ? "1" : "0");
-    }
+    syscfg_set (NULL, "troubleshoot_wizard_enable", bValue ? "1" : "0");
+
     return ANSC_STATUS_SUCCESS;
 }
-
