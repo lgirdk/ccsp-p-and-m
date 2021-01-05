@@ -54,14 +54,16 @@ ANSC_STATUS
 CosaDmlGiGetCAppName
 (
     ANSC_HANDLE                 hContext,
-    char                        *pValue
+    char                        *pValue,
+    size_t                      len
 );
 
 ANSC_STATUS
 CosaDmlGiGetWebsiteHelpURL
 (
     ANSC_HANDLE                 hContext,
-    char                        *pValue
+    char                        *pValue,
+    size_t                      len
 );
 
 ANSC_STATUS
