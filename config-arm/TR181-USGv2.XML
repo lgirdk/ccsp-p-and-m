@@ -15798,7 +15798,7 @@
         
         <parameter>
           <name>DeviceMode</name>
-          <type>string: Bridge(1),Ipv4(2),Ipv6(3),Dualstack(4)</type>
+          <type>string: ipDisabled(1),ipv4Only(2),ipv6Only(3),ipv4AndIpv6(4)</type>
           <syntax>uint32/mapped</syntax>
           <writable>true</writable>
         </parameter>
