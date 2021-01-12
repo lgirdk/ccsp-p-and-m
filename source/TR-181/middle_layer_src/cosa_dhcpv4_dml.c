@@ -5293,6 +5293,27 @@ static int is_pool_invalid(void *hInsContext)
     return(0);
 }
 
+static BOOL isValidSubnetMask(u_int32_t netmask)
+{
+    int i = 32;
+
+    while (i > 0 && !(netmask & 0x01))
+    {
+        i--;
+	netmask >>= 1;
+    }
+
+    while (i > 0)
+    {
+        if (!(netmask & 0x01))
+            return FALSE;
+	i--;
+	netmask >>= 1;
+    }
+
+    return TRUE;
+}
+
 /**********************************************************************  
 
     caller:     owner of this object 
@@ -10978,21 +10999,71 @@ LanAllowedSubnetTable_Validate
             //Range 10.0.0.0   -   10.255.255.255
             if (subnetFirstMask == 10)
             {
-                return ((subnetSecondMask <= 255) && (subnetThirdMask <= 255) && (subnetFourthMask <= 253));
+                if ((subnetSecondMask > 255) || (subnetThirdMask > 255) || (subnetFourthMask > 253))
+                    return FALSE;
             }
             //Range 172.16.0.0   -   172.31.255.255
             else if (subnetFirstMask == 172)
             {
-                return ((subnetSecondMask >=16 && subnetSecondMask <=31) && (subnetThirdMask <= 255) && (subnetFourthMask <= 253));
+                if (!(subnetSecondMask >=16 && subnetSecondMask <=31) || (subnetThirdMask > 255) || (subnetFourthMask > 253))
+                    return FALSE;
             }
             //Range 192.168.0.0 – 192.168.255.255
-            else if ((subnetFirstMask == 192) &&(subnetSecondMask == 168))
+            else if ((subnetFirstMask == 192) && (subnetSecondMask == 168))
             {
-                return ((subnetThirdMask <= 255) && (subnetFourthMask <= 253));
+                if ((subnetThirdMask > 255) || (subnetFourthMask > 253))
+                    return FALSE;
             }
+	    // Invalid Private IP range
+	    else {
+                return FALSE;
+	    }
         }
-        return FALSE;
     }
+
+    /* MVXREQ-674: Auto-correct subnet mask according to the subnet IP.
+     * If the subnet mask is not correct as per RFC 1918,
+     * set the subnet mask as default mask of that network class.
+     */
+    if (AnscSizeOfString(pLanAllowedSubnet->SubnetIP))
+    {
+        unsigned int subnetIP[4];
+	int retCnt = 0;
+	sscanf(pLanAllowedSubnet->SubnetIP, "%d.%d.%d.%d", &subnetIP[0], &subnetIP[1], &subnetIP[2], &subnetIP[3]);
+	retCnt = sscanf(pLanAllowedSubnet->SubnetMask, "%d.%d.%d.%d", &subnetFirstMask, &subnetSecondMask, &subnetThirdMask, &subnetFourthMask);
+
+	if (10 == subnetIP[0])                                                        /* 10.x.x.x/8 - 10.x.x.x/24*/
+	{
+            if (0 == retCnt || !isValidSubnetMask(lanSubnetBuf.Value & 0xFFFFFFFF) ||
+                !(255 == subnetFirstMask && 255 >= subnetSecondMask &&
+                  255 >= subnetThirdMask && 0 == subnetFourthMask))
+            {
+                /* Setting default Subnet Mask for class A network */
+                _ansc_snprintf(pLanAllowedSubnet->SubnetMask, sizeof(pLanAllowedSubnet->SubnetMask), "%s", "255.0.0.0");
+            }
+	}
+	else if (172 == subnetIP[0] && 16 <= subnetIP[1] && 31 >= subnetIP[1])        /*172.16.x.x/16 - 172.31.x.x/24 */
+	{
+	    if (0 == retCnt || !isValidSubnetMask(lanSubnetBuf.Value & 0xFFFFFFFF) ||
+                !(255 == subnetFirstMask && 255 == subnetSecondMask &&
+                  255 >= subnetThirdMask && 0 == subnetFourthMask))
+	    {
+                /* Setting default Subnet Mask for class B network */
+                _ansc_snprintf(pLanAllowedSubnet->SubnetMask, sizeof(pLanAllowedSubnet->SubnetMask), "%s", "255.255.0.0");
+	    }
+	}
+	else                                                                          /* 192.168.0.x/24 */
+	{
+	    if (0 == retCnt || !isValidSubnetMask(lanSubnetBuf.Value & 0xFFFFFFFF) ||
+                !(255 == subnetFirstMask && 255 == subnetSecondMask &&
+                  255 == subnetThirdMask && 0 == subnetFourthMask))
+            {
+                /* Setting default Subnet Mask for class C network */
+                _ansc_snprintf(pLanAllowedSubnet->SubnetMask, sizeof(pLanAllowedSubnet->SubnetMask), "%s", "255.255.255.0");
+            }
+	}
+    }
+
     return TRUE;
 }
 
