@@ -12187,6 +12187,22 @@
 
             </parameter>
 
+            <parameter>
+
+             <name>X_LGI-COM_ClearLanAllowedSubnetTable</name>
+
+              <description>
+                   Clear all the entries in  LanAllowedSubnetTable
+              </description>
+
+              <type>boolean</type>
+
+              <syntax>bool</syntax>
+
+              <writable>true</writable>
+
+            </parameter>
+
               </parameters>
 
               <objects>
