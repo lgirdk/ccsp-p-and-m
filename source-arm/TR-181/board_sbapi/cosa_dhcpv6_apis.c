@@ -1762,7 +1762,7 @@ int safe_strcpy(char * dst, char * src, int dst_size);
 static COSA_DML_DHCPCV6_FULL  g_dhcpv6_client;
 
 static int _dibbler_server_operation(char * arg);
-void _cosa_dhcpsv6_refresh_config();
+static void _cosa_dhcpsv6_refresh_config();
 int CosaDmlDHCPv6sTriggerRestart(BOOL OnlyTrigger);
 #define DHCPS6V_SERVER_RESTART_FIFO "/tmp/ccsp-dhcpv6-server-restart-fifo.txt"
 
@@ -3559,8 +3559,8 @@ char * CosaDmlDhcpv6sGetStringFromHex(char * hexString){
 
 /*now we have 2 threads to access __cosa_dhcpsv6_refresh_config(), one is the big thread to process datamodel, the other is dhcpv6c_dbg_thrd(void * in),
  add a lock*/
-void __cosa_dhcpsv6_refresh_config();
-void _cosa_dhcpsv6_refresh_config()
+static void __cosa_dhcpsv6_refresh_config();
+static void _cosa_dhcpsv6_refresh_config()
 {
     static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
     
@@ -4042,7 +4042,7 @@ static int get_iapd_info(ia_pd_t *iapd)
 #endif
 
 #ifdef _COSA_INTEL_USG_ARM_
-void __cosa_dhcpsv6_refresh_config()
+static void __cosa_dhcpsv6_refresh_config()
 {
     FILE * fp = fopen(SERVER_CONF_LOCATION, "w+");
     char   line[256] = {0};
@@ -4354,12 +4354,12 @@ OPTIONS:
                             */
 #if defined(_XB6_PRODUCT_REQ_) && defined(_COSA_BCM_ARM_)
 
-                static int sysevent_fd_gs;
+                static int sysevent_fd_gs = -1;
                 static token_t sysevent_token_gs;
-                if ((sysevent_fd_gs = sysevent_open("127.0.0.1", SE_SERVER_WELL_KNOWN_PORT,
-                    SE_VERSION, "SERVICE-IPV6", &sysevent_token_gs)) < 0) {
-                fprintf(stderr, "%s: fail to open sysevent\n", __FUNCTION__);
-                return -1;
+                if ((sysevent_fd_gs < 0) && ((sysevent_fd_gs = sysevent_open("127.0.0.1", SE_SERVER_WELL_KNOWN_PORT,
+                    SE_VERSION, "SERVICE-IPV6", &sysevent_token_gs)) < 0)) {
+                    fprintf(stderr, "%s: fail to open sysevent\n", __FUNCTION__);
+                    return -1;
                 }
                 char l_cSecWebUI_Enabled[8] = {0};
                 syscfg_get(NULL, "SecureWebUI_Enable", l_cSecWebUI_Enabled, sizeof(l_cSecWebUI_Enabled));
@@ -4534,10 +4534,10 @@ OPTIONS:
                     }
                 }
 #elif defined _HUB4_PRODUCT_REQ_
-                static int sysevent_fd_gs;
+                static int sysevent_fd_gs = -1;
                 static token_t sysevent_token_gs;
-                if ((sysevent_fd_gs = sysevent_open("127.0.0.1", SE_SERVER_WELL_KNOWN_PORT,
-                    SE_VERSION, "SERVICE-IPV6", &sysevent_token_gs)) < 0) {
+                if ((sysevent_fd_gs < 0) && ((sysevent_fd_gs = sysevent_open("127.0.0.1", SE_SERVER_WELL_KNOWN_PORT,
+                    SE_VERSION, "SERVICE-IPV6", &sysevent_token_gs)) < 0)) {
                     fprintf(stderr, "%s: fail to open sysevent\n", __FUNCTION__);
                     return -1;
                 }
@@ -4956,7 +4956,7 @@ EXIT:
 #endif
 
 #ifdef _COSA_BCM_MIPS_
-void __cosa_dhcpsv6_refresh_config()
+static void __cosa_dhcpsv6_refresh_config()
 {
 
     FILE * fp = fopen(SERVER_CONF_LOCATION, "w+");
