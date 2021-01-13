@@ -4393,6 +4393,61 @@ CosaDmlLAN_Allowed_Subnet_SetConf(ULONG ins, COSA_DML_LAN_Allowed_Subnet *pEntry
     return ANSC_STATUS_SUCCESS;
 }
 
+static int GetSubnetTableInsNumByIndex(int index)
+{
+    char tmpBuff[40];
+    char ins[12];
+
+    snprintf (tmpBuff, sizeof(tmpBuff), "arLanAllowedSubnet_%u", index);
+    syscfg_get (tmpBuff, "ins_num", ins, sizeof(ins));
+
+    return atoi(ins);
+}
+
+static void *ClearLanAllowedSubnetTable(void *arg)
+{
+   int ins_num = 0;
+   int index = 2;
+
+   while (g_NrLanAllowedSubnet > 1)
+   {
+       char obj[80];
+
+       ins_num = GetSubnetTableInsNumByIndex (index);
+       snprintf (obj, sizeof(obj), "Device.DHCPv4.Server.Pool.1.X_LGI-COM_LanAllowedSubnetTable.%u.", ins_num);
+       CcspBaseIf_DeleteTblRow (bus_handle, CCSP_PANDM_DEST_COMP_NAME,CCSP_PANDM_COMP_PATH, 0, obj);
+   }
+
+   pthread_exit(NULL);
+}
+
+int CosaDmlClearLanAllowedSubnetTable()
+{
+    int err = -1;
+    pthread_attr_t attr;
+    pthread_t threadId;
+
+    // Exit if unable to create thread attributes
+    err = pthread_attr_init(&attr);
+    if (err != 0) {
+        return err;
+    }
+
+    // Exit if unable to create the thread as detached (as we do not need to wait for it to terminate)
+    err = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+    if (err != 0)
+    {
+       return err;
+    }
+
+    err = pthread_create(&threadId, &attr, ClearLanAllowedSubnetTable, NULL);
+    if (err != 0)
+    {
+        return err;
+    }
+    pthread_attr_destroy(&attr);
+    return err;
+}
 
 #endif
 
