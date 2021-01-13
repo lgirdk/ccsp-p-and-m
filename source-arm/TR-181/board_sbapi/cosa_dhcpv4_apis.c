@@ -258,6 +258,8 @@ ANSC_STATUS COSAGetParamValueByPathName(void* bus_handle, parameterValStruct_t *
 
 int Utopia_get_lan_host_comments(UtopiaContext *ctx, unsigned char *pMac, unsigned char *pComments);
 
+static void *ClearLanAllowedSubnetTable(void *arg);
+
 int find_arp_entry(char *ipaddr, char *ifname, unsigned char *pMac)
 {
 	struct arpreq arpreq;
@@ -4394,6 +4396,56 @@ CosaDmlLAN_Allowed_Subnet_SetConf(ULONG ins, COSA_DML_LAN_Allowed_Subnet *pEntry
     return ANSC_STATUS_SUCCESS;
 }
 
+int CosaDmlClearLanAllowedSubnetTable()
+{
+    int err = -1;
+    pthread_attr_t attr;
+    pthread_t threadId;
+
+    // Exit if unable to create thread attributes
+    err = pthread_attr_init(&attr);
+    if (err != 0) {
+        return err;
+    }
+
+    // Exit if unable to create the thread as detached (as we do not need to wait for it to terminate)
+    err = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+    if (err != 0)
+    {
+       return err;
+    }
+
+    err = pthread_create(&threadId, &attr, ClearLanAllowedSubnetTable, NULL);
+   if (err != 0)
+    {
+        return err;
+    }
+    pthread_attr_destroy(&attr);
+    return err;
+}
+
+void *ClearLanAllowedSubnetTable(void *arg)
+{
+   int ins_num = 0;
+   int index = 0;
+   UtopiaContext ctx;
+
+   while (g_NrLanAllowedSubnet > 1)
+   {
+       Utopia_GetLanAllowedSubnetInsNumByIndex(&ctx, index, &ins_num);
+       if(ins_num == 1)
+       {
+          index++;
+          continue;
+       }
+
+       char obj[80] = {0};
+       sprintf(obj,"Device.DHCPv4.Server.Pool.1.X_LGI-COM_LanAllowedSubnetTable.%d.",ins_num);
+       CcspBaseIf_DeleteTblRow(bus_handle, CCSP_PANDM_DEST_COMP_NAME,
+           CCSP_PANDM_COMP_PATH, 0, &obj[0]);
+   }
+   pthread_exit(NULL);
+}
 
 #endif
 

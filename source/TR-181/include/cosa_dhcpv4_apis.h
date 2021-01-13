@@ -83,6 +83,9 @@
 #define  COSA_DML_DHCP_LEASES_FILE                  "/tmp/dnsmasq.leases"
 #define  COSA_DML_DHCP_OPTIONS_FILE                 "/tmp/dnsmasq.options"
 
+#define  CCSP_PANDM_COMP_PATH                       "/com/cisco/spvtg/ccsp/pam"
+#define  CCSP_PANDM_DEST_COMP_NAME                  "eRT.com.cisco.spvtg.ccsp.pam"
+
 #define  COSA_DML_DHCPV4_CLIENT_IFNAME              CFG_TR181_DHCPv4_CLIENT_IfName
 
 #define _DEBUG_DHCPV4
@@ -906,6 +909,8 @@ ANSC_STATUS CosaDmlLAN_Allowed_Subnet_AddEntry(COSA_DML_LAN_Allowed_Subnet *pEnt
 ANSC_STATUS CosaDmlLAN_Allowed_Subnet_DelEntry(ULONG ins);
 ANSC_STATUS CosaDmlLAN_Allowed_Subnet_GetConf(ULONG ins, COSA_DML_LAN_Allowed_Subnet *pEntry);
 ANSC_STATUS CosaDmlLAN_Allowed_Subnet_SetConf(ULONG ins, COSA_DML_LAN_Allowed_Subnet *pEntry);
+
+int CosaDmlClearLanAllowedSubnetTable();
 
 extern ANSC_STATUS UpdateJsonParamLegacy
 	(
