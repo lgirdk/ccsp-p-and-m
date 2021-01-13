@@ -2224,15 +2224,13 @@ static int _prepare_client_conf(PCOSA_DML_DHCPCV6_CFG       pCfg)
 
             if (pCfg->SuggestedT1)
             {
-                memset(line, 0, sizeof(line));
-                snprintf(line, sizeof(line)-1, "    t1 %d\n", pCfg->SuggestedT1);
+                snprintf(line, sizeof(line), "    t1 %d\n", pCfg->SuggestedT1);
                 fprintf(fp, "%s", line);
             }
 
             if (pCfg->SuggestedT2)
             {
-                memset(line, 0, sizeof(line));
-                snprintf(line, sizeof(line)-1, "    t2 %d\n", pCfg->SuggestedT2);
+                snprintf(line, sizeof(line), "    t2 %d\n", pCfg->SuggestedT2);
                 fprintf(fp, "%s", line);
             }
 
@@ -2245,15 +2243,13 @@ static int _prepare_client_conf(PCOSA_DML_DHCPCV6_CFG       pCfg)
 
             if (pCfg->SuggestedT1)
             {
-                memset(line, 0, sizeof(line));
-                snprintf(line, sizeof(line)-1, "    t1 %d\n", pCfg->SuggestedT1);
+                snprintf(line, sizeof(line), "    t1 %d\n", pCfg->SuggestedT1);
                 fprintf(fp, "%s", line);
             }
 
             if (pCfg->SuggestedT2)
             {
-                memset(line, 0, sizeof(line));
-                snprintf(line, sizeof(line)-1, "    t2 %d\n", pCfg->SuggestedT2);
+                snprintf(line, sizeof(line), "    t2 %d\n", pCfg->SuggestedT2);
                 fprintf(fp, "%s", line);
             }
 
@@ -3405,7 +3401,7 @@ char * CosaDmlDhcpv6sGetAddressFromString(char * address){
 }
 
 char * CosaDmlDhcpv6sGetStringFromHex(char * hexString){
-    static char     newString[256] = {0};
+    static char     newString[256];
     char    buff[8] = {0};
     ULONG   i =0;
     ULONG   j =0;
@@ -6968,7 +6964,6 @@ static int interface_num = 4; // Reserving first 4 /64s for dhcp configurations
 	if(ifName == NULL)
 	return 0;
 	
-	memset(cmd,0,sizeof(cmd));
 	memset(out,0,sizeof(out));
 	_ansc_sprintf(cmd, "%s%s",ifName,"_ipv6_index");
 	commonSyseventGet(cmd, out, sizeof(out));
@@ -6983,7 +6978,6 @@ static int interface_num = 4; // Reserving first 4 /64s for dhcp configurations
 	{
 		if(CalcIPv6Prefix(GlobalPref,pref,interface_num)== 0)
 		return 0;
-		memset(cmd,0,sizeof(cmd));
 		_ansc_sprintf(cmd, "%s%s",ifName,"_ipv6_index");
 		_ansc_sprintf(out, "%d",interface_num);
 		commonSyseventSet(cmd, out);
@@ -7011,8 +7005,7 @@ void enable_IPv6(char* if_name)
     	CcspTraceInfo(("%s : Enabling ipv6 on iface %s\n",__FUNCTION__,if_name));
 
     	char tbuff[100] = {0} , ipv6_addr[128] = {0} , cmd[128] = {0} ;
-    	memset(ipv6_addr,0,sizeof(ipv6_addr));
-    	memset(tbuff,0,sizeof(tbuff));
+
     	fp = v_secure_popen("r","sysctl net.ipv6.conf.%s.autoconf",if_name);
     	_get_shell_output(fp, tbuff, sizeof(tbuff));
     	if(tbuff[strlen(tbuff)-1] == '0')
@@ -7021,7 +7014,6 @@ void enable_IPv6(char* if_name)
             	v_secure_system("ifconfig %s down;ifconfig %s up",if_name,if_name);
     	}
 
-    	memset(cmd,0,sizeof(cmd));
     	_ansc_sprintf(cmd, "%s_ipaddr_v6",if_name);
     	commonSyseventGet(cmd, ipv6_addr, sizeof(ipv6_addr));
     	v_secure_system("ip -6 route add %s dev %s", ipv6_addr, if_name);
@@ -7049,8 +7041,6 @@ static void *InterfaceEventHandler_thrd(void *data)
     char tbuff[100];
     int err;
     char name[25] = {0}, val[42] = {0},buf[128] = {0},cmd[128] = {0};
-    memset(cmd,0,sizeof(cmd));
-    memset(buf,0,sizeof(buf));
 
     _ansc_sprintf(cmd, "multinet_2-status");
     commonSyseventGet(cmd, buf, sizeof(buf));
@@ -7076,7 +7066,6 @@ static void *InterfaceEventHandler_thrd(void *data)
     
     }
 
-    memset(cmd,0,sizeof(cmd));
     memset(buf,0,sizeof(buf));
 
     _ansc_sprintf(cmd, "multinet_6-status");
@@ -7097,17 +7086,12 @@ static void *InterfaceEventHandler_thrd(void *data)
     
     }
 
-    memset(cmd,0,sizeof(cmd));
-    memset(buf,0,sizeof(buf));
-
     while(1)
     {
          async_id_t getnotification_asyncid;
 
          memset(name,0,sizeof(name));
          memset(val,0,sizeof(val));
-         memset(cmd,0,sizeof(cmd));
-         memset(buf,0,sizeof(buf));
 
          int namelen = sizeof(name);
          int vallen  = sizeof(val);
@@ -7360,7 +7344,6 @@ dhcpv6c_dbg_thrd(void * in)
                     
                     if (strncmp(v6pref, "::", 2) != 0)
                     {
-			memset(v6Tpref,0,sizeof(v6Tpref));
 			strncpy(v6Tpref,v6pref,sizeof(v6Tpref));
                         /*We just delegate longer and equal 64bits. Use zero to fill in the slot naturally. */
 #if defined (MULTILAN_FEATURE)
@@ -7387,18 +7370,14 @@ dhcpv6c_dbg_thrd(void * in)
 			if(pref_len < 64)
 			{
 			    memset(out,0,sizeof(out));
-			    memset(cmd,0,sizeof(cmd));
 			    memset(out1,0,sizeof(out1));
-			    sprintf(cmd, "syscfg get IPv6subPrefix");
-      				_get_shell_output(cmd, out, sizeof(out));
+			    _get_shell_output("syscfg get IPv6subPrefix", out, sizeof(out));
 			    if(!strcmp(out,"true"))
 				{
                                 static int first = 0;
 
 				memset(out,0,sizeof(out));
-				memset(cmd,0,sizeof(cmd));
-				sprintf(cmd, "syscfg get IPv6_Interface");
-      				_get_shell_output(cmd, out, sizeof(out));
+				_get_shell_output("syscfg get IPv6_Interface", out, sizeof(out));
 				pt = out;
 				while((token = strtok_r(pt, ",", &pt)))
 				 {
@@ -7406,7 +7385,6 @@ dhcpv6c_dbg_thrd(void * in)
 					if(GenIPv6Prefix(token,v6Tpref,out1))
 					{
 						char tbuff[100];
-						memset(cmd,0,sizeof(cmd));
                         			memset(interface_name,0,sizeof(interface_name));
 
                         			#ifdef _COSA_INTEL_XB3_ARM_
@@ -7502,15 +7480,12 @@ dhcpv6c_dbg_thrd(void * in)
 #if !defined(INTEL_PUMA7) && !defined(_COSA_INTEL_XB3_ARM_)
                         // not the best place to add route, just to make it work
                         // delegated prefix need to route to LAN interface
-			memset(cmd,0,sizeof(cmd));
                         sprintf(cmd, "ip -6 route add %s dev %s", v6pref, COSA_DML_DHCPV6_SERVER_IFNAME);
                         system(cmd);
 			#ifdef _COSA_INTEL_XB3_ARM_
-			memset(cmd,0,sizeof(cmd));
                         sprintf(cmd, "ip -6 route add %s dev %s table erouter", v6pref, COSA_DML_DHCPV6_SERVER_IFNAME);
                         system(cmd);
 			#endif
-			memset(cmd,0,sizeof(cmd));
                         /* we need save this for zebra to send RA 
                            ipv6_prefix           // xx:xx::/yy
                          */
@@ -7613,7 +7588,6 @@ dhcpv6c_dbg_thrd(void * in)
                         sprintf(cmd, "ip -6 route add %s dev %s", v6pref, COSA_DML_DHCPV6_SERVER_IFNAME);
                         system(cmd);
 			#ifdef _COSA_INTEL_XB3_ARM_
-			memset(cmd,0,sizeof(cmd));
                         sprintf(cmd, "ip -6 route add %s dev %s table erouter", v6pref, COSA_DML_DHCPV6_SERVER_IFNAME);
                         system(cmd);
 			#endif
