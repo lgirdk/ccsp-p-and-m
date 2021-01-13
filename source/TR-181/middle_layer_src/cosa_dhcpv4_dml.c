@@ -5723,6 +5723,14 @@ Pool_GetParamBoolValue
         return TRUE;
     }
 
+    if( AnscEqualString(ParamName, "X_LGI-COM_ClearLanAllowedSubnetTable", TRUE))
+    {
+        /* collect value */
+        *pBool   =  FALSE;
+
+        return TRUE;
+    }
+
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
 }
@@ -6297,6 +6305,14 @@ Pool_SetParamBoolValue
         pPool->Cfg.DNSServersEnabled   = bValue;
 
         return TRUE;
+    }
+
+    if( AnscEqualString(ParamName, "X_LGI-COM_ClearLanAllowedSubnetTable", TRUE))
+    {
+        if (CosaDmlClearLanAllowedSubnetTable() == 0)
+        {
+            return TRUE;
+        }
     }
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
