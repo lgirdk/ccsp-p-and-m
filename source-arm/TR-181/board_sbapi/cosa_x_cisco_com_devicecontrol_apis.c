@@ -5099,10 +5099,10 @@ static BOOL isNewIpBlocked(unsigned long blockedIP, unsigned long blockedMask, u
                     |-----blocked------|
         |--ok--|--notok--|--notok--|--notok--|--ok--|
     */
-    if (newMaxIp < blockedMinIp || (newMinIp > blockedMaxIp))
-        return FALSE;
+    if ((newMinIp >= blockedMinIp) && (newMaxIp <= blockedMaxIp))
+        return TRUE;
 
-    return TRUE;
+    return FALSE;
 }
 
 static BOOL isNewIpAllowed(unsigned long allowedIP, unsigned long allowedMask, unsigned long newIP, unsigned long newMask)
@@ -5143,6 +5143,8 @@ BOOL validateIPRangeWithSubnetTable(const PCOSA_DML_LAN_MANAGEMENT pLanMngm)
     ULONG        size  = sizeof(validateIPBuf);
     unsigned int index = 0, noOfSubnetEntries = 0 , ulEntryInstanceNum = 0;
     struct in_addr allowedSubnetIP, blockedSubnetIP, blockedSubnetMask, allowedSubnetMask;
+    int returnStatus_ip = 0;
+    int returnStatus_subnet = 0;
 
         snprintf(validateIPBuf, sizeof(validateIPBuf), "%d.%d.%d.%d", pLanMngm->LanIPAddress.Dot[0], pLanMngm->LanIPAddress.Dot[1], pLanMngm->LanIPAddress.Dot[2], pLanMngm->LanIPAddress.Dot[3]);
 
@@ -5164,7 +5166,13 @@ BOOL validateIPRangeWithSubnetTable(const PCOSA_DML_LAN_MANAGEMENT pLanMngm)
                 _ansc_sprintf(ucEntryParamName, "Device.DHCPv4.Server.Pool.1.X_LGI-COM_LanBlockedSubnetTable.%lu.LanBlockedSubnetIP", ulEntryInstanceNum);
                 _ansc_sprintf(ucEntryParamName1, "Device.DHCPv4.Server.Pool.1.X_LGI-COM_LanBlockedSubnetTable.%lu.LanBlockedSubnetMask", ulEntryInstanceNum);
 
-                if (CosaGetParamValueString(ucEntryParamName, validateIPBuf, &size) == 0 && (CosaGetParamValueString(ucEntryParamName1, validateSubnetBuf, &size) == 0))
+                size = sizeof(validateIPBuf);
+                returnStatus_ip = CosaGetParamValueString(ucEntryParamName, validateIPBuf, &size);
+
+                size = sizeof(validateSubnetBuf);
+                returnStatus_subnet = CosaGetParamValueString(ucEntryParamName1, validateSubnetBuf, &size);
+
+                if (returnStatus_ip == 0 && returnStatus_subnet == 0)
                 {
                     inet_pton(AF_INET, validateIPBuf, &blockedSubnetIP);
                     inet_pton(AF_INET, validateSubnetBuf, &blockedSubnetMask);
