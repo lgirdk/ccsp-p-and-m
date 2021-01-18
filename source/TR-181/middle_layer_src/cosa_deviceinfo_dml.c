@@ -17133,6 +17133,7 @@ HwHealthTestEnable_GetParamBoolValue
         }
 #else
         *pBool = FALSE;
+		return TRUE;
 #endif
     }
     return FALSE;
@@ -17255,20 +17256,20 @@ HwHealthTest_GetParamUlongValue
     {
 #ifdef COLUMBO_HWTEST
         *puLong = pMyObject->HwHealtTestPTR.CPUThreshold;
-        return TRUE;
 #else
         *puLong = 0;
 #endif
+        return TRUE;
     }
 
     if( AnscEqualString(ParamName, "dramThreshold", TRUE))
     {
 #ifdef COLUMBO_HWTEST
         *puLong = pMyObject->HwHealtTestPTR.DRAMThreshold;
-        return TRUE;
 #else
         *puLong = 0;
 #endif
+        return TRUE;
     }
     return FALSE;
 }
@@ -17424,10 +17425,10 @@ HwHealthTestPTREnable_GetParamBoolValue
     {
 #ifdef COLUMBO_HWTEST
         *pBool = pMyObject->HwHealtTestPTR.PTREnable;
-        return TRUE;
 #else
         *pBool = FALSE;
 #endif
+        return TRUE;
     }
     return FALSE;
 }
@@ -17601,10 +17602,10 @@ HwHealthTestPTRFrequency_GetParamUlongValue
     {
 #ifdef COLUMBO_HWTEST
         *puLong = pMyObject->HwHealtTestPTR.Frequency;
-        return TRUE;
 #else
         *puLong = 0;
 #endif
+        return TRUE;
     }
     return FALSE;
 }
