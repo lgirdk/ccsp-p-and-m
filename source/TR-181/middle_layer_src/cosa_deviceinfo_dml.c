@@ -18486,6 +18486,7 @@ HwHealthTestEnable_GetParamBoolValue
         }
 #else
         *pBool = FALSE;
+		return TRUE;
 #endif
     }
     return FALSE;
@@ -18616,10 +18617,10 @@ HwHealthTest_GetParamUlongValue
             //Value is not set. Hence using default value
             *puLong = DEFAULT_HWST_PTR_CPU_THRESHOLD;
         }
-        return TRUE;
 #else
         *puLong = 0;
 #endif
+        return TRUE;
     }
 
     if( AnscEqualString(ParamName, "dramThreshold", TRUE))
@@ -18631,10 +18632,10 @@ HwHealthTest_GetParamUlongValue
             //Value is not set. Hence using default value
             *puLong = DEFAULT_HWST_PTR_DRAM_THRESHOLD;
         }
-        return TRUE;
 #else
         *puLong = 0;
 #endif
+        return TRUE;
     }
     return FALSE;
 }
@@ -18801,10 +18802,10 @@ HwHealthTestPTREnable_GetParamBoolValue
 #ifdef COLUMBO_HWTEST
         PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
         *pBool = pMyObject->HwHealtTestPTR.PTREnable;
-        return TRUE;
 #else
         *pBool = FALSE;
 #endif
+        return TRUE;
     }
     return FALSE;
 }
@@ -18989,10 +18990,10 @@ HwHealthTestPTRFrequency_GetParamUlongValue
             //Value is not set. Hence using default value
             *puLong = DEFAULT_HWST_PTR_FREQUENCY;
         }
-        return TRUE;
 #else
         *puLong = 0;
 #endif
+        return TRUE;
     }
     return FALSE;
 }
