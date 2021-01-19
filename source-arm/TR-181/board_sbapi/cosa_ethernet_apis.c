@@ -117,6 +117,8 @@
   #include "linux/if.h"
 #endif
 
+extern void *g_pDslhDmlAgent;
+
 static int saveID(char* ifName, char* pAlias, ULONG ulInstanceNumber);
 static int loadID(char* ifName, char* pAlias, ULONG* ulInstanceNumber);
 //static int saveLinkID(char* ifName, char* pAlias, ULONG ulInstanceNumber);
@@ -486,6 +488,8 @@ CosaDmlEthPortSetCfg
         saveID(pEthIf->sInfo->Name, pCfg->Alias, pCfg->InstanceNumber);
     }
     
+    CosaDmlEEEPortSetPsmCfg(pCfg->InstanceNumber, pCfg);
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -713,6 +717,59 @@ CosaDmlEthPortGetStats
     pStats->UnknownProtoPacketsReceived -= pEthIf->LastStats.UnknownProtoPacketsReceived;
 
     return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS CosaDmlEEEPortGetPsmCfg (ULONG ulInstanceNumber, PCOSA_DML_ETH_PORT_CFG pCfg)
+{
+    char recName[50];
+    char *strValue;
+    int retPsmGet;
+    int portIdx;
+
+    if (!pCfg)
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    portIdx = getPortID(ulInstanceNumber);
+    if ( portIdx < CCSP_HAL_ETHSW_EthPort1 ) // Port not found
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    strValue = NULL;
+    snprintf(recName, sizeof(recName), "ExSwitchPort.%d.EEEEnable", portIdx);
+    retPsmGet = PSM_Get_Record_Value2(g_MessageBusHandle, g_GetSubsystemPrefix(g_pDslhDmlAgent), recName, NULL, &strValue);
+    if ((retPsmGet == CCSP_SUCCESS) && (strValue != NULL))
+    {
+        pCfg->bEEEEnabled = (!strcasecmp(strValue,"true")) ? TRUE:FALSE;
+        ((CCSP_MESSAGE_BUS_INFO *)g_MessageBusHandle)->freefunc(strValue);
+    }
+}
+
+ANSC_STATUS CosaDmlEEEPortSetPsmCfg (ULONG ulInstanceNumber, PCOSA_DML_ETH_PORT_CFG pCfg)
+{
+    char recName[50];
+    int retPsmSet;
+    int portIdx;
+
+    if (!pCfg)
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    portIdx = getPortID(ulInstanceNumber);
+    if ( portIdx < CCSP_HAL_ETHSW_EthPort1 ) // Port not found
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    snprintf(recName, sizeof(recName), "ExSwitchPort.%d.EEEEnable", portIdx);
+    retPsmSet = PSM_Set_Record_Value2(g_MessageBusHandle, g_GetSubsystemPrefix(g_pDslhDmlAgent), recName, ccsp_string, ((pCfg->bEEEEnabled) ? "true" : "false"));
+    if(retPsmSet != CCSP_SUCCESS)
+    {
+        CcspTraceWarning(("%s - PSM_Set_Record_Value2 error %d setting %s\n", __FUNCTION__, retPsmSet, recName));
+    }
 }
 
 /**********************************************************************
@@ -1612,6 +1669,18 @@ PCosaEthInterfaceInfo getIF(const ULONG instanceNumber) {
         return NULL;
     }
     return g_EthEntries + i;
+}
+
+int getPortID(const ULONG instanceNumber)
+{
+    int PortIdx = 0;
+    PCosaEthInterfaceInfo pEthIf = getIF(instanceNumber);
+
+    if ((pEthIf != NULL) && (pEthIf->hwid != NULL))
+    {
+        PortIdx = *((PCCSP_HAL_ETHSW_PORT)pEthIf->hwid);
+    }
+    return PortIdx;
 }
 
 PCOSA_DML_ETH_VLAN_TERMINATION_FULL getVlanTermination(const ULONG ulInstanceNumber) {
