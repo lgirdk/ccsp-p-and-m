@@ -5901,6 +5901,19 @@
             <writable>true</writable>
 
           </parameter>
+
+          <parameter>
+            <name>EEECapability</name>
+            <type>boolean</type>
+            <syntax>bool</syntax>
+            <writable>false</writable>
+          </parameter>
+          <parameter>
+            <name>EEEEnable</name>
+            <type>boolean</type>
+            <syntax>bool</syntax>
+            <writable>true</writable>
+          </parameter>
            
           <parameter>
 
