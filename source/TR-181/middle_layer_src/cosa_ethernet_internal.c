@@ -202,6 +202,13 @@ CosaEthernetInitialize
 
             CosaDmlEthPortSetValues(NULL, ulIndex, ulNextInsNum, pMyObject->EthernetPortFullTable[ulIndex].Cfg.Alias);
 
+            if ( pMyObject->EthernetPortFullTable[ulIndex].DynamicInfo.Status != COSA_DML_IF_STATUS_NotPresent )
+            {
+                CosaDmlEEEPortGetPsmCfg(ulNextInsNum, &pMyObject->EthernetPortFullTable[ulIndex].Cfg);
+
+                CosaDmlEthPortSetCfg(NULL, &pMyObject->EthernetPortFullTable[ulIndex].Cfg);
+            }
+
             ulNextInsNum++;
         }
         else
