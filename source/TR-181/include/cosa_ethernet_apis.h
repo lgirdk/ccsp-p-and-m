@@ -115,6 +115,7 @@ _COSA_DML_ETH_PORT_CFG
     char                            Alias[COSA_DML_IF_NAME_LENGTH];
 
     BOOLEAN                         bEnabled;
+    BOOLEAN                         bEEEEnabled;
     LONG                            MaxBitRate;
     COSA_DML_ETH_DUPLEX_MODE        DuplexMode;
 }
@@ -498,6 +499,11 @@ CosaDmlEthVlanTerminationGetStats
         ULONG                       ulInstanceNumber,
         PCOSA_DML_ETH_STATS         pStats
     );
+
+ANSC_STATUS CosaDmlEEEPortGetCfg(ULONG ulInstanceNumber, PCOSA_DML_ETH_PORT_CFG pCfg);
+ANSC_STATUS CosaDmlEEEPortSetCfg(ULONG ulInstanceNumber, PCOSA_DML_ETH_PORT_CFG pCfg);
+int getPortID(const ULONG instanceNumber);
+
 #ifdef _HUB4_PRODUCT_REQ_
 ANSC_STATUS
 CosaDmlEthLinkGetWanUpDownTime
