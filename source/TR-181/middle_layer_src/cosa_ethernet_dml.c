@@ -485,6 +485,22 @@ Interface_GetParamBoolValue
         return TRUE;
     }
 
+    if (strcmp(ParamName, "EEECapability") == 0)
+    {
+        UINT PortIdx = getPortID(pEthernetPortFull->Cfg.InstanceNumber);
+        if (PortIdx > 0)
+        {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    if (strcmp(ParamName, "EEEEnable") == 0)
+    {
+        /* collect value */
+        *pBool = pEthernetPortFull->Cfg.bEEEEnabled;
+        return TRUE;
+    }
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
@@ -853,6 +869,12 @@ Interface_SetParamBoolValue
         return TRUE;
     }
 
+    if (strcmp(ParamName, "EEEEnable") == 0)
+    {
+        /* Set value */
+        pEthernetPortFull->Cfg.bEEEEnabled = bValue;
+        return TRUE;
+    }
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
