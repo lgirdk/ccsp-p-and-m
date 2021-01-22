@@ -505,6 +505,9 @@ BOOL GreTunnelIf_SetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName, B
 
     if (strcmp(ParamName, "Enable") == 0)
     {
+        if (bValue == pGreTuIf->Enable)
+            return TRUE;
+
         pGreTuIf->Enable = bValue;
         pGreTuIf->ChangeFlag |= GRETUIF_CF_ENABLE;
         return TRUE;
