@@ -490,8 +490,9 @@ InterfaceSetting4_GetParamUlongValue
         char buf[8] = {0};
         int status = 2; //status: Enabled(1), Disabled(2), Error(3)
         syscfg_get(NULL, "dslite_enable", buf, sizeof(buf));
+        CosaDmlDsliteGetCfg(NULL, pDsliteTunnel);
 
-        if (!strncmp(buf,"1",1))
+        if ((!strcmp(buf,"1")) && (pDsliteTunnel->active == 1))
         {
             char endPointName[260] = {0};
 
