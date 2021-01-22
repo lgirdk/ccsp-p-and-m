@@ -810,9 +810,6 @@ CosaDml_GreTunnelIfSetEnable(ULONG tuIns, ULONG ins, BOOL enable)
 
 	if (tuIns != 1)
         return ANSC_STATUS_FAILURE;
-		
-    if (ins != 1)
-        return ANSC_STATUS_FAILURE;
 
     if (GreTunnelIfPsmGetStr(GRETU_PARAM_GRETU, tuIns, ins, greNetworkTunnel, sizeof(greNetworkTunnel)) != 0)
         return ANSC_STATUS_FAILURE;
