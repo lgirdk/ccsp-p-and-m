@@ -51,7 +51,7 @@
 
 // Original Code Assumed Four Physical Ethernet Ports. Set to that for backwards compatibility. 
 #if !(defined (ETH_8_PORTS) || defined (ETH_6_PORTS) || defined (ETH_4_PORTS) || defined (ETH_2_PORTS) )
-#warning "Number of Ethernet Poarts NOT DEFINED. Setting to 4 Ports
+#warning "Number of Ethernet Poarts NOT DEFINED. Setting to 4 Ports"
 #define ETH_4_PORTS
 #endif
 
