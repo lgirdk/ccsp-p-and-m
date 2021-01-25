@@ -685,18 +685,16 @@ CosaDmlDiSetProvisioningCode
     return ANSC_STATUS_SUCCESS;
 }
 
-
-
-void uploadLogUtilityThread(void* vptr_value)
+static void *uploadLogUtilityThread(void* vptr_value)
 {
 	pthread_detach(pthread_self());
 	char uploadOnRequest[150];
 	char *str = (char *) vptr_value;
 	snprintf(uploadOnRequest,sizeof(uploadOnRequest),"sh /rdklogger/opsLogUpload.sh %s &",str);
 	system(uploadOnRequest);
-	return;
-
+	return NULL;
 }
+
 ANSC_STATUS
 COSADmlUploadLogsNow
 	(
