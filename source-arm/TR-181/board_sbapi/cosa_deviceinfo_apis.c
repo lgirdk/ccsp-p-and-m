@@ -880,7 +880,7 @@ CosaDmlDiGetFirmwareBuildTime
 		if (value_token != NULL) 
 		{
 			value_token = strtok_r(NULL, "\"", &st); 
-			snprintf(pValue, pulSize, "%s", value_token);
+			snprintf(pValue, *pulSize, "%s", value_token);
 			*pulSize = AnscSizeOfString(pValue);
 		
 			fclose(fp);
