@@ -91,6 +91,8 @@
 
 **************************************************************************/
 
+#include <string.h>
+
 #include "cosa_deviceinfo_apis.h"
 #include "cosa_deviceinfo_apis_custom.h"
 #include "dml_tr181_custom_cfg.h" 
