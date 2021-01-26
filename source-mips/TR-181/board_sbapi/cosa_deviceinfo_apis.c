@@ -2233,12 +2233,12 @@ ANSC_STATUS setTempPartnerId
 	
 }
 
-void CosaDmlDiPartnerIDChangeHandling( void* buff )
+void *CosaDmlDiPartnerIDChangeHandling( void* buff )
 {
 	CCSP_MESSAGE_BUS_INFO *bus_info 		  = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
 	parameterValStruct_t param_val[ 1 ] 	  = { "Device.X_CISCO_COM_DeviceControl.FactoryReset", "Router,Wifi,VoIP,Dect,MoCA", ccsp_string };
-	char				 pComponentName[ 64 ] = "eRT.com.cisco.spvtg.ccsp.pam";
-	char				 pComponentPath[ 64 ] = "/com/cisco/spvtg/ccsp/pam";
+	char 				*pComponentName = "eRT.com.cisco.spvtg.ccsp.pam";
+	char 				*pComponentPath = "/com/cisco/spvtg/ccsp/pam";
 	char				*faultParam 		  = NULL;
 	int 				 ret				  = 0;
 
@@ -2274,6 +2274,8 @@ void CosaDmlDiPartnerIDChangeHandling( void* buff )
 	{
 		AnscTraceWarning(("%s: Device will reboot in some time\n", __FUNCTION__ ));
 	}
+
+	return NULL;
 }
 
 ANSC_STATUS

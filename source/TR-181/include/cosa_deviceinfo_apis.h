@@ -588,7 +588,7 @@ CosaDmlDiSetSyndicationTR69CertLocation
         char*                       pValue
     );
 
-void CosaDmlDiPartnerIDChangeHandling( void* buff );
+void *CosaDmlDiPartnerIDChangeHandling( void* buff );
 
 ANSC_STATUS
 CosaDmlDiGetSyndicationLocalUIBrandingTable
