@@ -743,7 +743,8 @@ CosaDml_GreIfSetLocalInterfaces(ULONG ins, const char *ifs)
     char psmRec[MAX_GRE_PSM_REC + 1], dm[1024];
     char *cp, *if1, *if2, *br1, *br2, *brwfp1, *brwfp2;
     char *ifsBuf, *brsBuf, *brswfpBuf;
-    int brIns, brInsStr[3];
+    int brIns;
+    char brInsStr[12];
 
     if (ins != 1 || !ifs)
         return ANSC_STATUS_FAILURE;
