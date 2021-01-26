@@ -2786,7 +2786,7 @@ CosaDmlDcGetReinitMacThreshold
     else
     {
     	*pValue = 5;
-    	CosaDmlDcSetReinitMacThreshold(hContext, pValue);
+    	CosaDmlDcSetReinitMacThreshold(hContext, *pValue);
     }
     return ANSC_STATUS_SUCCESS;
 }
