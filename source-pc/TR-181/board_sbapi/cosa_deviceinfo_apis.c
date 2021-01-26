@@ -1343,7 +1343,7 @@ CosaDmlDiGetSyndicationPartnerId
     char *pPartnerId = NULL;
     const char partnerStr[] = "PARTNER_ID";
 
-    if (!pValue || !pulSize || *pulSize >= PARTNER_ID_LEN)
+    if (!pValue || !pulSize || *pulSize <= PARTNER_ID_LEN)
         return ANSC_STATUS_FAILURE;
 
     strcpy(pValue, "comcast"); // Set the default to comcast in case the partner id is not set in props file
