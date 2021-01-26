@@ -822,7 +822,7 @@ void COSADmlGetProcessInfo(PCOSA_DATAMODEL_PROCSTATUS p_info)
 
                 memset(state, 0, sizeof(state));
 
-                if (read_proc_stat(name, p_proc->Command, &state, &p_proc->Size, &p_proc->Priority, &p_proc->CPUTime ))
+                if (read_proc_stat(name, p_proc->Command, state, &p_proc->Size, &p_proc->Priority, &p_proc->CPUTime ))
                 {
                     CcspTraceWarning(("Failed to parse process %d information!\n", pid));
                     continue;
