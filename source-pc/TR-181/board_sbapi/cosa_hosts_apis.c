@@ -64,6 +64,9 @@
         01/11/2011    initial revision.
 
 **************************************************************************/
+
+#include <string.h>
+
 #include "plugin_main_apis.h"
 #include "cosa_hosts_apis.h"
 #include "cosa_hosts_internal.h"
