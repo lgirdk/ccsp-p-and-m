@@ -88,6 +88,7 @@ printf a;            \
 #define MAX_GRE_PSM_REC         127
 
 #define GRE_DM_BR_TEMP          "Device.Bridging.Bridge.%d."
+#define HOTSPOT_PSM_ENABLE      "dmsb.hotspot.enable"
 
 #define GRE_OBJ_GRE             "dmsb.hotspot."
 #define GRE_PARAM_KAITVL        GRE_OBJ_GRE "RemoteEndpointHealthCheckPingInterval"
@@ -787,6 +788,9 @@ CosaDml_GreTunnelSetEnable(ULONG tuIns, BOOL enable)
 	//	fprintf(stderr, "-- %s %d  fail\n", __func__, __LINE__);	
     //}
     /* save to PSM */
+    if(GrePsmSet(HOTSPOT_PSM_ENABLE, enable ? "1" : "0") != 0)
+        AnscTraceError(("Fail to set %s \n", HOTSPOT_PSM_ENABLE));
+
     snprintf(psmRec, sizeof(psmRec), GRETU_PARAM_ENABLE, tuIns);
     if (GrePsmSet(psmRec, enable ? "1" : "0") != 0)
         return ANSC_STATUS_FAILURE;
