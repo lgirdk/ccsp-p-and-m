@@ -235,8 +235,12 @@ MACFilter_SetParamStringValue
 
     if (AnscEqualString(ParamName, "Hostname", TRUE))
     {
-        _ansc_snprintf(pFwMACFilter->Hostname, sizeof(pFwMACFilter->Hostname), "%s", strValue);
-        return TRUE;
+        /* Return error for SPV if size is more than expected, currently max limit is sizeof(pFwMACFilter->Hostname)-1 */
+        if (strlen (strValue) < sizeof(pFwMACFilter->Hostname))
+        {
+            _ansc_sprintf(pFwMACFilter->Hostname, "%s", strValue);
+            return TRUE;
+        }
     }
     if (AnscEqualString(ParamName, "MACAddress", TRUE))
     {
