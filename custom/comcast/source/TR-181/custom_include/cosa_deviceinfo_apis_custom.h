@@ -130,6 +130,14 @@ CosaDmlDiGetCMIPAddress
         PULONG                      pulSize
     );
 
+ANSC_STATUS
+CosaDmlDiGetCMIPv4Address
+    (
+        ANSC_HANDLE                 hContext,
+        char*                       pValue,
+        PULONG                      pulSize
+    );
+
 /*X_COMCAST-COM_WAN_IP*/
 ANSC_STATUS
 CosaDmlDiGetRouterIPAddress
