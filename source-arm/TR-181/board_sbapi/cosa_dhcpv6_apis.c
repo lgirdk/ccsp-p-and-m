@@ -8141,9 +8141,20 @@ dhcpv6c_dbg_thrd(void * in)
                         // send an event to Sky-pro app manager that Global-prefix is set
                         commonSyseventSet("lan_prefix_set", globalIP);
 #endif
+                        /* check for old prefix*/
+                        char prevPref[128] = {0};
+                        commonSyseventGet("ipv6_prefix", prevPref, sizeof(prevPref));
+                        if ( (strlen(prevPref) > 3) && (0 != strcmp(prevPref, v6pref)) ) {
+                            sprintf(cmd, "ip -6 route del %s dev %s", prevPref, COSA_DML_DHCPV6_SERVER_IFNAME);
+                            system(cmd);
+                            sprintf(cmd, "ip -6 route del %s dev %s table all_lans", prevPref, COSA_DML_DHCPV6_SERVER_IFNAME);
+                            system(cmd);
+                        }
                         // not the best place to add route, just to make it work
                         // delegated prefix need to route to LAN interface
                         sprintf(cmd, "ip -6 route add %s dev %s", v6pref, COSA_DML_DHCPV6_SERVER_IFNAME);
+                        system(cmd);
+                        sprintf(cmd, "ip -6 route add %s dev %s table all_lans", v6pref, COSA_DML_DHCPV6_SERVER_IFNAME);
                         system(cmd);
 			#ifdef _COSA_INTEL_XB3_ARM_
                         sprintf(cmd, "ip -6 route add %s dev %s table erouter", v6pref, COSA_DML_DHCPV6_SERVER_IFNAME);
