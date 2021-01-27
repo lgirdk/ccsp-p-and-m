@@ -404,6 +404,25 @@ CosaDmlDiGetCMIPAddress
 #endif
 }
 
+ANSC_STATUS
+CosaDmlDiGetCMIPv4Address
+    (
+        ANSC_HANDLE                 hContext,
+        char*                       pValue,
+        PULONG                      pulSize
+    )
+{
+#ifndef _ENABLE_EPON_SUPPORT_
+    return Local_CosaDmlGetParamValueByPathName("Device.X_CISCO_COM_CableModem.IPAddress", pValue, pulSize);
+#else
+    if ( pValue )
+    {
+        strcpy(pValue, "0.0.0.0");
+    }
+    return ANSC_STATUS_SUCCESS;
+#endif
+}
+
 #endif
 
 
