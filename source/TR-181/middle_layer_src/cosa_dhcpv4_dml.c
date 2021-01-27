@@ -11351,7 +11351,9 @@ LanBlockedSubnetTable_GetParamUlongValue
             else if (pCxtLink->InstanceNumber == 2)
             {
                 // get CM IP
-                CosaDmlDiGetCMIPAddress(NULL, IPAddr, &ulSize);
+                // The IPv4 address is needed, so use CosaDmlDiGetCMIPv4Address()
+                // since CosaDmlDiGetCMIPAddress() returns the IPv6 address is available.
+                CosaDmlDiGetCMIPv4Address(NULL, IPAddr, &ulSize);
             }
             else if (pCxtLink->InstanceNumber == 3)
             {
