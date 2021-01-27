@@ -9486,9 +9486,24 @@ dhcpv6c_dbg_thrd(void * in)
                     }
 #endif
 #endif // FEATURE_RDKB_WAN_MANAGER
+
+                        /* check for old prefix*/
+                        char prevPref[128];
+
+                        prevPref[0] = 0;
+                        commonSyseventGet("ipv6_prefix", prevPref, sizeof(prevPref));
+                        if ((strlen(prevPref) > 3) && (strcmp(prevPref, v6pref) != 0)) {
+                            v_secure_system("ip -6 route del %s dev %s", prevPref, COSA_DML_DHCPV6_SERVER_IFNAME);
+                            v_secure_system("ip -6 route del %s dev %s table all_lans", prevPref, COSA_DML_DHCPV6_SERVER_IFNAME);
+#ifdef _COSA_INTEL_XB3_ARM_
+                            v_secure_system("ip -6 route del %s dev %s table erouter", prevPref, COSA_DML_DHCPV6_SERVER_IFNAME);
+#endif
+                        }
+
                         // not the best place to add route, just to make it work
                         // delegated prefix need to route to LAN interface
                         v_secure_system("ip -6 route add %s dev %s", v6pref, COSA_DML_DHCPV6_SERVER_IFNAME);
+                        v_secure_system("ip -6 route add %s dev %s table all_lans", v6pref, COSA_DML_DHCPV6_SERVER_IFNAME);
 			#ifdef _COSA_INTEL_XB3_ARM_
                         v_secure_system("ip -6 route add %s dev %s table erouter", v6pref, COSA_DML_DHCPV6_SERVER_IFNAME);
 			#endif
