@@ -118,6 +118,7 @@ CosaDmlDsliteAddEntry
     dslite_cfg.mss_clamping_enable = pEntry->mss_clamping_enable;
     dslite_cfg.tcpmss = pEntry->tcpmss;
     dslite_cfg.ipv6_frag_enable = pEntry->ipv6_frag_enable;
+    
 
     memcpy(dslite_cfg.alias, pEntry->alias, 65*sizeof(char));
     memcpy(dslite_cfg.addr_inuse, pEntry->addr_inuse, 257*sizeof(char));
@@ -125,6 +126,7 @@ CosaDmlDsliteAddEntry
     memcpy(dslite_cfg.addr_ipv6, pEntry->addr_ipv6, 257*sizeof(char));
     memcpy(dslite_cfg.tunnel_interface, pEntry->tunnel_interface, 257*sizeof(char));
     memcpy(dslite_cfg.tunneled_interface, pEntry->tunneled_interface, 257*sizeof(char));
+    memcpy(dslite_cfg.tunnel_v4addr, pEntry->tunnel_v4addr, 65*sizeof(char));
 
     rc = Utopia_AddDsliteEntry(&ctx,&dslite_cfg);
 
@@ -199,6 +201,7 @@ CosaDmlDsliteSetCfg
     memcpy(dslite_cfg.addr_ipv6, pEntry->addr_ipv6, 257*sizeof(char));
     memcpy(dslite_cfg.tunnel_interface, pEntry->tunnel_interface, 257*sizeof(char));
     memcpy(dslite_cfg.tunneled_interface, pEntry->tunneled_interface, 257*sizeof(char));
+    memcpy(dslite_cfg.tunnel_v4addr, pEntry->tunnel_v4addr, 65*sizeof(char));
 
     rc = Utopia_SetDsliteCfg(&ctx,&dslite_cfg);
     /* Free Utopia Context */
@@ -265,6 +268,7 @@ CosaDmlDsliteGetCfg
       memcpy(pEntry->addr_ipv6, dslite_cfg.addr_ipv6, 257*sizeof(char));
       memcpy(pEntry->tunnel_interface, dslite_cfg.tunnel_interface, 257*sizeof(char));
       memcpy(pEntry->tunneled_interface, dslite_cfg.tunneled_interface, 257*sizeof(char));
+      memcpy(pEntry->tunnel_v4addr, dslite_cfg.tunnel_v4addr, 65*sizeof(char));
     }
     /* Free Utopia Context */
     Utopia_Free(&ctx,0);
@@ -328,6 +332,7 @@ CosaDmlDsliteGetEntry
       memcpy(pEntry->addr_ipv6, dslite_cfg.addr_ipv6, 257*sizeof(char));
       memcpy(pEntry->tunnel_interface, dslite_cfg.tunnel_interface, 257*sizeof(char));
       memcpy(pEntry->tunneled_interface, dslite_cfg.tunneled_interface, 257*sizeof(char));
+      memcpy(pEntry->tunnel_v4addr, dslite_cfg.tunnel_v4addr, 65*sizeof(char));
     }
 
     /* Free Utopia Context */
