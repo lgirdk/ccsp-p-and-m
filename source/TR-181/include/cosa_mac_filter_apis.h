@@ -27,7 +27,7 @@ _COSA_DML_FW_MACFILTER
 {
    ULONG          InstanceNumber;
    char           Alias[256];
-   char           Hostname[64];
+   char           Hostname[65];
    char           MACAddress[64];
    BOOL           Enable;
 }
