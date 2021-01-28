@@ -416,6 +416,21 @@ InterfaceSetting4_GetParamStringValue
             return 1;
         }
     }
+    if( AnscEqualString(ParamName, "TunnelV4Addr", TRUE))
+    {
+        CosaDmlDsliteGetCfg(NULL, pDsliteTunnel);
+        /* collect value */
+        if ( AnscSizeOfString(pDsliteTunnel->tunnel_v4addr) < *pUlSize)
+        {
+            AnscCopyString(pValue, pDsliteTunnel->tunnel_v4addr);
+            return 0;
+        }
+        else
+        {
+            *pUlSize = AnscSizeOfString(pDsliteTunnel->tunnel_v4addr)+1;
+            return 1;
+        }
+    }
 
 #endif
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
@@ -590,6 +605,13 @@ InterfaceSetting4_SetParamStringValue
     {
         /* save update to backup */
         AnscCopyString(pDsliteTunnel->addr_ipv6, pString);
+        return TRUE;
+    }
+
+    if( AnscEqualString(ParamName, "TunnelV4Addr", TRUE))
+    {
+        /* save update to backup */
+        AnscCopyString(pDsliteTunnel->tunnel_v4addr, pString);
         return TRUE;
     }
 #endif
