@@ -745,7 +745,11 @@ Router_GetParamUlongValue
     if( AnscEqualString(ParamName, "Status", TRUE))
     {
         /* collect value */
-        *puLong = pRouter->Info.Status;
+        if(pRouter->Cfg.bEnabled) {
+            *puLong = COSA_DML_ROUTING_STATUS_Enabled;
+        } else {
+            *puLong = COSA_DML_ROUTING_STATUS_Disabled;
+        }
         return TRUE;
     }
 
