@@ -645,6 +645,7 @@ user_validatepwd
    char val[32] = {'\0'};
    char getHash[128]= {'\0'};
    int isDefault=0;
+   char guiPassword[40]= {'\0'};
    if(!strcmp(pEntry->Username,"admin"))
    {
 
@@ -653,6 +654,14 @@ user_validatepwd
    if(fromDB[0] == '\0')
    {
      #if defined(_HUB4_PRODUCT_REQ_) || defined(INTEL_PUMA7) && defined(_XB7_PRODUCT_REQ_) || defined(_PLATFORM_RASPBERRYPI_) || 1
+         if (platform_hal_getUIDefaultPassword(guiPassword) == RETURN_OK )
+         {
+             strcpy(pEntry->Password, guiPassword);
+         }
+         else
+         {
+             strcpy(pEntry->Password, "password");
+         }
          user_hashandsavepwd(hContext,pEntry->Password,pEntry);
      #else
          FILE *ptr;
