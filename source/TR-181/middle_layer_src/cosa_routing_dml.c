@@ -741,14 +741,15 @@ Router_GetParamUlongValue
     PCOSA_CONTEXT_LINK_OBJECT       pCosaContext = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     PCOSA_DML_ROUTER_FULL2          pRouter      = (PCOSA_DML_ROUTER_FULL2)pCosaContext->hContext;
 
-    /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "Status") == 0)
     {
-        /* collect value */
-        *puLong = pRouter->Info.Status;
+        if (pRouter->Cfg.bEnabled) {
+            *puLong = COSA_DML_ROUTING_STATUS_Enabled;
+        } else {
+            *puLong = COSA_DML_ROUTING_STATUS_Disabled;
+        }
         return TRUE;
     }
-
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
