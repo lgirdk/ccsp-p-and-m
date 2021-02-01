@@ -668,6 +668,15 @@ user_validatepwd
    if(fromDB[0] == '\0')
    {
      #if defined(_HUB4_PRODUCT_REQ_) || defined(INTEL_PUMA7) && defined(_XB7_PRODUCT_REQ_) || defined(_PLATFORM_RASPBERRYPI_) || defined(_PLATFORM_TURRIS_) || 1
+         char guiPassword[40]= {'\0'};
+         if (platform_hal_getUIDefaultPassword(guiPassword) == RETURN_OK )
+         {
+             strcpy(pEntry->Password, guiPassword);
+         }
+         else
+         {
+             strcpy(pEntry->Password, "password");
+         }
          user_hashandsavepwd(hContext,pEntry->Password,pEntry);
      #else
          FILE *ptr;
