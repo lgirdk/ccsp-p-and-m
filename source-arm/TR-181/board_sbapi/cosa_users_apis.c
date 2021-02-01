@@ -72,6 +72,7 @@
 #include "secure_wrapper.h"
 #include <openssl/hmac.h>
 #include <syscfg/syscfg.h>
+#include <platform_hal.h>
 #include "safec_lib_common.h"
 
 #define SIZE_OF_HASHPASSWORD  32
@@ -572,6 +573,33 @@ user_validatepwd
    if(fromDB[0] == '\0')
    {
 #if defined(_HUB4_PRODUCT_REQ_) || defined(_PLATFORM_RASPBERRYPI_) || defined(_PLATFORM_TURRIS_) || defined(_LG_OFW_)
+
+#if defined (_MV1_ARM_CBN_)
+         if (syscfg_get(NULL, "cbn_user_password", pEntry->Password, sizeof(pEntry->Password)) == 0)
+         {
+             if (strlen(pEntry->Password) == 0)
+             {
+                 strcpy(pEntry->Password, "password");
+             }
+         }
+         else
+#elif defined (_MV1_ARM_CS_)
+         if (syscfg_get(NULL, "cs_user_password", pEntry->Password, sizeof(pEntry->Password)) == 0)
+         {
+             if (strlen(pEntry->Password) == 0)
+             {
+                 strcpy(pEntry->Password, "password");
+             }
+         }
+         else
+#endif
+         {
+             pEntry->Password[0] = 0;
+             if ((platform_hal_getUIDefaultPassword(pEntry->Password, sizeof(pEntry->Password)) != RETURN_OK) || (pEntry->Password[0] == 0))
+             {
+                 strcpy(pEntry->Password, "password");
+             }
+         }
          user_hashandsavepwd(hContext,pEntry->Password,pEntry);
 #else
          FILE *fptr;
