@@ -72,6 +72,7 @@
 #include "secure_wrapper.h"
 #include <openssl/hmac.h>
 #include <syscfg/syscfg.h>
+#include <platform_hal.h>
 #include "safec_lib_common.h"
 
 #define SIZE_OF_HASHPASSWORD  32
@@ -579,6 +580,19 @@ user_validatepwd
    if(fromDB[0] == '\0')
    {
      #if defined(_HUB4_PRODUCT_REQ_) || defined(INTEL_PUMA7) && defined(_XB7_PRODUCT_REQ_) || defined(_PLATFORM_RASPBERRYPI_) || defined(_PLATFORM_TURRIS_)
+         char guiPassword[40];
+         /*
+            If the HAL returns an empty string it's bug in the HAL (it
+            should return an error instead), but try to handle it anway.
+         */
+         if ((platform_hal_getUIDefaultPassword(guiPassword, sizeof(guiPassword)) == RETURN_OK) && (strlen(guiPassword) > 0))
+         {
+             strcpy(pEntry->Password, guiPassword);
+         }
+         else
+         {
+             strcpy(pEntry->Password, "password");
+         }
          user_hashandsavepwd(hContext,pEntry->Password,pEntry);
      #else
          FILE *ptr;
