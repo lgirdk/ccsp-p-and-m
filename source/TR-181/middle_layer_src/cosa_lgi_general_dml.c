@@ -364,8 +364,16 @@ LgiGeneral_SetParamUlongValue
     PCOSA_DATAMODEL_LGI_GENERAL  pMyObject = (PCOSA_DATAMODEL_LGI_GENERAL)g_pCosaBEManager->hLgiGeneral;
     if (strcmp(ParamName, "CustomerId") == 0)
     {
-        pMyObject->CustomerId = uValuepUlong;
-        return TRUE;
+        /*
+        Check that a config file matching the customer ID is present in the filesystem.
+        */
+        char cust_file[45];
+        snprintf(cust_file,sizeof(cust_file), CUSTOMER_SYSCFG_FILE, (int)uValuepUlong);
+        if (access(cust_file, F_OK) == 0)
+        {
+            pMyObject->CustomerId = uValuepUlong;
+            return TRUE;
+        }
     }
     return FALSE;
 }
@@ -435,20 +443,7 @@ LgiGeneral_Validate
         ULONG*                      puLength
   )
 {
-    PCOSA_DATAMODEL_LGI_GENERAL pMyObject = (PCOSA_DATAMODEL_LGI_GENERAL)g_pCosaBEManager->hLgiGeneral;
-    ULONG cusid = pMyObject->CustomerId;
-
-    /*
-    Check that a config file matching the customer ID is present in the filesystem.
-    */
-    char cust_file[45];
-    snprintf(cust_file,sizeof(cust_file), CUSTOMER_SYSCFG_FILE, (int)cusid);
-    if (access(cust_file, F_OK) == 0)
-    {
-        return true;
-    }
-
-    return false;
+    return true;
 }
 
 
