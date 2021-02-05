@@ -8133,6 +8133,7 @@ void CosaDmlDhcpv6sRebootServer()
         return;
 #if defined (MULTILAN_FEATURE)
     commonSyseventSet("dhcpv6s-restart", "");
+    commonSyseventSet("zebra-restart", "");
 #else
     FILE *fp = NULL;
     int fd = 0;
@@ -10034,15 +10035,23 @@ dhcpv6c_dbg_thrd(void * in)
                         g_COSARepopulateTable(g_pDslhDmlAgent, "Device.DHCPv6.Server.Pool.1.Option.");
 
 #if defined (MULTILAN_FEATURE)
+                        /* we need save this for zebra to send RA 
+                           ipv6_prefix           // xx:xx::/yy
+                         */
+                        CcspTraceInfo(("%s: v6pref is %s ,pref_len is %d\n", __func__,v6pref,pref_len));
+                        v_secure_system("sysevent set ipv6_prefix %s ",v6pref);
+
                         g_dhcpv6_server_prefix_ready = TRUE;
 
                         if ((v6addr_prev[0] == '\0') || ( _ansc_strcmp(v6addr_prev, v6pref ) !=0))
                         {
                             _ansc_strncpy( v6addr_prev, v6pref, sizeof(v6pref));
-                            commonSyseventSet("ipv6-restart", "1");
+			    /* In case of change in prefix, sysevent set on 'ipv6_prefix' will always trigger ipv6-restart */
+                            //commonSyseventSet("ipv6-restart", "1");
                         }
                         else
                         {
+                            commonSyseventSet("ipv6_addr-unset", "");
                             commonSyseventSet("ipv6_addr-set", "");
                         }
 #endif
@@ -10058,11 +10067,6 @@ dhcpv6c_dbg_thrd(void * in)
 			#ifdef _COSA_INTEL_XB3_ARM_
                         v_secure_system("ip -6 route add %s dev %s table erouter", v6pref, COSA_DML_DHCPV6_SERVER_IFNAME);
 			#endif
-                        /* we need save this for zebra to send RA 
-                           ipv6_prefix           // xx:xx::/yy
-                         */
-                        CcspTraceInfo(("%s: v6pref is %s ,pref_len is %d\n", __func__,v6pref,pref_len));
-                        v_secure_system("sysevent set ipv6_prefix %s ",v6pref);
 #if defined(INTEL_PUMA7)        // handling v6 lease for INTEL platforms
                         {
 #if !defined(WAN_MANAGER_UNIFICATION_ENABLED)
@@ -10118,6 +10122,8 @@ dhcpv6c_dbg_thrd(void * in)
 #endif //  INTEL_PUMA7 
 
                         CcspTraceDebug(("%s,%d: Calling CosaDmlDHCPv6sTriggerRestart(FALSE)...\n", __FUNCTION__, __LINE__));
+
+#ifndef _PUMA6_ARM_
                         CosaDmlDHCPv6sTriggerRestart(FALSE);
 #if defined(_COSA_BCM_ARM_) || defined(INTEL_PUMA7) || defined(_COSA_QCA_ARM_)
                         CcspTraceWarning((" %s dhcpv6_assign_global_ip to brlan0 \n", __FUNCTION__));
@@ -10188,6 +10194,7 @@ dhcpv6c_dbg_thrd(void * in)
 			    CcspTraceWarning(("%s: setting lan-restart\n", __FUNCTION__));
                             commonSyseventSet("lan-restart", "1");
                         }
+#endif //_PUMA6_ARM_
 #endif
 #else
 #if defined(FEATURE_RDKB_WAN_MANAGER)
