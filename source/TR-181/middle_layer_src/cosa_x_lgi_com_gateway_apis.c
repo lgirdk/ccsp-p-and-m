@@ -456,8 +456,6 @@ CosaDmlGiSetCustomDataModelEnabled
 {
     syscfg_set (NULL, CUSTOM_DATA_MODEL_ENABLED, bValue ? "1" : "0");
 
-    system ("killall CcspTr069PaSsp ; cd /usr/ccsp/tr069pa ; /usr/bin/CcspTr069PaSsp -subsys eRT. &");
-
     return ANSC_STATUS_SUCCESS;
 }
 
