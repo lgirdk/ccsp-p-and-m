@@ -133,6 +133,12 @@ BOOL GRE_SetParamUlongValue ( ANSC_HANDLE  hInsContext, char* ParamName, ULONG  
     {
         pGreHealth->RemoteEndpointHealthCheckPingInterval = uValue;
         pGreHealth->ChangeFlag |= GRE_CF_KEEPITVL;
+        //MVXREQ-1237 If HealthCheckInterval>0 and RecoveryCheckInterval is undefined, the Gateway MUST default RecoveryCheckInterval to 10x the HealthCheckInterval
+        if(uValue > 0 && pGreHealth->RemoteEndpointHealthCheckPingIntervalInFailure == 0)
+        {
+               pGreHealth->RemoteEndpointHealthCheckPingIntervalInFailure = uValue * 10;
+               pGreHealth->ChangeFlag |= GRE_CF_KEEPFAILITVL;
+        }
         return TRUE;
     }
 
