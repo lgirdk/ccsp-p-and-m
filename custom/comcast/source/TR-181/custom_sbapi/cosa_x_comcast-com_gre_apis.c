@@ -98,6 +98,7 @@ printf a;            \
 #define GRETU_PARAM_ENABLE        	GRE_OBJ_GRETU "%lu.Enable"
 #define GRETU_PARAM_PRI_ENDPOINT 	GRE_OBJ_GRETU "%lu.PrimaryRemoteEndpoint"
 #define GRETU_PARAM_SEC_ENDPOINT 	GRE_OBJ_GRETU "%lu.SecondaryRemoteEndpoint"
+#define GRETU_PARAM_NUMBER_OF_EP	GRE_OBJ_GRETU "%lu.NumberOfEndPoints"
 #define GRETU_PARAM_ENDPOINTS		GRE_OBJ_GRETU "%lu.Endpoints"
 #define GRETU_PARAM_KEYGENPOL     	GRE_OBJ_GRETU "%lu.KeyIDGenPolicy"
 #define GRETU_PARAM_KEYID         	GRE_OBJ_GRETU "%lu.KeyID"
@@ -1230,27 +1231,47 @@ CosaDml_GreTunnelSetEndpoints(ULONG ins, const char *eps)
     char psmRec[MAX_GRE_PSM_REC + 1];
     char buf[1025];
     char *pri, *sec;
+    int numep;
+    char numep_str[12];
 
     if (ins != 1 || !eps)
+        return ANSC_STATUS_FAILURE;
+
+    /*
+       It's not clear that eps being an empty string ever happens, but checking
+       for it here and aborting early means we don't need to check strlen(pri)
+       later on.
+    */
+    if (eps[0] == 0)
         return ANSC_STATUS_FAILURE;
 
     snprintf(buf, sizeof(buf), "%s", eps);
     pri = buf;
     if ((sec = strchr(buf, ',')) != NULL)
         *sec++ = '\0';
+    else
+        sec = "0.0.0.0";
 
-    if (pri && strlen(pri)) {
-        if (sysevent_set(sysevent_fd, sysevent_token, kHotspotfd_primary, pri, 0) != 0) {
-            AnscTraceError(("Fail to set sysevent: %s to %s\n", kHotspotfd_primary, pri));
-            return ANSC_STATUS_FAILURE;
-        }
+    if (sysevent_set(sysevent_fd, sysevent_token, kHotspotfd_primary, pri, 0) != 0) {
+        AnscTraceError(("Fail to set sysevent: %s to %s\n", kHotspotfd_primary, pri));
+        return ANSC_STATUS_FAILURE;
     }
 
-    if (sec && strlen(sec)) {
-        if (sysevent_set(sysevent_fd, sysevent_token, khotspotfd_secondary, sec, 0) != 0) {
-            AnscTraceError(("Fail to set sysevent: %s to %s\n", khotspotfd_secondary, sec));
-            return ANSC_STATUS_FAILURE;
-        }
+    if (sysevent_set(sysevent_fd, sysevent_token, khotspotfd_secondary, sec, 0) != 0) {
+        AnscTraceError(("Fail to set sysevent: %s to %s\n", khotspotfd_secondary, sec));
+        return ANSC_STATUS_FAILURE;
+    }
+
+    numep = 0;
+    if (strcmp(pri, "0.0.0.0") != 0)
+        numep++;
+    if (strcmp(sec, "0.0.0.0") != 0)
+        numep++;
+
+    snprintf(numep_str, sizeof(numep_str), "%d", numep);
+    if (sysevent_set(sysevent_fd, sysevent_token, khotspotfd_ep_count, numep_str, 0) != 0) {
+        AnscTraceError(("Fail to set sysevent: %s to %d\n", khotspotfd_ep_count, numep));
+        return ANSC_STATUS_FAILURE;
     }
 
     /* save to PSM */
@@ -1265,6 +1286,10 @@ CosaDml_GreTunnelSetEndpoints(ULONG ins, const char *eps)
 
     snprintf(psmRec, sizeof(psmRec), GRETU_PARAM_SEC_ENDPOINT, ins);
     if (GrePsmSet(psmRec, sec) != 0)
+        return ANSC_STATUS_FAILURE;
+
+    snprintf(psmRec, sizeof(psmRec), GRETU_PARAM_NUMBER_OF_EP, ins);
+    if (GrePsmSet(psmRec, numep_str) != 0)
         return ANSC_STATUS_FAILURE;
 
     return ANSC_STATUS_SUCCESS;
