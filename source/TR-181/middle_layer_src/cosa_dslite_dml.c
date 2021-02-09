@@ -103,7 +103,7 @@ DSLite_SetParamBoolValue
         {
               return FALSE;
         }
-        rc = v_secure_system("/bin/sh /etc/utopia/service.d/set_resolv_conf.sh");
+        rc = v_secure_system("/bin/sh /etc/utopia/service.d/set_resolv_conf.sh &");
         return (rc == 0) ? TRUE : FALSE;
     }
     return FALSE;
