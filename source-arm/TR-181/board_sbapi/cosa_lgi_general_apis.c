@@ -325,3 +325,31 @@ ULONG CosaDmlGiGetDefaultAdminPassword ( ANSC_HANDLE hContext, char *pValue, ULO
 
     return ANSC_STATUS_SUCCESS;
 }
+
+ULONG
+CosaDmlGiGetUserBridgeModeAllowed
+    (
+        ANSC_HANDLE                 hContext,
+        BOOL                        *pValue
+    )
+{
+    char buf[8];
+
+    syscfg_get(NULL, "user_bridge_mode_allowed", buf, sizeof(buf));
+
+    *pValue = (strcmp(buf, "true") == 0);
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ULONG
+CosaDmlGiSetUserBridgeModeAllowed
+    (
+        ANSC_HANDLE                 hContext,
+        BOOL                        bValue
+    )
+{
+    syscfg_set(NULL, "user_bridge_mode_allowed", bValue ? "true" : "false");
+
+    return ANSC_STATUS_SUCCESS;
+}
