@@ -678,6 +678,12 @@
                 <syntax>uint32</syntax>
                 <writable>true</writable>
             </parameter>
+            <parameter>
+                <name>UserBridgeModeAllowed</name>
+                <type>boolean</type>
+                <syntax>bool</syntax>
+                <writable>true</writable>
+            </parameter>
          </parameters>
          <objects>
             <object>
