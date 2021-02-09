@@ -23,7 +23,7 @@
 #include "cosa_x_cisco_com_devicecontrol_internal.h"
 #include <syscfg/syscfg.h>
 
-static const char *UPDATE_RESOLV_CMD = "/bin/sh /etc/utopia/service.d/set_resolv_conf.sh";
+static const char *UPDATE_RESOLV_CMD = "/bin/sh /etc/utopia/service.d/set_resolv_conf.sh &";
 //#endif
 /***********************************************************************
 
