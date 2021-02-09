@@ -19,7 +19,7 @@
 #include "plugin_main_apis.h"
 #include "cosa_dslite_internal.h"
 
-static const char *UPDATE_RESOLV_CMD = "/bin/sh /etc/utopia/service.d/set_resolv_conf.sh";
+static const char *UPDATE_RESOLV_CMD = "/bin/sh /etc/utopia/service.d/set_resolv_conf.sh &";
 /***********************************************************************
 
  APIs for Object:
