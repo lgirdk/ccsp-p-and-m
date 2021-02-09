@@ -769,6 +769,119 @@ CosaDml_GreTunnelIfGetEnable(ULONG tuIns, ULONG ins, BOOL *enable)
 }
 
 ANSC_STATUS
+CosaDml_GreTunnelEnableBackup(ULONG tuIns, BOOL enable)
+{
+    char str_value[12];
+    char param[20];
+    snprintf(str_value, sizeof(str_value), "%d", enable);
+    snprintf(param, sizeof(param), "tunnel_enable_%d", tuIns);
+
+    if (sysevent_set(sysevent_fd, sysevent_token, param, str_value, 0) != 0) {
+        AnscTraceError(("Fail to set sysevent: %s to %d\n", param, enable));
+        return ANSC_STATUS_FAILURE;
+    }
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaDml_GreTunnelGetNumberofEP(ULONG tuIns, ULONG* numEp)
+{
+    if (!numEp)
+        return ANSC_STATUS_FAILURE;
+
+    if (GrePsmGetUlong(GRETU_PARAM_NUMBER_OF_EP, tuIns, numEp) != 0)
+        return ANSC_STATUS_FAILURE;
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+GreTunnelIfAndLowerlayerStatus(ULONG tuIns, BOOL* status) {
+    int ins=0;
+    int retval = 0;
+    int ssidIns;
+    char localinterfaces[200];
+    char* curInt = NULL;
+    int size;
+    char paramname[60];
+    char outdata[80];
+
+    parameterValStruct_t varStruct;
+    varStruct.parameterName = paramname;
+    varStruct.parameterValue = outdata;
+    bool intEnable = FALSE;
+
+    if (tuIns != 1)
+          return ANSC_STATUS_FAILURE;
+
+    //Get interface number of entries
+    int InterfaceNumberOfEntries=CosaDml_GreTunnelIfGetNumberOfEntries(tuIns);
+
+    for (ins =1; ins<=InterfaceNumberOfEntries; ins++)
+    {
+          if(0 != CosaDml_GreTunnelIfGetEnable(tuIns, ins, &intEnable))
+               return ANSC_STATUS_FAILURE;
+          if( intEnable == true)
+          {
+               //Get SSID index from local interfaces
+               if(0 != GreTunnelIfPsmGetStr(GRETUIF_PARAM_LOCALIFS, tuIns, ins, localinterfaces, sizeof(localinterfaces)))
+               {
+                     return ANSC_STATUS_FAILURE;
+               }
+               curInt = localinterfaces;
+               if(curInt[0] != '\0') {
+                     size = strlen(curInt);
+                     if (curInt[size -1] == '.')
+                         curInt[size - 1]='\0';
+                     ssidIns = atoi(strrchr(curInt,'.')+1);
+               }
+               else{    
+                     CcspTraceWarning(("Local interface not initialised properly\n"));
+                     return ANSC_STATUS_FAILURE;
+               }
+
+               int radioIndex = ( (ssidIns%2)==0 ? 2 : 1);
+
+               memset(outdata,0,sizeof(outdata));
+               
+               //Get Radio status
+               snprintf(paramname, sizeof(paramname), "Device.WiFi.Radio.%d.Enable", radioIndex);
+               size = sizeof(outdata);
+               retval = COSAGetParamValueByPathName(bus_handle, &varStruct, &size);
+               if ( retval != ANSC_STATUS_SUCCESS || !varStruct.parameterValue)
+                     return ANSC_STATUS_FAILURE;
+            
+               if(!_ansc_strstr(varStruct.parameterValue,"true"))
+               {
+                     CcspTraceWarning(("Radio not enabled \n"));
+                     continue;
+               }             
+
+               memset(outdata,0,sizeof(outdata));
+
+               //Get SSID status
+               snprintf(paramname, sizeof(paramname), "Device.WiFi.SSID.%d.Enable", ssidIns);
+               size = sizeof(outdata);
+               retval = COSAGetParamValueByPathName(bus_handle, &varStruct, &size);
+               if ( retval != ANSC_STATUS_SUCCESS || !varStruct.parameterValue )
+                     return ANSC_STATUS_FAILURE;
+
+               if(!_ansc_strstr(varStruct.parameterValue,"true"))
+               {
+                     CcspTraceWarning(("SSID not enabled \n"));
+                     continue;
+               } 
+                //If Any of the interface is satisfying tunnel enable condition change status to TRUE and return.
+               *status = TRUE;
+                break;    
+          }
+    }
+    return ANSC_STATUS_SUCCESS;
+}
+     
+
+ANSC_STATUS
 CosaDml_GreTunnelSetEnable(ULONG tuIns, BOOL enable)
 {
     char psmRec[MAX_GRE_PSM_REC + 1];
