@@ -126,6 +126,8 @@ CosaLgiGeneralInitialize
     memset(pMyObject->DefaultAdminPassword, 0, size_DefaultAdminPassword);
     CosaDmlGiGetDefaultAdminPassword(NULL, pMyObject->DefaultAdminPassword, &size_DefaultAdminPassword);
 
+    CosaDmlGiGetUserBridgeModeAllowed(NULL, &pMyObject->UserBridgeModeAllowed);
+
     /*Initializing the DataModelVersion with default value 1.01.01.
     Further implementation of this parameter is still under design discussion*/
     AnscCopyString(pMyObject->DataModelVersion, "1.01.01");
