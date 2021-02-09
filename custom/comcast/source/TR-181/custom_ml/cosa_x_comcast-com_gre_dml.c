@@ -726,8 +726,63 @@ BOOL GreTunnel_Validate ( ANSC_HANDLE hInsContext, char* pReturnParamName, ULONG
     UNREFERENCED_PARAMETER(hInsContext);
     UNREFERENCED_PARAMETER(pReturnParamName);
     UNREFERENCED_PARAMETER(puLength);
-    //All the parameters are validated in hotspot code
-	return TRUE;
+
+    //All Other parameters are validated in hotspot code
+
+    COSA_DML_GRE_TUNNEL                 *pGreTu      = (COSA_DML_GRE_TUNNEL *)hInsContext;
+    ULONG                                ins    = pGreTu->InstanceNumber;
+    BOOL                                 status = FALSE;
+    BOOL                                 enable = pGreTu->Enable;
+    ULONG                                numEP  = 0;
+
+    if (pGreTu->ChangeFlag & GRETU_CF_ENABLE)
+    {
+       //Taking enable param back up to fix the issue tunnel is not getting enabled while configured from boot config
+       if (CosaDml_GreTunnelEnableBackup(ins , enable) != ANSC_STATUS_SUCCESS)
+       {
+            CcspTraceError((" Failed to take Back up of enable param\n"));
+            goto rollback;
+       }
+       //Checking wifi component status since tunnel disable from boot config not working as expected
+       if(access(WIFI_FILE,  F_OK) != 0)
+       {
+            CcspTraceError((" Wifi is not initialised cannot modify tunnel status\n"));
+            goto rollback;
+       }
+       if(CosaDml_GreTunnelGetNumberofEP(ins, &numEP) != ANSC_STATUS_SUCCESS)
+       {
+            CcspTraceError(("Failed to get CosaDml_GreTunnelGetNumberofEP\n"));
+            goto rollback;
+       }
+       else if( enable && numEP <= 0) 
+       {
+            CcspTraceError((" No end points configured , Keep tunnel disabled  \n"));
+            goto rollback;
+       }
+       
+       if(GreTunnelIfAndLowerlayerStatus(ins,&status) != ANSC_STATUS_SUCCESS)
+       {
+            CcspTraceError(("Failed to get GreTunnelIfAndLowerlayerStatus \n"));
+            goto rollback;
+       }
+
+       if(enable && !status)
+       {
+           CcspTraceError(("None of the SSID's are satisfying tunnel enable criteria\n"));
+           goto rollback;
+       }
+       else if(!enable && status && numEP > 0){
+           CcspTraceError(("Atleast one of the Interface is satisfying fully defined condition, Cannot disable tunnel\n"));
+           goto rollback;
+       }
+    }
+
+    return TRUE;
+
+rollback:
+    pGreTu->ChangeFlag = 0;
+    GreTunnel_Rollback((ANSC_HANDLE)pGreTu);
+    return FALSE;
 }	
 
 BOOL GreTunnelIf_Validate ( ANSC_HANDLE hInsContext, char* pReturnParamName, ULONG* puLength )
