@@ -124,6 +124,11 @@ LgiGeneral_GetParamBoolValue
 	CosaDmlGiGetCustomDataModelEnabled(NULL, pBool);
 	return TRUE;
     }
+    if( AnscEqualString(ParamName, "UserBridgeModeAllowed", TRUE))
+    {
+        CosaDmlGiGetUserBridgeModeAllowed(NULL, pBool);
+        return TRUE;
+    }
     // LGI ADD END
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
@@ -361,6 +366,11 @@ LgiGeneral_SetParamBoolValue
 	pMyObject->CustomDataModelEnabled = bValue;
 	return TRUE;
     }
+    if( AnscEqualString(ParamName, "UserBridgeModeAllowed", TRUE))
+    {
+        pMyObject->UserBridgeModeAllowed = bValue;
+        return TRUE;
+    }
     return FALSE;
 }
 
@@ -494,6 +504,7 @@ LgiGeneral_Commit
     CosaDmlGiSetLoginSecurity(NULL, pMyObject->max_failed_login_attempts, "max_failed_login_attempts");
     CosaDmlGiSetLoginSecurity(NULL, pMyObject->lockout_period, "lockout_period");
     CosaDmlGiSetLoginSecurity(NULL, pMyObject->max_lockout_periods, "max_lockout_periods");
+    CosaDmlGiSetUserBridgeModeAllowed(NULL, pMyObject->UserBridgeModeAllowed);
     CosaDmlGiSaveSettings();
     return 0;
 }

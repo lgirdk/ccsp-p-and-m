@@ -179,4 +179,19 @@ CosaDmlGiGetDefaultAdminPassword
     char                        *pValue,
     ULONG                       *pUlSize
 );
+
+ULONG
+CosaDmlGiGetUserBridgeModeAllowed
+(
+    ANSC_HANDLE                 hContext,
+    BOOL                        *pValue
+);
+
+ULONG
+CosaDmlGiSetUserBridgeModeAllowed
+(
+    ANSC_HANDLE                 hContext,
+    BOOL                        bValue
+);
+
 #endif
