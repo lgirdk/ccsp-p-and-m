@@ -43,6 +43,7 @@ _COSA_DATAMODEL_LGI_GENERAL_CLASS_CONTENT
     ULONG                           max_failed_login_attempts;
     ULONG                           lockout_period;
     ULONG                           max_lockout_periods;
+    BOOL                            UserBridgeModeAllowed;
 }
 COSA_DATAMODEL_LGI_GENERAL, *PCOSA_DATAMODEL_LGI_GENERAL;
 
