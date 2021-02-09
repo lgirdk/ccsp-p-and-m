@@ -1403,24 +1403,17 @@ CosaDml_GreTunnelGetKeepAlivePolicy(ULONG tuIns, COSA_DML_KEEPALIVE_POLICY *poli
 ANSC_STATUS
 CosaDml_GreTunnelSetKeepAlivePolicy(ULONG tuIns, COSA_DML_KEEPALIVE_POLICY policy)
 {
-    char str_value[khotspotfd_policy_len+1];
-    int status;
+    char str_value[12];
     char psmRec[MAX_GRE_PSM_REC + 1], psmVal[16];
 
     if (tuIns != 1)
         return ANSC_STATUS_FAILURE;
 
-    status = snprintf(str_value, khotspotfd_policy_len, "%d", policy);
-
-    if(status > 0) {
-
-        if(sysevent_set(sysevent_fd, sysevent_token, 
-            khotspotfd_keep_alive_policy, str_value, 0)) {
-
-            AnscTraceError(("sysevent set %s failed\n", khotspotfd_keep_alive_policy)); 
-        } else {
-            AnscTraceWarning(("sysevent set %s to %s\n", khotspotfd_keep_alive_policy, str_value)); 
-        }
+    snprintf(str_value, sizeof(str_value), "%d", policy);
+    if(sysevent_set(sysevent_fd, sysevent_token, khotspotfd_keep_alive_policy, str_value, 0)) {
+        AnscTraceError(("sysevent set %s failed\n", khotspotfd_keep_alive_policy)); 
+    } else {
+        AnscTraceWarning(("sysevent set %s to %s\n", khotspotfd_keep_alive_policy, str_value)); 
     }
 
     /* save to PSM */
@@ -1450,26 +1443,20 @@ CosaDml_GreTunnelGetKeepAliveInterval(ULONG tuIns, ULONG *val)
 ANSC_STATUS
 CosaDml_GreTunnelSetKeepAliveInterval(ULONG tuIns, ULONG val)
 {
-    char str_value[khotspotfd_keep_alive_len+1];
-    int status;
+    char str_value[12];
     char psmRec[MAX_GRE_PSM_REC + 1];
     char psmVal[16];
 
     if (tuIns != 1)
         return ANSC_STATUS_FAILURE;
 
-    status = snprintf(str_value, khotspotfd_keep_alive_len, "%d", val);
-
-    if(status > 0) {
-
-        if(sysevent_set(sysevent_fd, sysevent_token, 
-            khotspotfd_keep_alive, str_value, 0)) {
-
-            AnscTraceError(("sysevent set %s failed\n", str_value)); 
-        } else {
-            AnscTraceWarning(("sysevent set %s to %s\n", khotspotfd_keep_alive, str_value)); 
-        }
+    snprintf(str_value, sizeof(str_value), "%d", val);
+    if(sysevent_set(sysevent_fd, sysevent_token, khotspotfd_keep_alive, str_value, 0)) {
+        AnscTraceError(("sysevent set %s failed\n", khotspotfd_keep_alive)); 
+    } else {
+        AnscTraceWarning(("sysevent set %s to %s\n", khotspotfd_keep_alive, str_value)); 
     }
+
 	//TODO: verify the logic
 	g_hsfdStat->keepAliveInterval=val;
 
@@ -1500,25 +1487,18 @@ CosaDml_GreTunnelGetKeepAliveThreshold(ULONG tuIns, ULONG *val)
 ANSC_STATUS
 CosaDml_GreTunnelSetKeepAliveThreshold(ULONG tuIns, ULONG val)
 {
-    char str_value[khotspotfd_keep_alive_threshold_len+1];
-    int status;
+    char str_value[12];
     char psmRec[MAX_GRE_PSM_REC + 1];
     char psmVal[16];
 
     if (tuIns != 1)
         return ANSC_STATUS_FAILURE;
 
-    status = snprintf(str_value, khotspotfd_keep_alive_threshold_len, "%d", val);
-
-    if(status > 0) {
-
-        if(sysevent_set(sysevent_fd, sysevent_token, 
-            khotspotfd_keep_alive_threshold, str_value, 0)) {
-
-            AnscTraceError(("sysevent set %s failed\n", str_value)); 
-        } else {
-            AnscTraceWarning(("sysevent set %s to %s\n", khotspotfd_keep_alive_threshold, str_value)); 
-        }
+    snprintf(str_value, sizeof(str_value), "%d", val);
+    if(sysevent_set(sysevent_fd, sysevent_token, khotspotfd_keep_alive_threshold, str_value, 0)) {
+        AnscTraceError(("sysevent set %s failed\n", khotspotfd_keep_alive_threshold)); 
+    } else {
+        AnscTraceWarning(("sysevent set %s to %s\n", khotspotfd_keep_alive_threshold, str_value)); 
     }
 
 	//TODO: check logic
@@ -1548,25 +1528,18 @@ CosaDml_GreTunnelGetKeepAliveCount(ULONG tuIns, ULONG *val)
 ANSC_STATUS
 CosaDml_GreTunnelSetKeepAliveCount(ULONG tuIns, ULONG val)
 {
-    char str_value[khotspotfd_keep_alive_count_len+1];
-    int status;
+    char str_value[12];
     char psmRec[MAX_GRE_PSM_REC + 1];
     char psmVal[16];
 
     if (tuIns != 1)
         return ANSC_STATUS_FAILURE;
 
-    status = snprintf(str_value, sizeof(str_value), "%d", val); 
-
-    if(status > 0) {
-
-        if(sysevent_set(sysevent_fd, sysevent_token, 
-            khotspotfd_keep_alive_count, str_value, 0)) {
-
-            AnscTraceError(("sysevent set %s failed\n", str_value)); 
-        } else {
-            AnscTraceWarning(("sysevent set %s to %s\n", khotspotfd_keep_alive_count, str_value)); 
-        }
+    snprintf(str_value, sizeof(str_value), "%d", val); 
+    if(sysevent_set(sysevent_fd, sysevent_token, khotspotfd_keep_alive_count, str_value, 0)) {
+        AnscTraceError(("sysevent set %s failed\n", khotspotfd_keep_alive_count)); 
+    } else {
+        AnscTraceWarning(("sysevent set %s to %s\n", khotspotfd_keep_alive_count, str_value)); 
     }
 
     /* save to PSM */
@@ -1593,25 +1566,18 @@ CosaDml_GreTunnelGetKeepAliveFailInterval(ULONG tuIns, ULONG *val)
 ANSC_STATUS
 CosaDml_GreTunnelSetKeepAliveFailInterval(ULONG tuIns, ULONG val)
 {
-    char str_value[khotspotfd_keep_alive_len+1];
-    int status;
+    char str_value[12];
     char psmRec[MAX_GRE_PSM_REC + 1];
     char psmVal[16];
 
     if (tuIns != 1)
         return ANSC_STATUS_FAILURE;
 
-    status = snprintf(str_value, khotspotfd_keep_alive_len, "%d", val);
-
-    if(status > 0) {
-
-        if(sysevent_set(sysevent_fd, sysevent_token, 
-            khotspotfd_dead_interval, str_value, 0)) {
-
-            AnscTraceError(("sysevent set %s failed\n", str_value)); 
-        } else {
-            AnscTraceWarning(("sysevent set %s to %s\n", khotspotfd_dead_interval, str_value)); 
-        }
+    snprintf(str_value, sizeof(str_value), "%d", val);
+    if(sysevent_set(sysevent_fd, sysevent_token, khotspotfd_dead_interval, str_value, 0)) {
+        AnscTraceError(("sysevent set %s failed\n", khotspotfd_dead_interval)); 
+    } else {
+        AnscTraceWarning(("sysevent set %s to %s\n", khotspotfd_dead_interval, str_value)); 
     }
 
     /* save to PSM */
@@ -1641,25 +1607,18 @@ CosaDml_GreTunnelGetReconnPrimary(ULONG tuIns, ULONG *time)
 ANSC_STATUS
 CosaDml_GreTunnelSetReconnPrimary(ULONG tuIns, ULONG time)
 {
-    char str_value[khotspotfd_max_secondary_len+1];
-    int status;
+    char str_value[12];
     char psmRec[MAX_GRE_PSM_REC + 1];
     char psmVal[16];
 
     if (tuIns != 1)
         return ANSC_STATUS_FAILURE;
 
-    status = snprintf(str_value, khotspotfd_max_secondary_len, "%d", time);
-
-    if(status > 0) {
-
-        if(sysevent_set(sysevent_fd, sysevent_token, 
-            khotspotfd_max_secondary, str_value, 0)) {
-
-            AnscTraceError(("sysevent set %s failed\n", str_value)); 
-        } else {
-            AnscTraceWarning(("sysevent set %s to %s\n", khotspotfd_max_secondary, str_value)); 
-        }
+    snprintf(str_value, sizeof(str_value), "%d", time);
+    if(sysevent_set(sysevent_fd, sysevent_token, khotspotfd_max_secondary, str_value, 0)) {
+        AnscTraceError(("sysevent set %s failed\n", khotspotfd_max_secondary)); 
+    } else {
+        AnscTraceWarning(("sysevent set %s to %s\n", khotspotfd_max_secondary, str_value)); 
     }
 	
 	//TODO: check logic
