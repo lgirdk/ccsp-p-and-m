@@ -102,7 +102,7 @@ DSLite_SetParamBoolValue
         {
               return FALSE;
         }
-        rc = system("/bin/sh /etc/utopia/service.d/set_resolv_conf.sh");
+        rc = system("/bin/sh /etc/utopia/service.d/set_resolv_conf.sh &");
         return (rc == 0) ? TRUE : FALSE;
     }
     return FALSE;
