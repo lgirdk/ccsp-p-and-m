@@ -130,6 +130,8 @@ CosaLgiGeneralInitialize
     CosaDmlGiGetLoginSecurity(NULL, &pMyObject->lockout_period, "lockout_period");
     CosaDmlGiGetLoginSecurity(NULL, &pMyObject->max_lockout_periods, "max_lockout_periods");
 
+    CosaDmlGiGetUserBridgeModeAllowed(NULL, &pMyObject->UserBridgeModeAllowed);
+
     /*Initializing the DataModelVersion with default value 1.01.01.
     Further implementation of this parameter is still under design discussion*/
     AnscCopyString(pMyObject->DataModelVersion, "1.01.01");
