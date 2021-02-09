@@ -49,6 +49,7 @@
 
 #define MAX_GRE_TU              1
 #define MAX_GRE_TUIF              2
+#define WIFI_FILE "/tmp/wifi_initialized"
 
 typedef enum
 _COSA_DML_GRE_STATUS 
@@ -416,6 +417,15 @@ CosaDml_GreTunnelIfGetXLGISSID(ULONG tuIns, ULONG ins, char *ssid, ULONG size);
 
 ANSC_STATUS
 CosaDml_GreTunnelIfSetXLGISSID(ULONG tuIns, ULONG ins, const char *ssid);
+
+ANSC_STATUS
+CosaDml_GreTunnelEnableBackup(ULONG tuIns, BOOL enable);
+
+ANSC_STATUS
+CosaDml_GreTunnelGetNumberofEP(ULONG tuIns, ULONG* numEp);
+
+ANSC_STATUS
+GreTunnelIfAndLowerlayerStatus(ULONG tuIns, BOOL* status);
 
 #endif
 #endif
