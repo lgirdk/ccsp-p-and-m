@@ -20,7 +20,7 @@
 #include "cosa_dslite_internal.h"
 
 #ifdef DSLITE_FEATURE_SUPPORT
-static const char *UPDATE_RESOLV_CMD = "/bin/sh /etc/utopia/service.d/set_resolv_conf.sh";
+static const char *UPDATE_RESOLV_CMD = "/bin/sh /etc/utopia/service.d/set_resolv_conf.sh &";
 #endif
 /***********************************************************************
 
