@@ -18,6 +18,8 @@
 
 #include "cosa_lgi_general_apis.h"
 
+#include <platform_hal.h>
+
 ULONG
 CosaDmlGiGetFirstInstallWizardEnable
     (
@@ -395,11 +397,17 @@ CosaDmlGiGetDefaultAdminPassword
         ULONG                       *pUlSize
     )
 {
-    if(syscfg_init() == 0)
+    if (platform_hal_getUIDefaultPassword (pValue, *pUlSize) == RETURN_OK)
     {
-        syscfg_get( NULL, "Default_Admin_Password", pValue, *pUlSize);
         return ANSC_STATUS_SUCCESS;
     }
 
-    return ANSC_STATUS_FAILURE;
+    if (syscfg_get (NULL, "Default_Admin_Password", pValue, *pUlSize) == 0)
+    {
+        return ANSC_STATUS_SUCCESS;
+    }
+
+    strcpy(pValue, "password");
+
+    return ANSC_STATUS_SUCCESS;
 }
