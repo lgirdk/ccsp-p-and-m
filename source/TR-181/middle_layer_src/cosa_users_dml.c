@@ -1193,7 +1193,7 @@ BOOL isvalid_pwd(char *str)
         return FALSE;
     while(str[i]!='\0')
     {
-        if(isalnum(str[i])!=0)
+        if(isgraph(str[i])!=0)
             i++;
         else
             return FALSE;
