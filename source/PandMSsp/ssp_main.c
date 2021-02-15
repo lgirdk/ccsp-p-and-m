@@ -93,7 +93,7 @@ extern  ANSC_HANDLE                     bus_handle;
 time_t start_t, end_t;
 double diff_t;
 
-void get_uptime(long *uptime)
+static void get_uptime(long *uptime)
 {
     struct sysinfo info;
     sysinfo( &info );
