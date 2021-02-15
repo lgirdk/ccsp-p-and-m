@@ -1373,6 +1373,8 @@ int puma6_getSwitchCfg(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_CFG pcfg)
 int puma6_setSwitchCfg(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_CFG pcfg) {
     CCSP_HAL_ETHSW_PORT         port        = *((PCCSP_HAL_ETHSW_PORT)eth->hwid);
 	CCSP_HAL_ETHSW_ADMIN_STATUS AdminStatus;
+    CCSP_HAL_ETHSW_LINK_RATE    LinkRate; 
+    CCSP_HAL_ETHSW_DUPLEX_MODE  DuplexMode;
 	if(pcfg->bEnabled == TRUE)
 	{
 		AdminStatus = CCSP_HAL_ETHSW_AdminUp;
@@ -1382,6 +1384,52 @@ int puma6_setSwitchCfg(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_CFG pcfg) {
 		AdminStatus = CCSP_HAL_ETHSW_AdminDown;
 	}
 	CcspHalEthSwSetPortAdminStatus(port,AdminStatus);
+    
+    switch ( pcfg->MaxBitRate )
+    {
+        case 10:
+        {
+            LinkRate = CCSP_HAL_ETHSW_LINK_10Mbps;
+            break;
+        }
+        case 100:
+        {
+            LinkRate = CCSP_HAL_ETHSW_LINK_100Mbps;
+            break;
+        }
+        case 1000:
+        {
+            LinkRate = CCSP_HAL_ETHSW_LINK_1Gbps;
+            break;
+        }
+        case 10000:
+        {
+            LinkRate = CCSP_HAL_ETHSW_LINK_10Gbps;
+            break;
+        }
+        default:
+        {
+            LinkRate = CCSP_HAL_ETHSW_LINK_Auto;
+            break;
+        }
+    }
+
+    switch ( pcfg->DuplexMode )
+    {
+        case COSA_DML_ETH_DUPLEX_Half:
+        {
+            DuplexMode = CCSP_HAL_ETHSW_DUPLEX_Half;
+            break;
+        }
+        case COSA_DML_ETH_DUPLEX_Full:
+        case COSA_DML_ETH_DUPLEX_Auto: // Note: driver doesn't handle/would ignore "Auto"
+        default:
+        {
+            DuplexMode = CCSP_HAL_ETHSW_DUPLEX_Full;
+            break;
+        }
+    }
+    CcspHalEthSwSetPortCfg(port,LinkRate,DuplexMode);
     return ANSC_STATUS_SUCCESS; 
 }
 int puma6_getSwitchDInfo(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_DINFO pDinfo){
