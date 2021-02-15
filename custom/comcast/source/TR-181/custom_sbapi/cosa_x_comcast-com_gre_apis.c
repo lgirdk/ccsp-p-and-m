@@ -928,7 +928,10 @@ CosaDml_GreTunnelIfSetEnable(ULONG tuIns, ULONG ins, BOOL enable)
 
 	if (tuIns != 1)
         return ANSC_STATUS_FAILURE;
-
+#if 0
+    //commenting out this part because below set is calling the handle_gre.sh unnecessarily.
+    //Even though the comment say its calling Device.X_CISCO_COM_GRE.Tunnel.1., actually Device.X_CISCO_COM_GRE.Interface.1.Enable is called
+    //This should be called when Device.GRE.Tunnel.1.Enable is called, not when the Device.GRE.Tunnel.1.Interface.{i}.Enable
     if (GreTunnelIfPsmGetStr(GRETU_PARAM_GRETU, tuIns, ins, greNetworkTunnel, sizeof(greNetworkTunnel)) != 0)
         return ANSC_STATUS_FAILURE;
 	//greNetworkTunnel:	Device.X_CISCO_COM_GRE.Tunnel.1.
@@ -938,7 +941,7 @@ CosaDml_GreTunnelIfSetEnable(ULONG tuIns, ULONG ins, BOOL enable)
     }
     if (g_SetParamValueBool(tmpPath, enable) != ANSC_STATUS_SUCCESS)
         return ANSC_STATUS_FAILURE;
-
+#endif
     /* save to PSM */
     snprintf(psmRec, sizeof(psmRec), GRETUIF_PARAM_ENABLE, tuIns, ins);
     if (GrePsmSet(psmRec, enable ? "1" : "0") != 0)
