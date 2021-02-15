@@ -16626,7 +16626,7 @@
             </parameter>
             <parameter>
               <name>PVID</name>
-              <type>int[1:4094]</type>
+              <type>int[0:4094]</type>
               <syntax>int</syntax>
               <writable>true</writable>
             </parameter>
