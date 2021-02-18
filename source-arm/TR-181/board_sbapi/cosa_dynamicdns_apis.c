@@ -92,6 +92,12 @@ DDNS_SERVICE gDdnsServices[] =
         "EasyDNS.com",
         "HTTPS",
         "HTTPS"
+    },
+    {
+        "changeip",
+        "ChangeIP.com",
+        "HTTP",
+        "HTTP"
     }
 };
 
