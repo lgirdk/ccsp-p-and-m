@@ -4917,7 +4917,22 @@ IPv6Prefix_GetParamBoolValue
     if (strcmp(ParamName, "Autonomous") == 0)
     {
         /* collect value */
+#ifndef _COSA_SIM_
+        char a_flag[16];
+        syscfg_get(NULL, "router_autonomous_flag", a_flag, sizeof(a_flag));
+        if (strcmp(a_flag, "1") == 0)
+        {
+            // Stateless
+            *pBool = TRUE;
+        }
+        else
+        {
+            // Stateful
+            *pBool = FALSE;
+        }
+#else
         *pBool = pIPv6Pre->bAutonomous;
+#endif
         return TRUE;
     }
 
