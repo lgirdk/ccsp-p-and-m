@@ -85,10 +85,10 @@ DDNS_SERVICE gDdnsServices[] =
         "HTTPS"
     },
     {
-        "easydns",
-        "EasyDNS.com",
-        "HTTPS",
-        "HTTPS"
+        "changeip",
+        "ChangeIP.com",
+        "HTTP",
+        "HTTP"
     }
 };
 
