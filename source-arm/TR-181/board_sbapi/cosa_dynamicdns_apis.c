@@ -85,10 +85,10 @@ DDNS_SERVICE gDdnsServices[] =
         "HTTPS"
     },
     {
-        "easydns",
-        "EasyDNS.com",
-        "HTTPS",
-        "HTTPS"
+        "changeip",
+        "ChangeIP.com",
+        "HTTP",
+        "HTTP"
     }
 };
 
@@ -418,7 +418,7 @@ CosaDmlDynamicDns_Client_AddEntry
     if (CosaDmlDynamicDns_GetEnable() && pEntry->Enable == TRUE)
     {
         CcspTraceInfo(("%s Going to restart dynamic dns service",__FUNCTION__));
-        vsystem("/etc/utopia/service.d/service_dynamic_dns.sh dynamic_dns-restart");
+        vsystem("/etc/utopia/service.d/service_dynamic_dns.sh dynamic_dns-restart &");
     }
 
     return (rc != 0) ? ANSC_STATUS_FAILURE : ANSC_STATUS_SUCCESS;
@@ -517,7 +517,7 @@ CosaDmlDynamicDns_Client_SetConf
     if (isUserconfChanged == TRUE)
     {
         CcspTraceInfo(("%s Going to restart dynamic dns service",__FUNCTION__));
-        vsystem("/etc/utopia/service.d/service_dynamic_dns.sh dynamic_dns-restart");
+        vsystem("/etc/utopia/service.d/service_dynamic_dns.sh dynamic_dns-restart &");
     }
 
     return (rc != 0) ? ANSC_STATUS_FAILURE : ANSC_STATUS_SUCCESS;
@@ -763,7 +763,7 @@ CosaDmlDynamicDns_Host_SetConf
     if (CosaDmlDynamicDns_GetEnable() && (g_DDNSHost[index].Enable == TRUE) && (isHostchanged == TRUE))
     {
         CcspTraceInfo(("%s Going to restart dynamic dns service",__FUNCTION__));
-        vsystem("/etc/utopia/service.d/service_dynamic_dns.sh dynamic_dns-restart");
+        vsystem("/etc/utopia/service.d/service_dynamic_dns.sh dynamic_dns-restart &");
     }
     return ANSC_STATUS_SUCCESS;
 }
