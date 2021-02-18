@@ -495,9 +495,13 @@ Interface_GetParamBoolValue
         UINT PortIdx = getPortID(pEthernetPortFull->Cfg.InstanceNumber);
         if (PortIdx > 0)
         {
-            return TRUE;
+            *pBool = TRUE;
         }
-        return FALSE;
+        else
+        {
+            *pBool = FALSE;
+        }
+        return TRUE;
     }
 
     if (strcmp(ParamName, "EEEEnable") == 0)
