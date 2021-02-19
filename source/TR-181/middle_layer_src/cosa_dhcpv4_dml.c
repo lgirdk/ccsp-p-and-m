@@ -6520,10 +6520,6 @@ Pool_SetParamUlongValue
             is_invalid_unicast_ip_addr(ntohl(gw),ntohl(mask), ntohl(uValue)))
             return(FALSE);
 
-	if (ntohl(uValue) == ntohl(pPool->Cfg.MaxAddress.Value)) {
-            CcspTraceError(("MinAddress equals MaxAddress 0x%08x\n", ntohl(uValue)));
-            return(FALSE);
-	}
 	if (ntohl(uValue) < ntohl(gw)) {
             CcspTraceError(("MinAddress should be greater than gateway address\n"));
             return(FALSE);
@@ -6589,11 +6585,8 @@ Pool_SetParamUlongValue
 
         if( ((pPool->Cfg.InstanceNumber == 1) && (is_invalid_unicast_ip_addr(ntohl(gw),ntohl(mask), ntohl(uValue)))) || (ntohl(uValue) < ntohl(pPool->Cfg.MinAddress.Value))){
             return(FALSE);
-		}
-        if (ntohl(uValue) == ntohl(pPool->Cfg.MinAddress.Value)) {
-            CcspTraceError(("MinAddress equals MaxAddress 0x%08x\n", ntohl(uValue)));
-            return(FALSE);
-	}
+        }
+
         if (Dhcpv4_Lan_MutexTryLock() != 0)
         {
             CcspTraceWarning(("%s not supported already macbinding blob update is inprogress \n",ParamName));
