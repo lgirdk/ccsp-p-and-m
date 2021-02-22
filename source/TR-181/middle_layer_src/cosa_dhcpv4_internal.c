@@ -83,6 +83,11 @@
 
 extern void * g_pDslhDmlAgent;
 
+static ANSC_STATUS CosaLanAllowedSubnetInitialize (ANSC_HANDLE hThisObject);
+static BOOL CosaLanBlockedSubnetInitialize (ANSC_HANDLE hInsContext);
+static ANSC_STATUS CosaBlockedSubnetRemove (ANSC_HANDLE hThisObject);
+static ANSC_STATUS CosaAllowedSubnetRemove (ANSC_HANDLE hThisObject);
+
 /**********************************************************************
 
     caller:     owner of the object
@@ -350,8 +355,9 @@ CosaDhcpv4Remove
         pPoamIrepFoDhcpv4->Remove( (ANSC_HANDLE)pPoamIrepFoDhcpv4);
     }
    
-     CosaBlockedSubnetRemove((ANSC_HANDLE)pMyObject);
-     CosaAllowedSubnetRemove((ANSC_HANDLE)pMyObject); 
+    CosaBlockedSubnetRemove((ANSC_HANDLE)pMyObject);
+    CosaAllowedSubnetRemove((ANSC_HANDLE)pMyObject);
+
     /* Remove self */
     AnscFreeMemory((ANSC_HANDLE)pMyObject);
     
@@ -3762,11 +3768,7 @@ CosaDhcpv4GetClientContentbyClient
 
 **********************************************************************/
 
-BOOL
-CosaLanBlockedSubnetInitialize
-    (
-        ANSC_HANDLE                 hInsContext
-    )
+static BOOL CosaLanBlockedSubnetInitialize (ANSC_HANDLE hInsContext)
 {
     PCOSA_DATAMODEL_DHCPV4          pDhcpv4              = (PCOSA_DATAMODEL_DHCPV4)hInsContext;
     PCOSA_CONTEXT_LINK_OBJECT       pCxtLink             = NULL;
@@ -3877,11 +3879,7 @@ CosaLanBlockedSubnetInitialize
     return:     status of operation.
 
 **********************************************************************/
-ANSC_STATUS
-CosaBlockedSubnetRemove
-    (
-        ANSC_HANDLE                 hThisObject
-    )
+static ANSC_STATUS CosaBlockedSubnetRemove (ANSC_HANDLE hThisObject)
 {
     PCOSA_DATAMODEL_DHCPV4     pMyObject      = (PCOSA_DATAMODEL_DHCPV4)hThisObject;
     PSINGLE_LINK_ENTRY         pLink          = NULL;
@@ -3904,11 +3902,7 @@ CosaBlockedSubnetRemove
 }
 
 
-ANSC_STATUS
-CosaLanAllowedSubnetInitialize
-    (
-        ANSC_HANDLE                 hThisObject
-    )
+static ANSC_STATUS CosaLanAllowedSubnetInitialize (ANSC_HANDLE hThisObject)
 {
     ANSC_STATUS                     returnStatus              = ANSC_STATUS_FAILURE;
     PCOSA_DATAMODEL_DHCPV4          pMyObject                 = (PCOSA_DATAMODEL_DHCPV4)hThisObject;
@@ -4021,11 +4015,7 @@ CosaLanAllowedSubnetInitialize
     return  returnStatus;
 }
 
-ANSC_STATUS
-CosaAllowedSubnetRemove
-    (
-        ANSC_HANDLE                 hThisObject
-    )
+static ANSC_STATUS CosaAllowedSubnetRemove (ANSC_HANDLE hThisObject)
 {
     PCOSA_DATAMODEL_DHCPV4     pMyObject      = (PCOSA_DATAMODEL_DHCPV4)hThisObject;
     PSINGLE_LINK_ENTRY         pLink          = NULL;
