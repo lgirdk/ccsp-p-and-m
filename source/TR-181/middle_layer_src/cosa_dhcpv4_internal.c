@@ -82,7 +82,7 @@
 #include <syscfg/syscfg.h>
 
 extern void * g_pDslhDmlAgent;
-#define MAX_BLOCKED_SIZE    1028
+
 /**********************************************************************
 
     caller:     owner of the object
@@ -3768,13 +3768,11 @@ CosaLanBlockedSubnetInitialize
     PCOSA_DML_DHCPSV4_LANBLOCKED    pLanBlockedSubnet    = NULL;
     int                             iIndex               = 0;
     int                             iCount               = 0;
-    char                            blockedList[MAX_BLOCKED_SIZE];
+    char                            blockedList[1028];
     char                            *pValue              = NULL;
 
     //get the lan blocked subnet list
-    memset(blockedList, 0, sizeof(blockedList));
-    if ((!syscfg_init()) &&
-        (!syscfg_get( NULL, "dhcp_server_lan_blocked_subnet", blockedList, sizeof(blockedList))))
+    if (syscfg_get (NULL, "dhcp_server_lan_blocked_subnet", blockedList, sizeof(blockedList)) == 0)
     {
         int i = 0;
         PANSC_TOKEN_CHAIN pTokenChain = (PANSC_TOKEN_CHAIN)NULL;
