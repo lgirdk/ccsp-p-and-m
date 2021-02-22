@@ -357,30 +357,6 @@ CosaDhcpv4GetClientContentbyClient
         ANSC_HANDLE                 hClientContext
     );
 
-BOOL
-CosaLanBlockedSubnetInitialize
-    (
-        ANSC_HANDLE                 hInsContext
-    );
-
-ANSC_STATUS
-CosaBlockedSubnetRemove
-    (
-        ANSC_HANDLE                 hThisObject
-    );
-
-ANSC_STATUS
-CosaLanAllowedSubnetInitialize
-    (
-        ANSC_HANDLE                 hThisObject
-    );
-
-ANSC_STATUS
-CosaAllowedSubnetRemove
-    (
-        ANSC_HANDLE                 hThisObject
-    );
-
 ANSC_STATUS
 CosaLanAllowedSubnetListGetInfo
     (
