@@ -70,6 +70,7 @@
 #define _XOPEN_SOURCE 700
 #include <string.h>
 #include <strings.h>
+#include <sys/sysinfo.h>
 #include "secure_wrapper.h"
 #include "cosa_apis.h"
 #include "cosa_dhcpv4_apis.h"
@@ -138,9 +139,6 @@
 #define PSM_ENABLE_STRING_FALSE "FALSE"        
 
 #define BOOTSTRAP_INFO_FILE             "/nvram/bootstrap.json"
-
-#define UPTIME_FILE_PATH                "/proc/uptime"
-#define MAX_LINE_SIZE                   64
 
 #ifndef FEATURE_RDKB_WAN_MANAGER
 COSA_DML_DHCPC_FULL     CH_g_dhcpv4_client[COSA_DML_DHCP_MAX_ENTRIES]; 
@@ -1690,39 +1688,17 @@ static ANSC_STATUS getDhcpcGeteRTDnsServs (PCOSA_DML_DHCPC_INFO pInfo)
     return STATUS_SUCCESS;
 }
 
-static ANSC_STATUS getUpTime (unsigned int *up_time)
+static ANSC_STATUS getUpTime (unsigned int *uptime)
 {
-    FILE *fp;
-    char line[MAX_LINE_SIZE];
-    char *ret_val;
+    struct sysinfo s_info;
 
-   if (!up_time)
-       return ANSC_STATUS_FAILURE;
-
-    *up_time = 0;
-
-   /* This file contains two numbers:
-    * the uptime of the system (seconds), and the amount of time spent in idle process (seconds).
-    * We care only for the first one */
-    fp = fopen(UPTIME_FILE_PATH, "r");
-    if (!fp)
+    if (sysinfo(&s_info) != 0)
         return ANSC_STATUS_FAILURE;
 
-    ret_val = fgets(line, sizeof(line), fp);
-    fclose(fp);
-
-    if (!ret_val)
-        return ANSC_STATUS_FAILURE;
-
-    /* Extracting the first token (number of up-time in seconds). */
-    ret_val = strtok (line, " .");
-
-    /* we need only the number of seconds */
-    *up_time = atoi(ret_val);
+    *uptime = s_info.uptime;
 
     return ANSC_STATUS_SUCCESS;
 }
-
 
 static ANSC_STATUS getDhcpcLeaseTime (UINT *pValue)
 {
