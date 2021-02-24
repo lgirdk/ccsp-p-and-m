@@ -133,7 +133,7 @@ CosaUtilStringToHex
     return ANSC_STATUS_SUCCESS;
 }
 
-ULONG CosaUtilGetIfAddr (char *netdev)
+uint32_t CosaUtilGetIfAddr (char *netdev)
 {
     struct ifreq ifr;
     struct sockaddr_in *ipaddr;

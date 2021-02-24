@@ -277,27 +277,18 @@ CosaDmlDiGetRouterIPAddress
 #if defined(_WNXL11BWL_PRODUCT_REQ_) || defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
     char wan_interface[32] = {0};
     commonSyseventGet("current_wan_ifname", wan_interface, sizeof(wan_interface));
-    unsigned int UIntIP = (unsigned int)CosaUtilGetIfAddr(wan_interface);
 #else
-    unsigned int UIntIP = (unsigned int)CosaUtilGetIfAddr("erouter0");
+    char *wan_interface = "erouter0";
 #endif
-    errno_t rc = -1;
-#if defined (_XB6_PRODUCT_REQ_) ||  defined (_COSA_BCM_ARM_)
-	rc = sprintf_s(pValue, *pulSize, "%d.%d.%d.%d",(UIntIP & 0xff),((UIntIP >> 8) & 0xff),((UIntIP >> 16) & 0xff),(UIntIP >> 24));
-	if(rc < EOK)
-	{
-		ERR_CHK(rc);
-		return ANSC_STATUS_FAILURE;
-	}
-#else
-	rc = sprintf_s(pValue, *pulSize, "%d.%d.%d.%d", (UIntIP >> 24),((UIntIP >> 16) & 0xff),((UIntIP >> 8) & 0xff),(UIntIP & 0xff));
-	if(rc < EOK)
-	{
-		ERR_CHK(rc);
-		return ANSC_STATUS_FAILURE;
-	}
-#endif
-	*pulSize = AnscSizeOfString(pValue);
+    uint32_t ip = CosaUtilGetIfAddr(wan_interface);
+    unsigned char *a = (unsigned char *) &ip;
+
+    /*
+       The value returned by CosaUtilGetIfAddr() is in network byte order
+       (ie it's always big endian). Processing as bytes allows this code to
+       be agnostic of target endianness.
+    */
+    *pulSize = sprintf (pValue, "%d.%d.%d.%d", a[0], a[1], a[2], a[3]);
 
     return ANSC_STATUS_SUCCESS;
 }
