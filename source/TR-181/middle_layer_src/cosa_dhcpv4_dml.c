@@ -11231,7 +11231,6 @@ LanBlockedSubnetTable_GetGuestNetworkMask
     return TRUE;
 }
 
-
 /**********************************************************************
 
     caller:     owner of this object
@@ -11332,37 +11331,56 @@ LanBlockedSubnetTable_GetParamUlongValue
     {
         char                        IPAddr[80]={0};
         ULONG                       ulSize = sizeof(IPAddr);
+        BOOL                        update_subnetip = FALSE; 
 
-        if (pCxtLink->InstanceNumber < 5)
-        {
-            // 1st 3 slots are reserved for MTA/CM/Router info
-            if (pCxtLink->InstanceNumber == 1)
-            {
-                // get MTA IP
-                CosaDmlDiGetMTAIPAddress(NULL, IPAddr, &ulSize);
-            }
-            else if (pCxtLink->InstanceNumber == 2)
-            {
-                // get CM IP
-                // The IPv4 address is needed, so use CosaDmlDiGetCMIPv4Address()
-                // since CosaDmlDiGetCMIPAddress() returns the IPv6 address is available.
-                CosaDmlDiGetCMIPv4Address(NULL, IPAddr, &ulSize);
-            }
-            else if (pCxtLink->InstanceNumber == 3)
-            {
-                // get Router IP
-                CosaDmlDiGetRouterIPAddress(NULL, IPAddr, &ulSize);
-            }
-            else if (pCxtLink->InstanceNumber == 4)
-            {
-                // get guest network IP
-                LanBlockedSubnetTable_GetGuestNetworkIP(IPAddr);
-            }
-            sscanf (IPAddr, "%hhu.%hhu.%hhu.%hhu",
-                &pDhcpLanBlockedSubnet->SubnetIP.Dot[0],
-                &pDhcpLanBlockedSubnet->SubnetIP.Dot[1],
-                &pDhcpLanBlockedSubnet->SubnetIP.Dot[2],
-                &pDhcpLanBlockedSubnet->SubnetIP.Dot[3]);
+         // 1st 3 slots are reserved for MTA/CM/Router info
+         if (pCxtLink->InstanceNumber == 1)
+         {
+             // get MTA IP
+             CosaDmlDiGetMTAIPAddress(NULL, IPAddr, &ulSize);
+             update_subnetip = TRUE;
+         }
+         else if (pCxtLink->InstanceNumber == 2)
+         {
+             // get CM IP
+             // The IPv4 address is needed, so use CosaDmlDiGetCMIPv4Address()
+             // since CosaDmlDiGetCMIPAddress() returns the IPv6 address is available.
+             CosaDmlDiGetCMIPv4Address(NULL, IPAddr, &ulSize);
+             update_subnetip = TRUE;
+         }
+         else if (pCxtLink->InstanceNumber == 3)
+         {
+             // get Router IP
+             CosaDmlDiGetRouterIPAddress(NULL, IPAddr, &ulSize);
+             update_subnetip = TRUE;
+         }
+         else if (pCxtLink->InstanceNumber == 4)
+         {
+             // get guest network IP
+             LanBlockedSubnetTable_GetGuestNetworkIP(IPAddr);
+             update_subnetip = TRUE;
+         }
+         else if (pCxtLink->InstanceNumber == 14)
+         {
+             // get brlan0 network IP 
+            unsigned int UIntIP = (unsigned int)CosaUtilGetIfAddr("brlan0");
+#if defined (_XB6_PRODUCT_REQ_) ||  defined (_COSA_BCM_ARM_)
+        sprintf(IPAddr, "%d.%d.%d.%d",(UIntIP & 0xff),((UIntIP >> 8) & 0xff),
+			((UIntIP >> 16) & 0xff),(UIntIP >> 24));
+#else
+        sprintf(IPAddr, "%d.%d.%d.%d", (UIntIP >> 24),((UIntIP >> 16) & 0xff),
+			((UIntIP >> 8) & 0xff),(UIntIP & 0xff));
+#endif
+            update_subnetip = TRUE;
+         }
+ 
+        if (update_subnetip)
+        { 
+             sscanf (IPAddr, "%hhu.%hhu.%hhu.%hhu",
+                 &pDhcpLanBlockedSubnet->SubnetIP.Dot[0],
+                 &pDhcpLanBlockedSubnet->SubnetIP.Dot[1],
+                 &pDhcpLanBlockedSubnet->SubnetIP.Dot[2],
+                 &pDhcpLanBlockedSubnet->SubnetIP.Dot[3]);
         }
 
         *puLong = pDhcpLanBlockedSubnet->SubnetIP.Value;
@@ -11374,47 +11392,66 @@ LanBlockedSubnetTable_GetParamUlongValue
         char                        IPMask[80]={0};
         ULONG                       ulSize = sizeof(IPMask);
         extern ANSC_HANDLE          bus_handle;
+        BOOL                        update_subnetmask=FALSE;
 
-        if (pCxtLink->InstanceNumber < 5)
+        // 1st 3 slots are reserved for MTA/CM/Router info
+        if (pCxtLink->InstanceNumber == 1)
         {
-            // 1st 3 slots are reserved for MTA/CM/Router info
-            if (pCxtLink->InstanceNumber == 1)
-            {
-                //get MTA SubnetMask
-                parameterValStruct_t    varStruct;
-                int                     size = sizeof(IPMask);
+            //get MTA SubnetMask
+            parameterValStruct_t    varStruct;
+            int                     size = sizeof(IPMask);
 
-                varStruct.parameterName = "Device.X_CISCO_COM_MTA.SubnetMask";
-                varStruct.parameterValue = IPMask;
-                if (COSAGetParamValueByPathName(bus_handle, &varStruct, &size) != ANSC_STATUS_SUCCESS)
-                {
-                    return FALSE;
-                }
+            varStruct.parameterName = "Device.X_CISCO_COM_MTA.SubnetMask";
+            varStruct.parameterValue = IPMask;
+            if (COSAGetParamValueByPathName(bus_handle, &varStruct, &size) != ANSC_STATUS_SUCCESS)
+            {
+                return FALSE;
+            }
+            update_subnetmask=TRUE;
 
-            }
-            else if (pCxtLink->InstanceNumber == 2)
-            {
-                // get CM SubnetMask
-                parameterValStruct_t    varStruct;
-                int                     size = sizeof(IPMask);
+        }
+        else if (pCxtLink->InstanceNumber == 2)
+        {
+            // get CM SubnetMask
+            parameterValStruct_t    varStruct;
+            int                     size = sizeof(IPMask);
 
-                varStruct.parameterName = "Device.X_CISCO_COM_CableModem.SubnetMask";
-                varStruct.parameterValue = IPMask;
-                if (COSAGetParamValueByPathName(bus_handle, &varStruct, &size) != ANSC_STATUS_SUCCESS)
-                {
-                    return FALSE;
-                }
-            }
-            else if (pCxtLink->InstanceNumber == 3)
+            varStruct.parameterName = "Device.X_CISCO_COM_CableModem.SubnetMask";
+            varStruct.parameterValue = IPMask;
+            if (COSAGetParamValueByPathName(bus_handle, &varStruct, &size) != ANSC_STATUS_SUCCESS)
             {
-                // get Router SubnetMask
-                commonSyseventGet("ipv4_wan_subnet",IPMask, sizeof(IPMask));
+                return FALSE;
             }
-            else if (pCxtLink->InstanceNumber == 4)
-            {
-                // get guest network Mask
-                LanBlockedSubnetTable_GetGuestNetworkMask(IPMask);
-            }
+            update_subnetmask=TRUE;
+        }
+        else if (pCxtLink->InstanceNumber == 3)
+        {
+            // get Router SubnetMask
+            commonSyseventGet("ipv4_wan_subnet",IPMask, sizeof(IPMask));
+            update_subnetmask=TRUE;
+        }
+        else if (pCxtLink->InstanceNumber == 4)
+        {
+            // get guest network Mask
+            LanBlockedSubnetTable_GetGuestNetworkMask(IPMask);
+            update_subnetmask=TRUE;
+        }
+        else if (pCxtLink->InstanceNumber == 14)
+        {
+            // get brlan0 network Mask
+	    ULONG netmask=CosaUtilIoctlXXX("brlan0","netmask",NULL);
+#if defined (_XB6_PRODUCT_REQ_) ||  defined (_COSA_BCM_ARM_)
+        sprintf(IPMask, "%d.%d.%d.%d",(netmask & 0xff),((netmask >> 8) & 0xff),
+			((netmask >> 16) & 0xff),(netmask >> 24));
+#else
+        sprintf(IPMask, "%d.%d.%d.%d", (netmask >> 24),((netmask >> 16) & 0xff),
+			((netmask >> 8) & 0xff),(netmask & 0xff));
+#endif
+            update_subnetmask=TRUE;
+        }
+
+        if (update_subnetmask)
+        {
             sscanf (IPMask, "%hhu.%hhu.%hhu.%hhu",
                 &pDhcpLanBlockedSubnet->SubnetMask.Dot[0],
                 &pDhcpLanBlockedSubnet->SubnetMask.Dot[1],
