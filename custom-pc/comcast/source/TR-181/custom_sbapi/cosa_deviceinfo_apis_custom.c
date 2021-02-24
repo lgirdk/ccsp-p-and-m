@@ -347,15 +347,16 @@ CosaDmlDiGetRouterIPAddress
         PULONG                      pulSize
     )
 {
-	//unsigned int UIntIP = (unsigned int)CosaUtilGetIfAddr("erouter0");
-	unsigned int UIntIP = (unsigned int)CosaUtilGetIfAddr("eth0");
-/*#ifdef INTEL_PUMA7
-	sprintf(pValue, "%d.%d.%d.%d",(UIntIP & 0xff),((UIntIP >> 8) & 0xff),((UIntIP >> 16) & 0xff),(UIntIP >> 24));
-#else
-	sprintf(pValue, "%d.%d.%d.%d", (UIntIP >> 24),((UIntIP >> 16) & 0xff),((UIntIP >> 8) & 0xff),(UIntIP & 0xff));
-#endif*/
-	sprintf(pValue, "%d.%d.%d.%d",(UIntIP & 0xff),((UIntIP >> 8) & 0xff),((UIntIP >> 16) & 0xff),(UIntIP >> 24));
-	*pulSize = AnscSizeOfString(pValue);
+    char *interface = "eth0";
+    uint32_t ip = (uint32_t) CosaUtilGetIfAddr (interface);
+    unsigned char *a = (unsigned char *) &ip;
+
+    /*
+       The value returned by CosaUtilGetIfAddr() is in network byte order
+       (ie it's always big endian). Processing as bytes allows this code to
+       be agnostic of target endianness.
+    */
+    *pulSize = sprintf (pValue, "%d.%d.%d.%d", a[0], a[1], a[2], a[3]);
 
     return ANSC_STATUS_SUCCESS;
 }
