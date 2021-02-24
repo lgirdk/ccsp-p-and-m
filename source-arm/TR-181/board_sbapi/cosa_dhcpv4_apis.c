@@ -139,6 +139,9 @@
 
 #define BOOTSTRAP_INFO_FILE             "/nvram/bootstrap.json"
 
+#define UPTIME_FILE_PATH                "/proc/uptime"
+#define MAX_LINE_SIZE                   64
+
 #ifndef FEATURE_RDKB_WAN_MANAGER
 COSA_DML_DHCPC_FULL     CH_g_dhcpv4_client[COSA_DML_DHCP_MAX_ENTRIES]; 
 COSA_DML_DHCP_OPT       g_dhcpv4_client_sent[COSA_DML_DHCP_MAX_ENTRIES][COSA_DML_DHCP_MAX_OPT_ENTRIES];
@@ -1622,6 +1625,126 @@ CosaDmlDhcpcGetCfg
     return ANSC_STATUS_SUCCESS;
 }
 
+static ANSC_STATUS getDhcpcIPAddrFromSysevent (char* cmdParam, UINT *pValue)
+{
+    char cfg_out[128];
+    struct in_addr addr;
+
+    if(!commonSyseventGet(cmdParam, cfg_out, sizeof(cfg_out)))
+    {
+        if(cfg_out[0] == '\0')
+            return ANSC_STATUS_FAILURE;
+
+        inet_aton(cfg_out, &addr);
+        *pValue = addr.s_addr;
+        return ANSC_STATUS_SUCCESS;
+    }
+    return ANSC_STATUS_FAILURE;
+}
+
+static ANSC_STATUS getDhcpcNumFromSysevent (char* cmdParam, UINT *pValue)
+{
+    char cfg_out[128];
+
+    if(!commonSyseventGet(cmdParam, cfg_out, sizeof(cfg_out)))
+    {
+        if(cfg_out[0] == '\0')
+            return ANSC_STATUS_FAILURE;
+
+        *pValue = atoi(cfg_out);
+        return ANSC_STATUS_SUCCESS;
+    }
+    return ANSC_STATUS_FAILURE;
+}
+
+static ANSC_STATUS getDhcpcGeteRTDnsServs (PCOSA_DML_DHCPC_INFO pInfo)
+{
+    char gw_str[64];
+    unsigned int dns_num = 0;
+    int i = 0;
+
+    if (NULL == pInfo)
+        return STATUS_FAILURE;
+
+    if (STATUS_FAILURE == getDhcpcNumFromSysevent("ipv4_erouter0_dns_number", &dns_num))
+        return STATUS_FAILURE;
+
+    if (dns_num < 1)
+    {
+        pInfo->NumDnsServers = 0;
+        return STATUS_SUCCESS;
+    }
+
+    if (dns_num > COSA_DML_DHCP_MAX_ENTRIES)
+        dns_num = COSA_DML_DHCP_MAX_ENTRIES; // Max supported address is 4 COSA_DML_DHCP_MAX_ENTRIES
+
+    pInfo->NumDnsServers = dns_num;
+    for (i = 0; i < dns_num; i++)
+    {
+        sprintf(gw_str,"ipv4_erouter0_dns_%d",i);
+        if (STATUS_FAILURE == getDhcpcIPAddrFromSysevent(gw_str, &pInfo->DNSServers[i].Value))
+            return STATUS_FAILURE;
+    }
+
+    return STATUS_SUCCESS;
+}
+
+static ANSC_STATUS getUpTime (unsigned int *up_time)
+{
+    FILE *fp;
+    char line[MAX_LINE_SIZE];
+    char *ret_val;
+
+   if (!up_time)
+       return ANSC_STATUS_FAILURE;
+
+    *up_time = 0;
+
+   /* This file contains two numbers:
+    * the uptime of the system (seconds), and the amount of time spent in idle process (seconds).
+    * We care only for the first one */
+    fp = fopen(UPTIME_FILE_PATH, "r");
+    if (!fp)
+        return ANSC_STATUS_FAILURE;
+
+    ret_val = fgets(line, sizeof(line), fp);
+    fclose(fp);
+
+    if (!ret_val)
+        return ANSC_STATUS_FAILURE;
+
+    /* Extracting the first token (number of up-time in seconds). */
+    ret_val = strtok (line, " .");
+
+    /* we need only the number of seconds */
+    *up_time = atoi(ret_val);
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+
+static ANSC_STATUS getDhcpcLeaseTime (UINT *pValue)
+{
+    UINT    lease_time = 0,
+            start_time = 0,
+            up_time = 0,
+            remain_lease_time = 0;
+
+    if (STATUS_FAILURE == getDhcpcNumFromSysevent("ipv4_erouter0_lease_time", &lease_time))
+        return ANSC_STATUS_FAILURE;
+
+    if (STATUS_FAILURE == getDhcpcNumFromSysevent("ipv4_erouter0_start_time", &start_time))
+        return ANSC_STATUS_FAILURE;
+
+    if (STATUS_FAILURE == getUpTime(&up_time))
+        return ANSC_STATUS_FAILURE;
+
+    remain_lease_time = lease_time - (up_time - start_time);
+    *pValue = remain_lease_time;
+
+    return ANSC_STATUS_SUCCESS;
+}
+
 ANSC_STATUS
 CosaDmlDhcpcGetInfo
     (
@@ -1631,32 +1754,43 @@ CosaDmlDhcpcGetInfo
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-	ULONG i;
-	dhcpv4c_ip_list_t ad;
-    
+    unsigned int DHCPStatus = 0;
+
     if ( (!pInfo) || (ulInstanceNumber != 1) ){
         return ANSC_STATUS_FAILURE;
     }
 
-	pInfo->Status = COSA_DML_DHCP_STATUS_Enabled;
-	dhcpv4c_get_ert_fsm_state((int*)&pInfo->DHCPStatus);
-	dhcpv4c_get_ert_ip_addr((unsigned int*)&pInfo->IPAddress.Value);
-	dhcpv4c_get_ert_mask((unsigned int*)&pInfo->SubnetMask.Value);
-	pInfo->NumIPRouters = 1;
-	dhcpv4c_get_ert_gw((unsigned int*)&pInfo->IPRouters[0].Value);
-	ad.number = 0;
-	dhcpv4c_get_ert_dns_svrs(&ad);
-	pInfo->NumDnsServers = ad.number;
-    if (pInfo->NumDnsServers > COSA_DML_DHCP_MAX_ENTRIES)
-    {
-        CcspTraceError(("!!! Max DHCP Entry Overflow: %d",ad.number));
-	    pInfo->NumDnsServers = COSA_DML_DHCP_MAX_ENTRIES; // Fail safe
+    pInfo->Status = COSA_DML_DHCP_STATUS_Enabled;
+
+    if (dhcpv4c_get_ert_fsm_state(&DHCPStatus) == STATUS_SUCCESS)
+        pInfo->DHCPStatus = DHCPStatus;
+    else {
+        /*
+           Arriving here means the HAL is broken. At least detect the error
+           and try to carry on. The real solution would be to fix the HAL.
+        */
+        pInfo->DHCPStatus = COSA_DML_DHCPC_STATUS_Bound;
     }
-	for(i=0; i< pInfo->NumDnsServers;i++)
-		pInfo->DNSServers[i].Value = ad.addrs[i];
-	dhcpv4c_get_ert_remain_lease_time((unsigned int*)&pInfo->LeaseTimeRemaining);
-	dhcpv4c_get_ert_dhcp_svr((unsigned int*)&pInfo->DHCPServer);
-   
+
+    if (STATUS_FAILURE == getDhcpcIPAddrFromSysevent("ipv4_erouter0_ipaddr", &pInfo->IPAddress.Value))
+        return ANSC_STATUS_FAILURE;
+
+    if (STATUS_FAILURE == getDhcpcIPAddrFromSysevent("ipv4_erouter0_subnet", &pInfo->SubnetMask.Value))
+        return ANSC_STATUS_FAILURE;
+
+    pInfo->NumIPRouters = 1;
+    if (STATUS_FAILURE == getDhcpcIPAddrFromSysevent("default_router", &pInfo->IPRouters[0].Value))
+        return ANSC_STATUS_FAILURE;
+
+    if (STATUS_FAILURE == getDhcpcGeteRTDnsServs(pInfo))
+        return ANSC_STATUS_FAILURE;
+
+    if (STATUS_FAILURE == getDhcpcLeaseTime(&pInfo->LeaseTimeRemaining))
+        return ANSC_STATUS_FAILURE;
+
+    if (STATUS_FAILURE == getDhcpcIPAddrFromSysevent("ipv4_erouter0_dhcp_server", &pInfo->DHCPServer))
+        return ANSC_STATUS_FAILURE;
+
     return ANSC_STATUS_SUCCESS;
 }
 
