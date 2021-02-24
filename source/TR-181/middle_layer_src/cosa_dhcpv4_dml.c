@@ -879,13 +879,9 @@ Client_GetParamUlongValue
     if (strcmp(ParamName, "DHCPServer") == 0)
     {
         /* collect value */
-        if ( !pDhcpc->Info.DHCPServer.Value )
-        {
-            CosaDmlDhcpcGetInfo(NULL, pCxtLink->InstanceNumber, &pDhcpc->Info);
-        }
-        
+        CosaDmlDhcpcGetInfo(NULL, pCxtLink->InstanceNumber, &pDhcpc->Info);
         *puLong = pDhcpc->Info.DHCPServer.Value;
-        
+
         return TRUE;
     }
     
@@ -1014,17 +1010,13 @@ Client_GetParamStringValue
     if (strcmp(ParamName, "DNSServers") == 0)
     {
         /* collect value */
-        
-        if ( pDhcpc->Info.DHCPStatus == COSA_DML_DHCPC_STATUS_Bound )
-        {
-            CosaDmlDhcpcGetInfo(NULL, pCxtLink->InstanceNumber, &pDhcpc->Info);
-        }
-        else
+        CosaDmlDhcpcGetInfo(NULL, pCxtLink->InstanceNumber, &pDhcpc->Info);
+        if ( pDhcpc->Info.DHCPStatus != COSA_DML_DHCPC_STATUS_Bound )
         {
             *pValue    = '\0';
             return 0;
         }
-        
+
         AnscZeroMemory(tmpBuff, sizeof(tmpBuff));
         for( i=0; i<pDhcpc->Info.NumDnsServers && i<COSA_DML_DHCP_MAX_ENTRIES; i++)
         {
