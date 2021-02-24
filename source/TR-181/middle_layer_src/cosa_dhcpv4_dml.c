@@ -11362,16 +11362,17 @@ LanBlockedSubnetTable_GetParamUlongValue
          }
          else if (pCxtLink->InstanceNumber == 14)
          {
-             // get brlan0 network IP 
-            unsigned int UIntIP = (unsigned int)CosaUtilGetIfAddr("brlan0");
-#if defined (_XB6_PRODUCT_REQ_) ||  defined (_COSA_BCM_ARM_)
-        sprintf(IPAddr, "%d.%d.%d.%d",(UIntIP & 0xff),((UIntIP >> 8) & 0xff),
-			((UIntIP >> 16) & 0xff),(UIntIP >> 24));
-#else
-        sprintf(IPAddr, "%d.%d.%d.%d", (UIntIP >> 24),((UIntIP >> 16) & 0xff),
-			((UIntIP >> 8) & 0xff),(UIntIP & 0xff));
-#endif
-            update_subnetip = TRUE;
+             char *interface = "brlan0";
+             uint32_t ip = (uint32_t) CosaUtilGetIfAddr (interface);
+             unsigned char *a = (unsigned char *) &ip;
+
+             /*
+                The value returned by CosaUtilGetIfAddr() is in network byte order
+                (ie it's always big endian). Processing as bytes allows this code to
+                be agnostic of target endianness.
+             */
+             sprintf (IPAddr, "%d.%d.%d.%d", a[0], a[1], a[2], a[3]);
+             update_subnetip = TRUE;
          }
  
         if (update_subnetip)
