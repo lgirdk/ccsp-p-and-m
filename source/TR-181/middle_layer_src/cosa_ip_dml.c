@@ -2515,7 +2515,7 @@ IPv4Address_GetParamUlongValue
 #endif /* !_COSA_BCM_MIPS_ */
         {
             /* TBC -- this should be from a SBAPI call */
-            *puLong = CosaUtilGetIfAddr(pIPInterface->Cfg.LinkName);
+            *puLong = (ULONG) CosaUtilGetIfAddr(pIPInterface->Cfg.LinkName);
         }
          
          return TRUE;
