@@ -393,8 +393,6 @@ ULONG get_ppp_ip_addr(void)
         return 0;
 
     return CosaUtilGetIfAddr("ppp0");
-
-    return 0;
 }
 
 ANSC_STATUS
@@ -750,7 +748,7 @@ static void be_struct_2_ml_info(UtopiaContext * p_ctx, wanInfo_t * p_in, PCOSA_D
 
     if (p_in->wan_proto == PPPOE)
     {
-        if (!CosaUtilGetIfAddr(g_ppp_info.ifname))
+        if (CosaUtilGetIfAddr(g_ppp_info.ifname) == 0)
             p_out->ConnectionStatus = COSA_DML_PPP_CONN_STATUS_Disconnected;            
         else
         {
