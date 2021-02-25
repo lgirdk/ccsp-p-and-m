@@ -8083,10 +8083,6 @@ StaticAddress_Validate
         ULONG*                      puLength
     )
 {
-    UNREFERENCED_PARAMETER(hInsContext);
-    UNREFERENCED_PARAMETER(pReturnParamName);
-    UNREFERENCED_PARAMETER(puLength);
-#if 0 /*removed by song*/
     /* Parent hasn't set, we don't permit child is set.*/
     PCOSA_CONTEXT_LINK_OBJECT       pCxtLink          = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     PCOSA_DML_DHCPS_SADDR           pDhcpStaAddr      = (PCOSA_DML_DHCPS_SADDR)pCxtLink->hContext;
@@ -8101,7 +8097,9 @@ StaticAddress_Validate
     int                             rc                = -1;
     int                             i                 = 0;
     ULONG                           ipaddr, netmask, gateway;
+    char 			    			temp[20], YiaddrIP1[64],YiaddrIP2[64];
 
+    /* Parent hasn't set, we don't permit child is set.*/
     if ( pCxtPoolLink->bNew )
     {
 #if COSA_DHCPV4_ROLLBACK_TEST        
@@ -8109,41 +8107,58 @@ StaticAddress_Validate
 #endif
         return FALSE;
     }
-    if ( pCxtPoolLink->AliasOfStaAddr[0] )
-    {
         /* save update to backup */
-        bFound                = FALSE;
-        pSListEntry           = AnscSListGetFirstEntry(&pCxtPoolLink->StaticAddressList);
-        while( pSListEntry != NULL)
+    bFound                = FALSE;
+    pSListEntry           = AnscSListGetFirstEntry(&pCxtPoolLink->StaticAddressList);
+    while( pSListEntry != NULL)
+    {
+        pCxtLink2         = ACCESS_COSA_CONTEXT_LINK_OBJECT(pSListEntry);
+        pSListEntry       = AnscSListGetNextEntry(pSListEntry);
+
+        pDhcpStaAddr2  = (PCOSA_DML_DHCPS_SADDR)pCxtLink2->hContext;
+        sprintf(temp, "%x:%x:%x:%x:%x:%x", pDhcpStaAddr2->Chaddr[0],pDhcpStaAddr2->Chaddr[1],pDhcpStaAddr2->Chaddr[2],pDhcpStaAddr2->Chaddr[3],pDhcpStaAddr2->Chaddr[4],pDhcpStaAddr2->Chaddr[5]);
+        if( DHCPV4_STATICADDRESS_ENTRY_MATCH2(pDhcpStaAddr->Alias, pDhcpStaAddr2->Alias ) )
         {
-            pCxtLink2         = ACCESS_COSA_CONTEXT_LINK_OBJECT(pSListEntry);
-            pSListEntry       = AnscSListGetNextEntry(pSListEntry);
-
-            pDhcpStaAddr2  = (PCOSA_DML_DHCPS_SADDR)pCxtLink2->hContext;
-
-            if( DHCPV4_STATICADDRESS_ENTRY_MATCH2(pDhcpStaAddr->Alias, pDhcpStaAddr2->Alias ) )
+            if ( (ANSC_HANDLE)pCxtLink2 == hInsContext )
             {
-                if ( (ANSC_HANDLE)pCxtLink2 == hInsContext )
-                {
-                    continue;
-                }
-
-                _ansc_strcpy(pReturnParamName, "Alias");
-
-                bFound = TRUE;
-
-                break;
+                 continue;
             }
+            _ansc_strcpy(pReturnParamName, "Alias");
+            bFound = TRUE;
+            break;
         }
-
-        if ( bFound )
+        if(AnscEqualString(pDhcpStaAddr->Chaddr, pDhcpStaAddr2->Chaddr, TRUE ))
         {
-#if COSA_DHCPV4_ROLLBACK_TEST        
-            StaticAddress_Rollback(hInsContext);
-#endif
-            return FALSE;
+            if ( (ANSC_HANDLE)pCxtLink2 == hInsContext || strcmp(temp, "0:0:0:0:0:0") == 0)
+            {
+                continue;
+            }
+            _ansc_strcpy(pReturnParamName, "Chaddr");
+            bFound = TRUE;
+            break;
+        }
+        inet_ntop(AF_INET, &pDhcpStaAddr->Yiaddr.Value, YiaddrIP1, sizeof(YiaddrIP1));
+        inet_ntop(AF_INET, &pDhcpStaAddr2->Yiaddr.Value, YiaddrIP2, sizeof(YiaddrIP2));
+        if(AnscEqualString(YiaddrIP1, YiaddrIP2, TRUE ))
+        {
+            if ( (ANSC_HANDLE)pCxtLink2 == hInsContext || strcmp(YiaddrIP2, "0.0.0.0") == 0)
+            {
+                continue;
+            }
+            _ansc_strcpy(pReturnParamName, "Yiaddr");
+            bFound = TRUE;
+            break;
         }
     }
+
+    if ( bFound )
+    {
+#if COSA_DHCPV4_ROLLBACK_TEST        
+        StaticAddress_Rollback(hInsContext);
+#endif
+        return FALSE;
+    }
+#if 0
     /* Make sure Static IP Address is properly formatted and isnt a network or multicast address */
     ipaddr = pDhcpStaAddr->Yiaddr.Value;
     netmask = pPool->Cfg.SubnetMask.Value;
@@ -8297,6 +8312,7 @@ StaticAddress_Rollback
     PCOSA_CONTEXT_LINK_OBJECT       pCxtLink          = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     PCOSA_DML_DHCPS_SADDR           pDhcpStaAddr      = (PCOSA_DML_DHCPS_SADDR)pCxtLink->hContext;
     PCOSA_CONTEXT_POOL_LINK_OBJECT  pCxtPoolLink      = (PCOSA_CONTEXT_POOL_LINK_OBJECT)pCxtLink->hParentTable;
+    PCOSA_DML_DHCPS_POOL_FULL       pPool             = (PCOSA_DML_DHCPS_POOL_FULL)pCxtPoolLink->hContext;
     errno_t  rc = -1;
 
     if ( pCxtPoolLink->AliasOfStaAddr[0] )
@@ -8304,8 +8320,7 @@ StaticAddress_Rollback
         rc = STRCPY_S_NOCLOBBER( pDhcpStaAddr->Alias, sizeof(pDhcpStaAddr->Alias), pCxtPoolLink->AliasOfStaAddr );
         ERR_CHK(rc);
     }
-#if 0/*Removed by song*/
-    PCOSA_DML_DHCPS_POOL_FULL       pPool             = (PCOSA_DML_DHCPS_POOL_FULL)pCxtPoolLink->hContext;
+
     if ( !pCxtLink->bNew )
     {
         CosaDmlDhcpsGetSaddrbyInsNum(NULL, pPool->Cfg.InstanceNumber, pDhcpStaAddr);
@@ -8316,7 +8331,6 @@ StaticAddress_Rollback
     }
 
     AnscZeroMemory( pCxtPoolLink->AliasOfStaAddr, sizeof(pCxtPoolLink->AliasOfStaAddr) );
-#endif    
     return returnStatus;
 }
 
