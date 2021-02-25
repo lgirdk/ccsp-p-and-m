@@ -8058,9 +8058,6 @@ StaticAddress_Validate
         ULONG*                      puLength
     )
 {
-    UNREFERENCED_PARAMETER(hInsContext);
-    UNREFERENCED_PARAMETER(pReturnParamName);
-    UNREFERENCED_PARAMETER(puLength);
     PCOSA_CONTEXT_LINK_OBJECT       pCxtLink          = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     PCOSA_DML_DHCPS_SADDR           pDhcpStaAddr      = (PCOSA_DML_DHCPS_SADDR)pCxtLink->hContext;
     ULONG                           ipaddr;
@@ -8141,40 +8138,53 @@ StaticAddress_Validate
 #endif
         return FALSE;
     }
-    if ( pCxtPoolLink->AliasOfStaAddr[0] )
-    {
         /* save update to backup */
-        bFound                = FALSE;
-        pSListEntry           = AnscSListGetFirstEntry(&pCxtPoolLink->StaticAddressList);
-        while( pSListEntry != NULL)
+    bFound                = FALSE;
+    pSListEntry           = AnscSListGetFirstEntry(&pCxtPoolLink->StaticAddressList);
+    while( pSListEntry != NULL)
+    {
+        pCxtLink2         = ACCESS_COSA_CONTEXT_LINK_OBJECT(pSListEntry);
+        pSListEntry       = AnscSListGetNextEntry(pSListEntry);
+
+        pDhcpStaAddr2  = (PCOSA_DML_DHCPS_SADDR)pCxtLink2->hContext;
+        if( DHCPV4_STATICADDRESS_ENTRY_MATCH2(pDhcpStaAddr->Alias, pDhcpStaAddr2->Alias ) )
         {
-            pCxtLink2         = ACCESS_COSA_CONTEXT_LINK_OBJECT(pSListEntry);
-            pSListEntry       = AnscSListGetNextEntry(pSListEntry);
-
-            pDhcpStaAddr2  = (PCOSA_DML_DHCPS_SADDR)pCxtLink2->hContext;
-
-            if( DHCPV4_STATICADDRESS_ENTRY_MATCH2(pDhcpStaAddr->Alias, pDhcpStaAddr2->Alias ) )
+            if ( (ANSC_HANDLE)pCxtLink2 == hInsContext )
             {
-                if ( (ANSC_HANDLE)pCxtLink2 == hInsContext )
-                {
-                    continue;
-                }
-
-                _ansc_strcpy(pReturnParamName, "Alias");
-
-                bFound = TRUE;
-
-                break;
+                 continue;
             }
+            _ansc_strcpy(pReturnParamName, "Alias");
+            bFound = TRUE;
+            break;
         }
-
-        if ( bFound )
+        if (memcmp(pDhcpStaAddr->Chaddr, pDhcpStaAddr2->Chaddr, 6) == 0)
         {
-#if COSA_DHCPV4_ROLLBACK_TEST        
-            StaticAddress_Rollback(hInsContext);
-#endif
-            return FALSE;
+            if ( (ANSC_HANDLE)pCxtLink2 == hInsContext || memcmp(pDhcpStaAddr2->Chaddr, "\x00\x00\x00\x00\x00\x00", 6) == 0)
+            {
+                continue;
+            }
+            _ansc_strcpy(pReturnParamName, "Chaddr");
+            bFound = TRUE;
+            break;
         }
+        if (pDhcpStaAddr->Yiaddr.Value == pDhcpStaAddr2->Yiaddr.Value)
+        {
+            if ( (ANSC_HANDLE)pCxtLink2 == hInsContext || pDhcpStaAddr2->Yiaddr.Value == 0)
+            {
+                continue;
+            }
+            _ansc_strcpy(pReturnParamName, "Yiaddr");
+            bFound = TRUE;
+            break;
+        }
+    }
+
+    if ( bFound )
+    {
+#if COSA_DHCPV4_ROLLBACK_TEST        
+        StaticAddress_Rollback(hInsContext);
+#endif
+        return FALSE;
     }
     /* Make sure Static IP Address is properly formatted and isnt a network or multicast address */
     ipaddr = pDhcpStaAddr->Yiaddr.Value;
