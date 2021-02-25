@@ -1274,9 +1274,8 @@ ULONG FW_V4_IpFilter_Commit ( ANSC_HANDLE hInsContext )
             CosaDmlFW_V4_IPFilter_GetConf(pFwIpFilter->InstanceNumber, pFwIpFilter);
             return -1;
         }
-        else
-            CosaDmlFW_V4_IPFilter_GetConf(pFwIpFilter->InstanceNumber, pFwIpFilter);
     }
+    CosaDmlFW_V4_IPFilter_GetConf(pFwIpFilter->InstanceNumber, pFwIpFilter);
     return 0;
 }
 
