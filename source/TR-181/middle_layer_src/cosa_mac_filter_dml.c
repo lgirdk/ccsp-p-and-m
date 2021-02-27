@@ -258,6 +258,34 @@ MACFilter_Validate
         ULONG*                      puLength
     )
 {
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj        = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_MACFILTER          *pFwMACFilter    = (COSA_DML_FW_MACFILTER*)pLinkObj->hContext;
+    PCOSA_DATAMODEL_MAC_FILTER      pDmlMacFilter   = (PCOSA_DATAMODEL_MAC_FILTER)g_pCosaBEManager->hMacFilter;
+    PSLIST_HEADER                   pMaclisthd      = (PSLIST_HEADER)&pDmlMacFilter->MACFilterList;
+    PSINGLE_LINK_ENTRY              pSLinkEntry     = AnscSListGetFirstEntry(pMaclisthd);
+
+    //walk through the DML structure to find any duplicates
+    while (pSLinkEntry)
+    {
+        PCOSA_CONTEXT_LINK_OBJECT pobj = ACCESS_COSA_CONTEXT_LINK_OBJECT(pSLinkEntry);
+        COSA_DML_FW_MACFILTER *pFilter = (COSA_DML_FW_MACFILTER *)(pobj->hContext);
+
+        if (strcasecmp(pFilter->MACAddress, pFwMACFilter->MACAddress) == 0)
+        {
+            if (pFilter == pFwMACFilter)
+            {
+                pSLinkEntry = AnscSListGetNextEntry(pSLinkEntry);
+                continue;
+            }
+
+            // clear macaddress of new dml entry, to avoid displaying in dmcli
+            pFwMACFilter->MACAddress[0] = 0;
+            return FALSE;
+        }
+
+        pSLinkEntry = AnscSListGetNextEntry(pSLinkEntry);
+    }
+
     return TRUE;
 }
 
