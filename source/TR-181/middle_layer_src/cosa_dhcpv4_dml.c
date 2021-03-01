@@ -5765,9 +5765,29 @@ Pool_GetParamIntValue
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "LeaseTime") == 0)
     {
-        /* collect value */
-        *pInt = pPool->Cfg.LeaseTime;
-        
+        char wanevent[12];
+        char buf[12];
+
+        wanevent[0] = 0;
+        commonSyseventGet("wan-status", wanevent, sizeof(wanevent));
+        if (strcmp (wanevent, "stopped") == 0)
+        {
+            // when modem is offline, lease time should be 120 seconds.
+
+            if( syscfg_get(NULL, "dhcp_offline_lease_time", buf, sizeof(buf)) == 0)
+            {
+                *pInt = atoi(buf);
+            }
+            else
+            {
+                *pInt = 120;
+            }
+        }
+        else
+        {
+            /* collect value */
+            *pInt = pPool->Cfg.LeaseTime;
+        }
         return TRUE;
     }
 
