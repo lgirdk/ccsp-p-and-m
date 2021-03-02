@@ -405,6 +405,14 @@ CosaDmlDiGetSerialNumber
         ULONG*                      pulSize
     );
 ANSC_STATUS
+CosaDmlDiGetActualCMMacAddress
+    (
+        ANSC_HANDLE                 hContext,
+        char*                       pValue,
+        ULONG*                      pulSize
+    );
+
+ANSC_STATUS
 CosaDmlDiGetGW_IPv6
     (
         ANSC_HANDLE                 hContext,
