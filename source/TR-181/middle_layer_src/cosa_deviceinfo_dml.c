@@ -815,7 +815,7 @@ DeviceInfo_GetParamStringValue
     if( AnscEqualString(ParamName, "SerialNumber", TRUE))
     {
         /* collect value */
-        CosaDmlDiGetRouterMacAddress(NULL, pValue, pulSize);
+        CosaDmlDiGetActualCMMacAddress(NULL, pValue, pulSize);
         return 0;
     }
     if ( AnscEqualString(ParamName, "X_LGI-COM_GW_IPv6", TRUE))
