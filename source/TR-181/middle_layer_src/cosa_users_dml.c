@@ -127,7 +127,7 @@ static void CsrPasswordResetThread(PCOSA_DML_USER  pEntry)
     int pwd_timeout = CSR_PASSWORD_TIMEOUT;
     time_t now_time;
 
-    syscfg_get (NULL, "user_password_timeout_4", buf, sizeof(buf));
+    syscfg_get (NULL, "user_password_timeout_1", buf, sizeof(buf));
 
     if (buf[0] != '\0')
     {
@@ -146,11 +146,11 @@ static void CsrPasswordResetThread(PCOSA_DML_USER  pEntry)
 
         if ((pwd_set_time == 0) || ((now_time - pwd_set_time) > pwd_timeout))
         {
-            strcpy (pEntry->Password, "");
-            syscfg_set_commit (NULL, "user_password_4", "");
+            strcpy (pEntry->HashedPassword, "");
+            syscfg_set_commit (NULL, "user_password_1", "");
             pwd_set_time = 0;
             /* Destroy/Clear WEB sessions */
-            system("rm -rf /var/tmp/gui/sess_*"); //FIXME: Check and Remove the right  session
+            system("rm -rf /var/tmp/gui/session_*"); //FIXME: Check and Remove the right  session
             break;
         }
 
@@ -838,7 +838,7 @@ User_GetParamStringValue
             if( AnscEqualString(pUser->Username, csr_user_name, TRUE)
                 || AnscEqualString(pUser->Username, "mso", TRUE) )
             {
-               AnscCopyString(pUser->HashedPassword, "Invalid_PWD");
+               AnscCopyString(pUser->HashedPassword, "");
                returnStatus = CosaDmlUserSetCfg(NULL, pUser);
 
                if ( returnStatus != ANSC_STATUS_SUCCESS)
@@ -1294,35 +1294,42 @@ User_SetParamStringValue
 
     if (strcmp(ParamName, "X_CISCO_COM_Password") == 0)
     {
-        syscfg_get(NULL, "user_name_4", csr_user_name, sizeof(csr_user_name));
-        if( AnscEqualString(pUser->Username, csr_user_name, TRUE)
-            || AnscEqualString(pUser->Username, "mso", TRUE))
+        syscfg_get(NULL, "user_name_1", csr_user_name, sizeof(csr_user_name));
+        if( AnscEqualString(pUser->Username, csr_user_name, TRUE))
         {
-                unsigned int ret=0;
+            syscfg_get (NULL, "user_password_timeout_1", csr_user_timeout, sizeof(csr_user_timeout));
+            if (csr_user_timeout[0] != '\0')
+               csr_timeout = atoi(csr_user_timeout);
+            else
+               csr_timeout = CSR_PASSWORD_TIMEOUT;
+            if( csr_timeout != 0 )
+            {
+                pthread_t csr_pw_reset_tid;
 
-                ret = mso_validatepwd(pString);
-
-                if ( ret == Invalid_PWD )
+                // If CSR sets empty password, set timestamp to 0 which terminates the reset thread.
+                if( strcmp(pString, "") == 0 )
                 {
-                        AnscCopyString(pUser->HashedPassword, "Invalid_PWD");
-                }
-                else if ( ret == Good_PWD )
-                {
-                        AnscCopyString(pUser->HashedPassword, "Good_PWD");
-                }
-                else if ( ret == Unique_PWD )
-                {
-                        AnscCopyString(pUser->HashedPassword, "Unique_PWD");
-                }
-                else if ( ret == Expired_PWD )
-                {
-                        AnscCopyString(pUser->HashedPassword, "Expired_PWD");
+                    pwd_set_time = 0;
+                    system("rm -rf /var/tmp/gui/session_*"); 
                 }
                 else
                 {
-                        AnscCopyString(pUser->HashedPassword, "TimeError");
+                    // If CSR sets new password, destroy the existing session and reset timestamp.
+                    // else, just restart timestamp to extend the timeout.
+                    if( CsrPwResetThreadRunning && (strcmp(pString, pUser->HashedPassword) != 0) )
+                    {
+                        /* Destroy/Clear WEB sessions */
+                        system("rm -rf /var/tmp/gui/session_*"); 
+                    }
+                    time(&pwd_set_time);
+                    if( !CsrPwResetThreadRunning )
+                    {
+                        CsrPwResetThreadRunning = true;
+                        pthread_create(&csr_pw_reset_tid, NULL, &CsrPasswordResetThread, (void *)pUser);
+                    }
                 }
-
+	    }
+            AnscCopyString(pUser->HashedPassword, pString);
         }
         else if (strcmp(pUser->Username, "admin") == 0)
 	{
@@ -1370,15 +1377,26 @@ User_SetParamStringValue
 
     if (strcmp(ParamName, "X_RDKCENTRAL-COM_ComparePassword") == 0)
     {
-       char resultBuffer[32]= {'\0'};
-       user_validatepwd(NULL,pString,pUser,resultBuffer);
-       rc = strcpy_s(pUser->X_RDKCENTRAL_COM_ComparePassword,sizeof(pUser->X_RDKCENTRAL_COM_ComparePassword), resultBuffer);
-       if(rc != EOK)
-       {
-           ERR_CHK(rc);
-           return FALSE;
-       }
-       return TRUE;
+        syscfg_get(NULL, "user_name_1", csr_user_name, sizeof(csr_user_name));
+        if( AnscEqualString(pUser->Username, csr_user_name, TRUE))
+        {
+            if( AnscEqualString(pUser->HashedPassword, pString, TRUE))
+                AnscCopyString(pUser->X_RDKCENTRAL_COM_ComparePassword,"Good_PWD");
+            else
+                AnscCopyString(pUser->X_RDKCENTRAL_COM_ComparePassword,"Invalid_PWD");
+        }
+        else
+        {
+            char resultBuffer[32]= {'\0'};
+            user_validatepwd(NULL,pString,pUser,resultBuffer);
+            rc = strcpy_s(pUser->X_RDKCENTRAL_COM_ComparePassword,sizeof(pUser->X_RDKCENTRAL_COM_ComparePassword), resultBuffer);
+            if(rc != EOK)
+            {
+                ERR_CHK(rc);
+                return FALSE;
+            }
+        }
+        return TRUE;
     }
 
     if (strcmp(ParamName, "Language") == 0)
