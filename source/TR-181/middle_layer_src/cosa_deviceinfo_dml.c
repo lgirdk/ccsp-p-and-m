@@ -815,7 +815,7 @@ DeviceInfo_GetParamStringValue
     if (strcmp(ParamName, "SerialNumber") == 0)
     {
         /* collect value */
-        CosaDmlDiGetSerialNumber(NULL,pValue,pulSize);
+        CosaDmlDiGetActualCMMacAddress(NULL, pValue, pulSize);
         return 0;
     }
     if (strcmp(ParamName, "X_LGI-COM_GW_IPv6") == 0)
