@@ -53,6 +53,7 @@
         *  CosaDmlDiGetDescription
         *  CosaDmlDiGetProductClass
         *  CosaDmlDiGetSerialNumber
+        *  CosaDmlDiGetActualCMMacAddress
         *  CosaDmlDiGetHardwareVersion
         *  CosaDmlDiGetSoftwareVersion
         *  CosaDmlDiGetAdditionalHardwareVersion
@@ -692,6 +693,23 @@ CosaDmlDiGetSerialNumber
     *pulSize = AnscSizeOfString(pValue);
     return ANSC_STATUS_SUCCESS;
 }
+
+ANSC_STATUS
+CosaDmlDiGetActualCMMacAddress
+    (
+        ANSC_HANDLE                 hContext,
+        char*                       pValue,
+        ULONG*                      pulSize
+    )
+{
+
+    if (platform_hal_GetCmMacAddress(pValue, *pulSize) != RETURN_OK )
+        return ANSC_STATUS_FAILURE;
+    *pulSize = AnscSizeOfString(pValue);
+    return ANSC_STATUS_SUCCESS;
+
+}
+
 
 static unsigned int parseHex(const char *strAddr, unsigned char  *inetAddr)
 {
