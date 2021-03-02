@@ -800,7 +800,17 @@ DeviceInfo_GetParamStringValue
 
     if (strcmp(ParamName, "SerialNumber") == 0)
     {
+#if defined (_PUMA6_ARM_)
+        if (*pulSize <= 18) {
+            *pulSize = 18 + 1;
+            return 1;
+        }
+
+        if (platform_hal_GetCmMacAddress(pValue, *pulSize) != RETURN_OK)
+            return -1;
+#else
         CosaDmlDiGetSerialNumber(NULL, pValue, pulSize);
+#endif
         return 0;
     }
 
