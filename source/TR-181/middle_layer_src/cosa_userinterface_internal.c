@@ -175,6 +175,9 @@ CosaUserinterfaceInitialize
 
     pMyObject->hIrepFolderCOSA = g_GetRegistryRootFolder(g_pDslhDmlAgent);
 
+    CosaDmlStdRaInit(NULL, NULL);
+
+    CosaDmlStdRaGetCfg(NULL, &pMyObject->StdRaCfg);
 
     /* Initiation Device.UserInterface.X_CISCO_COM_RemoteAccess.iprange.{i}. */
 
