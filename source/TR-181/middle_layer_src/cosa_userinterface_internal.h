@@ -68,6 +68,7 @@
 #include "cosa_userinterface_apis.h"
 #include "poam_irepfo_interface.h"
 #include "sys_definitions.h"
+#include "cosa_lgi_userinterface_apis.h"
 
 #define  COSA_IREP_FOLDER_NAME_UserInterface_IPRange    "UserInterfaceIPRange"
 #define  COSA_DML_RR_NAME_UserInterface_IPRangeAlias    "Alias"
@@ -79,6 +80,7 @@
     /* duplication of the base object class content */                      \
     COSA_BASE_CONTENT                                                       \
     /* start of Time object class content */                                \
+    COSA_DML_STD_RA_CFG             StdRaCfg;                               \
     COSA_DML_RA_CFG                 RaCfg;                                  \
     COSA_DML_USERINTERFACE_CFG      UserInterfaceCfg;                       \
     SLIST_HEADER                    iprangeList;                            \
