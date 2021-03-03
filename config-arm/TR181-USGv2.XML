@@ -5560,6 +5560,66 @@
 
         </object>
 
+        <!--
+         Copyright 2017-2019 ARRIS Enterprises, LLC.
+
+         Licensed under the Apache License, Version 2.0 (the "License");
+         you may not use this file except in compliance with the License.
+         You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+         Unless required by applicable law or agreed to in writing, software
+         distributed under the License is distributed on an "AS IS" BASIS,
+         WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         See the License for the specific language governing permissions and
+         limitations under the License.
+         -->
+        <object>
+            <name>RemoteAccess</name>
+            <objectType>object</objectType>
+            <functions>
+                <func_GetParamBoolValue>Std_RemoteAccess_GetParamBoolValue</func_GetParamBoolValue>
+                <func_GetParamIntValue>Std_RemoteAccess_GetParamIntValue</func_GetParamIntValue>
+                <func_GetParamUlongValue>Std_RemoteAccess_GetParamUlongValue</func_GetParamUlongValue>
+                <func_GetParamStringValue>Std_RemoteAccess_GetParamStringValue</func_GetParamStringValue>
+                <func_SetParamBoolValue>Std_RemoteAccess_SetParamBoolValue</func_SetParamBoolValue>
+                <func_SetParamIntValue>Std_RemoteAccess_SetParamIntValue</func_SetParamIntValue>
+                <func_SetParamUlongValue>Std_RemoteAccess_SetParamUlongValue</func_SetParamUlongValue>
+                <func_SetParamStringValue>Std_RemoteAccess_SetParamStringValue</func_SetParamStringValue>
+                <func_Validate>Std_RemoteAccess_Validate</func_Validate>
+                <func_Commit>Std_RemoteAccess_Commit</func_Commit>
+                <func_Rollback>Std_RemoteAccess_Rollback</func_Rollback>
+            </functions>
+            <parameters>
+                <parameter>
+                    <name>Enable</name>
+                    <type>boolean</type>
+                    <syntax>bool</syntax>
+                    <writable>true</writable>
+                </parameter>
+                <parameter>
+                    <name>SupportedProtocols</name>
+                    <type>string</type>
+                    <syntax>string</syntax>
+                     <writable>false</writable>
+
+                </parameter>
+                <parameter>
+                    <name>Port</name>
+                    <type>unsignedInt</type>
+                    <syntax>uint32</syntax>
+                    <writable>false</writable>
+                </parameter>
+                <parameter>
+                    <name>Protocol</name>
+                    <type>string</type>
+                    <syntax>string</syntax>
+                    <writable>false</writable>
+                </parameter>
+            </parameters>
+        </object>
+
       </objects>
 
     </object>
