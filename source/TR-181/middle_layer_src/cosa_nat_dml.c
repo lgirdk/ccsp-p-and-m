@@ -2359,17 +2359,23 @@ PortMapping_SetParamUlongValue
     if( AnscEqualString(ParamName, "InternalPort", TRUE))
     {
         /* save update to backup */
-        pNatPMapping->InternalPort = (USHORT)uValue;
-
-        return TRUE;
+        if ( uValue != 0 )
+        {
+                        pNatPMapping->InternalPort = (USHORT)uValue;
+                        return TRUE;
+        }
+        return FALSE;
     }
 
     if( AnscEqualString(ParamName, "X_RDKCENTRAL_InternalPortEndRange", TRUE))
     {
        /* save update to backup */
-       pNatPMapping->X_RDKCENTRAL_InternalPortEndRange = (USHORT)uValue;
-
-       return TRUE;
+       if ( uValue != 0 )
+       {
+                        pNatPMapping->X_RDKCENTRAL_InternalPortEndRange = (USHORT)uValue;
+                        return TRUE;
+       }
+       return FALSE;
     }
 
     if( AnscEqualString(ParamName, "Protocol", TRUE))
