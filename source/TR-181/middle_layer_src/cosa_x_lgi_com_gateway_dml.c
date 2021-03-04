@@ -66,10 +66,8 @@ LgiGateway_GetParamUlongValue
 
     else if (strcmp(ParamName, "IPv6LeaseTimeRemaining") == 0)
     {
-        if (CosaDml_Gateway_GetIPv6LeaseTimeRemaining(puLong) == ANSC_STATUS_SUCCESS)
-        {
-            retValue = TRUE;
-        }
+        CosaDml_Gateway_GetIPv6LeaseTimeRemaining(puLong);
+        retValue = TRUE;
     }
 
     return retValue;
