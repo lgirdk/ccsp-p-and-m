@@ -585,8 +585,7 @@ X_CISCO_COM_DeviceControl_GetParamUlongValue
 
     if (strcmp(ParamName, "WebUITimeout") == 0)
     {
-        if (CosaDmlDcGetWebUITimeout(NULL, puLong) != ANSC_STATUS_SUCCESS)
-            return FALSE;
+        CosaDmlDcGetWebUITimeout(NULL, puLong);
 
         return TRUE;
     }
@@ -2449,62 +2448,74 @@ WebAccessLevel_GetParamIntValue
 	
     if (strcmp(ParamName, "HomeUser_Lan_Level") == 0)
     {
-        return (CosaDmlDcGetWebAccessLevel(NULL, 1, 1, (ULONG*)pInt) == ANSC_STATUS_SUCCESS);
+        CosaDmlDcGetWebAccessLevel(NULL, 1, 1, (ULONG*)pInt);
+        return TRUE;
     }
 
 	if (strcmp(ParamName, "HomeUser_RfCM_Level") == 0)
     {
-        return (CosaDmlDcGetWebAccessLevel(NULL, 1, 2, (ULONG*)pInt) == ANSC_STATUS_SUCCESS);
+        CosaDmlDcGetWebAccessLevel(NULL, 1, 2, (ULONG*)pInt);
+        return TRUE;
     }
 
 	if (strcmp(ParamName, "HomeUser_Mta_Level") == 0)
     {
-        return (CosaDmlDcGetWebAccessLevel(NULL, 1, 16, (ULONG*)pInt) == ANSC_STATUS_SUCCESS);
+        CosaDmlDcGetWebAccessLevel(NULL, 1, 16, (ULONG*)pInt);
+        return TRUE;
     }
 
 	if (strcmp(ParamName, "HomeUser_WanRG_Level") == 0)
     {
-        return (CosaDmlDcGetWebAccessLevel(NULL, 1, 40, (ULONG*)pInt) == ANSC_STATUS_SUCCESS);
+        CosaDmlDcGetWebAccessLevel(NULL, 1, 40, (ULONG*)pInt);
+        return TRUE;
     }
 
 	if (strcmp(ParamName, "CusAdmin_Lan_Level") == 0)
     {
-        return (CosaDmlDcGetWebAccessLevel(NULL, 5, 1, (ULONG*)pInt) == ANSC_STATUS_SUCCESS);
+        CosaDmlDcGetWebAccessLevel(NULL, 5, 1, (ULONG*)pInt);
+        return TRUE;
     }
 
 	if (strcmp(ParamName, "CusAdmin_RfCM_Level") == 0)
     {
-        return (CosaDmlDcGetWebAccessLevel(NULL, 5, 2, (ULONG*)pInt) == ANSC_STATUS_SUCCESS);
+        CosaDmlDcGetWebAccessLevel(NULL, 5, 2, (ULONG*)pInt);
+        return TRUE;
     }
 
 	if (strcmp(ParamName, "CusAdmin_Mta_Level") == 0)
     {
-        return (CosaDmlDcGetWebAccessLevel(NULL, 5, 16, (ULONG*)pInt) == ANSC_STATUS_SUCCESS);
+        CosaDmlDcGetWebAccessLevel(NULL, 5, 16, (ULONG*)pInt);
+        return TRUE;
     }
 
 	if (strcmp(ParamName, "CusAdmin_WanRG_Level") == 0)
     {
-        return (CosaDmlDcGetWebAccessLevel(NULL, 5, 40, (ULONG*)pInt) == ANSC_STATUS_SUCCESS);
+        CosaDmlDcGetWebAccessLevel(NULL, 5, 40, (ULONG*)pInt);
+        return TRUE;
     }
 
 	if (strcmp(ParamName, "AdvUser_Lan_Level") == 0)
     {
-        return (CosaDmlDcGetWebAccessLevel(NULL, 10, 1, (ULONG*)pInt) == ANSC_STATUS_SUCCESS);
+        CosaDmlDcGetWebAccessLevel(NULL, 10, 1, (ULONG*)pInt);
+        return TRUE;
     }
 
 	if (strcmp(ParamName, "AdvUser_RfCM_Level") == 0)
     {
-        return (CosaDmlDcGetWebAccessLevel(NULL, 10, 2,(ULONG*)pInt) == ANSC_STATUS_SUCCESS);
+        CosaDmlDcGetWebAccessLevel(NULL, 10, 2, (ULONG*)pInt);
+        return TRUE;
     }
 
 	if (strcmp(ParamName, "AdvUser_Mta_Level") == 0)
     {
-        return (CosaDmlDcGetWebAccessLevel(NULL, 10, 16, (ULONG*)pInt) == ANSC_STATUS_SUCCESS);
+        CosaDmlDcGetWebAccessLevel(NULL, 10, 16, (ULONG*)pInt);
+        return TRUE;
     }
 
 	if (strcmp(ParamName, "AdvUser_WanRG_Level") == 0)
     {
-        return (CosaDmlDcGetWebAccessLevel(NULL, 10, 40, (ULONG*)pInt) == ANSC_STATUS_SUCCESS);
+        CosaDmlDcGetWebAccessLevel(NULL, 10, 40, (ULONG*)pInt);
+        return TRUE;
     }
     /*CID: 66266 Missing return statement*/
     return FALSE;	
