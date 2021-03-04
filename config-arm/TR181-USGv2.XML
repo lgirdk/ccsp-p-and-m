@@ -4068,22 +4068,6 @@
                                 </parameter>
                         </parameters>
                 </object>
-                <object>
-                    <name>UseXPKI</name>
-                    <objectType>object</objectType>
-                    <functions>
-                        <func_GetParamBoolValue>UseXPKI_GetParamBoolValue</func_GetParamBoolValue>
-                        <func_SetParamBoolValue>UseXPKI_SetParamBoolValue</func_SetParamBoolValue>
-                    </functions>
-                    <parameters>
-                        <parameter>
-                            <name>Enable</name>
-                            <type>boolean</type>
-                            <syntax>bool</syntax>
-                            <writable>true</writable>
-                        </parameter>
-                    </parameters>
-               </object>
                <object>
                     <name>LnFUseXPKI</name>
                     <objectType>object</objectType>
@@ -18552,12 +18536,6 @@
                         <name>VLANID</name>
                         <type>int[1:4094]</type>
                         <syntax>int</syntax>
-                        <writable>true</writable>
-                    </parameter>
-                    <parameter>
-                        <name>GreTransportInterface</name>
-                        <type>string: eRouter(0), eCM(1)</type>
-                        <syntax>uint32/mapped</syntax>
                         <writable>true</writable>
                     </parameter>
                     <parameter>
