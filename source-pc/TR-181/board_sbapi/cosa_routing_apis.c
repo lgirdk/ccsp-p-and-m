@@ -549,20 +549,30 @@ COSA_DML_RIPD_CONF CosaDmlRIPDefaultConfig =
 COSA_DML_RIPD_CONF CosaDmlRIPCurrentConfig = {0};
 
 
-void _get_shell_output3(FILE *fp, char *buf, int len)
+void _get_shell_output3 (FILE *fp, char *buf, size_t len)
 {
-    char * p;
-
-    if (fp)
+    if (len > 0)
     {
-        if(fgets (buf, len-1, fp) != NULL)
+        buf[0] = 0;
+    }
+
+    if (fp == NULL)
+    {
+        return;
+    }
+
+    buf = fgets (buf, len, fp);
+
+    v_secure_pclose (fp); 
+
+    if ((len > 0) && (buf != NULL))
+    {
+        len = strlen (buf);
+
+        if ((len > 0) && (buf[len - 1] == '\n'))
         {
-            buf[len-1] = '\0';
-            if ((p = strchr(buf, '\n'))) {
-                *p = '\0';
-            }
+            buf[len - 1] = 0;
         }
-    v_secure_pclose(fp); 
     }
 }
 
@@ -570,7 +580,7 @@ void _get_shell_output3(FILE *fp, char *buf, int len)
 static int CosaRipdOperation(char * arg)
 {
     FILE *fp;
-    char out[256] = {0};
+    char out[256];
     ULONG Index  = 0;
     char *base = basename(COSA_RIPD_BIN);
     char *base1 = basename(COSA_ZEBRA_BIN);
