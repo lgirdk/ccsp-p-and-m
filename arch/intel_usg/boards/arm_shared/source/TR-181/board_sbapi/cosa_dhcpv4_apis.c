@@ -3514,7 +3514,7 @@ CosaDmlDhcpsGetClient
     return ANSC_STATUS_FAILURE;
 }
 
-int _get_shell_output2(FILE *fp, char * dststr);
+int _get_shell_output2 (FILE *fp, char *needle);
 
 ANSC_STATUS
 CosaDmlDhcpsPing
@@ -3522,8 +3522,7 @@ CosaDmlDhcpsPing
         PCOSA_DML_DHCPSV4_CLIENT_IPADDRESS    pDhcpsClient
     )
 {
-    char      out[256] = {0};
-    ULONG     i        = 0;
+    FILE *fp;
 
     /*ping -w 2 -c 1 fe80::225:2eff:fe7d:5b5 */
     fp = v_secure_popen("r", "ping -W 1 -c 1 %s", _ansc_inet_ntoa(*((struct in_addr*)&(pDhcpsClient->IPAddress))));
@@ -3546,7 +3545,6 @@ CosaDmlDhcpsARPing
     )
 {
     FILE *fp;
-    ULONG     i        = 0;
 
     fp = v_secure_popen("r", "arping -I %s -c 2 -f -w 1 %s", LAN_L3_IFNAME, _ansc_inet_ntoa(*((struct in_addr*)&(pDhcpsClient->IPAddress))) );
     if ( _get_shell_output2(fp, "Received 0 reply"))

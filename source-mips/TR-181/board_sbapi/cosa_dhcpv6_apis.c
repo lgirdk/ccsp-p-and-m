@@ -1092,18 +1092,18 @@ int safe_strcpy(char * dst, char * src, int dst_size)
 
 void _get_shell_output(FILE *fp, char *buf, int len)
 {
-    char * p;
+    buf = fgets (buf, len, fp);
 
-    if (fp)
+    v_secure_pclose (fp); 
+
+    if (buf != NULL)
     {
-        if(fgets (buf, len-1, fp) != NULL)
+        len = strlen (buf);
+
+        if ((len > 0) && (buf[len - 1] == '\n'))
         {
-            buf[len-1] = '\0';
-            if ((p = strchr(buf, '\n'))) {
-                *p = '\0';
-            }
+            buf[len - 1] = 0;
         }
-    v_secure_pclose(fp); 
     }
 }
 
@@ -2225,8 +2225,8 @@ static int _prepare_client_conf(PCOSA_DML_DHCPCV6_CFG       pCfg)
     return 0;
 }
 
-void _get_shell_output(FILE *fp, char * buf, int len);
-int _get_shell_output2(FILE *fp, char * dststr);
+void _get_shell_output (FILE *fp, char *buf, size_t len);
+int _get_shell_output2 (FILE *fp, char *needle);
 
 static int _dibbler_client_operation(char * arg)
 {
@@ -4298,21 +4298,6 @@ CosaDmlDhcpv6sGetState
         ANSC_HANDLE                 hContext
     )
 {
-    char cmd[256] = {0};
-    char out[256] = {0};
-
-    /*
-    sprintf(cmd, "busybox ps |grep %s|grep -v grep", SERVER_BIN);
-    _get_shell_output(cmd, out, sizeof(out));
-    if (strstr(out, SERVER_BIN))
-    {
-        return TRUE;
-    }
-    else
-    {
-        return FALSE;
-    }*/
-
     return g_dhcpv6_server;
 }
 
@@ -4771,7 +4756,7 @@ CosaDmlDhcpv6sGetPoolInfo
         PCOSA_DML_DHCPSV6_POOL_INFO pInfo
     )
 {
-    char out[256] = {0};
+    char out[256];
     FILE *fp;
 
     ULONG                           Index = 0;
@@ -5193,7 +5178,6 @@ ANSC_STATUS
 CosaDmlDhcpv6sPing( PCOSA_DML_DHCPSV6_CLIENT        pDhcpsClient )
 {
     FILE *fp;
-    char      out[256] = {0};
     ULONG     i        = 0;
 
     for( i =0; i<g_dhcps6v_client_num; i++ )
@@ -5663,8 +5647,7 @@ int dhcpv6_assign_global_ip(char * prefix, char * intfName, char * ipAddr)
     unsigned int    i                = 0;
     unsigned int    j                = 0;
     unsigned int    k                = 0;
-    char            cmd[256]         = {0};
-    char            out[256]         = {0};
+    char            out[256];
     char            tmp[8]           = {0};
     FILE *fp;
 
@@ -5776,7 +5759,7 @@ int dhcpv6_assign_global_ip(char * prefix, char * intfName, char * ipAddr)
 void CosaDmlDhcpv6sRebootServer()
 {
     int fd = 0;
-    char out[128] = {0};
+    char out[128];
     BOOL isBridgeMode = FALSE;
     FILE *fp;
 
@@ -6137,13 +6120,11 @@ dhcpv6c_dbg_thrd(void * in)
 			char s[2] = ",";	
 			if(pref_len < 64)
 			{
-			memset(out,0,sizeof(out));
 			memset(out1,0,sizeof(out1));
                         fp = v_secure_popen("r", "syscfg get IPv6subPrefix");
 			_get_shell_output(fp, out, sizeof(out));
 			if(!strcmp(out,"true"))
 				{
-				memset(out,0,sizeof(out));
                                 fp = v_secure_popen("r","syscfg get IPv6_Interface");
       				_get_shell_output(fp, out, sizeof(out));
 				pt = out;
@@ -6156,7 +6137,6 @@ dhcpv6c_dbg_thrd(void * in)
 						memset(cmd,0,sizeof(cmd));
 						_ansc_sprintf(cmd, "%s%s",token,"_ipaddr_v6");
 						commonSyseventSet(cmd, out1);
-						memset(tbuff,0,sizeof(tbuff));
                                                 fp = v_secure_popen("r","sysctl net.ipv6.conf.%s.autoconf",token);
 						_get_shell_output(fp, tbuff, sizeof(tbuff));
 						if(tbuff[strlen(tbuff)-1] == '0')
