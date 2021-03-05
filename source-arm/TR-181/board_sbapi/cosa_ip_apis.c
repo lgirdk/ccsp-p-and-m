@@ -212,7 +212,7 @@ int _get_shell_output2 (FILE *fp, char *needle)
 #if 0
 static void _wait_for_services(char * serv_name)
 {
-    char buf[256] = {0};
+    char buf[256];
     int  i = 0;
     FILE *fp;
 
@@ -255,7 +255,7 @@ static void _wait_for_services(char * serv_name)
 
 static int _is_primary_mode()
 {
-    char buf[256] = {0};
+    char buf[256];
     FILE *fp;    
 
     fp = v_secure_popen("r","sysevent get current_hsd_mode");
@@ -271,7 +271,7 @@ static int _is_primary_mode()
 
 static int _is_in_linux_bridge(char * if_name, char * br_name)
 {
-    char buf[256] = {0};
+    char buf[256];
     FILE *fp;
 
     fp = v_secure_popen("r", "brctl show %s|grep %s", br_name, if_name);
