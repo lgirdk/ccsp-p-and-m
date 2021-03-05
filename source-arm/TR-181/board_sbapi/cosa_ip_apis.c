@@ -157,35 +157,45 @@ BOOL CosaIpifGetSetSupported(char * pParamName)
     return TRUE;
 }
 
-void _get_shell_output(FILE *fp, char *buf, int len)
+void _get_shell_output (FILE *fp, char *buf, size_t len)
 {
-    char * p;
-
-    if (fp)
+    if (len > 0)
     {
-        if(fgets (buf, len-1, fp) != NULL)
-        {
-            buf[len-1] = '\0';
-            if ((p = strchr(buf, '\n'))) {
-                *p = '\0';
-            }
-        }
+        buf[0] = 0;
+    }
+
+    if (fp == NULL)
+    {
+        return;
+    }
+
+    buf = fgets (buf, len, fp);
+
     v_secure_pclose(fp); 
+
+    if ((len > 0) && (buf != NULL))
+    {
+        len = strlen (buf);
+
+        if ((len > 0) && (buf[len - 1] == '\n'))
+        {
+            buf[len - 1] = 0;
+        }
     }
 }
 
-int _get_shell_output2(FILE *fp, char * dststr)
+int _get_shell_output2 (FILE *fp, char *needle)
 {
-    char   buf[256];
-    int   bFound = 0;
+    char buf[256];
+    int bFound = 0;
 
     if (fp)
     {
-        while( fgets(buf, sizeof(buf), fp) )
+        while (fgets (buf, sizeof(buf), fp))
         {
-            if (strstr(buf, dststr)) 
+            if (strstr (buf, needle))
             {
-                bFound = 1;;
+                bFound = 1;
                 break;
             }
         }
@@ -202,7 +212,7 @@ int _get_shell_output2(FILE *fp, char * dststr)
 #if 0
 static void _wait_for_services(char * serv_name)
 {
-    char buf[256] = {0};
+    char buf[256];
     int  i = 0;
     FILE *fp;
 
@@ -245,7 +255,7 @@ static void _wait_for_services(char * serv_name)
 
 static int _is_primary_mode()
 {
-    char buf[256] = {0};
+    char buf[256];
     FILE *fp;    
 
     fp = v_secure_popen("r","sysevent get current_hsd_mode");
@@ -261,7 +271,7 @@ static int _is_primary_mode()
 
 static int _is_in_linux_bridge(char * if_name, char * br_name)
 {
-    char buf[256] = {0};
+    char buf[256];
     FILE *fp;
 
     fp = v_secure_popen("r", "brctl show %s|grep %s", br_name, if_name);
