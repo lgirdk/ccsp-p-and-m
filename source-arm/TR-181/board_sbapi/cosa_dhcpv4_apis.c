@@ -3784,7 +3784,7 @@ CosaDmlDhcpsGetClient
     return ANSC_STATUS_FAILURE;
 }
 
-int _get_shell_output2(FILE *fp, char * dststr);
+int _get_shell_output2 (FILE *fp, char *needle);
 
 ANSC_STATUS
 CosaDmlDhcpsPing
