@@ -6096,13 +6096,12 @@ int cosa_dhcpv6_client_info(char *pInterface)
     int  client_num = 0;
     int  s_len;
     long buffer_len = 0;
-    char duid[64], ip6_addr[40], time_stamp[32], preferred_lifetime[32], unicast[128], prefix[32], valid_lifetime[32], ifacename[32], mac_addr[18] = {0};
-    char cmd[200] = {0};
-    char respBuf[200] = {0};
+    char duid[64], ip6_addr[40], time_stamp[32], preferred_lifetime[32], unicast[128], prefix[32], valid_lifetime[32], ifacename[32];
     FILE * fp = fopen(DHCPSV6_SERVER_FILE, "r");
     FILE * serverclient = NULL;
     char *interface = NULL;
     BOOL ret = 0;
+
     if (fp)
     {
         fseek(fp, 0, SEEK_END);
@@ -6264,9 +6263,12 @@ int cosa_dhcpv6_client_info(char *pInterface)
 
                    if (ip6_addr[0])
                    {
-                       sprintf(cmd, "ip neigh | grep %s | awk '{print $5}'", ip6_addr);
-                       _get_shell_output(cmd, respBuf, 200);
-                       snprintf(mac_addr, sizeof(mac_addr), "%s", respBuf);
+                       FILE *cfp;
+                       char mac_addr[18 + 4];   /* add extra bytes since it's not clear that _get_shell_output() handles exact sizes correctly... */
+
+                       mac_addr[0] = 0;
+                       cfp = v_secure_popen("r","ip neigh | grep %s | awk '{print $5}'", ip6_addr);
+                       _get_shell_output(cfp, mac_addr, sizeof(mac_addr));
                        fprintf(serverclient, "MAC:%s\n", mac_addr);
                    }
 
