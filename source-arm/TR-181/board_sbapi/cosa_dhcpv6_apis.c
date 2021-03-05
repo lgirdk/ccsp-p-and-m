@@ -1175,18 +1175,18 @@ char *safe_strcpy (char *dst, char *src, size_t dst_size)
 
 void _get_shell_output(FILE *fp, char *buf, int len)
 {
-    char * p;
+    buf = fgets (buf, len, fp);
 
-    if (fp)
+    v_secure_pclose (fp); 
+
+    if (buf != NULL)
     {
-        if(fgets (buf, len-1, fp) != NULL)
+        len = strlen (buf);
+
+        if ((len > 0) && (buf[len - 1] == '\n'))
         {
-            buf[len-1] = '\0';
-            if ((p = strchr(buf, '\n'))) {
-                *p = '\0';
-            }
+            buf[len - 1] = 0;
         }
-    v_secure_pclose(fp); 
     }
 }
 
@@ -2419,14 +2419,14 @@ static int _prepare_client_conf(PCOSA_DML_DHCPCV6_CFG       pCfg)
     return 0;
 }
 
-void _get_shell_output(FILE *fp, char * buf, int len);
-int _get_shell_output2(FILE *fp, char * dststr);
+void _get_shell_output (FILE *fp, char *buf, size_t len);
+int _get_shell_output2 (FILE *fp, char *needle);
 
 static int _dibbler_client_operation(char * arg)
 {
 #if defined(INTEL_PUMA7) || defined(_COSA_BCM_ARM_)
     FILE *fp = NULL;
-    char out[256] = {0};
+    char out[256];
 #endif
 #if defined (INTEL_PUMA7)
     int watchdog = NO_OF_RETRY;
@@ -5566,19 +5566,6 @@ CosaDmlDhcpv6sGetState
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-    /*
-    char cmd[256] = {0};
-    char out[256] = {0};
-    sprintf(cmd, "busybox ps |grep %s|grep -v grep", SERVER_BIN);
-    _get_shell_output(cmd, out, sizeof(out));
-    if (strstr(out, SERVER_BIN))
-    {
-        return TRUE;
-    }
-    else
-    {
-        return FALSE;
-    }*/
 
     return g_dhcpv6_server;
 }
@@ -6157,7 +6144,7 @@ CosaDmlDhcpv6sGetPoolInfo
 {
     UNREFERENCED_PARAMETER(hContext);
     FILE *fp = NULL;
-    char out[256] = {0};
+    char out[256];
 
     ULONG                           Index = 0;
 
@@ -7091,7 +7078,7 @@ int dhcpv6_assign_global_ip(char * prefix, char * intfName, char * ipAddr)
     unsigned int    i                = 0;
     unsigned int    j                = 0;
     unsigned int    k                = 0;
-    char            out[256]         = {0};
+    char            out[256];
     char            tmp[8]           = {0};
     FILE *fp = NULL;
     errno_t         rc               = -1;
@@ -7258,7 +7245,7 @@ void CosaDmlDhcpv6sRebootServer()
     if (fd < 0) {
 #endif
         BOOL isBridgeMode = FALSE;
-        char out[128] = {0};
+        char out[128];
 
 /* dibbler-server process start fix for HUB4 and ADA */
 #if defined (_HUB4_PRODUCT_REQ_)
@@ -7488,10 +7475,12 @@ void enable_IPv6(char* if_name)
 
     	CcspTraceInfo(("%s : Enabling ipv6 on iface %s\n",__FUNCTION__,if_name));
 
-    	char tbuff[100] = {0} , ipv6_addr[128] = {0} , cmd[128] = {0} ;
+    	char tbuff[100], ipv6_addr[128] = {0} , cmd[128] = {0} ;
     	errno_t rc = -1;
-	    fp = v_secure_popen("r","sysctl net.ipv6.conf.%s.autoconf",if_name);
-	    _get_shell_output(fp, tbuff, sizeof(tbuff));
+
+	fp = v_secure_popen("r","sysctl net.ipv6.conf.%s.autoconf",if_name);
+	_get_shell_output(fp, tbuff, sizeof(tbuff));
+
     	if(tbuff[strlen(tbuff)-1] == '0')
     	{
             v_secure_system("sysctl -w net.ipv6.conf.%s.autoconf=1",if_name);
@@ -7757,7 +7746,6 @@ static void *InterfaceEventHandler_thrd(void *data)
         retPsmGet = PSM_Get_Record_Value2(bus_handle,g_Subsystem, "dmsb.l2net.2.Port.1.Name", NULL, &Inf_name);
         if (retPsmGet == CCSP_SUCCESS)
         {
-            memset(tbuff,0,sizeof(tbuff));
             fp = v_secure_popen("r","sysctl net.ipv6.conf.%s.autoconf",Inf_name);
             _get_shell_output(fp, tbuff, sizeof(tbuff));
             if(tbuff[strlen(tbuff)-1] == '0')
@@ -7780,8 +7768,6 @@ static void *InterfaceEventHandler_thrd(void *data)
 
     if(strcmp((const char*)buf, "ready") == 0)
     {
-
-        memset(tbuff,0,sizeof(tbuff));
         fp = v_secure_popen("r","sysctl net.ipv6.conf.br106.autoconf");
         _get_shell_output(fp, tbuff, sizeof(tbuff));
         if(tbuff[strlen(tbuff)-1] == '0')
@@ -8523,7 +8509,6 @@ dhcpv6c_dbg_thrd(void * in)
                             
 			if(pref_len < 64)
 			{
-			    memset(out,0,sizeof(out));
 			    memset(out1,0,sizeof(out1));
                             fp = v_secure_popen("r","syscfg get IPv6subPrefix");
                             _get_shell_output(fp, out, sizeof(out));
@@ -8531,7 +8516,6 @@ dhcpv6c_dbg_thrd(void * in)
 				{
                                 static int first = 0;
 
-				memset(out,0,sizeof(out));
                                 fp = v_secure_popen("r","syscfg get IPv6_Interface");
                                 _get_shell_output(fp, out, sizeof(out));
 				pt = out;
