@@ -1207,20 +1207,30 @@ CosaDmlDcGetHTTPSEnable
     return ANSC_STATUS_SUCCESS;
 }
 
-void _get_shell_output(FILE *fp, char *buf, int len)
+void _get_shell_output (FILE *fp, char *buf, size_t len)
 {
-    char * p;
-
-    if (fp)
+    if (len > 0)
     {
-        if(fgets (buf, len-1, fp) != NULL)
+        buf[0] = 0;
+    }
+
+    if (fp == NULL)
+    {
+        return;
+    }
+
+    buf = fgets (buf, len, fp);
+
+    v_secure_pclose (fp); 
+
+    if ((len > 0) && (buf != NULL))
+    {
+        len = strlen (buf);
+
+        if ((len > 0) && (buf[len - 1] == '\n'))
         {
-            buf[len-1] = '\0';
-            if ((p = strchr(buf, '\n'))) {
-                *p = '\0';
-            }
+            buf[len - 1] = 0;
         }
-    v_secure_pclose(fp); 
     }
 }
 
@@ -1231,9 +1241,9 @@ CosaDmlDcGetHTTPPort
         ULONG                       *pValue
     )
 {
-	char out[128] = {0};
+	char out[128];
 	FILE *fp;
-	memset(out,0,sizeof(out));
+
         fp = v_secure_popen("r", "syscfg get mgmt_wan_httpport");
         _get_shell_output(fp, out, sizeof(out));
 
@@ -1258,9 +1268,9 @@ CosaDmlDcGetHTTPSPort
         ULONG                       *pValue
     )
 {
-	char out[128] = {0};
+	char out[128];
         FILE *fp;
-	memset(out,0,sizeof(out));
+
         fp = v_secure_popen("r","syscfg get mgmt_wan_httpsport");
         _get_shell_output(fp, out, sizeof(out));
 	if(strncmp(out,"ERROR",5) == 0)
