@@ -22,6 +22,15 @@ extern ULONG CosaDmlDhcpv6sGetType(ANSC_HANDLE hContext);
 extern ANSC_STATUS CosaDmlDhcpv6sSetType(ANSC_HANDLE hContext, ULONG type);
 extern int CosaDmlDHCPv6sTriggerRestart(BOOL OnlyTrigger);
 
+#define PATH_PROC_UPTIME           "/proc/uptime"
+#define IPV6_LEASE_TIME            "ipv6_"COSA_DML_DHCPV6_CLIENT_IFNAME"_pref_lifetime"
+#define IPV6_LEASE_START_TIME      "ipv6_"COSA_DML_DHCPV6_CLIENT_IFNAME"_start_time"
+
+enum {
+    DHCPV6_SERVER_TYPE_STATEFUL  =1,
+    DHCPV6_SERVER_TYPE_STATELESS
+};
+
 ANSC_STATUS CosaDmlLgiGwGetIpv6LanMode ( ANSC_HANDLE hContext, ULONG *pValue )
 {
     *pValue = CosaDmlDhcpv6sGetType(NULL);
@@ -285,51 +294,64 @@ static ANSC_STATUS getIPv6PreferredLifetime(char * fn, int * p_prefer, ipv6_addr
 
 ANSC_STATUS CosaDml_Gateway_GetIPv6LeaseTimeRemaining(ULONG *pValue)
 {
-    ipv6_addr_info_t * tmp_v6addr = NULL;
-    ipv6_addr_info_t * p_v6addr = NULL;
-    ipv6_addr_info_t * orig_p_v6addr = NULL;
-    int  v6addr_num = 0;
-    int i = 0;
-    char cmd[SYS_CMD_STR_LEN] = {0};
-    char dhcpv6_addr[IPV6_ADDR_STR_LEN] = {0};
-    int  prefered_lft = 0;
-    ANSC_STATUS retVal = ANSC_STATUS_FAILURE;
+    ANSC_STATUS retVal = ANSC_STATUS_SUCCESS;
+    char out[256]= "";
+    long start_time = 0, now = 0, prefered_lft = 0, tmp;
 
-    if (CosaUtilGetIpv6AddrInfo(EROUTER_IF_NAME, &tmp_v6addr, &v6addr_num) != ANSC_STATUS_SUCCESS)
+    if (pValue != NULL)
     {
-        return ANSC_STATUS_FAILURE;
-    }
+        int ipv6_mode = CosaDmlDhcpv6sGetType(NULL);
 
-    /* Get erouter0 IPv6 address. */
-    commonSyseventGet(COSA_DML_DHCPV6C_ADDR_SYSEVENT_NAME, dhcpv6_addr, sizeof(dhcpv6_addr));
-    if (tmp_v6addr != NULL)
-    {
-        /* Save for free. */
-        orig_p_v6addr = tmp_v6addr;
-        for (i=0; i<v6addr_num; i++,tmp_v6addr++)
+        /* The value of preferred life time MUST be 0 if the AddressSource is not DHCP.*/
+        if (ipv6_mode == DHCPV6_SERVER_TYPE_STATEFUL)
         {
-            if ((tmp_v6addr->scope == IPV6_ADDR_SCOPE_GLOBAL) && (strncmp(tmp_v6addr->v6addr, dhcpv6_addr, sizeof(tmp_v6addr->v6addr)) == 0))
+            if (!commonSyseventGet(IPV6_LEASE_TIME, &out, sizeof(out)))
             {
-                p_v6addr = tmp_v6addr;
-                break;
+                long leaseTime = atol(out);
+                if (leaseTime)
+                {
+                    FILE *fp = fopen(PATH_PROC_UPTIME, "r");
+                    if (fp != NULL)
+                    {
+                        fscanf(fp, "%ld, %ld", &now, &tmp);
+                        fclose(fp);
+
+                        memset(out,0,sizeof(out));
+                        if( !commonSyseventGet(IPV6_LEASE_START_TIME, &out, sizeof(out)))
+                        {
+                            start_time = atol(out);
+                            prefered_lft = leaseTime - (now - start_time);
+                        }
+                        else
+                        {
+                            CcspTraceError(("commonSyseventGet failed in %s to get %s\n",__FUNCTION__,IPV6_LEASE_START_TIME));
+                            retVal = ANSC_STATUS_FAILURE;
+                        }
+                    }
+                    else
+                    {
+                        CcspTraceError(("%s: Failed to open %s\n",__FUNCTION__,PATH_PROC_UPTIME));
+                    }
+                }
+                else
+                {
+                    /* set preferred life time to forever */
+                    prefered_lft = -1;
+                }
+            }
+            else
+            {
+                CcspTraceError(("commonSyseventGet failed in %s to get %s\n",__FUNCTION__,IPV6_LEASE_TIME));
+                retVal = ANSC_STATUS_FAILURE;
             }
         }
+        if (retVal == ANSC_STATUS_SUCCESS)
+            *pValue = prefered_lft;
     }
-
-    /* Porting from X_CISCO_COM_PreferredLifetime implementated in cosa_ip_apis.c */
-    sprintf(cmd, IPV6_SHOW_CMD, EROUTER_IF_NAME, TMP_IP_CMD_OUTPUT);
-    system(cmd);
-    retVal = getIPv6PreferredLifetime(TMP_IP_CMD_OUTPUT, &prefered_lft, p_v6addr);
-
-    /* Free memory */
-    if (orig_p_v6addr)
+    else
     {
-        free(orig_p_v6addr);
-    }
-
-    if ( (pValue != NULL) && (retVal == ANSC_STATUS_SUCCESS) )
-    {
-        *pValue = prefered_lft;
+        CcspTraceError(("%s: Invalid memory %d\n",__FUNCTION__,__LINE__));
+        retVal = ANSC_STATUS_FAILURE;
     }
 
     return retVal;
