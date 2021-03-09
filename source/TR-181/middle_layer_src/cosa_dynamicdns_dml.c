@@ -5,7 +5,8 @@
 #include "cosa_dynamicdns_internal.h"
 #include "cosa_dynamicdns_apis.h"
           /* MACROS */
-#define  MAX_CLIENT_COUNT 1
+/* Define MaxInstance in XML file and it get checked in data module before this function is called. */
+//#define  MAX_CLIENT_COUNT 1
 #define  MAX_HOST_COUNT 1
 #define  HOST_DISABLED                    5
 #define  CLIENT_DISABLED                  6
@@ -216,9 +217,11 @@ DDNSClient_AddEntry
     PCOSA_CONTEXT_LINK_OBJECT  pLinkObj  = NULL;
     COSA_DML_DDNS_CLIENT  *pClientEntry  = NULL;
 
+/* Define MaxInstance in XML file and it get checked in data module before this function is called.
     if(MAX_CLIENT_COUNT == AnscSListQueryDepth(&pDynamicDns->DDNSClientList)) {
         return NULL;
     }
+*/
     pLinkObj = (PCOSA_CONTEXT_LINK_OBJECT)AnscAllocateMemory(sizeof(COSA_CONTEXT_LINK_OBJECT));
     if (!pLinkObj)
     {
