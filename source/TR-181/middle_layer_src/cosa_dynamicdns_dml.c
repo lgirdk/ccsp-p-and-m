@@ -25,7 +25,6 @@
 #include "safec_lib_common.h"
 
           /* MACROS */
-#define  MAX_CLIENT_COUNT 1
 #define  MAX_HOST_COUNT 1
 #define  HOST_DISABLED                    5
 #define  CLIENT_DISABLED                  6
@@ -207,9 +206,6 @@ DDNSClient_AddEntry
     COSA_DML_DDNS_CLIENT  *pClientEntry  = NULL;
     errno_t               rc             = -1;
 
-    if(MAX_CLIENT_COUNT == AnscSListQueryDepth(&pDynamicDns->DDNSClientList)) {
-        return NULL;
-    }
     pLinkObj = (PCOSA_CONTEXT_LINK_OBJECT)AnscAllocateMemory(sizeof(COSA_CONTEXT_LINK_OBJECT));
     if (!pLinkObj)
     {
