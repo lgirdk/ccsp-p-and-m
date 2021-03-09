@@ -9921,7 +9921,7 @@
 
                           </description>
 
-                          <type>string: Inbound(1),Outbound(2)</type>
+                          <type>string: incoming(1),outgoing(2)</type>
 
                           <syntax>uint32/mapped</syntax>
 
