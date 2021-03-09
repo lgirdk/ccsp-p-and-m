@@ -14240,6 +14240,7 @@
         <object>
           <name>Client</name>
           <objectType>writableTable</objectType>
+          <maxInstance>1</maxInstance>
           <functions>
             <func_GetEntryCount>DDNSClient_GetEntryCount</func_GetEntryCount>
             <func_GetEntry>DDNSClient_GetEntry</func_GetEntry>
