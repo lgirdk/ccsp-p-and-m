@@ -909,6 +909,7 @@ ANSC_STATUS CosaDmlLAN_Allowed_Subnet_AddEntry(COSA_DML_LAN_Allowed_Subnet *pEnt
 ANSC_STATUS CosaDmlLAN_Allowed_Subnet_DelEntry(ULONG ins);
 ANSC_STATUS CosaDmlLAN_Allowed_Subnet_GetConf(ULONG ins, COSA_DML_LAN_Allowed_Subnet *pEntry);
 ANSC_STATUS CosaDmlLAN_Allowed_Subnet_SetConf(ULONG ins, COSA_DML_LAN_Allowed_Subnet *pEntry);
+ANSC_STATUS CosaDmlLAN_Validate_ModifyLanIP(COSA_DML_LAN_Allowed_Subnet *pEntry, ULONG ins);
 
 int CosaDmlClearLanAllowedSubnetTable();
 
