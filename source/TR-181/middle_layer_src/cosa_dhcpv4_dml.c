@@ -10888,6 +10888,7 @@ LanAllowedSubnetTable_DelEntry
         CosaDmlLAN_Allowed_Subnet_DelEntry(pLinkObj->InstanceNumber);
     }
 
+    CosaDmlLAN_Validate_ModifyLanIP(pLanAllowedSubnet, pLinkObj->InstanceNumber);
     AnscFreeMemory(pLanAllowedSubnet);
     AnscFreeMemory(pLinkObj);
     return ANSC_STATUS_SUCCESS;
