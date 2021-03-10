@@ -4602,6 +4602,50 @@ void *ClearLanAllowedSubnetTable(void *arg)
    pthread_exit(NULL);
 }
 
+ANSC_STATUS
+CosaDmlLAN_Validate_ModifyLanIP(COSA_DML_LAN_Allowed_Subnet *pLanAllowedSubnet, ULONG ins)
+{
+    char buff[17] = {};
+    char tmpbuff[17] = {};
+    int temp[4];
+    int iMatchFound = 0;
+    unsigned int subnetFirstMask = 0, subnetSecondMask = 0, subnetThirdMask = 0, subnetFourthMask = 0;
+
+    syscfg_get(NULL, "lan_ipaddr", buff, sizeof(buff));
+    if (sscanf(buff,"%d.%d.%d.%d",&temp[0],&temp[1],&temp[2],&temp[3]) == 4)
+    {
+        CosaDmlLAN_Allowed_Subnet_GetEntryByIndex(ins, pLanAllowedSubnet);
+        if (sscanf(pLanAllowedSubnet->SubnetIP, "%d.%d.%d.%d", &subnetFirstMask, &subnetSecondMask, &subnetThirdMask, &subnetFourthMask) == 4)
+        {
+            if ((subnetFirstMask == temp[0]) && (subnetSecondMask == temp[1]) && (subnetThirdMask == temp[2]))
+            {
+                iMatchFound =1;
+            }
+        }
+    }
+
+    if(iMatchFound)
+    {
+        syscfg_get(NULL, "arLanAllowedSubnet_1::SubnetIP", buff, sizeof(buff));
+        PSM_Set_Record_Value2(bus_handle, g_Subsystem, "dmsb.l3net.4.V4Addr", ccsp_string, buff);
+        syscfg_set(NULL, "lan_ipaddr", buff);
+
+        sscanf(buff,"%d.%d.%d.%d",&temp[0],&temp[1],&temp[2],&temp[3]);
+         _ansc_sprintf(tmpbuff, "%d.%d.%d.%s",temp[0], temp[1], temp[2], "2");
+        syscfg_set(NULL, "dhcp_start", tmpbuff);
+
+         _ansc_sprintf(tmpbuff, "%d.%d.%d.%s",temp[0], temp[1], temp[2], "253");
+        syscfg_set(NULL, "dhcp_end", tmpbuff);
+
+        syscfg_get(NULL, "arLanAllowedSubnet_1::SubnetMask", buff, sizeof(buff));
+        PSM_Set_Record_Value2(bus_handle, g_Subsystem, "dmsb.l3net.4.V4SubnetMask", ccsp_string, buff);
+        syscfg_set(NULL, "lan_netmask", buff);
+
+        syscfg_commit();
+    }
+    return ANSC_STATUS_SUCCESS;
+}
+
 #endif
 
 
