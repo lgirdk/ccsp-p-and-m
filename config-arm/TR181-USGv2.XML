@@ -9903,7 +9903,7 @@
 
                           </description>
 
-                          <type>string: TCP(1),UDP(2),TCP_UDP(3),All(4)</type>
+                          <type>string: TCP(1),UDP(2),TCP_UDP(3),ALL(4)</type>
 
                           <syntax>uint32/mapped</syntax>
 
