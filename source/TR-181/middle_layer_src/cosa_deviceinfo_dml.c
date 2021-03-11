@@ -119,8 +119,6 @@ void set_firmware_download_start_time(char *start_time);
 char* get_firmware_download_start_time();
 void *handleBleRestart(void *arg);
 
-#define GENERATEOUIFROMMAC "X_LGI_COM_OuiFromMAC"
-
 #define MAX_ALLOWABLE_STRING_LEN  256
 
 #define MAX_T2_VER_LEN 16
@@ -726,24 +724,7 @@ DeviceInfo_GetParamStringValue
     if( AnscEqualString(ParamName, "ManufacturerOUI", TRUE))
     {
         /* collect value */
-        char buf[6] = {0};
-        char baseMacAddress[18] = {0};
-        unsigned char macByte[3] = {0};
-        syscfg_init();
-        syscfg_get(NULL, GENERATEOUIFROMMAC, buf, sizeof(buf));
-        if(strcmp(buf,"true") == 0)
-        {
-           /* get the CM MAC */
-           ULONG len = sizeof(baseMacAddress);
-           CosaDmlDiGetBaseMacAddress(NULL, baseMacAddress, &len);
-           sscanf(baseMacAddress, "%02X:%02X:%02X", &macByte[0], &macByte[1], &macByte[2]);
-           sprintf(pValue, "%02X%02X%02X", macByte[0], macByte[1], macByte[2]);
-           *pulSize = AnscSizeOfString(pValue);
-        }
-        else
-        {
-           CosaDmlDiGetManufacturerOUI(NULL,pValue,pulSize);
-        }
+        CosaDmlDiGetManufacturerOUI(NULL,pValue,pulSize);
         return 0;
     }
 
