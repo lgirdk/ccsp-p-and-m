@@ -135,8 +135,6 @@ CosaDmlGiSetCustomerId
     ULONG                       ulValue
 )
 {
-    char buf[12];
-    char cust_file[45];
     ULONG id = 0;
 
     CosaDmlGiGetCustomerId(NULL, &id);
@@ -144,39 +142,27 @@ CosaDmlGiSetCustomerId
     /* compare the new value with the current customer ID */
     if (id != ulValue)
     {
-        snprintf(cust_file, sizeof(cust_file), CUSTOMER_SYSCFG_FILE, (int) ulValue);
-
-        /* Load customer specific syscfg file to memory */
-        if (syscfg_load_from_file(cust_file) == 0)
+        /*
+            This logic is only for testing multiple customer indexes.
+            In the field customer index won't change.
+            Customer specific file will be loaded in syscfg db from
+            syscfg_create on the next boot.
+        */
+        FILE *fpt = fopen("/nvram/bootconfig_custindex", "w");
+        if(fpt)
         {
-            /* Set customer-index-changed as true in syscfg. This will be used to
-            remove bbhm files from nvram on next boot. */
-            if (syscfg_set(NULL, "customer-index-changed", "true") == 0)
-            {
-                /* If all previous steps are successful then change the Customer_Index in syscfg
-                and reboot the box */
-                snprintf (buf, sizeof(buf), "%d", (int) ulValue);
-                if (syscfg_set (NULL, "Customer_Index", buf) == 0){
-                    if (syscfg_commit() == 0){
-                        CosaDmlDcSetRebootDevice(NULL, "Device");
-                    }
-                    else{
-                        CcspTraceError(("syscfg_commit Customer_Index failed\n"));
-                    }
-                }
-                else{
-                    CcspTraceError(("syscfg_set Customer_Index failed\n"));
-                }
-            }
-            else{
-                CcspTraceError(("syscfg_set customer-index-changed failed\n"));
-            }
+            fprintf(fpt, "%d\n", (int)ulValue);
+            fclose(fpt);
+            CcspTraceInfo(("Customer id Changed from %d to %d\n", id, (int)ulValue));
+            CosaDmlDcSetRebootDevice(NULL, "Device");
         }
-        else{
-            CcspTraceError(("Unable to load customer specific file - %s\n", cust_file));
+        else
+        {
+            CcspTraceError(("Not able to open file in %s\n", __func__));
         }
     }
-    else{
+    else
+    {
         CcspTraceInfo(("Customer id didn't change. Customer_Index - %d\n",(int)ulValue));
     }
 
