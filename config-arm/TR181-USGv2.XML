@@ -9921,7 +9921,7 @@
 
                           </description>
 
-                          <type>string: incoming(1),outgoing(2)</type>
+                          <type>string: Inbound(1),Outbound(2)</type>
 
                           <syntax>uint32/mapped</syntax>
 
@@ -10261,7 +10261,7 @@
 
                           </description>
 
-                          <type>string: TCP(1),UDP(2),BOTH(3),All(4),ICMPv6(5),ESP(6),AH(7),GRE(8),IPv6Encap(9),IPv4Encap(10),IPv6Fragment(11),L2TP(12)</type>
+                          <type>string: TCP(1),UDP(2),TCP_UDP(3),ALL(4),ICMPv6(5),ESP(6),AH(7),GRE(8),IPv6Encap(9),IPv4Encap(10),IPv6Fragment(11),L2TP(12)</type>
 
                           <syntax>uint32/mapped</syntax>
 
@@ -10296,7 +10296,7 @@
                             Whether IP filtering rule is applied to inbound or outbound packets
 
                           </description>
-                          <type>string: incoming(1),outgoing(2)</type>
+                          <type>string: Inbound(1),Outbound(2)</type>
 
                           <syntax>uint32/mapped</syntax>
 
