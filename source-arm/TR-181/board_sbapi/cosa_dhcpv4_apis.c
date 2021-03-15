@@ -3954,7 +3954,7 @@ CosaDmlDhcpsARPing
     FILE *fp = NULL;
 
     fp = v_secure_popen("r", "arping -I %s -c 2 -f -w 1 %s", LAN_L3_IFNAME, _ansc_inet_ntoa(*((struct in_addr*)&(pDhcpsClient->IPAddress))) );
-    if ( _get_shell_output2(fp, "Received 0 reply"))
+    if ( _get_shell_output2(fp, "Received 0")) //MNG return "Received 0 response(s)". MV2 return "Received 0 reply". So Making it generic.
     {
         return ANSC_STATUS_FAILURE;
     }
