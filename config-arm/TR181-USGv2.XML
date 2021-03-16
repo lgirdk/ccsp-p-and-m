@@ -10343,7 +10343,7 @@
 
           <name>PortMapping</name>
 
-          <objectType>writableTable</objectType>
+          <objectType>dynWritableTable</objectType>
 
           <maxInstance>128</maxInstance>
 
@@ -10452,6 +10452,8 @@
             <type>unsignedInt[0:65535]</type>
 
             <syntax>uint32</syntax>
+
+            <notify>off</notify>
 
             <writable>true</writable>
 
