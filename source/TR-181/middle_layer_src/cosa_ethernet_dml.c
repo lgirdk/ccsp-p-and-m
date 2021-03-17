@@ -1124,6 +1124,19 @@ Interface_Validate
 
             return FALSE;
         }
+
+        if(pEthernetPortFull->Cfg.MaxBitRate != 10 && pEthernetPortFull->Cfg.MaxBitRate != 100 && pEthernetPortFull->Cfg.MaxBitRate != 1000 && pEthernetPortFull->Cfg.MaxBitRate != -1)
+        {
+            fprintf(stderr,"\n %s %d MaxBitRate:%d duplexMode:%d return FALSE" ,__FUNCTION__,__LINE__,pEthernetPortFull->Cfg.MaxBitRate,pEthernetPortFull->Cfg.DuplexMode);
+            return FALSE;
+        }
+
+        if(pEthernetPortFull->Cfg.MaxBitRate == 1000 && pEthernetPortFull->Cfg.DuplexMode ==COSA_DML_ETH_DUPLEX_Half)
+        {
+
+            fprintf(stderr,"\n %s %d MaxBitRate:%d duplexMode:%d return FALSE" ,__FUNCTION__,__LINE__,pEthernetPortFull->Cfg.MaxBitRate,pEthernetPortFull->Cfg.DuplexMode);
+            return FALSE;
+        }
     }
 
     return TRUE;
