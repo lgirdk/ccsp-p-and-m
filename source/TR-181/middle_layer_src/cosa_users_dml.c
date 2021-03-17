@@ -71,6 +71,8 @@
 #include "cosa_users_apis.h"
 #include "plugin_main_apis.h"
 #include "cosa_users_internal.h"
+#include "cosa_drg_common.h"
+
 #include "dml_tr181_custom_cfg.h"
 #include <syscfg/syscfg.h>
 
@@ -159,6 +161,13 @@ static void CsrPasswordResetThread(PCOSA_DML_USER  pEntry)
             pwd_set_time = 0;
             /* Destroy/Clear WEB sessions */
             system("rm -rf /var/tmp/gui/session_*"); //FIXME: Check and Remove the right  session
+            if (syscfg_set(NULL, "mgmt_wan_access", "0") != 0)
+            {
+                CcspTraceInfo(("Failed disable  WAN access syscfg param"));
+            }
+            syscfg_commit();
+            g_SetParamValueBool("Device.UserInterface.RemoteAccess.Enable",false);
+            commonSyseventSet("firewall-restart", "");
             break;
         }
 
@@ -1336,13 +1345,14 @@ User_SetParamStringValue
                 }
                 else
                 {
-                    // If CSR sets new password, destroy the existing session and reset timestamp.
-                    // else, just restart timestamp to extend the timeout.
-                    if( CsrPwResetThreadRunning && (strcmp(pString, pUser->HashedPassword) != 0) )
+                    if (syscfg_set(NULL, "mgmt_wan_access", "1") != 0)
                     {
-                        /* Destroy/Clear WEB sessions */
-                        system("rm -rf /var/tmp/gui/session_*"); 
+                        CcspTraceInfo(("Failed to enable WAN access syscfg param"));
+                        return FALSE;
                     }
+                    syscfg_commit();
+                    system("rm -rf /var/tmp/gui/session_*");
+                    commonSyseventSet("firewall-restart", "");
                     time(&pwd_set_time);
                     if( !CsrPwResetThreadRunning )
                     {
