@@ -71,6 +71,8 @@
 #include "cosa_users_apis.h"
 #include "plugin_main_apis.h"
 #include "cosa_users_internal.h"
+#include "cosa_drg_common.h"
+
 #include "dml_tr181_custom_cfg.h"
 #include <syscfg/syscfg.h>
 
@@ -147,10 +149,16 @@ static void CsrPasswordResetThread(PCOSA_DML_USER  pEntry)
         if ((pwd_set_time == 0) || ((now_time - pwd_set_time) > pwd_timeout))
         {
             strcpy (pEntry->HashedPassword, "");
-            syscfg_set_commit (NULL, "user_password_1", "");
+            syscfg_set (NULL, "user_password_1", "");
             pwd_set_time = 0;
             /* Destroy/Clear WEB sessions */
             system("rm -rf /var/tmp/gui/session_*"); //FIXME: Check and Remove the right  session
+            if (syscfg_set_commit (NULL, "mgmt_wan_access", "0") != 0)
+            {
+                CcspTraceInfo(("Failed disable  WAN access syscfg param"));
+            }
+            g_SetParamValueBool("Device.UserInterface.RemoteAccess.Enable",false);
+            commonSyseventSet("firewall-restart", "");
             break;
         }
 
@@ -1314,13 +1322,13 @@ User_SetParamStringValue
                 }
                 else
                 {
-                    // If CSR sets new password, destroy the existing session and reset timestamp.
-                    // else, just restart timestamp to extend the timeout.
-                    if( CsrPwResetThreadRunning && (strcmp(pString, pUser->HashedPassword) != 0) )
+                    if (syscfg_set_commit (NULL, "mgmt_wan_access", "1") != 0)
                     {
-                        /* Destroy/Clear WEB sessions */
-                        system("rm -rf /var/tmp/gui/session_*"); 
+                        CcspTraceInfo(("Failed to enable WAN access syscfg param"));
+                        return FALSE;
                     }
+                    system("rm -rf /var/tmp/gui/session_*");
+                    commonSyseventSet("firewall-restart", "");
                     time(&pwd_set_time);
                     if( !CsrPwResetThreadRunning )
                     {
