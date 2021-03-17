@@ -55,6 +55,12 @@ CosaDmlStdRaSetCfg
         PCOSA_DML_STD_RA_CFG        pCfg
     )
 {
+#if 0
+/************************************************************************************************************
+* According to the latest update to the CSR Login requirements, we are supposed to enable the CSR UI login
+* only when the Password is set, not when the remote access is enabled. So the setting of syscfg variable
+* and firewall restart is to be done after the Device.Users.User.{i}.Password is set
+***********************************************************************************************************/
     const char* gui_session;
     gui_session = "/var/tmp/gui/";
     struct stat stats;
@@ -98,6 +104,7 @@ CosaDmlStdRaSetCfg
     system("/bin/sh /etc/start_lighttpd.sh restart");
 
     fprintf(stderr, "%s: OK !!!!\n", __FUNCTION__);
+#endif
     return ANSC_STATUS_SUCCESS;
 }
 
