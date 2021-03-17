@@ -1422,7 +1422,15 @@ int puma6_setSwitchCfg(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_CFG pcfg) {
             break;
         }
         case COSA_DML_ETH_DUPLEX_Full:
+        {
+            DuplexMode = CCSP_HAL_ETHSW_DUPLEX_Full;
+            break;
+        }
         case COSA_DML_ETH_DUPLEX_Auto: // Note: driver doesn't handle/would ignore "Auto"
+        {
+            DuplexMode = CCSP_HAL_ETHSW_DUPLEX_Auto;
+            break;
+        }
         default:
         {
             DuplexMode = CCSP_HAL_ETHSW_DUPLEX_Full;
