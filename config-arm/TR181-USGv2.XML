@@ -5840,7 +5840,7 @@
 
             <syntax>int</syntax>
 
-            <writable>false</writable>
+            <writable>true</writable>
 
           </parameter>
 
