@@ -156,12 +156,7 @@ Std_RemoteAccess_GetParamBoolValue
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "Enable") == 0)
     {
-        int status = RemoteAccess_GetHttpWanValue(pBool);
-        /* in case of error retrieving the syscfg db value */
-        if (status == -1)
-        {
-            *pBool = pMyObject->StdRaCfg.bEnabled;
-        }
+        *pBool = pMyObject->StdRaCfg.bEnabled;
         return TRUE;
     }
 
