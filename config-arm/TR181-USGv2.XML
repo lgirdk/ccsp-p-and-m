@@ -10244,6 +10244,10 @@
 
                 <func_SetParamBoolValue>V4_SetParamBoolValue</func_SetParamBoolValue>
 
+                <func_GetParamUlongValue>V4_GetParamUlongValue</func_GetParamUlongValue>
+
+                <func_SetParamUlongValue>V4_SetParamUlongValue</func_SetParamUlongValue>
+
                 <func_Validate>V4_Validate</func_Validate>
 
                 <func_Commit>V4_Commit</func_Commit>
@@ -10297,6 +10301,30 @@
                   <type>boolean</type>
 
                   <syntax>bool</syntax>
+
+                  <writable>true</writable>
+
+                </parameter>
+
+                <parameter>
+
+                  <name>ICMPFloodDetect</name>
+
+                  <type>boolean</type>
+
+                  <syntax>bool</syntax>
+
+                  <writable>true</writable>
+
+                </parameter>
+
+                <parameter>
+
+                  <name>ICMPFloodDetectRate</name>
+
+                  <type>unsignedInt</type>
+
+                  <syntax>uint32</syntax>
 
                   <writable>true</writable>
 
