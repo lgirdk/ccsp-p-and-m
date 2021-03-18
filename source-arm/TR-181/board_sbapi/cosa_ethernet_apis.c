@@ -1328,12 +1328,12 @@ int puma6_getSwitchCfg(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_CFG pcfg)
             }
             case CCSP_HAL_ETHSW_LINK_Auto:
             {
-                pcfg->MaxBitRate = 0;
+                pcfg->MaxBitRate = -1;
                 break;
             }
             default:
             {
-                pcfg->MaxBitRate = 0;
+                pcfg->MaxBitRate = -1;
                 break;
             }
         }
@@ -1406,6 +1406,11 @@ int puma6_setSwitchCfg(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_CFG pcfg) {
         {
             LinkRate = CCSP_HAL_ETHSW_LINK_10Gbps;
             break;
+        }
+        case -1:
+        {
+           LinkRate = CCSP_HAL_ETHSW_LINK_Auto;
+           break;
         }
         default:
         {
