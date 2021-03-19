@@ -2314,7 +2314,32 @@ static int getCurrentTemperature (int index)
        Read temperature using platform specific code.
        Fixme: there should be a HAL API for this!
     */
+#ifdef _PUMA6_ARM_
+    {
+        FILE *fp;
+        char *cmd;
+        char out[128];
+
+        cmd = "rpcclient2 'thermal -r'";
+
+        fp = popen(cmd, "r");
+        if (fp != NULL)
+        {
+            while (fgets(out, sizeof(out), fp) != NULL)
+            {
+                if (memcmp (out, "Current CPU temperature is ", 27) == 0)
+                {
+                    sscanf (out + 27, "%d", &cpu_temp);
+                    break;
+                }
+            }
+
+            pclose (fp);
+        }
+    }
+#else
     cpu_temp = 30;
+#endif
 
     if (cpu_temp == ABSOLUTE_ZERO_TEMPERATURE)
     {
@@ -2554,7 +2579,11 @@ ANSC_HANDLE CosaTemperatureStatusCreate (void)
         sprintf (pTempSensor->Alias, "cpe-TemperatureSensor_%d", index);
 
         if (index == 1)
+#ifdef _PUMA6_ARM_
+            strcpy(pTempSensor->Name, "ATOM_CPU");
+#else
             strcpy(pTempSensor->Name, "CPU");
+#endif
         else
             sprintf (pTempSensor->Name, "TEMPERATURE_SENSOR_%d", index);            
 
