@@ -328,6 +328,15 @@ X_CISCO_COM_DeviceControl_GetParamBoolValue
             return FALSE;
         return TRUE;
     }
+    
+    /* This parameter is used to enable SSH access in SH releases and only accessible via CM interface.
+     * The access remains active for a 5 minute period during which the configured username and password remains valid (Default=FALSE)
+     * To be used with Device.X_LGI-COM_DeviceControl.SSH.Username and Device.X_LGI-COM_DeviceControl.SSH.Password
+     */
+    if (strcmp(ParamName, "Enable") == 0)
+    {      
+        return TRUE;
+    }
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
 }
@@ -777,6 +786,21 @@ X_CISCO_COM_DeviceControl_GetParamStringValue
         return CosaDmlDcGetParConAnswer(NULL, pValue);
     }
 
+    /*This parameter is used to configure password for the SSH session.Need to be explicitly configured for a session and there must be no default password.*/
+    if (strcmp(ParamName, "Username") == 0)
+    {
+      AnscCopyString(pValue,"");
+      fprintf(stderr,"\n %s %d ParamName:%s pValue:%s  ***TODO*** \n",__func__,__LINE__,ParamName,pValue);
+      return 0;
+    }
+    /*This parameter is used to configure username for the SSH session.Need to be explicitly configured for a session and there must be no default username.*/
+    if (strcmp(ParamName, "Password") == 0)
+    { 
+      AnscCopyString(pValue,"");
+      fprintf(stderr,"\n %s %d ParamName:%s pValue:%s ***TODO*** \n",__func__,__LINE__,ParamName,pValue);
+      return 0;
+    }
+
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return -1;
 }
@@ -1032,6 +1056,16 @@ X_CISCO_COM_DeviceControl_SetParamBoolValue
         pMyObject->bXHSPortEnabled = bValue;
         pMyObject->bXHSPortChanged = 1;
         return TRUE;
+    }    
+    
+    /* This parameter is used to enable SSH access in SH releases and only accessible via CM interface.
+     * The access remains active for a 5 minute period during which the configured username and password remains valid (Default=FALSE)
+     * To be used with Device.X_LGI-COM_DeviceControl.SSH.Username and Device.X_LGI-COM_DeviceControl.SSH.Password
+     */    
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+      fprintf(stderr,"\n %s %d  *** TODO ***",__func__,__LINE__);
+      return TRUE;
     }
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
@@ -1587,6 +1621,26 @@ X_CISCO_COM_DeviceControl_SetParamStringValue
 
         return TRUE;
     }
+
+    rc = strcmp_s("Username", strlen("Username"), ParamName, &ind);
+    ERR_CHK(rc);
+    if((rc == EOK) && (!ind))
+    {
+        fprintf(stderr,"\n %s %d ParamName:%s ***TODO***\n",__func__,__LINE__,ParamName);
+        //TODO
+        /*This parameter is used to configure username for the SSH session. Need to be explicitly configured for a session and there must be no default username.*/
+        return TRUE;
+     }
+     
+     rc = strcmp_s("Password", strlen("Password"), ParamName, &ind);
+     ERR_CHK(rc);
+     if((rc == EOK) && (!ind))
+     {
+        fprintf(stderr,"\n %s %d ParamName:%s  ***TODO***\n",__func__,__LINE__,ParamName);
+        //TODO
+        /* This parameter is used to configure password for the SSH session.Need to be explicitly configured for a session and there must be no default password.*/
+        return TRUE;
+     }
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
