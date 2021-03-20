@@ -16064,8 +16064,43 @@
           <writable>false</writable>
         </parameter>
       </parameters>
-    </object>
-    
+      <objects>
+      <object>
+      <name>SSH</name>
+      <objectType>object</objectType>
+       <functions>
+        <func_GetParamBoolValue>X_CISCO_COM_DeviceControl_GetParamBoolValue</func_GetParamBoolValue>
+        <func_SetParamBoolValue>X_CISCO_COM_DeviceControl_SetParamBoolValue</func_SetParamBoolValue>
+        <func_GetParamStringValue>X_CISCO_COM_DeviceControl_GetParamStringValue</func_GetParamStringValue>
+        <func_SetParamStringValue>X_CISCO_COM_DeviceControl_SetParamStringValue</func_SetParamStringValue>
+        <func_Validate>X_CISCO_COM_DeviceControl_Validate</func_Validate>
+        <func_Commit>X_CISCO_COM_DeviceControl_Commit</func_Commit>
+        <func_Rollback>X_CISCO_COM_DeviceControl_Rollback</func_Rollback>
+      </functions>
+      <parameters>
+	<parameter>
+	  <name>Enable</name>
+          <type>boolean</type>
+          <syntax>bool</syntax>
+          <writable>true</writable>
+        </parameter>
+	<parameter>
+	  <name>Username</name>         
+            <type>string(16)</type>            
+            <syntax>string</syntax>            
+            <writable>true</writable>            
+          </parameter>          
+          <parameter>          
+            <name>Password</name>            
+            <type>string(16)</type>            
+            <syntax>string</syntax>            
+            <writable>true</writable>            
+          </parameter>          
+      </parameters>      
+    </object>    
+    </objects>
+     </object>
+
     <object>
       <name>X_CISCO_COM_DeviceControl</name>
       <objectType>object</objectType>
