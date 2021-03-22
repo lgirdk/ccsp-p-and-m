@@ -906,10 +906,8 @@ DDNSHostname_Rollback
     *  DDNSServer_GetEntry
     *  DDNSServer_AddEntry
     *  DDNSServer_DelEntry
-    *  DDNSServer_GetParamBoolValue
     *  DDNSServer_GetParamUlongValue
     *  DDNSServer_GetParamStringValue
-    *  DDNSServer_SetParamBoolValue
     *  DDNSServer_SetParamStringValue
     *  DDNSServer_Validate
     *  DDNSServer_Commit
@@ -1040,27 +1038,6 @@ DDNSServer_DelEntry
 }
 
 BOOL
-DDNSServer_GetParamBoolValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL*                       pBool
-    )
-{
-    PCOSA_CONTEXT_LINK_OBJECT     pLinkObj     = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
-    COSA_DML_DDNS_SERVER          *pDDNSServer = (COSA_DML_DDNS_SERVER*)pLinkObj->hContext;
-
-    CosaDmlDynamicDns_Server_GetConf(pDDNSServer->InstanceNumber,pDDNSServer);
-
-    if (AnscEqualString(ParamName, "Enable", TRUE))
-    {
-        *pBool = pDDNSServer->Enable;
-        return TRUE;
-    }
-    return FALSE;
-}
-
-BOOL
 DDNSServer_GetParamUlongValue
     (
         ANSC_HANDLE                 hInsContext,
@@ -1072,6 +1049,13 @@ DDNSServer_GetParamUlongValue
     PCOSA_CONTEXT_LINK_OBJECT    pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_DDNS_SERVER         *pServerEntry = (COSA_DML_DDNS_SERVER *)pLinkObj->hContext;
 
+    /* check the parameter name and return the corresponding value */
+    if( AnscEqualString(ParamName, "Enable", TRUE))
+    {
+        /* collect value */
+        *puLong = (pServerEntry->Enable) ? 1 : 0;
+        return TRUE;
+    }
     /* check the parameter name and return the corresponding value */
     if( AnscEqualString(ParamName, "CheckInterval", TRUE))
     {
@@ -1172,25 +1156,6 @@ DDNSServer_GetParamStringValue
 }
 
 BOOL
-DDNSServer_SetParamBoolValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL                        pBool
-    )
-{
-    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
-    COSA_DML_DDNS_SERVER          *pDDNSServer  = (COSA_DML_DDNS_SERVER*)pLinkObj->hContext;
-
-    if (AnscEqualString(ParamName, "Enable", TRUE))
-    {
-        pDDNSServer->Enable = pBool;
-        return TRUE;
-    }
-    return FALSE;
-}
-
-BOOL
 DDNSServer_SetParamStringValue
     (
         ANSC_HANDLE                 hInsContext,
@@ -1240,6 +1205,11 @@ DDNSServer_SetParamUlongValue
     PCOSA_CONTEXT_LINK_OBJECT    pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_DDNS_SERVER         *pServerEntry = (COSA_DML_DDNS_SERVER *)pLinkObj->hContext;
 
+    if( AnscEqualString(ParamName, "Enable", TRUE))
+    {
+        pServerEntry->Enable = (uValue) ? TRUE : FALSE;
+        return TRUE;
+    }
     if( AnscEqualString(ParamName, "CheckInterval", TRUE))
     {
         pServerEntry->CheckInterval = uValue;
