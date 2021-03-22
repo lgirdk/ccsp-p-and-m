@@ -1034,27 +1034,6 @@ DDNSServer_DelEntry
 }
 
 BOOL
-DDNSServer_GetParamBoolValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL*                       pBool
-    )
-{
-    PCOSA_CONTEXT_LINK_OBJECT     pLinkObj     = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
-    COSA_DML_DDNS_SERVER          *pDDNSServer = (COSA_DML_DDNS_SERVER*)pLinkObj->hContext;
-
-    CosaDmlDynamicDns_Server_GetConf(pDDNSServer->InstanceNumber,pDDNSServer);
-
-    if (strcmp(ParamName, "Enable") == 0)
-    {
-        *pBool = pDDNSServer->Enable;
-        return TRUE;
-    }
-    return FALSE;
-}
-
-BOOL
 DDNSServer_GetParamUlongValue
     (
         ANSC_HANDLE                 hInsContext,
@@ -1169,25 +1148,6 @@ DDNSServer_GetParamStringValue
         return 0;
     }
     return -1;
-}
-
-BOOL
-DDNSServer_SetParamBoolValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL                        pBool
-    )
-{
-    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
-    COSA_DML_DDNS_SERVER          *pDDNSServer  = (COSA_DML_DDNS_SERVER*)pLinkObj->hContext;
-
-    if (strcmp(ParamName, "Enable") == 0)
-    {
-        pDDNSServer->Enable = pBool;
-        return TRUE;
-    }
-    return FALSE;
 }
 
 BOOL
