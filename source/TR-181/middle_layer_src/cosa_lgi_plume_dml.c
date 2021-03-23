@@ -62,6 +62,11 @@ LgiPlume_GetParamBoolValue
     {
         return CosaDmlGetPlumeNativeAtmBsControl(NULL, pValue);
     }
+    if( AnscEqualString(ParamName, "SONLogpullEnable", TRUE))
+    {
+        return CosaDmlGetPlumeLogpullEnable(NULL, pValue);
+    }
+
     return -1;
 }
 
@@ -101,6 +106,11 @@ LgiPlume_SetParamBoolValue
     {
         pMyObject->plumeNativeAtmBsControl = value;
         pMyObject->bPlumeNativeAtmBsControlChanged = 1;
+        return TRUE;
+    }
+    if( AnscEqualString(ParamName, "SONLogpullEnable", TRUE))
+    {
+        pMyObject->plumeLogpullEnable = value;
         return TRUE;
     }
 
@@ -174,6 +184,7 @@ LgiPlume_Commit
     CosaDmlSetPlumeAdminStatus(NULL, pMyObject->plumeAdminStatus);
     CosaDmlSetPlumeOperationalStatus(NULL, pMyObject->plumeOperationalStatus);
     CosaDmlSetPlumeDFSEnable(NULL, pMyObject->plumeDFSEnable);
+    CosaDmlSetPlumeLogpullEnable(NULL, pMyObject->plumeLogpullEnable);
     if (pMyObject->bPlumeNativeAtmBsControlChanged) {
         CosaDmlSetPlumeNativeAtmBsControl(NULL, pMyObject->plumeNativeAtmBsControl);
     }
