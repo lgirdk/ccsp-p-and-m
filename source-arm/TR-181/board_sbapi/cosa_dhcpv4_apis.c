@@ -4558,25 +4558,29 @@ int CosaDmlClearLanAllowedSubnetTable()
     return err;
 }
 
+static int GetSubnetTableInsNumByIndex(int index)
+{
+    char tmpBuff[64];
+    char ins[12];
+
+    snprintf (tmpBuff, sizeof(tmpBuff), "arLanAllowedSubnet_%u::ins_num", index);
+    syscfg_get (NULL, tmpBuff, ins, sizeof(ins));
+
+    return atoi(ins);
+}
+
 void *ClearLanAllowedSubnetTable(void *arg)
 {
    int ins_num = 0;
-   int index = 0;
-   UtopiaContext ctx;
+   int index = 2;
 
    while (g_NrLanAllowedSubnet > 1)
    {
-       Utopia_GetLanAllowedSubnetInsNumByIndex(&ctx, index, &ins_num);
-       if(ins_num == 1)
-       {
-          index++;
-          continue;
-       }
+       char obj[80];
 
-       char obj[80] = {0};
-       sprintf(obj,"Device.DHCPv4.Server.Pool.1.X_LGI-COM_LanAllowedSubnetTable.%d.",ins_num);
-       CcspBaseIf_DeleteTblRow(bus_handle, CCSP_PANDM_DEST_COMP_NAME,
-           CCSP_PANDM_COMP_PATH, 0, &obj[0]);
+       ins_num = GetSubnetTableInsNumByIndex (index);
+       snprintf (obj, sizeof(obj), "Device.DHCPv4.Server.Pool.1.X_LGI-COM_LanAllowedSubnetTable.%u.", ins_num);
+       CcspBaseIf_DeleteTblRow (bus_handle, CCSP_PANDM_DEST_COMP_NAME,CCSP_PANDM_COMP_PATH, 0, obj);
    }
    pthread_exit(NULL);
 }
