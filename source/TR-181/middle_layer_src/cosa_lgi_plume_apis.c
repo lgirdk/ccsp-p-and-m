@@ -283,3 +283,35 @@ CosaDmlSetPlumeNativeAtmBsControl
     }
     return FALSE;
 }
+
+BOOL
+CosaDmlGetPlumeLogpullEnable
+    (
+        ANSC_HANDLE                 hContext,
+        BOOL                        *pValue
+    )
+{
+    char buf[8];
+
+    syscfg_get (NULL, "son_logpull_enable", buf, sizeof(buf));
+
+    *pValue = (strcmp (buf, "1") == 0);
+
+    return TRUE;
+}
+
+BOOL
+CosaDmlSetPlumeLogpullEnable
+(
+    ANSC_HANDLE                 hContext,
+    BOOL                        value
+)
+{
+    if (syscfg_set (NULL, "son_logpull_enable", value ? "1" : "0") == 0)
+    {
+        syscfg_commit();
+        return TRUE;
+    }
+
+    return FALSE;
+}
