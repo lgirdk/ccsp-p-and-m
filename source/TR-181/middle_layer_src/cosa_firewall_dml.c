@@ -1688,6 +1688,7 @@ ANSC_HANDLE FW_V6_IpFilter_AddEntry ( ANSC_HANDLE hInsContext, ULONG* pInsNumber
      /* now we have this link content */
     pLinkObj->InstanceNumber = pCosaDMFirewall->FwV6IpFilterNextInsNum;
     pFwIpFilter->InstanceNumber = pCosaDMFirewall->FwV6IpFilterNextInsNum;
+    pFwIpFilter->Enable = TRUE;
     pCosaDMFirewall->FwV6IpFilterNextInsNum++;
     if (pCosaDMFirewall->FwV6IpFilterNextInsNum == 0)
         pCosaDMFirewall->FwV6IpFilterNextInsNum = 1;
