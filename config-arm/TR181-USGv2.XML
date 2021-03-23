@@ -806,6 +806,13 @@
                 <type>boolean</type>
                 <syntax>bool</syntax>
                 <writable>true</writable>
+	    </parameter>
+            <parameter>
+                <name>SONLogpullEnable</name>
+                <description>Enable/Disable PLUME Logpull functionality</description>
+                <type>boolean</type>
+                <syntax>bool</syntax>
+                <writable>true</writable>
             </parameter>
             <parameter>
                 <name>NativeAtmBsControl</name>
