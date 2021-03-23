@@ -39,6 +39,7 @@ _COSA_DATAMODEL_LGI_PLUME_CLASS_CONTENT
     BOOL bNeedPlumeServiceRestart;
     BOOL bPlumeUrlChanged;
     BOOL bPlumeNativeAtmBsControlChanged;
+    BOOL plumeLogpullEnable;
 }
 COSA_DATAMODEL_LGI_PLUME, *PCOSA_DATAMODEL_LGI_PLUME;
 
