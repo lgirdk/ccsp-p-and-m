@@ -88,4 +88,16 @@ CosaDmlSetPlumeNativeAtmBsControl
     ANSC_HANDLE                 hContext,
     BOOL                        value
 );
+BOOL
+CosaDmlGetPlumeLogpullEnable
+(
+    ANSC_HANDLE                 hContext,
+    BOOL                        *pValue
+);
+BOOL
+CosaDmlSetPlumeLogpullEnable
+(
+    ANSC_HANDLE                 hContext,
+    BOOL                        value
+);
 #endif
