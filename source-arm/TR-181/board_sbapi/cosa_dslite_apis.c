@@ -18,6 +18,7 @@
 #include <utapi.h>
 #include "cosa_dslite_apis.h"
 #include <utapi/utapi_dslite.h>
+#include "cosa_x_cisco_com_devicecontrol_internal.h"
 
 ANSC_STATUS
 CosaDmlDsliteInit
@@ -68,6 +69,17 @@ CosaDmlSetDsliteEnable
     int rc = -1;
     UtopiaContext ctx;
     boolean_t read_dslite_enable;
+
+    if (bEnabled == TRUE)
+    {
+        ULONG deviceMode;
+        if (CosaDmlDcGetDeviceMode(NULL, &deviceMode) == ANSC_STATUS_SUCCESS) {
+            if (deviceMode != COSA_DML_DEVICE_MODE_Ipv6) {
+                CcspTraceWarning(("Cannot set DSLite, the device mode is ipv4, dualstack or bridge \n" ));
+                return ANSC_STATUS_FAILURE;
+            }
+        }
+    }
 
     if(!Utopia_Init(&ctx))
         return ANSC_STATUS_FAILURE;
