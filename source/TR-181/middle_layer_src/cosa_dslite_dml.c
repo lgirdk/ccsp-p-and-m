@@ -20,6 +20,7 @@
 #include "plugin_main_apis.h"
 #include "cosa_dslite_internal.h"
 #include "safec_lib_common.h"
+#include "cosa_x_cisco_com_devicecontrol_internal.h"
 #include <syscfg/syscfg.h>
 
 static const char *UPDATE_RESOLV_CMD = "/bin/sh /etc/utopia/service.d/set_resolv_conf.sh &";
@@ -595,6 +596,15 @@ InterfaceSetting4_SetParamBoolValue
     UNREFERENCED_PARAMETER(bValue);
     PCOSA_CONTEXT_LINK_OBJECT       pCxtLink          = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     PCOSA_DML_DSLITE                pDsliteTunnel     = (PCOSA_DML_DSLITE)pCxtLink->hContext;
+
+    ULONG   deviceMode;
+
+    if (CosaDmlDcGetDeviceMode(NULL, &deviceMode) == ANSC_STATUS_SUCCESS) {
+        if((deviceMode == COSA_DML_DEVICE_MODE_Ipv4 ) || (deviceMode == COSA_DML_DEVICE_MODE_Dualstack )) {
+            CcspTraceWarning(("Cannot set DSLite.InterfaceSetting, the device mode is ipv4 or dualstack \n" ));
+            return ANSC_STATUS_FAILURE;
+       }
+    }
 
     /* check the parameter name and set the corresponding value */
     if (strcmp(ParamName, "Enable") == 0)
