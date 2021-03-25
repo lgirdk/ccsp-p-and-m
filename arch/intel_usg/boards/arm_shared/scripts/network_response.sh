@@ -196,7 +196,7 @@ rfCpInterface()
 }
 
 echo_t "Network Response: Device:$BOX_TYPE, TRIGGER_STATE:$TRIGGER_STATE"
-if [ "$BOX_TYPE" = "XB6" ]
+if [ "$BOX_TYPE" = "XB6" ] || [ "$BOX_TYPE" = "MV2PLUS" ]
 then
    echo_t "Network Response: Invoke rfCpInterface function"
    rfCpInterface
@@ -393,7 +393,7 @@ then
 			echo 204 > $RESPONSE
 			echo_t "Network Response: Got 204. Move on.."
 
-			#if [ "$BOX_TYPE" = "XB6" ]; then
+			#if [ "$BOX_TYPE" = "XB6" ] || [ "$BOX_TYPE" = "MV2PLUS" ]; then
 			#	white=0
 			#	solid=0
 			#	/usr/bin/SetLED $white $solid		#Set LED to Solid White
@@ -452,7 +452,7 @@ then
 		else
 				echo_t "Network Response: Didnt recieve success response..should retry.."
 
-    			if [ "$BOX_TYPE" = "XB6" ]; then
+    			if [ "$BOX_TYPE" = "XB6" ] || [ "$BOX_TYPE" = "MV2PLUS" ]; then
         			white=0
         			blink=1
 					interval=1
@@ -500,7 +500,7 @@ else
 	syscfg set unit_activated 1
 	syscfg commit
 
-    if [ "$BOX_TYPE" = "XB6" ]; then
+    if [ "$BOX_TYPE" = "XB6" ] || [ "$BOX_TYPE" = "MV2PLUS" ]; then
         white=0
         solid=0
         /usr/bin/SetLED $white $solid       #Set LED to Solid White
