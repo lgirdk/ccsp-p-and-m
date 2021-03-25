@@ -54,7 +54,7 @@
 #endif
 
 // Original Code Assumed Four Physical Ethernet Ports. Set to that for backwards compatibility. 
-#if !(defined (ETH_8_PORTS) || defined (ETH_6_PORTS) || defined (ETH_4_PORTS) || defined (ETH_2_PORTS) )
+#if !(defined (ETH_8_PORTS) || defined (ETH_6_PORTS) || defined (ETH_4_PORTS) || defined (ETH_3_PORTS) ) || defined (ETH_2_PORTS)
     #ifdef DO_WARNINGS
         #warning "Number of Ethernet Poarts NOT DEFINED. Setting to 4 Ports"
     #endif /* DO_WARNINGS */
