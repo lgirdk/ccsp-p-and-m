@@ -5020,21 +5020,21 @@ Pool1_SetParamStringValue
     if((!ind) && (rc == EOK))
     {
        /* save update to backup */
-#if defined (MULTILAN_FEATURE) 
+/*#if defined (MULTILAN_FEATURE)
        rc = sprintf_s(pPool->Cfg.Interface,sizeof(pPool->Cfg.Interface), "%s.", pString);
        if(rc < EOK)
        {
           ERR_CHK(rc);
           return FALSE;
        }
-#else
+#else*/
        rc = STRCPY_S_NOCLOBBER(pPool->Cfg.Interface,sizeof(pPool->Cfg.Interface), pString);
        if(rc != EOK)
        {
           ERR_CHK(rc);
           return FALSE;
        }
-#endif
+//#endif
        return TRUE;
     }
 
