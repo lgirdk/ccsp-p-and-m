@@ -2680,6 +2680,11 @@ Link_SetParamStringValue
             {
                 pEntry->Cfg.LinkInstNum = 0;
             }
+            else if ( (pEntry->Cfg.LinkType  == COSA_DML_LINK_TYPE_Bridge) && strstr(pString,"Port.1"))
+            {
+                /* Special processing for Bridge type LowerLayers */
+                pEntry->Cfg.LinkInstNum = (ULONG)AnscString2Int(&pString[ulIndex-7]);
+            }
             else
             {
                 pEntry->Cfg.LinkInstNum = (ULONG)AnscString2Int(&pString[ulIndex]);
