@@ -6373,12 +6373,7 @@ Pool_SetParamIntValue
 	    Dhcpv4_Lan_MutexUnLock();
             return FALSE;
 	}
-        if((iValue%WEEKS==0)  ||
-            (iValue%DAYS==0)  ||
-            (iValue%HOURS==0) || 
-            (iValue%MIN==0)   ||
-            (iValue<=MAXSECS) ||
-            (iValue==-1)){
+        if(((iValue>=MINSECS) && (iValue<=WEEKS)) || (iValue==-1)) {
                 /* save update to backup */
                 pPool->Cfg.LeaseTime  = iValue;
                 Dhcpv4_Lan_MutexUnLock();
