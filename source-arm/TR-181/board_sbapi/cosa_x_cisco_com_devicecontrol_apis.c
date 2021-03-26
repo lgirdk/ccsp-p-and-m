@@ -3951,9 +3951,9 @@ void* bridge_mode_wifi_notifier_thread(void* arg) {
  
 // Pseudo bridge
  parameterValStruct_t val2[] = { 
- {"Device.WiFi.SSID.1.Enable", acSetSSIDString, ccsp_boolean}, 
- {"Device.WiFi.SSID.2.Enable", acSetSSIDString, ccsp_boolean},
- {"Device.WiFi.SSID.17.Enable", acSetSSIDString, ccsp_boolean}};
+ {"Device.WiFi.Radio.1.Enable", acSetSSIDString, ccsp_boolean}, 
+ {"Device.WiFi.Radio.2.Enable", acSetSSIDString, ccsp_boolean},
+ {"Device.WiFi.Radio.17.Enable", acSetSSIDString, ccsp_boolean}};
 
 parameterValStruct_t valCommit1[] = {
  {"Device.WiFi.Radio.1.X_CISCO_COM_ApplySetting", "true", ccsp_boolean}, 
