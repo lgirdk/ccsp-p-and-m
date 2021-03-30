@@ -23727,6 +23727,117 @@ SelfHeal_SetParamUlongValue
     return TRUE;
 }
 
+/***********************************************************************
+
+ APIs for Object:
+
+    LANConfigSecurity.
+
+    *  LANCfgSec_GetParamStringValue
+    *  LANCfgSec_SetParamStringValue
+
+***********************************************************************/
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ULONG
+        LANCfgSec_GetParamStringValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                char*                       pValue,
+                ULONG*                      pUlSize
+            );
+
+    description:
+
+        This function is called to retrieve string parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                char*                       pValue,
+                The string value buffer;
+
+                ULONG*                      pUlSize
+                The buffer of length of string value;
+                Usually size of 1023 will be used.
+                If it's not big enough, put required size here and return 1;
+
+    return:     0 if succeeded;
+                1 if short of buffer size; (*pUlSize = required size)
+                -1 if not supported.
+
+**********************************************************************/
+ULONG
+LANCfgSec_GetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pValue,
+        ULONG*                      pUlSize
+    )
+{
+    if (strcmp(ParamName, "ConfigPassword") == 0)
+    {
+        AnscCopyString(pValue, "");
+        return 0;
+    }
+    return -1;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        LANCfgSec_SetParamStringValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                char*                       pValue,
+            );
+
+    description:
+
+        This function is called to retrieve string parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                char*                       pValue,
+                The string value buffer;
+
+    return:     TRUE if succeeded;
+
+**********************************************************************/
+BOOL
+LANCfgSec_SetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pValue
+    )
+{
+    if (strcmp(ParamName, "ConfigPassword") == 0)
+    {
+        /*TODO: implementation if required*/
+        return TRUE;
+    }
+    return FALSE;
+}
+
 #if defined(FEATURE_RDKB_NFC_MANAGER)
 //NFC RFC :: NFC Feature should enable.
 
