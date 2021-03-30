@@ -71,8 +71,17 @@
 
     DNS.
 
+    *  DNS_GetParamStringValue
 
 ***********************************************************************/
+ULONG
+DNS_GetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pValue,
+        ULONG*                      pUlSize
+    );
 
 /***********************************************************************
 
