@@ -2310,6 +2310,32 @@ LnFUseXPKI_SetParamBoolValue
         BOOL                        bValue
     );
 
+/***********************************************************************
+
+ APIs for Object:
+
+    Device.LANConfigSecurity.ConfigPassword
+
+    *  LANCfgSec_GetParamStringValue
+    *  LANCfgSec_SetParamStringValue
+***********************************************************************/
+ULONG
+LANCfgSec_GetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pValue,
+        ULONG*                      pUlSize
+    );
+
+BOOL
+LANCfgSec_SetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pValue
+    );
+
 #if defined(FEATURE_MAPT) || defined(FEATURE_SUPPORT_MAPT_NAT46)
 /***********************************************************************
 
