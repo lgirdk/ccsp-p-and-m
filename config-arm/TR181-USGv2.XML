@@ -9665,6 +9665,26 @@
 
       <objectType>object</objectType>
 
+      <functions>
+
+        <func_GetParamStringValue>DNS_GetParamStringValue</func_GetParamStringValue>
+
+      </functions>
+
+      <parameters>
+
+        <parameter>
+
+          <name>SupportedRecordTypes</name>
+
+          <type>string</type>
+
+          <syntax>string</syntax>
+
+        </parameter>
+
+      </parameters>
+
       <objects>
 
     <object>
@@ -19973,6 +19993,38 @@
 
     </object>
 <!-- LGI ADD END -->
+    <object>
+
+      <name>LANConfigSecurity</name>
+
+      <objectType>object</objectType>
+
+      <functions>
+
+        <func_GetParamStringValue>LANCfgSec_GetParamStringValue</func_GetParamStringValue>
+
+        <func_SetParamStringValue>LANCfgSec_SetParamStringValue</func_SetParamStringValue>
+
+      </functions>
+
+      <parameters>
+
+        <parameter>
+
+          <name>ConfigPassword</name>
+
+          <type>string(64)</type>
+
+          <syntax>string</syntax>
+
+          <writable>true</writable>
+
+        </parameter>
+
+      </parameters>
+
+    </object>
+
 	  </objects>
 
 </dataModelInfo>
