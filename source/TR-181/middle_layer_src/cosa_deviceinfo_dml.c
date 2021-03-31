@@ -3349,11 +3349,11 @@ Snmpv3DHKickstart_GetParamBoolValue
     BOOL bRet = FALSE;
     /* check the parameter name and return the corresponding value */
 
-    CcspTraceInfo(("Snmpv3DHKickstart_GetParamBoolValue: hInsContext = 0x%lx\n", (long unsigned)hInsContext));
-    CcspTraceInfo(("Snmpv3DHKickstart_GetParamBoolValue: pKickstart = 0x%lx\n", (long unsigned)pKickstart));
+    //CcspTraceInfo(("Snmpv3DHKickstart_GetParamBoolValue: hInsContext = 0x%lx\n", (long unsigned)hInsContext));
+    //CcspTraceInfo(("Snmpv3DHKickstart_GetParamBoolValue: pKickstart = 0x%lx\n", (long unsigned)pKickstart));
 
 
-    CcspTraceInfo(("Snmpv3DHKickstart_GetParamBoolValue: ParamName = %s\n", ParamName));
+    //CcspTraceInfo(("Snmpv3DHKickstart_GetParamBoolValue: ParamName = %s\n", ParamName));
 
     if( AnscEqualString(ParamName, "Enabled", TRUE))
     {
@@ -3442,9 +3442,9 @@ Snmpv3DHKickstart_SetParamBoolValue
     int i;
     BOOL bRet = FALSE;
 
-    CcspTraceInfo(("Snmpv3DHKickstart_SetParamBoolValue: hInsContext = 0x%lx\n", (long unsigned)hInsContext));
-    CcspTraceInfo(("Snmpv3DHKickstart_SetParamBoolValue: pKickstart = 0x%lx\n", (long unsigned)pKickstart));
-    CcspTraceInfo(("Snmpv3DHKickstart_SetParamBoolValue: ParamName = %s, bValue = %d\n", ParamName, (int)bValue));
+    //CcspTraceInfo(("Snmpv3DHKickstart_SetParamBoolValue: hInsContext = 0x%lx\n", (long unsigned)hInsContext));
+    //CcspTraceInfo(("Snmpv3DHKickstart_SetParamBoolValue: pKickstart = 0x%lx\n", (long unsigned)pKickstart));
+    //CcspTraceInfo(("Snmpv3DHKickstart_SetParamBoolValue: ParamName = %s, bValue = %d\n", ParamName, (int)bValue));
 
     /*CID: 128676 Uninitialized pointer read*/
     Snmpv3_Kickstart_Table.n_rows = 0;
@@ -3662,21 +3662,21 @@ Snmpv3DHKickstart_GetParamUlongValue
     PCOSA_DATAMODEL_KICKSTART      pKickstart = (PCOSA_DATAMODEL_KICKSTART)&pMyObject->Kickstart;
     BOOL bRet = FALSE;
 
-    CcspTraceInfo(("Snmpv3DHKickstart_GetParamUlongValue: hInsContext = 0x%lx\n", (unsigned long)hInsContext));
-    CcspTraceInfo(("Snmpv3DHKickstart_GetParamUlongValue: ParamName = %s\n", ParamName));
+    //CcspTraceInfo(("Snmpv3DHKickstart_GetParamUlongValue: hInsContext = 0x%lx\n", (unsigned long)hInsContext));
+    //CcspTraceInfo(("Snmpv3DHKickstart_GetParamUlongValue: ParamName = %s\n", ParamName));
     if( pKickstart != NULL )
     {
         /* check the parameter name and return the corresponding value */
         if( AnscEqualString(ParamName, "KickstartTotal", TRUE) )
         {
             *puLong = pKickstart->KickstartTotal;
-            CcspTraceInfo(("Snmpv3DHKickstart_GetParamUlongValue: KickstartTotal = %lu\n", (unsigned long)pKickstart->KickstartTotal));
+            //CcspTraceInfo(("Snmpv3DHKickstart_GetParamUlongValue: KickstartTotal = %lu\n", (unsigned long)pKickstart->KickstartTotal));
             bRet = TRUE;
         }
         else if( AnscEqualString(ParamName, "TableNumberOfEntries", TRUE) )
         {
             *puLong = pKickstart->KickstartTotal;
-            CcspTraceInfo(("Snmpv3DHKickstart_GetParamUlongValue: TableNumberOfEntries = %lu\n", (unsigned long)pKickstart->TableNumberOfEntries));
+            //CcspTraceInfo(("Snmpv3DHKickstart_GetParamUlongValue: TableNumberOfEntries = %lu\n", (unsigned long)pKickstart->TableNumberOfEntries));
             bRet = TRUE;
         }
         else
@@ -3733,8 +3733,8 @@ Snmpv3DHKickstart_SetParamUlongValue
     PCOSA_DATAMODEL_KICKSTART      pKickstart = (PCOSA_DATAMODEL_KICKSTART)&pMyObject->Kickstart;
     BOOL bRet = FALSE;
 
-    CcspTraceInfo(("Snmpv3DHKickstart_SetParamUlongValue: hInsContext = 0x%lx\n", (unsigned long)hInsContext));
-    CcspTraceInfo(("Snmpv3DHKickstart_SetParamUlongValue: ParamName = %s, uValue = %ld\n", ParamName, uValue));
+    //CcspTraceInfo(("Snmpv3DHKickstart_SetParamUlongValue: hInsContext = 0x%lx\n", (unsigned long)hInsContext));
+    //CcspTraceInfo(("Snmpv3DHKickstart_SetParamUlongValue: ParamName = %s, uValue = %ld\n", ParamName, uValue));
 
     if( pKickstart != NULL )
     {
@@ -3742,7 +3742,7 @@ Snmpv3DHKickstart_SetParamUlongValue
         if( AnscEqualString(ParamName, "KickstartTotal", TRUE) && uValue <= MAX_KICKSTART_ROWS )
         {
             pKickstart->KickstartTotal = uValue;
-            CcspTraceInfo(("Snmpv3DHKickstart_SetParamUlongValue: KickstartTotal = %lu\n", (unsigned long)pKickstart->KickstartTotal));
+            //CcspTraceInfo(("Snmpv3DHKickstart_SetParamUlongValue: KickstartTotal = %lu\n", (unsigned long)pKickstart->KickstartTotal));
             bRet = TRUE;
         }
         else
@@ -3799,16 +3799,16 @@ KickstartTable_GetEntryCount
     PCOSA_DATAMODEL_KICKSTART      pKickstart = (PCOSA_DATAMODEL_KICKSTART)&pMyObject->Kickstart;
     ULONG ulEntries = 0;
 
-    CcspTraceInfo(("KickstartTable_GetEntryCount: hInsContext = 0x%lx\n", (long unsigned)hInsContext));
-    CcspTraceInfo(("KickstartTable_GetEntryCount: pKickstart = 0x%lx\n", (long unsigned)pKickstart));
+    //CcspTraceInfo(("KickstartTable_GetEntryCount: hInsContext = 0x%lx\n", (long unsigned)hInsContext));
+    //CcspTraceInfo(("KickstartTable_GetEntryCount: pKickstart = 0x%lx\n", (long unsigned)pKickstart));
 
     if( pKickstart )
     {
         pKickstart->TableNumberOfEntries = MAX_KICKSTART_ROWS;
-        CcspTraceInfo(("KickstartTable_GetEntryCount: TableNumberOfEntries = %d\n", pKickstart->TableNumberOfEntries));
+        //CcspTraceInfo(("KickstartTable_GetEntryCount: TableNumberOfEntries = %d\n", pKickstart->TableNumberOfEntries));
         ulEntries = pKickstart->TableNumberOfEntries;
     }
-    CcspTraceInfo(("KickstartTable_GetEntryCount: ulEntries = %lu\n", ulEntries));
+    //CcspTraceInfo(("KickstartTable_GetEntryCount: ulEntries = %lu\n", ulEntries));
     return ulEntries;
 }
 
@@ -3857,19 +3857,19 @@ KickstartTable_GetEntry
 
     *pInsNumber  = nIndex + 1;
 
-    CcspTraceInfo(("KickstartTable_GetEntry: hInsContext = 0x%lx\n", (long unsigned)hInsContext));
-    CcspTraceInfo(("KickstartTable_GetEntry: pKickstart = 0x%lx\n", (long unsigned)pKickstart));
-    CcspTraceInfo(("KickstartTable_GetEntry: nIndex = %lu, *pInsNumber = %lu\n", nIndex, *pInsNumber));
+    //CcspTraceInfo(("KickstartTable_GetEntry: hInsContext = 0x%lx\n", (long unsigned)hInsContext));
+    //CcspTraceInfo(("KickstartTable_GetEntry: pKickstart = 0x%lx\n", (long unsigned)pKickstart));
+    //CcspTraceInfo(("KickstartTable_GetEntry: nIndex = %lu, *pInsNumber = %lu\n", nIndex, *pInsNumber));
     if( pKickstart )
     {
-        CcspTraceInfo(("KickstartTable_GetEntry: TableNumberOfEntries = %lu\n", pKickstart->TableNumberOfEntries));
+        //CcspTraceInfo(("KickstartTable_GetEntry: TableNumberOfEntries = %lu\n", pKickstart->TableNumberOfEntries));
         pKickstartTable = pKickstart->KickstartTable;
-        CcspTraceInfo(("KickstartTable_GetEntry: pKickstartTable = 0x%lx\n", (long unsigned)pKickstartTable));
+        //CcspTraceInfo(("KickstartTable_GetEntry: pKickstartTable = 0x%lx\n", (long unsigned)pKickstartTable));
 
         if( pKickstartTable && nIndex < MAX_KICKSTART_ROWS )
         {
             hEntry = (ANSC_HANDLE)(pKickstartTable + nIndex);
-            CcspTraceInfo(("KickstartTable_GetEntry: returning 0x%lx\n", (long unsigned)hEntry));
+            //CcspTraceInfo(("KickstartTable_GetEntry: returning 0x%lx\n", (long unsigned)hEntry));
         }
     }
     return hEntry;
@@ -3926,8 +3926,8 @@ KickstartTable_GetParamStringValue
     LONG lRet = -1;
     char *pPtr = NULL;
 
-    CcspTraceInfo(("KickstartTable_GetParamStringValue: hInsContext = 0x%lx\n", (unsigned long)hInsContext));
-    CcspTraceInfo(("KickstartTable_GetParamStringValue: ParamName = %s, *pUlSize = %ld\n", ParamName, *pUlSize));
+    //CcspTraceInfo(("KickstartTable_GetParamStringValue: hInsContext = 0x%lx\n", (unsigned long)hInsContext));
+    //CcspTraceInfo(("KickstartTable_GetParamStringValue: ParamName = %s, *pUlSize = %ld\n", ParamName, *pUlSize));
 
     if( pKickstartTable != NULL )
     {
@@ -3974,7 +3974,7 @@ KickstartTable_GetParamStringValue
     }
     else if( lRet == 0 && pValue != NULL && ParamName != NULL )
     {
-        CcspTraceError(("KickstartTable_GetParamStringValue: %s = %s\n", ParamName, pValue));
+        //CcspTraceError(("KickstartTable_GetParamStringValue: %s = %s\n", ParamName, pValue));
     }
     else
     {
@@ -4031,7 +4031,7 @@ KickstartTable_SetParamStringValue
     BOOL bRet = FALSE;
 
 
-    CcspTraceInfo(("KickstartTable_SetParamStringValue: ParamName = %s\n", ParamName));
+    //CcspTraceInfo(("KickstartTable_SetParamStringValue: ParamName = %s\n", ParamName));
 
     if( pKickstartTable != NULL )
     {
@@ -9116,7 +9116,7 @@ Feature_GetParamIntValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
    /* check the parameter name and return the corresponding value */
-    CcspTraceInfo(("Feature_GetParamIntValue: RDKLowQueueRebootThreshold\n"));
+    //CcspTraceInfo(("Feature_GetParamIntValue: RDKLowQueueRebootThreshold\n"));
 
     if( AnscEqualString(ParamName, "RDKLowQueueRebootThreshold", TRUE))
     {
