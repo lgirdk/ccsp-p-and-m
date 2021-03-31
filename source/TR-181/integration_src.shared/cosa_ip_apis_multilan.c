@@ -165,7 +165,7 @@ CosaDmlIpIfMlanLoadPsm
     SLAP_VARIABLE                   SlapValue       = {0};
     ULONG                           ulL2netInst     = 0;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     iReturnValue = 
         PsmGetNextLevelInstances
@@ -670,7 +670,7 @@ CosaDmlIpIfMlanSavePsm
     unsigned int                    RecordType      = ccsp_string;
     char                            RecordValue[64] = {0};
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if ( TRUE )     /* Enable */
     {
@@ -975,7 +975,7 @@ CosaDmlIpIfMlanDelPsm
     int                             iReturnValue    = CCSP_SUCCESS;
     char                            pParamPath[64]  = {0};
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if ( TRUE )     /* Enable */
     {
@@ -1012,7 +1012,7 @@ CosaDmlIpIfMlanGetNumberOfEntries
 {
     PDMSB_TR181_IP_CONTEXT          pIpContext      = (PDMSB_TR181_IP_CONTEXT )hContext;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if ( !pIpContext->IpIfInit )
     {
@@ -1036,7 +1036,7 @@ CosaDmlIpIfMlanGetEntry
     PSINGLE_LINK_ENTRY              pSLinkEntry;
     PDMSB_TR181_IP_IF               pIpIf;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if ( !pEntry )
     {
@@ -1083,7 +1083,7 @@ CosaDmlIpIfMlanSetValues
     PSINGLE_LINK_ENTRY              pSLinkEntry;
     PDMSB_TR181_IP_IF               pIpIf;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     pSLinkEntry = AnscSListGetEntryByIndex(&pIpContext->IpIfList, ulIndex);
 
@@ -1125,7 +1125,7 @@ CosaDmlIpIfMlanAddEntry
     PDMSB_TR181_IP_CONTEXT          pIpContext     = (PDMSB_TR181_IP_CONTEXT)hContext;
     PDMSB_TR181_IP_IF               pIpIf;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if ( !pEntry )
     {
@@ -1278,7 +1278,7 @@ CosaDmlIpIfMlanDelEntry
     PDMSB_TR181_IP_CONTEXT          pIpContext     = (PDMSB_TR181_IP_CONTEXT)hContext;
     PDMSB_TR181_IP_IF               pIpIf;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     pIpIf = CosaDmlIpIfMlanFindByInstNum(pIpContext, ulInstanceNumber);
 
@@ -1310,7 +1310,7 @@ CosaDmlIpIfMlanSetCfg
     PDMSB_TR181_IP_CONTEXT          pIpContext     = (PDMSB_TR181_IP_CONTEXT)hContext;
     PDMSB_TR181_IP_IF               pIpIf;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     pIpIf = CosaDmlIpIfMlanFindByInstNum(pIpContext, pCfg->InstanceNumber);
 
@@ -1396,7 +1396,7 @@ CosaDmlIpIfMlanGetCfg
     PDMSB_TR181_IP_CONTEXT          pIpContext     = (PDMSB_TR181_IP_CONTEXT)hContext;
     PDMSB_TR181_IP_IF               pIpIf;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     pIpIf = CosaDmlIpIfMlanFindByInstNum(pIpContext, pCfg->InstanceNumber);
 
@@ -1424,7 +1424,7 @@ CosaDmlIpIfMlanGetInfo
     PDMSB_TR181_IP_CONTEXT          pIpContext     = (PDMSB_TR181_IP_CONTEXT)hContext;
     PDMSB_TR181_IP_IF               pIpIf;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     pIpIf = CosaDmlIpIfMlanFindByInstNum(pIpContext, ulInstanceNumber);
 
@@ -1451,7 +1451,7 @@ CosaDmlIpIfMlanReset
     PDMSB_TR181_IP_CONTEXT          pIpContext     = (PDMSB_TR181_IP_CONTEXT)hContext;
     PDMSB_TR181_IP_IF               pIpIf;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     pIpIf = CosaDmlIpIfMlanFindByInstNum(pIpContext, ulInstanceNumber);
 
@@ -1496,7 +1496,7 @@ CosaDmlIpIfMlanGetIPv4Addr
     unsigned int                    RecordType      = 0;
     SLAP_VARIABLE                   SlapValue       = {0};
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     /*
      *  Retrieve the IPv4Addr
@@ -1549,7 +1549,7 @@ CosaDmlIpIfMlanGetSubnetMask
     unsigned int                    RecordType      = 0;
     SLAP_VARIABLE                   SlapValue       = {0};
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     /*
      *  Retrieve the Subnet Mask
@@ -1605,7 +1605,7 @@ CosaDmlIpIfMlanGetV4Addr
     unsigned int                    RecordType      = 0;
     SLAP_VARIABLE                   SlapValue       = {0};
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if ( ulIndex != 0 )
     {
@@ -1874,7 +1874,7 @@ CosaDmlIpIfMlanGetV4Addr2
     unsigned int                    RecordType      = 0;
     SLAP_VARIABLE                   SlapValue       = {0};
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     /*
      *  Retrieve the IPv4Addr
@@ -2039,7 +2039,7 @@ CosaDmlIpIfMlanGetV6Addr2
     char                            evt_value[64] = {0};
     char                            out[32] = {0};
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     /*
      *  Retrieve the EthLink
@@ -2151,7 +2151,7 @@ CosaDmlIpIfMlanGetV6Addr2
     char                            evt_value[64] = {0};
     char                            out[32] = {0};
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     /*
      *  Retrieve the EthLink
@@ -2309,7 +2309,7 @@ CosaDmlIpIfMlanGetV6Prefix2
     char                            evt_value[64] = {0};
     char                            out[32] = {0};
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     /*
      *  Retrieve the EthLink
@@ -2424,7 +2424,7 @@ CosaDmlIpIfMlanGetV6Prefix2
     char                            evt_value[64] = {0};
     char                            out[32] = {0};
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     /*
      *  Retrieve the EthLink
@@ -2518,7 +2518,7 @@ CosaDmlIpIfMlanGetStats
     PDMSB_TR181_IP_CONTEXT          pIpContext     = (PDMSB_TR181_IP_CONTEXT)hContext;
     PDMSB_TR181_IP_IF               pIpIf;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     pIpIf = CosaDmlIpIfMlanFindByInstNum(pIpContext, ulIpIfInstanceNumber);
 
@@ -2548,7 +2548,7 @@ CosaDmlIpIfMlanGetStats
         pStats->UnicastPacketsSent          -= pIpIf->LastStats.UnicastPacketsSent;
         pStats->UnknownProtoPacketsReceived -= pIpIf->LastStats.UnknownProtoPacketsReceived;
 
-        AnscTraceFlow(("%s done!\n", __FUNCTION__));
+        //AnscTraceFlow(("%s done!\n", __FUNCTION__));
 
         return ANSC_STATUS_SUCCESS;
     }
