@@ -92,7 +92,7 @@ CosaDmlMlanInit
 {
     PCOSA_DATAMODEL_MULTILAN        pContext        = NULL;
     UNREFERENCED_PARAMETER(hDml);
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     pContext = (PCOSA_DATAMODEL_MULTILAN)AnscAllocateMemory(sizeof(COSA_DATAMODEL_MULTILAN));
 
@@ -143,7 +143,7 @@ CosaDmlMlanGetPrimaryLanIpIf
     SLAP_VARIABLE                   SlapValue       = {0};
     ULONG                           ulStrSize       = 0;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if ( !pContext->pPrimaryLanIpIf )
     {
@@ -233,7 +233,7 @@ CosaDmlMlanGetHomeSecurityIpIf
     SLAP_VARIABLE                   SlapValue       = {0};
     ULONG                           ulStrSize       = 0;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if ( !pContext->pHomeSecurityIpIf )
     {
@@ -322,7 +322,7 @@ CosaDmlMlanGetPrimaryLanBridge
     SLAP_VARIABLE                   SlapValue       = {0};
     ULONG                           ulStrSize       = 0;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if ( !pContext->pPrimaryLanBridge )
     {
@@ -411,7 +411,7 @@ CosaDmlMlanGetPrimaryLanBridgeHsPorts
     SLAP_VARIABLE                   SlapValue       = {0};
     ULONG                           ulStrSize       = 0;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if ( !pContext->pPrimaryLanBridgeHsPorts )
     {
@@ -491,7 +491,7 @@ CosaDmlMlanGetPrimaryLanDhcpv4ServerPool
     SLAP_VARIABLE                   SlapValue       = {0};
     ULONG                           ulStrSize       = 0;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if ( !pContext->pPrimaryLanDhcpv4ServerPool )
     {
@@ -571,7 +571,7 @@ CosaDmlMlanGetHomeSecurityBridge
     SLAP_VARIABLE                   SlapValue       = {0};
     ULONG                           ulStrSize       = 0;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if ( !pContext->pHomeSecurityBridge )
     {
@@ -660,7 +660,7 @@ CosaDmlMlanGetHomeSecurityBridgePorts
     SLAP_VARIABLE                   SlapValue       = {0};
     ULONG                           ulStrSize       = 0;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if ( !pContext->pHomeSecurityBridgePorts )
     {
@@ -739,7 +739,7 @@ CosaDmlMlanGetHomeSecurityDhcpv4ServerPool
     SLAP_VARIABLE                   SlapValue       = {0};
     ULONG                           ulStrSize       = 0;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if ( !pContext->pHomeSecurityDHCPv4ServerPool )
     {
@@ -829,7 +829,7 @@ CosaDmlMlanGetHomeSecurityWiFiRadio
     SLAP_VARIABLE                   SlapValue       = {0};
     ULONG                           ulStrSize       = 0;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if ( !pContext->pHomeSecurityWiFiRadio )
     {
@@ -909,7 +909,7 @@ CosaDmlMlanGetHomeSecurityWiFiSsid
     SLAP_VARIABLE                   SlapValue       = {0};
     ULONG                           ulStrSize       = 0;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if ( !pContext->pHomeSecurityWiFiSsid )
     {
@@ -989,7 +989,7 @@ CosaDmlMlanGetHomeSecurityWiFiAp
     SLAP_VARIABLE                   SlapValue       = {0};
     ULONG                           ulStrSize       = 0;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if ( !pContext->pHomeSecurityWiFiAp )
     {
