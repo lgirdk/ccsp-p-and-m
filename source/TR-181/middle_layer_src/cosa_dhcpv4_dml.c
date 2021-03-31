@@ -5990,8 +5990,8 @@ Pool_GetParamStringValue
                         (PUCHAR)"Name",
                         (PUCHAR)pPool->Cfg.Interface
                     );
-            AnscTraceFlow(("%s: interface %s\n", __FUNCTION__, pPool->Cfg.Interface));  
-            AnscTraceFlow(("%s: pString %s\n", __FUNCTION__, pString));               
+            //AnscTraceFlow(("%s: interface %s\n", __FUNCTION__, pPool->Cfg.Interface));  
+            //AnscTraceFlow(("%s: pString %s\n", __FUNCTION__, pString));               
             if ( pString )
             {
                 int ret = update_pValue(pValue,pUlSize, (char*)pString);
@@ -6206,7 +6206,7 @@ Pool_SetParamBoolValue
     PCOSA_DML_DHCPS_POOL_FULL       pPool            = (PCOSA_DML_DHCPS_POOL_FULL)pCxtLink->hContext;
     BOOL bridgeInd = FALSE;
 
-    AnscTraceFlow(("%s: ParamName = %s\n", __FUNCTION__, ParamName));
+    //AnscTraceFlow(("%s: ParamName = %s\n", __FUNCTION__, ParamName));
     /*CID: 65626 Unchecked return value*/
     if((ANSC_STATUS_SUCCESS == is_usg_in_bridge_mode(&bridgeInd)) &&
        ( TRUE == bridgeInd ))
@@ -6633,7 +6633,7 @@ Pool_SetParamStringValue
     BOOL bridgeInd = FALSE;
     errno_t                         rc                = -1;
 		
-    AnscTraceFlow(("%s: ParamName %s, \npString %s\n", __FUNCTION__, ParamName, pString));    
+    //AnscTraceFlow(("%s: ParamName %s, \npString %s\n", __FUNCTION__, ParamName, pString));    
 	is_usg_in_bridge_mode(&bridgeInd);
 	if(bridgeInd)
 		return(FALSE);
@@ -6687,7 +6687,7 @@ Pool_SetParamStringValue
             if ( 0 == CosaGetParamValueString(ucEntryParamName, ucEntryNameValue, &ulEntryNameLen))
             {
 
-                AnscTraceFlow(("%s:paramName %s, paramValue %s\n", __FUNCTION__, ucEntryParamName, ucEntryNameValue));
+                //AnscTraceFlow(("%s:paramName %s, paramValue %s\n", __FUNCTION__, ucEntryParamName, ucEntryNameValue));
                 if(strlen(ucEntryNameValue) == 0)
                 {
                     // if the Name string is empty, return failure
