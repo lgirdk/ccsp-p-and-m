@@ -171,7 +171,7 @@ X_CISCO_COM_DeviceControl_GetParamBoolValue
     ULONG                           uSize    = 0;
     ANSC_STATUS                     retStatus= ANSC_STATUS_SUCCESS;   
     /* check the parameter name and return the corresponding value */
-    CcspTraceWarning(("-----DeviceControl_GetParamBoolValue,Trying to get parameter '%s'\n", ParamName));
+    //CcspTraceWarning(("-----DeviceControl_GetParamBoolValue,Trying to get parameter '%s'\n", ParamName));
     
     if (strcmp(ParamName, "ErouterEnable") == 0) {
         retStatus = CosaDmlDcGetErouterEnabled(NULL,pBool);
@@ -382,7 +382,7 @@ X_CISCO_COM_DeviceControl_GetParamIntValue
     UNREFERENCED_PARAMETER(hInsContext);
     UNREFERENCED_PARAMETER(pInt);
     /* check the parameter name and return the corresponding value */
-    CcspTraceWarning(("-----DeviceControl_GetParamIntValue,Trying to get parameter '%s'\n", ParamName));
+    //CcspTraceWarning(("-----DeviceControl_GetParamIntValue,Trying to get parameter '%s'\n", ParamName));
 
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
@@ -445,7 +445,7 @@ X_CISCO_COM_DeviceControl_GetParamUlongValue
         if (retStatus != ANSC_STATUS_SUCCESS) {
             return FALSE;
         }
-        CcspTraceWarning(("-----DeviceControl_GetParamUlongValue, buf:%s\n", buf));
+        //CcspTraceWarning(("-----DeviceControl_GetParamUlongValue, buf:%s\n", buf));
         if (strcasecmp(buf, "primary") == 0) {
             *puLong = PRIMARY_MODE;
         }
@@ -455,7 +455,7 @@ X_CISCO_COM_DeviceControl_GetParamUlongValue
         else {
             *puLong = NONE_MODE;
         }
-        CcspTraceWarning(("-----DeviceControl_GetParamUlongValue, puLong:%lu\n", *puLong));
+        //CcspTraceWarning(("-----DeviceControl_GetParamUlongValue, puLong:%lu\n", *puLong));
         return TRUE;
     }
 
@@ -1164,7 +1164,7 @@ X_CISCO_COM_DeviceControl_SetParamUlongValue
     
     /* check the parameter name and set the corresponding value */
 
-    CcspTraceWarning(("--------X_CISCO_COM_DeviceControl_SetParamUlongValue...\n"));
+    //CcspTraceWarning(("--------X_CISCO_COM_DeviceControl_SetParamUlongValue...\n"));
     if (strcmp(ParamName, "MultiHomedHSDFlag") == 0)
     {
         pMyObject->HsdFlag = uValue;
@@ -2180,8 +2180,8 @@ LanMngm_SetParamUlongValue
         }*/
 
         pLanMngm->LanMode = uValuepUlong;
-        CcspTraceWarning(("RDKB_LAN_CONFIG_CHANGED: Setting new LanMode value (bridge-dhcp(1),bridge-static(2),router(3),full-bridge-static(4)) as (%lu)...\n",
-        		uValuepUlong ));	
+        //CcspTraceWarning(("RDKB_LAN_CONFIG_CHANGED: Setting new LanMode value (bridge-dhcp(1),bridge-static(2),router(3),full-bridge-static(4)) as (%lu)...\n",
+        //		uValuepUlong ));	
         return TRUE;
     }
 
@@ -2483,7 +2483,7 @@ WebAccessLevel_GetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     UNREFERENCED_PARAMETER(pBool);
     /* check the parameter name and return the corresponding value */
-    CcspTraceWarning(("-----DeviceControl_GetParamBoolValue,Trying to get parameter '%s'\n", ParamName));
+    //CcspTraceWarning(("-----DeviceControl_GetParamBoolValue,Trying to get parameter '%s'\n", ParamName));
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
@@ -2498,7 +2498,7 @@ WebAccessLevel_GetParamIntValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    CcspTraceWarning(("-----WebAccessLevel_GetParamIntValue,Trying to get parameter '%s'\n", ParamName)); 
+    //CcspTraceWarning(("-----WebAccessLevel_GetParamIntValue,Trying to get parameter '%s'\n", ParamName)); 
 	
     if (strcmp(ParamName, "HomeUser_Lan_Level") == 0)
     {
@@ -2586,7 +2586,7 @@ WebAccessLevel_GetParamUlongValue
     UNREFERENCED_PARAMETER(hInsContext);
     UNREFERENCED_PARAMETER(puLong);
     /* check the parameter name and return the corresponding value */
-    CcspTraceWarning(("-----DeviceControl_GetParamUlongValue,Trying to get parameter '%s'\n", ParamName));
+    //CcspTraceWarning(("-----DeviceControl_GetParamUlongValue,Trying to get parameter '%s'\n", ParamName));
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
@@ -2605,7 +2605,7 @@ WebAccessLevel_GetParamStringValue
     UNREFERENCED_PARAMETER(pValue);
     UNREFERENCED_PARAMETER(pulSize);
     /* check the parameter name and return the corresponding value */
-    CcspTraceWarning(("-----DeviceControl_GetParamUlongValue,Trying to get parameter '%s'\n", ParamName));
+    //CcspTraceWarning(("-----DeviceControl_GetParamUlongValue,Trying to get parameter '%s'\n", ParamName));
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return -1;
@@ -2634,7 +2634,7 @@ WebAccessLevel_SetParamIntValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    CcspTraceWarning(("-----WebAccessLevel_SetParamIntValue,Trying to get parameter '%s'\n", ParamName)); 
+    //CcspTraceWarning(("-----WebAccessLevel_SetParamIntValue,Trying to get parameter '%s'\n", ParamName)); 
 	
     if (strcmp(ParamName, "HomeUser_Lan_Level") == 0)
     {
