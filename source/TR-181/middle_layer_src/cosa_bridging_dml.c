@@ -1439,8 +1439,8 @@ Port_GetEntryCount
     PCOSA_CONTEXT_LINK_OBJECT       pCosaContext = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     PCOSA_DML_BRG_FULL_ALL          pDmlBridge   = (PCOSA_DML_BRG_FULL_ALL   )pCosaContext->hContext;
     //$HL 4/27/2013
-    AnscTraceFlow(("<HL >%s bridge instance = %lu get num of port entries=%d\n",
-           __FUNCTION__,pDmlBridge->Cfg.InstanceNumber, AnscSListQueryDepth(&pDmlBridge->PortList)));
+    //AnscTraceFlow(("<HL >%s bridge instance = %lu get num of port entries=%d\n",
+    //       __FUNCTION__,pDmlBridge->Cfg.InstanceNumber, AnscSListQueryDepth(&pDmlBridge->PortList)));
     return AnscSListQueryDepth(&pDmlBridge->PortList);
 }
 
@@ -2696,11 +2696,11 @@ fprintf(stderr, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 1\n");
             
                 int ret = COSAGetParamValueByPathName(g_MessageBusHandle,&varStruct,&ulEntryNameLen);
                 
-                AnscTraceFlow(("<HL>%s >>>>>> ret is %d \n",__func__,ret));
+                //AnscTraceFlow(("<HL>%s >>>>>> ret is %d \n",__func__,ret));
             
                  if ( ret == 0 && AnscSizeOfString(ucEntryNameValue) != 0 ) {
                  
-                    AnscTraceFlow(("<HL>%s 11 STRING LENGTH NOT ZERO \n",__func__));
+                    //AnscTraceFlow(("<HL>%s 11 STRING LENGTH NOT ZERO \n",__func__));
                     rc = STRCPY_S_NOCLOBBER(pPort->Cfg.LinkName, sizeof(pPort->Cfg.LinkName), ucEntryNameValue);
                     if(rc != EOK)
                     {
@@ -2722,11 +2722,11 @@ fprintf(stderr, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 1\n");
             {
                 int ret = COSAGetParamValueByPathName(g_MessageBusHandle,&varStruct,&ulEntryNameLen);
 
-                AnscTraceFlow(("<HL>%s >>>>>> ret is %d \n",__func__,ret));
+                //AnscTraceFlow(("<HL>%s >>>>>> ret is %d \n",__func__,ret));
 
                  if ( ret == 0 && AnscSizeOfString(ucEntryNameValue) != 0 ) {
 
-                    AnscTraceFlow(("<HL>%s 11 STRING LENGTH NOT ZERO \n",__func__));
+                    //AnscTraceFlow(("<HL>%s 11 STRING LENGTH NOT ZERO \n",__func__));
                     rc = STRCPY_S_NOCLOBBER(pPort->Cfg.LinkName, sizeof(pPort->Cfg.LinkName), ucEntryNameValue);
                     if(rc != EOK)
                     {
@@ -2798,8 +2798,8 @@ fprintf(stderr, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 1\n");
 
         /* Do not spontaneously change the port mode -- from 1.6.2 commit c9992ba4 */
         //pPort->Cfg.mode = COSA_DML_BPORT_TAGGING;
-        AnscTraceFlow(("<HL>%s search linkname and linktype pString=%s ucEntryParamName=%s \nucEntryNameValue=%s linktype=%d linkname=%s\n",
-            __FUNCTION__, pString, ucEntryParamName,ucEntryNameValue,pPort->Cfg.LinkType,pPort->Cfg.LinkName));
+        //AnscTraceFlow(("<HL>%s search linkname and linktype pString=%s ucEntryParamName=%s \nucEntryNameValue=%s linktype=%d linkname=%s\n",
+        //    __FUNCTION__, pString, ucEntryParamName,ucEntryNameValue,pPort->Cfg.LinkType,pPort->Cfg.LinkName));
 
 
         if ( !pPort->Cfg.bManagementPort )
@@ -2813,8 +2813,8 @@ fprintf(stderr, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 2\n");
                 0 == (COSAGetParamValueByPathName(g_MessageBusHandle,&varStruct,&ulEntryNameLen)) && ( AnscSizeOfString(ucEntryNameValue) != 0 ))
             {
             
-                AnscTraceFlow(("<HL>%s 222 STRING LENGTH NOT ZERO \n",__func__));
-                AnscTraceFlow(("<HL>%s %s=%s\n", __func__,pString,ucEntryNameValue));
+                //AnscTraceFlow(("<HL>%s 222 STRING LENGTH NOT ZERO \n",__func__));
+                //AnscTraceFlow(("<HL>%s %s=%s\n", __func__,pString,ucEntryNameValue));
 
                 rc = sprintf_s(ucEntryParamName, sizeof(ucEntryParamName), "%s%s", ucEntryNameValue, ".Upstream");
                 if(rc < EOK)
@@ -2828,7 +2828,7 @@ fprintf(stderr, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 2\n");
                 if( 0 == (COSAGetParamValueByPathName(g_MessageBusHandle,&varStruct,&ulEntryNameLen)) &&
                     ( AnscSizeOfString(ucEntryNameValue) != 0 ) )
                 {
-                    AnscTraceFlow(("<HL>%s %s=%s\n", __func__, pString, ucEntryNameValue));
+                    //AnscTraceFlow(("<HL>%s %s=%s\n", __func__, pString, ucEntryNameValue));
                     if (_ansc_strstr(ucEntryNameValue,"true"))
                     {
                         pPort->Cfg.bUpstream = true;
@@ -2838,7 +2838,7 @@ fprintf(stderr, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 2\n");
             else if (_ansc_strstr(pString,"MoCA") &&
                 !(COSAGetParamValueByPathName(g_MessageBusHandle,&varStruct,&ulEntryNameLen)) && ( AnscSizeOfString(ucEntryNameValue) != 0 ))
             {
-                AnscTraceFlow(("<HL>%s %s=%s\n", __FUNCTION__,pString,ucEntryNameValue));
+                //AnscTraceFlow(("<HL>%s %s=%s\n", __FUNCTION__,pString,ucEntryNameValue));
 
                 rc = sprintf_s(ucEntryParamName, sizeof(ucEntryParamName), "%s%s", ucEntryNameValue, ".Upstream");
                 if(rc < EOK)
@@ -2852,7 +2852,7 @@ fprintf(stderr, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 2\n");
                 if( !(COSAGetParamValueByPathName(g_MessageBusHandle,&varStruct,&ulEntryNameLen)) &&
                     ( AnscSizeOfString(ucEntryNameValue) != 0 ) )
                 {
-                    AnscTraceFlow(("<HL>%s %s=%s\n", __FUNCTION__, pString, ucEntryNameValue));
+                    //AnscTraceFlow(("<HL>%s %s=%s\n", __FUNCTION__, pString, ucEntryNameValue));
                     if (_ansc_strstr(ucEntryNameValue,"true"))
                     {
                         pPort->Cfg.bUpstream = true;
@@ -2862,15 +2862,15 @@ fprintf(stderr, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 2\n");
             else if (( 0 == CosaGetParamValueString(ucEntryParamName, ucEntryNameValue, &ulEntryNameLen ) ) &&
                 ( AnscSizeOfString(ucEntryNameValue) != 0 ) )
             {
-                AnscTraceFlow(("<HL>%s %s=%s\n", __FUNCTION__,pString,ucEntryNameValue));
+                //AnscTraceFlow(("<HL>%s %s=%s\n", __FUNCTION__,pString,ucEntryNameValue));
                 if (_ansc_strstr(ucEntryNameValue,"true"))
                 {
                     pPort->Cfg.bUpstream = true;
                 }
             }
         }     
-        AnscTraceFlow(("<HL>%s search UpStream pString=%s \nucEntryParamName=%s \nucEntryNameValue=%s \nbUpstream=%d\n",
-            __FUNCTION__, pString, ucEntryParamName,ucEntryNameValue,pPort->Cfg.bUpstream));       
+        //AnscTraceFlow(("<HL>%s search UpStream pString=%s \nucEntryParamName=%s \nucEntryNameValue=%s \nbUpstream=%d\n",
+        //    __FUNCTION__, pString, ucEntryParamName,ucEntryNameValue,pPort->Cfg.bUpstream));       
         return TRUE;
 #endif
     }
@@ -5099,7 +5099,7 @@ VLANPort_SetParamStringValue
     PCOSA_DML_BRG_VLANPORT_FULL     pVLANPort       = (PCOSA_DML_BRG_VLANPORT_FULL)pCosaContext->hContext;
     errno_t rc = -1;
 
-    AnscTraceFlow(("%s: %s='%s'\n", __func__, ParamName, pString));
+    //AnscTraceFlow(("%s: %s='%s'\n", __func__, ParamName, pString));
 
     /* check the parameter name and set the corresponding value */
     if (strcmp(ParamName, "Alias") == 0)
@@ -5127,12 +5127,12 @@ VLANPort_SetParamStringValue
                  brInsNum > 0 && vlanInsNum > 0)
         {
             pVLANPort->Cfg.VLANInsNum = vlanInsNum;
-            AnscTraceFlow(("%s: %s='%s' success %lu %lu\n", __func__, ParamName, pString, brInsNum, vlanInsNum));
+            //AnscTraceFlow(("%s: %s='%s' success %lu %lu\n", __func__, ParamName, pString, brInsNum, vlanInsNum));
             return TRUE;
         }
         else // invalid format
         {
-            AnscTraceFlow(("%s: %s='%s' error %lu %lu\n", __func__, ParamName, pString, brInsNum, vlanInsNum));
+            //AnscTraceFlow(("%s: %s='%s' error %lu %lu\n", __func__, ParamName, pString, brInsNum, vlanInsNum));
             return FALSE;
         }
     }
@@ -5150,7 +5150,7 @@ VLANPort_SetParamStringValue
                  brInsNum > 0 && portInsNum > 0)
         {
             pVLANPort->Cfg.PortInsNum = portInsNum;
-            AnscTraceFlow(("%s: %s='%s' success %lu %lu\n", __func__, ParamName, pString, brInsNum, portInsNum));
+            //AnscTraceFlow(("%s: %s='%s' success %lu %lu\n", __func__, ParamName, pString, brInsNum, portInsNum));
             return TRUE;
         }
         else // invalid format
@@ -5212,7 +5212,7 @@ VLANPort_Validate
     PSINGLE_LINK_ENTRY              pSLinkEntry      = (PSINGLE_LINK_ENTRY       )NULL;
     errno_t  rc = -1;
 
-    AnscTraceFlow(("%s\n", __func__));
+    //AnscTraceFlow(("%s\n", __func__));
 
     // check against non-existing VLAN reference
     if (pVLANPort->Cfg.VLANInsNum > 0 &&
