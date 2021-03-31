@@ -377,11 +377,11 @@ PcBlkURL_GetEntryCount
     COSA_DATAMODEL_PARENTALCONTROL  *pParCtrl = (COSA_DATAMODEL_PARENTALCONTROL*)g_pCosaBEManager->hParentalControl;
     ULONG                           ulCount;
 
-    AnscTraceWarning(("%s -- pParCtrl = 0x%lX\n", __FUNCTION__, pParCtrl));
+    //AnscTraceWarning(("%s -- pParCtrl = 0x%lX\n", __FUNCTION__, pParCtrl));
 
     ulCount = AnscSListQueryDepth(&pParCtrl->BlkUrlList);
 
-    AnscTraceWarning(("%s -- ulCount = %d...\n", __FUNCTION__, ulCount));
+    //AnscTraceWarning(("%s -- ulCount = %d...\n", __FUNCTION__, ulCount));
 
     return ulCount;
 }
@@ -398,7 +398,7 @@ PcBlkURL_GetEntry
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = NULL;
     PSINGLE_LINK_ENTRY              pSLinkEntry = NULL;
 
-    AnscTraceWarning(("%s -- nIndex = %d...\n", __FUNCTION__, nIndex));
+    //AnscTraceWarning(("%s -- nIndex = %d...\n", __FUNCTION__, nIndex));
 
     pSLinkEntry = AnscQueueGetEntryByIndex((ANSC_HANDLE)&pParCtrl->BlkUrlList, nIndex);
     
@@ -422,7 +422,7 @@ PcBlkURL_AddEntry
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = NULL;
     COSA_DML_BLOCKEDURL             *pBlkUrl    = NULL;
 
-    AnscTraceWarning(("%s...\n", __FUNCTION__));
+    //AnscTraceWarning(("%s...\n", __FUNCTION__));
 
     pLinkObj = AnscAllocateMemory(sizeof(COSA_CONTEXT_LINK_OBJECT));
     if (!pLinkObj)
@@ -466,7 +466,7 @@ PcBlkURL_DelEntry
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInstance;
     COSA_DML_BLOCKEDURL             *pBlkUrl    = (COSA_DML_BLOCKEDURL*)pLinkObj->hContext;
 
-    AnscTraceWarning(("%s...\n", __FUNCTION__));
+    //AnscTraceWarning(("%s...\n", __FUNCTION__));
 
     AnscTraceWarning(("%s-%d RDKB_PCONTROL[URL]:%lu\n", __FUNCTION__, __LINE__, pLinkObj->InstanceNumber));
     if (CosaDmlBlkURL_DelEntry(pLinkObj->InstanceNumber) != ANSC_STATUS_SUCCESS)
@@ -493,7 +493,7 @@ PcBlkURL_GetParamBoolValue
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_BLOCKEDURL             *pBlkUrl    = (COSA_DML_BLOCKEDURL*)pLinkObj->hContext;
 
-    AnscTraceWarning(("%s -- param name = %s...\n", __FUNCTION__, ParamName));
+    //AnscTraceWarning(("%s -- param name = %s...\n", __FUNCTION__, ParamName));
 
     if (AnscEqualString(ParamName, "AlwaysBlock", TRUE))
     {
@@ -513,7 +513,7 @@ PcBlkURL_GetParamUlongValue(
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_BLOCKEDURL             *pBlkUrl    = (COSA_DML_BLOCKEDURL*)pLinkObj->hContext;
 
-    AnscTraceWarning(("%s -- param name = %s...\n", __FUNCTION__, ParamName));
+    //AnscTraceWarning(("%s -- param name = %s...\n", __FUNCTION__, ParamName));
 
     if (AnscEqualString(ParamName, "BlockMethod", TRUE))
     {
@@ -536,7 +536,7 @@ PcBlkURL_GetParamStringValue
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_BLOCKEDURL             *pBlkUrl    = (COSA_DML_BLOCKEDURL*)pLinkObj->hContext;
 
-    AnscTraceWarning(("%s -- param name = %s...\n", __FUNCTION__, ParamName));
+    //AnscTraceWarning(("%s -- param name = %s...\n", __FUNCTION__, ParamName));
 
     if (AnscEqualString(ParamName, "Site", TRUE))
     {
@@ -585,7 +585,7 @@ PcBlkURL_SetParamBoolValue
     COSA_DML_BLOCKEDURL             *pBlkUrl    = (COSA_DML_BLOCKEDURL*)pLinkObj->hContext;
     BOOL                            pBridgeMode     = FALSE;
 
-    AnscTraceWarning(("%s -- param name = %s...\n", __FUNCTION__, ParamName));
+    //AnscTraceWarning(("%s -- param name = %s...\n", __FUNCTION__, ParamName));
 
     if((ANSC_STATUS_SUCCESS == is_usg_in_bridge_mode(&pBridgeMode)) && (pBridgeMode == TRUE))
         return FALSE;
@@ -609,7 +609,7 @@ PcBlkURL_SetParamUlongValue(
     COSA_DML_BLOCKEDURL             *pBlkUrl    = (COSA_DML_BLOCKEDURL*)pLinkObj->hContext;
     BOOL                            pBridgeMode     = FALSE;
 
-    AnscTraceWarning(("%s -- param name = %s...\n", __FUNCTION__, ParamName));
+    //AnscTraceWarning(("%s -- param name = %s...\n", __FUNCTION__, ParamName));
 
     if((ANSC_STATUS_SUCCESS == is_usg_in_bridge_mode(&pBridgeMode)) && (pBridgeMode == TRUE))
         return FALSE;
@@ -715,7 +715,7 @@ PcBlkURL_SetParamStringValue
     if(AnscValidStringCheck(strValue) != TRUE)
         return FALSE;
         
-    AnscTraceWarning(("%s -- param name = %s...\n", __FUNCTION__, ParamName));
+    //AnscTraceWarning(("%s -- param name = %s...\n", __FUNCTION__, ParamName));
 
     if((ANSC_STATUS_SUCCESS == is_usg_in_bridge_mode(&pBridgeMode)) && (pBridgeMode == TRUE))
         return FALSE;
@@ -849,7 +849,7 @@ PcBlkURL_Commit
     COSA_DML_BLOCKEDURL             *pBlkUrl    = (COSA_DML_BLOCKEDURL*)pLinkObj->hContext;
     PCOSA_DATAMODEL_PARENTALCONTROL pParCtrl    = (PCOSA_DATAMODEL_PARENTALCONTROL)g_pCosaBEManager->hParentalControl;
 
-    AnscTraceWarning(("%s...\n", __FUNCTION__));
+    //AnscTraceWarning(("%s...\n", __FUNCTION__));
 
     if (pLinkObj->bNew)
     {
@@ -893,7 +893,7 @@ PcTrustedUser_GetEntryCount
 {
     COSA_DATAMODEL_PARENTALCONTROL  *pParCtrl = (COSA_DATAMODEL_PARENTALCONTROL*)g_pCosaBEManager->hParentalControl;
 
-    AnscTraceWarning(("%s...\n", __FUNCTION__));
+    //AnscTraceWarning(("%s...\n", __FUNCTION__));
 
     return AnscSListQueryDepth(&pParCtrl->TrustedUserList);
 }
@@ -1207,7 +1207,7 @@ MSServ_GetEntryCount
 {
     COSA_DATAMODEL_PARENTALCONTROL  *pParCtrl = (COSA_DATAMODEL_PARENTALCONTROL*)g_pCosaBEManager->hParentalControl;
 
-    AnscTraceWarning(("%s...\n", __FUNCTION__));
+    //AnscTraceWarning(("%s...\n", __FUNCTION__));
 
     return AnscSListQueryDepth(&pParCtrl->MSServList);
 }
@@ -1638,7 +1638,7 @@ MSTrustedUser_GetEntryCount
 {
     COSA_DATAMODEL_PARENTALCONTROL  *pParCtrl = (COSA_DATAMODEL_PARENTALCONTROL*)g_pCosaBEManager->hParentalControl;
 
-    AnscTraceWarning(("%s...\n", __FUNCTION__));
+    //AnscTraceWarning(("%s...\n", __FUNCTION__));
 
     return AnscSListQueryDepth(&pParCtrl->MSTrustedUserList);
 }
@@ -1953,7 +1953,7 @@ MDDev_GetEntryCount
 {
     COSA_DATAMODEL_PARENTALCONTROL  *pParCtrl = (COSA_DATAMODEL_PARENTALCONTROL*)g_pCosaBEManager->hParentalControl;
 
-    AnscTraceWarning(("%s...\n", __FUNCTION__));
+    //AnscTraceWarning(("%s...\n", __FUNCTION__));
 
     return AnscSListQueryDepth(&pParCtrl->MDDevList);
 }
