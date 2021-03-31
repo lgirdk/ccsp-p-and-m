@@ -811,7 +811,7 @@ static void deleteDHCPv4ServerPoolOptionPSM(ULONG poolInstanceNumber, ULONG inst
         ERR_CHK(rc);
     }
 
-    AnscTraceFlow(("%s: deleting %s\n", __FUNCTION__, param_path));
+    //AnscTraceFlow(("%s: deleting %s\n", __FUNCTION__, param_path));
     //printf("%s: deleting %s\n", __FUNCTION__,  param_path);
     retPsmSet = PSM_Del_Record(bus_handle, g_Subsystem, param_path);
 
@@ -838,7 +838,7 @@ static void deleteDHCPv4ServerPoolPSM(ULONG instanceNumber)
         ERR_CHK(rc);
     }
 
-    AnscTraceFlow(("%s: deleting %s\n", __FUNCTION__, param_path));
+    //AnscTraceFlow(("%s: deleting %s\n", __FUNCTION__, param_path));
     retPsmSet = PSM_Del_Record(bus_handle, g_Subsystem, param_path);
 
     if ( retPsmSet != CCSP_SUCCESS )
@@ -958,7 +958,7 @@ static BOOLEAN writeDHCPv4ServerPoolCFGToPSM(PCOSA_DML_DHCPS_POOL_CFG pNewCfg, P
         char* instStr;
         int strLength = strlen("Device.IP.Interface.");
         instStr = &(pNewCfg->Interface[strLength]);
-        AnscTraceFlow(("%s: instStr %s\n", __FUNCTION__, instStr));
+        //AnscTraceFlow(("%s: instStr %s\n", __FUNCTION__, instStr));
         rc = strcpy_s(param_value, sizeof(param_value), instStr);
         ERR_CHK(rc);
         _PSM_WRITE_PARAM(PSM_DHCPV4_SERVER_POOL_INTERFACE);
@@ -1338,17 +1338,17 @@ static void readDHCPv4ServerPoolFromPSM()
     retPsmGet = PsmGetNextLevelInstances(bus_handle, g_Subsystem, PSM_DHCPV4_SERVER_POOL, &poolCnt, &poolList);
     if ( retPsmGet == CCSP_SUCCESS && poolList != NULL ) 
     {
-        AnscTraceFlow(("%s: poolCnt = %d\n", __FUNCTION__, poolCnt));
+        //AnscTraceFlow(("%s: poolCnt = %d\n", __FUNCTION__, poolCnt));
         for (i = 0; i< poolCnt; i++)
         {
-            AnscTraceFlow(("%s: pool instance %d\n", __FUNCTION__, poolList[i]));
+            //AnscTraceFlow(("%s: pool instance %d\n", __FUNCTION__, poolList[i]));
         
             if(poolList[i] == 1)
             {
                 // at this time, pool instance 1 is saved in utopia, so it should not be here
                 // We are ignoring it if we see instance 1.
                 // When we save pool 1 in PSM, we also need to change utopia script to reflect it.
-                AnscTraceFlow(("%s: pool instance %d is ignored at this time.\n", __FUNCTION__, poolList[i]));
+                //AnscTraceFlow(("%s: pool instance %d is ignored at this time.\n", __FUNCTION__, poolList[i]));
                 continue;
             }
 
@@ -1379,8 +1379,8 @@ static void readDHCPv4ServerPoolFromPSM()
             retPsmGet1 = PsmGetNextLevelInstances(bus_handle, g_Subsystem, param_name, &saddrCnt, &saddrList);
             if ( retPsmGet1 == CCSP_SUCCESS && saddrList != NULL )
             {
-                AnscTraceFlow(("%s: found %d DHCPv4 Server Pool SADDR entry %s\n", __FUNCTION__, saddrCnt, param_name));
-                AnscTraceFlow(("%s: not supported for now\n", __FUNCTION__));
+                //AnscTraceFlow(("%s: found %d DHCPv4 Server Pool SADDR entry %s\n", __FUNCTION__, saddrCnt, param_name));
+                //AnscTraceFlow(("%s: not supported for now\n", __FUNCTION__));
                 ((CCSP_MESSAGE_BUS_INFO *)bus_handle)->freefunc(saddrList);
             }
             else
@@ -1397,7 +1397,7 @@ static void readDHCPv4ServerPoolFromPSM()
             retPsmGet1 = PsmGetNextLevelInstances(bus_handle, g_Subsystem, param_name, &optionCnt, &optionList);
             if ( retPsmGet1 == CCSP_SUCCESS && optionList != NULL )
             {
-                AnscTraceFlow(("%s: found %u DHCPv4 Server Pool OPTION entry %s\n", __FUNCTION__, optionCnt, param_name));
+                //AnscTraceFlow(("%s: found %u DHCPv4 Server Pool OPTION entry %s\n", __FUNCTION__, optionCnt, param_name));
                 //printf("%s: found %d DHCPv4 Server Pool OPTION entry %s\n", __FUNCTION__, optionCnt, param_name);
 
                 for(j=0; j< optionCnt; j++)
@@ -2151,7 +2151,7 @@ CosaDmlDhcpsEnable
     } 
     else 
     { 
-        AnscTraceFlow(("%s: retPsmGet == CCSP_SUCCESS reading %s = %s \n", __FUNCTION__,param_name,param_value)); 
+        //AnscTraceFlow(("%s: retPsmGet == CCSP_SUCCESS reading %s = %s \n", __FUNCTION__,param_name,param_value)); 
     }
       
     if(!Utopia_Init(&ctx))
@@ -2256,7 +2256,7 @@ CosaDmlDhcpsGetPool
 {
 
     UNREFERENCED_PARAMETER(hContext);
-    AnscTraceFlow(("%s: ulIndex = %lu\n", __FUNCTION__, ulIndex));
+    //AnscTraceFlow(("%s: ulIndex = %lu\n", __FUNCTION__, ulIndex));
 
     if(ulIndex == 0){
         // ulIndex start from 0 for the 1st pool
@@ -2286,7 +2286,7 @@ CosaDmlDhcpsGetPool
         PCOSA_DML_DHCPS_POOL_CFG pPoolCfg = NULL;
         PCOSA_DML_DHCPS_POOL_INFO pPoolInfo = NULL;
 
-        AnscTraceFlow(("%s: getting DHCPv4 Server pool index %lu\n", __FUNCTION__, ulIndex));
+        //AnscTraceFlow(("%s: getting DHCPv4 Server pool index %lu\n", __FUNCTION__, ulIndex));
         pPoolLinkObj = (PCOSA_DML_DHCPS_POOL_FULL_LINK_OBJ)AnscSListGetEntryByIndex(&g_dhcpv4_server_pool_list,ulIndex-1);
         if(pPoolLinkObj == NULL)
         {
@@ -2298,7 +2298,7 @@ CosaDmlDhcpsGetPool
         // need to copy Cfg and Info
         pPoolCfg = &(pPool->Cfg);
         pPoolInfo = &(pPool->Info);
-        AnscTraceFlow(("%s:found index %lu, instancenum %lu\n", __FUNCTION__, ulIndex, pPoolCfg->InstanceNumber));
+        //AnscTraceFlow(("%s:found index %lu, instancenum %lu\n", __FUNCTION__, ulIndex, pPoolCfg->InstanceNumber));
         AnscCopyMemory(&(pEntry->Cfg), pPoolCfg, sizeof(COSA_DML_DHCPS_POOL_CFG));
         AnscCopyMemory(&(pEntry->Info), pPoolInfo, sizeof(COSA_DML_DHCPS_POOL_INFO));
 
@@ -2318,7 +2318,7 @@ CosaDmlDhcpsSetPoolValues
 {
 
     UNREFERENCED_PARAMETER(hContext);
-    AnscTraceFlow(("%s: ulIndex = %lu, ulInstanceNumber %lu\n", __FUNCTION__, ulIndex, ulInstanceNumber));
+    //AnscTraceFlow(("%s: ulIndex = %lu, ulInstanceNumber %lu\n", __FUNCTION__, ulIndex, ulInstanceNumber));
 
     if(ulIndex == 0){
         int rc = -1;
@@ -2348,7 +2348,7 @@ CosaDmlDhcpsSetPoolValues
         PCOSA_DML_DHCPS_POOL_FULL_LINK_OBJ pPoolLinkObj=NULL;
         PCOSA_DML_DHCPS_POOL_FULL pPool=NULL;
         PCOSA_DML_DHCPS_POOL_CFG pPoolCfg = NULL;
-        AnscTraceFlow(("%s: getting DHCPv4 Server pool index %lu\n", __FUNCTION__, ulIndex));
+        //AnscTraceFlow(("%s: getting DHCPv4 Server pool index %lu\n", __FUNCTION__, ulIndex));
         pPoolLinkObj = (PCOSA_DML_DHCPS_POOL_FULL_LINK_OBJ)AnscSListGetEntryByIndex(&g_dhcpv4_server_pool_list,ulIndex-1);
         if(pPoolLinkObj == NULL)
         {
@@ -2395,7 +2395,7 @@ static PCOSA_DML_DHCPS_POOL_FULL_LINK_OBJ find_dhcpv4_pool_by_instancenum(ULONG 
     {
         if(curPoolLinkObj->SPool.Cfg.InstanceNumber == instancenum)
         {
-            AnscTraceFlow(("%s: found DHCPv4 Server Pool for instance number %lu\n", __FUNCTION__, instancenum));
+            //AnscTraceFlow(("%s: found DHCPv4 Server Pool for instance number %lu\n", __FUNCTION__, instancenum));
             return curPoolLinkObj;
         }
 
@@ -2440,7 +2440,7 @@ CosaDmlDhcpsAddPool
         DHCPV4_POOL_SET_DEFAULTVALUE(pPool);
 
         pPool->Cfg.InstanceNumber = pEntry->Cfg.InstanceNumber;
-        AnscTraceFlow(("%s: AnscSListPushEntryAtBack instancenum = %lu\n", __FUNCTION__, pPool->Cfg.InstanceNumber));
+        //AnscTraceFlow(("%s: AnscSListPushEntryAtBack instancenum = %lu\n", __FUNCTION__, pPool->Cfg.InstanceNumber));
         AnscSListPushEntryAtBack(&g_dhcpv4_server_pool_list, &pPoolLinkObj->Linkage);
         
         // Write CFG values to PSM
@@ -2488,13 +2488,13 @@ CosaDmlDhcpsDelPool
         return ANSC_STATUS_CANT_FIND;
     }
 
-    AnscTraceFlow(("%s:pop link instancenum = %lu\n", __FUNCTION__, pPoolLinkObj->SPool.Cfg.InstanceNumber));
+    //AnscTraceFlow(("%s:pop link instancenum = %lu\n", __FUNCTION__, pPoolLinkObj->SPool.Cfg.InstanceNumber));
     AnscSListPopEntryByLink(&g_dhcpv4_server_pool_list, &pPoolLinkObj->Linkage);
 
     deleteDHCPv4ServerPoolPSM(ulInstanceNumber);
     AnscFreeMemory(pPoolLinkObj);
 
-    AnscTraceFlow(("%s: notify sysevent dhcp_server-resync and dhcp_server-restart\n", __FUNCTION__));
+    //AnscTraceFlow(("%s: notify sysevent dhcp_server-resync and dhcp_server-restart\n", __FUNCTION__));
     v_secure_system("sysevent set dhcp_server-resync");
     v_secure_system("sysevent set dhcp_server-restart");
     return ANSC_STATUS_SUCCESS;
@@ -2509,7 +2509,7 @@ CosaDmlDhcpsSetPoolCfg
 {
 
     UNREFERENCED_PARAMETER(hContext);
-    AnscTraceFlow(("%s: pCfg->InstanceNumber =%lu\n", __FUNCTION__, pCfg->InstanceNumber));
+    //AnscTraceFlow(("%s: pCfg->InstanceNumber =%lu\n", __FUNCTION__, pCfg->InstanceNumber));
 
     if(pCfg->InstanceNumber == 1){
         int rc = -1;
@@ -2578,7 +2578,7 @@ CosaDmlDhcpsSetPoolCfg
         if(dhcpServerRestart)
         {
             // resync for the second pool
-            AnscTraceFlow(("%s: notify sysevent dhcp_server-resync and dhcp_server-restart\n", __FUNCTION__));
+            //AnscTraceFlow(("%s: notify sysevent dhcp_server-resync and dhcp_server-restart\n", __FUNCTION__));
             printf("%s: notify sysevent dhcp_server-resync and dhcp_server-restart\n", __FUNCTION__);
             v_secure_system("sysevent set dhcp_server-resync");
             v_secure_system("sysevent set dhcp_server-restart");
@@ -2597,7 +2597,7 @@ CosaDmlDhcpsGetPoolCfg
 {
    
     UNREFERENCED_PARAMETER(hContext);
-    AnscTraceFlow(("%s: pCfg->InstanceNumber =%lu\n", __FUNCTION__, pCfg->InstanceNumber));
+    //AnscTraceFlow(("%s: pCfg->InstanceNumber =%lu\n", __FUNCTION__, pCfg->InstanceNumber));
  
     if(pCfg->InstanceNumber == 1){
         int rc = -1;
@@ -2644,7 +2644,7 @@ CosaDmlDhcpsGetPoolInfo
 {
 
     UNREFERENCED_PARAMETER(hContext);
-    AnscTraceFlow(("%s: ulInstanceNumber =%lu\n", __FUNCTION__, ulInstanceNumber));
+    //AnscTraceFlow(("%s: ulInstanceNumber =%lu\n", __FUNCTION__, ulInstanceNumber));
     errno_t                         rc              = -1;
    
     if(ulInstanceNumber == 1) {
@@ -2704,7 +2704,7 @@ CosaDmlDhcpsGetPoolInfo
             /* Get DHCP Server Status */             
             sysevent_get(se_fd, se_token, "dhcp_server-status", dhcp_status, sizeof(dhcp_status));
 
-            AnscTraceFlow(("%s: dhcp_status = %s\n", __FUNCTION__, dhcp_status));
+            //AnscTraceFlow(("%s: dhcp_status = %s\n", __FUNCTION__, dhcp_status));
              
         }
 
@@ -3097,7 +3097,7 @@ CosaDmlDhcpsGetOptionbyInsNum
         {
             if(curPoolOptionLinkObj->SPoolOption.InstanceNumber == pEntry->InstanceNumber)
             {
-                AnscTraceFlow(("%s: found DHCPv4 Server Pool Option for instance number %lu\n", __FUNCTION__, pEntry->InstanceNumber));
+                //AnscTraceFlow(("%s: found DHCPv4 Server Pool Option for instance number %lu\n", __FUNCTION__, pEntry->InstanceNumber));
                 //printf("%s: found DHCPv4 Server Pool Option for instance number %d\n", __FUNCTION__, pEntry->InstanceNumber);
                 break;
             }
@@ -3161,7 +3161,7 @@ CosaDmlDhcpsSetOptionValues
         {
             if(curPoolOptionLinkObj->SPoolOption.InstanceNumber == ulInstanceNumber)
             {
-                AnscTraceFlow(("%s: found DHCPv4 Server Pool Option for instance number %lu\n", __FUNCTION__, ulInstanceNumber));
+                //AnscTraceFlow(("%s: found DHCPv4 Server Pool Option for instance number %lu\n", __FUNCTION__, ulInstanceNumber));
                 //printf("%s: found DHCPv4 Server Pool Option for instance number %d\n", __FUNCTION__, ulInstanceNumber);
                 break;
             }
@@ -3256,7 +3256,7 @@ CosaDmlDhcpsAddOption
             DHCPV4_POOLOPTION_SET_DEFAULTVALUE(pPoolOption);
 
             pPoolOption->InstanceNumber = pEntry->InstanceNumber;
-            AnscTraceFlow(("%s: AnscSListPushEntryAtBack instancenum = %lu\n", __FUNCTION__, pPoolOption->InstanceNumber));
+            //AnscTraceFlow(("%s: AnscSListPushEntryAtBack instancenum = %lu\n", __FUNCTION__, pPoolOption->InstanceNumber));
             AnscSListPushEntryAtBack(&(pPoolLinkObj->OptionList), &pOptionLinkObj->Linkage);
 
             // Write Option to PSM and update to new option value
@@ -3264,7 +3264,7 @@ CosaDmlDhcpsAddOption
 
             if(dhcpServerRestart)
             {
-                AnscTraceFlow(("%s: notify sysevent dhcp_server-resync and dhcp_server-restart\n", __FUNCTION__));
+                //AnscTraceFlow(("%s: notify sysevent dhcp_server-resync and dhcp_server-restart\n", __FUNCTION__));
                 printf("%s: notify sysevent dhcp_server-resync and dhcp_server-restart\n", __FUNCTION__);
                 v_secure_system("sysevent set dhcp_server-resync");
                 v_secure_system("sysevent set dhcp_server-restart");
@@ -3293,7 +3293,7 @@ CosaDmlDhcpsDelOption
         return ANSC_STATUS_SUCCESS;
     }   
 
-    AnscTraceFlow(("SBAPI->CosaDmlDhcpsDelPool:Pool %lu, Instance %lu",ulPoolInstanceNumber, ulInstanceNumber));
+    //AnscTraceFlow(("SBAPI->CosaDmlDhcpsDelPool:Pool %lu, Instance %lu",ulPoolInstanceNumber, ulInstanceNumber));
     PCOSA_DML_DHCPS_POOL_FULL_LINK_OBJ pPoolLinkObj = find_dhcpv4_pool_by_instancenum(ulPoolInstanceNumber);
     if(pPoolLinkObj == NULL)
     {
@@ -3306,7 +3306,7 @@ CosaDmlDhcpsDelOption
     {
         if(curPoolOptionLinkObj->SPoolOption.InstanceNumber == ulInstanceNumber)
         {
-            AnscTraceFlow(("%s: found DHCPv4 Server Pool Option for instance number %lu\n", __FUNCTION__, ulInstanceNumber));
+            //AnscTraceFlow(("%s: found DHCPv4 Server Pool Option for instance number %lu\n", __FUNCTION__, ulInstanceNumber));
             break;
         }
 
@@ -3319,14 +3319,14 @@ CosaDmlDhcpsDelOption
         return ANSC_STATUS_CANT_FIND;
     }
     
-    AnscTraceFlow(("%s:pop link instancenum = %lu\n", __FUNCTION__, curPoolOptionLinkObj->SPoolOption.InstanceNumber));
+    //AnscTraceFlow(("%s:pop link instancenum = %lu\n", __FUNCTION__, curPoolOptionLinkObj->SPoolOption.InstanceNumber));
     //printf("%s:pop link instancenum = %d\n", __FUNCTION__, curPoolOptionLinkObj->SPoolOption.InstanceNumber);
     AnscSListPopEntryByLink(&(pPoolLinkObj->OptionList), &curPoolOptionLinkObj->Linkage);
 
     deleteDHCPv4ServerPoolOptionPSM(ulPoolInstanceNumber, ulInstanceNumber);
     AnscFreeMemory(curPoolOptionLinkObj);
 
-    AnscTraceFlow(("%s: notify sysevent dhcp_server-resync and dhcp_server-restart\n", __FUNCTION__));
+    //AnscTraceFlow(("%s: notify sysevent dhcp_server-resync and dhcp_server-restart\n", __FUNCTION__));
     //printf("%s: notify sysevent dhcp_server-resync and dhcp_server-restart\n", __FUNCTION__);
     v_secure_system("sysevent set dhcp_server-resync");
     v_secure_system("sysevent set dhcp_server-restart");
@@ -3379,7 +3379,7 @@ CosaDmlDhcpsSetOption
             {
                 if(curPoolOptionLinkObj->SPoolOption.InstanceNumber == pEntry->InstanceNumber)
                 {
-                    AnscTraceFlow(("%s: found DHCPv4 Server Pool Option for instance number %lu\n", __FUNCTION__, pEntry->InstanceNumber));
+                    //AnscTraceFlow(("%s: found DHCPv4 Server Pool Option for instance number %lu\n", __FUNCTION__, pEntry->InstanceNumber));
                     //printf("%s: found DHCPv4 Server Pool Option for instance number %d\n", __FUNCTION__, pEntry->InstanceNumber);
                     break;
                 }
@@ -3400,7 +3400,7 @@ CosaDmlDhcpsSetOption
 
             if(dhcpServerRestart)
             {
-                AnscTraceFlow(("%s: notify sysevent dhcp_server-resync and dhcp_server-restart\n", __FUNCTION__));
+                //AnscTraceFlow(("%s: notify sysevent dhcp_server-resync and dhcp_server-restart\n", __FUNCTION__));
                 printf("%s: notify sysevent dhcp_server-resync and dhcp_server-restart\n", __FUNCTION__);
                 v_secure_system("sysevent set dhcp_server-resync");
                 v_secure_system("sysevent set dhcp_server-restart");
@@ -3512,7 +3512,7 @@ int _cosa_get_dhcps_client(ULONG instancenum, UCHAR *ifName, ULONG minAddress, U
     ULONG tempIPAddr=0;
     errno_t rc = -1;
 
-    AnscTraceFlow(("Entered Inside %s\n", __FUNCTION__));
+    //AnscTraceFlow(("Entered Inside %s\n", __FUNCTION__));
 #if 0
     struct timeval tval;   
     gettimeofday(&tval, NULL);
@@ -3528,7 +3528,7 @@ int _cosa_get_dhcps_client(ULONG instancenum, UCHAR *ifName, ULONG minAddress, U
         return -1;
     }
 
-    AnscTraceFlow(("Opening COSA_DML_DHCP_LEASES_FILE in a read mode complete %s\n", __FUNCTION__));
+    //AnscTraceFlow(("Opening COSA_DML_DHCP_LEASES_FILE in a read mode complete %s\n", __FUNCTION__));
 
     fpTmp = fopen(COSA_DML_DHCP_LEASES_FILE_TMP, "w");
     if (!fpTmp){
@@ -3539,13 +3539,13 @@ int _cosa_get_dhcps_client(ULONG instancenum, UCHAR *ifName, ULONG minAddress, U
         return -1;
     }
 
-    AnscTraceFlow(("Opening COSA_DML_DHCP_LEASES_FILE_TMP in a write mode complete, %s\n", __FUNCTION__));
+    //AnscTraceFlow(("Opening COSA_DML_DHCP_LEASES_FILE_TMP in a write mode complete, %s\n", __FUNCTION__));
     while(fgets(oneline, sizeof(oneline), fp)){
         fputs(oneline, fpTmp);
     }
 
 
-    AnscTraceFlow(("Writing dnsmasq lease info to tmp file complete, %s\n", __FUNCTION__));
+    //AnscTraceFlow(("Writing dnsmasq lease info to tmp file complete, %s\n", __FUNCTION__));
     fclose(fp);
     fclose(fpTmp);
     fp = NULL;
@@ -3748,7 +3748,7 @@ int _cosa_get_dhcps_client(ULONG instancenum, UCHAR *ifName, ULONG minAddress, U
 	printf("%02d-%02d-%02d EXITING %s %d\n", tm.tm_hour, tm.tm_min, tm.tm_sec, __func__, __LINE__);
 #endif
 
-        AnscTraceFlow(("%s, Done with client parameters\n", __FUNCTION__));
+        //AnscTraceFlow(("%s, Done with client parameters\n", __FUNCTION__));
     /* for option */
     
 	fp = fopen(COSA_DML_DHCP_OPTIONS_FILE, "r");
@@ -3825,7 +3825,7 @@ int _cosa_get_dhcps_client(ULONG instancenum, UCHAR *ifName, ULONG minAddress, U
 
         }            
     }
-    AnscTraceFlow(("%s, Done with Option parameters\n", __FUNCTION__));
+    //AnscTraceFlow(("%s, Done with Option parameters\n", __FUNCTION__));
     if (fp)
         fclose(fp);
 #if 0
@@ -3833,7 +3833,7 @@ int _cosa_get_dhcps_client(ULONG instancenum, UCHAR *ifName, ULONG minAddress, U
     tm = *localtime(&tval.tv_sec);
     printf("%02d-%02d-%02d EXITING %s %d\n", tm.tm_hour, tm.tm_min, tm.tm_sec, __func__, __LINE__);
 #endif
-    AnscTraceFlow(("Exiting from %s without error\n", __FUNCTION__));
+    //AnscTraceFlow(("Exiting from %s without error\n", __FUNCTION__));
     return 0;
 
 ErrRet:
