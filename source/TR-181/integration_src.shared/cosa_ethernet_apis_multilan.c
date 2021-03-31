@@ -105,7 +105,7 @@ CosaDmlEthMlanInit
     UNREFERENCED_PARAMETER(hDml);
     PDMSB_TR181_ETH_CONTEXT         pEthContext     = NULL;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     pEthContext = (PDMSB_TR181_ETH_CONTEXT)AnscAllocateMemory(sizeof(DMSB_TR181_ETH_CONTEXT));
 
@@ -138,7 +138,7 @@ CosaDmlEthLinkFindByInstNum
     PSINGLE_LINK_ENTRY              pSLinkEntry;
     PDMSB_TR181_ETH_LINK            pEthLink;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     pSLinkEntry = AnscSListGetFirstEntry(&pEthContext->EthLinkList);
 
@@ -174,7 +174,7 @@ CosaDmlEthLinkLoadPsm
     unsigned int                    RecordType      = 0;
     SLAP_VARIABLE                   SlapValue       = {0};
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     iReturnValue = 
         PsmGetNextLevelInstances
@@ -551,7 +551,7 @@ CosaDmlEthLinkSavePsm
     unsigned int                    RecordType      = ccsp_string;
     char                            RecordValue[64] = {0};
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if ( TRUE )     /* Enable */
     {
@@ -708,7 +708,7 @@ CosaDmlEthLinkDelPsm
     int                             iReturnValue    = CCSP_SUCCESS;
     char                            pParamPath[64]  = {0};
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if ( TRUE )     /* Enable */
     {
@@ -747,7 +747,7 @@ CosaDmlEthLinkGetNumberOfEntries
 {
     PDMSB_TR181_ETH_CONTEXT         pEthContext     = (PDMSB_TR181_ETH_CONTEXT)hContext;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if ( !pEthContext->EthLinkInit )
     {
@@ -770,7 +770,7 @@ CosaDmlEthLinkGetEntry
     PSINGLE_LINK_ENTRY              pSLinkEntry;
     PDMSB_TR181_ETH_LINK            pEthLink;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if ( !pEntry )
     {
@@ -818,7 +818,7 @@ CosaDmlEthLinkSetValues
     PSINGLE_LINK_ENTRY              pSLinkEntry;
     PDMSB_TR181_ETH_LINK            pEthLink;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     pSLinkEntry = AnscSListGetEntryByIndex(&pEthContext->EthLinkList, ulIndex);
 
@@ -849,7 +849,7 @@ CosaDmlEthLinkAddEntry
     PDMSB_TR181_ETH_CONTEXT         pEthContext     = (PDMSB_TR181_ETH_CONTEXT)hContext;
     PDMSB_TR181_ETH_LINK            pEthLink;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if ( !pEntry )
     {
@@ -936,7 +936,7 @@ CosaDmlEthLinkDelEntry
     PDMSB_TR181_ETH_CONTEXT         pEthContext     = (PDMSB_TR181_ETH_CONTEXT)hContext;
     PDMSB_TR181_ETH_LINK            pEthLink;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     pEthLink = CosaDmlEthLinkFindByInstNum(pEthContext, ulInstanceNumber);
 
@@ -965,7 +965,7 @@ CosaDmlEthLinkSetCfg
     PDMSB_TR181_ETH_CONTEXT         pEthContext     = (PDMSB_TR181_ETH_CONTEXT)hContext;
     PDMSB_TR181_ETH_LINK            pEthLink;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     pEthLink = CosaDmlEthLinkFindByInstNum(pEthContext, pCfg->InstanceNumber);
 
@@ -1039,7 +1039,7 @@ CosaDmlEthLinkUpdateStaticMac
     PDMSB_TR181_ETH_CONTEXT         pEthContext     = (PDMSB_TR181_ETH_CONTEXT)hContext;
     PDMSB_TR181_ETH_LINK            pEthLink;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     pEthLink = CosaDmlEthLinkFindByInstNum(pEthContext, pCfg->InstanceNumber);
 
@@ -1076,7 +1076,7 @@ CosaDmlEthLinkGetCfg
     PDMSB_TR181_ETH_CONTEXT         pEthContext     = (PDMSB_TR181_ETH_CONTEXT)hContext;
     PDMSB_TR181_ETH_LINK            pEthLink;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     pEthLink = CosaDmlEthLinkFindByInstNum(pEthContext, pCfg->InstanceNumber);
 
@@ -1103,7 +1103,7 @@ CosaDmlEthLinkGetDinfo
     PDMSB_TR181_ETH_CONTEXT         pEthContext     = (PDMSB_TR181_ETH_CONTEXT)hContext;
     PDMSB_TR181_ETH_LINK            pEthLink;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     pEthLink = CosaDmlEthLinkFindByInstNum(pEthContext, ulInstanceNumber);
 
@@ -1130,7 +1130,7 @@ CosaDmlEthLinkGetStats
     PDMSB_TR181_ETH_CONTEXT         pEthContext     = (PDMSB_TR181_ETH_CONTEXT)hContext;
     PDMSB_TR181_ETH_LINK            pEthLink;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     pEthLink = CosaDmlEthLinkFindByInstNum(pEthContext, ulInstanceNumber);
 
@@ -1175,7 +1175,7 @@ CosaDmlEthLinkUpdateStaticLowerLayerName
     PDMSB_TR181_ETH_CONTEXT         pEthContext     = (PDMSB_TR181_ETH_CONTEXT)hContext;
     PDMSB_TR181_ETH_LINK            pEthLink;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     pEthLink = CosaDmlEthLinkFindByInstNum(pEthContext, ulInstanceNumber);
 
@@ -1200,7 +1200,7 @@ int _getMac(char* ifName, char* mac){
     struct ifreq ifr;
     int skfd;
     
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     skfd = socket(AF_INET, SOCK_DGRAM, 0);
     /* CID: 54085 Argument cannot be negative*/
@@ -1227,7 +1227,7 @@ COSA_DML_IF_STATUS getIfStatus(const PUCHAR name, struct ifreq *pIfr)
     struct ifreq ifr;
     int skfd;
     
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     skfd = socket(AF_INET, SOCK_DGRAM, 0);
     /* CID: 56442 Argument cannot be negative*/
@@ -1271,7 +1271,7 @@ static int setIfStatus(struct ifreq *pIfr)
 {
     int skfd;
     
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     skfd = socket(AF_INET, SOCK_DGRAM, 0);
     /* CID: 62903 Argument cannot be negative*/
@@ -1294,7 +1294,7 @@ BOOLEAN getIfAvailability( const PUCHAR name )
     struct ifreq ifr;
     int skfd;
     
-    AnscTraceFlow(("%s... name %s\n", __FUNCTION__,name));
+    //AnscTraceFlow(("%s... name %s\n", __FUNCTION__,name));
 
     skfd = socket(AF_INET, SOCK_DGRAM, 0);
 
