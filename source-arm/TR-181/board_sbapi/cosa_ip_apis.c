@@ -863,7 +863,7 @@ IPIF_getEntry_for_Ipv6Addr
     int  need_write = 0;
     errno_t safec_rc = -1;
     
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     CosaUtilGetIpv6AddrInfo((char *)g_ipif_names[ulIndex], &p_v6addr, &v6addr_num);
     _obtain_ra_info(&p_ra, &ra_num);
@@ -1213,7 +1213,7 @@ int CosaDmlGetPrefixPathName(char * ifname, int inst1, PCOSA_DML_IP_V6ADDR p_dml
     int   found = 0;
     errno_t safec_rc = -1;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if (!p_dml_v6addr || !p_val)
         return -1;
@@ -1360,7 +1360,7 @@ ULONG CosaDmlIPv6addrGetV6Status(PCOSA_DML_IP_V6ADDR p_dml_v6addr, PCOSA_DML_IP_
     int  valid_lft = 0, prefered_lft = 0;
     ipv6_addr_info_t v6_ai;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     errno_t safec_rc = strcpy_s(v6_ai.v6addr, sizeof(v6_ai.v6addr), p_dml_v6addr->IP6Address);
     if(safec_rc != EOK)
@@ -1429,7 +1429,7 @@ CosaDmlIPGetIPv6Addresses
     int i = 0;
     PCOSA_DML_IP_V6ADDR p_dml_addr = NULL;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if (!p_ipif || !p_num)
         return NULL;
@@ -1485,7 +1485,7 @@ CosaDmlIPGetIPv6Addresses
     int i = 0;
     PCOSA_DML_IP_V6ADDR p_dml_addr = NULL;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if (!p_ipif || !p_num)
         return NULL;
@@ -1981,7 +1981,7 @@ CosaDmlIpIfGetEntry
 
     int i;
     errno_t safec_rc = -1;
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if ( ulIndex >= (COSA_USG_IF_NUM - 1) )
     {
@@ -2293,7 +2293,7 @@ CosaDmlIpIfSetCfg
         UtopiaContext                   utctx;
         errno_t safec_rc = -1;
 
-        AnscTraceFlow(("%s...\n", __FUNCTION__));
+        //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
         p_be_buf_cfg = &g_ipif_be_bufs[pCfg->InstanceNumber-1].Cfg;
         
@@ -2428,7 +2428,7 @@ if ( pCfg->InstanceNumber >= COSA_USG_IF_NUM )
     {
         ANSC_STATUS                     returnStatus = ANSC_STATUS_SUCCESS;
 
-        AnscTraceFlow(("%s...\n", __FUNCTION__));
+        //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
         /*the reason we can safely use pIPInerface.Cfg.InstanceNumber to refer to real backend buffer is we can't add/del IP.Interface. table, the InstanceNumber is fixed*/
         AnscCopyMemory(pCfg, &g_ipif_be_bufs[pCfg->InstanceNumber-1].Cfg, sizeof(COSA_DML_IP_IF_CFG));
@@ -2498,7 +2498,7 @@ CosaDmlIpIfGetInfo
     {
         ANSC_STATUS                     returnStatus = ANSC_STATUS_SUCCESS;
 
-        AnscTraceFlow(("%s...\n", __FUNCTION__));
+        //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
         /*the reason we can safely use pIPInerface.Cfg.InstanceNumber to refer to real backend buffer is we can't add/del IP.Interface. table, the InstanceNumber is fixed*/
         AnscCopyMemory(pInfo, &g_ipif_be_bufs[ulInstanceNumber-1].Info, sizeof(COSA_DML_IP_IF_INFO));
@@ -2551,7 +2551,7 @@ CosaDmlIpIfReset
         ANSC_STATUS                     returnStatus = ANSC_STATUS_SUCCESS;
         /*TODO: TR181 requires to delay this operation after the end of current CWMP session, not supported*/
         
-        AnscTraceFlow(("%s...\n", __FUNCTION__));
+        //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
         if (strstr((char *)g_ipif_names[ulInstanceNumber-1], "lan0"))
         {
@@ -2705,7 +2705,7 @@ CosaDmlIpIfGetV4Addr
     {
         ANSC_STATUS                     returnStatus = ANSC_STATUS_SUCCESS;
        
-        AnscTraceFlow(("%s...\n", __FUNCTION__));
+        //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
         pEntry->InstanceNumber   = ulIndex + 1;
         /*Not supported now*/
@@ -2968,7 +2968,7 @@ CosaDmlIpIfSetV4Addr
         UtopiaContext                   utctx;
         errno_t safec_rc = -1;
         
-        AnscTraceFlow(("%s...\n", __FUNCTION__));
+        //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
         p_be_buf = &g_ipif_be_bufs[ulIpIfInstanceNumber-1].V4AddrList[0];
 
@@ -3475,7 +3475,7 @@ CosaDmlIpIfAddV6Addr
         char                            namespace[256] = {0};
         errno_t  safec_rc = -1;
         
-        AnscTraceFlow(("%s...\n", __FUNCTION__));
+        //AnscTraceFlow(("%s...\n", __FUNCTION__));
         
         for ( i = 0; i < g_ipif_num; i++ )
         {
@@ -3652,7 +3652,7 @@ CosaDmlIpIfDelV6Addr
         UtopiaContext                   utctx = {0};
         errno_t safec_rc = -1;
 
-        AnscTraceFlow(("%s...\n", __FUNCTION__));
+        //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
         for ( i = 0; i < g_ipif_num; i++ )
         {
@@ -3758,7 +3758,7 @@ CosaDmlIpIfSetV6Addr
         UNREFERENCED_PARAMETER(hContext);
         errno_t safec_rc = -1;
 
-        AnscTraceFlow(("%s...\n", __FUNCTION__));
+        //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
         for ( i = 0; i < g_ipif_num; i++ )
         {
@@ -3900,7 +3900,7 @@ CosaDmlIpIfGetV6Addr2
         int                             i       = 0;
         ULONG                           j       = 0;
 
-        AnscTraceFlow(("%s...\n", __FUNCTION__));
+        //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
         for ( i = 0; i < g_ipif_num; i++ )
         {
@@ -3935,7 +3935,7 @@ CosaDmlIPGetIPv6Prefixes
     int i = 0;
     PCOSA_DML_IP_V6PREFIX p_dml_pref = NULL;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if (!p_ipif || !p_num)
         return NULL;
@@ -4028,7 +4028,7 @@ CosaDmlIPGetIPv6Prefixes
 	int i = 0;
         PCOSA_DML_IP_V6PREFIX p_dml_pref = NULL;
 #endif
-        AnscTraceFlow(("%s...\n", __FUNCTION__));
+        //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
         for (i=0; i<g_ipif_num; i++)
             if (!strncmp(g_ipif_names[i], p_ipif->Info.Name, sizeof(p_ipif->Info.Name)))
@@ -4140,7 +4140,7 @@ CosaDmlIpIfAddV6Prefix
         UtopiaContext                   utctx = {0};
         errno_t safec_rc = -1;
 
-        AnscTraceFlow(("%s...\n", __FUNCTION__));
+        //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
         for ( i = 0; i < g_ipif_num; i++ )
         {
@@ -4247,7 +4247,7 @@ CosaDmlIpIfDelV6Prefix
         UtopiaContext                   utctx = {0};
         errno_t safec_rc = -1;
 
-        AnscTraceFlow(("%s...\n", __FUNCTION__));
+        //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
         for ( i = 0; i < g_ipif_num; i++ )
         {
@@ -4344,7 +4344,7 @@ CosaDmlIpIfSetV6Prefix
         ULONG                           j       = 0;
         UtopiaContext                   utctx = {0};
 
-        AnscTraceFlow(("%s...\n", __FUNCTION__));
+        //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
         for ( i = 0; i < g_ipif_num; i++ )
         {
@@ -4426,7 +4426,7 @@ CosaDmlIpIfGetV6Prefix2
         int                             i       = 0;
         ULONG                           j       = 0;
 
-        AnscTraceFlow(("%s...\n", __FUNCTION__));
+        //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
         for ( i = 0; i < g_ipif_num; i++ )
         {
@@ -4493,7 +4493,7 @@ CosaDmlIpIfGetStats
     else
     {
        
-        AnscTraceFlow(("%s...\n", __FUNCTION__));
+        //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
         if (CosaUtilGetIfStats((char *)g_ipif_names[ulIpIfInstanceNumber-1],  (PCOSA_DML_IF_STATS)pStats))
             return ANSC_STATUS_SUCCESS;
@@ -4554,7 +4554,7 @@ CosaDmlIpGetActivePorts
     CHAR                            ucLineBuf[256]  = {0};
     CHAR                            ucTempBuf[128]  = {0};
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     v_secure_system("netstat -nt | grep -E  'ESTABLISHED|LISTEN' > /tmp/.netstat_tcp");
 
