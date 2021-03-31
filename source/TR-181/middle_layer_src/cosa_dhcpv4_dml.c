@@ -10924,8 +10924,11 @@ LanAllowedSubnetTable_SetParamStringValue
     }
     if (strcmp(ParamName, "Alias") == 0)
     {
-        _ansc_snprintf(pLanAllowedSubnet->Alias, sizeof(pLanAllowedSubnet->Alias), "%s", pString);
-        return TRUE;
+        if (strcmp (pString, "") != 0)
+        {
+            _ansc_snprintf(pLanAllowedSubnet->Alias, sizeof(pLanAllowedSubnet->Alias), "%s", pString);
+            return TRUE;
+        }
     }
 
     return FALSE;
