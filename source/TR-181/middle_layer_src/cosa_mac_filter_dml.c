@@ -280,6 +280,7 @@ MACFilter_Validate
 
             // clear macaddress of new dml entry, to avoid displaying in dmcli
             pFwMACFilter->MACAddress[0] = 0;
+            _ansc_strcpy(pReturnParamName, "MACAddress");
             return FALSE;
         }
 
