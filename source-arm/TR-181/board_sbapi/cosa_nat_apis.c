@@ -1155,7 +1155,6 @@ static BOOL g_NatOne2OneEnable;
 
 ANSC_IPV4_ADDRESS  g_NatLanIP = {{0}};
 
-/*
 static ULONG
 saveID
     (
@@ -1255,7 +1254,6 @@ unsetID
 
     return 0;
 }
-*/
 
 /* InstanceNum save/load for PortTrigger entries */
 /*
