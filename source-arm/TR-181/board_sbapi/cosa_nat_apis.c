@@ -783,7 +783,6 @@ static BOOL g_NatOne2OneEnable;
 
 ANSC_IPV4_ADDRESS  g_NatLanIP = {{0}};
 
-#if defined _DT_WAN_Manager_Enable_
 static ULONG
 saveID
     (
@@ -858,9 +857,7 @@ loadID
 
     return 0;
 }
-#endif
 
-/*
 static ULONG
 unsetID
     (
@@ -887,7 +884,6 @@ unsetID
 
     return 0;
 }
-*/
 
 /* InstanceNum save/load for PortTrigger entries */
 /*
