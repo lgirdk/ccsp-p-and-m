@@ -1155,7 +1155,6 @@ static BOOL g_NatOne2OneEnable;
 
 ANSC_IPV4_ADDRESS  g_NatLanIP = {{0}};
 
-/*
 static ULONG
 saveID
     (
@@ -1166,9 +1165,9 @@ saveID
         ULONG ulInstanceNumber
     )
 {
-    char keyStr[1024] = {0};
-    char idStr[1024] = {0};
-    errno_t  safec_rc = -1;
+    char keyStr[32];
+    char idStr[128];
+    errno_t safec_rc = -1;
 	
     if ( proto < 0 )
     {
@@ -1200,8 +1199,8 @@ loadID
         ULONG* ulInstanceNumber
     )
 {
-    char keyStr[1024] = {0};
-    char idStr[1024] = {0};
+    char keyStr[32];
+    char idStr[128];
     char* instNumString;
     int rv;
     errno_t safec_rc = -1;
@@ -1216,6 +1215,8 @@ loadID
     {
        ERR_CHK(safec_rc);
     }
+
+    idStr[0] = 0;
     rv =Utopia_RawGet(utctx, COSA_NAT_ID_SYSCFG_NAMESPACE, keyStr, idStr, sizeof(idStr));
     if (rv == -1 || idStr[0] == '\0') {
         return -1;
@@ -1237,7 +1238,7 @@ unsetID
         int proto
     )
 {
-    char keyStr[1024] = {0};
+    char keyStr[32];
     errno_t safec_rc = -1;
 
     if ( proto < 0 )
@@ -1255,7 +1256,6 @@ unsetID
 
     return 0;
 }
-*/
 
 /* InstanceNum save/load for PortTrigger entries */
 /*
@@ -1267,8 +1267,7 @@ saveIDPt
         ULONG ulInstanceNumber
     )
 {
-    char idStr[1024] = {0};
-
+    char idStr[32];
 
     errno_t safec_rc = sprintf_s(idStr,  sizeof(idStr), "%u", ulInstanceNumber);
     if(safec_rc < EOK)
@@ -1289,10 +1288,10 @@ loadIDPt
         ULONG* pulInstanceNumber
     )
 {
-    char idStr[1024] = {0};
+    char idStr[128];
     int rv;
 
-
+    idStr[0] = 0;
     rv =Utopia_RawGet(utctx, COSA_NAT_ID_SYSCFG_NAMESPACE, pAlias, idStr, sizeof(idStr));
 
     if (rv == -1 || idStr[0] == '\0')
