@@ -2701,58 +2701,58 @@ CosaDmlDhcpv6cGetEnabled
     BOOL bEnabled = FALSE;
     char out[256] = {0};
 
-// For XB3, AXB6 if dibbler flag enabled, check dibbler-client process status
-#if defined(_COSA_INTEL_XB3_ARM_) || defined(INTEL_PUMA7)
-        char buf[8];
-        BOOL dibblerEnabled = FALSE;
-        if(( syscfg_get( NULL, "dibbler_client_enable_v2", buf, sizeof(buf))==0) && (strcmp(buf, "true") == 0))
-	{
-		dibblerEnabled = TRUE;
-	}
-	CcspTraceWarning(("dibbler_client_enable_v2 %d\n", dibblerEnabled));
-#endif
-
 #if defined (FEATURE_RDKB_WAN_MANAGER)
     FILE *fp = popen("busybox ps |grep -i dibbler-client | grep -v grep", "r");
 #elif defined (_HUB4_PRODUCT_REQ_)
     FILE *fp = popen("busybox ps |grep -i dhcp6c | grep -v grep", "r");
 #elif defined (_COSA_BCM_ARM_)
     FILE *fp = popen("busybox ps |grep -i dibbler-client | grep -v grep", "r");
-
 #elif defined (_XF3_PRODUCT_REQ_)
-   FILE *fp = popen("/usr/sbin/dibbler-client status |grep  client", "r");
-
+    FILE *fp = popen("/usr/sbin/dibbler-client status | grep client", "r");
+#elif defined(_COSA_INTEL_XB3_ARM_) || defined(INTEL_PUMA7)
+    FILE *fp;
+    char buf[8];
+    BOOL dibblerEnabled = FALSE;
+    // For XB3, AXB6 if dibbler flag enabled, check dibbler-client process status
+    if ((syscfg_get(NULL, "dibbler_client_enable_v2", buf, sizeof(buf)) == 0) && (strcmp(buf, "true") == 0))
+    {
+        dibblerEnabled = TRUE;
+    }
+    CcspTraceWarning(("dibbler_client_enable_v2 %d\n", dibblerEnabled));
+    if (dibblerEnabled)
+        fp = popen("busybox ps |grep -i dibbler-client | grep -v grep", "r");
+    else
+        fp = popen("busybox ps |grep -i ti_dhcp6c | grep erouter0 | grep -v grep", "r");
 #else
-	FILE *fp;
-	// For XB3, AXB6 if dibbler flag enabled, check dibbler-client process status
-	if(dibblerEnabled)
-		fp = popen("busybox ps |grep -i dibbler-client | grep -v grep", "r");
-	else
-		fp = popen("busybox ps |grep -i ti_dhcp6c | grep erouter0 | grep -v grep", "r");
+    FILE *fp = popen("busybox ps |grep -i dibbler-client | grep -v grep", "r");
 #endif
 
     if ( fp != NULL){
         if ( fgets(out, sizeof(out), fp) != NULL ){
 #if defined (FEATURE_RDKB_WAN_MANAGER)
-            if ( _ansc_strstr(out, "dibbler-client") )
+            if (strstr(out, "dibbler-client"))
                 bEnabled = TRUE;
 #elif defined (_HUB4_PRODUCT_REQ_)
-            if ( _ansc_strstr(out, "dhcp6c") )
+            if (strstr(out, "dhcp6c"))
                 bEnabled = TRUE;
 #elif defined (_COSA_BCM_ARM_)
-            if ( _ansc_strstr(out, "dibbler-client") )
+            if (strstr(out, "dibbler-client"))
                 bEnabled = TRUE;
 #elif defined (_XF3_PRODUCT_REQ_)
-            if ( strstr(out, "RUNNING,") )
+            if (strstr(out, "RUNNING,"))
+                bEnabled = TRUE;
+#elif defined(_COSA_INTEL_XB3_ARM_) || defined(INTEL_PUMA7)
+            // For XB3, AXB6 if dibbler flag enabled, check dibbler-client process status
+            if (dibblerEnabled && strstr(out, "dibbler-client"))
+                bEnabled = TRUE;
+            if (strstr(out, "erouter_dhcp6c"))
                 bEnabled = TRUE;
 #else
-	// For XB3, AXB6 if dibbler flag enabled, check dibbler-client process status
-	if ( dibblerEnabled && _ansc_strstr(out, "dibbler-client") )
-                bEnabled = TRUE;
-        if ( _ansc_strstr(out, "erouter_dhcp6c") )
+            if (strstr(out, "dibbler-client"))
                 bEnabled = TRUE;
 #endif
-       }
+        }
+
         pclose(fp);
     }
 
