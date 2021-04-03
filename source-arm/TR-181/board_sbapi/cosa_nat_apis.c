@@ -2349,11 +2349,11 @@ CosaDmlNatGetPortMapping
     UtopiaContext          Ctx = {0};
     portFwdSingle_t        singleInfo;
     portFwdRange_t         rangeInfo;
+    portMapDyn_t           dynInfo ={0};
     int                    PortFwdDynCount = 0;
-    ULONG                  rc;
-/*  portMapDyn_t           dynInfo ={0};
-    ANSC_IPV4_ADDRESS      nat_lan;  
+    ULONG                  rc, i;
     COSA_DML_NAT_PMAPPING  tmp ={0};
+/*  ANSC_IPV4_ADDRESS      nat_lan;  
     lanSetting_t           lan;
     ULONG                  ulIndex = 0;*/
 
@@ -2453,7 +2453,7 @@ CosaDmlNatGetPortMapping
 
     if ( PortFwdDynCount != 0 )
     {
-        for (i = 0; i < PortFwdDynCount; i++, ulIndex++)
+        for (i = 0; i < PortFwdDynCount; i++)
         {
             rc = Utopia_GetDynPortMapping(i + 1, &dynInfo);
             if ( UT_SUCCESS != rc )
