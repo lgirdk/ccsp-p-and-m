@@ -83,22 +83,28 @@ LgiPlume_SetParamBoolValue
     /* check the parameter name and return the corresponding value */
     if( AnscEqualString(ParamName, "SONAdminStatus", TRUE))
     {
-        pMyObject->plumeAdminStatus = value;
-        pMyObject->bNeedPlumeServiceRestart = 1;
+        if (pMyObject->plumeAdminStatus != value) {
+            pMyObject->plumeAdminStatus = value;
+            pMyObject->bNeedPlumeServiceRestart = 1;
+        }
         return TRUE;
     }
 
     if( AnscEqualString(ParamName, "SONOperationalStatus", TRUE))
     {
-        pMyObject->plumeOperationalStatus = value;
-        pMyObject->bNeedPlumeServiceRestart = 1;
+        if (pMyObject->plumeOperationalStatus != value) {
+            pMyObject->plumeOperationalStatus = value;
+            pMyObject->bNeedPlumeServiceRestart = 1;
+        }
         return TRUE;
     }
 
     if( AnscEqualString(ParamName, "SONDFSEnable", TRUE))
     {
-        pMyObject->plumeDFSEnable = value;
-        pMyObject->bNeedPlumeServiceRestart = 1;
+        if (pMyObject->plumeDFSEnable != value) {
+            pMyObject->plumeDFSEnable = value;
+            pMyObject->bNeedPlumeServiceRestart = 1;
+        }
         return TRUE;
     }
 
