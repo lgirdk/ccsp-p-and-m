@@ -1577,6 +1577,18 @@ int puma6_getSwitchDInfo(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_DINFO pDi
 }
 
 int puma6_getSwitchStats(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_STATS pStats){
+
+    CCSP_HAL_ETHSW_PORT         port        = *((PCCSP_HAL_ETHSW_PORT)eth->hwid);
+    
+    if (!pStats)
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    if ( RETURN_OK != CcspHalEthSwGetPortStats (port, (PCCSP_HAL_ETHSW_STATS)pStats))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
     return ANSC_STATUS_SUCCESS; 
 }
 
