@@ -76,7 +76,7 @@
 #define DEBUG_INI_NAME  "/etc/debug.ini"
 // With WAN boot time optimization, in few cases P&M initialization is further delayed
 // Since there is no evidence of P&M APIs being hung, increasing the timeout period to one more minute.
-#define PAM_CRASH_TIMEOUT 360  //seconds
+#define PAM_CRASH_TIMEOUT 420  //seconds
 #define PAM_INIT_FILE "/tmp/pam_initialized"
 
 //  Existing pam_initialized is removed from systemd/selfheal . Created this file to determine if component is coming after crashed to sync values from server.
@@ -99,9 +99,6 @@ CcspBaseIf_deadlock_detection_log_print
     int sig
 );
 #endif
-//Debug variables
-time_t start_t, end_t;
-double diff_t;
 
 void get_uptime(long *uptime)
 {
@@ -271,12 +268,17 @@ static void _print_stack_backtrace(void)
 #endif
 
 static void daemonize(void) {
-	int s;
+	int s,i;
         pid_t   pid;
         struct timespec max_wait;
         int svalue = -1;
         long uptime1=0, uptime2=0, diff=0;
-	
+#ifdef _PUMA6_ARM_
+        int polling_period = 5; /* less frequent polling for platforms with slower CPUs */
+#else
+        int polling_period = 1; /* more frequent polling for platforms with faster CPUs */
+#endif
+
 	/* initialize semaphores for shared processes */
 	sem = sem_open ("pSemPnm", O_CREAT | O_EXCL, 0644, 0);
 	if(SEM_FAILED == sem)
@@ -308,12 +310,9 @@ static void daemonize(void) {
 		break;
 	default:
                 CcspTraceInfo(("PAM_DBG:--------------waiting for child process to initialize------------\n"));
-                time(&start_t);
-                get_uptime(&uptime1);
-                CcspTraceInfo(("PAM_DBG:------------time before sem_timedwait hit %ld ---------------\n", uptime1));
 
-                clock_gettime(CLOCK_REALTIME, &max_wait);
-                max_wait.tv_sec += PAM_CRASH_TIMEOUT;
+                get_uptime(&uptime1);
+                CcspTraceInfo(("PAM_DBG:------------uptime before waiting for sem is %ld seconds ---------------\n", uptime1));
 
                 s = sem_getvalue(sem, &svalue);
                 if (s < 0)
@@ -321,34 +320,21 @@ static void daemonize(void) {
                     CcspTraceInfo(("PAM_DBG:-------------sem_getvalue returns error %d - %s, continuing-------------\n", errno, strerror(errno)));
                 }
                 CcspTraceInfo(("PAM_DBG:----------------sem_getvalue returns value = %d -------------\n", svalue));
-                while (1)
+
+                for (i = 0 ; i < PAM_CRASH_TIMEOUT; i += polling_period)
                 {
-                    s = sem_timedwait(sem, &max_wait);
-                    if (s < 0)
+                    sleep(polling_period);
+
+                    if (sem_trywait(sem) == 0)
                     {
-                        if (errno == EINTR)
-                        {
-                            CcspTraceInfo(("PAM_DBG:-------------- sem_timedwait: syscall interrupted, continuing---------------\n"));
-                            continue;
-                        }
-                        if (errno == ETIMEDOUT)
-                        {
-                            CcspTraceInfo(("PAM_DBG:-------------sem_timedwait TIMEOUT--------------\n"));
-                        }
-                        CcspTraceInfo(("PAM_DBG:-------------sem_timedwait returns error %d - %s, continuing\n-------------", errno, strerror(errno)));
+                        CcspTraceInfo(("PAM_DBG:---------------sem_trywait() returns 0 ---------------------\n"));
+                        break;
                     }
-                    else
-                    {
-                        CcspTraceInfo(("PAM_DBG:------------sem_timedwait success-------------\n"));
-                    }
-                    break;    // jump out of loop
                 }
 
-                /*time(&end_t);
-                diff_t = difftime(end_t, start_t);
-                CcspTraceInfo(("PAM_DBG:---------------sem_timedwait returns after (%lf) seconds ---------------------\n", diff_t));*/
                 get_uptime(&uptime2);
-                CcspTraceInfo(("PAM_DBG:---------------sem_timedwait returns after (%ld) seconds ---------------------\n", uptime2));
+                CcspTraceInfo(("PAM_DBG:---------------uptime after waiting for sem is %ld seconds ---------------------\n", uptime2));
+
                 s = sem_close(sem);
                 if (s < 0)
                 {
