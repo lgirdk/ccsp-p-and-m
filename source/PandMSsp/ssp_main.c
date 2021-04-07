@@ -76,7 +76,7 @@
 #define DEBUG_INI_NAME  "/etc/debug.ini"
 // With WAN boot time optimization, in few cases P&M initialization is further delayed
 // Since there is no evidence of P&M APIs being hung, increasing the timeout period to one more minute.
-#define PAM_CRASH_TIMEOUT 360  //seconds
+#define PAM_CRASH_TIMEOUT 420  //seconds
 #define PAM_INIT_FILE "/tmp/pam_initialized"
 
 //  Existing pam_initialized is removed from systemd/selfheal . Created this file to determine if component is coming after crashed to sync values from server.
@@ -272,7 +272,12 @@ static void daemonize(void) {
         pid_t   pid;
         int svalue = -1;
         long uptime1=0, uptime2=0, diff=0;
-	
+#ifdef _PUMA6_ARM_
+        int polling_period = 5; /* less frequent polling for platforms with slower CPUs */
+#else
+        int polling_period = 1; /* more frequent polling for platforms with faster CPUs */
+#endif
+
 	/* initialize semaphores for shared processes */
 	sem = sem_open ("pSemPnm", O_CREAT | O_EXCL, 0644, 0);
 	if(SEM_FAILED == sem)
@@ -315,14 +320,15 @@ static void daemonize(void) {
                 }
                 CcspTraceInfo(("PAM_DBG:----------------sem_getvalue returns value = %d -------------\n", svalue));
 
-                for (i = 0 ; i < PAM_CRASH_TIMEOUT; i += 2)
+                for (i = 0 ; i < PAM_CRASH_TIMEOUT; i += polling_period)
                 {
+                    sleep(polling_period);
+
                     if (sem_trywait(sem) == 0)
                     {
                         CcspTraceInfo(("PAM_DBG:---------------sem_trywait() returns 0 ---------------------\n"));
                         break;
                     }
-                    sleep(2);
                 }
 
                 get_uptime(&uptime2);
