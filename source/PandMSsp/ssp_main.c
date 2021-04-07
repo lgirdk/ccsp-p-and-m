@@ -100,9 +100,6 @@ CcspBaseIf_deadlock_detection_log_print
     int sig
 );
 #endif
-//Debug variables
-time_t start_t, end_t;
-double diff_t;
 
 static void get_uptime(long *uptime)
 {
@@ -277,7 +274,7 @@ static void _print_stack_backtrace(void)
 
 #if defined(_ANSC_LINUX)
 static void daemonize(void) {
-	int s;
+	int s,i;
         pid_t   pid;
         struct timespec max_wait;
         int svalue = -1;
@@ -314,12 +311,9 @@ static void daemonize(void) {
 		break;
 	default:
                 CcspTraceInfo(("PAM_DBG:--------------waiting for child process to initialize------------\n"));
-                time(&start_t);
-                get_uptime(&uptime1);
-                CcspTraceInfo(("PAM_DBG:------------time before sem_timedwait hit %ld ---------------\n", uptime1));
 
-                clock_gettime(CLOCK_REALTIME, &max_wait);
-                max_wait.tv_sec += PAM_CRASH_TIMEOUT;
+                get_uptime(&uptime1);
+                CcspTraceInfo(("PAM_DBG:------------uptime before waiting for sem is %ld seconds ---------------\n", uptime1));
 
                 s = sem_getvalue(sem, &svalue);
                 if (s < 0)
@@ -327,34 +321,20 @@ static void daemonize(void) {
                     CcspTraceInfo(("PAM_DBG:-------------sem_getvalue returns error %d - %s, continuing-------------\n", errno, strerror(errno)));
                 }
                 CcspTraceInfo(("PAM_DBG:----------------sem_getvalue returns value = %d -------------\n", svalue));
-                while (1)
+
+                for (i = 0 ; i < PAM_CRASH_TIMEOUT; i+= 5)
                 {
-                    s = sem_timedwait(sem, &max_wait);
-                    if (s < 0)
+                    if (sem_trywait(sem) == 0)
                     {
-                        if (errno == EINTR)
-                        {
-                            CcspTraceInfo(("PAM_DBG:-------------- sem_timedwait: syscall interrupted, continuing---------------\n"));
-                            continue;
-                        }
-                        if (errno == ETIMEDOUT)
-                        {
-                            CcspTraceInfo(("PAM_DBG:-------------sem_timedwait TIMEOUT--------------\n"));
-                        }
-                        CcspTraceInfo(("PAM_DBG:-------------sem_timedwait returns error %d - %s, continuing\n-------------", errno, strerror(errno)));
+                        CcspTraceInfo(("PAM_DBG:---------------sem_trywait() returns 0 ---------------------\n", uptime2));
+                        break;
                     }
-                    else
-                    {
-                        CcspTraceInfo(("PAM_DBG:------------sem_timedwait success-------------\n"));
-                    }
-                    break;    // jump out of loop
+                    sleep(5);
                 }
 
-                /*time(&end_t);
-                diff_t = difftime(end_t, start_t);
-                CcspTraceInfo(("PAM_DBG:---------------sem_timedwait returns after (%lf) seconds ---------------------\n", diff_t));*/
                 get_uptime(&uptime2);
-                CcspTraceInfo(("PAM_DBG:---------------sem_timedwait returns after (%ld) seconds ---------------------\n", uptime2));
+                CcspTraceInfo(("PAM_DBG:---------------uptime after waiting for sem is %ld seconds ---------------------\n", uptime2));
+
                 s = sem_close(sem);
                 if (s < 0)
                 {
