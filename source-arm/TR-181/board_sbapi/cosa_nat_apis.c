@@ -3864,72 +3864,13 @@ static BOOL _Find_IPv4_LAN_DML(ULONG client, ULONG *dml_ip_instance, ULONG *dml_
 /* Validate client ip address */
 static BOOL validateClientIPAddress(ULONG client_ip_address)
 {
-    char pool_instance[MAX_QUERY] = {0};
-    char ip_instance[MAX_QUERY] = {0};
-    char param_val[MAX_QUERY] = {0};
-    char name[MAX_QUERY] = {0};
-    ULONG val_len = 0;
-    ULONG i = 0;
-    ULONG dhcp_server_pool_count = 0;
-    ULONG pool_inst_num = 0;
     ULONG dml_ip_inst_num = 0;
-    ULONG dhcp_ip_address_start = 0xffffffff;
-    ULONG dhcp_ip_address_end = 0xffffffff;
-    errno_t rc = -1;
 
     /* Find the IP instance */
     if(_Find_IPv4_LAN_DML(client_ip_address, &dml_ip_inst_num, NULL) && dml_ip_inst_num)
-    {
-        snprintf(ip_instance, sizeof(ip_instance), "%s%lu", IP_INTERFACE_DML, dml_ip_inst_num);
-
-        /* Check dhcp range */
-        dhcp_server_pool_count = g_GetParamValueUlong(g_pDslhDmlAgent, DHCPV4_SERVER_POOL_COUNT_DML);
-        for(i = 0; i < dhcp_server_pool_count; i++)
-        {
-            pool_inst_num = g_GetInstanceNumberByIndex(g_pDslhDmlAgent, DHCPV4_SERVER_POOL_DML, i);
-
-            if(pool_inst_num)
-            {
-                 snprintf(pool_instance, sizeof(pool_instance), "%s%lu", DHCPV4_SERVER_POOL_DML, pool_inst_num);
-                 rc = sprintf_s(name, sizeof(name), "%s.Interface", pool_instance);
-                 if(rc < EOK) ERR_CHK(rc);
-                 val_len = sizeof(param_val);
-                if((0 == g_GetParamValueString(g_pDslhDmlAgent, name, param_val, &val_len)) && _ansc_strstr(param_val, ip_instance))
-                {
-                    rc = sprintf_s(name, sizeof(name), "%s.Enable", pool_instance);
-                    if(rc < EOK) ERR_CHK(rc);
-                    if(g_GetParamValueBool(g_pDslhDmlAgent, name))
-                    {
-                        rc = sprintf_s(name, sizeof(name), "%s.MinAddress", pool_instance);
-                        if(rc < EOK) ERR_CHK(rc);
-                        val_len = sizeof(param_val);
-                        if(g_GetParamValueString(g_pDslhDmlAgent, name, param_val, &val_len))
-                            continue;
-
-                        inet_pton(AF_INET, param_val, &dhcp_ip_address_end);
-                        dhcp_ip_address_start = htonl(dhcp_ip_address_end);
-
-                        rc = sprintf_s(name, sizeof(name), "%s.MaxAddress", pool_instance);
-                        if(rc < EOK) ERR_CHK(rc);
-                        val_len = sizeof(param_val);
-                        if(g_GetParamValueString(g_pDslhDmlAgent, name, param_val, &val_len))
-                            continue;
-
-                        inet_pton(AF_INET, param_val, &dhcp_ip_address_end);
-                        dhcp_ip_address_end = htonl(dhcp_ip_address_end);
-
-                        client_ip_address = htonl(client_ip_address);
-                        if(client_ip_address >= dhcp_ip_address_start && client_ip_address <= dhcp_ip_address_end)
-                        {
-                            return TRUE;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    return FALSE;
+        return TRUE;
+    else
+        return FALSE;
 }
 #endif
 
