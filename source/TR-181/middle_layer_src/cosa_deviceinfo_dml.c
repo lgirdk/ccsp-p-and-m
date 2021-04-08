@@ -7290,7 +7290,7 @@ HTTPSConfigDownload_SetParamBoolValue
             if (retPsmGet != CCSP_SUCCESS)
             {
                 CcspTraceError(("Set failed for HTTPSConfigDownloadEnabled \n"));
-                return ANSC_STATUS_FAILURE;
+                return FALSE;
             }
         }
         else
@@ -9228,7 +9228,7 @@ ActiveMeasurements_RFC_SetParamBoolValue
        retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.WifiClient.ActiveMeasurements.Enable", ccsp_string, str);
        if (retPsmGet != CCSP_SUCCESS) {
            CcspTraceError(("Set failed for Active Measurement RFC enable \n"));
-           return ANSC_STATUS_FAILURE;
+           return FALSE;
        }
        CcspTraceInfo(("Successfully set Active Measurement RFC enable \n"));
        return TRUE;
@@ -9430,7 +9430,7 @@ EasyConnect_SetParamBoolValue
        retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.EasyConnect.Enable", ccsp_string, str);
        if (retPsmGet != CCSP_SUCCESS) {
            CcspTraceError(("Set failed for EasyConnect support \n"));
-           return ANSC_STATUS_FAILURE;
+           return FALSE;
        }
        CcspTraceInfo(("Successfully set EasyConnect support \n"));
        return TRUE;
@@ -9445,7 +9445,7 @@ EasyConnect_SetParamBoolValue
        retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.EasyConnect.EnableAPISecurity", ccsp_string, str);
        if (retPsmGet != CCSP_SUCCESS) {
            CcspTraceError(("Set failed for EasyConnect APISecurity support \n"));
-           return ANSC_STATUS_FAILURE;
+           return FALSE;
        }
        CcspTraceInfo(("Successfully set EasyConnect APISecurity support \n"));
        return TRUE;
@@ -9518,7 +9518,7 @@ Feature_SetParamBoolValue
              retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "dmsb.l2net.HomeNetworkIsolation", ccsp_string, str);
              if (retPsmGet != CCSP_SUCCESS) {
              CcspTraceError(("Set failed for HomeNetworkIsolation \n"));
-             return ANSC_STATUS_FAILURE;
+             return FALSE;
              }
                 if(bValue)
                 {
@@ -9591,7 +9591,7 @@ Feature_SetParamBoolValue
        if (retPsmGet != CCSP_SUCCESS) 
        {
           CcspTraceError(("Set failed for ContainerSupport \n"));
-          return ANSC_STATUS_FAILURE;
+          return FALSE;
        }
        CcspTraceInfo(("Successfully set ContainerSupport \n"));
        return TRUE;
@@ -9994,7 +9994,7 @@ MEMSWAP_SetParamBoolValue
        retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.MEMSWAP.Enable", ccsp_string, str);
        if (retPsmGet != CCSP_SUCCESS) {
            CcspTraceError(("Set failed for MEMSWAP support \n"));
-           return ANSC_STATUS_FAILURE;
+           return FALSE;
        }
        CcspTraceInfo(("Successfully set MEMSWAP support \n"));
        return TRUE;
@@ -11863,7 +11863,7 @@ WiFiInterworking_SetParamBoolValue
 	retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.WiFi-Interworking.Enable", ccsp_string, str);
 	if (retPsmGet != CCSP_SUCCESS) {
 	    CcspTraceError(("Set failed for WiFiInterworkingSupport \n"));
-	    return ANSC_STATUS_FAILURE;
+	    return FALSE;
 	}
 	CcspTraceInfo(("Successfully set WiFiInterworkingSupport \n"));
 	return TRUE;
@@ -11985,7 +11985,7 @@ WiFiPasspoint_SetParamBoolValue
 	retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.WiFi-Passpoint.Enable", ccsp_string, str);
 	if (retPsmGet != CCSP_SUCCESS) {
 	    CcspTraceError(("Set failed for WiFiPasspointSupport \n"));
-	    return ANSC_STATUS_FAILURE;
+	    return FALSE;
 	}
 	CcspTraceInfo(("Successfully set WiFiPasspointSupport \n"));
 	return TRUE;
