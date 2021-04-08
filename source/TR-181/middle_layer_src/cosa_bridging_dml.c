@@ -2661,7 +2661,7 @@ Port_SetParamStringValue
 {
     PCOSA_CONTEXT_LINK_OBJECT       pCosaContext     = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     PCOSA_DML_BRG_PORT_FULL         pPort            = (PCOSA_DML_BRG_PORT_FULL  )pCosaContext->hContext;
-    ULONG                           ulEntryNameLen   = 256;
+    ULONG                           ulEntryNameLen;
     CHAR                            ucEntryParamName[256] = {0};
     CHAR                           ucEntryNameValue[256] = {0};
     parameterValStruct_t            varStruct;
@@ -2697,6 +2697,7 @@ Port_SetParamStringValue
            return FALSE;
         }
 
+        ulEntryNameLen = sizeof(ucEntryNameValue);
         if ( ( 0 == CosaGetParamValueString(ucEntryParamName, ucEntryNameValue, &ulEntryNameLen ) ) &&
              ( AnscSizeOfString(ucEntryNameValue) != 0 ) )
         {
@@ -2857,6 +2858,7 @@ fprintf(stderr, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 2\n");
                 }
                 ucEntryNameValue[0] = '\0';
 
+                ulEntryNameLen = sizeof(ucEntryNameValue);
                 if( 0 == (COSAGetParamValueByPathName(g_MessageBusHandle,&varStruct,&ulEntryNameLen)) &&
                     ( AnscSizeOfString(ucEntryNameValue) != 0 ) )
                 {
@@ -2880,6 +2882,7 @@ fprintf(stderr, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 2\n");
                 }
                 ucEntryNameValue[0] = '\0';
 
+                ulEntryNameLen = sizeof(ucEntryNameValue);
                 if( !(COSAGetParamValueByPathName(g_MessageBusHandle,&varStruct,&ulEntryNameLen)) &&
                     ( AnscSizeOfString(ucEntryNameValue) != 0 ) )
                 {

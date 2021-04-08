@@ -247,7 +247,7 @@ CosaUtilGetLowerLayers
     ULONG                           ulNumOfEntries              = 0;
     ULONG                           i                           = 0;
     ULONG                           j                           = 0;
-    ULONG                           ulEntryNameLen              = 256;
+    ULONG                           ulEntryNameLen;
     CHAR                            ucEntryParamName[256]       = {0};
     CHAR                            ucEntryNameValue[256]       = {0};
     CHAR                            ucEntryFullPath[256]        = {0};
@@ -366,12 +366,12 @@ CosaUtilGetLowerLayers
             {
 
                 parameterValStruct_t varStruct;
-                ulEntryNameLen   = sizeof(ucEntryNameValue);
                   ulNumOfEntries = 0;
                 AnscCopyString(ucEntryParamName,"Device.MoCA.InterfaceNumberOfEntries");
                 varStruct.parameterName = ucEntryParamName;
                 varStruct.parameterValue = ucEntryNameValue;
 
+                ulEntryNameLen = sizeof(ucEntryNameValue);
                 if (COSAGetParamValueByPathName(g_MessageBusHandle,&varStruct,&ulEntryNameLen))
                 {
                     AnscTraceFlow(("<HL>%s not found %s\n",__FUNCTION__,varStruct.parameterName ));
@@ -386,10 +386,10 @@ CosaUtilGetLowerLayers
                 ulEntryInstanceNum =1;
                 while (i < ulNumOfEntries)
                 {
-                    _ansc_memset(ucEntryParamName, 0, sizeof(ucEntryParamName));
                     _ansc_memset(ucEntryNameValue, 0, sizeof(ucEntryNameValue));
                     _ansc_sprintf(ucEntryParamName,"Device.MoCA.Interface.%lu.Name",ulEntryInstanceNum);                    
                         
+                    ulEntryNameLen = sizeof(ucEntryNameValue);
                     if (COSAGetParamValueByPathName(g_MessageBusHandle,&varStruct,&ulEntryNameLen))
                     {
                         AnscTraceFlow(("<HL>%s WiFi instance(%d) not found\n", __FUNCTION__,
@@ -475,11 +475,12 @@ CosaUtilGetLowerLayers
             else if ( AnscEqualString(pTableStringToken->Name, "Device.WiFi.SSID.", TRUE ) )
             {
                 parameterValStruct_t varStruct;
-                ulEntryNameLen   = sizeof(ucEntryNameValue);
                 ulNumOfEntries = 0;
                 AnscCopyString(ucEntryParamName,"Device.WiFi.SSIDNumberOfEntries");
                 varStruct.parameterName = ucEntryParamName;
                 varStruct.parameterValue = ucEntryNameValue;
+
+                ulEntryNameLen = sizeof(ucEntryNameValue);
                 if (COSAGetParamValueByPathName(g_MessageBusHandle,&varStruct,&ulEntryNameLen))
                 {
                     AnscTraceFlow(("<HL>%s not found %s\n",__FUNCTION__,varStruct.parameterName ));
@@ -492,10 +493,10 @@ CosaUtilGetLowerLayers
                 ulEntryInstanceNum =1;
                 while (i < ulNumOfEntries)
                 {
-                    _ansc_memset(ucEntryParamName, 0, sizeof(ucEntryParamName));
                     _ansc_memset(ucEntryNameValue, 0, sizeof(ucEntryNameValue));
                     _ansc_sprintf(ucEntryParamName,"Device.WiFi.SSID.%lu.Name",ulEntryInstanceNum);                    
                         
+                    ulEntryNameLen = sizeof(ucEntryNameValue);
                     if (COSAGetParamValueByPathName(g_MessageBusHandle,&varStruct,&ulEntryNameLen))
                     {
                         AnscTraceFlow(("<HL>%s WiFi instance(%d) not found\n", __FUNCTION__,
@@ -806,7 +807,7 @@ PUCHAR
 CosaUtilFindBridgeName(char* pBridgePath)
 {
     ULONG                           j                           = 0;
-    ULONG                           ulEntryNameLen              = 256;
+    ULONG                           ulEntryNameLen;
     CHAR                            ucEntryParamName[256]       = {0};
     CHAR                            ucEntryNameValue[256]       = {0};
    
@@ -855,7 +856,7 @@ CosaUtilFindBridgePath(char* pBridgeName)
     ULONG                           ulNumOfEntries              = 0;
     ULONG                           i                           = 0;
     ULONG                           j                           = 0;
-    ULONG                           ulEntryNameLen              = 256;
+    ULONG                           ulEntryNameLen;
     CHAR                            ucEntryParamName[256]       = {0};
     CHAR                            ucEntryNameValue[256]       = {0};
     CHAR                            ucEntryFullPath[256]        = {0};
@@ -932,7 +933,7 @@ CosaUtilGetFullPathNameByKeyword
 
     ULONG                           ulNumOfEntries              = 0;
     ULONG                           i                           = 0;
-    ULONG                           ulEntryNameLen              = 256;
+    ULONG                           ulEntryNameLen;
     CHAR                            ucEntryParamName[256]       = {0};
     CHAR                            ucEntryNameValue[256]       = {0};
     CHAR                            ucTmp[128]                  = {0};
