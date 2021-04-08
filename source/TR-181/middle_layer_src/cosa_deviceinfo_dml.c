@@ -9501,7 +9501,6 @@ Feature_SetParamBoolValue
     if( AnscEqualString(ParamName, "HomeNetworkIsolation", TRUE))
     {
     char *strValue = NULL;
-    char str[2] = {0};
     int retPsmGet = CCSP_SUCCESS;
     BOOL getVal = 0;
 
@@ -9513,9 +9512,7 @@ Feature_SetParamBoolValue
 
    / if(getVal != bValue)*/
 	{
-            str[1] = '/0'; 
-             sprintf(str,"%d",bValue);
-             retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "dmsb.l2net.HomeNetworkIsolation", ccsp_string, str);
+             retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "dmsb.l2net.HomeNetworkIsolation", ccsp_string, bValue ? "1" : "0");
              if (retPsmGet != CCSP_SUCCESS) {
              CcspTraceError(("Set failed for HomeNetworkIsolation \n"));
              return FALSE;
@@ -9573,7 +9570,6 @@ Feature_SetParamBoolValue
 
     if( AnscEqualString(ParamName, "ContainerSupport", TRUE))
     {
-       char str[2];
        int retPsmGet = CCSP_SUCCESS;
 
        if ( bValue == TRUE)
@@ -9586,8 +9582,7 @@ Feature_SetParamBoolValue
        }
        syscfg_commit();
 
-       sprintf(str,"%d",bValue);
-       retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Container", ccsp_string, str);
+       retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Container", ccsp_string, bValue ? "1" : "0");
        if (retPsmGet != CCSP_SUCCESS) 
        {
           CcspTraceError(("Set failed for ContainerSupport \n"));
@@ -9621,24 +9616,14 @@ Feature_SetParamBoolValue
 
     if( AnscEqualString(ParamName, "EnableMultiProfileXDNS", TRUE))
     {
-        char buf[5] = {0};
+        char buf[5];
         syscfg_get( NULL, "X_RDKCENTRAL-COM_XDNS", buf, sizeof(buf));
         if( buf != NULL && !strcmp(buf,"1") )
         {
                 if(!setMultiProfileXdnsConfig(bValue))
                         return FALSE;
 
-                char bval[2] = {0};
-                if( bValue == TRUE)
-                {
-                        bval[0] = '1';
-                }
-                else
-                {
-                        bval[0] = '0';
-                }
-
-                if (syscfg_set(NULL, "MultiProfileXDNS", bval) != 0)
+                if (syscfg_set(NULL, "MultiProfileXDNS", bValue ? "1" : "0") != 0)
                 {
                         AnscTraceWarning(("[XDNS] syscfg_set MultiProfileXDNS failed!\n"));
                 }
@@ -9987,11 +9972,9 @@ MEMSWAP_SetParamBoolValue
 
     if( AnscEqualString(ParamName, "Enable", TRUE))
     {
-       char str[2];
        int retPsmGet = CCSP_SUCCESS;
 
-       sprintf(str,"%d",bValue);
-       retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.MEMSWAP.Enable", ccsp_string, str);
+       retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.MEMSWAP.Enable", ccsp_string, bValue ? "1" : "0");
        if (retPsmGet != CCSP_SUCCESS) {
            CcspTraceError(("Set failed for MEMSWAP support \n"));
            return FALSE;
@@ -10100,7 +10083,6 @@ ShortsDL_GetParamBoolValue
     if( AnscEqualString(ParamName, "Enable", TRUE))
     {
         char buf[8];
-        memset (buf, 0, sizeof(buf));
 
         /* collect value */
         syscfg_get( NULL, "ShortsDL", buf, sizeof(buf));
@@ -10157,12 +10139,7 @@ ShortsDL_SetParamBoolValue
 {
     if( AnscEqualString(ParamName, "Enable", TRUE))
     {
-        char buf[8];
-        memset (buf, 0, sizeof(buf));
-
-        snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
-
-        if (syscfg_set(NULL, "ShortsDL", buf) != 0)
+        if (syscfg_set(NULL, "ShortsDL", bValue ? "true" : "false") != 0)
         {
             CcspTraceError(("syscfg_set ShortsDLEnabled failed\n"));
         }
@@ -10369,12 +10346,7 @@ AutoExcluded_SetParamBoolValue
 {
     if( AnscEqualString(ParamName, "Enable", TRUE))
     {
-        char buf[8];
-        memset (buf, 0, sizeof(buf));
-
-        snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
-
-        if (syscfg_set(NULL, "AutoExcludedEnabled", buf) != 0)
+        if (syscfg_set(NULL, "AutoExcludedEnabled", bValue ? "true" : "false") != 0)
         {
             CcspTraceError(("syscfg_set AutoExcluded failed\n"));
         }
@@ -10386,7 +10358,7 @@ AutoExcluded_SetParamBoolValue
             }
             else
             {
-                CcspTraceInfo(("syscfg_commit AutoExcluded.Enable success new value '%s'\n", buf));
+                CcspTraceInfo(("syscfg_commit AutoExcluded.Enable success new value '%s'\n", bValue ? "true" : "false"));
                 return TRUE;
             }
         }
@@ -10436,7 +10408,6 @@ AutoExcluded_GetParamBoolValue
     if( AnscEqualString(ParamName, "Enable", TRUE))
     {
         char buf[8];
-        memset (buf, 0, sizeof(buf));
 
         /* collect value */
         syscfg_get( NULL, "AutoExcludedEnabled", buf, sizeof(buf));
@@ -10489,7 +10460,7 @@ AutoExcluded_GetParamStringValue
     {
         /* collect value */
         char buf[64];
-        memset(buf, 0 ,sizeof(buf));
+
         syscfg_get( NULL, "AutoExcludedURL", buf, sizeof(buf));
         if( buf != NULL )
         {
@@ -11369,7 +11340,8 @@ WANLinkHeal_GetParamBoolValue
 {
   if( AnscEqualString(ParamName, "Enable", TRUE))
     {
-      char value[8] = {'\0'};
+      char value[8];
+
       if(syscfg_get(NULL,"wanlinkheal",value, sizeof(value)) == 0)
       {
 	if( value[0]!='\0')
@@ -11429,10 +11401,7 @@ WANLinkHeal_SetParamBoolValue
 {
     if( AnscEqualString(ParamName, "Enable", TRUE))
     {
-	char buf[8]= {'\0'};
-	snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
-
-	if (syscfg_set(NULL, "wanlinkheal", buf) != 0)
+	if (syscfg_set(NULL, "wanlinkheal", bValue ? "true" : "false") != 0)
 	{
 		CcspTraceError(("syscfg_set wanlinkhealEnabled failed\n"));
 	}
@@ -11793,7 +11762,6 @@ WiFiInterworking_GetParamBoolValue
     {
 	/* Collect Value */
 	char *strValue = NULL;
-	char str[2];
 	int retPsmGet = CCSP_SUCCESS;
 
 	retPsmGet = PSM_Get_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.WiFi-Interworking.Enable", NULL, &strValue);
@@ -11856,11 +11824,9 @@ WiFiInterworking_SetParamBoolValue
 #if defined (FEATURE_SUPPORT_INTERWORKING)
     if( AnscEqualString(ParamName, "Enable", TRUE))
     {
-	char str[2];
 	int retPsmGet = CCSP_SUCCESS;
 
-	sprintf(str,"%d",bValue);
-	retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.WiFi-Interworking.Enable", ccsp_string, str);
+	retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.WiFi-Interworking.Enable", ccsp_string, bValue ? "1" : "0");
 	if (retPsmGet != CCSP_SUCCESS) {
 	    CcspTraceError(("Set failed for WiFiInterworkingSupport \n"));
 	    return FALSE;
@@ -11917,7 +11883,6 @@ WiFiPasspoint_GetParamBoolValue
     {
 	/* Collect Value */
 	char *strValue = NULL;
-	char str[2];
 	int retPsmGet = CCSP_SUCCESS;
 
 	retPsmGet = PSM_Get_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.WiFi-Passpoint.Enable", NULL, &strValue);
@@ -11978,11 +11943,9 @@ WiFiPasspoint_SetParamBoolValue
 #if defined(_COSA_INTEL_XB3_ARM_) || (defined(_XB6_PRODUCT_REQ_) && !defined(_XB7_PRODUCT_REQ_))
     if( AnscEqualString(ParamName, "Enable", TRUE))
     {
-	char str[2];
 	int retPsmGet = CCSP_SUCCESS;
 
-	sprintf(str,"%d",bValue);
-	retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.WiFi-Passpoint.Enable", ccsp_string, str);
+	retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.WiFi-Passpoint.Enable", ccsp_string, bValue ? "1" : "0");
 	if (retPsmGet != CCSP_SUCCESS) {
 	    CcspTraceError(("Set failed for WiFiPasspointSupport \n"));
 	    return FALSE;
@@ -12046,7 +12009,6 @@ IPv6onLnF_SetParamBoolValue
 	
             memset(buf,0,sizeof(buf));
             memset(OutBuff,0,sizeof(OutBuff));
-            memset(Inf_name,0,sizeof(Inf_name));
  	    syscfg_get( NULL, "iot_brname", Inf_name, sizeof(Inf_name));
             if ( (Inf_name[0] == '\0') && (strlen(Inf_name)) == 0 )
             {
@@ -12534,7 +12496,6 @@ RDKFirmwareUpgrader_GetParamBoolValue
     if( AnscEqualString(ParamName, "Enable", TRUE))
     {
         char buf[8];
-        memset (buf, 0, sizeof(buf));
 
         /* collect value */
         syscfg_get( NULL, "RDKFirmwareUpgraderEnabled", buf, sizeof(buf));
@@ -12591,12 +12552,7 @@ RDKFirmwareUpgrader_SetParamBoolValue
 {
   if( AnscEqualString(ParamName, "Enable", TRUE))
     {
-        char buf[8];
-        memset (buf, 0, sizeof(buf));
-
-        snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
-
-        if (syscfg_set(NULL, "RDKFirmwareUpgraderEnabled", buf) != 0)
+        if (syscfg_set(NULL, "RDKFirmwareUpgraderEnabled", bValue ? "true" : "false") != 0)
         {
             CcspTraceError(("syscfg_set RDKFirmwareUpgraderEnabled failed\n"));
         }
@@ -12945,7 +12901,7 @@ EthernetWAN_GetParamStringValue
     if( AnscEqualString(ParamName, "CurrentOperationalMode", TRUE))
     {
         /* collect value */
-        char buf[32] = { 0 };
+        char buf[32];
 		
         if( ( 0 == syscfg_get( NULL, "eth_wan_enabled", buf, sizeof( buf ) ) ) && \
 			( '\0' != buf[ 0 ] )
@@ -13245,10 +13201,7 @@ CredDwnld_SetParamBoolValue
     if( AnscEqualString(ParamName, "Enable", TRUE))
     {
         /* collect value */
-        char buf[8];
-        memset(buf, 0, sizeof(buf));
-        snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
-        if(syscfg_set(NULL, "CredDwnld_Enable", buf) != 0 )
+        if(syscfg_set(NULL, "CredDwnld_Enable", bValue ? "true" : "false") != 0 )
         {
             CcspTraceError(("syscfg_set failed\n"));
             return FALSE;
@@ -13317,7 +13270,7 @@ CredDwnld_GetParamBoolValue
     /* check the parameter name and return the corresponding value */
     if( AnscEqualString(ParamName, "Enable", TRUE))
     {
-        char buf[8]={0};
+        char buf[8];
         /* collect value */
         if(syscfg_get(NULL, "CredDwnld_Enable", buf, sizeof(buf)) != 0 )
         {
@@ -13386,7 +13339,6 @@ CredDwnld_GetParamStringValue
     if( AnscEqualString(ParamName, "Use", TRUE))
     {
         char buf[MAX_USE_LEN];
-        memset(buf, 0, sizeof(buf));
 
         /* collect value */
         if( syscfg_get( NULL, "CredDwnld_Use", buf, sizeof(buf)) != 0)
@@ -13527,7 +13479,8 @@ ForwardSSH_GetParamBoolValue
         BOOL*                       pBool
     )
 {
-    char buf[8]={0};
+    char buf[8];
+
     /* check the parameter name and return the corresponding value */
     if( AnscEqualString(ParamName, "Enable", TRUE))
     {
@@ -13798,7 +13751,8 @@ Logging_GetParamUlongValue
     if( AnscEqualString(ParamName, "DmesgLogSyncInterval", TRUE))
     {
         /* collect value */
-	 char buf[8]={0};
+	 char buf[8];
+
 	 syscfg_get(NULL, "dmesglogsync_interval", buf, sizeof(buf));
          *puLong = atoi(buf);
         return TRUE;
@@ -13853,7 +13807,7 @@ Logging_SetParamUlongValue
     if( AnscEqualString(ParamName, "DmesgLogSyncInterval", TRUE))
     {
         /* collect value */
-		char buf[8]={0};
+		char buf[8];
 		snprintf(buf,sizeof(buf),"%lu",uValue);
 			if (syscfg_set(NULL, "dmesglogsync_interval", buf) != 0) 
 			{
@@ -14126,7 +14080,7 @@ CDLDM_GetParamStringValue
     if( AnscEqualString(ParamName, "CDLModuleUrl", TRUE))
     {
         /* collect value */
-           char buff[255]={'\0'};
+           char buff[255];
 
            syscfg_get( NULL, "CDLModuleUrl", buff, sizeof(buff));
            if( buff != NULL )
@@ -14316,7 +14270,8 @@ Syndication_GetParamStringValue
     if( AnscEqualString(ParamName, "CMVoiceImageSelect", TRUE))
     {
 #if defined(_COSA_BCM_ARM_) && !defined(_CBR_PRODUCT_REQ_)
-	char buf[64] = { 0 };
+	char buf[64];
+
 	if(0 == syscfg_get(NULL, "CMVoiceImg", buf, sizeof(buf)))
 	{
 		if (AnscSizeOfString(buf) < *pulSize)
