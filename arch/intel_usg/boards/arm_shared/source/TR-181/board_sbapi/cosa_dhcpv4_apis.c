@@ -500,8 +500,8 @@ reopen:
                         flock(fd, LOCK_UN);
                        	
                         snprintf(dm,sizeof(dm), "Device.WiFi.SSID.%d.SSID", i);
+
                         size = sizeof(outdata);
-                
                         if(!COSAGetParamValueByPathName(bus_handle, &varStruct,&size)){
                             snprintf(ssid, 64, "%s", outdata);
 				        }
