@@ -11406,20 +11406,6 @@ LanBlockedSubnetTable_GetParamUlongValue
              LanBlockedSubnetTable_GetGuestNetworkIP(IPAddr);
              update_subnetip = TRUE;
          }
-         else if (pCxtLink->InstanceNumber == 14)
-         {
-             char *interface = "brlan0";
-             uint32_t ip = (uint32_t) CosaUtilGetIfAddr (interface);
-             unsigned char *a = (unsigned char *) &ip;
-
-             /*
-                The value returned by CosaUtilGetIfAddr() is in network byte order
-                (ie it's always big endian). Processing as bytes allows this code to
-                be agnostic of target endianness.
-             */
-             sprintf (IPAddr, "%d.%d.%d.%d", a[0], a[1], a[2], a[3]);
-             update_subnetip = TRUE;
-         }
  
         if (update_subnetip)
         { 
@@ -11481,19 +11467,6 @@ LanBlockedSubnetTable_GetParamUlongValue
         {
             // get guest network Mask
             LanBlockedSubnetTable_GetGuestNetworkMask(IPMask);
-            update_subnetmask=TRUE;
-        }
-        else if (pCxtLink->InstanceNumber == 14)
-        {
-            // get brlan0 network Mask
-	    ULONG netmask=CosaUtilIoctlXXX("brlan0","netmask",NULL);
-#if defined (_XB6_PRODUCT_REQ_) ||  defined (_COSA_BCM_ARM_)
-        sprintf(IPMask, "%d.%d.%d.%d",(netmask & 0xff),((netmask >> 8) & 0xff),
-			((netmask >> 16) & 0xff),(netmask >> 24));
-#else
-        sprintf(IPMask, "%d.%d.%d.%d", (netmask >> 24),((netmask >> 16) & 0xff),
-			((netmask >> 8) & 0xff),(netmask & 0xff));
-#endif
             update_subnetmask=TRUE;
         }
 
