@@ -131,12 +131,13 @@ Local_CosaDmlGetParamValueByPathName
     ANSC_STATUS retval = ANSC_STATUS_FAILURE;
     parameterValStruct_t varStruct;
     char outdata[80];
-    ULONG size = sizeof(outdata);
+    ULONG size;
     outdata[0] = '\0';
 
     varStruct.parameterName = (char*)pathName;
     varStruct.parameterValue = outdata;
 
+    size = sizeof(outdata);
     retval = COSAGetParamValueByPathName(bus_handle, &varStruct, &size);
     
     if ( retval != ANSC_STATUS_SUCCESS) 
