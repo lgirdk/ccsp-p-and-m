@@ -13810,7 +13810,8 @@ Logging_SetParamUlongValue
     if( AnscEqualString(ParamName, "DmesgLogSyncInterval", TRUE))
     {
         /* collect value */
-		char buf[8];
+		char buf[12];
+
 		snprintf(buf,sizeof(buf),"%lu",uValue);
 			if (syscfg_set(NULL, "dmesglogsync_interval", buf) != 0) 
 			{
@@ -21115,20 +21116,24 @@ EnableOCSPStapling_SetParamBoolValue
     return FALSE;
 }
 
-void copy_command_output(char * cmd, char * out, int len)
+static void copy_command_output (char *cmd, char *out, int len)
 {
-    FILE * fp;
-    char * p;
-    fp = popen(cmd, "r");
+    FILE *fp;
+
+    out[0] = 0;
+
+    fp = popen (cmd, "r");
     if (fp)
     {
-       
-       fgets(out, len, fp);
-       // add terminating NULL char, remove newline char
-       out[len-1] = '\0';
-       if ((p = strchr(out, '\n'))) *p = 0;
-       pclose(fp);
-   }
+        if (fgets (out, len, fp) != NULL)
+        {
+            size_t len = strlen (out);
+            if ((len > 0) && (out[len - 1] == '\n'))
+                out[len - 1] = 0;
+        }
+
+        pclose (fp);
+    }
 }
 
 
@@ -21224,10 +21229,11 @@ SelfHeal_SetParamUlongValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    char buf[128]={0};
 
     if (AnscEqualString(ParamName, "AggressiveInterval", TRUE))
     {
+        char buf[16];
+
         if (uValue < 2) /* Minimum interval is 2 as per the aggressive selfheal US [RDKB-25546] */
 	{
 	    AnscTraceWarning(("Minimum interval is 2 for %s !\n", ParamName));
@@ -21259,13 +21265,9 @@ SelfHeal_SetParamUlongValue
             AnscTraceWarning(("%s syscfg_commit failed!\n", ParamName));
             return FALSE;
         }
-        char cmd[128];
-        memset(cmd, 0, sizeof(cmd));
-        memset(buf, 0, sizeof(buf));
-        sprintf(cmd, "pidof selfheal_aggressive.sh");
-        copy_command_output(cmd, buf, sizeof(buf));
-        buf[strlen(buf)] = '\0';
-        if (strcmp(buf, "") != 0) {
+
+        copy_command_output("pidof selfheal_aggressive.sh", buf, sizeof(buf));
+        if (buf[0] != 0) {
           v_secure_system("kill -9 %s", buf);
         }
         v_secure_system("/usr/ccsp/tad/selfheal_aggressive.sh &");
