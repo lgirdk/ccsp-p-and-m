@@ -386,6 +386,12 @@ LgiGeneral_SetParamUlongValue
     PCOSA_DATAMODEL_LGI_GENERAL  pMyObject = (PCOSA_DATAMODEL_LGI_GENERAL)g_pCosaBEManager->hLgiGeneral;
     if (strcmp(ParamName, "CustomerId") == 0)
     {
+        /* Add support for customer index zero */
+        if ( (int)uValuepUlong == 0 )
+        {
+            pMyObject->CustomerId = uValuepUlong;
+            return TRUE;
+        }
         /*
         Check that a config file matching the customer ID is present in the filesystem.
         */
