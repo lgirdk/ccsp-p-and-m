@@ -488,7 +488,7 @@ CosaDmlEthPortSetCfg
         saveID(pEthIf->sInfo->Name, pCfg->Alias, pCfg->InstanceNumber);
     }
     
-    CosaDmlEEEPortSetPsmCfg(pCfg->InstanceNumber, pCfg);
+    CosaDmlEEEPortSetCfg(pCfg->InstanceNumber, pCfg);
 
     return ANSC_STATUS_SUCCESS;
 }
@@ -719,57 +719,61 @@ CosaDmlEthPortGetStats
     return ANSC_STATUS_SUCCESS;
 }
 
-ANSC_STATUS CosaDmlEEEPortGetPsmCfg (ULONG ulInstanceNumber, PCOSA_DML_ETH_PORT_CFG pCfg)
+ANSC_STATUS CosaDmlEEEPortGetCfg (ULONG ulInstanceNumber, PCOSA_DML_ETH_PORT_CFG pCfg)
 {
-    char recName[50];
-    char *strValue;
-    int retPsmGet;
+    ANSC_STATUS                     returnStatus    = ANSC_STATUS_SUCCESS;
     int portIdx;
-
+    bool enable = FALSE;
+    int status;
     if (!pCfg)
     {
-        return ANSC_STATUS_FAILURE;
+        returnStatus = ANSC_STATUS_FAILURE;
     }
 
     portIdx = getPortID(ulInstanceNumber);
-    if ( portIdx < CCSP_HAL_ETHSW_EthPort1 ) // Port not found
+    if ( portIdx == CCSP_HAL_ETHSW_EthPort1 || portIdx == CCSP_HAL_ETHSW_EthPort2 || portIdx == CCSP_HAL_ETHSW_EthPort3 || portIdx == CCSP_HAL_ETHSW_EthPort4)
     {
-        return ANSC_STATUS_FAILURE;
+        status = CcspHalEthSwGetEEEPortEnable(portIdx,enable);
+        if ( status == RETURN_OK )
+        {
+                pCfg->bEEEEnabled = TRUE;
+                returnStatus = ANSC_STATUS_SUCCESS;
+        }
+        else
+        {
+                returnStatus = ANSC_STATUS_FAILURE;
+        }
     }
 
-    strValue = NULL;
-    snprintf(recName, sizeof(recName), "ExSwitchPort.%d.EEEEnable", portIdx);
-    retPsmGet = PSM_Get_Record_Value2(g_MessageBusHandle, g_GetSubsystemPrefix(g_pDslhDmlAgent), recName, NULL, &strValue);
-    if ((retPsmGet == CCSP_SUCCESS) && (strValue != NULL))
-    {
-        pCfg->bEEEEnabled = (!strcasecmp(strValue,"true")) ? TRUE:FALSE;
-        ((CCSP_MESSAGE_BUS_INFO *)g_MessageBusHandle)->freefunc(strValue);
-    }
+        return returnStatus;
+
 }
 
-ANSC_STATUS CosaDmlEEEPortSetPsmCfg (ULONG ulInstanceNumber, PCOSA_DML_ETH_PORT_CFG pCfg)
+ANSC_STATUS CosaDmlEEEPortSetCfg (ULONG ulInstanceNumber, PCOSA_DML_ETH_PORT_CFG pCfg)
 {
-    char recName[50];
-    int retPsmSet;
+    ANSC_STATUS                     returnStatus    = ANSC_STATUS_SUCCESS;
     int portIdx;
-
+    int status;
     if (!pCfg)
     {
-        return ANSC_STATUS_FAILURE;
+        returnStatus = ANSC_STATUS_FAILURE;
     }
 
     portIdx = getPortID(ulInstanceNumber);
-    if ( portIdx < CCSP_HAL_ETHSW_EthPort1 ) // Port not found
+    if ( portIdx == CCSP_HAL_ETHSW_EthPort1 || portIdx == CCSP_HAL_ETHSW_EthPort2 || portIdx == CCSP_HAL_ETHSW_EthPort3 || portIdx == CCSP_HAL_ETHSW_EthPort4)
     {
-        return ANSC_STATUS_FAILURE;
+        status = CcspHalEthSwSetEEEPortEnable(portIdx,pCfg->bEEEEnabled);
+        if ( status == RETURN_OK )
+        {
+                returnStatus = ANSC_STATUS_SUCCESS;
+        }
+        else
+        {
+                returnStatus = ANSC_STATUS_FAILURE;
+        }
     }
+        return returnStatus;
 
-    snprintf(recName, sizeof(recName), "ExSwitchPort.%d.EEEEnable", portIdx);
-    retPsmSet = PSM_Set_Record_Value2(g_MessageBusHandle, g_GetSubsystemPrefix(g_pDslhDmlAgent), recName, ccsp_string, ((pCfg->bEEEEnabled) ? "true" : "false"));
-    if(retPsmSet != CCSP_SUCCESS)
-    {
-        CcspTraceWarning(("%s - PSM_Set_Record_Value2 error %d setting %s\n", __FUNCTION__, retPsmSet, recName));
-    }
 }
 
 /**********************************************************************
