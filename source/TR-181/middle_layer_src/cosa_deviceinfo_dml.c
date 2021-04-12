@@ -10716,7 +10716,7 @@ Feature_SetParamBoolValue
                     v_secure_system("rm /tmp/MoCABridge_up");
                     v_secure_system("sysevent set multinet-restart 1");
 #endif
-                    v_secure_system("killall mcsender; killall MRD; killall smcroute;igmpproxy -c /tmp/igmpproxy.conf &");
+                    v_secure_system("killall mcsender; killall MRD; killall smcroute; mcproxy_v4 -r -f /tmp/mcproxy_v4.conf &");
 
                     v_secure_system("sh /usr/ccsp/moca/MoCA_isolation.sh &");
                 }
