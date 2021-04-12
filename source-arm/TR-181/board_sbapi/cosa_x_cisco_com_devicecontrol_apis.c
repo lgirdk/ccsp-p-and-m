@@ -2815,7 +2815,7 @@ CosaDmlDcGetIGMPProxyEnable
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-    if ( detect_process("igmpproxy") == 0 )
+    if ( detect_process("mcproxy_v4") == 0 )
     {
         *pFlag = FALSE;
     }
@@ -2847,14 +2847,14 @@ CosaDmlDcSetIGMPProxyEnable
 
     if (pFlag)
     {
-        if ( detect_process("igmpproxy") == 0 )
+        if ( detect_process("mcproxy_v4") == 0 )
         {
-            system("igmpproxy &");
+            system("mcproxy_v4 &");
         }
     }
     else
     {
-        system("killall igmpproxy");
+        system("killall mcproxy_v4");
     }
     return ANSC_STATUS_SUCCESS;
 }
