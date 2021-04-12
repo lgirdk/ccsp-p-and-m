@@ -2492,7 +2492,7 @@ CosaDmlDcGetIGMPProxyEnable
         BOOLEAN                     *pFlag
     )
 {
-    if ( detect_process("igmpproxy") == 0 )
+    if ( detect_process("mcproxy_v4") == 0 )
     {
         *pFlag = FALSE;
     }
@@ -2523,14 +2523,14 @@ CosaDmlDcSetIGMPProxyEnable
 
     if (pFlag)
     {
-        if ( detect_process("igmpproxy") == 0 )
+        if ( detect_process("mcproxy_v4") == 0 )
         {
-            vsystem("igmpproxy &");
+            vsystem("mcproxy_v4 &");
         }
     }
     else
     {
-        vsystem("killall igmpproxy");
+        vsystem("killall mcproxy_v4");
     }
     return ANSC_STATUS_SUCCESS;
 }

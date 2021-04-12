@@ -9541,7 +9541,7 @@ Feature_SetParamBoolValue
                     system("rm /tmp/MoCABridge_up");
                     system("sysevent set multinet-restart 1");
 #endif
-                    system("killall MRD; killall smcroute;igmpproxy -c /tmp/igmpproxy.conf &");
+                    system("killall MRD; killall smcroute;mcproxy_v4 -r -f /tmp/mcproxy_v4.conf &");
 
                     system("sh /usr/ccsp/moca/MoCA_isolation.sh &");
                 }
