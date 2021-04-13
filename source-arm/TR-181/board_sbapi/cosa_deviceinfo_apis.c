@@ -1448,38 +1448,23 @@ isValidInput
 	{
             return ANSC_STATUS_FAILURE;
 	}
-        int port = 0;
-        int i = 0;
-        int count =0;
-        char* tok;
-        char *host = strdup(inputparam);
-        if (! host) {
-            return ANSC_STATUS_FAILURE;
-        }
-        else {
-            tok = strtok(host, ":");
-            while(tok != NULL) {
-                if (count == 0 ) { 
-                    while(host[i] != '\0') {
-                        if(((host[i] >='A') &&(host[i]<='Z')) || ((host[i]>='a') && (host[i]<='z')) || ((host[i] >= '0') && (host[i] <= '9')) || (host[i] == '.') || (host[i] == '-') || (host[i] == '_'))
-                            i++;
-                        else
-                            return ANSC_STATUS_FAILURE;
-                    }
-                }
-                else if(count == 1 ) {
-                    port = _ansc_atoi(tok);
-                    if ((port <= 0) || (port > 65535))
-                        return ANSC_STATUS_FAILURE;
-                }
-                else {
-                    return ANSC_STATUS_FAILURE;
-                }
-                tok = strtok (NULL, ":");
-                count++;
-            }
-        free(host);
-        }
+
+    if (strchr(inputparam, ';')) // check for possible command injection
+    {
+        returnStatus = ANSC_STATUS_FAILURE;
+    }
+    else if (strchr(inputparam, '&'))
+    {
+        returnStatus = ANSC_STATUS_FAILURE;
+    }
+    else if (strchr(inputparam, '|'))
+    {
+        returnStatus = ANSC_STATUS_FAILURE;
+    }
+    else if (strchr(inputparam,'\''))
+    {
+        returnStatus = ANSC_STATUS_FAILURE;
+    }
 
     if(ANSC_STATUS_SUCCESS == returnStatus)
     {
