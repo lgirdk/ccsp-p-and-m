@@ -1811,37 +1811,26 @@ DeviceInfo_SetParamStringValue
     if((!ind) && (rc == EOK))
 
     {
-       
-      
-        char wrapped_inputparam[256]={0};
+        char wrapped_inputparam[256];
+
 	   ret=isValidInput(pString,wrapped_inputparam, AnscSizeOfString(pString), sizeof( wrapped_inputparam ));
 	  if(ANSC_STATUS_SUCCESS != ret)
 	    return FALSE;
-         /* input string size check to avoid truncated data update on database  */   
-         if(sizeof(wrapped_inputparam ) < sizeof(pMyObject->WebURL))
-        {    
-	
-    	 if (syscfg_set_commit(NULL, "redirection_url", wrapped_inputparam) != 0) {
-             AnscTraceWarning(("syscfg_set failed\n"));
-          } else {
-		 v_secure_system("/etc/whitelist.sh %s", wrapped_inputparam);
-		 rc =STRCPY_S_NOCLOBBER(pMyObject->WebURL,sizeof(pMyObject->WebURL), wrapped_inputparam);
-                if(rc != EOK)
-               {
-                 ERR_CHK(rc);
-                 return FALSE;
-               }
-		CcspTraceWarning(("CaptivePortal:Cloud URL is changed, new URL is %s ...\n",pMyObject->WebURL));
-             }
 
-	    return TRUE;
-       } 
-       
-       else
-       {
-           return FALSE;
-       }    
-
+        if (syscfg_set_commit(NULL, "redirection_url", wrapped_inputparam) != 0)
+        {
+            AnscTraceWarning(("syscfg_set failed\n"));
+            return FALSE;
+        }
+        else
+        {
+            char url[400];
+            snprintf(url,sizeof(url),"/etc/whitelist.sh %s",wrapped_inputparam);
+            system(url);
+            AnscCopyString(pMyObject->WebURL, wrapped_inputparam);
+            CcspTraceWarning(("CaptivePortal:Cloud URL is changed, new URL is %s ...\n",pMyObject->WebURL));
+            return TRUE;
+       }
     }
 #endif
 #define BUFF_SIZE 2048
