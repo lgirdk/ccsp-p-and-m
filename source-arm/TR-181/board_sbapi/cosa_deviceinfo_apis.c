@@ -1309,6 +1309,29 @@ isValidInput
     {
         return ANSC_STATUS_FAILURE;
     }
+
+    if (strchr(inputparam, ';')) // check for possible command injection
+    {
+        returnStatus = ANSC_STATUS_FAILURE;
+    }
+    else if (strchr(inputparam, '&'))
+    {
+        returnStatus = ANSC_STATUS_FAILURE;
+    }
+    else if (strchr(inputparam, '|'))
+    {
+        returnStatus = ANSC_STATUS_FAILURE;
+    }
+    else if (strchr(inputparam,'\''))
+    {
+        returnStatus = ANSC_STATUS_FAILURE;
+    }
+
+    if (returnStatus == ANSC_STATUS_SUCCESS)
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
     while(inputparam[i]!='\0')
     {
         if(inputparam[i]==':')
