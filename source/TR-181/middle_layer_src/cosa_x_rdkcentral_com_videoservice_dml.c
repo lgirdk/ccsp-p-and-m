@@ -55,7 +55,7 @@ VideoService_GetParamBoolValue
     )
 {
 
-    if (AnscEqualString(ParamName, "Enabled", TRUE))
+    if( strcmp(ParamName, "Enabled") == 0 )
     {
         char buf[5] = {0};
         syscfg_get( NULL, "X_RDKCENTRAL-COM_VIDEOSERVICE", buf, sizeof(buf));
@@ -85,7 +85,7 @@ VideoService_SetParamBoolValue
     )
 {
   
-    if (AnscEqualString(ParamName, "Enabled", TRUE))
+    if( strcmp(ParamName, "Enabled") == 0 )
     {   
         char bval[2] = {0};
         if( bValue == TRUE )

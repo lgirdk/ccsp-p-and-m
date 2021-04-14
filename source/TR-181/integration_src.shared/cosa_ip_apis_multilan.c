@@ -235,7 +235,7 @@ CosaDmlIpIfMlanLoadPsm
             }
             else if (RecordType == ccsp_string)
             {
-                pIpIf->Cfg.bEnabled = AnscEqualString(SlapValue.Variant.varString, "true", TRUE);
+                pIpIf->Cfg.bEnabled = (strcmp(SlapValue.Variant.varString, "true") == 0);
             }
 
             SlapCleanVariable(&SlapValue);
@@ -363,7 +363,7 @@ CosaDmlIpIfMlanLoadPsm
             }
             else if (RecordType == ccsp_string)
             {
-                pIpIf->Cfg.AutoIPEnable = AnscEqualString(SlapValue.Variant.varString, "true", TRUE);
+                pIpIf->Cfg.AutoIPEnable = (strcmp(SlapValue.Variant.varString, "true") == 0);
             }
 
             SlapCleanVariable(&SlapValue);
@@ -451,7 +451,7 @@ CosaDmlIpIfMlanLoadPsm
             }
             else if (RecordType == ccsp_string)
             {
-                pIpIf->Cfg.UpnpIgdEnabled = AnscEqualString(SlapValue.Variant.varString, "true", TRUE);
+                pIpIf->Cfg.UpnpIgdEnabled = (strcmp(SlapValue.Variant.varString, "true") == 0);
             }
 
             SlapCleanVariable(&SlapValue);
@@ -491,7 +491,7 @@ CosaDmlIpIfMlanLoadPsm
             }
             else
             {
-                pIpIf->Cfg.bIPv6Enabled = AnscEqualString(SlapValue.Variant.varString, "true", TRUE);
+                pIpIf->Cfg.bIPv6Enabled = (strcmp(SlapValue.Variant.varString, "true") == 0);
             }
 
             SlapCleanVariable(&SlapValue);

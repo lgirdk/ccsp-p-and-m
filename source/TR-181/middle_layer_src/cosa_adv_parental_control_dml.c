@@ -73,7 +73,7 @@ AdvancedParentalControl_GetParamBoolValue
 {
     /* check the parameter name and return the corresponding value */
     PCOSA_DATAMODEL_ADVPC       pMyObject     = (PCOSA_DATAMODEL_ADVPC)g_pCosaBEManager->hAdvPC;
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         *pBool = pMyObject->bEnable;
         return TRUE;
@@ -129,7 +129,7 @@ AdvancedParentalControl_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, AdvancedParentalControl_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         if(bValue == pMyObject->bEnable)
                 return TRUE;
