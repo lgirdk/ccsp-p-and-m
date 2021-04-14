@@ -3860,13 +3860,18 @@ void* bridge_mode_wifi_notifier_thread(void* arg) {
     char*   faultParam = NULL;
     CCSP_MESSAGE_BUS_INFO *bus_info = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
     ANSC_STATUS ret = ANSC_STATUS_FAILURE;
-	char acBridgeMode[ 4 ],
-		 acSetRadioString[ 8 ],
-		 acSetSSIDString[ 8 ];
+    char acBridgeMode[ 4 ];
+#if defined(_LG_OFW_)
+    char acForceDisableRadioString[ 8 ];
+#else
+    char acSetRadioString[ 8 ], acSetSSIDString[ 8 ];
+#endif
 	errno_t safec_rc = -1;
     int  sizevalCommit1 = 0;
     int  sizeval = 0;
+#if !defined(_LG_OFW_)
     int  sizeval2 = 0;
+#endif
     int ulNumOfEntries=0;
     parameterValStruct_t **valWifistatus;
     char pWifiComponentName[64]="eRT.com.cisco.spvtg.ccsp.wifi";
@@ -3889,8 +3894,27 @@ void* bridge_mode_wifi_notifier_thread(void* arg) {
 	  */
 
 	memset( acBridgeMode, 0 ,sizeof( acBridgeMode ) );
-	syscfg_get( NULL, "bridge_mode", acBridgeMode, sizeof(acBridgeMode));
+	sysevent_get(commonSyseventFd, commonSyseventToken, "bridge_mode", acBridgeMode, sizeof(acBridgeMode));
 
+#if defined(_LG_OFW_)
+	switch( atoi( acBridgeMode ) )
+	{
+		case BRIDGE_MODE_STATIC:
+		case BRIDGE_MODE_FULL_STATIC:
+		{
+			snprintf(acForceDisableRadioString, sizeof(acForceDisableRadioString), "%s", "true");
+		}
+		break;
+
+		default: /* BRIDGE_MODE_OFF */
+		{
+			snprintf(acForceDisableRadioString, sizeof(acForceDisableRadioString), "%s", "false");
+		}
+		break;
+	}
+
+	AnscTraceInfo(("%s - Mode:%d Wifi Forced Disable:%s\n", __FUNCTION__, atoi( acBridgeMode ), acForceDisableRadioString ));
+#else
 	switch( atoi( acBridgeMode ) )
 	{
 		case BRIDGE_MODE_STATIC:
@@ -3940,7 +3964,8 @@ void* bridge_mode_wifi_notifier_thread(void* arg) {
 	}
 
 	AnscTraceInfo(("%s - Mode:%d Radio:%s SSID:%s\n", __FUNCTION__, atoi( acBridgeMode ), acSetRadioString, acSetSSIDString ));
-    
+#endif
+
 #ifdef CONFIG_CISCO_FEATURE_CISCOCONNECT
     char param[50];
     char* enVal = NULL;
@@ -3979,6 +4004,12 @@ void* bridge_mode_wifi_notifier_thread(void* arg) {
         free_parameterValStruct_t (bus_handle, nval, valWifistatus);
     }
     
+#if defined(_LG_OFW_)
+    //Full bridge
+ parameterValStruct_t           val[] = {
+ {"Device.WiFi.X_RDK-CENTRAL_COM_ForceDisable", acForceDisableRadioString, ccsp_boolean},
+};
+#else
     //Full bridge
  parameterValStruct_t           val[] = { 
 #ifdef CONFIG_CISCO_FEATURE_CISCOCONNECT
@@ -3997,6 +4028,7 @@ void* bridge_mode_wifi_notifier_thread(void* arg) {
  {"Device.WiFi.Radio.1.Enable", acSetSSIDString, ccsp_boolean}, 
  {"Device.WiFi.Radio.2.Enable", acSetSSIDString, ccsp_boolean},
  {"Device.WiFi.Radio.17.Enable", acSetSSIDString, ccsp_boolean}};
+#endif
 
 parameterValStruct_t valCommit1[] = {
 #ifdef RDK_ONEWIFI
@@ -4008,12 +4040,18 @@ parameterValStruct_t valCommit1[] = {
  {"Device.WiFi.Radio.3.X_CISCO_COM_ApplySetting", "true", ccsp_boolean} };
 #endif
     if (ulNumOfEntries < 3) {
+#if !defined(_LG_OFW_)
         sizeval         = (sizeof(val)/sizeof(*val)) - 1;
         sizeval2        = (sizeof(val2)/sizeof(*val2)) - 1;
+#else
+        sizeval         = (sizeof(val)/sizeof(*val));
+#endif
         sizevalCommit1  = (sizeof(valCommit1)/sizeof(*valCommit1)) - 1;
     } else {
         sizeval         = sizeof(val)/sizeof(*val);
+#if !defined(_LG_OFW_)
         sizeval2        = sizeof(val2)/sizeof(*val2);
+#endif
         sizevalCommit1  = sizeof(valCommit1)/sizeof(*valCommit1);
     }
 
@@ -4033,7 +4071,14 @@ parameterValStruct_t valCommit1[] = {
                             TRUE,   /* no commit */
                             &faultParam
                     );      
-            
+    if (ret != CCSP_SUCCESS && faultParam)
+    {
+        AnscTraceError(("Error:Failed to SetValue for param '%s'\n", faultParam));
+        bus_info->freefunc(faultParam);
+        faultParam = NULL;
+    }
+
+#if !defined(_LG_OFW_)
 	// All the cases Radio should get update since transition will happen during full - psedo - router
                 ret = CcspBaseIf_setParameterValues
                                 (
@@ -4053,7 +4098,7 @@ parameterValStruct_t valCommit1[] = {
                     bus_info->freefunc(faultParam);
                     faultParam = NULL;
                 }  
-        
+#endif
                
       ret = CcspBaseIf_setParameterValues
                         (
@@ -4084,13 +4129,13 @@ parameterValStruct_t valCommit1[] = {
                                 TRUE,   /* no commit */
                                 &faultParam
                         );
- #endif
         if (ret != CCSP_SUCCESS && faultParam)
         {
             AnscTraceError(("Error:Failed to SetValue for param '%s'\n", faultParam));
             bus_info->freefunc(faultParam);
             faultParam = NULL;
         } 
+ #endif
 
 	// All the cases Radio should get update since transition will happen during full - psedo - router
         {
