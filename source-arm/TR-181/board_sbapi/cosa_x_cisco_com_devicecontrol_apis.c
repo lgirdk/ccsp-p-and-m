@@ -3518,9 +3518,12 @@ void* bridge_mode_wifi_notifier_thread(void* arg) {
     CCSP_MESSAGE_BUS_INFO *bus_info = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
     ANSC_STATUS ret = ANSC_STATUS_FAILURE;
     parameterValStruct_t* theVals;
-	char acBridgeMode[ 4 ],
-		 acSetRadioString[ 8 ],
-		 acSetSSIDString[ 8 ];
+	char acBridgeMode[ 4 ];
+#if defined(CONFIG_MNG)
+    char acForceDisableRadioString[ 8 ];
+#else
+	char acSetRadioString[ 8 ], acSetSSIDString[ 8 ];
+#endif
     int numVals;
 
     checkTicket(pNotify->ticket);
@@ -3538,8 +3541,27 @@ void* bridge_mode_wifi_notifier_thread(void* arg) {
 	  */
 
 	memset( acBridgeMode, 0 ,sizeof( acBridgeMode ) );
-	syscfg_get( NULL, "bridge_mode", acBridgeMode, sizeof(acBridgeMode));
+	sysevent_get(commonSyseventFd, commonSyseventToken, "bridge_mode", acBridgeMode, sizeof(acBridgeMode));
 
+#if defined(CONFIG_MNG)
+	switch( atoi( acBridgeMode ) )
+	{
+		case BRIDGE_MODE_STATIC:
+		case BRIDGE_MODE_FULL_STATIC:
+		{
+			snprintf(acForceDisableRadioString, sizeof(acForceDisableRadioString), "%s", "true");
+		}
+		break;
+
+		default: /* BRIDGE_MODE_OFF */
+		{
+			snprintf(acForceDisableRadioString, sizeof(acForceDisableRadioString), "%s", "false");
+		}
+		break;
+	}
+
+	AnscTraceInfo(("%s - Mode:%d Wifi Forced Disable:%s\n", __FUNCTION__, atoi( acBridgeMode ), acForceDisableRadioString ));
+#else
 	switch( atoi( acBridgeMode ) )
 	{
 		case BRIDGE_MODE_STATIC:
@@ -3574,7 +3596,8 @@ void* bridge_mode_wifi_notifier_thread(void* arg) {
 	}
 
 	AnscTraceInfo(("%s - Mode:%d Radio:%s SSID:%s\n", __FUNCTION__, atoi( acBridgeMode ), acSetRadioString, acSetSSIDString ));
-    
+#endif
+
 #ifdef CONFIG_CISCO_FEATURE_CISCOCONNECT
     char param[50];
     char* enVal = NULL;
@@ -3595,7 +3618,13 @@ void* bridge_mode_wifi_notifier_thread(void* arg) {
     guestnetDM = "Device.WiFi.SSID.5.Enable";
     
 #endif
-    
+
+#if defined(CONFIG_MNG)
+    //Full bridge
+ parameterValStruct_t           val[] = {
+ {"Device.WiFi.X_RDK-CENTRAL_COM_ForceDisable", acForceDisableRadioString, ccsp_boolean},
+};
+#else
     //Full bridge
  parameterValStruct_t           val[] = { 
 #ifdef CONFIG_CISCO_FEATURE_CISCOCONNECT
@@ -3612,6 +3641,7 @@ void* bridge_mode_wifi_notifier_thread(void* arg) {
  parameterValStruct_t val2[] = { 
  {"Device.WiFi.Radio.1.Enable", acSetSSIDString, ccsp_boolean}, 
  {"Device.WiFi.Radio.2.Enable", acSetSSIDString, ccsp_boolean}};
+#endif
 
 parameterValStruct_t valCommit1[] = {
  {"Device.WiFi.Radio.1.X_CISCO_COM_ApplySetting", "true", ccsp_boolean}, {"Device.WiFi.Radio.2.X_CISCO_COM_ApplySetting", "true", ccsp_boolean} };
@@ -3632,7 +3662,14 @@ parameterValStruct_t valCommit1[] = {
                             TRUE,   /* no commit */
                             &faultParam
                     );      
-            
+    if (ret != CCSP_SUCCESS && faultParam)
+    {
+        AnscTraceError(("Error:Failed to SetValue for param '%s'\n", faultParam));
+        bus_info->freefunc(faultParam);
+        faultParam = NULL;
+    }
+
+#if !defined(CONFIG_MNG)
 	// All the cases Radio should get update since transition will happen during full - psedo - router
                 ret = CcspBaseIf_setParameterValues
                                 (
@@ -3652,7 +3689,7 @@ parameterValStruct_t valCommit1[] = {
                     bus_info->freefunc(faultParam);
                     faultParam = NULL;
                 }  
-        
+#endif
                
       ret = CcspBaseIf_setParameterValues
                         (
@@ -3683,13 +3720,13 @@ parameterValStruct_t valCommit1[] = {
                                 TRUE,   /* no commit */
                                 &faultParam
                         );
- #endif
         if (ret != CCSP_SUCCESS && faultParam)
         {
             AnscTraceError(("Error:Failed to SetValue for param '%s'\n", faultParam));
             bus_info->freefunc(faultParam);
             faultParam = NULL;
         } 
+ #endif
 
 	// All the cases Radio should get update since transition will happen during full - psedo - router
         {
