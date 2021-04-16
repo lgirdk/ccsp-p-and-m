@@ -5439,8 +5439,9 @@ MemoryStatus_GetParamUlongValue
 
     if (strcmp(ParamName, "X_RDKCENTRAL-COM_FreeMemThreshold") == 0)
     {
-        /* collect value */
-        *puLong = COSADmlGetMemoryStatus(ParamName);
+        char buf[12];
+        syscfg_get (NULL, "MinMemoryThreshold_Value", buf, sizeof(buf));
+        *puLong = atoi(buf);
         return TRUE;
     }
 
@@ -5549,10 +5550,10 @@ MemoryStatus_SetParamUlongValue
     /* check the parameter name and set the corresponding value */
     if (strcmp(ParamName, "X_RDKCENTRAL-COM_FreeMemThreshold") == 0)
     {
-        /* collect value */
-	   COSADmlSetMemoryStatus(ParamName,uValue);
-	   return TRUE;
-    } 
+        syscfg_set_u_commit (NULL, "MinMemoryThreshold_Value", uValue);
+        return TRUE;
+    }
+
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
 }
