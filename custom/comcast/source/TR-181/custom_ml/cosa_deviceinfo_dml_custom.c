@@ -717,6 +717,7 @@ PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaB
 			CcspTraceWarning(("CaptivePortal:Disabling CloudUIEnable to stop redirection to Cloud URL ...\n"));
              }
          }
+         system("/bin/sh /etc/start_lighttpd.sh restart &");
 	}
 	else
 	{
