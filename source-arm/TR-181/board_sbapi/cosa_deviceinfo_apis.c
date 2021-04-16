@@ -1715,95 +1715,93 @@ int COSADmlSetMemoryStatus(char * ParamName, ULONG val)
 	     } 
      }
 }
-ULONG COSADmlGetMemoryStatus(char * ParamName)
-{
-     struct sysinfo si;
-     int tmp;
-     if (sysinfo(&si))
-     {
-          /*Error*/
-          return 0;
-     }
-     if( AnscEqualString(ParamName, "Total", TRUE))
-     {
-#if defined  _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
-#if 0
-         /* we want to get the real Physical memory size */
-        FILE *fp;
-        char *line = NULL;
-        size_t size;
-        char *str;
-        int mem = 0;
 
-        fp = fopen("/proc/bootparams","r");
-        if(fp == NULL){
+ULONG COSADmlGetMemoryStatus(char *ParamName)
+{
+    static unsigned long memtotal_kb = 0;
+
+    /*
+       The definition of total memory is well defined and can be found via
+       both /proc/meminfo and sysinfo() but of the two, sysinfo() is faster.
+       Since the value of total memory is fixed, we can cache it.
+    */
+    if (strcmp (ParamName, "Total") == 0)
+    {
+        if (memtotal_kb == 0)
+        {
+            struct sysinfo si;
+            sysinfo (&si);
+            memtotal_kb = (unsigned long) ((((unsigned long long) si.totalram) * si.mem_unit) / 1024);
+        }
+
+        return memtotal_kb;
+    }
+
+    /*
+       Free and used memory are a little harder to define, but by most
+       definitions we need to combine various values. Although some of the
+       required values are available via sysinfo() some are not. Parse
+       everything from /proc/meminfo rather than trying to use both.
+    */
+    if ((strcmp (ParamName, "Free") == 0) || (strcmp (ParamName, "Used") == 0))
+    {
+        char buf[64];
+        unsigned long memfree_kb = 0, buffers_kb = 0, cached_kb = 0, sreclaimable_kb = 0;
+        unsigned long freepluscached_kb;
+        FILE *fp;
+
+        if ((fp = fopen("/proc/meminfo", "r")) == NULL)
+        {
             return 0;
         }
-        while(-1 != getline(&line, &size, fp)){
-            if(0 != (str = strstr(line, "RAM Size"))){
-               if(0 != (str = strstr(str, "0x"))){
-                   mem = strtol(str, NULL, 16);
-                   free(line);
-                   return mem/1024;
-               }
-            }
-            free(line);
-            line = NULL;
-        }
-        return 0;
-#endif
 
-    if ( platform_hal_GetTotalMemorySize(&tmp) != RETURN_OK )
-        return 0;
-    else
-        return tmp;
-        /* return  512*1024; */
-
-#else
-        return si.totalram*si.mem_unit/(1024);
-#endif
-     }
-     else if(AnscEqualString(ParamName, "Free", TRUE))
-     {
-#ifdef _COSA_INTEL_USG_ARM_
-	if ( platform_hal_GetFreeMemorySize(&tmp) != RETURN_OK )
-        return 0;
-    	else
-        return tmp;
-#else
-#if defined(_XF3_PRODUCT_REQ_)
-         return si.freeram*si.mem_unit/(1024*1024);
-    #else
-         return si.freeram*si.mem_unit/(1024);
-#endif
-#endif
-     }
-
-
-     else if(AnscEqualString(ParamName, "Used", TRUE))
-     {
-#if (defined _COSA_INTEL_USG_ARM_) || (defined  _COSA_BCM_MIPS_)
-	if ( platform_hal_GetUsedMemorySize(&tmp) != RETURN_OK )
-        return 0;
-    	else 
-        return tmp;
-#endif
-     }
-     else if(AnscEqualString(ParamName, "X_RDKCENTRAL-COM_FreeMemThreshold", TRUE))
-     {
-	char buf[10];
-	memset(buf,0,sizeof(buf));
-        syscfg_get( NULL, "MinMemoryThreshold_Value", buf, sizeof(buf));
-        if( buf != NULL )
+        while (fgets(buf, sizeof(buf), fp))
         {
-            return atoi(buf);
+            if ((memtotal_kb == 0) && (strncmp(buf, "MemTotal:", 9) == 0))
+            {
+                sscanf(buf, "MemTotal: %lu", &memtotal_kb);
+            }
+            else if (strncmp(buf, "MemFree:", 8) == 0)
+            {
+                sscanf(buf, "MemFree: %lu", &memfree_kb);
+            }
+            else if (strncmp(buf, "Buffers:", 8) == 0)
+            {
+                sscanf(buf, "Buffers: %lu", &buffers_kb);
+            }
+            else if (strncmp(buf, "Cached:", 7) == 0)
+            {
+                sscanf(buf, "Cached: %lu", &cached_kb);
+            }
+            else if (strncmp(buf, "SReclaimable:", 13) == 0)
+            {
+                sscanf(buf, "SReclaimable: %lu", &sreclaimable_kb);
+                break;
+            }
         }
-	return 0;
-     }
-     else 
-     {
-          return 0;
-     }
+
+        fclose(fp);
+
+        freepluscached_kb = memfree_kb + buffers_kb + cached_kb + sreclaimable_kb;
+
+        if (ParamName[0] == 'F')
+        {
+            return freepluscached_kb; /* Free */
+        }
+        else
+        {
+            return memtotal_kb - freepluscached_kb; /* Used == (Total - (Free + cached)) */
+        }
+    }
+
+    if (strcmp (ParamName, "X_RDKCENTRAL-COM_FreeMemThreshold") == 0)
+    {
+        char buf[12];
+        syscfg_get (NULL, "MinMemoryThreshold_Value", buf, sizeof(buf));
+        return atoi(buf);
+    }
+
+    return 0;
 }
 
 
