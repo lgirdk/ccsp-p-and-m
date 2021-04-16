@@ -30,7 +30,7 @@ DynamicDNS_GetParamBoolValue
     )
 {
 #if defined(DDNS_BROADBANDFORUM)
-    if (AnscEqualString(ParamName, "X_RDK-COM_Enable", TRUE))
+    if( strcmp(ParamName, "X_RDK-COM_Enable") == 0 )
     {
         *pBool = CosaDmlDynamicDns_GetEnable();
         return TRUE;
@@ -53,7 +53,7 @@ DynamicDNS_GetParamStringValue
 {
 #if defined(DDNS_BROADBANDFORUM)
     char supportedServices[1024] = {0};
-    if (AnscEqualString(ParamName, "SupportedServices", TRUE))
+    if( strcmp(ParamName, "SupportedServices") == 0 )
     {
         if (!CosaDmlDynamicDns_GetsupportedServices(supportedServices))
         {
@@ -77,7 +77,7 @@ DynamicDNS_SetParamBoolValue
     )
 {
 #if defined(DDNS_BROADBANDFORUM)
-    if (AnscEqualString(ParamName, "X_RDK-COM_Enable", TRUE))
+    if( strcmp(ParamName, "X_RDK-COM_Enable") == 0 )
     {
         if (!CosaDmlDynamicDns_SetEnable(bValue))
         {
@@ -292,7 +292,7 @@ DDNSClient_GetParamBoolValue
     COSA_DML_DDNS_CLIENT         *pClientEntry = (COSA_DML_DDNS_CLIENT *)pLinkObj->hContext;
 
     CosaDmlDynamicDns_Client_GetConf(pClientEntry->InstanceNumber,pClientEntry);
-    if (AnscEqualString(ParamName, "Enable", TRUE))
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         *pBool = pClientEntry->Enable;
         return TRUE;
@@ -316,7 +316,7 @@ DDNSClient_GetParamUlongValue
     COSA_DML_DDNS_CLIENT         *pClientEntry = (COSA_DML_DDNS_CLIENT *)pLinkObj->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Status", TRUE))
+    if( strcmp(ParamName, "Status") == 0 )
     {
         /* collect value */
         if(pClientEntry->Enable)
@@ -325,7 +325,7 @@ DDNSClient_GetParamUlongValue
             *puLong = CLIENT_DISABLED;
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "LastError", TRUE))
+    if( strcmp(ParamName, "LastError") == 0 )
     {
         /* collect value */
         if(pClientEntry->Enable)
@@ -355,27 +355,27 @@ DDNSClient_GetParamStringValue
     PCOSA_CONTEXT_LINK_OBJECT    pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_DDNS_CLIENT         *pClientEntry = (COSA_DML_DDNS_CLIENT *)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "Alias", TRUE))
+    if( strcmp(ParamName, "Alias") == 0 )
     {
         AnscCopyString(pValue, pClientEntry->Alias);
         return 0;
     }
-    if (AnscEqualString(ParamName, "Username", TRUE))
+    if( strcmp(ParamName, "Username") == 0 )
     {
         AnscCopyString(pValue, pClientEntry->Username);
         return 0;
     }
-    if (AnscEqualString(ParamName, "Password", TRUE))
+    if( strcmp(ParamName, "Password") == 0 )
     {
         AnscCopyString(pValue, "");
         return 0;
     }
-    if (AnscEqualString(ParamName, "Server", TRUE))
+    if( strcmp(ParamName, "Server") == 0 )
     {
         AnscCopyString(pValue, pClientEntry->Server);
         return 0;
     }
-    if (AnscEqualString(ParamName, "Interface", TRUE))
+    if( strcmp(ParamName, "Interface") == 0 )
     {
         AnscCopyString(pValue, "Device.IP.Interface.1");
         return 0;
@@ -399,7 +399,7 @@ DDNSClient_SetParamBoolValue
     PCOSA_CONTEXT_LINK_OBJECT    pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_DDNS_CLIENT         *pClientEntry = (COSA_DML_DDNS_CLIENT *)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "Enable", TRUE))
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         pClientEntry->Enable = bValue;
         return TRUE;
@@ -423,27 +423,27 @@ DDNSClient_SetParamStringValue
     PCOSA_CONTEXT_LINK_OBJECT    pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_DDNS_CLIENT         *pClientEntry = (COSA_DML_DDNS_CLIENT *)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "Interface", TRUE))
+    if( strcmp(ParamName, "Interface") == 0 )
     {
         _ansc_snprintf(pClientEntry->Interface, sizeof(pClientEntry->Interface), "%s", strValue);
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "Alias", TRUE))
+    if( strcmp(ParamName, "Alias") == 0 )
     {
         _ansc_snprintf(pClientEntry->Alias, sizeof(pClientEntry->Alias), "%s", strValue);
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "Username", TRUE))
+    if( strcmp(ParamName, "Username") == 0 )
     {
         _ansc_snprintf(pClientEntry->Username, sizeof(pClientEntry->Username), "%s", strValue);
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "Password", TRUE))
+    if( strcmp(ParamName, "Password") == 0 )
     {
         _ansc_snprintf(pClientEntry->Password, sizeof(pClientEntry->Password), "%s", strValue);
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "Server", TRUE))
+    if( strcmp(ParamName, "Server") == 0 )
     {
         _ansc_snprintf(pClientEntry->Server, sizeof(pClientEntry->Server), "%s", strValue);
         return TRUE;
@@ -716,7 +716,7 @@ DDNSHostname_GetParamBoolValue
     COSA_DML_DDNS_HOST           *pHostEntry   = (COSA_DML_DDNS_HOST *)pLinkObj->hContext;
     CosaDmlDynamicDns_Host_GetConf(pHostEntry->InstanceNumber,pHostEntry);
 
-    if (AnscEqualString(ParamName, "Enable", TRUE))
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         *pBool = pHostEntry->Enable;
         return TRUE;
@@ -740,7 +740,7 @@ DDNSHostname_GetParamUlongValue
     COSA_DML_DDNS_HOST           *pHostEntry   = (COSA_DML_DDNS_HOST *)pLinkObj->hContext;
     CosaDmlDynamicDns_Host_GetConf(pHostEntry->InstanceNumber,pHostEntry);
 
-    if( AnscEqualString(ParamName, "Status", TRUE))
+    if( strcmp(ParamName, "Status") == 0 )
     {
         /* collect value */
         if(pHostEntry->Enable)
@@ -771,12 +771,12 @@ DDNSHostname_GetParamStringValue
     COSA_DML_DDNS_HOST           *pHostEntry     = (COSA_DML_DDNS_HOST *)pLinkObj->hContext;
     CosaDmlDynamicDns_Host_GetConf(pHostEntry->InstanceNumber,pHostEntry);
 
-    if (AnscEqualString(ParamName, "Name", TRUE))
+    if( strcmp(ParamName, "Name") == 0 )
     {
         AnscCopyString(pValue, pHostEntry->Name);
         return 0;
     }
-    if (AnscEqualString(ParamName, "LastUpdate", TRUE))
+    if( strcmp(ParamName, "LastUpdate") == 0 )
     {
         //Need to check the date time format
         CosaDmlDynamicDns_GetHostLastUpdate(pHostEntry->LastUpdate);
@@ -803,7 +803,7 @@ DDNSHostname_SetParamBoolValue
     PCOSA_CONTEXT_LINK_OBJECT    pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_DDNS_HOST           *pHostEntry   = (COSA_DML_DDNS_HOST *)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "Enable", TRUE))
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         pHostEntry->Enable = bValue;
         return TRUE;
@@ -827,7 +827,7 @@ DDNSHostname_SetParamStringValue
     PCOSA_CONTEXT_LINK_OBJECT    pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_DDNS_HOST           *pHostEntry   = (COSA_DML_DDNS_HOST *)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "Name", TRUE))
+    if( strcmp(ParamName, "Name") == 0 )
     {
         _ansc_snprintf(pHostEntry->Name, sizeof(pHostEntry->Name), "%s", strValue);
         return TRUE;
@@ -1085,26 +1085,26 @@ DDNSServer_GetParamUlongValue
     COSA_DML_DDNS_SERVER         *pServerEntry = (COSA_DML_DDNS_SERVER *)pLinkObj->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         /* collect value */
         *puLong = (pServerEntry->Enable) ? 1 : 0;
         return TRUE;
     }
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "CheckInterval", TRUE))
+    if( strcmp(ParamName, "CheckInterval") == 0 )
     {
         /* collect value */
         *puLong = pServerEntry->CheckInterval;
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "RetryInterval", TRUE))
+    if( strcmp(ParamName, "RetryInterval") == 0 )
     {
         /* collect value */
         *puLong = pServerEntry->RetryInterval;
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "MaxRetries", TRUE))
+    if( strcmp(ParamName, "MaxRetries") == 0 )
     {
         /* collect value */
         *puLong = pServerEntry->MaxRetries;
@@ -1131,32 +1131,32 @@ DDNSServer_GetParamStringValue
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj     = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_DDNS_SERVER            *pDDNSServer = (COSA_DML_DDNS_SERVER*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "Name", TRUE))
+    if( strcmp(ParamName, "Name") == 0 )
     {
         AnscCopyString(pValue, pDDNSServer->Name);
         return 0;
     }
-    if (AnscEqualString(ParamName, "Alias", TRUE))
+    if( strcmp(ParamName, "Alias") == 0 )
     {
         AnscCopyString(pValue, pDDNSServer->Alias);
         return 0;
     }
-    if (AnscEqualString(ParamName, "ServiceName", TRUE))
+    if( strcmp(ParamName, "ServiceName") == 0 )
     {
         AnscCopyString(pValue, pDDNSServer->ServiceName);
         return 0;
     }
-    if (AnscEqualString(ParamName, "ServerAddress", TRUE))
+    if( strcmp(ParamName, "ServerAddress") == 0 )
     {
         AnscCopyString(pValue, pDDNSServer->ServerAddress);
         return 0;
     }
-    if (AnscEqualString(ParamName, "SupportedProtocols", TRUE))
+    if( strcmp(ParamName, "SupportedProtocols") == 0 )
     {
         AnscCopyString(pValue, pDDNSServer->SupportedProtocols);
         return 0;
     }
-    if (AnscEqualString(ParamName, "Protocol", TRUE))
+    if( strcmp(ParamName, "Protocol") == 0 )
     {
         AnscCopyString(pValue, pDDNSServer->Protocol);
         return 0;
@@ -1180,27 +1180,27 @@ DDNSServer_SetParamStringValue
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_DDNS_SERVER           *pDDNSServer = (COSA_DML_DDNS_SERVER*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "Name", TRUE))
+    if( strcmp(ParamName, "Name") == 0 )
     {
         _ansc_snprintf(pDDNSServer->Name, sizeof(pDDNSServer->Name), "%s", strValue);
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "Alias", TRUE))
+    if( strcmp(ParamName, "Alias") == 0 )
     {
         _ansc_snprintf(pDDNSServer->Alias, sizeof(pDDNSServer->Alias), "%s", strValue);
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "ServiceName", TRUE))
+    if( strcmp(ParamName, "ServiceName") == 0 )
     {
         _ansc_snprintf(pDDNSServer->ServiceName, sizeof(pDDNSServer->ServiceName), "%s", strValue);
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "ServerAddress", TRUE))
+    if( strcmp(ParamName, "ServerAddress") == 0 )
     {
         _ansc_snprintf(pDDNSServer->ServerAddress, sizeof(pDDNSServer->ServerAddress), "%s", strValue);
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "Protocol", TRUE))
+    if( strcmp(ParamName, "Protocol") == 0 )
     {
         _ansc_snprintf(pDDNSServer->Protocol, sizeof(pDDNSServer->Protocol), "%s", strValue);
         return TRUE;
@@ -1224,22 +1224,22 @@ DDNSServer_SetParamUlongValue
     PCOSA_CONTEXT_LINK_OBJECT    pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_DDNS_SERVER         *pServerEntry = (COSA_DML_DDNS_SERVER *)pLinkObj->hContext;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         pServerEntry->Enable = (uValue) ? TRUE : FALSE;
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "CheckInterval", TRUE))
+    if( strcmp(ParamName, "CheckInterval") == 0 )
     {
         pServerEntry->CheckInterval = uValue;
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "RetryInterval", TRUE))
+    if( strcmp(ParamName, "RetryInterval") == 0 )
     {
         pServerEntry->RetryInterval = uValue;
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "MaxRetries", TRUE))
+    if( strcmp(ParamName, "MaxRetries") == 0 )
     {
         pServerEntry->MaxRetries = uValue;
         return TRUE;

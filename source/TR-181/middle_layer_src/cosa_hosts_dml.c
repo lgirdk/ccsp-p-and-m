@@ -250,7 +250,7 @@ Hosts_GetParamUlongValue
     )
 {
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "X_CISCO_COM_ConnectedDeviceNumber", TRUE))
+    if( strcmp(ParamName, "X_CISCO_COM_ConnectedDeviceNumber") == 0 )
     {
         /* collect value */
         *puLong = CosaDmlHostsGetOnline();
@@ -258,7 +258,7 @@ Hosts_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_ConnectedWiFiNumber", TRUE))
+    if( strcmp(ParamName, "X_CISCO_COM_ConnectedWiFiNumber") == 0 )
     {
         /* collect value */
         *puLong = 0;
@@ -545,7 +545,7 @@ Host_GetParamBoolValue
     PLmObjectHost pHost = (PLmObjectHost) hInsContext;
     int i = 0;
     for(; i<LM_HOST_NumBoolPara; i++){
-        if( AnscEqualString(ParamName, lmHosts.pHostBoolParaName[i], TRUE))
+        if( strcmp(ParamName, lmHosts.pHostBoolParaName[i]) == 0 )
         {
             /* collect value */
             *pBool = pHost->bBoolParaValue[i];
@@ -553,7 +553,7 @@ Host_GetParamBoolValue
         }
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_TrueStaticIPClient", TRUE))
+    if( strcmp(ParamName, "X_CISCO_COM_TrueStaticIPClient") == 0 )
     {
         /* collect value */
         *pBool = pHost->bTrueStaticIPClient;
@@ -615,7 +615,7 @@ Host_GetParamIntValue
     }
 #endif
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "X_CISCO_COM_ActiveTime", TRUE))
+    if( strcmp(ParamName, "X_CISCO_COM_ActiveTime") == 0 )
     {
         /* collect dynamic value */
         if(pHost->bBoolParaValue[LM_HOST_ActiveId]){
@@ -628,7 +628,7 @@ Host_GetParamIntValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_InactiveTime", TRUE))
+    if( strcmp(ParamName, "X_CISCO_COM_InactiveTime") == 0 )
     {
         /* collect dynamic value */
         if(!pHost->bBoolParaValue[LM_HOST_ActiveId]){
@@ -641,14 +641,14 @@ Host_GetParamIntValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_RSSI", TRUE))
+    if( strcmp(ParamName, "X_CISCO_COM_RSSI") == 0 )
     {
         /* collect value */
         *pInt = pHost->iIntParaValue[LM_HOST_X_CISCO_COM_RSSIId];
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "LeaseTimeRemaining", TRUE))
+    if( strcmp(ParamName, "LeaseTimeRemaining") == 0 )
     {
         time_t currentTime = time(NULL);
         if(pHost->LeaseTime == 0xffffffff){
@@ -707,7 +707,7 @@ Host_GetParamUlongValue
     PLmObjectHost pHost = (PLmObjectHost) hInsContext;
     int i = 0;
     for(; i<LM_HOST_NumUlongPara; i++){
-        if( AnscEqualString(ParamName, COSA_HOSTS_Extension1_Name, TRUE))
+        if( strcmp(ParamName, COSA_HOSTS_Extension1_Name) == 0 )
         {
             time_t currentTime = time(NULL);
             if(currentTime > pHost->activityChangeTime){
@@ -717,7 +717,7 @@ Host_GetParamUlongValue
             }
             return TRUE;
         }
-        else if( AnscEqualString(ParamName, lmHosts.pHostUlongParaName[i], TRUE))
+        else if( strcmp(ParamName, lmHosts.pHostUlongParaName[i]) == 0 )
         {
             /* collect value */
             *puLong = pHost->ulUlongParaValue[i];
@@ -800,7 +800,7 @@ Host_GetParamStringValue
     PLmObjectHost pHost = (PLmObjectHost) hInsContext;
     int i = 0;
     for(; i<LM_HOST_NumStringPara; i++){
-        if( AnscEqualString(ParamName, lmHosts.pHostStringParaName[i], TRUE))
+        if( strcmp(ParamName, lmHosts.pHostStringParaName[i]) == 0 )
         {
             /* collect value */
             size_t len = 0;
@@ -1095,7 +1095,7 @@ Host_SetParamStringValue
     /* check the parameter name and set the corresponding value */
     PLmObjectHost pHost = (PLmObjectHost) hInsContext;
 
-    if( AnscEqualString(ParamName, "Comments", TRUE))
+    if( strcmp(ParamName, "Comments") == 0 )
     {
         /* save update to backup */
         if( pHost->pStringParaValue[LM_HOST_Comments] )
@@ -1496,7 +1496,7 @@ Host_IPv4Address_GetParamStringValue
     PLmObjectHostIPv4Address pIPv4Address = (PLmObjectHostIPv4Address) hInsContext;
     int i = 0;
     for(; i<LM_HOST_IPv4Address_NumStringPara; i++){
-        if( AnscEqualString(ParamName, lmHosts.pIPv4AddressStringParaName[i], TRUE))
+        if( strcmp(ParamName, lmHosts.pIPv4AddressStringParaName[i]) == 0 )
         {
             /* collect value */
             size_t len = 0;
@@ -1796,7 +1796,7 @@ Host_IPv6Address_GetParamStringValue
     PLmObjectHostIPv6Address pIPv6Address = (PLmObjectHostIPv6Address) hInsContext;
     int i = 0;
     for(; i<LM_HOST_IPv6Address_NumStringPara; i++){
-        if( AnscEqualString(ParamName, lmHosts.pIPv6AddressStringParaName[i], TRUE))
+        if( strcmp(ParamName, lmHosts.pIPv6AddressStringParaName[i]) == 0 )
         {
             /* collect value */
             size_t len = 0;

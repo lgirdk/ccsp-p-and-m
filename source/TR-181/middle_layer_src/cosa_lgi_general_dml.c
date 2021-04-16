@@ -102,29 +102,29 @@ LgiGeneral_GetParamBoolValue
     )
 {
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "FirstInstallWizardEnable", TRUE))
+    if( strcmp(ParamName, "FirstInstallWizardEnable") == 0 )      
     {
         CosaDmlGiGetFirstInstallWizardEnable(NULL, pBool);
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FirstInstallState", TRUE))
+    if( strcmp(ParamName, "FirstInstallState") == 0 )
     {
         CosaDmlGiGetFirstInstallState(NULL, pBool);
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "TroubleshootWizardEnable", TRUE))
+    if( strcmp(ParamName, "TroubleshootWizardEnable") == 0 )
     {
         CosaDmlGiGetTroubleshootWizardEnable(NULL, pBool);
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "CustomDataModelEnabled", TRUE))
+    if( strcmp(ParamName, "CustomDataModelEnabled") == 0 )
     {
 	CosaDmlGiGetCustomDataModelEnabled(NULL, pBool);
 	return TRUE;
     }
-    if( AnscEqualString(ParamName, "UserBridgeModeAllowed", TRUE))
+    if( strcmp(ParamName, "UserBridgeModeAllowed") == 0 )
     {
         CosaDmlGiGetUserBridgeModeAllowed(NULL, pBool);
         return TRUE;
@@ -174,22 +174,22 @@ LgiGeneral_GetParamUlongValue
     )
 {
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "CustomerId", TRUE))
+    if( strcmp(ParamName, "CustomerId") == 0 )
     {
         CosaDmlGiGetCustomerId(NULL, puLong);
         return TRUE;
     }
-    else if( AnscEqualString(ParamName, "MaxLoginAttempts", TRUE))
+    else if( strcmp(ParamName, "MaxLoginAttempts") == 0 )
     {
         CosaDmlGiGetLoginSecurity(NULL, puLong, "max_failed_login_attempts");
         return TRUE;
     }
-    else if( AnscEqualString(ParamName, "LockoutPeriod", TRUE))
+    else if( strcmp(ParamName, "LockoutPeriod") == 0 )
     {
         CosaDmlGiGetLoginSecurity(NULL, puLong, "lockout_period");
         return TRUE;
     }
-    else if( AnscEqualString(ParamName, "MaxLockoutPeriods", TRUE))
+    else if( strcmp(ParamName, "MaxLockoutPeriods") == 0 )
     {
         CosaDmlGiGetLoginSecurity(NULL, puLong, "max_lockout_periods");
         return TRUE;
@@ -246,12 +246,12 @@ LgiGeneral_GetParamStringValue
 
     PCOSA_DATAMODEL_LGI_GENERAL  pMyObject = (PCOSA_DATAMODEL_LGI_GENERAL)g_pCosaBEManager->hLgiGeneral;
 
-    if( AnscEqualString(ParamName, "AvailableLanguages", TRUE))
+    if( strcmp(ParamName, "AvailableLanguages") == 0 )
     {
         return CosaDmlGiGetAvailableLanguages(NULL, pValue, pulSize);
     }
 
-    if( AnscEqualString(ParamName, "CurrentLanguage", TRUE))
+    if( strcmp(ParamName, "CurrentLanguage") == 0 )
     {
         if (AnscSizeOfString(pMyObject->CurrentLanguage) < *pulSize){
           AnscCopyString(pValue, pMyObject->CurrentLanguage);
@@ -264,12 +264,12 @@ LgiGeneral_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "LanHostname", TRUE))
+    if( strcmp(ParamName, "LanHostname") == 0 )
     {
         return CosaDmlGiGetLanHostname(NULL, pValue, pulSize);
     }
 
-    if( AnscEqualString(ParamName, "CAppName", TRUE))
+    if( strcmp(ParamName, "CAppName") == 0 )
     {
         if (AnscSizeOfString(pMyObject->CAppName) < *pulSize){
           AnscCopyString(pValue, pMyObject->CAppName);
@@ -282,7 +282,7 @@ LgiGeneral_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "WebsiteHelpURL", TRUE))
+    if( strcmp(ParamName, "WebsiteHelpURL") == 0 )
     {
         if (AnscSizeOfString(pMyObject->WebsiteHelpURL) < *pulSize){
           AnscCopyString(pValue, pMyObject->WebsiteHelpURL);
@@ -294,7 +294,7 @@ LgiGeneral_GetParamStringValue
           return 1;
         }
     }
-    if( AnscEqualString(ParamName, "DataModelVersion", TRUE))
+    if( strcmp(ParamName, "DataModelVersion") == 0 )
     {
         if (AnscSizeOfString(pMyObject->DataModelVersion) < *pulSize){
           AnscCopyString(pValue, pMyObject->DataModelVersion);
@@ -306,7 +306,7 @@ LgiGeneral_GetParamStringValue
           return 1;
         }
     }
-    if( AnscEqualString(ParamName, "WebUISkin", TRUE))
+    if( strcmp(ParamName, "WebUISkin") == 0 )
     {
         if (AnscSizeOfString(pMyObject->WebUISkin) < *pulSize){
           AnscCopyString(pValue, pMyObject->WebUISkin);
@@ -318,7 +318,7 @@ LgiGeneral_GetParamStringValue
           return 1;
         }
     }
-    if( AnscEqualString(ParamName, "DefaultAdminPassword", TRUE))
+    if( strcmp(ParamName, "DefaultAdminPassword") == 0 )
     {
         if (AnscSizeOfString(pMyObject->DefaultAdminPassword) < *pulSize){
           AnscCopyString(pValue, pMyObject->DefaultAdminPassword);
@@ -346,27 +346,27 @@ LgiGeneral_SetParamBoolValue
     PCOSA_DATAMODEL_LGI_GENERAL  pMyObject = (PCOSA_DATAMODEL_LGI_GENERAL)g_pCosaBEManager->hLgiGeneral;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "FirstInstallWizardEnable", TRUE))
+    if( strcmp(ParamName, "FirstInstallWizardEnable") == 0 )
     {
         pMyObject->FirstInstallWizardEnable = bValue;
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "FirstInstallState", TRUE))
+    if( strcmp(ParamName, "FirstInstallState") == 0 )
     {
         pMyObject->FirstInstallState = bValue;
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "TroubleshootWizardEnable", TRUE))
+    if( strcmp(ParamName, "TroubleshootWizardEnable") == 0 )
     {
         pMyObject->TroubleshootWizardEnable = bValue;
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "CustomDataModelEnabled", TRUE))
+    if( strcmp(ParamName, "CustomDataModelEnabled") == 0 )
     {
 	pMyObject->CustomDataModelEnabled = bValue;
 	return TRUE;
     }
-    if( AnscEqualString(ParamName, "UserBridgeModeAllowed", TRUE))
+    if( strcmp(ParamName, "UserBridgeModeAllowed") == 0 )
     {
         pMyObject->UserBridgeModeAllowed = bValue;
         return TRUE;
@@ -384,7 +384,7 @@ LgiGeneral_SetParamUlongValue
 {
     /* check the parameter name and return the corresponding value */
     PCOSA_DATAMODEL_LGI_GENERAL  pMyObject = (PCOSA_DATAMODEL_LGI_GENERAL)g_pCosaBEManager->hLgiGeneral;
-    if( AnscEqualString(ParamName, "CustomerId", TRUE))
+    if( strcmp(ParamName, "CustomerId") == 0 )
     {
         /*
         Check that a config file matching the customer ID is present in the filesystem.
@@ -397,17 +397,17 @@ LgiGeneral_SetParamUlongValue
             return TRUE;
         }
     }
-    else if( AnscEqualString(ParamName, "MaxLoginAttempts", TRUE))
+    else if( strcmp(ParamName, "MaxLoginAttempts") == 0 )
     {
         pMyObject->max_failed_login_attempts = uValuepUlong;
         return TRUE;
     }
-    else if( AnscEqualString(ParamName, "LockoutPeriod", TRUE))
+    else if( strcmp(ParamName, "LockoutPeriod") == 0 )
     {
         pMyObject->lockout_period = uValuepUlong;
         return TRUE;
     }
-    else if( AnscEqualString(ParamName, "MaxLockoutPeriods", TRUE))
+    else if( strcmp(ParamName, "MaxLockoutPeriods") == 0 )
     {
         pMyObject->max_lockout_periods = uValuepUlong;
         return TRUE;
@@ -425,7 +425,7 @@ LgiGeneral_SetParamStringValue
 
     PCOSA_DATAMODEL_LGI_GENERAL  pMyObject = (PCOSA_DATAMODEL_LGI_GENERAL)g_pCosaBEManager->hLgiGeneral;
 
-    if( AnscEqualString(ParamName, "CurrentLanguage", TRUE))
+    if( strcmp(ParamName, "CurrentLanguage") == 0 )
     {
         /*Before SPV CurrentLanguage should be checked with the Available_Languages List present.*/
         char buf[128];
@@ -447,17 +447,17 @@ LgiGeneral_SetParamStringValue
         return FALSE;
     }
 
-    if( AnscEqualString(ParamName, "CAppName", TRUE))
+    if( strcmp(ParamName, "CAppName") == 0 )
     {
         AnscCopyString(pMyObject->CAppName, strValue);
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "WebsiteHelpURL", TRUE))
+    if( strcmp(ParamName, "WebsiteHelpURL") == 0 )
     {
         AnscCopyString(pMyObject->WebsiteHelpURL, strValue);
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "WebUISkin", TRUE))
+    if( strcmp(ParamName, "WebUISkin") == 0 )
     {
         if( AnscSizeOfString(strValue) < sizeof(pMyObject->WebUISkin))
         {

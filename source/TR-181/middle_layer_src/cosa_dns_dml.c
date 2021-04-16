@@ -162,7 +162,7 @@ DNS_GetParamStringValue
 {
     /* check the parameter name and return the corresponding value */
 
-    if ( AnscEqualString(ParamName, "SupportedRecordTypes", TRUE) )
+    if( strcmp(ParamName, "SupportedRecordTypes") == 0 )
     {
         AnscCopyString(pValue, "A,AAAA");
         return 0;
@@ -232,7 +232,7 @@ Client1_GetParamBoolValue
     COSA_DML_DNS_STATUS             eClientStatus = COSA_DML_DNS_STATUS_Disabled;
 
     /* check the parameter name and return the corresponding value */
-    if ( AnscEqualString(ParamName, "Enable", TRUE) )
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         /* collect value */
         eClientStatus = CosaDmlIpDnsGetClientStatus(NULL);
@@ -334,7 +334,7 @@ Client1_GetParamUlongValue
     )
 {
     /* check the parameter name and return the corresponding value */
-    if ( AnscEqualString(ParamName, "Status", TRUE) )
+    if( strcmp(ParamName, "Status") == 0 )
     {
         /* collect value */
         *puLong = (ULONG)CosaDmlIpDnsGetClientStatus(NULL);
@@ -438,7 +438,7 @@ Client1_SetParamBoolValue
     )
 {
     /* check the parameter name and set the corresponding value */
-    if ( AnscEqualString(ParamName, "Enable", TRUE) )
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         /* save update to backup */
         CosaDmlDnsEnableClient(NULL, (BOOLEAN)bValue);
@@ -1186,7 +1186,7 @@ Server1_GetParamBoolValue
     PCOSA_DML_DNS_CLIENT_SERVER     pDnsServer   = (PCOSA_DML_DNS_CLIENT_SERVER)pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         /* collect value */
         *pBool = pDnsServer->bEnabled;
@@ -1283,21 +1283,21 @@ Server1_GetParamUlongValue
     PCOSA_DML_DNS_CLIENT_SERVER     pDnsServer   = (PCOSA_DML_DNS_CLIENT_SERVER)pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Status", TRUE) )
+    if( strcmp(ParamName, "Status") == 0 )
     {
         /* collect value */
         *puLong  = pDnsServer->Status;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Type", TRUE) )
+    if( strcmp(ParamName, "Type") == 0 )
     {
         /* collect value */
         *puLong  = pDnsServer->Type;
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "X_CISCO_COM_Order", TRUE))
+    if( strcmp(ParamName, "X_CISCO_COM_Order") == 0 )
     {
         *puLong  = pDnsServer->Order;
         return TRUE;
@@ -1358,21 +1358,21 @@ Server1_GetParamStringValue
     PCOSA_DML_DNS_CLIENT_SERVER     pDnsServer   = (PCOSA_DML_DNS_CLIENT_SERVER)pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if( strcmp(ParamName, "Alias") == 0 )
     {
         /* collect value */
         AnscCopyString(pValue, pDnsServer->Alias);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Interface", TRUE) )
+    if( strcmp(ParamName, "Interface") == 0 )
     {
         /* collect value */
         AnscCopyString(pValue, pDnsServer->Interface);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "DNSServer", TRUE) )
+    if( strcmp(ParamName, "DNSServer") == 0 )
     {
         /* collect value */
         AnscCopyString(pValue, pDnsServer->DNSServer);
@@ -1425,7 +1425,7 @@ Server1_SetParamBoolValue
     PCOSA_DML_DNS_CLIENT_SERVER     pDnsServer   = (PCOSA_DML_DNS_CLIENT_SERVER)pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         /* save update to backup */
         pDnsServer->bEnabled = bValue;
@@ -1522,7 +1522,7 @@ Server1_SetParamUlongValue
     PCOSA_DML_DNS_CLIENT_SERVER     pDnsServer   = (PCOSA_DML_DNS_CLIENT_SERVER)pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if (AnscEqualString(ParamName, "X_CISCO_COM_Order", TRUE))
+    if( strcmp(ParamName, "X_CISCO_COM_Order") == 0 )
     {
         pDnsServer->Order = uValue;
         return TRUE;
@@ -1574,14 +1574,14 @@ Server1_SetParamStringValue
     PCOSA_DML_DNS_CLIENT_SERVER     pDnsServer   = (PCOSA_DML_DNS_CLIENT_SERVER)pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if( strcmp(ParamName, "Alias") == 0 )
     {
         /* save update to backup */
         AnscCopyString(pDnsServer->Alias, pString);
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Interface", TRUE) )
+    if( strcmp(ParamName, "Interface") == 0 )
     {
        /* Note: Interface is only writable when Type is Static; */
         if ( COSA_DML_DNS_ADDR_SRC_Static  == pDnsServer->Type )
@@ -1594,7 +1594,7 @@ Server1_SetParamStringValue
          return FALSE;
     }
 
-    if( AnscEqualString(ParamName, "DNSServer", TRUE) )
+    if( strcmp(ParamName, "DNSServer") == 0 )
     {
         if( COSA_DML_DNS_ADDR_SRC_Static  == pDnsServer->Type ) //LGI MOD
         {
@@ -1837,7 +1837,7 @@ Relay_GetParamBoolValue
     PCOSA_DML_DNS_RELAY             pRelay       = &pDns->Relay;
     
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         *pBool = pRelay->bEnabled;
         return TRUE;
@@ -1934,7 +1934,7 @@ Relay_GetParamUlongValue
     PCOSA_DATAMODEL_DNS             pDns         = (PCOSA_DATAMODEL_DNS)g_pCosaBEManager->hDNS;
     PCOSA_DML_DNS_RELAY             pRelay       = &pDns->Relay;
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Status", TRUE))
+    if( strcmp(ParamName, "Status") == 0 )
     {
         /* collect value */
         CosaDmlIpDnsGetRelayStatus(NULL, pRelay); //LGI ADD
@@ -1943,7 +1943,7 @@ Relay_GetParamUlongValue
     }
 
     //LGI MOD Start - TR-181 defines ForwardNumberOfEntries for Forwarding table
-    if( AnscEqualString(ParamName, "ForwardNumberOfEntries", TRUE))
+    if( strcmp(ParamName, "ForwardNumberOfEntries") == 0 )
     {
         *puLong = Forwarding_GetEntryCount(hInsContext);
         return TRUE;
@@ -2050,7 +2050,7 @@ Relay_SetParamBoolValue
     PCOSA_DML_DNS_RELAY             pRelay       = &pDns->Relay;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         /* save update to backup */
         pRelay->bEnabled = (BOOLEAN)bValue;
@@ -2808,7 +2808,7 @@ Forwarding_GetParamBoolValue
     PCOSA_DML_DNS_RELAY_ENTRY       pForward     = (PCOSA_DML_DNS_RELAY_ENTRY)pCosaContext->hContext;
     
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         *pBool = pForward->bEnabled;
         return TRUE;
@@ -2905,19 +2905,19 @@ Forwarding_GetParamUlongValue
     PCOSA_DML_DNS_RELAY_ENTRY       pForward     = (PCOSA_DML_DNS_RELAY_ENTRY)pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Status", TRUE))
+    if( strcmp(ParamName, "Status") == 0 )
     {
         *puLong = pForward->Status;
         return TRUE;
     }
 #if 0 // LGI MOD
-    if( AnscEqualString(ParamName, "DNSServer", TRUE))
+    if( strcmp(ParamName, "DNSServer") == 0 )
     {
         *puLong = pForward->DNSServer.Value;
         return TRUE;
     }
 #endif
-    if( AnscEqualString(ParamName, "Type", TRUE))
+    if( strcmp(ParamName, "Type") == 0 )
     {
         *puLong = pForward->Type;
         return TRUE;
@@ -2979,21 +2979,21 @@ Forwarding_GetParamStringValue
     PCOSA_DML_DNS_RELAY_ENTRY       pForward     = (PCOSA_DML_DNS_RELAY_ENTRY)pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE))
+    if( strcmp(ParamName, "Alias") == 0 )
     {
         AnscCopyString(pValue, pForward->Alias);
         *pUlSize = AnscSizeOfString(pValue);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Interface", TRUE))
+    if( strcmp(ParamName, "Interface") == 0 )
     {
         AnscCopyString(pValue, pForward->Interface);
         *pUlSize = AnscSizeOfString(pValue);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "DNSServer", TRUE) )
+    if( strcmp(ParamName, "DNSServer") == 0 )
     {
         /* collect value */
         AnscCopyString(pValue, pForward->DNSServer);
@@ -3045,7 +3045,7 @@ Forwarding_SetParamBoolValue
     PCOSA_DML_DNS_RELAY_ENTRY       pForward     = (PCOSA_DML_DNS_RELAY_ENTRY)pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         pForward->bEnabled = bValue;
         return TRUE;
@@ -3201,13 +3201,13 @@ Forwarding_SetParamStringValue
     PCOSA_DML_DNS_RELAY_ENTRY       pForward     = (PCOSA_DML_DNS_RELAY_ENTRY)pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE))
+    if( strcmp(ParamName, "Alias") == 0 )
     {
         AnscCopyString(pForward->Alias, pString);
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Interface", TRUE))
+    if( strcmp(ParamName, "Interface") == 0 )
     {
        /* Note: Interface is only writable when Type is Static; */
         if ( COSA_DML_DNS_ADDR_SRC_Static  == pForward->Type )
@@ -3220,7 +3220,7 @@ Forwarding_SetParamStringValue
          return FALSE;
     }
 
-    if( AnscEqualString(ParamName, "DNSServer", TRUE) )
+    if( strcmp(ParamName, "DNSServer") == 0 )
     {
         if ( COSA_DML_DNS_ADDR_SRC_Static  == pForward->Type )
         {
@@ -3292,7 +3292,7 @@ Forwarding_Validate
 
         if ( pForward2 && 
             ((ULONG)pForward2 != (ULONG)pForward) &&
-             AnscEqualString(pForward2->Alias, pForward->Alias, TRUE))
+            strcmp(pForward2->Alias, pForward->Alias) == 0 )
         {
             AnscCopyString(pReturnParamName, "Alias");
             *puLength = AnscSizeOfString("Alias");
