@@ -1923,23 +1923,6 @@ ULONG COSADmlGetCpuUsage()
     return  CPUUsage;
 }
 
-int COSADmlSetMemoryStatus(char * ParamName, ULONG val)
-{
-    if (strcmp(ParamName, "X_RDKCENTRAL-COM_FreeMemThreshold") == 0)
-     {
-            char buf[10];
-	    memset(buf,0,sizeof(buf));
-	    snprintf(buf,sizeof(buf),"%lu",val);            		    
-	    if ((syscfg_set_commit(NULL, "MinMemoryThreshold_Value", buf) != 0)) 
-	    {
-	        CcspTraceWarning(("syscfg_set failed\n"));
-	        return -1;
-	    }
-
-	    return 0;
-     }
-    return 0; 
-}
 ULONG COSADmlGetMemoryStatus(char * ParamName)
 {
      struct sysinfo si;
@@ -2013,17 +1996,6 @@ ULONG COSADmlGetMemoryStatus(char * ParamName)
     	else 
         return tmp;
 #endif
-     }
-     else if (strcmp(ParamName, "X_RDKCENTRAL-COM_FreeMemThreshold") == 0)
-     {
-	char buf[10];
-	memset(buf,0, sizeof(buf));
-        /* CID:56435 Array compared against 0*/
-        if(!syscfg_get( NULL, "MinMemoryThreshold_Value", buf, sizeof(buf)))
-        {
-            return atoi(buf);
-        }
-	return 0;
      }
      else 
      {
