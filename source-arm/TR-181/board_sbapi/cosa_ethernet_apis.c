@@ -721,59 +721,47 @@ CosaDmlEthPortGetStats
 
 ANSC_STATUS CosaDmlEEEPortGetCfg (ULONG ulInstanceNumber, PCOSA_DML_ETH_PORT_CFG pCfg)
 {
-    ANSC_STATUS                     returnStatus    = ANSC_STATUS_SUCCESS;
+    ANSC_STATUS returnStatus = ANSC_STATUS_FAILURE;
+    BOOLEAN enable = FALSE;
     int portIdx;
-    bool enable = FALSE;
-    int status;
-    if (!pCfg)
-    {
-        returnStatus = ANSC_STATUS_FAILURE;
-    }
 
     portIdx = getPortID(ulInstanceNumber);
-    if ( portIdx == CCSP_HAL_ETHSW_EthPort1 || portIdx == CCSP_HAL_ETHSW_EthPort2 || portIdx == CCSP_HAL_ETHSW_EthPort3 || portIdx == CCSP_HAL_ETHSW_EthPort4)
+
+    if ((portIdx == CCSP_HAL_ETHSW_EthPort1) ||
+        (portIdx == CCSP_HAL_ETHSW_EthPort2) ||
+        (portIdx == CCSP_HAL_ETHSW_EthPort3) ||
+        (portIdx == CCSP_HAL_ETHSW_EthPort4))
     {
-        status = CcspHalEthSwGetEEEPortEnable(portIdx,enable);
-        if ( status == RETURN_OK )
+        if (CcspHalEthSwGetEEEPortEnable(portIdx, &enable) == RETURN_OK)
         {
-                pCfg->bEEEEnabled = TRUE;
-                returnStatus = ANSC_STATUS_SUCCESS;
-        }
-        else
-        {
-                returnStatus = ANSC_STATUS_FAILURE;
+            returnStatus = ANSC_STATUS_SUCCESS;
         }
     }
 
-        return returnStatus;
+    pCfg->bEEEEnabled = enable;
 
+    return returnStatus;
 }
 
 ANSC_STATUS CosaDmlEEEPortSetCfg (ULONG ulInstanceNumber, PCOSA_DML_ETH_PORT_CFG pCfg)
 {
-    ANSC_STATUS                     returnStatus    = ANSC_STATUS_SUCCESS;
+    ANSC_STATUS returnStatus = ANSC_STATUS_FAILURE;
     int portIdx;
-    int status;
-    if (!pCfg)
-    {
-        returnStatus = ANSC_STATUS_FAILURE;
-    }
 
     portIdx = getPortID(ulInstanceNumber);
-    if ( portIdx == CCSP_HAL_ETHSW_EthPort1 || portIdx == CCSP_HAL_ETHSW_EthPort2 || portIdx == CCSP_HAL_ETHSW_EthPort3 || portIdx == CCSP_HAL_ETHSW_EthPort4)
+
+    if ((portIdx == CCSP_HAL_ETHSW_EthPort1) ||
+        (portIdx == CCSP_HAL_ETHSW_EthPort2) ||
+        (portIdx == CCSP_HAL_ETHSW_EthPort3) ||
+        (portIdx == CCSP_HAL_ETHSW_EthPort4))
     {
-        status = CcspHalEthSwSetEEEPortEnable(portIdx,pCfg->bEEEEnabled);
-        if ( status == RETURN_OK )
+        if (CcspHalEthSwSetEEEPortEnable(portIdx, pCfg->bEEEEnabled) == RETURN_OK)
         {
-                returnStatus = ANSC_STATUS_SUCCESS;
-        }
-        else
-        {
-                returnStatus = ANSC_STATUS_FAILURE;
+            returnStatus = ANSC_STATUS_SUCCESS;
         }
     }
-        return returnStatus;
 
+    return returnStatus;
 }
 
 /**********************************************************************
