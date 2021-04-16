@@ -121,7 +121,7 @@ NAT_GetParamBoolValue_Custom
 
     CosaDmlNatGet(NULL, pNat);
 
-    if (AnscEqualString(ParamName, "X_Comcast_com_EnablePortMapping", TRUE))
+    if( strcmp(ParamName, "X_Comcast_com_EnablePortMapping") == 0 )
     {
         //*pBool = COSA_DML_NAT_CUSTOM_GET_ENABLEPORTMAPPING(pNat);
         char buf[8] = {0} ;
@@ -142,18 +142,18 @@ NAT_GetParamBoolValue_Custom
 
         return FALSE;
     }
-    if (AnscEqualString(ParamName, "X_Comcast_com_EnableHSPortMapping", TRUE))
+    if( strcmp(ParamName, "X_Comcast_com_EnableHSPortMapping") == 0 )
     {
         *pBool = COSA_DML_NAT_CUSTOM_GET_ENABLEHSPORTMAPPING(pNat);
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "X_Comcast_com_EnableNATMapping", TRUE))
+    if( strcmp(ParamName, "X_Comcast_com_EnableNATMapping") == 0 )
     {
         *pBool = COSA_DML_NAT_CUSTOM_GET_ENABLENATMAPPING(pNat);
         return TRUE;
     }
     /* LG ADD Start CR14 */
-    if(AnscEqualString(ParamName, "X_LGI-COM_NATPassthroughFunctionEnable", TRUE))
+    if( strcmp(ParamName, "X_LGI-COM_NATPassthroughFunctionEnable") == 0 )
     {
         char buf[8] = {0};
         syscfg_get(NULL, "natPassthrough_enable", buf, sizeof(buf));
@@ -183,25 +183,25 @@ NAT_SetParamBoolValue_Custom
         return FALSE;
     #endif
 
-    if( AnscEqualString(ParamName, "X_Comcast_com_EnablePortMapping", TRUE))
+    if( strcmp(ParamName, "X_Comcast_com_EnablePortMapping") == 0 )
     {
         COSA_DML_NAT_CUSTOM_SET_ENABLEPORTMAPPING(pNat, bValue);
         CcspTraceNotice(("PF_split:Feature Switch Port Forwarding %d\n",bValue));
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "X_Comcast_com_EnableHSPortMapping", TRUE))
+    if( strcmp(ParamName, "X_Comcast_com_EnableHSPortMapping") == 0 )
     {
         COSA_DML_NAT_CUSTOM_SET_ENABLEHSPORTMAPPING(pNat, bValue);
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "X_Comcast_com_EnableNATMapping", TRUE))
+    if( strcmp(ParamName, "X_Comcast_com_EnableNATMapping") == 0 )
     {
         COSA_DML_NAT_CUSTOM_SET_ENABLENATMAPPING(pNat, bValue);
         return TRUE;
     }
 
  /* LG ADD Start CR14 */
-    if(AnscEqualString(ParamName, "X_LGI-COM_NATPassthroughFunctionEnable", TRUE))
+    if( strcmp(ParamName, "X_LGI-COM_NATPassthroughFunctionEnable") == 0 )
     {
         if(syscfg_set(NULL, "natPassthrough_enable", bValue?"1":"0") == 0)
         {
@@ -225,7 +225,7 @@ PortMapping_GetParamUlongValue_Custom
     PCOSA_CONTEXT_PMAPPING_LINK_OBJECT        pCxtLink      = (PCOSA_CONTEXT_PMAPPING_LINK_OBJECT)hInsContext;
     PCOSA_DML_NAT_PMAPPING                    pNatPMapping  = (PCOSA_DML_NAT_PMAPPING)pCxtLink->hContext;
 
-    if( AnscEqualString(ParamName, "X_Comcast_com_PublicIP", TRUE))
+    if( strcmp(ParamName, "X_Comcast_com_PublicIP") == 0 )
     {
         /* collect value */
         *puLong = pNatPMapping->PublicIP.Value;
@@ -250,7 +250,7 @@ PortMapping_SetParamUlongValue_Custom
     PCOSA_CONTEXT_PMAPPING_LINK_OBJECT        pCxtLink      = (PCOSA_CONTEXT_PMAPPING_LINK_OBJECT)hInsContext;
     PCOSA_DML_NAT_PMAPPING                    pNatPMapping  = (PCOSA_DML_NAT_PMAPPING)pCxtLink->hContext;
 
-    if( AnscEqualString(ParamName, "X_Comcast_com_PublicIP", TRUE))
+    if( strcmp(ParamName, "X_Comcast_com_PublicIP") == 0 )
     {
         /* save update to backup */
         pNatPMapping->PublicIP.Value = uValue;

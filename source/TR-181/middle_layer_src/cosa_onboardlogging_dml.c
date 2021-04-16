@@ -73,7 +73,7 @@ OnboardingLogging_GetParamBoolValue
     /* check the parameter name and return the corresponding value */
     PCOSA_DATAMODEL_ONBOARDLOGGING       pMyObject     = (PCOSA_DATAMODEL_ONBOARDLOGGING)g_pCosaBEManager->hOnboardLogging;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         *pBool = pMyObject->bEnable;
         return TRUE;
@@ -130,7 +130,7 @@ OnboardingLogging_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, OnboardingLogging_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         if(bValue == pMyObject->bEnable)
                 return TRUE;

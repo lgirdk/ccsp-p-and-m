@@ -79,17 +79,17 @@ RabidFramework_GetParamUlongValue
     /* check the parameter name and return the corresponding value */
     PCOSA_DATAMODEL_RABID       pMyObject     = (PCOSA_DATAMODEL_RABID)g_pCosaBEManager->hRabid;
 
-    if( AnscEqualString(ParamName, "MemoryLimit", TRUE))
+    if( strcmp(ParamName, "MemoryLimit") == 0 )
     {
         *pUlong = pMyObject->uMemoryLimit;
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "MacCacheSize", TRUE))
+    if( strcmp(ParamName, "MacCacheSize") == 0 )
     {
         *pUlong = pMyObject->uMacCacheSize;
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "DNSCacheSize", TRUE))
+    if( strcmp(ParamName, "DNSCacheSize") == 0 )
     {
         *pUlong = pMyObject->uDNSCacheSize;
         return TRUE;
@@ -145,7 +145,7 @@ RabidFramework_SetParamUlongValue
     if (IsUlongSame(hInsContext, ParamName, uValue, RabidFramework_GetParamUlongValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "MemoryLimit", TRUE))
+    if( strcmp(ParamName, "MemoryLimit") == 0 )
     {
         if(uValue == pMyObject->uMemoryLimit)
                 return TRUE;
@@ -163,7 +163,7 @@ RabidFramework_SetParamUlongValue
 
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "MacCacheSize", TRUE))
+    if( strcmp(ParamName, "MacCacheSize") == 0 )
     {
         if(uValue == pMyObject->uMacCacheSize)
                 return TRUE;
@@ -181,7 +181,7 @@ RabidFramework_SetParamUlongValue
 
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "DNSCacheSize", TRUE))
+    if( strcmp(ParamName, "DNSCacheSize") == 0 )
     {
         if(uValue == pMyObject->uDNSCacheSize)
                 return TRUE;

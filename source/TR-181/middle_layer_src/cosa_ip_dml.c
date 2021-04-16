@@ -173,28 +173,28 @@ IP_GetParamBoolValue
     )
 {
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "IPv4Capable", TRUE))
+    if( strcmp(ParamName, "IPv4Capable") == 0 )
     {
         /* collect value */
         *pBool = TRUE;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IPv6Capable", TRUE))
+    if( strcmp(ParamName, "IPv6Capable") == 0 )
     {
         /* collect value */
         *pBool = TRUE;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IPv4Enable", TRUE))
+    if( strcmp(ParamName, "IPv4Enable") == 0 )
     {
         /* collect value */
         *pBool = TRUE;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IPv6Enable", TRUE))
+    if( strcmp(ParamName, "IPv6Enable") == 0 )
     {
         /* collect value */
         *pBool = TRUE;
@@ -288,14 +288,14 @@ IP_GetParamUlongValue
     )
 {
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "IPv4Status", TRUE))
+    if( strcmp(ParamName, "IPv4Status") == 0 )
     {
         /* collect value */
         *puLong = COSA_DML_IPV4V6_STATUS_Enabled;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IPv6Status", TRUE))
+    if( strcmp(ParamName, "IPv6Status") == 0 )
     {
         /* collect value */
         *puLong = COSA_DML_IPV4V6_STATUS_Enabled;
@@ -355,7 +355,7 @@ IP_GetParamStringValue
     )
 {
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "ULAPrefix", TRUE))
+    if( strcmp(ParamName, "ULAPrefix") == 0 )
     {
         /* collect value */
         *pValue = 0;
@@ -404,13 +404,13 @@ IP_SetParamBoolValue
     )
 {
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "IPv4Enable", TRUE))
+    if( strcmp(ParamName, "IPv4Enable") == 0 )
     {
         /* not supported */
         return FALSE;
     }
 
-    if( AnscEqualString(ParamName, "IPv6Enable", TRUE))
+    if( strcmp(ParamName, "IPv6Enable") == 0 )
     {
         /* not supported */
         return FALSE;
@@ -548,7 +548,7 @@ IP_SetParamStringValue
     )
 {
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "ULAPrefix", TRUE))
+    if( strcmp(ParamName, "ULAPrefix") == 0 )
     {
         /* not supported */
         return FALSE;
@@ -986,42 +986,42 @@ Interface2_GetParamBoolValue
     PCOSA_DML_IP_IF_FULL2           pIPInterface = (PCOSA_DML_IP_IF_FULL2)pCosaContext->hContext;
     
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         *pBool = pIPInterface->Cfg.bEnabled;
         /* collect value */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Reset", TRUE))
+    if( strcmp(ParamName, "Reset") == 0 )
     {
         /* collect value */
         *pBool = FALSE;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Loopback", TRUE))
+    if( strcmp(ParamName, "Loopback") == 0 )
     {
         /* collect value */
         *pBool = pIPInterface->Cfg.Loopback;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AutoIPEnable", TRUE))
+    if( strcmp(ParamName, "AutoIPEnable") == 0 )
     {
         /* collect value */
         *pBool = pIPInterface->Cfg.AutoIPEnable;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IPv4Enable", TRUE))
+    if( strcmp(ParamName, "IPv4Enable") == 0 )
     {
         /* collect value */
         *pBool = TRUE;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IPv6Enable", TRUE))
+    if( strcmp(ParamName, "IPv6Enable") == 0 )
     {
         /* collect value */
 #if defined (MULTILAN_FEATURE)
@@ -1032,13 +1032,13 @@ Interface2_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "ULAEnable", TRUE))
+    if( strcmp(ParamName, "ULAEnable") == 0 )
     {
         /* collect value */
         *pBool = FALSE;
         return TRUE;
     }
-    else if ( AnscEqualString(ParamName, "X_CISCO_COM_UPnPIGDEnabled", TRUE) )
+    else if( strcmp(ParamName, "X_CISCO_COM_UPnPIGDEnabled") == 0 )
     {
         *pBool = pIPInterface->Cfg.UpnpIgdEnabled;
         return  TRUE;
@@ -1142,7 +1142,7 @@ Interface2_GetParamUlongValue
     p = CosaDmlIpIfGetEntry2(NULL, pIPInterface->Cfg.InstanceNumber);
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Status", TRUE))
+    if( strcmp(ParamName, "Status") == 0 )
     {
         /* Get value every time */
         if (CosaUtilIoctlXXX((char *)pIPInterface->Info.Name, "status", NULL) & IFF_UP) 
@@ -1157,14 +1157,14 @@ Interface2_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "LastChange", TRUE))
+    if( strcmp(ParamName, "LastChange") == 0 )
     {
         /* collect value */
         *puLong = AnscGetTimeIntervalInSeconds(pIPInterface->Info.LastChange, AnscGetTickInSeconds());
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "MaxMTUSize", TRUE))
+    if( strcmp(ParamName, "MaxMTUSize") == 0 )
     {
         /* collect value */
         *puLong = pIPInterface->Cfg.MaxMTUSize;
@@ -1176,25 +1176,25 @@ Interface2_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Type", TRUE))
+    if( strcmp(ParamName, "Type") == 0 )
     {
         /* collect value */
         *puLong = pIPInterface->Cfg.IfType;
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "X_CISCO_COM_TTL", TRUE))
+    if( strcmp(ParamName, "X_CISCO_COM_TTL") == 0 )
     {
         *puLong = pIPInterface->Cfg.WanTTL;
         return TRUE;
     }
-    else if ( AnscEqualString(ParamName, "X_CISCO_COM_ARPCacheTimeout", TRUE) )
+    else if( strcmp(ParamName, "X_CISCO_COM_ARPCacheTimeout") == 0 )
     {
         *puLong = pIPInterface->Cfg.ArpCacheTimeout;
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "X_CISCO_COM_IPv6_IANA_T1", TRUE))
+    if( strcmp(ParamName, "X_CISCO_COM_IPv6_IANA_T1") == 0 )
     {
         if ( p ){
             *puLong = p->iana_t1;
@@ -1202,7 +1202,7 @@ Interface2_GetParamUlongValue
         }
     }
 
-    if (AnscEqualString(ParamName, "X_CISCO_COM_IPv6_IANA_T2", TRUE))
+    if( strcmp(ParamName, "X_CISCO_COM_IPv6_IANA_T2") == 0 )
     {
         if ( p ){
             *puLong = p->iana_t2;
@@ -1210,7 +1210,7 @@ Interface2_GetParamUlongValue
         }
     }
 
-    if (AnscEqualString(ParamName, "X_CISCO_COM_IPv6_IAPD_T1", TRUE))
+    if( strcmp(ParamName, "X_CISCO_COM_IPv6_IAPD_T1") == 0 )
     {
         if ( p ){
             *puLong = p->iapd_t1;
@@ -1218,7 +1218,7 @@ Interface2_GetParamUlongValue
         }
     }
 
-    if (AnscEqualString(ParamName, "X_CISCO_COM_IPv6_IAPD_T2", TRUE))
+    if( strcmp(ParamName, "X_CISCO_COM_IPv6_IAPD_T2") == 0 )
     {
         if ( p ){
             *puLong = p->iapd_t2;
@@ -1226,7 +1226,7 @@ Interface2_GetParamUlongValue
         }
     }
 
-    if (AnscEqualString(ParamName, "X_CISCO_COM_IPv6_IANA_IAID", TRUE))
+    if( strcmp(ParamName, "X_CISCO_COM_IPv6_IANA_IAID") == 0 )
     {
         if ( p ){
             *puLong = p->iana_iaid;
@@ -1234,7 +1234,7 @@ Interface2_GetParamUlongValue
         }
     }
 
-    if (AnscEqualString(ParamName, "X_CISCO_COM_IPv6_IAPD_IAID", TRUE))
+    if( strcmp(ParamName, "X_CISCO_COM_IPv6_IAPD_IAID") == 0 )
     {
         if ( p ){
             *puLong = p->iapd_iaid;         
@@ -1298,21 +1298,21 @@ Interface2_GetParamStringValue
     PUCHAR                          pLowerLayer             = NULL;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE))
+    if( strcmp(ParamName, "Alias") == 0 )
     {
         /* collect value */
         AnscCopyString(pValue, pIPInterface->Cfg.Alias);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Name", TRUE))
+    if( strcmp(ParamName, "Name") == 0 )
     {
         /* collect value */
         AnscCopyString(pValue, pIPInterface->Info.Name);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "LowerLayers", TRUE))
+    if( strcmp(ParamName, "LowerLayers") == 0 )
     {
         if(_ansc_strlen(pIPInterface->Cfg.LowerLayers) == 0)
         {
@@ -1364,7 +1364,7 @@ Interface2_GetParamStringValue
         AnscFreeMemory(pLowerLayer);
     }
 
-    if( AnscEqualString(ParamName, "Router", TRUE))
+    if( strcmp(ParamName, "Router") == 0 )
     {
         /* collect value */
         AnscCopyString(pValue, pIPInterface->Cfg.RouterName);         
@@ -1425,7 +1425,7 @@ Interface2_SetParamBoolValue
 #endif
 #endif
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         /* save update to backup */
         pIPInterface ->Cfg.bEnabled = bValue;
@@ -1433,7 +1433,7 @@ Interface2_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Reset", TRUE))
+    if( strcmp(ParamName, "Reset") == 0 )
     {
         /* save update to backup */
         if ( TRUE == bValue )
@@ -1443,26 +1443,26 @@ Interface2_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Loopback", TRUE))
+    if( strcmp(ParamName, "Loopback") == 0 )
     {
         /* save update to backup */
         pIPInterface->Cfg.Loopback = bValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AutoIPEnable", TRUE))
+    if( strcmp(ParamName, "AutoIPEnable") == 0 )
     {
         /* save update to backup */
         pIPInterface->Cfg.AutoIPEnable = bValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IPv4Enable", TRUE))
+    if( strcmp(ParamName, "IPv4Enable") == 0 )
     {
         return FALSE;
     }
 
-    if( AnscEqualString(ParamName, "IPv6Enable", TRUE))
+    if( strcmp(ParamName, "IPv6Enable") == 0 )
     {
 #if defined (MULTILAN_FEATURE)
         /* save update to backup */
@@ -1473,12 +1473,12 @@ Interface2_SetParamBoolValue
 #endif
     }
 
-    if( AnscEqualString(ParamName, "ULAEnable", TRUE))
+    if( strcmp(ParamName, "ULAEnable") == 0 )
     {
         return FALSE;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_UPnPIGDEnabled", TRUE))
+    if( strcmp(ParamName, "X_CISCO_COM_UPnPIGDEnabled") == 0 )
     {
         /* save update to backup */
         pIPInterface->Cfg.UpnpIgdEnabled = bValue;
@@ -1582,19 +1582,19 @@ Interface2_SetParamUlongValue
 #endif
 #endif
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "MaxMTUSize", TRUE))
+    if( strcmp(ParamName, "MaxMTUSize") == 0 )
     {
         /* save update to backup */
         pIPInterface->Cfg.MaxMTUSize = uValue;
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "X_CISCO_COM_TTL", TRUE))
+    if( strcmp(ParamName, "X_CISCO_COM_TTL") == 0 )
     {
         pIPInterface->Cfg.WanTTL = uValue;
         return TRUE;
     }
-    else if ( AnscEqualString(ParamName, "X_CISCO_COM_ARPCacheTimeout", TRUE) )
+    else if( strcmp(ParamName, "X_CISCO_COM_ARPCacheTimeout") == 0 )
     {
         pIPInterface->Cfg.ArpCacheTimeout = uValue;
         return  TRUE;
@@ -1653,7 +1653,7 @@ Interface2_SetParamStringValue
 #endif
 #endif
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE))
+    if( strcmp(ParamName, "Alias") == 0 )
     {
         /* save update to backup */
         AnscCopyString(pIPInterface->Cfg.Alias, pString);
@@ -1661,7 +1661,7 @@ Interface2_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "LowerLayers", TRUE))
+    if( strcmp(ParamName, "LowerLayers") == 0 )
     {
         if ( pIPInterface->Cfg.IfType != COSA_DML_IP_IF_TYPE_Normal )
         {
@@ -1740,7 +1740,7 @@ Interface2_SetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "Router", TRUE))
+    if( strcmp(ParamName, "Router") == 0 )
     {
         /* save update to backup */
 //        AnscCopyString(pIPInterface->Cfg.Router, pString);
@@ -1809,7 +1809,8 @@ Interface2_Validate
 
         if ( pIPInterface2 && 
             ((ULONG)pIPInterface2 != (ULONG)pIPInterface) &&
-             AnscEqualString(pIPInterface2->Cfg.Alias, pIPInterface->Cfg.Alias, TRUE))
+             strcmp(pIPInterface2->Cfg.Alias, pIPInterface->Cfg.Alias) == 0 )
+
         {
             AnscCopyString(pReturnParamName, "Alias");
             *puLength = AnscSizeOfString("Alias");
@@ -2214,7 +2215,7 @@ IPv4Address_GetParamBoolValue
     PCOSA_DML_IP_V4ADDR             pIPv4Addr    = (PCOSA_DML_IP_V4ADDR)pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         /* collect value */
         *pBool = pIPv4Addr->bEnabled;
@@ -2314,7 +2315,7 @@ IPv4Address_GetParamUlongValue
     BOOL                                      bridgeMode;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "IPAddress", TRUE))
+    if( strcmp(ParamName, "IPAddress") == 0 )
     {
 #if !defined(_COSA_BCM_MIPS_) && !defined(_ENABLE_DSL_SUPPORT_)
         if (pIPv4Addr->AddressingType == COSA_DML_IP_ADDR_TYPE_Static && pIPInterface->Cfg.InstanceNumber >= CosaGetUsgIfNum())
@@ -2332,7 +2333,7 @@ IPv4Address_GetParamUlongValue
          return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SubnetMask", TRUE))
+    if( strcmp(ParamName, "SubnetMask") == 0 )
     {
         //if((ANSC_STATUS_SUCCESS == is_usg_in_bridge_mode(&bridgeMode)) &&
         //   (TRUE == bridgeMode))
@@ -2357,14 +2358,14 @@ IPv4Address_GetParamUlongValue
 
     }
 
-    if( AnscEqualString(ParamName, "AddressingType", TRUE))
+    if( strcmp(ParamName, "AddressingType") == 0 )
     {
         /* collect value */
         *puLong = pIPv4Addr->AddressingType;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Status", TRUE) )
+    if( strcmp(ParamName, "Status") == 0 )
     {
         *puLong = pIPv4Addr->Status;
         return TRUE;
@@ -2426,7 +2427,7 @@ IPv4Address_GetParamStringValue
     PCOSA_DML_IP_V4ADDR             pIPv4Addr    = (PCOSA_DML_IP_V4ADDR)pCosaContext->hContext;
     
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE))
+    if( strcmp(ParamName, "Alias") == 0 )
     {
         /* collect value */
         AnscCopyString(pValue, pIPv4Addr->Alias);
@@ -2487,7 +2488,7 @@ IPv4Address_SetParamBoolValue
 #endif
 #endif  
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         /* save update to backup */
         pIPv4Addr->bEnabled = bValue;
@@ -2591,7 +2592,7 @@ IPv4Address_SetParamUlongValue
 #endif
 #endif
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "IPAddress", TRUE))
+    if( strcmp(ParamName, "IPAddress") == 0 )
     {
         /* save update to backup */
         if (pIPv4Addr->AddressingType != COSA_DML_IP_ADDR_TYPE_Static)
@@ -2605,7 +2606,7 @@ IPv4Address_SetParamUlongValue
         }
     }
 
-    if( AnscEqualString(ParamName, "SubnetMask", TRUE))
+    if( strcmp(ParamName, "SubnetMask") == 0 )
     {
         /* save update to backup */
         if (pIPv4Addr->AddressingType != COSA_DML_IP_ADDR_TYPE_Static)
@@ -2672,7 +2673,7 @@ IPv4Address_SetParamStringValue
 #endif
 #endif
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE))
+    if( strcmp(ParamName, "Alias") == 0 )
     {
         /* save update to backup */
         AnscCopyString(pIPv4Addr->Alias, pString);
@@ -2740,7 +2741,8 @@ IPv4Address_Validate
 
         if ( pIPv4Addr2 &&
             ((ULONG)pIPv4Addr2 != (ULONG)pIPv4Addr) &&
-             AnscEqualString(pIPv4Addr2->Alias, pIPv4Addr->Alias, TRUE))
+             strcmp(pIPv4Addr2->Alias, pIPv4Addr->Alias) == 0 )
+
         {
             AnscCopyString(pReturnParamName, "Alias");
             *puLength = AnscSizeOfString("Alias");
@@ -3349,14 +3351,14 @@ IPv6Address_GetParamBoolValue
     PCOSA_DML_IP_V6ADDR             pIPv6Addr    = (PCOSA_DML_IP_V6ADDR)pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         /* collect value */
         *pBool = pIPv6Addr->bEnabled;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Anycast", TRUE))
+    if( strcmp(ParamName, "Anycast") == 0 )
     {
         /* collect value */
         *pBool = pIPv6Addr->bAnycast;
@@ -3459,14 +3461,14 @@ IPv6Address_GetParamUlongValue
     PCOSA_DML_IP_IF_FULL2           pIPInterface = (PCOSA_DML_IP_IF_FULL2)pCosaContext->hParentTable;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Status", TRUE))
+    if( strcmp(ParamName, "Status ") == 0 )
     {
         /* collect value */
         *puLong = pIPv6Addr->Status;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IPAddressStatus", TRUE))
+    if( strcmp(ParamName, "IPAddressStatus") == 0 )
     {
         /* collect value */
 #ifndef _COSA_SIM_
@@ -3478,14 +3480,14 @@ IPv6Address_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Origin", TRUE))
+    if( strcmp(ParamName, "Origin") == 0 )
     {
         /* collect value */
         *puLong = pIPv6Addr->Origin;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_PreferredLifetime", TRUE) )
+    if( strcmp(ParamName, "X_CISCO_COM_PreferredLifetime") == 0 )
     {
         /* collect value */
         *puLong  = pIPv6Addr->iana_pretm;
@@ -3493,7 +3495,7 @@ IPv6Address_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_ValidLifetime", TRUE) )
+    if( strcmp(ParamName, "X_CISCO_COM_ValidLifetime") == 0 )
     {
         /* collect value */
         *puLong  = pIPv6Addr->iana_vldtm;
@@ -3557,21 +3559,21 @@ IPv6Address_GetParamStringValue
     PCOSA_DML_IP_IF_FULL2           pIPInterface = (PCOSA_DML_IP_IF_FULL2)pCosaContext->hParentTable;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE))
+    if( strcmp(ParamName, "Alias") == 0 )
     {
         /* collect value */
         AnscCopyString(pValue, pIPv6Addr->Alias);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "IPAddress", TRUE))
+    if( strcmp(ParamName, "IPAddress") == 0 )
     {
         /* collect value */
         AnscCopyString(pValue, pIPv6Addr->IP6Address);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Prefix", TRUE))
+    if( strcmp(ParamName, "Prefix") == 0 )
     {
         /* collect value */
 #ifndef _COSA_SIM_
@@ -3588,14 +3590,14 @@ IPv6Address_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "PreferredLifetime", TRUE))
+    if( strcmp(ParamName, "PreferredLifetime") == 0 )
     {
         /* collect value */
 		AnscCopyString(pValue, pIPv6Addr->PreferredLifetime);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "ValidLifetime", TRUE))
+    if( strcmp(ParamName, "ValidLifetime") == 0 )
     {
         /* collect value */
 		AnscCopyString(pValue, pIPv6Addr->ValidLifetime);
@@ -3648,7 +3650,7 @@ IPv6Address_SetParamBoolValue
     PCOSA_DML_IP_V6ADDR             pIPv6Addr    = (PCOSA_DML_IP_V6ADDR)pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         /* save update to backup */
 #ifndef _COSA_SIM_
@@ -3661,7 +3663,7 @@ IPv6Address_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Anycast", TRUE))
+    if( strcmp(ParamName, "Anycast") == 0 )
     {
         /* save update to backup */
         if (pIPv6Addr->Origin != COSA_DML_IP6_ORIGIN_Static)
@@ -3765,14 +3767,14 @@ IPv6Address_SetParamUlongValue
         return FALSE;
         
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Status", TRUE))
+    if( strcmp(ParamName, "Status") == 0 )
     {
         /* save update to backup */
         pIPv6Addr->Status = uValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IPAddressStatus", TRUE))
+    if( strcmp(ParamName, "IPAddressStatus") == 0 )
     {
         /* save update to backup */
         pIPv6Addr->V6Status = uValue;
@@ -3961,7 +3963,7 @@ IPv6Address_Validate
 
         if ( pIPv6Addr2 &&
             ((ULONG)pIPv6Addr2 != (ULONG)pIPv6Addr ) &&
-             AnscEqualString(pIPv6Addr2->Alias, pIPv6Addr->Alias, TRUE))
+             strcmp(pIPv6Addr2->Alias, pIPv6Addr->Alias) == 0 )
         {
             AnscCopyString(pReturnParamName, "Alias");
             *puLength = AnscSizeOfString("Alias");
@@ -4611,21 +4613,21 @@ IPv6Prefix_GetParamBoolValue
     PCOSA_DML_IP_V6PREFIX           pIPv6Pre     = (PCOSA_DML_IP_V6PREFIX)pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         /* collect value */
         *pBool = pIPv6Pre->bEnabled;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "OnLink", TRUE))
+    if( strcmp(ParamName, "OnLink") == 0 )
     {
         /* collect value */
         *pBool = pIPv6Pre->bOnlink;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Autonomous", TRUE))
+    if( strcmp(ParamName, "Autonomous") == 0 )
     {
         /* collect value */
 #ifndef _COSA_SIM_
@@ -4738,28 +4740,28 @@ IPv6Prefix_GetParamUlongValue
     PCOSA_DML_IP_V6PREFIX           pIPv6Pre     = (PCOSA_DML_IP_V6PREFIX)pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Status", TRUE))
+    if( strcmp(ParamName, "Status") == 0 )
     {
         /* collect value */
         *puLong = pIPv6Pre->Status;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "PrefixStatus", TRUE))
+    if( strcmp(ParamName, "PrefixStatus") == 0 )
     {
         /* collect value */
         *puLong = pIPv6Pre->PrefixStatus;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Origin", TRUE))
+    if( strcmp(ParamName, "Origin") == 0 )
     {
         /* collect value */
         *puLong = pIPv6Pre->Origin;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "StaticType", TRUE))
+    if( strcmp(ParamName, "StaticType") == 0 )
     {
         /* collect value */
         *puLong = pIPv6Pre->StaticType;
@@ -4767,14 +4769,14 @@ IPv6Prefix_GetParamUlongValue
     }
 
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_PreferredLifetime", TRUE) )
+    if( strcmp(ParamName, "X_CISCO_COM_PreferredLifetime") == 0 )
     {
         /* collect value */
         *puLong  = pIPv6Pre->iapd_pretm;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_ValidLifetime", TRUE) )
+    if( strcmp(ParamName, "X_CISCO_COM_ValidLifetime") == 0 )
     {
         /* collect value */
         *puLong  = pIPv6Pre->iapd_vldtm;
@@ -4837,42 +4839,42 @@ IPv6Prefix_GetParamStringValue
     PCOSA_DML_IP_V6PREFIX           pIPv6Pre     = (PCOSA_DML_IP_V6PREFIX)pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE))
+    if( strcmp(ParamName, "Alias") == 0 )
     {
         /* collect value */
         AnscCopyString(pValue, pIPv6Pre->Alias);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Prefix", TRUE))
+    if( strcmp(ParamName, "Prefix") == 0 )
     {
         /* collect value */
         AnscCopyString(pValue, pIPv6Pre->Prefix);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "ParentPrefix", TRUE))
+    if( strcmp(ParamName, "ParentPrefix") == 0 )
     {
         /* collect value */
         AnscCopyString(pValue, pIPv6Pre->ParentPrefix);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "ChildPrefixBits", TRUE))
+    if( strcmp(ParamName, "ChildPrefixBits") == 0 )
     {
         /* collect value */
         AnscCopyString(pValue, pIPv6Pre->ChildPrefixBits);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "PreferredLifetime", TRUE))
+    if( strcmp(ParamName, "PreferredLifetime") == 0 )
     {
         /* collect value */
 		AnscCopyString(pValue, pIPv6Pre->PreferredLifetime);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "ValidLifetime", TRUE))
+    if( strcmp(ParamName, "ValidLifetime") == 0 )
     {
         /* collect value */
 		AnscCopyString(pValue, pIPv6Pre->ValidLifetime);
@@ -4925,7 +4927,7 @@ IPv6Prefix_SetParamBoolValue
     PCOSA_DML_IP_V6PREFIX           pIPv6Pre     = (PCOSA_DML_IP_V6PREFIX)pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         /* save update to backup */
 #ifndef _COSA_SIM_
@@ -4941,7 +4943,7 @@ IPv6Prefix_SetParamBoolValue
     if (pIPv6Pre->Origin != COSA_DML_IP6PREFIX_ORIGIN_Static)
         return FALSE;
 
-    if( AnscEqualString(ParamName, "OnLink", TRUE))
+    if( strcmp(ParamName, "OnLink") == 0 )
     {
         /* save update to backup */
 #ifndef _COSA_SIM_
@@ -4954,7 +4956,7 @@ IPv6Prefix_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Autonomous", TRUE))
+    if( strcmp(ParamName, "Autonomous") == 0 )
     {
         /* save update to backup */
 #ifndef _COSA_SIM_
@@ -5061,21 +5063,21 @@ IPv6Prefix_SetParamUlongValue
         return FALSE;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Status", TRUE))
+    if( strcmp(ParamName, "Status") == 0 )
     {
         /* save update to backup */
         pIPv6Pre->Status = uValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "PrefixStatus", TRUE))
+    if( strcmp(ParamName, "PrefixStatus") == 0 )
     {
         /* save update to backup */
         pIPv6Pre->PrefixStatus = uValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "StaticType", TRUE))
+    if( strcmp(ParamName, "StaticType") == 0 )
     {
 #ifndef _COSA_SIM_
         /*not supported*/
@@ -5134,7 +5136,7 @@ IPv6Prefix_SetParamStringValue
     PCOSA_DML_IP_V6PREFIX           pIPv6Pre     = (PCOSA_DML_IP_V6PREFIX)pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE))
+    if( strcmp(ParamName, "Alias") == 0 )
     {
         /* save update to backup */
         AnscCopyString(pIPv6Pre->Alias, pString);
@@ -5144,14 +5146,14 @@ IPv6Prefix_SetParamStringValue
     if (pIPv6Pre->Origin != COSA_DML_IP6PREFIX_ORIGIN_Static)
         return FALSE;
 
-    if( AnscEqualString(ParamName, "Prefix", TRUE))
+    if( strcmp(ParamName, "Prefix") == 0 )
     {
         /* save update to backup */
         AnscCopyString(pIPv6Pre->Prefix, pString);
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "ParentPrefix", TRUE))
+    if( strcmp(ParamName, "ParentPrefix") == 0 )
     {
         /* save update to backup */
 #ifndef _COSA_SIM_
@@ -5161,7 +5163,7 @@ IPv6Prefix_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "ChildPrefixBits", TRUE))
+    if( strcmp(ParamName, "ChildPrefixBits") == 0 )
     {
         /* save update to backup */
 #ifndef _COSA_SIM_
@@ -5171,14 +5173,14 @@ IPv6Prefix_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "PreferredLifetime", TRUE))
+    if( strcmp(ParamName, "PreferredLifetime") == 0 )
     {
         /* save update to backup */
 		AnscCopyString(pIPv6Pre->PreferredLifetime, pString);
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "ValidLifetime", TRUE))
+    if( strcmp(ParamName, "ValidLifetime") == 0 )
     {
         /* save update to backup */
 		AnscCopyString(pIPv6Pre->ValidLifetime, pString);
@@ -5247,7 +5249,8 @@ IPv6Prefix_Validate
 
         if ( pIPv6Pre2 &&
             ((ULONG)pIPv6Pre2 != (ULONG)pIPv6Pre ) &&
-             AnscEqualString(pIPv6Pre2->Alias, pIPv6Pre->Alias, TRUE))
+             strcmp(pIPv6Pre2->Alias, pIPv6Pre->Alias) == 0 )
+
         {
             AnscCopyString(pReturnParamName, "Alias");
             *puLength = AnscSizeOfString("Alias");
@@ -5552,105 +5555,105 @@ Stats5_GetParamUlongValue
     }
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "BytesSent", TRUE))
+    if( strcmp(ParamName, "BytesSent") == 0 )
     {
         /* collect value */
         *puLong = pIPStats->BytesSent;
         goto SUCCESS;
     }
 
-    if( AnscEqualString(ParamName, "BytesReceived", TRUE))
+    if( strcmp(ParamName, "BytesReceived") == 0 )
     {
         /* collect value */
         *puLong = pIPStats->BytesReceived;
         goto SUCCESS;
     }
 
-    if( AnscEqualString(ParamName, "PacketsSent", TRUE))
+    if( strcmp(ParamName, "PacketsSent") == 0 )
     {
         /* collect value */
         *puLong = pIPStats->PacketsSent;
         goto SUCCESS;
     }
 
-    if( AnscEqualString(ParamName, "PacketsReceived", TRUE))
+    if( strcmp(ParamName, "PacketsReceived") == 0 )
     {
         /* collect value */
         *puLong = pIPStats->PacketsReceived;
         goto SUCCESS;
     }
 
-    if( AnscEqualString(ParamName, "ErrorsSent", TRUE))
+    if( strcmp(ParamName, "ErrorsSent") == 0 )
     {
         /* collect value */
         *puLong = pIPStats->ErrorsSent;
         goto SUCCESS;
     }
 
-    if( AnscEqualString(ParamName, "ErrorsReceived", TRUE))
+    if( strcmp(ParamName, "ErrorsReceived") == 0 )
     {
         /* collect value */
         *puLong = pIPStats->ErrorsReceived;
         goto SUCCESS;
     }
 
-    if( AnscEqualString(ParamName, "UnicastPacketsSent", TRUE))
+    if( strcmp(ParamName, "UnicastPacketsSent") == 0 )
     {
         /* collect value */
         *puLong = pIPStats->UnicastPacketsSent;
         goto SUCCESS;
     }
 
-    if( AnscEqualString(ParamName, "UnicastPacketsReceived", TRUE))
+    if( strcmp(ParamName, "UnicastPacketsReceived") == 0 )
     {
         /* collect value */
         *puLong = pIPStats->UnicastPacketsReceived;
         goto SUCCESS;
     }
 
-    if( AnscEqualString(ParamName, "DiscardPacketsSent", TRUE))
+    if( strcmp(ParamName, "DiscardPacketsSent") == 0 )
     {
         /* collect value */
         *puLong = pIPStats->DiscardPacketsSent;
         goto SUCCESS;
     }
 
-    if( AnscEqualString(ParamName, "DiscardPacketsReceived", TRUE))
+    if( strcmp(ParamName, "DiscardPacketsReceived") == 0 )
     {
         /* collect value */
         *puLong = pIPStats->DiscardPacketsReceived;
         goto SUCCESS;
     }
 
-    if( AnscEqualString(ParamName, "MulticastPacketsSent", TRUE))
+    if( strcmp(ParamName, "MulticastPacketsSent") == 0 )
     {
         /* collect value */
         *puLong = pIPStats->MulticastPacketsSent;
         goto SUCCESS;
     }
 
-    if( AnscEqualString(ParamName, "MulticastPacketsReceived", TRUE))
+    if( strcmp(ParamName, "MulticastPacketsReceived") == 0 )
     {
         /* collect value */
         *puLong = pIPStats->MulticastPacketsReceived;
         goto SUCCESS;
     }
 
-    if( AnscEqualString(ParamName, "BroadcastPacketsSent", TRUE))
+    if( strcmp(ParamName, "BroadcastPacketsSent") == 0 )
     {
         /* collect value */
         *puLong = pIPStats->BroadcastPacketsSent;
         goto SUCCESS;
     }
 
-    if( AnscEqualString(ParamName, "BroadcastPacketsReceived", TRUE))
+    if( strcmp(ParamName, "BroadcastPacketsReceived") == 0 )
     {
         /* collect value */
         *puLong = pIPStats->BroadcastPacketsReceived;
         goto SUCCESS;
     }
 
-    if( AnscEqualString(ParamName, "UnknownProtoPacketsReceived", TRUE))
+    if( strcmp(ParamName, "UnknownProtoPacketsReceived") == 0 )
     {
         /* collect value */
         *puLong = pIPStats->UnknownProtoPacketsReceived;
@@ -6061,21 +6064,20 @@ ActivePort_GetParamUlongValue
     PCOSA_DML_IP_ACTIVE_PORT        pActivePort   = (PCOSA_DML_IP_ACTIVE_PORT)hInsContext;
     
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "LocalPort", TRUE))
+    if( strcmp(ParamName, "LocalPort") == 0 )
     {
         /* collect value */
         *puLong = pActivePort->LocalPort;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "RemotePort", TRUE))
+    if( strcmp(ParamName, "RemotePort") == 0 )
     {
         /* collect value */
         *puLong = pActivePort->RemotePort;
         return TRUE;
     }
-
-    if( AnscEqualString(ParamName, "Status", TRUE))
+    if( strcmp(ParamName, "Status") == 0 )
     {
         /* collect value */
         *puLong = pActivePort->Status;
@@ -6137,14 +6139,14 @@ ActivePort_GetParamStringValue
     PCOSA_DML_IP_ACTIVE_PORT        pActivePort   = (PCOSA_DML_IP_ACTIVE_PORT)hInsContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "LocalIPAddress", TRUE))
+    if( strcmp(ParamName, "LocalIPAddress") == 0 )
     {
         /* collect value */
         AnscCopyString(pValue, pActivePort->LocalIPAddress);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "RemoteIPAddress", TRUE))
+    if( strcmp(ParamName, "RemoteIPAddress") == 0 )
     {
         /* collect value */
         AnscCopyString(pValue, pActivePort->RemoteIPAddress);

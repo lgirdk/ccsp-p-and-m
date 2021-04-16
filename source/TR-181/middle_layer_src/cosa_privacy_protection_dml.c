@@ -73,7 +73,7 @@ PrivacyProtection_GetParamBoolValue
 {
     /* check the parameter name and return the corresponding value */
     PCOSA_DATAMODEL_PRIVACYPROTECTION       pMyObject     = (PCOSA_DATAMODEL_PRIVACYPROTECTION)g_pCosaBEManager->hPrivacyProtection;
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         *pBool = pMyObject->bEnable;
         return TRUE;
@@ -129,7 +129,7 @@ PrivacyProtection_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, PrivacyProtection_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if( strcmp(ParamName, "Enable") == 0 )
     {
         if(bValue == pMyObject->bEnable)
                 return TRUE;
