@@ -585,6 +585,7 @@ DeviceInfo_SetParamBoolValue_Custom
 			CcspTraceWarning(("CaptivePortal:Disabling CloudUIEnable to stop redirection to Cloud URL ...\n"));
              }
          }
+         system("/bin/sh /etc/start_lighttpd.sh restart &");
 	}
 	else
 	{
