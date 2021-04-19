@@ -616,7 +616,7 @@ Client3_GetParamBoolValue
     PCOSA_DML_DHCPCV6_FULL            pDhcpc          = (PCOSA_DML_DHCPCV6_FULL)pCxtLink->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         /**pBool   = pDhcpc->Cfg.bEnabled;*/
@@ -625,7 +625,7 @@ Client3_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "RequestAddresses", TRUE) )
+    if (strcmp(ParamName, "RequestAddresses") == 0)
     {
         /* collect value */
         *pBool   = pDhcpc->Cfg.RequestAddresses;
@@ -633,7 +633,7 @@ Client3_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "RequestPrefixes", TRUE) )
+    if (strcmp(ParamName, "RequestPrefixes") == 0)
     {
         /* collect value */
         *pBool   = pDhcpc->Cfg.RequestPrefixes;
@@ -641,7 +641,7 @@ Client3_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "RapidCommit", TRUE) )
+    if (strcmp(ParamName, "RapidCommit") == 0)
     {
         /* collect value */
         *pBool   = pDhcpc->Cfg.RapidCommit;
@@ -649,7 +649,7 @@ Client3_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Renew", TRUE) )
+    if (strcmp(ParamName, "Renew") == 0)
     {
         /* collect value */
         *pBool   = FALSE;
@@ -705,7 +705,7 @@ Client3_GetParamIntValue
     PCOSA_DML_DHCPCV6_FULL            pDhcpc            = (PCOSA_DML_DHCPCV6_FULL)pCxtLink->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "SuggestedT1", TRUE) )
+    if (strcmp(ParamName, "SuggestedT1") == 0)
     {
         /* collect value */        
         *pInt   = pDhcpc->Cfg.SuggestedT1;
@@ -713,7 +713,7 @@ Client3_GetParamIntValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SuggestedT2", TRUE) )
+    if (strcmp(ParamName, "SuggestedT2") == 0)
     {
         /* collect value */
         *pInt   = pDhcpc->Cfg.SuggestedT2;
@@ -769,7 +769,7 @@ Client3_GetParamUlongValue
     PCOSA_DML_DHCPCV6_FULL            pDhcpc            = (PCOSA_DML_DHCPCV6_FULL)pCxtLink->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Status", TRUE) )
+    if (strcmp(ParamName, "Status") == 0)
     {
         /* collect value */
         CosaDmlDhcpv6cGetInfo(pDhcpc, pCxtLink->InstanceNumber, &pDhcpc->Info);
@@ -839,7 +839,7 @@ Client3_GetParamStringValue
     PUCHAR                          pString           = NULL;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pDhcpc->Cfg.Alias) < *pUlSize)
@@ -856,7 +856,7 @@ Client3_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Interface", TRUE) )
+    if (strcmp(ParamName, "Interface") == 0)
     {
         /* collect value */
         pString = CosaUtilGetFullPathNameByKeyword
@@ -892,7 +892,7 @@ Client3_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "DUID", TRUE) )
+    if (strcmp(ParamName, "DUID") == 0)
     {
         CosaDmlDhcpv6cGetInfo(pDhcpc, pCxtLink->InstanceNumber, &pDhcpc->Info);
 
@@ -910,7 +910,7 @@ Client3_GetParamStringValue
     }
 
 
-    if( AnscEqualString(ParamName, "SupportedOptions", TRUE) )
+    if (strcmp(ParamName, "SupportedOptions") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pDhcpc->Info.SupportedOptions) < *pUlSize)
@@ -925,7 +925,7 @@ Client3_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "RequestedOptions", TRUE) )
+    if (strcmp(ParamName, "RequestedOptions") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pDhcpc->Cfg.RequestedOptions) < *pUlSize)
@@ -987,7 +987,7 @@ Client3_SetParamBoolValue
     PCOSA_DML_DHCPCV6_FULL            pDhcpc            = (PCOSA_DML_DHCPCV6_FULL)pCxtLink->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* save update to backup */
         pDhcpc->Cfg.bEnabled = bValue;
@@ -995,7 +995,7 @@ Client3_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "RequestAddresses", TRUE) )
+    if (strcmp(ParamName, "RequestAddresses") == 0)
     {
         /* save update to backup */
         pDhcpc->Cfg.RequestAddresses = bValue;
@@ -1003,7 +1003,7 @@ Client3_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "RequestPrefixes", TRUE) )
+    if (strcmp(ParamName, "RequestPrefixes") == 0)
     {
         /* save update to backup */
         pDhcpc->Cfg.RequestPrefixes = bValue;
@@ -1011,7 +1011,7 @@ Client3_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "RapidCommit", TRUE) )
+    if (strcmp(ParamName, "RapidCommit") == 0)
     {
         /* save update to backup */
         pDhcpc->Cfg.RapidCommit = bValue;
@@ -1019,7 +1019,7 @@ Client3_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Renew", TRUE) )
+    if (strcmp(ParamName, "Renew") == 0)
     {
         /* save update to backup */
         if ( bValue )
@@ -1081,7 +1081,7 @@ Client3_SetParamIntValue
     PCOSA_DML_DHCPCV6_FULL            pDhcpc            = (PCOSA_DML_DHCPCV6_FULL)pCxtLink->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "SuggestedT1", TRUE) )
+    if (strcmp(ParamName, "SuggestedT1") == 0)
     {
         /* save update to backup */
         pDhcpc->Cfg.SuggestedT1 = iValue;
@@ -1089,7 +1089,7 @@ Client3_SetParamIntValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SuggestedT2", TRUE) )
+    if (strcmp(ParamName, "SuggestedT2") == 0)
     {
         /* save update to backup */
         pDhcpc->Cfg.SuggestedT2 = iValue;
@@ -1189,7 +1189,7 @@ Client3_SetParamStringValue
     PCOSA_DATAMODEL_DHCPV6            pDhcpv6           = (PCOSA_DATAMODEL_DHCPV6)pCxtLink->hParentTable;
         
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "RequestedOptions", TRUE) )
+    if (strcmp(ParamName, "RequestedOptions") == 0)
     {
         /* save update to backup */
         AnscCopyString(pDhcpc->Cfg.RequestedOptions, pString);
@@ -1198,7 +1198,7 @@ Client3_SetParamStringValue
     }
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* save update to backup */
         AnscCopyString(pDhcpv6->AliasOfClient, pDhcpc->Cfg.Alias);
@@ -1208,7 +1208,7 @@ Client3_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Interface", TRUE) )
+    if (strcmp(ParamName, "Interface") == 0)
     {
 #if defined _COSA_DRG_CNS_  || defined _COSA_DRG_TPG_
         /*not supported*/
@@ -1821,7 +1821,7 @@ Server2_GetParamStringValue
     PCOSA_DML_DHCPCV6_SVR pDhcpcServer    = (PCOSA_DML_DHCPCV6_SVR)hInsContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "SourceAddress", TRUE) )
+    if (strcmp(ParamName, "SourceAddress") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pDhcpcServer->SourceAddress) < *pUlSize)
@@ -1838,7 +1838,7 @@ Server2_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "DUID", TRUE) )
+    if (strcmp(ParamName, "DUID") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pDhcpcServer->DUID) < *pUlSize)
@@ -1854,7 +1854,7 @@ Server2_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "InformationRefreshTime", TRUE) )
+    if (strcmp(ParamName, "InformationRefreshTime") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pDhcpcServer->InformationRefreshTime) < *pUlSize)
@@ -2175,7 +2175,7 @@ SentOption1_GetParamBoolValue
     ANSC_STATUS                     returnStatus         = ANSC_STATUS_SUCCESS;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         *pBool  = pDhcpSentOption->bEnabled;
@@ -2275,7 +2275,7 @@ SentOption1_GetParamUlongValue
     ANSC_STATUS                     returnStatus         = ANSC_STATUS_SUCCESS;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Tag", TRUE) )
+    if (strcmp(ParamName, "Tag") == 0)
     {
         /* collect value */
         *puLong = pDhcpSentOption->Tag;
@@ -2340,7 +2340,7 @@ SentOption1_GetParamStringValue
     ANSC_STATUS                     returnStatus         = ANSC_STATUS_SUCCESS;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pDhcpSentOption->Alias) < *pUlSize)
@@ -2355,7 +2355,7 @@ SentOption1_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "Value", TRUE) )
+    if (strcmp(ParamName, "Value") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pDhcpSentOption->Value) < *pUlSize)
@@ -2417,7 +2417,7 @@ SentOption1_SetParamBoolValue
     PCOSA_DML_DHCPCV6_SENT          pDhcpSentOption      = (PCOSA_DML_DHCPCV6_SENT)pCxtLink->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* save update to backup */
         pDhcpSentOption->bEnabled  = bValue;
@@ -2515,7 +2515,7 @@ SentOption1_SetParamUlongValue
     PCOSA_DML_DHCPCV6_SENT          pDhcpSentOption      = (PCOSA_DML_DHCPCV6_SENT)pCxtLink->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Tag", TRUE) )
+    if (strcmp(ParamName, "Tag") == 0)
     {
         /* save update to backup */
         pDhcpSentOption->Tag  = (UCHAR)uValue;
@@ -2571,7 +2571,7 @@ SentOption1_SetParamStringValue
     PCOSA_CONTEXT_DHCPCV6_LINK_OBJECT pCxtDhcpcLink     = (PCOSA_CONTEXT_DHCPCV6_LINK_OBJECT)pCxtLink->hParentTable;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* save update to backup */
         AnscCopyString(pCxtDhcpcLink->AliasOfSent, pDhcpSentOption->Alias);
@@ -2581,7 +2581,7 @@ SentOption1_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Value", TRUE) )
+    if (strcmp(ParamName, "Value") == 0)
     {
         /* save update to backup */
         AnscCopyString(pDhcpSentOption->Value, pString);
@@ -3161,7 +3161,7 @@ ReceivedOption_GetParamUlongValue
     PCOSA_DML_DHCPCV6_RECV pDhcpcRecv      = (PCOSA_DML_DHCPCV6_RECV)hInsContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Tag", TRUE) )
+    if (strcmp(ParamName, "Tag") == 0)
     {
         /* collect value */
         *puLong  = pDhcpcRecv->Tag;
@@ -3225,7 +3225,7 @@ ReceivedOption_GetParamStringValue
     PCOSA_DML_DHCPCV6_RECV pDhcpcRecv      = (PCOSA_DML_DHCPCV6_RECV)hInsContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Value", TRUE) )
+    if (strcmp(ParamName, "Value") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pDhcpcRecv->Value) < *pUlSize)
@@ -3240,7 +3240,7 @@ ReceivedOption_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "Server", TRUE) )
+    if (strcmp(ParamName, "Server") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pDhcpcRecv->Server) < *pUlSize)
@@ -3319,7 +3319,7 @@ Server3_GetParamBoolValue
     PCOSA_DATAMODEL_DHCPV6          pDhcpv6           = (PCOSA_DATAMODEL_DHCPV6)g_pCosaBEManager->hDhcpv6;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         *pBool  =  CosaDmlDhcpv6sGetState(NULL);
@@ -3418,7 +3418,7 @@ Server3_GetParamUlongValue
     PCOSA_DATAMODEL_DHCPV6          pDhcpv6           = (PCOSA_DATAMODEL_DHCPV6)g_pCosaBEManager->hDhcpv6;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "X_CISCO_COM_Type", TRUE) )
+    if (strcmp(ParamName, "X_CISCO_COM_Type") == 0)
     {
         /* collect value */
         *puLong  =  CosaDmlDhcpv6sGetType(NULL);
@@ -3524,7 +3524,7 @@ Server3_SetParamBoolValue
     ANSC_STATUS                     returnStatus  = ANSC_STATUS_SUCCESS;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* save update to backup */
         returnStatus = CosaDmlDhcpv6sEnable((ANSC_HANDLE)NULL, bValue );
@@ -3627,7 +3627,7 @@ Server3_SetParamUlongValue
     ANSC_STATUS                     returnStatus  = ANSC_STATUS_SUCCESS;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "X_CISCO_COM_Type", TRUE) )
+    if (strcmp(ParamName, "X_CISCO_COM_Type") == 0)
     {
         /* save update to backup */
         returnStatus = CosaDmlDhcpv6sSetType((ANSC_HANDLE)NULL, uValue );
@@ -4112,7 +4112,7 @@ Pool1_GetParamBoolValue
     PCOSA_DML_DHCPSV6_POOL_FULL       pDhcpc            = (PCOSA_DML_DHCPSV6_POOL_FULL)pCxtLink->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         *pBool   =  pDhcpc->Cfg.bEnabled;
@@ -4120,7 +4120,7 @@ Pool1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "DUIDExclude", TRUE) )
+    if (strcmp(ParamName, "DUIDExclude") == 0)
     {
         /* collect value */
         *pBool   =  pDhcpc->Cfg.DUIDExclude;
@@ -4128,7 +4128,7 @@ Pool1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "VendorClassIDExclude", TRUE) )
+    if (strcmp(ParamName, "VendorClassIDExclude") == 0)
     {
         /* collect value */
         *pBool   =  pDhcpc->Cfg.VendorClassIDExclude;
@@ -4136,7 +4136,7 @@ Pool1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "UserClassIDExclude", TRUE) )
+    if (strcmp(ParamName, "UserClassIDExclude") == 0)
     {
         /* collect value */
         *pBool   =  pDhcpc->Cfg.UserClassIDExclude;
@@ -4144,7 +4144,7 @@ Pool1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SourceAddressExclude", TRUE) )
+    if (strcmp(ParamName, "SourceAddressExclude") == 0)
     {
         /* collect value */
         *pBool   =  pDhcpc->Cfg.SourceAddressExclude;
@@ -4152,7 +4152,7 @@ Pool1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IANAEnable", TRUE) )
+    if (strcmp(ParamName, "IANAEnable") == 0)
     {
         /* collect value */
         *pBool   =  pDhcpc->Cfg.IANAEnable;
@@ -4160,7 +4160,7 @@ Pool1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IAPDEnable", TRUE) )
+    if (strcmp(ParamName, "IAPDEnable") == 0)
     {
         /* collect value */
         *pBool   =  pDhcpc->Cfg.IAPDEnable;
@@ -4168,7 +4168,7 @@ Pool1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_RapidEnable", TRUE) )
+    if (strcmp(ParamName, "X_CISCO_RapidEnable") == 0)
     {
         /* collect value */
         *pBool   =  pDhcpc->Cfg.RapidEnable;
@@ -4176,7 +4176,7 @@ Pool1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_UnicastEnable", TRUE) )
+    if (strcmp(ParamName, "X_CISCO_UnicastEnable") == 0)
     {
         /* collect value */
         *pBool   =  pDhcpc->Cfg.UnicastEnable;
@@ -4184,7 +4184,7 @@ Pool1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_EUI64Enable", TRUE) )
+    if (strcmp(ParamName, "X_CISCO_EUI64Enable") == 0)
     {
         /* collect value */
         *pBool   =  pDhcpc->Cfg.EUI64Enable;
@@ -4241,7 +4241,7 @@ Pool1_GetParamIntValue
 
     /* check the parameter name and return the corresponding value */
 
-    if( AnscEqualString(ParamName, "LeaseTime", TRUE) )
+    if (strcmp(ParamName, "LeaseTime") == 0)
     {
         /* collect value */
         *pInt  = pPool->Cfg.LeaseTime;
@@ -4296,7 +4296,7 @@ Pool1_GetParamUlongValue
     PCOSA_DML_DHCPSV6_POOL_FULL       pPool             = (PCOSA_DML_DHCPSV6_POOL_FULL)pCxtLink->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Status", TRUE) )
+    if (strcmp(ParamName, "Status") == 0)
     {
         /* collect value */
         CosaDmlDhcpv6sGetPoolInfo( NULL, pPool->Cfg.InstanceNumber, &pPool->Info );
@@ -4306,7 +4306,7 @@ Pool1_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Order", TRUE) )
+    if (strcmp(ParamName, "Order") == 0)
     {
         /* collect value */
         *puLong  = pPool->Cfg.Order;
@@ -4314,7 +4314,7 @@ Pool1_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IAPDAddLength", TRUE) )
+    if (strcmp(ParamName, "IAPDAddLength") == 0)
     {
         /* collect value */
         *puLong  = pPool->Cfg.IAPDAddLength;
@@ -4322,7 +4322,7 @@ Pool1_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_IANAAmount", TRUE) )
+    if (strcmp(ParamName, "X_CISCO_IANAAmount") == 0)
     {
         /* collect value */
         *puLong  = pPool->Cfg.IANAAmount;
@@ -4392,7 +4392,7 @@ Pool1_GetParamStringValue
     
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pPool->Cfg.Alias) < *pUlSize)
@@ -4407,7 +4407,7 @@ Pool1_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "Interface", TRUE) )
+    if (strcmp(ParamName, "Interface") == 0)
     {
         /* collect value */
         pString = CosaUtilGetFullPathNameByKeyword
@@ -4441,7 +4441,7 @@ Pool1_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "DUID", TRUE) )
+    if (strcmp(ParamName, "DUID") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pPool->Cfg.DUID) < *pUlSize)
@@ -4456,7 +4456,7 @@ Pool1_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "VendorClassID", TRUE) )
+    if (strcmp(ParamName, "VendorClassID") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pPool->Cfg.VendorClassID) < *pUlSize)
@@ -4471,7 +4471,7 @@ Pool1_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "UserClassID", TRUE) )
+    if (strcmp(ParamName, "UserClassID") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pPool->Cfg.UserClassID) < *pUlSize)
@@ -4486,7 +4486,7 @@ Pool1_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "SourceAddress", TRUE) )
+    if (strcmp(ParamName, "SourceAddress") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pPool->Cfg.SourceAddress) < *pUlSize)
@@ -4501,7 +4501,7 @@ Pool1_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "SourceAddressMask", TRUE) )
+    if (strcmp(ParamName, "SourceAddressMask") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pPool->Cfg.SourceAddressMask) < *pUlSize)
@@ -4516,7 +4516,7 @@ Pool1_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "IANAManualPrefixes", TRUE) )
+    if (strcmp(ParamName, "IANAManualPrefixes") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pPool->Cfg.IANAManualPrefixes) < *pUlSize)
@@ -4531,7 +4531,7 @@ Pool1_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "IANAPrefixes", TRUE) )
+    if (strcmp(ParamName, "IANAPrefixes") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pPool->Info.IANAPrefixes) < *pUlSize)
@@ -4546,7 +4546,7 @@ Pool1_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "IAPDManualPrefixes", TRUE) )
+    if (strcmp(ParamName, "IAPDManualPrefixes") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pPool->Cfg.IAPDManualPrefixes) < *pUlSize)
@@ -4561,7 +4561,7 @@ Pool1_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "IAPDPrefixes", TRUE) )
+    if (strcmp(ParamName, "IAPDPrefixes") == 0)
     {
         /* collect value */
 #ifdef _COSA_DRG_CNS_
@@ -4580,7 +4580,7 @@ Pool1_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "PrefixRangeBegin", TRUE) )
+    if (strcmp(ParamName, "PrefixRangeBegin") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pPool->Cfg.PrefixRangeBegin) < *pUlSize)
@@ -4595,7 +4595,7 @@ Pool1_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "PrefixRangeEnd", TRUE) )
+    if (strcmp(ParamName, "PrefixRangeEnd") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pPool->Cfg.PrefixRangeEnd) < *pUlSize)
@@ -4610,7 +4610,7 @@ Pool1_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_StartAddress", TRUE) )
+    if (strcmp(ParamName, "X_CISCO_StartAddress") == 0)
     {
         char   addr[64] = {0};
 
@@ -4676,7 +4676,7 @@ Pool1_SetParamBoolValue
     PCOSA_DML_DHCPSV6_POOL_FULL       pPool            = (PCOSA_DML_DHCPSV6_POOL_FULL)pCxtLink->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* save update to backup */
         pPool->Cfg.bEnabled   = bValue;
@@ -4684,7 +4684,7 @@ Pool1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "DUIDExclude", TRUE) )
+    if (strcmp(ParamName, "DUIDExclude") == 0)
     {
         /* save update to backup */
         pPool->Cfg.DUIDExclude   = bValue;
@@ -4695,7 +4695,7 @@ Pool1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "VendorClassIDExclude", TRUE) )
+    if (strcmp(ParamName, "VendorClassIDExclude") == 0)
     {
         /* save update to backup */
 #if defined _COSA_DRG_CNS_  || defined _COSA_DRG_TPG_
@@ -4707,7 +4707,7 @@ Pool1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "UserClassIDExclude", TRUE) )
+    if (strcmp(ParamName, "UserClassIDExclude") == 0)
     {
         /* save update to backup */
 #if defined _COSA_DRG_CNS_  || defined _COSA_DRG_TPG_
@@ -4719,7 +4719,7 @@ Pool1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SourceAddressExclude", TRUE) )
+    if (strcmp(ParamName, "SourceAddressExclude") == 0)
     {
         /* save update to backup */
         pPool->Cfg.SourceAddressExclude   = bValue;
@@ -4729,7 +4729,7 @@ Pool1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IANAEnable", TRUE) )
+    if (strcmp(ParamName, "IANAEnable") == 0)
     {
         /* save update to backup */
         pPool->Cfg.IANAEnable   = bValue;
@@ -4737,7 +4737,7 @@ Pool1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IAPDEnable", TRUE) )
+    if (strcmp(ParamName, "IAPDEnable") == 0)
     {
         /* save update to backup */
         pPool->Cfg.IAPDEnable   = bValue;
@@ -4745,7 +4745,7 @@ Pool1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_UnicastEnable", TRUE) )
+    if (strcmp(ParamName, "X_CISCO_UnicastEnable") == 0)
     {
         /* save update to backup */
         pPool->Cfg.UnicastEnable= bValue;
@@ -4753,7 +4753,7 @@ Pool1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_RapidEnable", TRUE) )
+    if (strcmp(ParamName, "X_CISCO_RapidEnable") == 0)
     {
         /* save update to backup */
         pPool->Cfg.RapidEnable  = bValue;
@@ -4761,7 +4761,7 @@ Pool1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_EUI64Enable", TRUE) )
+    if (strcmp(ParamName, "X_CISCO_EUI64Enable") == 0)
     {
         /* save update to backup */
         pPool->Cfg.EUI64Enable = bValue;
@@ -4818,7 +4818,7 @@ Pool1_SetParamIntValue
 
     /* check the parameter name and set the corresponding value */
 
-    if( AnscEqualString(ParamName, "LeaseTime", TRUE) )
+    if (strcmp(ParamName, "LeaseTime") == 0)
     {
         /* save update to backup */
         pPool->Cfg.LeaseTime= iValue;
@@ -4873,7 +4873,7 @@ Pool1_SetParamUlongValue
     PCOSA_DML_DHCPSV6_POOL_FULL       pPool             = (PCOSA_DML_DHCPSV6_POOL_FULL)pCxtLink->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Order", TRUE) )
+    if (strcmp(ParamName, "Order") == 0)
     {
         /* save update to backup */
         pPool->Cfg.Order  = uValue;
@@ -4881,7 +4881,7 @@ Pool1_SetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IAPDAddLength", TRUE) )
+    if (strcmp(ParamName, "IAPDAddLength") == 0)
     {
         /* save update to backup */
         pPool->Cfg.IAPDAddLength  = uValue;
@@ -4889,7 +4889,7 @@ Pool1_SetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_IANAAmount", TRUE) )
+    if (strcmp(ParamName, "X_CISCO_IANAAmount") == 0)
     {
         /* save update to backup */
         pPool->Cfg.IANAAmount = uValue;
@@ -4948,7 +4948,7 @@ Pool1_SetParamStringValue
     BOOL                              bFound            = FALSE;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* save update to backup */
         AnscCopyString(pDhcpv6->AliasOfPool, pPool->Cfg.Alias);
@@ -4958,7 +4958,7 @@ Pool1_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Interface", TRUE) )
+    if (strcmp(ParamName, "Interface") == 0)
     {
         /* save update to backup */
 #if defined _COSA_DRG_CNS_  || defined _COSA_DRG_TPG_
@@ -4971,7 +4971,7 @@ Pool1_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "DUID", TRUE) )
+    if (strcmp(ParamName, "DUID") == 0)
     {
         /* save update to backup */
         AnscCopyString(pPool->Cfg.DUID, pString);
@@ -4979,7 +4979,7 @@ Pool1_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "VendorClassID", TRUE) )
+    if (strcmp(ParamName, "VendorClassID") == 0)
     {
         /* save update to backup */
 #if defined _COSA_DRG_CNS_  || defined _COSA_DRG_TPG_
@@ -4990,7 +4990,7 @@ Pool1_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "UserClassID", TRUE) )
+    if (strcmp(ParamName, "UserClassID") == 0)
     {
         /* save update to backup */
 #if defined _COSA_DRG_CNS_  || defined _COSA_DRG_TPG_
@@ -5001,7 +5001,7 @@ Pool1_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IANAManualPrefixes", TRUE) )
+    if (strcmp(ParamName, "IANAManualPrefixes") == 0)
     {
         /* save update to backup */
         AnscCopyString(pPool->Cfg.IANAManualPrefixes, pString);
@@ -5010,7 +5010,7 @@ Pool1_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IAPDManualPrefixes", TRUE) )
+    if (strcmp(ParamName, "IAPDManualPrefixes") == 0)
     {
         /* save update to backup */
         AnscCopyString(pPool->Cfg.IAPDManualPrefixes, pString);
@@ -5018,7 +5018,7 @@ Pool1_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SourceAddress", TRUE) )
+    if (strcmp(ParamName, "SourceAddress") == 0)
     {
         /* save update to backup */
         AnscCopyString(pPool->Cfg.SourceAddress, pString);
@@ -5026,7 +5026,7 @@ Pool1_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SourceAddressMask", TRUE) )
+    if (strcmp(ParamName, "SourceAddressMask") == 0)
     {
         /* save update to backup */
         AnscCopyString(pPool->Cfg.SourceAddressMask, pString);
@@ -5034,7 +5034,7 @@ Pool1_SetParamStringValue
         return TRUE;
     }
     
-    if( AnscEqualString(ParamName, "PrefixRangeBegin", TRUE) )
+    if (strcmp(ParamName, "PrefixRangeBegin") == 0)
     {
         /* save update to backup */
         AnscCopyString(pPool->Cfg.PrefixRangeBegin, pString);
@@ -5042,7 +5042,7 @@ Pool1_SetParamStringValue
         return TRUE;
     }
     
-    if( AnscEqualString(ParamName, "PrefixRangeEnd", TRUE) )
+    if (strcmp(ParamName, "PrefixRangeEnd") == 0)
     {
         /* save update to backup */
         AnscCopyString(pPool->Cfg.PrefixRangeEnd, pString);
@@ -5050,7 +5050,7 @@ Pool1_SetParamStringValue
         return TRUE;
     }
     
-    if( AnscEqualString(ParamName, "X_CISCO_StartAddress", TRUE) )
+    if (strcmp(ParamName, "X_CISCO_StartAddress") == 0)
     {
         /* save update to backup */
         AnscCopyString(pPool->Cfg.StartAddress, pString);
@@ -5618,7 +5618,7 @@ Client4_GetParamBoolValue
     PCOSA_DML_DHCPSV6_CLIENT        pDhcpsClient    = (PCOSA_DML_DHCPSV6_CLIENT)hInsContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Active", TRUE) )
+    if (strcmp(ParamName, "Active") == 0)
     {
         /* collect value */
         returnStatus = CosaDmlDhcpv6sPing(pDhcpsClient);
@@ -5778,7 +5778,7 @@ Client4_GetParamStringValue
     PCOSA_DML_DHCPSV6_CLIENT        pDhcpsClient    = (PCOSA_DML_DHCPSV6_CLIENT)hInsContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pDhcpsClient->Alias) < *pUlSize)
@@ -5793,7 +5793,7 @@ Client4_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "SourceAddress", TRUE) )
+    if (strcmp(ParamName, "SourceAddress") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pDhcpsClient->SourceAddress) < *pUlSize)
@@ -5987,7 +5987,7 @@ Client4_SetParamStringValue
     PCOSA_DML_DHCPSV6_CLIENT        pDhcpsClient    = (PCOSA_DML_DHCPSV6_CLIENT)hInsContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* save update to backup */
         AnscCopyString(pDhcpsClient->Alias, pString);
@@ -6395,7 +6395,7 @@ IPv6Address2_GetParamStringValue
     PCOSA_DML_DHCPSV6_CLIENT_IPV6ADDRESS   pIPv6Address    = (PCOSA_DML_DHCPSV6_CLIENT_IPV6ADDRESS)hInsContext;
    
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "IPAddress", TRUE) )
+    if (strcmp(ParamName, "IPAddress") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pIPv6Address->IPAddress) < *pUlSize)
@@ -6410,7 +6410,7 @@ IPv6Address2_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "PreferredLifetime", TRUE) )
+    if (strcmp(ParamName, "PreferredLifetime") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pIPv6Address->PreferredLifetime) < *pUlSize)
@@ -6425,7 +6425,7 @@ IPv6Address2_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "ValidLifetime", TRUE) )
+    if (strcmp(ParamName, "ValidLifetime") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pIPv6Address->ValidLifetime) < *pUlSize)
@@ -6735,7 +6735,7 @@ IPv6Prefix1_GetParamStringValue
     PCOSA_DML_DHCPSV6_CLIENT_IPV6PREFIX    pIPv6Prefix    = (PCOSA_DML_DHCPSV6_CLIENT_IPV6PREFIX)hInsContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Prefix", TRUE) )
+    if (strcmp(ParamName, "Prefix") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pIPv6Prefix->Prefix) < *pUlSize)
@@ -6750,7 +6750,7 @@ IPv6Prefix1_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "PreferredLifetime", TRUE) )
+    if (strcmp(ParamName, "PreferredLifetime") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pIPv6Prefix->PreferredLifetime) < *pUlSize)
@@ -6765,7 +6765,7 @@ IPv6Prefix1_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "ValidLifetime", TRUE) )
+    if (strcmp(ParamName, "ValidLifetime") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pIPv6Prefix->ValidLifetime) < *pUlSize)
@@ -7023,7 +7023,7 @@ Option3_GetParamUlongValue
 
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Tag", TRUE) )
+    if (strcmp(ParamName, "Tag") == 0)
     {
         /* collect value */
         *puLong  = pIPv6Option->Tag;
@@ -7087,7 +7087,7 @@ Option3_GetParamStringValue
     PCOSA_DML_DHCPSV6_CLIENT_OPTION        pIPv6Option     = (PCOSA_DML_DHCPSV6_CLIENT_OPTION)hInsContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Value", TRUE) )
+    if (strcmp(ParamName, "Value") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pIPv6Option->Value) < *pUlSize)
@@ -7416,7 +7416,7 @@ Option4_GetParamBoolValue
     PCOSA_DML_DHCPSV6_POOL_OPTION   pDhcpOption   = (PCOSA_DML_DHCPSV6_POOL_OPTION)pCxtLink->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         *pBool  =  pDhcpOption->bEnabled;
@@ -7515,7 +7515,7 @@ Option4_GetParamUlongValue
     PCOSA_DML_DHCPSV6_POOL_OPTION   pDhcpOption   = (PCOSA_DML_DHCPSV6_POOL_OPTION)pCxtLink->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Tag", TRUE) )
+    if (strcmp(ParamName, "Tag") == 0)
     {
         /* collect value */
         *puLong    =  pDhcpOption->Tag;
@@ -7579,7 +7579,7 @@ Option4_GetParamStringValue
     PCOSA_DML_DHCPSV6_POOL_OPTION   pDhcpOption   = (PCOSA_DML_DHCPSV6_POOL_OPTION)pCxtLink->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pDhcpOption->Alias) < *pUlSize)
@@ -7594,7 +7594,7 @@ Option4_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "Value", TRUE) )
+    if (strcmp(ParamName, "Value") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pDhcpOption->Value) < *pUlSize)
@@ -7609,7 +7609,7 @@ Option4_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "PassthroughClient", TRUE) )
+    if (strcmp(ParamName, "PassthroughClient") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pDhcpOption->PassthroughClient) < *pUlSize)
@@ -7671,7 +7671,7 @@ Option4_SetParamBoolValue
     PCOSA_DML_DHCPSV6_POOL_OPTION     pDhcpOption     = (PCOSA_DML_DHCPSV6_POOL_OPTION)pCxtLink->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* save update to backup */
         pDhcpOption->bEnabled  = bValue;
@@ -7770,7 +7770,7 @@ Option4_SetParamUlongValue
     PCOSA_DML_DHCPSV6_POOL_OPTION   pDhcpOption   = (PCOSA_DML_DHCPSV6_POOL_OPTION)pCxtLink->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Tag", TRUE) )
+    if (strcmp(ParamName, "Tag") == 0)
     {
         /* save update to backup */
         if ( !tagPermitted( uValue ) )
@@ -7831,7 +7831,7 @@ Option4_SetParamStringValue
     PCOSA_CONTEXT_POOLV6_LINK_OBJECT  pPoolLink            = (PCOSA_CONTEXT_POOLV6_LINK_OBJECT)pCxtLink->hParentTable;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if (strcmp(ParamName, "Alias") == 0)
     {
         AnscCopyString(pPoolLink->AliasOfOption, pDhcpOption->Alias);
 
@@ -7840,7 +7840,7 @@ Option4_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Value", TRUE) )
+    if (strcmp(ParamName, "Value") == 0)
     {
         /* save update to backup */
         AnscCopyString(pDhcpOption->Value,pString);
@@ -7848,7 +7848,7 @@ Option4_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "PassthroughClient", TRUE) )
+    if (strcmp(ParamName, "PassthroughClient") == 0)
     {
 #if defined _COSA_DRG_CNS_  || defined _COSA_DRG_TPG_
         /*not supported*/
