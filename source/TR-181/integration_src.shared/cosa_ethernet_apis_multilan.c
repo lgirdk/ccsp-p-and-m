@@ -239,7 +239,7 @@ CosaDmlEthLinkLoadPsm
             }
             else if (RecordType == ccsp_string)
             {
-                pEthLink->Cfg.bEnabled = AnscEqualString(SlapValue.Variant.varString, "true", TRUE);
+                pEthLink->Cfg.bEnabled = (strcmp(SlapValue.Variant.varString, "true") == 0);
             }
 
             SlapCleanVariable(&SlapValue);
