@@ -3360,7 +3360,7 @@ Forwarding_Validate
 
         if ( pForward2 && 
             ((ULONG)pForward2 != (ULONG)pForward) &&
-             AnscEqualString(pForward2->Alias, pForward->Alias, TRUE))
+             (strcmp(pForward2->Alias, pForward->Alias) == 0))
         {
             AnscCopyString(pReturnParamName, "Alias");
             *puLength = AnscSizeOfString("Alias");
