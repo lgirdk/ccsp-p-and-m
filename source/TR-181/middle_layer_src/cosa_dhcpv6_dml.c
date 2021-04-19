@@ -3356,7 +3356,7 @@ dhcp6c_mapt_mape_GetParamBoolValue
 #ifdef _HUB4_PRODUCT_REQ_
         char temp[32] = {0};
         commonSyseventGet(SYSEVENT_MAP_IS_FMR, temp, sizeof(temp));
-        if( AnscEqualString(temp, "TRUE", TRUE))
+        if (strcmp(temp, "TRUE") == 0)
             *pBool  = TRUE;
         else
             *pBool  = FALSE;
