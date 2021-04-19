@@ -508,7 +508,7 @@ Std_RemoteAccess_SetParamStringValue
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     if (strcmp(ParamName, "Protocol") == 0)
     {
-        if ((strcmp(ParamName, "HTTP") == 0) || (strcmp(ParamName, "HTTPS") == 0))
+        if ((strcmp(pString, "HTTP") == 0) || (strcmp(pString, "HTTPS") == 0))
         {
             AnscCopyString(pMyObject->StdRaCfg.Protocol, pString);
             return TRUE;
