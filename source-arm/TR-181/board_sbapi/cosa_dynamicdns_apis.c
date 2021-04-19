@@ -707,6 +707,8 @@ CosaDmlDynamicDns_Host_AddEntry
         COSA_DML_DDNS_HOST *pEntry
     )
 {
+    CosaDmlDynamicDns_Host_SetValues(0, pEntry->InstanceNumber, pEntry->Alias);
+
     return ANSC_STATUS_SUCCESS;
 }
 
