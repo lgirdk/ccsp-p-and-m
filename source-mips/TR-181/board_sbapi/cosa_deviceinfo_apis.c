@@ -1569,7 +1569,7 @@ ULONG COSADmlGetCpuUsage()
 
 int COSADmlSetMemoryStatus(char * ParamName, ULONG val)
 {
-    if(AnscEqualString(ParamName, "X_RDKCENTRAL-COM_FreeMemThreshold", TRUE))
+    if (strcmp(ParamName, "X_RDKCENTRAL-COM_FreeMemThreshold") == 0)
      {
             char buf[10];
 	    snprintf(buf,sizeof(buf),"%d",val);            		    
@@ -1601,7 +1601,7 @@ ULONG COSADmlGetMemoryStatus(char * ParamName)
           /*Error*/
           return 0;
      }
-     if( AnscEqualString(ParamName, "Total", TRUE))
+     if (strcmp(ParamName, "Total") == 0)
      {
 #ifdef  _COSA_BCM_MIPS_
 #if 0
@@ -1640,7 +1640,7 @@ ULONG COSADmlGetMemoryStatus(char * ParamName)
         return si.totalram*si.mem_unit/(1024);
 #endif
      }
-     else if(AnscEqualString(ParamName, "Free", TRUE))
+     else if (strcmp(ParamName, "Free") == 0)
      {
 #ifdef _COSA_INTEL_USG_ARM_
 	if ( platform_hal_GetFreeMemorySize(&tmp) != RETURN_OK )
@@ -1653,7 +1653,7 @@ ULONG COSADmlGetMemoryStatus(char * ParamName)
      }
 
 
-     else if(AnscEqualString(ParamName, "Used", TRUE))
+     else if (strcmp(ParamName, "Used") == 0)
      {
 #ifdef _COSA_INTEL_USG_ARM_
 	if ( platform_hal_GetUsedMemorySize(&tmp) != RETURN_OK )
@@ -1662,7 +1662,7 @@ ULONG COSADmlGetMemoryStatus(char * ParamName)
         return tmp;
 #endif
      }
-     else if(AnscEqualString(ParamName, "X_RDKCENTRAL-COM_FreeMemThreshold", TRUE))
+     else if (strcmp(ParamName, "X_RDKCENTRAL-COM_FreeMemThreshold") == 0)
      {
 	char buf[10];
 	memset(buf,sizeof(buf),0);
