@@ -496,13 +496,13 @@ DeviceInfo_GetParamBoolValue
 {
     BOOL                            bReturnValue;
     
-    if( AnscEqualString(ParamName, "ClearResetCount", TRUE))
+    if (strcmp(ParamName, "ClearResetCount") == 0)
     {
         *pBool = FALSE ; 
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_RDKCENTRAL-COM_AkerEnable", TRUE))
+    if (strcmp(ParamName, "X_RDKCENTRAL-COM_AkerEnable") == 0)
     {
         /* collect value */
         char buf[8];
@@ -526,7 +526,7 @@ DeviceInfo_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_RDKCENTRAL-COM_OnBoarding_DeleteLogs", TRUE))
+    if (strcmp(ParamName, "X_RDKCENTRAL-COM_OnBoarding_DeleteLogs") == 0)
     {
         *pBool = FALSE ;
         return TRUE;
@@ -592,7 +592,7 @@ DeviceInfo_GetParamIntValue
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and return the corresponding value */
 #ifndef FEATURE_FWUPGRADE_MANAGER
-    if( AnscEqualString(ParamName, "X_RDKCENTRAL-COM_FirmwareDownloadAndFactoryReset", TRUE))
+    if (strcmp(ParamName, "X_RDKCENTRAL-COM_FirmwareDownloadAndFactoryReset") == 0)
     {
         *pInt = 0;
         return TRUE;
@@ -602,7 +602,7 @@ DeviceInfo_GetParamIntValue
     UNREFERENCED_PARAMETER(pInt);
 #endif
 #ifdef CISCO_XB3_PLATFORM_CHANGES
-    if (AnscEqualString(ParamName, "PingPeerRebootThreshold", TRUE))
+    if (strcmp(ParamName, "PingPeerRebootThreshold") == 0)
     {
         char buf[10] = { 0 };
         syscfg_get(NULL, "ping_peer_reboot_threshold", buf, sizeof (buf));
@@ -657,14 +657,14 @@ DeviceInfo_GetParamUlongValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "UpTime", TRUE))
+    if (strcmp(ParamName, "UpTime") == 0)
     {
         /* collect value */
         *puLong = CosaDmlDiGetUpTime(NULL);
         return TRUE;
     }
 	/* Required for xPC sync */
-	if( AnscEqualString(ParamName, "X_RDKCENTRAL-COM_ConfigureDocsicPollTime", TRUE))
+	if (strcmp(ParamName, "X_RDKCENTRAL-COM_ConfigureDocsicPollTime") == 0)
     {
      #if !defined(_COSA_BCM_MIPS_) && !defined(_ENABLE_DSL_SUPPORT_)
         /* collect value */
@@ -693,14 +693,14 @@ DeviceInfo_GetParamUlongValue
            return TRUE;
     }
     
-    if( AnscEqualString(ParamName, "X_RDKCENTRAL-COM_BootTime", TRUE))
+    if (strcmp(ParamName, "X_RDKCENTRAL-COM_BootTime") == 0)
     {
         /* collect value */
        *puLong = CosaDmlDiGetBootTime(NULL);
         return TRUE;
     }
     
-    if( AnscEqualString(ParamName, "FactoryResetCount", TRUE))
+    if (strcmp(ParamName, "FactoryResetCount") == 0)
     {
         /* collect value */
         CosaDmlDiGetFactoryResetCount(NULL,puLong);
@@ -763,62 +763,62 @@ DeviceInfo_GetParamStringValue
     errno_t                         rc        = -1;
     
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "DeviceCategory", TRUE))
+    if (strcmp(ParamName, "DeviceCategory") == 0)
     {
         /* collect value */
         CosaDmlDiGetDeviceCategory(NULL,pValue,pulSize);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Manufacturer", TRUE))
+    if (strcmp(ParamName, "Manufacturer") == 0)
     {
         /* collect value */
         CosaDmlDiGetManufacturer(NULL,pValue,pulSize);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "ManufacturerOUI", TRUE))
+    if (strcmp(ParamName, "ManufacturerOUI") == 0)
     {
         /* collect value */
         CosaDmlDiGetManufacturerOUI(NULL,pValue,pulSize);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "ModelName", TRUE))
+    if (strcmp(ParamName, "ModelName") == 0)
     {
         /* collect value */
         CosaDmlDiGetModelName(NULL,pValue,pulSize);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "ModelNumber", TRUE))
+    if (strcmp(ParamName, "ModelNumber") == 0)
     {
         /* collect value */
         CosaDmlDiGetModelName(NULL,pValue,pulSize);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Description", TRUE))
+    if (strcmp(ParamName, "Description") == 0)
     {
         /* collect value */
         CosaDmlDiGetDescription(NULL,pValue, pulSize);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "ProductClass", TRUE))
+    if (strcmp(ParamName, "ProductClass") == 0)
     {
         /* collect value */
         CosaDmlDiGetProductClass(NULL, pValue,pulSize);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "SerialNumber", TRUE))
+    if (strcmp(ParamName, "SerialNumber") == 0)
     {
         /* collect value */
         CosaDmlDiGetActualCMMacAddress(NULL, pValue, pulSize);
         return 0;
     }
-    if ( AnscEqualString(ParamName, "X_LGI-COM_GW_IPv6", TRUE))
+    if (strcmp(ParamName, "X_LGI-COM_GW_IPv6") == 0)
     {
         if(CosaDmlDiGetGW_IPv6(NULL, pValue, pulSize) == ANSC_STATUS_SUCCESS)
         {
@@ -828,41 +828,41 @@ DeviceInfo_GetParamStringValue
     }
 
     /* This parameter always returns the actual serial number */
-    if( AnscEqualString(ParamName, "X_LGI-COM_SerialNumber", TRUE))
+    if (strcmp(ParamName, "X_LGI-COM_SerialNumber") == 0)
     {
         CosaDmlDiGetSerialNumber(NULL, pValue, pulSize);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "HardwareVersion", TRUE))
+    if (strcmp(ParamName, "HardwareVersion") == 0)
     {
         /* collect value */
        CosaDmlDiGetHardwareVersion(NULL,pValue,pulSize);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "SoftwareVersion", TRUE))
+    if (strcmp(ParamName, "SoftwareVersion") == 0)
     {
         /* collect value */
         CosaDmlDiGetFirmwareName(NULL, pValue,pulSize);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "AdditionalHardwareVersion", TRUE))
+    if (strcmp(ParamName, "AdditionalHardwareVersion") == 0)
     {
         /* collect value */
          CosaDmlDiGetAdditionalHardwareVersion(NULL,pValue,pulSize);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "AdditionalSoftwareVersion", TRUE))
+    if (strcmp(ParamName, "AdditionalSoftwareVersion") == 0)
     {
         /* collect value */
         CosaDmlDiGetAdditionalSoftwareVersion(NULL,pValue,pulSize);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "ProvisioningCode", TRUE))
+    if (strcmp(ParamName, "ProvisioningCode") == 0)
     {
         /* collect value */
         CosaDmlDiGetProvisioningCode(NULL,pValue,pulSize);
@@ -870,67 +870,67 @@ DeviceInfo_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "FirstUseDate", TRUE))
+    if (strcmp(ParamName, "FirstUseDate") == 0)
     {
 
 	CosaDmlDiGetFirstUseDate(NULL, pValue,pulSize);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_BootloaderVersion", TRUE))
+    if (strcmp(ParamName, "X_CISCO_COM_BootloaderVersion") == 0)
     {
 
 	    CosaDmlDiGetBootloaderVersion(NULL, pValue,pulSize);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_FirmwareName", TRUE))
+    if (strcmp(ParamName, "X_CISCO_COM_FirmwareName") == 0)
     {
 
 	    CosaDmlDiGetFirmwareName(NULL, pValue,pulSize);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_FirmwareBuildTime", TRUE))
+    if (strcmp(ParamName, "X_CISCO_COM_FirmwareBuildTime") == 0)
     {
 
 	    CosaDmlDiGetFirmwareBuildTime(NULL, pValue,pulSize);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_BaseMacAddress", TRUE))
+    if (strcmp(ParamName, "X_CISCO_COM_BaseMacAddress") == 0)
     {
 
 	    CosaDmlDiGetBaseMacAddress(NULL, pValue,pulSize);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Hardware", TRUE))
+    if (strcmp(ParamName, "Hardware") == 0)
     {
         CosaDmlDiGetHardware(NULL, pValue,pulSize);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Hardware_MemUsed", TRUE))
+    if (strcmp(ParamName, "Hardware_MemUsed") == 0)
     {
         CosaDmlDiGetHardware_MemUsed(NULL, pValue,pulSize);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Hardware_MemFree", TRUE))
+    if (strcmp(ParamName, "Hardware_MemFree") == 0)
     {
         CosaDmlDiGetHardware_MemFree(NULL, pValue,pulSize);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_AdvancedServices", TRUE))
+    if (strcmp(ParamName, "X_CISCO_COM_AdvancedServices") == 0)
     {
 
     	CosaDmlDiGetAdvancedServices(NULL, pValue,pulSize);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_ProcessorSpeed", TRUE))
+    if (strcmp(ParamName, "X_CISCO_COM_ProcessorSpeed") == 0)
     {
 
     	CosaDmlDiGetProcessorSpeed(NULL, pValue,pulSize);
@@ -938,7 +938,7 @@ DeviceInfo_GetParamStringValue
     }
 
     /* Required for WebPA timestamp */
-    if( AnscEqualString(ParamName, "X_RDKCENTRAL-COM_SystemTime", TRUE))
+    if (strcmp(ParamName, "X_RDKCENTRAL-COM_SystemTime") == 0)
     {
         struct timespec sysTime;
 
@@ -983,7 +983,7 @@ DeviceInfo_GetParamStringValue
         return 0;
     }
         
-     if( AnscEqualString(ParamName, "X_RDKCENTRAL-COM_LastRebootReason", TRUE))
+     if (strcmp(ParamName, "X_RDKCENTRAL-COM_LastRebootReason") == 0)
     {
         char buf[64] = {'\0'};
         /* CID: 57845 Array compared against 0*/
@@ -1004,7 +1004,7 @@ DeviceInfo_GetParamStringValue
         
     }
 
-    if( AnscEqualString(ParamName, "X_RDK_RDKProfileName", TRUE))
+    if (strcmp(ParamName, "X_RDK_RDKProfileName") == 0)
     {
             rc = strcpy_s(pValue, *pulSize, "RDKB");
             if(rc != EOK)
@@ -1017,7 +1017,7 @@ DeviceInfo_GetParamStringValue
 	
 	/* Changes for EMS begins here */
 	
-	if( AnscEqualString(ParamName, "X_COMCAST-COM_EMS_MobileNumber", TRUE))
+	if (strcmp(ParamName, "X_COMCAST-COM_EMS_MobileNumber") == 0)
     {
         rc = strcpy_s(pValue, *pulSize,  pMyObject->EMS_MobileNo);
         if(rc != EOK)
@@ -1028,7 +1028,7 @@ DeviceInfo_GetParamStringValue
         return 0;
     }
 	
-	if( AnscEqualString(ParamName, "X_COMCAST-COM_EMS_ServerURL", TRUE))
+	if (strcmp(ParamName, "X_COMCAST-COM_EMS_ServerURL") == 0)
     {
        //pMyObject->EMS_ServerURL;
 		char buf[60];
@@ -1050,7 +1050,7 @@ DeviceInfo_GetParamStringValue
 	return 0;
     }
 
-	if( AnscEqualString(ParamName, "RouterName", TRUE))
+	if (strcmp(ParamName, "RouterName") == 0)
     {
         char buf[16] = {'\0'};
                /* CID: 57845 Array compared against 0*/
@@ -1072,7 +1072,7 @@ DeviceInfo_GetParamStringValue
 #if !defined(_COSA_BCM_MIPS_) && !defined(_ENABLE_DSL_SUPPORT_)
 	/* Changes for EMS end here */
 	/*Changes for RDKB-6560*/
-   	if( AnscEqualString(ParamName, "X_RDKCENTRAL-COM_CMTS_MAC", TRUE))
+   	if (strcmp(ParamName, "X_RDKCENTRAL-COM_CMTS_MAC") == 0)
     		{
 		    CosaDmlDiGetCMTSMac(NULL, pValue,pulSize);
         	    return 0;
@@ -1080,7 +1080,7 @@ DeviceInfo_GetParamStringValue
 	/*Changes for RDKB-6560 end*/
 #endif
 	/*Changes for RDKB-5878*/
-	if( AnscEqualString(ParamName, "X_RDKCENTRAL-COM_CloudPersonalizationURL", TRUE))
+	if (strcmp(ParamName, "X_RDKCENTRAL-COM_CloudPersonalizationURL") == 0)
 	{
 	   syscfg_get(NULL, "CloudPersonalizationURL", pMyObject->CloudPersonalizationURL, sizeof(pMyObject->CloudPersonalizationURL));
 	   rc = strcpy_s(pValue, *pulSize, pMyObject->CloudPersonalizationURL);
@@ -1093,7 +1093,7 @@ DeviceInfo_GetParamStringValue
 	}
 	/*Changes for RDKB-5878 end*/
 
-    if( AnscEqualString(ParamName, "X_RDKCENTRAL-COM_OnBoarding_State", TRUE))
+    if (strcmp(ParamName, "X_RDKCENTRAL-COM_OnBoarding_State") == 0)
     {
         if(access("/nvram/.device_onboarded", F_OK) != -1)
         {
@@ -1180,14 +1180,14 @@ DeviceInfo_SetParamBoolValue
 #endif
     
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "ClearResetCount", TRUE))
+    if (strcmp(ParamName, "ClearResetCount") == 0)
     {
         /* collect value */
         CosaDmlDiClearResetCount(NULL,bValue);
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_RDKCENTRAL-COM_AkerEnable", TRUE))
+    if (strcmp(ParamName, "X_RDKCENTRAL-COM_AkerEnable") == 0)
     {
         /* collect value */
         char buf[8];
@@ -1221,7 +1221,7 @@ DeviceInfo_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_RDKCENTRAL-COM_OnBoarding_DeleteLogs", TRUE))
+    if (strcmp(ParamName, "X_RDKCENTRAL-COM_OnBoarding_DeleteLogs") == 0)
     {
         if(bValue)
         {
@@ -1290,7 +1290,7 @@ DeviceInfo_SetParamIntValue
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and set the corresponding value */
 #ifndef FEATURE_FWUPGRADE_MANAGER
-    if( AnscEqualString(ParamName, "X_RDKCENTRAL-COM_FirmwareDownloadAndFactoryReset", TRUE))
+    if (strcmp(ParamName, "X_RDKCENTRAL-COM_FirmwareDownloadAndFactoryReset") == 0)
     {
         if( iValue == 1)
         {
@@ -1306,7 +1306,7 @@ DeviceInfo_SetParamIntValue
     UNREFERENCED_PARAMETER(iValue);
 #endif
 #ifdef CISCO_XB3_PLATFORM_CHANGES
-    if (AnscEqualString(ParamName, "PingPeerRebootThreshold", TRUE))
+    if (strcmp(ParamName, "PingPeerRebootThreshold") == 0)
     {
         int ret = 0;
         char buf[10] = { 0 };
@@ -1369,7 +1369,7 @@ DeviceInfo_SetParamUlongValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "X_RDKCENTRAL-COM_ConfigureDocsicPollTime", TRUE))
+    if (strcmp(ParamName, "X_RDKCENTRAL-COM_ConfigureDocsicPollTime") == 0)
     {
         /* collect value */
            FILE *fp;
@@ -1437,7 +1437,7 @@ TelemetryEndpoint_GetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     char buf[8];
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         /* CID: 58662 Array compared against 0*/
@@ -1496,7 +1496,7 @@ TelemetryEndpoint_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, TelemetryEndpoint_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
 
         char buf[8];
@@ -1567,7 +1567,7 @@ ULONG
     UNREFERENCED_PARAMETER(hInsContext);
     errno_t   rc   = -1;
     /* Required for xPC sync */
-    if( AnscEqualString(ParamName, "URL", TRUE))
+    if (strcmp(ParamName, "URL") == 0)
     {
         /* collect value */
         char buf[64];
@@ -1633,7 +1633,7 @@ BOOL
         return TRUE;
 
     /* Required for xPC sync */
-    if( AnscEqualString(ParamName, "URL", TRUE))
+    if (strcmp(ParamName, "URL") == 0)
     {
         if (syscfg_set(NULL, "TelemetryEndpointURL", pString) != 0)
         {
@@ -1704,7 +1704,7 @@ AccountInfo_GetParamStringValue
     UNREFERENCED_PARAMETER(hInsContext);
     errno_t  rc = -1;
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "AccountID", TRUE))
+    if (strcmp(ParamName, "AccountID") == 0)
     {
         /* collect value */
            char buff[ACCOUNT_ID_SIZE]={'\0'};
@@ -1771,7 +1771,7 @@ AccountInfo_SetParamStringValue
         return TRUE;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "AccountID", TRUE))
+    if (strcmp(ParamName, "AccountID") == 0)
     {
         /* collect value */
            char buff[ACCOUNT_ID_SIZE]={'\0'};
@@ -2409,7 +2409,7 @@ WiFi_Telemetry_SetParamIntValue
     errno_t                         rc        = -1;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "LogInterval", TRUE))
+    if (strcmp(ParamName, "LogInterval") == 0)
     {
         char str[10];
         int retPsmGet = CCSP_SUCCESS;
@@ -2432,7 +2432,7 @@ WiFi_Telemetry_SetParamIntValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "ChUtilityLogInterval", TRUE))
+    if (strcmp(ParamName, "ChUtilityLogInterval") == 0)
     {
         char str[10];
         int retPsmGet = CCSP_SUCCESS;
@@ -2497,7 +2497,7 @@ WiFi_Telemetry_SetParamStringValue
     errno_t   rc = -1;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "NormalizedRssiList", TRUE))
+    if (strcmp(ParamName, "NormalizedRssiList") == 0)
     {
         int retPsmGet = CCSP_SUCCESS;
 
@@ -2519,7 +2519,7 @@ WiFi_Telemetry_SetParamStringValue
     }
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "CliStatList", TRUE) )
+    if (strcmp(ParamName, "CliStatList") == 0)
     {
         int retPsmGet = CCSP_SUCCESS;
 
@@ -2541,7 +2541,7 @@ WiFi_Telemetry_SetParamStringValue
     }
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "TxRxRateList", TRUE) )
+    if (strcmp(ParamName, "TxRxRateList") == 0)
     {
         int retPsmGet = CCSP_SUCCESS;
 
@@ -2562,7 +2562,7 @@ WiFi_Telemetry_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SNRList", TRUE))
+    if (strcmp(ParamName, "SNRList") == 0)
     {
         int retPsmSet = CCSP_SUCCESS;
     
@@ -2631,13 +2631,13 @@ WiFi_Telemetry_GetParamIntValue
     PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "LogInterval", TRUE))
+    if (strcmp(ParamName, "LogInterval") == 0)
     {
         *pInt =  pMyObject->WiFi_Telemetry.LogInterval;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "ChUtilityLogInterval", TRUE))
+    if (strcmp(ParamName, "ChUtilityLogInterval") == 0)
     {
         *pInt =  pMyObject->WiFi_Telemetry.ChUtilityLogInterval;
         return TRUE;
@@ -2701,7 +2701,7 @@ WiFi_Telemetry_GetParamStringValue
     errno_t   rc = -1;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "NormalizedRssiList", TRUE))
+    if (strcmp(ParamName, "NormalizedRssiList") == 0)
     {
         /* collect value */
         rc = strcpy_s( pValue, *pulSize, pMyObject->WiFi_Telemetry.NormalizedRssiList);
@@ -2714,7 +2714,7 @@ WiFi_Telemetry_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "CliStatList", TRUE))
+    if (strcmp(ParamName, "CliStatList") == 0)
     {
         /* collect value */
         rc = strcpy_s( pValue, *pulSize, pMyObject->WiFi_Telemetry.CliStatList);
@@ -2728,7 +2728,7 @@ WiFi_Telemetry_GetParamStringValue
     }
 
 
-    if( AnscEqualString(ParamName, "TxRxRateList", TRUE))
+    if (strcmp(ParamName, "TxRxRateList") == 0)
     {
         /* collect value */
         rc = strcpy_s( pValue, *pulSize, pMyObject->WiFi_Telemetry.TxRxRateList);
@@ -2741,7 +2741,7 @@ WiFi_Telemetry_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "SNRList", TRUE))
+    if (strcmp(ParamName, "SNRList") == 0)
     {
         /* collect value */
         rc = strcpy_s( pValue, *pulSize, pMyObject->WiFi_Telemetry.SNRList);
@@ -2816,7 +2816,7 @@ UniqueTelemetryId_GetParamBoolValue
 
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         *pBool = pMyObject->UniqueTelemetryId.Enable;
@@ -2878,7 +2878,7 @@ UniqueTelemetryId_GetParamStringValue
     PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "TagString", TRUE))
+    if (strcmp(ParamName, "TagString") == 0)
     {
         return  update_pValue(pValue,pUlSize, pMyObject->UniqueTelemetryId.TagString);
 	    /* CID: 64836 Structurally dead code*/
@@ -2931,7 +2931,7 @@ UniqueTelemetryId_GetParamIntValue
 	PCOSA_DATAMODEL_DEVICEINFO		pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 	
 	/* check the parameter name and return the corresponding value */
-	if( AnscEqualString(ParamName, "TimingInterval", TRUE))
+	if (strcmp(ParamName, "TimingInterval") == 0)
 	{
 		*pInt =  pMyObject->UniqueTelemetryId.TimingInterval;
 		return TRUE;
@@ -2986,7 +2986,7 @@ UniqueTelemetryId_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, UniqueTelemetryId_GetParamBoolValue))
         return TRUE;
 
-    if (AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         rc = strcpy_s(buf, sizeof(buf), (bValue ? "true" : "false"));
         if(rc != EOK) {
@@ -3063,7 +3063,7 @@ UniqueTelemetryId_SetParamStringValue
     if (IsStringSame(hInsContext, ParamName, strValue, UniqueTelemetryId_GetParamStringValue))
         return TRUE;
 
-    if (AnscEqualString(ParamName, "TagString", TRUE))
+    if (strcmp(ParamName, "TagString") == 0)
     {
 
         if (syscfg_set(NULL, "unique_telemetry_tag", strValue) != 0)
@@ -3138,7 +3138,7 @@ UniqueTelemetryId_SetParamIntValue
     if (IsIntSame(hInsContext, ParamName, value, UniqueTelemetryId_GetParamIntValue))
         return TRUE;
 
-    if (AnscEqualString(ParamName, "TimingInterval", TRUE))
+    if (strcmp(ParamName, "TimingInterval") == 0)
     {
         rc = sprintf_s(buf, sizeof(buf), "%d", value);
         if(rc < EOK)
@@ -3216,7 +3216,7 @@ ManageableNotification_GetParamBoolValue
 
     /* check the parameter name and return the corresponding value */
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         /*CID: 67293 Array compared against 0*/
@@ -3277,7 +3277,7 @@ ManageableNotification_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, ManageableNotification_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         if( bValue == TRUE)
@@ -3345,7 +3345,7 @@ Snmpv3DHKickstart_GetParamBoolValue
 
     //CcspTraceInfo(("Snmpv3DHKickstart_GetParamBoolValue: ParamName = %s\n", ParamName));
 
-    if( AnscEqualString(ParamName, "Enabled", TRUE))
+    if (strcmp(ParamName, "Enabled") == 0)
     {
         if( pKickstart != NULL )
         {
@@ -3353,7 +3353,7 @@ Snmpv3DHKickstart_GetParamBoolValue
             bRet = TRUE;
         }
     }
-    else if( AnscEqualString(ParamName, "RFCUpdateDone", TRUE))
+    else if (strcmp(ParamName, "RFCUpdateDone") == 0)
     {
         if( pKickstart != NULL )
         {
@@ -3439,7 +3439,7 @@ Snmpv3DHKickstart_SetParamBoolValue
     /*CID: 128676 Uninitialized pointer read*/
     Snmpv3_Kickstart_Table.n_rows = 0;
 
-    if( AnscEqualString( ParamName, "Enabled", TRUE ) )
+    if (strcmp(ParamName, "Enabled") == 0)
     {
         if( pKickstart != NULL )
         {
@@ -3447,7 +3447,7 @@ Snmpv3DHKickstart_SetParamBoolValue
             bRet = TRUE;
         }
     }
-    else if( AnscEqualString( ParamName, "RFCUpdateDone", TRUE ) )    // RFCUpdateDone comes from RFCPostProcess.sh
+    else if (strcmp(ParamName, "RFCUpdateDone") == 0)    // RFCUpdateDone comes from RFCPostProcess.sh
     {
         if( pKickstart != NULL )
         {
@@ -3657,13 +3657,13 @@ Snmpv3DHKickstart_GetParamUlongValue
     if( pKickstart != NULL )
     {
         /* check the parameter name and return the corresponding value */
-        if( AnscEqualString(ParamName, "KickstartTotal", TRUE) )
+        if (strcmp(ParamName, "KickstartTotal") == 0)
         {
             *puLong = pKickstart->KickstartTotal;
             //CcspTraceInfo(("Snmpv3DHKickstart_GetParamUlongValue: KickstartTotal = %lu\n", (unsigned long)pKickstart->KickstartTotal));
             bRet = TRUE;
         }
-        else if( AnscEqualString(ParamName, "TableNumberOfEntries", TRUE) )
+        else if (strcmp(ParamName, "TableNumberOfEntries") == 0)
         {
             *puLong = pKickstart->KickstartTotal;
             //CcspTraceInfo(("Snmpv3DHKickstart_GetParamUlongValue: TableNumberOfEntries = %lu\n", (unsigned long)pKickstart->TableNumberOfEntries));
@@ -3922,7 +3922,7 @@ KickstartTable_GetParamStringValue
     if( pKickstartTable != NULL )
     {
         /* check the parameter name and return the corresponding value */
-        if( AnscEqualString(ParamName, "SecurityName", TRUE) )
+        if (strcmp(ParamName, "SecurityName") == 0)
         {
             pPtr = pKickstartTable->SecurityName;
             if( AnscSizeOfString( pPtr ) < *pUlSize)
@@ -3939,7 +3939,7 @@ KickstartTable_GetParamStringValue
                 lRet = 1;
             }
         }
-        if( AnscEqualString(ParamName, "SecurityNumber", TRUE) )
+        if (strcmp(ParamName, "SecurityNumber") == 0)
         {
             pPtr = (char *)pKickstartTable->SecurityNumber;
             if( ((pKickstartTable->SecurityNumberLen*2) + 1) < *pUlSize)    // 2 output characters per input byte plus NULL terminator
@@ -4026,7 +4026,7 @@ KickstartTable_SetParamStringValue
     if( pKickstartTable != NULL )
     {
         /* check the parameter name and set the corresponding value */
-        if( AnscEqualString( ParamName, "SecurityName", TRUE ) )
+        if (strcmp(ParamName, "SecurityName") == 0)
         {
             if( pString != NULL && AnscSizeOfString( pString ) < (sizeof(pKickstartTable->SecurityName) - 1) )
             {
@@ -4034,7 +4034,7 @@ KickstartTable_SetParamStringValue
                 bRet = TRUE;
             }
         }
-        else if( AnscEqualString( ParamName, "SecurityNumber", TRUE ) )
+        else if (strcmp(ParamName, "SecurityNumber") == 0)
         {
             if( ( pString != NULL) && ((AnscSizeOfString( pString )/2) <= sizeof(pKickstartTable->SecurityNumber)) )
             {
@@ -4100,7 +4100,7 @@ TR069support_GetParamBoolValue
 
     /* check the parameter name and return the corresponding value */
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         /* CID: 71587 Array compared against 0*/
@@ -4163,7 +4163,7 @@ TR069support_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, TR069support_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         if( bValue == FALSE)
@@ -4226,7 +4226,7 @@ newNTP_GetParamBoolValue
 
     /* check the parameter name and return the corresponding value */
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         /*CID:54377 Array compared against 0*/
@@ -4283,7 +4283,7 @@ newNTP_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, newNTP_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         if( ANSC_STATUS_SUCCESS != CosaDmlSetnewNTPEnable(bValue))
 	    return FALSE;
@@ -4334,7 +4334,7 @@ MACsecRequired_GetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         if ( RETURN_ERR == platform_hal_GetMACsecEnable( ETHWAN_DEF_INTF_NUM, pBool )) {
             return FALSE;
@@ -4386,7 +4386,7 @@ MACsecRequired_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, MACsecRequired_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         if ( RETURN_ERR == platform_hal_SetMACsecEnable( ETHWAN_DEF_INTF_NUM, bValue )) {
             return FALSE;
@@ -4686,31 +4686,31 @@ VendorConfigFile_GetParamStringValue
     UNREFERENCED_PARAMETER(pValue);
     UNREFERENCED_PARAMETER(pUlSize);
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE))
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* collect value */
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Name", TRUE))
+    if (strcmp(ParamName, "Name") == 0)
     {
         /* collect value */
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Version", TRUE))
+    if (strcmp(ParamName, "Version") == 0)
     {
         /* collect value */
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Date", TRUE))
+    if (strcmp(ParamName, "Date") == 0)
     {
         /* collect value */
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Description", TRUE))
+    if (strcmp(ParamName, "Description") == 0)
     {
         /* collect value */
         return 0;
@@ -4903,7 +4903,7 @@ VendorConfigFile_SetParamStringValue
     UNREFERENCED_PARAMETER(hInsContext);
     UNREFERENCED_PARAMETER(pString);
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE))
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* save update to backup */
         return TRUE;
@@ -5304,19 +5304,19 @@ SupportedDataModel_GetParamStringValue
     UNREFERENCED_PARAMETER(pValue);
     UNREFERENCED_PARAMETER(pUlSize);
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "URL", TRUE))
+    if (strcmp(ParamName, "URL") == 0)
     {
         /* collect value */
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "URN", TRUE))
+    if (strcmp(ParamName, "URN") == 0)
     {
         /* collect value */
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Features", TRUE))
+    if (strcmp(ParamName, "Features") == 0)
     {
         /* collect value */
         return 0;
@@ -5473,14 +5473,14 @@ MemoryStatus_GetParamUlongValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Total", TRUE))
+    if (strcmp(ParamName, "Total") == 0)
     {
          /* collect value */
         *puLong = COSADmlGetMemoryStatus(ParamName);
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Free", TRUE))
+    if (strcmp(ParamName, "Free") == 0)
     {
         /* collect value */
         *puLong = COSADmlGetMemoryStatus(ParamName);
@@ -5488,14 +5488,14 @@ MemoryStatus_GetParamUlongValue
     }
 
 
-    if( AnscEqualString(ParamName, "Used", TRUE))
+    if (strcmp(ParamName, "Used") == 0)
     {
         /* collect value */
         *puLong = COSADmlGetMemoryStatus(ParamName);
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_RDKCENTRAL-COM_FreeMemThreshold", TRUE))
+    if (strcmp(ParamName, "X_RDKCENTRAL-COM_FreeMemThreshold") == 0)
     {
         char buf[12];
         syscfg_get (NULL, "MinMemoryThreshold_Value", buf, sizeof(buf));
@@ -5606,7 +5606,7 @@ MemoryStatus_SetParamUlongValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "X_RDKCENTRAL-COM_FreeMemThreshold", TRUE))
+    if (strcmp(ParamName, "X_RDKCENTRAL-COM_FreeMemThreshold") == 0)
     {
         syscfg_set_u_commit (NULL, "MinMemoryThreshold_Value", uValue);
         return TRUE;
@@ -5669,19 +5669,19 @@ X_RDKCENTRAL_COM_GetParamBoolValue
     PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "DhcpServDetectEnable", TRUE))
+    if (strcmp(ParamName, "DhcpServDetectEnable") == 0)
     {
         *pBool = pMyObject->bDhcpServDetectEnable;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "MultipleGW", TRUE))
+    if (strcmp(ParamName, "MultipleGW") == 0)
     {
         *pBool = pMyObject->bMultipleGW;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "InternetStatus", TRUE))
+    if (strcmp(ParamName, "InternetStatus") == 0)
     {
         *pBool = CosaDmlGetInternetStatus();
         return TRUE;
@@ -5877,7 +5877,7 @@ X_RDKCENTRAL_COM_SetParamBoolValue
     PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "DhcpServDetectEnable", TRUE))
+    if (strcmp(ParamName, "DhcpServDetectEnable") == 0)
     {
 		/* Same value should not be process at anytime */
 		if( bValue == pMyObject->bDhcpServDetectEnable )
@@ -5890,7 +5890,7 @@ X_RDKCENTRAL_COM_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "MultipleGW", TRUE))
+    if (strcmp(ParamName, "MultipleGW") == 0)
     {
 		pMyObject->bMultipleGW = bValue;
 
@@ -5960,7 +5960,7 @@ Ops_GetParamBoolValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "UploadLogsNow", TRUE))
+    if (strcmp(ParamName, "UploadLogsNow") == 0)
     {
         /* collect value */
          *pBool = FALSE;
@@ -6111,7 +6111,7 @@ Ops_GetParamStringValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "LogsUploadStatus", TRUE))
+    if (strcmp(ParamName, "LogsUploadStatus") == 0)
     {
         /* collect value */
 	COSADmlUploadLogsStatus(NULL, pValue,pUlSize);
@@ -6162,7 +6162,7 @@ Ops_SetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     BOOL                            bReturnValue;
 
-    if( AnscEqualString(ParamName, "UploadLogsNow", TRUE))
+    if (strcmp(ParamName, "UploadLogsNow") == 0)
     {
 
 	bReturnValue =
@@ -6333,7 +6333,7 @@ ProcessStatus_GetParamUlongValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "CPUUsage", TRUE))
+    if (strcmp(ParamName, "CPUUsage") == 0)
     {
         /* collect value */
          *puLong = COSADmlGetCpuUsage();
@@ -6732,35 +6732,35 @@ Process_GetParamUlongValue
     PCOSA_PROCESS_ENTRY        p_proc = (PCOSA_PROCESS_ENTRY)hInsContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "PID", TRUE))
+    if (strcmp(ParamName, "PID") == 0)
     {
         /* collect value */
         *puLong = p_proc->Pid;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Size", TRUE))
+    if (strcmp(ParamName, "Size") == 0)
     {
         /* collect value */
         *puLong = p_proc->Size;        
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Priority", TRUE))
+    if (strcmp(ParamName, "Priority") == 0)
     {
         /* collect value */
         *puLong = p_proc->Priority;                
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "CPUTime", TRUE))
+    if (strcmp(ParamName, "CPUTime") == 0)
     {
         /* collect value */
         *puLong = p_proc->CPUTime;                
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "State", TRUE))
+    if (strcmp(ParamName, "State") == 0)
     {
         /* collect value */
         *puLong = p_proc->State;                
@@ -6822,7 +6822,7 @@ Process_GetParamStringValue
     PCOSA_PROCESS_ENTRY        p_proc = (PCOSA_PROCESS_ENTRY)hInsContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Command", TRUE))
+    if (strcmp(ParamName, "Command") == 0)
     {
         /* collect value */
         return  update_pValue(pValue,pUlSize, p_proc->Command);
@@ -6978,13 +6978,13 @@ TemperatureSensor_GetParamBoolValue
     PCOSA_TEMPERATURE_SENSOR_ENTRY          PTempSensorEntry = (PCOSA_TEMPERATURE_SENSOR_ENTRY)hInsContext;
 
     /* check the parameter name and return the corresponding value */
-    if (AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         *pBool = PTempSensorEntry->Enable;
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "Reset", TRUE))
+    if (strcmp(ParamName, "Reset") == 0)
     {
         *pBool = FALSE;
         return TRUE;
@@ -7036,7 +7036,7 @@ TemperatureSensor_GetParamIntValue
     int                                     index = PTempSensorEntry->InstanceNumber;
 
     /* check the parameter name and return the corresponding value */
-    if (AnscEqualString(ParamName, "Value", TRUE))
+    if (strcmp(ParamName, "Value") == 0)
     {
         pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
         *pInt = PTempSensorEntry->Value;
@@ -7044,7 +7044,7 @@ TemperatureSensor_GetParamIntValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "MinValue", TRUE))
+    if (strcmp(ParamName, "MinValue") == 0)
     {
         pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
         *pInt = PTempSensorEntry->MinValue;
@@ -7052,7 +7052,7 @@ TemperatureSensor_GetParamIntValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "MaxValue", TRUE))
+    if (strcmp(ParamName, "MaxValue") == 0)
     {
         pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
         *pInt = PTempSensorEntry->MaxValue;
@@ -7060,7 +7060,7 @@ TemperatureSensor_GetParamIntValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "LowAlarmValue", TRUE))
+    if (strcmp(ParamName, "LowAlarmValue") == 0)
     {
         pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
         *pInt = PTempSensorEntry->LowAlarmValue;
@@ -7068,7 +7068,7 @@ TemperatureSensor_GetParamIntValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "HighAlarmValue", TRUE))
+    if (strcmp(ParamName, "HighAlarmValue") == 0)
     {
         pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
         *pInt = PTempSensorEntry->HighAlarmValue;
@@ -7120,13 +7120,13 @@ TemperatureSensor_GetParamUlongValue
     PCOSA_TEMPERATURE_SENSOR_ENTRY          PTempSensorEntry = (PCOSA_TEMPERATURE_SENSOR_ENTRY)hInsContext;
 
     /* check the parameter name and return the corresponding value */
-    if (AnscEqualString(ParamName, "Status", TRUE))
+    if (strcmp(ParamName, "Status") == 0)
     {
         *puLong = PTempSensorEntry->Status;
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "PollingInterval", TRUE))
+    if (strcmp(ParamName, "PollingInterval") == 0)
     {
         *puLong = PTempSensorEntry->PollingInterval;
         return TRUE;
@@ -7187,7 +7187,7 @@ TemperatureSensor_GetParamStringValue
     int                                     index = PTempSensorEntry->InstanceNumber;
 
     /* check the parameter name and return the corresponding value */
-    if (AnscEqualString(ParamName, "Alias", TRUE))
+    if (strcmp(ParamName, "Alias") == 0)
     {
         if (*pUlSize < AnscSizeOfString(PTempSensorEntry->Alias))
         {
@@ -7199,7 +7199,7 @@ TemperatureSensor_GetParamStringValue
         return 0;
     }
 
-    if (AnscEqualString(ParamName, "ResetTime", TRUE))
+    if (strcmp(ParamName, "ResetTime") == 0)
     {
         if (*pUlSize < AnscSizeOfString(PTempSensorEntry->ResetTime))
         {
@@ -7213,7 +7213,7 @@ TemperatureSensor_GetParamStringValue
         return 0;
     }
 
-    if (AnscEqualString(ParamName, "Name", TRUE))
+    if (strcmp(ParamName, "Name") == 0)
     {
         if (*pUlSize < AnscSizeOfString(PTempSensorEntry->Name))
         {
@@ -7225,7 +7225,7 @@ TemperatureSensor_GetParamStringValue
         return 0;
     }
 
-    if (AnscEqualString(ParamName, "LastUpdate", TRUE))
+    if (strcmp(ParamName, "LastUpdate") == 0)
     {
         if (*pUlSize < AnscSizeOfString(PTempSensorEntry->LastUpdate))
         {
@@ -7239,7 +7239,7 @@ TemperatureSensor_GetParamStringValue
         return 0;
     }
 
-    if (AnscEqualString(ParamName, "MinTime", TRUE))
+    if (strcmp(ParamName, "MinTime") == 0)
     {
         if (*pUlSize < AnscSizeOfString(PTempSensorEntry->MinTime))
         {
@@ -7253,7 +7253,7 @@ TemperatureSensor_GetParamStringValue
         return 0;
     }
 
-    if (AnscEqualString(ParamName, "MaxTime", TRUE))
+    if (strcmp(ParamName, "MaxTime") == 0)
     {
         if (*pUlSize < AnscSizeOfString(PTempSensorEntry->MaxTime))
         {
@@ -7267,7 +7267,7 @@ TemperatureSensor_GetParamStringValue
         return 0;
     }
 
-    if (AnscEqualString(ParamName, "LowAlarmTime", TRUE))
+    if (strcmp(ParamName, "LowAlarmTime") == 0)
     {
         if (*pUlSize < AnscSizeOfString(PTempSensorEntry->LowAlarmTime))
         {
@@ -7281,7 +7281,7 @@ TemperatureSensor_GetParamStringValue
         return 0;
     }
 
-    if (AnscEqualString(ParamName, "HighAlarmTime", TRUE))
+    if (strcmp(ParamName, "HighAlarmTime") == 0)
     {
         if (*pUlSize < AnscSizeOfString(PTempSensorEntry->HighAlarmTime))
         {
@@ -7341,7 +7341,7 @@ TemperatureSensor_SetParamBoolValue
     PCOSA_TEMPERATURE_SENSOR_ENTRY          pTempSensorEntry = (PCOSA_TEMPERATURE_SENSOR_ENTRY)hInsContext;
 
     /* check the parameter name and set the corresponding value */
-    if (AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         if (pTempSensorEntry->Enable != bValue)
         {
@@ -7351,7 +7351,7 @@ TemperatureSensor_SetParamBoolValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "Reset", TRUE))
+    if (strcmp(ParamName, "Reset") == 0)
     {
         CosaTemperatureSensorReset(pTempSensorEntry->Enable, pTempSensorEntry);
         return TRUE;
@@ -7402,13 +7402,13 @@ TemperatureSensor_SetParamIntValue
     PCOSA_TEMPERATURE_SENSOR_ENTRY          pTempSensorEntry = (PCOSA_TEMPERATURE_SENSOR_ENTRY)hInsContext;
 
     /* check the parameter name and set the corresponding value */
-    if (AnscEqualString(ParamName, "LowAlarmValue", TRUE))
+    if (strcmp(ParamName, "LowAlarmValue") == 0)
     {
         CosaTemperatureSensorSetLowAlarm(bValue, pTempSensorEntry);
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "HighAlarmValue", TRUE))
+    if (strcmp(ParamName, "HighAlarmValue") == 0)
     {
         CosaTemperatureSensorSetHighAlarm(bValue, pTempSensorEntry);
         return TRUE;
@@ -7458,7 +7458,7 @@ TemperatureSensor_SetParamUlongValue
     PCOSA_TEMPERATURE_SENSOR_ENTRY          pTempSensorEntry = (PCOSA_TEMPERATURE_SENSOR_ENTRY)hInsContext;
 
     /* check the parameter name and set the corresponding value */
-    if (AnscEqualString(ParamName, "PollingInterval", TRUE))
+    if (strcmp(ParamName, "PollingInterval") == 0)
     {
         if (pTempSensorEntry->PollingInterval != uValue)
         {
@@ -7511,7 +7511,7 @@ TemperatureSensor_SetParamStringValue
     PCOSA_TEMPERATURE_SENSOR_ENTRY          PTempSensorEntry = (PCOSA_TEMPERATURE_SENSOR_ENTRY)hInsContext;
 
     /* check the parameter name and set the corresponding value */
-    if (AnscEqualString(ParamName, "Alias", TRUE))
+    if (strcmp(ParamName, "Alias") == 0)
     {
         AnscCopyString(PTempSensorEntry->Alias, pString);
         return TRUE;
@@ -7565,7 +7565,7 @@ HTTPSConfigDownload_GetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and return the corresponding value */
 
-    if( AnscEqualString(ParamName, "Enabled", TRUE))
+    if (strcmp(ParamName, "Enabled") == 0)
     {
         char *strValue = NULL;
         int retPsmGet = CCSP_SUCCESS;
@@ -7630,7 +7630,7 @@ HTTPSConfigDownload_SetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enabled", TRUE))
+    if (strcmp(ParamName, "Enabled") == 0)
     {
         char *strValue = NULL;
         char str[2];
@@ -7818,7 +7818,7 @@ NetworkProperties_GetParamUlongValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "MaxTCPWindowSize", TRUE))
+    if (strcmp(ParamName, "MaxTCPWindowSize") == 0)
     {
         /* collect value */
         *puLong = COSADmlGetMaxWindowSize();
@@ -7876,7 +7876,7 @@ NetworkProperties_GetParamStringValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "TCPImplementation", TRUE))
+    if (strcmp(ParamName, "TCPImplementation") == 0)
     {
 	/* collect value */
         CosaDmlGetTCPImplementation(NULL,pValue,pulSize);
@@ -7936,7 +7936,7 @@ SHORTS_GetParamBoolValue
     )
 {
         UNREFERENCED_PARAMETER(hInsContext);
-        if( AnscEqualString(ParamName, "Enable", TRUE))
+        if (strcmp(ParamName, "Enable") == 0)
         {
                 char buf[8]={0};
                 if (syscfg_get( NULL, "ShortsEnabled", buf, sizeof(buf)) == 0)
@@ -7997,7 +7997,7 @@ SHORTS_SetParamBoolValue
 {
         if (IsBoolSame(hInsContext, ParamName, bValue, SHORTS_GetParamBoolValue))
             return TRUE;
-        if ( AnscEqualString(ParamName, "Enable", TRUE))
+        if (strcmp(ParamName, "Enable") == 0)
         {
                 if(syscfg_set(NULL, "ShortsEnabled", (bValue==TRUE)?"true":"false") != 0)
                 {
@@ -8058,7 +8058,7 @@ CodeBigFirst_GetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and return the corresponding value */
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         /* CID: 58325 Array compared against 0*/
@@ -8119,7 +8119,7 @@ CodeBig_First_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, CodeBigFirst_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         if( bValue == TRUE)
@@ -8183,7 +8183,7 @@ PresenceDetect_GetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and return the corresponding value */
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         /*CID: 67242 Array compared against 0*/
@@ -8246,7 +8246,7 @@ PresenceDetect_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, PresenceDetect_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         if( bValue == TRUE)
@@ -8315,7 +8315,7 @@ LostandFoundInternet_GetParamBoolValue
 
     /* check the parameter name and return the corresponding value */
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         /* CID: 119814 Array compared against 0*/
@@ -8376,7 +8376,7 @@ LostandFoundInternet_SetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         if( bValue == TRUE)
@@ -8451,7 +8451,7 @@ OAUTH_GetParamStringValue
     BOOL bAuthModeCheck = FALSE;
 
     hInsContext = hInsContext;    // prevent compiler unused variable warning
-    if( AnscEqualString(ParamName, "AuthMode", TRUE) )
+    if (strcmp(ParamName, "AuthMode") == 0)
     {
         retval = 0;
         bAuthModeCheck = TRUE;
@@ -8540,19 +8540,19 @@ OAUTH_SetParamStringValue
     if (IsStringSame(hInsContext, ParamName, pString, OAUTH_GetParamStringValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "AuthMode", TRUE) )
+    if (strcmp(ParamName, "AuthMode") == 0)
     {
         bParamNameGood = TRUE;
     }
-    else if( AnscEqualString(ParamName, "ServerUrl", TRUE) )
+    else if (strcmp(ParamName, "ServerUrl") == 0)
     {
         bParamNameGood = TRUE;
     }
-    else if( AnscEqualString(ParamName, "TokenEndpoint", TRUE) )
+    else if (strcmp(ParamName, "TokenEndpoint") == 0)
     {
         bParamNameGood = TRUE;
     }
-    else if( AnscEqualString(ParamName, "ClientId", TRUE) )
+    else if (strcmp(ParamName, "ClientId") == 0)
     {
         bParamNameGood = TRUE;
     }
@@ -8625,7 +8625,7 @@ Iot_GetParamBoolValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "X_RDKCENTRAL-COM_ENABLEIOT", TRUE))
+    if (strcmp(ParamName, "X_RDKCENTRAL-COM_ENABLEIOT") == 0)
     {
         /* collect value */
         char buf[8];
@@ -8684,7 +8684,7 @@ Iot_SetParamBoolValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "X_RDKCENTRAL-COM_ENABLEIOT", TRUE))
+    if (strcmp(ParamName, "X_RDKCENTRAL-COM_ENABLEIOT") == 0)
     {
         char buf[8];
 #if defined(_PLATFORM_RASPBERRYPI_)
@@ -8786,7 +8786,7 @@ Control_GetParamUlongValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
 	/* check the parameter name and return the corresponding value */
-	if( AnscEqualString(ParamName, "RetrieveNow", TRUE))
+	if (strcmp(ParamName, "RetrieveNow") == 0)
 	{
 		*pUlValue =  0;
 		return TRUE;
@@ -8838,7 +8838,7 @@ Control_SetParamUlongValue
         return TRUE;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "RetrieveNow", TRUE))
+    if (strcmp(ParamName, "RetrieveNow") == 0)
     {
 	if( ulValue == 1 )
 	{
@@ -8895,7 +8895,7 @@ Control_GetParamBoolValue
 
     *pBool = FALSE; //Initialize to FALSE
 
-    if (AnscEqualString(ParamName, "DisableNativeHostapd", TRUE))
+    if (strcmp(ParamName, "DisableNativeHostapd") == 0)
     {
         CcspTraceInfo(("[%s] Get DisableNativeHostapd Value \n",__FUNCTION__));
 
@@ -8910,13 +8910,13 @@ Control_GetParamBoolValue
     }
 #endif //FEATURE_HOSTAP_AUTHENTICATOR
 
-    if( AnscEqualString(ParamName, "ClearDB", TRUE))
+    if (strcmp(ParamName, "ClearDB") == 0)
     {
 	*pBool = g_clearDB;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "ClearDBEnd", TRUE))
+    if (strcmp(ParamName, "ClearDBEnd") == 0)
     {
         *pBool = !g_clearDB;
 	return TRUE;
@@ -8966,13 +8966,13 @@ Control_SetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     UNREFERENCED_PARAMETER(bValue);
     CcspTraceWarning(("g_currentParamFullName = %s\n", g_currentParamFullName));
-    if( AnscEqualString(ParamName, "ClearDB", TRUE))
+    if (strcmp(ParamName, "ClearDB") == 0)
     {
         g_clearDB = true;
         StartRfcProcessing();
         return TRUE;
     }
-    else if( AnscEqualString(ParamName, "ClearDBEnd", TRUE))
+    else if (strcmp(ParamName, "ClearDBEnd") == 0)
     {
         PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
         g_clearDB = false;
@@ -8980,7 +8980,7 @@ Control_SetParamBoolValue
         return TRUE;
     }
 #if defined(FEATURE_HOSTAP_AUTHENTICATOR)
-    if (AnscEqualString(ParamName, "DisableNativeHostapd", TRUE))
+    if (strcmp(ParamName, "DisableNativeHostapd") == 0)
     {
         CcspTraceInfo(("[%s] set DisableNativeHostapd Value [%s]\n",__FUNCTION__, (bValue ? "TRUE" : "FALSE")));
         return CosaDmlSetNativeHostapdState(bValue);
@@ -9038,7 +9038,7 @@ Control_GetParamStringValue
     UNREFERENCED_PARAMETER(hInsContext);
     errno_t  rc  = -1;
     /* check the "XconfSelector" parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "XconfSelector", TRUE))
+    if (strcmp(ParamName, "XconfSelector") == 0)
     {
         /* collect value */
            char buff[XCONF_SELECTOR_SIZE]={'\0'};
@@ -9050,7 +9050,7 @@ Control_GetParamStringValue
     }
 
     /* check the "XconfUrl" parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "XconfUrl", TRUE))
+    if (strcmp(ParamName, "XconfUrl") == 0)
     {
         /* collect value */
            char buff[XCONF_URL_SIZE]={'\0'};
@@ -9108,7 +9108,7 @@ Feature_GetParamIntValue
    /* check the parameter name and return the corresponding value */
     //CcspTraceInfo(("Feature_GetParamIntValue: RDKLowQueueRebootThreshold\n"));
 
-    if( AnscEqualString(ParamName, "RDKLowQueueRebootThreshold", TRUE))
+    if (strcmp(ParamName, "RDKLowQueueRebootThreshold") == 0)
     {
          /* collect value */
          char buf[10];
@@ -9166,7 +9166,7 @@ Control_SetParamStringValue
         return TRUE;
 
     /* check the "XconfSelector" parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "XconfSelector", TRUE))
+    if (strcmp(ParamName, "XconfSelector") == 0)
     {
         /* collect value */
            int idlen = strlen(pString)-1;
@@ -9205,7 +9205,7 @@ Control_SetParamStringValue
            }
     }
     /* check the "XconfUrl" parameter name and set the corresponding value */
-    else if( AnscEqualString(ParamName, "XconfUrl", TRUE))
+    else if (strcmp(ParamName, "XconfUrl") == 0)
     {
         /* collect value */
            int idlen = strlen(pString)-1;
@@ -9285,7 +9285,7 @@ Feature_GetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and return the corresponding value */
 #if defined(MOCA_HOME_ISOLATION)
-    if( AnscEqualString(ParamName, "HomeNetworkIsolation", TRUE))
+    if (strcmp(ParamName, "HomeNetworkIsolation") == 0)
     {
         /* collect value */
     char *strValue = NULL;
@@ -9301,7 +9301,7 @@ Feature_GetParamBoolValue
      return TRUE;   
     }
 #endif
-    if( AnscEqualString(ParamName, "CodebigSupport", TRUE))
+    if (strcmp(ParamName, "CodebigSupport") == 0)
     {
          char value[8];
          syscfg_get(NULL,"codebigsupport",value, sizeof(value));
@@ -9315,7 +9315,7 @@ Feature_GetParamBoolValue
          return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "ContainerSupport", TRUE))
+    if (strcmp(ParamName, "ContainerSupport") == 0)
     {
        /* Collect Value */
        char *strValue = NULL;
@@ -9335,7 +9335,7 @@ Feature_GetParamBoolValue
     }
 
 #if defined(_COSA_FOR_BCI_)
-    if( AnscEqualString(ParamName, "OneToOneNAT", TRUE))
+    if (strcmp(ParamName, "OneToOneNAT") == 0)
     {
          char value[8];
          /*CID: 66608 Array compared against 0*/
@@ -9351,7 +9351,7 @@ Feature_GetParamBoolValue
          return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "EnableMultiProfileXDNS", TRUE))
+    if (strcmp(ParamName, "EnableMultiProfileXDNS") == 0)
     {
         char buf[5] = {0};
          /*CID: 66608 Array compared against 0*/
@@ -9372,7 +9372,7 @@ Feature_GetParamBoolValue
 #endif
 
 #if defined(_XB6_PRODUCT_REQ_)   
-   if(AnscEqualString(ParamName, "BLERadio", TRUE))
+   if (strcmp(ParamName, "BLERadio") == 0)
     {
         BLE_Status_e status;
         if(!ble_GetStatus(&status))
@@ -9390,7 +9390,7 @@ Feature_GetParamBoolValue
 	    }
     }
 #endif
-    if( AnscEqualString(ParamName, "Xupnp", TRUE))
+    if (strcmp(ParamName, "Xupnp") == 0)
     {
 	 char value[8];
          /*CID: 66608 Array compared against 0*/
@@ -9407,7 +9407,7 @@ Feature_GetParamBoolValue
     }
 
 #ifdef _BRIDGE_UTILS_BIN_ 
-    if( AnscEqualString(ParamName, "BridgeUtilsEnable", TRUE))
+    if (strcmp(ParamName, "BridgeUtilsEnable") == 0)
     {
            char value[8] = {0};
            syscfg_get(NULL, "bridge_util_enable", value, sizeof(value));
@@ -9422,7 +9422,7 @@ Feature_GetParamBoolValue
     }
 #endif
 #if (defined _COSA_INTEL_XB3_ARM_)
-    if( AnscEqualString(ParamName, "CMRouteIsolationEnable", TRUE))
+    if (strcmp(ParamName, "CMRouteIsolationEnable") == 0)
     {
 	   char value[8] = {0};
            syscfg_get(NULL, "CMRouteIsolation_Enable", value, sizeof(value));
@@ -9452,7 +9452,7 @@ SyndicationFlowControl_GetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
     PCOSA_DATAMODEL_RDKB_SYNDICATIONFLOWCONTROL SyndicatonFlowControl = (PCOSA_DATAMODEL_RDKB_SYNDICATIONFLOWCONTROL)&(pMyObject->SyndicatonFlowControl);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         *pBool = SyndicatonFlowControl->Enable.ActiveValue;
         return TRUE;
@@ -9499,7 +9499,7 @@ EncryptCloudUpload_GetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         char value[8];
         /* CID: 69222 Array compared against 0*/
@@ -9556,7 +9556,7 @@ UploadLogsOnUnscheduledReboot_GetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Disable", TRUE))
+    if (strcmp(ParamName, "Disable") == 0)
     {
         char value[8];
 
@@ -9586,11 +9586,11 @@ SyndicationFlowControl_GetParamStringValue
     UNREFERENCED_PARAMETER(hInsContext);
     PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
     PCOSA_DATAMODEL_RDKB_SYNDICATIONFLOWCONTROL SyndicatonFlowControl = (PCOSA_DATAMODEL_RDKB_SYNDICATIONFLOWCONTROL)&(pMyObject->SyndicatonFlowControl);
-    if( AnscEqualString(ParamName, "InitialForwardedMark", TRUE))
+    if (strcmp(ParamName, "InitialForwardedMark") == 0)
     {
         return  update_pValue(pValue,pUlSize, SyndicatonFlowControl->InitialForwardedMark.ActiveValue);
     }
-    if( AnscEqualString(ParamName, "InitialOutputMark", TRUE))
+    if (strcmp(ParamName, "InitialOutputMark") == 0)
     {
         return  update_pValue(pValue,pUlSize, SyndicatonFlowControl->InitialOutputMark.ActiveValue);
     }
@@ -9637,7 +9637,7 @@ MEMSWAP_GetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
        /* Collect Value */
        char *strValue = NULL;
@@ -9698,7 +9698,7 @@ DNSSTRICTORDER_GetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         char value[8];
         if(!syscfg_get(NULL,"DNSStrictOrder",value, sizeof(value))) {
@@ -9755,7 +9755,7 @@ ActiveMeasurements_RFC_GetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
        /* Collect Value */
        char *strValue = NULL;
@@ -9815,7 +9815,7 @@ ActiveMeasurements_RFC_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, ActiveMeasurements_RFC_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
        char str[2];
        int retPsmGet = CCSP_SUCCESS;
@@ -9878,7 +9878,7 @@ DLCaStore_RFC_GetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         char buf[8] = {0};
         /* collect value */
@@ -9944,7 +9944,7 @@ WPA3_Personal_Transition_RFC_GetParamBoolValue
     if (!ParamName || !pBool)
         return FALSE;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
        /* Collect Value */
        char *strValue = NULL;
@@ -10005,7 +10005,7 @@ WPA3_Personal_Transition_RFC_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, WPA3_Personal_Transition_RFC_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         char str[2];
         char secMode[64];
@@ -10143,7 +10143,7 @@ DLCaStore_RFC_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, DLCaStore_RFC_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         if (syscfg_set(NULL, "DLCaStoreEnabled", (bValue==TRUE)?"true":"false") != 0)
         {
@@ -10205,7 +10205,7 @@ Feature_SetParamIntValue
     /* check the parameter name and set the corresponding value */
     CcspTraceInfo(("Feature_SetParamIntValue: RDKLowQueueRebootThreshold"));
 
-    if( AnscEqualString(ParamName, "RDKLowQueueRebootThreshold", TRUE))
+    if (strcmp(ParamName, "RDKLowQueueRebootThreshold") == 0)
     {
         char buf[8]={0};
         snprintf(buf, sizeof(buf), "%d", bValue);
@@ -10264,7 +10264,7 @@ DFSatBootUp_GetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
        /* Collect Value */
        char *strValue = NULL;
@@ -10323,7 +10323,7 @@ DFS_GetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
        /* Collect Value */
        char *strValue = NULL;
@@ -10382,7 +10382,7 @@ EasyConnect_GetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
        /* Collect Value */
        char *strValue = NULL;
@@ -10400,7 +10400,7 @@ EasyConnect_GetParamBoolValue
          return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "EnableAPISecurity", TRUE))
+    if (strcmp(ParamName, "EnableAPISecurity") == 0)
     {
        /* Collect Value */
        char *strValue = NULL;
@@ -10460,7 +10460,7 @@ DFSatBootUp_SetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         CcspTraceInfo(("[%s] set  DFSatBootUp Value [%s]\n",__FUNCTION__, (bValue ? "TRUE" : "FALSE")));
         return CosaDmlSetDFSatBootUp(bValue);
@@ -10508,7 +10508,7 @@ DFS_SetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         CcspTraceInfo(("[%s] set  DFS Value [%s]\n",__FUNCTION__, (bValue ? "TRUE" : "FALSE")));
         return CosaDmlSetDFS(bValue);
@@ -10559,7 +10559,7 @@ EasyConnect_SetParamBoolValue
 
     errno_t rc = -1;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
        char str[2];
        int retPsmGet = CCSP_SUCCESS;
@@ -10579,7 +10579,7 @@ EasyConnect_SetParamBoolValue
        return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "EnableAPISecurity", TRUE))
+    if (strcmp(ParamName, "EnableAPISecurity") == 0)
     {
        char str[2];
        int retPsmGet = CCSP_SUCCESS;
@@ -10647,7 +10647,7 @@ Feature_SetParamBoolValue
 
 #if defined(MOCA_HOME_ISOLATION)
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "HomeNetworkIsolation", TRUE))
+    if (strcmp(ParamName, "HomeNetworkIsolation") == 0)
     {
     int retPsmGet = CCSP_SUCCESS;
 
@@ -10702,7 +10702,7 @@ Feature_SetParamBoolValue
     }
 #endif
 
-    if( AnscEqualString(ParamName, "CodebigSupport", TRUE))
+    if (strcmp(ParamName, "CodebigSupport") == 0)
     {
         if ( bValue == TRUE)
         {
@@ -10717,7 +10717,7 @@ Feature_SetParamBoolValue
     }
 
 
-    if( AnscEqualString(ParamName, "ContainerSupport", TRUE))
+    if (strcmp(ParamName, "ContainerSupport") == 0)
     {
        int retPsmGet = CCSP_SUCCESS;
 
@@ -10742,7 +10742,7 @@ Feature_SetParamBoolValue
     }
 
 #if defined(_COSA_FOR_BCI_)
-    if( AnscEqualString(ParamName, "OneToOneNAT", TRUE))
+    if (strcmp(ParamName, "OneToOneNAT") == 0)
     {
         BOOL bNatEnable = FALSE;
         bNatEnable  = g_GetParamValueBool(g_pDslhDmlAgent, "Device.NAT.X_Comcast_com_EnableNATMapping");
@@ -10763,7 +10763,7 @@ Feature_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "EnableMultiProfileXDNS", TRUE))
+    if (strcmp(ParamName, "EnableMultiProfileXDNS") == 0)
     {
         char buf[5];
         syscfg_get( NULL, "X_RDKCENTRAL-COM_XDNS", buf, sizeof(buf));
@@ -10796,7 +10796,7 @@ Feature_SetParamBoolValue
     }
 #endif
 #if defined (_XB6_PRODUCT_REQ_)
-    if( AnscEqualString(ParamName, "BLERadio", TRUE))
+    if (strcmp(ParamName, "BLERadio") == 0)
     {
        BLE_Status_e status;
        if(bValue == TRUE)
@@ -10830,7 +10830,7 @@ Feature_SetParamBoolValue
     }
 #endif
 
-    if( AnscEqualString(ParamName, "Xupnp", TRUE))
+    if (strcmp(ParamName, "Xupnp") == 0)
     {
        if ( bValue == TRUE)
        {
@@ -10868,7 +10868,7 @@ Feature_SetParamBoolValue
        return TRUE;
     }
 #ifdef _BRIDGE_UTILS_BIN_ 
-    if( AnscEqualString(ParamName, "BridgeUtilsEnable", TRUE))
+    if (strcmp(ParamName, "BridgeUtilsEnable") == 0)
     {
             if ( bValue == TRUE)
             {
@@ -10899,7 +10899,7 @@ Feature_SetParamBoolValue
     }
 #endif
 #if (defined _COSA_INTEL_XB3_ARM_)
-    if( AnscEqualString(ParamName, "CMRouteIsolationEnable", TRUE))
+    if (strcmp(ParamName, "CMRouteIsolationEnable") == 0)
     {
        CcspTraceInfo(("CM Route Isolation Enable:%s\n",bValue?"true":"false"));
        
@@ -11095,7 +11095,7 @@ SyndicationFlowControl_SetParamBoolValue
 
     IS_UPDATE_ALLOWED_IN_DM(ParamName, requestorStr);
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         IS_UPDATE_ALLOWED_IN_JSON(ParamName, requestorStr, SyndicatonFlowControl->Enable.UpdateSource);
 
@@ -11247,7 +11247,7 @@ EncryptCloudUpload_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, EncryptCloudUpload_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         if ( bValue == TRUE)
         {
@@ -11304,7 +11304,7 @@ UploadLogsOnUnscheduledReboot_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, UploadLogsOnUnscheduledReboot_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "Disable", TRUE))
+    if (strcmp(ParamName, "Disable") == 0)
     {
         if ( bValue == TRUE)
         {
@@ -11363,7 +11363,7 @@ MEMSWAP_SetParamBoolValue
         return TRUE;
     errno_t rc = -1;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
        int retPsmGet = CCSP_SUCCESS;
 
@@ -11419,7 +11419,7 @@ DNSSTRICTORDER_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, DNSSTRICTORDER_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         if ( bValue == TRUE)
         {
@@ -11474,7 +11474,7 @@ ShortsDL_GetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         char buf[8];
 
@@ -11533,7 +11533,7 @@ ShortsDL_SetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         if (syscfg_set(NULL, "ShortsDL", bValue ? "true" : "false") != 0)
         {
@@ -11596,7 +11596,7 @@ SSIDPSWDCTRL_GetParamBoolValue
 
     /* check the parameter name and return the corresponding value */
 
-    if( AnscEqualString(ParamName, "SnmpEnable", TRUE))
+    if (strcmp(ParamName, "SnmpEnable") == 0)
     {
         /* collect value */
         /* CID: 54616 Array compared against 0*/
@@ -11609,7 +11609,7 @@ SSIDPSWDCTRL_GetParamBoolValue
         }
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "Tr069Enable", TRUE))
+    if (strcmp(ParamName, "Tr069Enable") == 0)
     {
         /* collect value */
         syscfg_get( NULL, "TR069PSWDCTRLFLAG", buf, sizeof(buf));
@@ -11669,7 +11669,7 @@ SSIDPSWDCTRL_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, SSIDPSWDCTRL_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "SnmpEnable", TRUE))
+    if (strcmp(ParamName, "SnmpEnable") == 0)
     {
         /* collect value */
         if( bValue == TRUE)
@@ -11684,7 +11684,7 @@ SSIDPSWDCTRL_SetParamBoolValue
         }
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "Tr069Enable", TRUE))
+    if (strcmp(ParamName, "Tr069Enable") == 0)
     {
         /* collect value */
         if( bValue == TRUE)
@@ -11741,7 +11741,7 @@ AutoExcluded_SetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         if (syscfg_set(NULL, "AutoExcludedEnabled", bValue ? "true" : "false") != 0)
         {
@@ -11803,7 +11803,7 @@ AutoExcluded_GetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         char buf[8];
 
@@ -11856,7 +11856,7 @@ AutoExcluded_GetParamStringValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
     /* Required for xPC sync */
-    if( AnscEqualString(ParamName, "XconfUrl", TRUE))
+    if (strcmp(ParamName, "XconfUrl") == 0)
     {
         /* collect value */
         char buf[64];
@@ -11912,7 +11912,7 @@ BOOL
 {
     UNREFERENCED_PARAMETER(hInsContext);
     /* Required for xPC sync */
-    if( AnscEqualString(ParamName, "XconfUrl", TRUE))
+    if (strcmp(ParamName, "XconfUrl") == 0)
     {
         if (syscfg_set(NULL, "AutoExcludedURL", pString) != 0)
         {
@@ -11975,7 +11975,7 @@ PeriodicFWCheck_GetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and return the corresponding value */
 
-	if( AnscEqualString(ParamName, "Enable", TRUE))
+	if (strcmp(ParamName, "Enable") == 0)
 		{
 			/* collect value */
 			char buf[8];
@@ -12036,7 +12036,7 @@ PeriodicFWCheck_SetParamBoolValue
 	    if (IsBoolSame(hInsContext, ParamName, bValue, PeriodicFWCheck_GetParamBoolValue))
 	        return TRUE;
 
- 	    if( AnscEqualString(ParamName, "Enable", TRUE))
+ 	    if (strcmp(ParamName, "Enable") == 0)
 		{
 			/* collect value */
 			if( bValue == TRUE)
@@ -12101,7 +12101,7 @@ AllowOpenPorts_GetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and return the corresponding value */
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
         {
             /* collect value */
             char buf[8];
@@ -12163,7 +12163,7 @@ AllowOpenPorts_SetParamBoolValue
         if (IsBoolSame(hInsContext, ParamName, bValue, AllowOpenPorts_GetParamBoolValue))
             return TRUE;
 
-        if( AnscEqualString(ParamName, "Enable", TRUE))
+        if (strcmp(ParamName, "Enable") == 0)
         {
             /* collect value */
             syscfg_set(NULL, "RFCAllowOpenPorts", (bValue == TRUE ? "true": "false"));
@@ -12229,7 +12229,7 @@ BOOL*                       pBool
 )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         FILE *file = NULL;  
         if((file = fopen("/nvram/rbus_support","r"))!=NULL)
@@ -12287,7 +12287,7 @@ BOOL                        bValue
 {
     if (IsBoolSame(hInsContext, ParamName, bValue, RBUS_GetParamBoolValue))
         return TRUE;
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         if (bValue == 0)
         {
@@ -12356,7 +12356,7 @@ ULONG*                      pUlSize
         UNREFERENCED_PARAMETER(hInsContext);
         errno_t   rc = -1;
         int ret;
-        if( AnscEqualString(ParamName, "Status", TRUE) )
+        if (strcmp(ParamName, "Status") == 0)
         {
             FILE *file1 = fopen("/nvram/rbus_support","r");
             FILE *file2 = fopen("/nvram/rbus_support_on_pending","r");
@@ -12490,7 +12490,7 @@ SNMP_GetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "V3Support", TRUE))
+    if (strcmp(ParamName, "V3Support") == 0)
     {
         char value[8];
         /*CID: 72231 Array compared against 0*/
@@ -12505,7 +12505,7 @@ SNMP_GetParamBoolValue
 
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "V2Support", TRUE))
+    if (strcmp(ParamName, "V2Support") == 0)
     {
         char value[8];
         /*CID:72231 Array compared against 0*/
@@ -12520,7 +12520,7 @@ SNMP_GetParamBoolValue
 
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "RestartMaintenanceEnable", TRUE))
+    if (strcmp(ParamName, "RestartMaintenanceEnable") == 0)
     {
         char value[8] = { 0 };
         /* CID: 72231 Array compared against 0*/
@@ -12579,7 +12579,7 @@ SNMP_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, SNMP_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "V3Support", TRUE))
+    if (strcmp(ParamName, "V3Support") == 0)
     {
         if ( bValue == TRUE)
         {
@@ -12592,7 +12592,7 @@ SNMP_SetParamBoolValue
         syscfg_commit();
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "V2Support", TRUE))
+    if (strcmp(ParamName, "V2Support") == 0)
     {
         if ( bValue == TRUE)
         {
@@ -12605,7 +12605,7 @@ SNMP_SetParamBoolValue
         syscfg_commit();
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "RestartMaintenanceEnable", TRUE))
+    if (strcmp(ParamName, "RestartMaintenanceEnable") == 0)
     {
         if ( bValue == TRUE)
         {
@@ -12663,7 +12663,7 @@ TDK_GetParamBoolValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         char value[8];
         syscfg_get(NULL,"TDKEnable",value, sizeof(value));
@@ -12719,7 +12719,7 @@ TDK_SetParamBoolValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         if ( bValue == TRUE)
         {
@@ -12796,7 +12796,7 @@ WANLinkHeal_GetParamBoolValue
     )
 {
   UNREFERENCED_PARAMETER(hInsContext);
-  if( AnscEqualString(ParamName, "Enable", TRUE))
+  if (strcmp(ParamName, "Enable") == 0)
     {
       char value[8];
 
@@ -12857,7 +12857,7 @@ WANLinkHeal_SetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
 	if (syscfg_set(NULL, "wanlinkheal", bValue ? "true" : "false") != 0)
 	{
@@ -12920,7 +12920,7 @@ IPv6subPrefix_GetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and return the corresponding value */
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
         {
             /* collect value */
             char buf[8];
@@ -12982,7 +12982,7 @@ IPv6subPrefix_SetParamBoolValue
         if (IsBoolSame(hInsContext, ParamName, bValue, IPv6subPrefix_GetParamBoolValue))
             return TRUE;
 
-        if( AnscEqualString(ParamName, "Enable", TRUE))
+        if (strcmp(ParamName, "Enable") == 0)
         {
             /* collect value */
             syscfg_set(NULL, "IPv6subPrefix", (bValue == TRUE ? "true": "false"));
@@ -13036,7 +13036,7 @@ IPv6onLnF_GetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and return the corresponding value */
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
         {
             /* collect value */
             char buf[128];
@@ -13108,7 +13108,7 @@ WebUI_GetParamUlongValue
     UNREFERENCED_PARAMETER(hInsContext);
     char buf[8] = {0};
 
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         syscfg_get( NULL, "WebUIEnable", buf, sizeof(buf));
         if( 0 == strlen(buf) )
@@ -13166,7 +13166,7 @@ WebUI_SetParamUlongValue
 
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
 	char buf[8]={0};
@@ -13234,7 +13234,7 @@ WiFiInterworking_GetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
 	/* Collect Value */
 	char *strValue = NULL;
@@ -13294,7 +13294,7 @@ WiFiInterworking_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, WiFiInterworking_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
 	int retPsmGet = CCSP_SUCCESS;
 	errno_t rc = -1;
@@ -13416,7 +13416,7 @@ WiFiPasspoint_GetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
 	/* Collect Value */
 	char *strValue = NULL;
@@ -13475,7 +13475,7 @@ WiFiPasspoint_SetParamBoolValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
 	int retPsmGet = CCSP_SUCCESS;
 	errno_t rc = -1;
@@ -13582,7 +13582,7 @@ WiFiPsmDb_GetParamBoolValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
 //#if defined(FEATURE_SUPPORT_WIFIDB)
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
 	/* Collect Value */
 	char *strValue = NULL;
@@ -13648,7 +13648,7 @@ WiFiPsmDb_SetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
 #if defined(FEATURE_SUPPORT_WIFIDB)
     int   ret   = 0;
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
 	char str[2];
 	int retPsmGet = CCSP_SUCCESS;
@@ -13714,7 +13714,7 @@ RadiusGreyList_GetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* Collect Value */
         char *strValue = NULL;
@@ -13772,7 +13772,7 @@ RadiusGreyList_SetParamBoolValue
          CcspTraceError(("[%s] set RadiusGreyListEnable [%s]\n",__FUNCTION__, (bValue ? "TRUE" : "FALSE")))
 	return TRUE;
     }
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         return CosaDmlSetRadiusGreyListEnable(bValue);
     }
@@ -13824,7 +13824,7 @@ IPv6onLnF_SetParamBoolValue
         if (IsBoolSame(hInsContext, ParamName, bValue, IPv6onLnF_GetParamBoolValue))
             return TRUE;
 
-        if( AnscEqualString(ParamName, "Enable", TRUE))
+        if (strcmp(ParamName, "Enable") == 0)
         {
      	    char buf[128], OutBuff[128];
 	    char Inf_name[32];
@@ -13952,7 +13952,7 @@ IPv6onXHS_GetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and return the corresponding value */
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
         {
             /* collect value */
             char buf[128];
@@ -14029,7 +14029,7 @@ IPv6onXHS_SetParamBoolValue
  if (IsBoolSame(hInsContext, ParamName, bValue, IPv6onXHS_GetParamBoolValue))
         return TRUE;
 
- if( AnscEqualString(ParamName, "Enable", TRUE))
+ if (strcmp(ParamName, "Enable") == 0)
         {
      	    char buf[128], OutBuff[128];
 	    char *Inf_name = NULL;
@@ -14156,7 +14156,7 @@ IPv6onPOD_GetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and return the corresponding value */
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
         {
             /* collect value */
             char buf[128];
@@ -14234,7 +14234,7 @@ IPv6onPOD_SetParamBoolValue
  if (IsBoolSame(hInsContext, ParamName, bValue, IPv6onPOD_GetParamBoolValue))
         return TRUE;
 
- if( AnscEqualString(ParamName, "Enable", TRUE))
+ if (strcmp(ParamName, "Enable") == 0)
         {
      	    char buf[128], OutBuff[128];
 			char *Inf_name = NULL;
@@ -14359,7 +14359,7 @@ IPv6onMoCA_GetParamBoolValue
 	    UNREFERENCED_PARAMETER(hInsContext);
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
         {			
 		/* collect value */
 		char buf[128];
@@ -14422,7 +14422,7 @@ IPv6onMoCA_SetParamBoolValue
     }
 
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         char buf[128], OutBuff[128];
         char *Inf_name = NULL;
@@ -14569,7 +14569,7 @@ EvoStream_DirectConnect_GetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and return the corresponding value */
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
         {
             /* collect value */
             char buf[8];
@@ -14629,7 +14629,7 @@ EvoStream_DirectConnect_SetParamBoolValue
         if (IsBoolSame(hInsContext, ParamName, bValue, EvoStream_DirectConnect_GetParamBoolValue))
             return TRUE;
 
-        if( AnscEqualString(ParamName, "Enable", TRUE))
+        if (strcmp(ParamName, "Enable") == 0)
         {
             /* collect value */
             if(syscfg_set(NULL, "EvoStreamDirectConnect", (bValue == TRUE ? "true": "false")) != 0)
@@ -14695,7 +14695,7 @@ Xconf_GetParamBoolValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
 
-	if( AnscEqualString(ParamName, "xconfCheckNow", TRUE))
+	if (strcmp(ParamName, "xconfCheckNow") == 0)
 	{
 		*pBool = FALSE;
 		return TRUE;
@@ -14744,7 +14744,7 @@ RDKFirmwareUpgrader_GetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         char buf[8];
 
@@ -14802,7 +14802,7 @@ RDKFirmwareUpgrader_SetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         if (syscfg_set(NULL, "RDKFirmwareUpgraderEnabled", bValue ? "true" : "false") != 0)
         {
@@ -14868,7 +14868,7 @@ Xconf_SetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     int status = 0;
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "xconfCheckNow", TRUE))
+    if (strcmp(ParamName, "xconfCheckNow") == 0)
     {
         AnscTraceWarning(("Triggering firmware download check from TR181\n"));
         if( TRUE == bValue )
@@ -15014,13 +15014,13 @@ ReverseSSH_GetParamStringValue
     errno_t  rc = -1;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "xOpsReverseSshArgs", TRUE))
+    if (strcmp(ParamName, "xOpsReverseSshArgs") == 0)
     {
         getXOpsReverseSshArgs(NULL, pValue,pulSize);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "xOpsReverseSshStatus", TRUE))
+    if (strcmp(ParamName, "xOpsReverseSshStatus") == 0)
     {
         if (isRevSshActive()) {
             rc = strcpy_s(pValue, *pulSize, activeStr);
@@ -15042,7 +15042,7 @@ ReverseSSH_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "xOpsReverseSshTrigger", TRUE))
+    if (strcmp(ParamName, "xOpsReverseSshTrigger") == 0)
     {
          rc = strcpy_s(pValue, *pulSize, "");
          if(rc != EOK)
@@ -15100,13 +15100,13 @@ ReverseSSH_SetParamStringValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "xOpsReverseSshArgs", TRUE))
+    if (strcmp(ParamName, "xOpsReverseSshArgs") == 0)
     {
         setXOpsReverseSshArgs(pString);
         return TRUE ;
     }
 
-    if( AnscEqualString(ParamName, "xOpsReverseSshTrigger", TRUE)) {
+    if (strcmp(ParamName, "xOpsReverseSshTrigger") == 0) {
         setXOpsReverseSshTrigger(pString);
         return TRUE ;
 
@@ -15179,7 +15179,7 @@ EthernetWAN_GetParamStringValue
     UNREFERENCED_PARAMETER(pUlSize);
     errno_t     rc = -1;
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "CurrentOperationalMode", TRUE))
+    if (strcmp(ParamName, "CurrentOperationalMode") == 0)
     {
         /* collect value */
         char buf[32];
@@ -15286,7 +15286,7 @@ EthernetWAN_MACsec_GetParamStringValue
     UNREFERENCED_PARAMETER(hInsContext);
     errno_t  rc = -1;
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "OperationalStatus", TRUE))
+    if (strcmp(ParamName, "OperationalStatus") == 0)
     {
         BOOL flag;
 
@@ -15371,7 +15371,7 @@ MaintenanceWindow_GetParamStringValue
     BOOL bReturnValue = FALSE;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "FirmwareUpgradeStartTime", TRUE))
+    if (strcmp(ParamName, "FirmwareUpgradeStartTime") == 0)
     {
         /* collect value */
         bReturnValue = CosaDmlDiGetFirmwareUpgradeStartTime(NULL, pValue,pulSize);
@@ -15379,7 +15379,7 @@ MaintenanceWindow_GetParamStringValue
     }
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "FirmwareUpgradeEndTime", TRUE))
+    if (strcmp(ParamName, "FirmwareUpgradeEndTime") == 0)
     {
         /* collect value */
         bReturnValue = CosaDmlDiGetFirmwareUpgradeEndTime (NULL, pValue,pulSize);
@@ -15435,13 +15435,13 @@ MaintenanceWindow_SetParamStringValue
     ANSC_STATUS retValue = ANSC_STATUS_FAILURE;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "FirmwareUpgradeStartTime", TRUE))
+    if (strcmp(ParamName, "FirmwareUpgradeStartTime") == 0)
     {
         retValue = CosaDmlDiSetFirmwareUpgradeStartTime (pString);
     }
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "FirmwareUpgradeEndTime", TRUE))
+    if (strcmp(ParamName, "FirmwareUpgradeEndTime") == 0)
     {
         retValue = CosaDmlDiSetFirmwareUpgradeEndTime (pString);
     }
@@ -15503,7 +15503,7 @@ CredDwnld_SetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         if(syscfg_set(NULL, "CredDwnld_Enable", bValue ? "true" : "false") != 0 )
@@ -15574,7 +15574,7 @@ CredDwnld_GetParamBoolValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         char buf[8];
         /* collect value */
@@ -15644,7 +15644,7 @@ CredDwnld_GetParamStringValue
     UNREFERENCED_PARAMETER(hInsContext);
     errno_t   rc  = -1;
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Use", TRUE))
+    if (strcmp(ParamName, "Use") == 0)
     {
         char buf[MAX_USE_LEN];
 
@@ -15708,7 +15708,7 @@ CredDwnld_SetParamStringValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Use", TRUE))
+    if (strcmp(ParamName, "Use") == 0)
     {
         if (syscfg_set(NULL, "CredDwnld_Use", pString) != 0)
         {
@@ -15797,7 +15797,7 @@ ForwardSSH_GetParamBoolValue
     char buf[8];
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
          /* CID: 91711 Array compared against 0*/
         if(!syscfg_get( NULL, "ForwardSSH", buf, sizeof(buf)))
@@ -15861,7 +15861,7 @@ ForwardSSH_SetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         if( bValue == TRUE)
@@ -15923,14 +15923,14 @@ Logging_GetParamBoolValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "xOpsDMRetrieveConfigLogNow", TRUE))
+    if (strcmp(ParamName, "xOpsDMRetrieveConfigLogNow") == 0)
     {
         /* collect value */
 		*pBool=FALSE;
 		return TRUE;
         
     }
-	if( AnscEqualString(ParamName, "xOpsDMUploadLogsNow", TRUE))
+	if (strcmp(ParamName, "xOpsDMUploadLogsNow") == 0)
     {
         /* collect value */
 		*pBool=FALSE;
@@ -15983,7 +15983,7 @@ Logging_SetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
 	BOOL bReturnValue;
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "xOpsDMRetrieveConfigLogNow", TRUE))
+    if (strcmp(ParamName, "xOpsDMRetrieveConfigLogNow") == 0)
     {
 		if( TRUE == bValue )
 		{
@@ -15993,7 +15993,7 @@ Logging_SetParamBoolValue
 
     	return TRUE;
 	}
-	else if( AnscEqualString(ParamName, "xOpsDMUploadLogsNow", TRUE))
+	else if (strcmp(ParamName, "xOpsDMUploadLogsNow") == 0)
 	{
 		bReturnValue = COSADmlUploadLogsNow((ANSC_HANDLE)NULL, bValue);
 		if( !bReturnValue )
@@ -16015,7 +16015,7 @@ Logging_GetParamStringValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "xOpsDMLogsUploadStatus", TRUE))
+    if (strcmp(ParamName, "xOpsDMLogsUploadStatus") == 0)
     {
         /* collect value */
         COSADmlUploadLogsStatus(NULL, pValue,pUlSize);
@@ -16068,7 +16068,7 @@ Logging_GetParamUlongValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "DmesgLogSyncInterval", TRUE))
+    if (strcmp(ParamName, "DmesgLogSyncInterval") == 0)
     {
         /* collect value */
 	 char buf[8];
@@ -16124,7 +16124,7 @@ Logging_SetParamUlongValue
     UNREFERENCED_PARAMETER(hInsContext);
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "DmesgLogSyncInterval", TRUE))
+    if (strcmp(ParamName, "DmesgLogSyncInterval") == 0)
     {
         /* collect value */
 		char buf[12];
@@ -16192,7 +16192,7 @@ SwitchToDibbler_GetParamBoolValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
 	/* This Get API is only for XB3,AXB6 devices */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         char buf[8];
@@ -16391,7 +16391,7 @@ CDLDM_GetParamStringValue
     UNREFERENCED_PARAMETER(hInsContext);
     errno_t   rc = -1;
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "CDLModuleUrl", TRUE))
+    if (strcmp(ParamName, "CDLModuleUrl") == 0)
     {
         /* collect value */
            char buff[255];
@@ -16459,7 +16459,7 @@ CDLDM_SetParamStringValue
         return TRUE;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "CDLModuleUrl", TRUE))
+    if (strcmp(ParamName, "CDLModuleUrl") == 0)
     {
            if (syscfg_set(NULL, "CDLModuleUrl", pString) != 0)
            {
@@ -16544,7 +16544,7 @@ Syndication_GetParamStringValue
     PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
     errno_t      rc  = -1;
 
-    if( AnscEqualString(ParamName, "PartnerId", TRUE))
+    if (strcmp(ParamName, "PartnerId") == 0)
     {
         /* collect value */
         //CosaDmlDiGetSyndicationPartnerId(NULL, pValue,pulSize);
@@ -16558,7 +16558,7 @@ Syndication_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "TR69CertLocation", TRUE))
+    if (strcmp(ParamName, "TR69CertLocation") == 0)
     {
         /* collect value */
         CosaDmlDiGetSyndicationTR69CertLocation( hInsContext, pMyObject->TR69CertLocation.ActiveValue );
@@ -16572,25 +16572,25 @@ Syndication_GetParamStringValue
 
         return 0;
     }
-    if( AnscEqualString(ParamName, "LocalUIBrandingTable", TRUE))
+    if (strcmp(ParamName, "LocalUIBrandingTable") == 0)
     {
         /* collect value */
         CosaDmlDiGetSyndicationLocalUIBrandingTable(NULL, pValue,pulSize);
         return 0;
     }
-    if( AnscEqualString(ParamName, "WifiUIBrandingTable", TRUE))
+    if (strcmp(ParamName, "WifiUIBrandingTable") == 0)
     {
         /* collect value */
         CosaDmlDiGetSyndicationWifiUIBrandingTable(NULL, pValue,pulSize);
         return 0;
     }
-    if( AnscEqualString(ParamName, "PauseScreenFileLocation", TRUE))
+    if (strcmp(ParamName, "PauseScreenFileLocation") == 0)
     {
         /* collect value */
         return  update_pValue(pValue,pulSize, pMyObject->UiBrand.PauseScreenFileLocation.ActiveValue);
      }
 #if defined(_COSA_BCM_ARM_) && !defined(_CBR_PRODUCT_REQ_)
-    if( AnscEqualString(ParamName, "CMVoiceImageSelect", TRUE))
+    if (strcmp(ParamName, "CMVoiceImageSelect") == 0)
     {
 	char buf[64];
 
@@ -16832,7 +16832,7 @@ SwitchToUDHCPC_GetParamBoolValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
 	/* This Get API is only for XB3,AXB6 devices */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         char buf[8];
@@ -17086,7 +17086,7 @@ WANsideSSH_GetParamBoolValue
         PCOSA_DATAMODEL_DEVICEINFO              pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 
 
-        if( AnscEqualString(ParamName, "Enable", TRUE))
+        if (strcmp(ParamName, "Enable") == 0)
         {
 		*pBool = pMyObject->bWANsideSSHEnable.ActiveValue;
                 return TRUE;
@@ -17108,7 +17108,7 @@ WANsideSSH_SetParamBoolValue
    UNREFERENCED_PARAMETER(hInsContext);
    PCOSA_DATAMODEL_DEVICEINFO              pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 
-   if( AnscEqualString(ParamName, "Enable", TRUE) )
+   if (strcmp(ParamName, "Enable") == 0)
    {
         char * requestorStr = getRequestorString();
         char * currentTime = getTime();
@@ -17167,12 +17167,12 @@ RDKB_Control_GetParamBoolValue
     UNREFERENCED_PARAMETER(pBool);
     /* check the parameter name and return the corresponding value */
 
-	if( AnscEqualString(ParamName, "ActivatePartnerId", TRUE))
+	if (strcmp(ParamName, "ActivatePartnerId") == 0)
 	{
 		return TRUE;
 	}
 
-	if( AnscEqualString(ParamName, "ClearPartnerId", TRUE))
+	if (strcmp(ParamName, "ClearPartnerId") == 0)
 	{
 		return TRUE;
 	}
@@ -17193,7 +17193,7 @@ RDKB_Control_SetParamBoolValue
     pthread_t tid ; 
     ANSC_STATUS 				   retValue  = ANSC_STATUS_FAILURE;
 
-   if( AnscEqualString(ParamName, "ActivatePartnerId", TRUE) )
+   if (strcmp(ParamName, "ActivatePartnerId") == 0)
     {
 	if ( bValue )
 	{
@@ -17205,7 +17205,7 @@ RDKB_Control_SetParamBoolValue
 	}
     }
 
-    if( AnscEqualString(ParamName, "ClearPartnerId", TRUE) )
+    if (strcmp(ParamName, "ClearPartnerId") == 0)
     {
 	if ( bValue )
 	{
@@ -17240,7 +17240,7 @@ RDKB_UIBranding_GetParamBoolValue
 	PCOSA_DATAMODEL_DEVICEINFO		pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 	PCOSA_DATAMODEL_RDKB_UIBRANDING	pBindObj =	& pMyObject->UiBrand;
 
-        if( AnscEqualString(ParamName, "AllowEthernetWAN", TRUE))
+        if (strcmp(ParamName, "AllowEthernetWAN") == 0)
         {
 		 /* collect value */
 		*pBool = pBindObj->AllowEthernetWAN.ActiveValue;
@@ -17264,15 +17264,15 @@ RDKB_UIBranding_GetParamStringValue
 	PCOSA_DATAMODEL_DEVICEINFO		pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 	PCOSA_DATAMODEL_RDKB_UIBRANDING	pBindObj =	& pMyObject->UiBrand;
 	
-	if( AnscEqualString(ParamName, "DefaultLocalIPv4SubnetRange", TRUE))
+	if (strcmp(ParamName, "DefaultLocalIPv4SubnetRange") == 0)
         {
             return  update_pValue(pValue,pulSize, pBindObj->DefaultLocalIPv4SubnetRange.ActiveValue);
         }
-	if( AnscEqualString(ParamName, "DefaultLanguage", TRUE))
+	if (strcmp(ParamName, "DefaultLanguage") == 0)
         {
             return  update_pValue(pValue,pulSize, pBindObj->DefaultLanguage.ActiveValue);
         }
-	if( AnscEqualString(ParamName, "DefaultAdminIP", TRUE))
+	if (strcmp(ParamName, "DefaultAdminIP") == 0)
         {
             return  update_pValue(pValue,pulSize, pBindObj->DefaultAdminIP.ActiveValue);
 
@@ -17372,33 +17372,33 @@ Footer_GetParamStringValue
 	PCOSA_DATAMODEL_DEVICEINFO		pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 	PCOSA_DATAMODEL_RDKB_UIBRANDING	pBindObj =	& pMyObject->UiBrand;
 
-	if( AnscEqualString(ParamName, "PartnerLink", TRUE))
+	if (strcmp(ParamName, "PartnerLink") == 0)
 	{
 		/* collect value */
 	    return  update_pValue(pValue,pulSize, pBindObj->Footer.PartnerLink.ActiveValue);
 	}
 
-	if( AnscEqualString(ParamName, "UserGuideLink", TRUE))
+	if (strcmp(ParamName, "UserGuideLink") == 0)
 	{
 		return  update_pValue(pValue,pulSize, pBindObj->Footer.UserGuideLink.ActiveValue);
 	}
 	
-	if( AnscEqualString(ParamName, "CustomerCentralLink", TRUE))
+	if (strcmp(ParamName, "CustomerCentralLink") == 0)
 	{
 	    return  update_pValue(pValue,pulSize, pBindObj->Footer.CustomerCentralLink.ActiveValue);
 	}
 
-	if( AnscEqualString(ParamName, "PartnerText", TRUE))
+	if (strcmp(ParamName, "PartnerText") == 0)
 	{
 	    return  update_pValue(pValue,pulSize, pBindObj->Footer.PartnerText.ActiveValue);
 	}
 
-	if( AnscEqualString(ParamName, "UserGuideText", TRUE))
+	if (strcmp(ParamName, "UserGuideText") == 0)
 	{
 	    return  update_pValue(pValue,pulSize, pBindObj->Footer.UserGuideText.ActiveValue);
 	}
 
-	if( AnscEqualString(ParamName, "CustomerCentralText", TRUE))
+	if (strcmp(ParamName, "CustomerCentralText") == 0)
 	{
 	    return  update_pValue(pValue,pulSize, pBindObj->Footer.CustomerCentralText.ActiveValue);
 	}
@@ -17670,22 +17670,22 @@ Connection_GetParamStringValue
 	PCOSA_DATAMODEL_DEVICEINFO		pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 	PCOSA_DATAMODEL_RDKB_UIBRANDING	pBindObj =	& pMyObject->UiBrand;
 
-	if( AnscEqualString(ParamName, "MSOmenu", TRUE))
+	if (strcmp(ParamName, "MSOmenu") == 0)
 	{
 	    return  update_pValue(pValue,pulSize, pBindObj->Connection.MSOmenu.ActiveValue);
 	}
 
-	if( AnscEqualString(ParamName, "MSOinfo", TRUE))
+	if (strcmp(ParamName, "MSOinfo") == 0)
 	{
 	    return  update_pValue(pValue,pulSize, pBindObj->Connection.MSOinfo.ActiveValue);
 	}
 	
-	if( AnscEqualString(ParamName, "StatusTitle", TRUE))
+	if (strcmp(ParamName, "StatusTitle") == 0)
 	{
 	    return  update_pValue(pValue,pulSize, pBindObj->Connection.StatusTitle.ActiveValue);
 	}
 	
-	if( AnscEqualString(ParamName, "StatusInfo", TRUE))
+	if (strcmp(ParamName, "StatusInfo") == 0)
 	{
 	    return  update_pValue(pValue,pulSize, pBindObj->Connection.StatusInfo.ActiveValue);
 	}
@@ -17882,7 +17882,7 @@ NetworkDiagnosticTools_GetParamStringValue
 	PCOSA_DATAMODEL_DEVICEINFO		pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 	PCOSA_DATAMODEL_RDKB_UIBRANDING	pBindObj =	& pMyObject->UiBrand;
 
-	if( AnscEqualString(ParamName, "ConnectivityTestURL", TRUE))
+	if (strcmp(ParamName, "ConnectivityTestURL") == 0)
 	{
 	    return  update_pValue(pValue,pulSize, pBindObj->NDiagTool.ConnectivityTestURL.ActiveValue);
 	}
@@ -17983,14 +17983,14 @@ WiFiPersonalization_GetParamBoolValue
 	PCOSA_DATAMODEL_DEVICEINFO		pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 	PCOSA_DATAMODEL_RDKB_UIBRANDING	pBindObj =	& pMyObject->UiBrand;
 
-        if( AnscEqualString(ParamName, "Support", TRUE))
+        if (strcmp(ParamName, "Support") == 0)
         {
 		 /* collect value */
 		*pBool = pBindObj->WifiPersonal.Support.ActiveValue;
 		return TRUE;
         }    
 
-	if( AnscEqualString(ParamName, "SMSsupport", TRUE))
+	if (strcmp(ParamName, "SMSsupport") == 0)
         {
 		/* collect value */
 		*pBool = pBindObj->WifiPersonal.SMSsupport.ActiveValue;
@@ -17998,7 +17998,7 @@ WiFiPersonalization_GetParamBoolValue
 
         }
 	
-        if( AnscEqualString(ParamName, "MyAccountAppSupport", TRUE))
+        if (strcmp(ParamName, "MyAccountAppSupport") == 0)
 	{
 		/* collect value */
 		*pBool = pBindObj->WifiPersonal.MyAccountAppSupport.ActiveValue;
@@ -18030,7 +18030,7 @@ WiFiPersonalization_SetParamBoolValue
 
    if((CCSP_SUCCESS == getPartnerId(PartnerID) ) && ( PartnerID[ 0 ] != '\0'))
    {
-	    if( AnscEqualString(ParamName, "Support", TRUE))
+	    if (strcmp(ParamName, "Support") == 0)
 	    {
                         IS_UPDATE_ALLOWED_IN_JSON(ParamName, requestorStr, pBindObj->WifiPersonal.Support.UpdateSource);
 
@@ -18049,7 +18049,7 @@ WiFiPersonalization_SetParamBoolValue
 
 	    }
 
-	    if( AnscEqualString(ParamName, "SMSsupport", TRUE))
+	    if (strcmp(ParamName, "SMSsupport") == 0)
 	    {
                         IS_UPDATE_ALLOWED_IN_JSON(ParamName, requestorStr, pBindObj->WifiPersonal.SMSsupport.UpdateSource);
 
@@ -18068,7 +18068,7 @@ WiFiPersonalization_SetParamBoolValue
 			
 	    }
 		
-	    if( AnscEqualString(ParamName, "MyAccountAppSupport", TRUE))
+	    if (strcmp(ParamName, "MyAccountAppSupport") == 0)
 	    {
                         IS_UPDATE_ALLOWED_IN_JSON(ParamName, requestorStr, pBindObj->WifiPersonal.MyAccountAppSupport.UpdateSource);
 
@@ -18104,26 +18104,26 @@ WiFiPersonalization_GetParamStringValue
 	PCOSA_DATAMODEL_DEVICEINFO		pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 	PCOSA_DATAMODEL_RDKB_UIBRANDING	pBindObj =	& pMyObject->UiBrand;
 	
-	 if( AnscEqualString(ParamName, "PartnerHelpLink", TRUE))
+	 if (strcmp(ParamName, "PartnerHelpLink") == 0)
         {
 	        return  update_pValue(pValue,pulSize, pBindObj->WifiPersonal.PartnerHelpLink.ActiveValue);
         } 
-	if( AnscEqualString(ParamName, "MSOLogo", TRUE))
+	if (strcmp(ParamName, "MSOLogo") == 0)
         {
 	        return  update_pValue(pValue,pulSize, pBindObj->WifiPersonal.MSOLogo.ActiveValue);
 
         } 
-	if( AnscEqualString(ParamName, "Title", TRUE))
+	if (strcmp(ParamName, "Title") == 0)
         {
 	        return  update_pValue(pValue,pulSize, pBindObj->WifiPersonal.Title.ActiveValue);
 
         } 
-	if( AnscEqualString(ParamName, "WelcomeMessage", TRUE))
+	if (strcmp(ParamName, "WelcomeMessage") == 0)
         {
 	        return  update_pValue(pValue,pulSize, pBindObj->WifiPersonal.WelcomeMessage.ActiveValue);
 
         } 
-	if( AnscEqualString(ParamName, "WelcomeMessage_fre", TRUE))
+	if (strcmp(ParamName, "WelcomeMessage_fre") == 0)
         {
 	        return  update_pValue(pValue,pulSize, pBindObj->WifiPersonal.WelcomeMessage_fre.ActiveValue);
 
@@ -18226,21 +18226,21 @@ LocalUI_GetParamStringValue
 	PCOSA_DATAMODEL_DEVICEINFO		pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 	PCOSA_DATAMODEL_RDKB_UIBRANDING	pBindObj =	& pMyObject->UiBrand;
 	
-	 if( AnscEqualString(ParamName, "MSOLogo", TRUE))
+	 if (strcmp(ParamName, "MSOLogo") == 0)
         {
 	        return  update_pValue(pValue,pulSize, pBindObj->LocalUI.MSOLogo.ActiveValue);
 
         } 
-	if( AnscEqualString(ParamName, "DefaultLoginUsername", TRUE))
+	if (strcmp(ParamName, "DefaultLoginUsername") == 0)
         {
 	        return  update_pValue(pValue,pulSize, pBindObj->LocalUI.DefaultLoginUsername.ActiveValue);
         } 
-	if( AnscEqualString(ParamName, "DefaultLoginPassword", TRUE))
+	if (strcmp(ParamName, "DefaultLoginPassword") == 0)
         {
 	        return  update_pValue(pValue,pulSize, pBindObj->LocalUI.DefaultLoginPassword.ActiveValue);
 
         } 
-	if( AnscEqualString(ParamName, "MSOLogoTitle", TRUE))
+	if (strcmp(ParamName, "MSOLogoTitle") == 0)
         {
 	        return  update_pValue(pValue,pulSize, pBindObj->LocalUI.MSOLogoTitle.ActiveValue);
 
@@ -18278,7 +18278,7 @@ LocalUI_GetParamBoolValue
 	PCOSA_DATAMODEL_DEVICEINFO		pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 	PCOSA_DATAMODEL_RDKB_UIBRANDING	pBindObj =	& pMyObject->UiBrand;
 
-        if( AnscEqualString(ParamName, "HomeNetworkControl", TRUE))
+        if (strcmp(ParamName, "HomeNetworkControl") == 0)
         {
 		 /* collect value */
 		*pBool = pBindObj->LocalUI.HomeNetworkControl.ActiveValue;
@@ -18324,7 +18324,7 @@ HelpTip_GetParamStringValue
 	PCOSA_DATAMODEL_DEVICEINFO		pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 	PCOSA_DATAMODEL_RDKB_UIBRANDING	pBindObj =	& pMyObject->UiBrand;
 	
-	 if( AnscEqualString(ParamName, "NetworkName", TRUE))
+	 if (strcmp(ParamName, "NetworkName") == 0)
         {
 	        return  update_pValue(pValue,pulSize, pBindObj->HelpTip.NetworkName.ActiveValue);
         } 
@@ -18368,17 +18368,17 @@ CloudUI_GetParamStringValue
     PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
     PCOSA_DATAMODEL_RDKB_UIBRANDING pBindObj =  & pMyObject->UiBrand;
 
-    if( AnscEqualString(ParamName, "brandname", TRUE))
+    if (strcmp(ParamName, "brandname") == 0)
     {
         return  update_pValue(pValue,pulSize, pBindObj->CloudUI.brandname.ActiveValue);
     }
 
-    if( AnscEqualString(ParamName, "productname", TRUE))
+    if (strcmp(ParamName, "productname") == 0)
     {
         return  update_pValue(pValue,pulSize, pBindObj->CloudUI.productname.ActiveValue);
     }
 
-    if( AnscEqualString(ParamName, "link", TRUE))
+    if (strcmp(ParamName, "link") == 0)
     {
         return  update_pValue(pValue,pulSize, pBindObj->CloudUI.link.ActiveValue);
     }
@@ -18579,14 +18579,14 @@ RPC_GetParamUlongValue
     /* check the parameter name and return the corresponding value */
 #ifndef FEATURE_FWUPGRADE_MANAGER
     PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
-    if( AnscEqualString(ParamName, "DeferFWDownloadReboot", TRUE))
+    if (strcmp(ParamName, "DeferFWDownloadReboot") == 0)
     {
         /* collect value */
         *puLong = pMyObject->DeferFWDownloadReboot;
         return TRUE;
     }	
 #endif    
-    if( AnscEqualString(ParamName, "RebootPendingNotification", TRUE))
+    if (strcmp(ParamName, "RebootPendingNotification") == 0)
     {
         /* collect value */
         *puLong = 0;
@@ -18639,14 +18639,14 @@ RPC_SetParamUlongValue
     /* check the parameter name and set the corresponding value */
 #ifndef FEATURE_FWUPGRADE_MANAGER
     PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
-    if( AnscEqualString(ParamName, "DeferFWDownloadReboot", TRUE))
+    if (strcmp(ParamName, "DeferFWDownloadReboot") == 0)
     {
         /* collect value */
 		CosaDmlDiSet_DeferFWDownloadReboot(&(pMyObject->DeferFWDownloadReboot),uValue);
 		return TRUE;
     } 
 #endif    
-    if( AnscEqualString(ParamName, "RebootPendingNotification", TRUE))
+    if (strcmp(ParamName, "RebootPendingNotification") == 0)
     {
         /* collect value */
         char buff[64] = {0};
@@ -18715,7 +18715,7 @@ RPC_GetParamStringValue
     PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
     errno_t  rc  = -1;
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "RebootDevice", TRUE) )
+    if (strcmp(ParamName, "RebootDevice") == 0)
     {
         /* collect value */
         rc = strcpy_s(pValue, *pulSize, "");
@@ -18727,7 +18727,7 @@ RPC_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "FirmwareDownloadStartedNotification", TRUE))
+    if (strcmp(ParamName, "FirmwareDownloadStartedNotification") == 0)
     {
 	/* collect value */
 	rc = strcpy_s( pValue, *pulSize, pMyObject->FirmwareDownloadStartedNotification);
@@ -18740,7 +18740,7 @@ RPC_GetParamStringValue
 	return 0;
     }
 
-    if( AnscEqualString(ParamName, "DeviceManageableNotification", TRUE))
+    if (strcmp(ParamName, "DeviceManageableNotification") == 0)
     {
 	/* collect value */
 	rc = strcpy_s( pValue, *pulSize, pMyObject->DeviceManageableNotification);
@@ -18965,14 +18965,14 @@ RPC_GetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 
-    if( AnscEqualString(ParamName, "AbortReboot", TRUE))
+    if (strcmp(ParamName, "AbortReboot") == 0)
     {
         /*CcspTraceWarning(("supported parameter '%s'\n", ParamName));*/
         *pBool = pMyObject->AbortReboot;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FirmwareDownloadCompletedNotification", TRUE))
+    if (strcmp(ParamName, "FirmwareDownloadCompletedNotification") == 0)
     {
 	/*CcspTraceWarning(("supported parameter '%s'\n", ParamName));*/
 	*pBool = pMyObject->FirmwareDownloadCompletedNotification;
@@ -19022,7 +19022,7 @@ RPC_SetParamBoolValue
    UNREFERENCED_PARAMETER(hInsContext);
    PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 
-   if( AnscEqualString(ParamName, "AbortReboot", TRUE))
+   if (strcmp(ParamName, "AbortReboot") == 0)
    {
        {
            AnscTraceWarning(("Triggering abortReboot from TR181\n"));
@@ -19069,7 +19069,7 @@ RPC_SetParamBoolValue
        return FALSE;
    } 
 
-	if( AnscEqualString(ParamName, "FirmwareDownloadCompletedNotification", TRUE))
+	if (strcmp(ParamName, "FirmwareDownloadCompletedNotification") == 0)
 	{
 		char notifyEnable[64];
 		memset(notifyEnable, 0, sizeof(notifyEnable));
@@ -19140,7 +19140,7 @@ BLE_GetParamBoolValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
     char buf[8];
-    if( AnscEqualString(ParamName, "Discovery", TRUE))
+    if (strcmp(ParamName, "Discovery") == 0)
     {
         /* collect value */
         /* CID: 59124 Array compared against 0*/
@@ -19203,7 +19203,7 @@ BLE_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, BLE_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "Discovery", TRUE))
+    if (strcmp(ParamName, "Discovery") == 0)
     {
         /* collect value */
         if( bValue == TRUE)
@@ -19237,7 +19237,7 @@ PeriodicBeacon_GetParamBoolValue
     CcspTraceInfo(("PeriodicBeacon_GetParamBoolValue \n"));
     UNREFERENCED_PARAMETER(hInsContext);
     char buf[8];
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         syscfg_get( NULL, "BLEPeriodicBeacon", buf, sizeof(buf));
@@ -19272,7 +19272,7 @@ PeriodicBeacon_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, PeriodicBeacon_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         if( bValue == TRUE)
@@ -19308,7 +19308,7 @@ PeriodicBeacon_GetParamUlongValue
     UNREFERENCED_PARAMETER(hInsContext);
     char buf[8] = {0};
 
-    if( AnscEqualString(ParamName, "frequency", TRUE) )
+    if (strcmp(ParamName, "frequency") == 0)
     {
         syscfg_get( NULL, "BLEPeriodicBeaconFrequency", buf, sizeof(buf));
         if( 0 == strlen(buf) )
@@ -19343,7 +19343,7 @@ PeriodicBeacon_SetParamUlongValue
 	 UNREFERENCED_PARAMETER(hInsContext);
          pthread_t tid;
 
- 	if( AnscEqualString(ParamName, "frequency", TRUE))
+ 	if (strcmp(ParamName, "frequency") == 0)
 	{
 		char buf[8] = {'\0'};
 		snprintf(buf,sizeof(buf),"%lu",uValue);
@@ -19409,7 +19409,7 @@ Tile_GetParamStringValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
     errno_t  rc  = -1;
-    if( AnscEqualString(ParamName, "ReportingURL", TRUE))
+    if (strcmp(ParamName, "ReportingURL") == 0)
     {
         /* collect value */
         char buf[256]="";
@@ -19471,7 +19471,7 @@ Tile_SetParamStringValue
  )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "ReportingURL", TRUE))
+    if (strcmp(ParamName, "ReportingURL") == 0)
     {
         if (syscfg_set(NULL, "TileReportingURL", pString) != 0)
         {
@@ -19503,7 +19503,7 @@ Tile_SetParamIntValue
     /* check the parameter name and set the corresponding value */
     CcspTraceInfo(("Tile SetparamInt value:ReportingThrottling"));
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "ReportingInterval", TRUE))
+    if (strcmp(ParamName, "ReportingInterval") == 0)
     {
         char buf[16]={0};
         errno_t rc = -1;
@@ -19546,7 +19546,7 @@ Tile_GetParamIntValue
     /* check the parameter name and set the corresponding value */
     CcspTraceInfo(("Tile GetParamInt Value Called\n"));
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "ReportingInterval", TRUE))
+    if (strcmp(ParamName, "ReportingInterval") == 0)
     {
          /* collect value */
           char buf[10];
@@ -19573,7 +19573,7 @@ xBlueTooth_GetParamBoolValue
     )
 {
           UNREFERENCED_PARAMETER(hInsContext);
-          if( AnscEqualString(ParamName, "LimitBeaconDetection", TRUE))
+          if (strcmp(ParamName, "LimitBeaconDetection") == 0)
           {
                char buf[8] = {0};
                *pBool = FALSE;
@@ -19611,7 +19611,7 @@ xBlueTooth_SetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
      CcspTraceInfo(("xBlueTooth_SetParamBoolValue \n"));
      pthread_t tid;
-    if( AnscEqualString(ParamName, "LimitBeaconDetection", TRUE))
+    if (strcmp(ParamName, "LimitBeaconDetection") == 0)
     {
         if(syscfg_set(NULL, "limit_beacon_detection", bValue ? "true" : "false"))
         {
@@ -19838,7 +19838,7 @@ Cmd_SetParamStringValue
     UNREFERENCED_PARAMETER(hInsContext);
     char *cmd =  NULL;
     int index;
-    if( AnscEqualString(ParamName, "Request", TRUE))
+    if (strcmp(ParamName, "Request") == 0)
     {
          if(!isTileDiscoveryEnabled())
          {
@@ -20142,7 +20142,7 @@ MessageBusSource_GetParamBoolValue
     )
 {
  UNREFERENCED_PARAMETER(hInsContext);
- if( AnscEqualString(ParamName, "Enable", TRUE))
+ if (strcmp(ParamName, "Enable") == 0)
     {
         char value[8] = {'\0'};
         if( syscfg_get(NULL, "MessageBusSource", value, sizeof(value)) == 0 )
@@ -20206,7 +20206,7 @@ MessageBusSource_SetParamBoolValue
   if (IsBoolSame(hInsContext, ParamName, bValue, MessageBusSource_GetParamBoolValue))
         return TRUE;
 
-  if( AnscEqualString(ParamName, "Enable", TRUE))
+  if (strcmp(ParamName, "Enable") == 0)
     {
         char buf[8] = {'\0'};
         snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
@@ -20272,7 +20272,7 @@ MTLS_GetParamBoolValue
     )
 {
  UNREFERENCED_PARAMETER(hInsContext);
- if( AnscEqualString(ParamName, "Enable", TRUE))
+ if (strcmp(ParamName, "Enable") == 0)
     {
         char value[8] = {'\0'};
         if( syscfg_get(NULL, "T2mTLSEnable", value, sizeof(value)) == 0 )
@@ -20334,7 +20334,7 @@ MTLS_SetParamBoolValue
   if (IsBoolSame(hInsContext, ParamName, bValue, MTLS_GetParamBoolValue))
         return TRUE;
 
-  if( AnscEqualString(ParamName, "Enable", TRUE))
+  if (strcmp(ParamName, "Enable") == 0)
     {
         char buf[8] = {'\0'};
         snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
@@ -20401,7 +20401,7 @@ TR104_GetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         char value[8] = {'\0'};
         if( syscfg_get(NULL, "TR104Enable", value, sizeof(value)) == 0 )
@@ -20463,7 +20463,7 @@ TR104_SetParamBoolValue
   if (IsBoolSame(hInsContext, ParamName, bValue, TR104_GetParamBoolValue))
         return TRUE;
 
-  if( AnscEqualString(ParamName, "Enable", TRUE))
+  if (strcmp(ParamName, "Enable") == 0)
     {
         char buf[8] = {'\0'};
         snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
@@ -20530,7 +20530,7 @@ UPnPRefactor_GetParamBoolValue
     )
 {
  UNREFERENCED_PARAMETER(hInsContext);
- if( AnscEqualString(ParamName, "Enable", TRUE))
+ if (strcmp(ParamName, "Enable") == 0)
     {
         char value[8] = {'\0'};
         if( syscfg_get(NULL, "Refactor", value, sizeof(value)) == 0 )
@@ -20594,7 +20594,7 @@ UPnPRefactor_SetParamBoolValue
   if (IsBoolSame(hInsContext, ParamName, bValue, UPnPRefactor_GetParamBoolValue))
         return TRUE;
 
-  if( AnscEqualString(ParamName, "Enable", TRUE))
+  if (strcmp(ParamName, "Enable") == 0)
     {
         char buf[8] = {'\0'};
         snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
@@ -20662,7 +20662,7 @@ HwHealthTestEnable_GetParamBoolValue
 {
 
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         char value[8] = {'\0'};
         if( syscfg_get(NULL, "hwHealthTest", value, sizeof(value)) == 0 )
@@ -20726,7 +20726,7 @@ HwHealthTestEnable_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, HwHealthTestEnable_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         char buf[8] = {'\0'};
         snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
@@ -20794,7 +20794,7 @@ HwHealthTest_GetParamUlongValue
     UNREFERENCED_PARAMETER(hInsContext);
     PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 
-    if( AnscEqualString(ParamName, "cpuThreshold", TRUE))
+    if (strcmp(ParamName, "cpuThreshold") == 0)
     {
         *puLong = pMyObject->HwHealtTestPTR.CPUThreshold;
         if(0 == *puLong)
@@ -20805,7 +20805,7 @@ HwHealthTest_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "dramThreshold", TRUE))
+    if (strcmp(ParamName, "dramThreshold") == 0)
     {
         *puLong = pMyObject->HwHealtTestPTR.DRAMThreshold;
         if(0 == *puLong)
@@ -20879,7 +20879,7 @@ HwHealthTest_SetParamUlongValue
 
     PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 
-    if( AnscEqualString(ParamName, "cpuThreshold", TRUE))
+    if (strcmp(ParamName, "cpuThreshold") == 0)
     {
         //Threshold value should be in range as per the requirement in COLBO-132
         if( (uLong >= 1) && ( uLong <= 95))
@@ -20898,7 +20898,7 @@ HwHealthTest_SetParamUlongValue
         }
     }
 
-    if( AnscEqualString(ParamName, "dramThreshold", TRUE))
+    if (strcmp(ParamName, "dramThreshold") == 0)
     {
         //Threshold value should be in range as per the requirement in COLBO-132
         if( uLong >= 20 )
@@ -20961,7 +20961,7 @@ HwHealthTestPTREnable_GetParamBoolValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
 
-    if( AnscEqualString(ParamName, "enable", TRUE))
+    if (strcmp(ParamName, "enable") == 0)
     {
         PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
         *pBool = pMyObject->HwHealtTestPTR.PTREnable;
@@ -21027,7 +21027,7 @@ HwHealthTestPTREnable_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, HwHealthTestPTREnable_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "enable", TRUE))
+    if (strcmp(ParamName, "enable") == 0)
     {
         PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 
@@ -21144,7 +21144,7 @@ HwHealthTestPTRFrequency_GetParamUlongValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "frequency", TRUE))
+    if (strcmp(ParamName, "frequency") == 0)
     {
         PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
         *puLong = pMyObject->HwHealtTestPTR.Frequency;
@@ -21217,7 +21217,7 @@ HwHealthTestPTRFrequency_SetParamUlongValue
     if (IsUlongSame(hInsContext, ParamName, uLong, HwHealthTestPTRFrequency_GetParamUlongValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "frequency", TRUE))
+    if (strcmp(ParamName, "frequency") == 0)
     {
         PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 
@@ -21288,7 +21288,7 @@ HwHealthTestPTRFrequency_SetParamUlongValue
 BOOL
 Telemetry_GetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName, BOOL* pBool) {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE)) {
+    if (strcmp(ParamName, "Enable") == 0) {
         char value[8] = {'\0'};
         if( syscfg_get(NULL, "T2Enable", value, sizeof(value)) == 0 ) {
 		/*CID: 60562 Array compared against 0*/
@@ -21341,7 +21341,7 @@ Telemetry_SetParamBoolValue (ANSC_HANDLE hInsContext, char* ParamName, BOOL bVal
     if (IsBoolSame(hInsContext, ParamName, bValue, Telemetry_GetParamBoolValue))
         return TRUE;
 
-    if (AnscEqualString(ParamName, "Enable", TRUE)) {
+    if (strcmp(ParamName, "Enable") == 0) {
         char buf[8] = { '\0' };
         char versionBuf[8] = { '\0' };
         snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
@@ -21411,7 +21411,7 @@ Telemetry_GetParamStringValue (ANSC_HANDLE hInsContext, char* ParamName, char* p
     UNREFERENCED_PARAMETER(pUlSize);
     errno_t   rc  = -1;
     /* Required for xPC sync */
-    if (AnscEqualString(ParamName, "ConfigURL", TRUE)) {
+    if (strcmp(ParamName, "ConfigURL") == 0) {
         /* collect value */
         char buf[128] = {'\0'};
         /* CID: 68487 Array compared against 0*/
@@ -21429,7 +21429,7 @@ Telemetry_GetParamStringValue (ANSC_HANDLE hInsContext, char* ParamName, char* p
         return -1;
     }
 
-    if (AnscEqualString(ParamName, "Version", TRUE)) {
+    if (strcmp(ParamName, "Version") == 0) {
         /* collect value */
         char buf[MAX_T2_VER_LEN] = {'\0'};
         /* CID: 68487 Array compared against 0*/
@@ -21485,7 +21485,7 @@ Telemetry_SetParamStringValue (ANSC_HANDLE hInsContext, char* ParamName, char* p
     if (IsStringSame(hInsContext, ParamName, pString, Telemetry_GetParamStringValue))
         return TRUE;
 
-    if (AnscEqualString(ParamName, "ConfigURL", TRUE)) {
+    if (strcmp(ParamName, "ConfigURL") == 0) {
         if (syscfg_set(NULL, "T2ConfigURL", pString) != 0) {
             CcspTraceError(("syscfg_set failed\n"));
 
@@ -21497,7 +21497,7 @@ Telemetry_SetParamStringValue (ANSC_HANDLE hInsContext, char* ParamName, char* p
         }
     }
 
-    if(AnscEqualString(ParamName, "Version", TRUE)) {
+    if (strcmp(ParamName, "Version") == 0) {
 
         if ((strncmp(pString, "2", MAX_T2_VER_LEN) == 0) || (strncmp(pString, "2.0.1", MAX_T2_VER_LEN) == 0)) {
             if (syscfg_set(NULL, "T2Version", pString) != 0) {
@@ -21560,7 +21560,7 @@ MocaAccountIsolation_GetParamBoolValue
 	UNREFERENCED_PARAMETER(hInsContext);
 	/*RDKB-28819 : TR-181 implementation
 	DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.MocaAccountIsolation.Enable*/
-	if( AnscEqualString(ParamName, "Enable", TRUE))
+	if (strcmp(ParamName, "Enable") == 0)
 	{
 		char value[8];
 		syscfg_get(NULL,"enableMocaAccountIsolation",value, sizeof(value));
@@ -21623,7 +21623,7 @@ MocaAccountIsolation_SetParamBoolValue
 	UNREFERENCED_PARAMETER(hInsContext);
 	/*RDKB-28819 : TR-181 implementation
 	DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.MocaAccountIsolation.Enable*/
-	if( AnscEqualString(ParamName, "Enable", TRUE))
+	if (strcmp(ParamName, "Enable") == 0)
 	{
 		if ( bValue == TRUE )
 		{
@@ -21694,7 +21694,7 @@ CaptivePortalForNoCableRF_GetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
- if( AnscEqualString(ParamName, "Enable", TRUE))
+ if (strcmp(ParamName, "Enable") == 0)
     {
 	 char value[8];
          /* CID: 92210 Array compared against 0*/
@@ -21755,7 +21755,7 @@ CaptivePortalForNoCableRF_SetParamBoolValue
 {
   UNREFERENCED_PARAMETER(hInsContext);
 
-  if( AnscEqualString(ParamName, "Enable", TRUE))
+  if (strcmp(ParamName, "Enable") == 0)
     {
 	  if ( bValue == TRUE )
 	  {
@@ -21825,7 +21825,7 @@ SecureWebUI_GetParamBoolValue
 
 	/* check the parameter name and return the corresponding value */
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         /* CID: 68633 Array compared against 0*/
@@ -21884,7 +21884,7 @@ SecureWebUI_SetParamBoolValue
  )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         if( bValue == TRUE)
@@ -21958,7 +21958,7 @@ ULONG
     UNREFERENCED_PARAMETER(pUlSize);
     errno_t  rc = -1;
     /* Required for xPC sync */
-    if( AnscEqualString(ParamName, "LocalFqdn", TRUE))
+    if (strcmp(ParamName, "LocalFqdn") == 0)
     {
         /* collect value */
         char buf[64];
@@ -22017,7 +22017,7 @@ BOOL
  )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "LocalFqdn", TRUE))
+    if (strcmp(ParamName, "LocalFqdn") == 0)
     {
         if (syscfg_set(NULL, "SecureWebUI_LocalFqdn", pString) != 0)
         {
@@ -22119,7 +22119,7 @@ UseXPKI_SetParamBoolValue
  )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         if (syscfg_set(NULL, "UseXPKI_Enable", (bValue==FALSE)?"false":"true") != 0) {
@@ -22216,7 +22216,7 @@ mTlsLogUpload_SetParamBoolValue
  )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         if (syscfg_set(NULL, "mTlsLogUpload_Enable", (bValue==FALSE)?"false":"true") != 0) {
@@ -22274,7 +22274,7 @@ BOOL
 XHFW_GetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName, BOOL* pBool)
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         char value[8] = {'\0'};
         if( syscfg_get(NULL, "XHFW_Enable", value, sizeof(value)) == 0 )
@@ -22328,7 +22328,7 @@ XHFW_SetParamBoolValue (ANSC_HANDLE hInsContext, char* ParamName, BOOL bValue)
     UNREFERENCED_PARAMETER(hInsContext);
     BOOL result = FALSE;
 
-    if (AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         char buf[8] = { '\0' };
         snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
@@ -22392,7 +22392,7 @@ NonRootSupport_GetParamStringValue
   size_t len = 0;
   ssize_t read = 0;
   /* check the parameter name and return the corresponding value */
-  if( AnscEqualString( ParamName, "ApparmorBlocklist", TRUE) )
+  if (strcmp(ParamName, "ApparmorBlocklist") == 0)
   {
       fp = fopen(APPARMOR_BLOCKLIST_FILE,"r");
       if(fp != NULL) {
@@ -22411,7 +22411,7 @@ NonRootSupport_GetParamStringValue
       }
   }
   //Blocklist RFC
-  if( AnscEqualString( ParamName, "Blocklist", TRUE) )
+  if (strcmp(ParamName, "Blocklist") == 0)
   {
       fp = fopen(BLOCKLIST_FILE,"r");
       if(fp!=NULL) {
@@ -22510,7 +22510,7 @@ NonRootSupport_SetParamStringValue
   char *sub_string = NULL;
   char *sp = NULL;
   char tmp[SIZE] = {0};
-  if( AnscEqualString( ParamName, "ApparmorBlocklist", TRUE) )
+  if (strcmp(ParamName, "ApparmorBlocklist") == 0)
   {
      fptr = fopen(APPARMOR_BLOCKLIST_FILE,"r");
      tmp_fptr = fopen(TMP_FILE,"w+");
@@ -22549,7 +22549,7 @@ NonRootSupport_SetParamStringValue
   }
 
   //Blocklist RFC
-  if( AnscEqualString(ParamName, "Blocklist", TRUE))
+  if (strcmp(ParamName, "Blocklist") == 0)
   {
       char buf[MAX_SIZE] = {'\0'};
       snprintf(buf,sizeof(buf),"%s",pValue);
@@ -22964,7 +22964,7 @@ AutoReboot_GetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);  
     PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         CcspTraceInfo(("[%s :] AutoReboot Getparam Enable value\n",__FUNCTION__));
         *pBool = pMyObject->AutoReboot.Enable;
@@ -23015,7 +23015,7 @@ AutoReboot_SetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     PCOSA_DATAMODEL_DEVICEINFO  pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         if( pMyObject->AutoReboot.Enable == bValue)
         {
@@ -23072,7 +23072,7 @@ AutoReboot_SetParamIntValue
     /* check the parameter name and set the corresponding value */    
     PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 
-    if( AnscEqualString(ParamName, "UpTime", TRUE))
+    if (strcmp(ParamName, "UpTime") == 0)
     {
         CcspTraceInfo(("[%s:] AutoReboot Set uptime \n", __FUNCTION__ ));
         if((1 > iValue || iValue > 30))
@@ -23137,7 +23137,7 @@ AutoReboot_GetParamIntValue
     const int DEFAULT_UPTIME = 10;
     PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 
-    if( AnscEqualString(ParamName, "UpTime", TRUE))
+    if (strcmp(ParamName, "UpTime") == 0)
     {
         *iValue = pMyObject->AutoReboot.UpTime;
         if( (1 > *iValue || *iValue > 30) )
@@ -23197,7 +23197,7 @@ EnableOCSPStapling_GetParamBoolValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         char buf[8];
         /* collect value */
@@ -23213,7 +23213,7 @@ EnableOCSPStapling_GetParamBoolValue
         return TRUE;                
     }
 
-    if( AnscEqualString(ParamName, "DirectOCSP", TRUE))
+    if (strcmp(ParamName, "DirectOCSP") == 0)
     {
         char buf1[8];
         /* collect value */
@@ -23274,7 +23274,7 @@ EnableOCSPStapling_SetParamBoolValue
  )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
 
         char buf[8];
@@ -23299,7 +23299,7 @@ EnableOCSPStapling_SetParamBoolValue
         }
     }
 
-    if( AnscEqualString(ParamName, "DirectOCSP", TRUE))
+    if (strcmp(ParamName, "DirectOCSP") == 0)
     {
 
         char buf1[8];
@@ -23388,7 +23388,7 @@ SelfHeal_GetParamUlongValue
     UNREFERENCED_PARAMETER(hInsContext);
     char buf[8] = {0};
 
-    if( AnscEqualString(ParamName, "AggressiveInterval", TRUE) )
+    if (strcmp(ParamName, "AggressiveInterval") == 0)
     {
         syscfg_get( NULL, ParamName, buf, sizeof(buf));
         if( 0 == strlen(buf) )
@@ -23440,7 +23440,7 @@ SelfHeal_SetParamUlongValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
 
-    if (AnscEqualString(ParamName, "AggressiveInterval", TRUE))
+    if (strcmp(ParamName, "AggressiveInterval") == 0)
     {
         char buf[16];
 
@@ -23547,7 +23547,7 @@ LANCfgSec_GetParamStringValue
         ULONG*                      pUlSize
     )
 {
-    if ( AnscEqualString(ParamName, "ConfigPassword", TRUE) )
+    if (strcmp(ParamName, "ConfigPassword") == 0)
     {
         AnscCopyString(pValue, "");
         return 0;
@@ -23593,7 +23593,7 @@ LANCfgSec_SetParamStringValue
         char*                       pValue
     )
 {
-    if ( AnscEqualString(ParamName, "ConfigPassword", TRUE) )
+    if (strcmp(ParamName, "ConfigPassword") == 0)
     {
         /*TODO: implementation if required*/
         return TRUE;

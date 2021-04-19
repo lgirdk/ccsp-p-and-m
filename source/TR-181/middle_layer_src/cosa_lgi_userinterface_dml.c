@@ -154,7 +154,7 @@ Std_RemoteAccess_GetParamBoolValue
     /* CosaDmlRaGetCfg(NULL, &pMyObject->RaCfg); */
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         *pBool = pMyObject->StdRaCfg.bEnabled;
         return TRUE;
@@ -248,7 +248,7 @@ Std_RemoteAccess_GetParamUlongValue
 {
     PCOSA_DATAMODEL_USERINTERFACE   pMyObject = (PCOSA_DATAMODEL_USERINTERFACE)g_pCosaBEManager->hUserinterface;
 
-    if( AnscEqualString(ParamName, "Port", TRUE))
+    if (strcmp(ParamName, "Port") == 0)
     {
         *puLong = pMyObject->StdRaCfg.Port;
         return TRUE;
@@ -307,13 +307,13 @@ Std_RemoteAccess_GetParamStringValue
 {
     PCOSA_DATAMODEL_USERINTERFACE   pMyObject = (PCOSA_DATAMODEL_USERINTERFACE)g_pCosaBEManager->hUserinterface;
 
-    if( AnscEqualString(ParamName, "SupportedProtocols", TRUE))
+    if (strcmp(ParamName, "SupportedProtocols") == 0)
     {
         AnscCopyString(pValue, pMyObject->StdRaCfg.SupportedProtocols);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Protocol", TRUE))
+    if (strcmp(ParamName, "Protocol") == 0)
     {
         AnscCopyString(pValue, pMyObject->StdRaCfg.Protocol);
         return 0;
@@ -362,7 +362,7 @@ Std_RemoteAccess_SetParamBoolValue
 {
     PCOSA_DATAMODEL_USERINTERFACE   pMyObject = (PCOSA_DATAMODEL_USERINTERFACE)g_pCosaBEManager->hUserinterface;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         pMyObject->StdRaCfg.bEnabled = bValue;
         return TRUE;
@@ -455,7 +455,7 @@ Std_RemoteAccess_SetParamUlongValue
 {
    PCOSA_DATAMODEL_USERINTERFACE   pMyObject = (PCOSA_DATAMODEL_USERINTERFACE)g_pCosaBEManager->hUserinterface;
 
-    if( AnscEqualString(ParamName, "Port", TRUE))
+    if (strcmp(ParamName, "Port") == 0)
     {
         pMyObject->StdRaCfg.Port = uValue;
         return TRUE;
@@ -506,7 +506,7 @@ Std_RemoteAccess_SetParamStringValue
     PCOSA_DATAMODEL_USERINTERFACE   pMyObject = (PCOSA_DATAMODEL_USERINTERFACE)g_pCosaBEManager->hUserinterface;
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
-    if( AnscEqualString(ParamName, "Protocol", TRUE))
+    if (strcmp(ParamName, "Protocol") == 0)
     {
         if( AnscEqualString(pString, "HTTP", TRUE) || AnscEqualString(pString, "HTTPS", TRUE))
         {

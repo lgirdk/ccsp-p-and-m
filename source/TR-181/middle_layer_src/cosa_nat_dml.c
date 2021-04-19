@@ -280,7 +280,7 @@ NAT_GetParamUlongValue
     CosaDmlNatGet(NULL, pNat);
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "X_CISCO_COM_TCPTimeout", TRUE))
+    if (strcmp(ParamName, "X_CISCO_COM_TCPTimeout") == 0)
     {
         /* collect value */
         *puLong  = pNat->X_CISCO_COM_TCPTimeout;
@@ -288,7 +288,7 @@ NAT_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_UDPTimeout", TRUE))
+    if (strcmp(ParamName, "X_CISCO_COM_UDPTimeout") == 0)
     {
         /* collect value */
         *puLong  = pNat->X_CISCO_COM_UDPTimeout;
@@ -296,7 +296,7 @@ NAT_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_ICMPTimeout", TRUE))
+    if (strcmp(ParamName, "X_CISCO_COM_ICMPTimeout") == 0)
     {
         /* collect value */
         *puLong  = pNat->X_CISCO_COM_ICMPTimeout;
@@ -442,7 +442,7 @@ NAT_SetParamUlongValue
         return FALSE;
     #endif
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_TCPTimeout", TRUE))
+    if (strcmp(ParamName, "X_CISCO_COM_TCPTimeout") == 0)
     {
         /* save update to backup */
         pNat->X_CISCO_COM_TCPTimeout = uValue;
@@ -450,7 +450,7 @@ NAT_SetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_UDPTimeout", TRUE))
+    if (strcmp(ParamName, "X_CISCO_COM_UDPTimeout") == 0)
     {
         /* save update to backup */
         pNat->X_CISCO_COM_UDPTimeout = uValue;
@@ -458,7 +458,7 @@ NAT_SetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_ICMPTimeout", TRUE))
+    if (strcmp(ParamName, "X_CISCO_COM_ICMPTimeout") == 0)
     {
         /* save update to backup */
         pNat->X_CISCO_COM_ICMPTimeout = uValue;
@@ -652,7 +652,7 @@ X_CISCO_COM_DMZ_GetParamBoolValue
     PCOSA_DML_NAT_DMZ               pDmz         = &pNat->Dmz;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         *pBool = pDmz->bEnabled;
@@ -716,13 +716,13 @@ X_CISCO_COM_DMZ_GetParamStringValue
     errno_t                         rc           = -1;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Data", TRUE))
+    if (strcmp(ParamName, "Data") == 0)
     {
         CcspTraceWarning(("Data Get Not supported\n"));
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "RemoteIPStart", TRUE))
+    if (strcmp(ParamName, "RemoteIPStart") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pDmz->RemoteIPStart) < *pUlSize)
@@ -742,7 +742,7 @@ X_CISCO_COM_DMZ_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "RemoteIPEnd", TRUE))
+    if (strcmp(ParamName, "RemoteIPEnd") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pDmz->RemoteIPEnd) < *pUlSize)
@@ -762,7 +762,7 @@ X_CISCO_COM_DMZ_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "InternalIP", TRUE))
+    if (strcmp(ParamName, "InternalIP") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pDmz->InternalIP) < *pUlSize)
@@ -782,7 +782,7 @@ X_CISCO_COM_DMZ_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "InternalMAC", TRUE))
+    if (strcmp(ParamName, "InternalMAC") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pDmz->InternalMAC) < *pUlSize)
@@ -802,7 +802,7 @@ X_CISCO_COM_DMZ_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "IPv6Host", TRUE))
+    if (strcmp(ParamName, "IPv6Host") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pDmz->IPv6Host) < *pUlSize)
@@ -870,7 +870,7 @@ X_CISCO_COM_DMZ_SetParamBoolValue
     errno_t                         rc           = -1;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* save update to backup */
         pDmz->bEnabled     = bValue;
@@ -932,7 +932,7 @@ X_CISCO_COM_DMZ_SetParamStringValue
     errno_t                         rc           = -1;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Data", TRUE))
+    if (strcmp(ParamName, "Data") == 0)
      {
 	char * decodeMsg =NULL;
 	int decodeMsgSize =0;
@@ -1054,7 +1054,7 @@ X_CISCO_COM_DMZ_SetParamStringValue
     }
 
 
-    if( AnscEqualString(ParamName, "RemoteIPStart", TRUE))
+    if (strcmp(ParamName, "RemoteIPStart") == 0)
     {
         /* save update to backup */
         rc = STRCPY_S_NOCLOBBER( pDmz->RemoteIPStart, sizeof(pDmz->RemoteIPStart), pString);
@@ -1066,7 +1066,7 @@ X_CISCO_COM_DMZ_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "RemoteIPEnd", TRUE))
+    if (strcmp(ParamName, "RemoteIPEnd") == 0)
     {
         /* save update to backup */
         rc = STRCPY_S_NOCLOBBER( pDmz->RemoteIPEnd, sizeof(pDmz->RemoteIPEnd), pString );
@@ -1078,7 +1078,7 @@ X_CISCO_COM_DMZ_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "InternalIP", TRUE))
+    if (strcmp(ParamName, "InternalIP") == 0)
     {
         /* save update to backup */
         if (AnscEqualString(pString, "0.0.0.0", FALSE)){ /* keep sync between gui and snmp */
@@ -1116,7 +1116,7 @@ X_CISCO_COM_DMZ_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "InternalMAC", TRUE))
+    if (strcmp(ParamName, "InternalMAC") == 0)
     {
         /* save update to backup */
         rc = STRCPY_S_NOCLOBBER( pDmz->InternalMAC, sizeof(pDmz->InternalMAC), pString );
@@ -1128,7 +1128,7 @@ X_CISCO_COM_DMZ_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IPv6Host", TRUE))
+    if (strcmp(ParamName, "IPv6Host") == 0)
     {
         /* save update to backup */
         rc = STRCPY_S_NOCLOBBER( pDmz->IPv6Host, sizeof(pDmz->IPv6Host), pString );
@@ -1786,7 +1786,7 @@ PortMapping_GetParamBoolValue
     PCOSA_DML_NAT_PMAPPING                   pNatPMapping  = (PCOSA_DML_NAT_PMAPPING)pCxtLink->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         *pBool = pNatPMapping->bEnabled;
@@ -1794,7 +1794,7 @@ PortMapping_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AllInterfaces", TRUE))
+    if (strcmp(ParamName, "AllInterfaces") == 0)
     {
         /* collect value */
         *pBool = pNatPMapping->AllInterfaces;
@@ -1896,7 +1896,7 @@ PortMapping_GetParamUlongValue
     PCOSA_DML_NAT_PMAPPING                    pNatPMapping  = (PCOSA_DML_NAT_PMAPPING)pCxtLink->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Status", TRUE))
+    if (strcmp(ParamName, "Status") == 0)
     {
         /* collect value */
         *puLong  = pNatPMapping->Status;
@@ -1904,7 +1904,7 @@ PortMapping_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "LeaseDuration", TRUE))
+    if (strcmp(ParamName, "LeaseDuration") == 0)
     {
         /* collect value */
         *puLong  = pNatPMapping->LeaseDuration;
@@ -1912,7 +1912,7 @@ PortMapping_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "ExternalPort", TRUE))
+    if (strcmp(ParamName, "ExternalPort") == 0)
     {
         /* collect value */
         *puLong  = pNatPMapping->ExternalPort;
@@ -1920,7 +1920,7 @@ PortMapping_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "ExternalPortEndRange", TRUE))
+    if (strcmp(ParamName, "ExternalPortEndRange") == 0)
     {
         /* collect value */
         *puLong  = pNatPMapping->ExternalPortEndRange;
@@ -1928,7 +1928,7 @@ PortMapping_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "InternalPort", TRUE))
+    if (strcmp(ParamName, "InternalPort") == 0)
     {
         /* collect value */
         *puLong  = pNatPMapping->InternalPort;
@@ -1936,14 +1936,14 @@ PortMapping_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_RDKCENTRAL_InternalPortEndRange", TRUE))
+    if (strcmp(ParamName, "X_RDKCENTRAL_InternalPortEndRange") == 0)
     {
         /* collect value */
         *puLong  = pNatPMapping->X_RDKCENTRAL_InternalPortEndRange;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Protocol", TRUE))
+    if (strcmp(ParamName, "Protocol") == 0)
     {
         /* collect value */
         *puLong  = pNatPMapping->Protocol;
@@ -1951,7 +1951,7 @@ PortMapping_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "InternalClient", TRUE))
+    if (strcmp(ParamName, "InternalClient") == 0)
     {
         /* collect value */
         *puLong = pNatPMapping->InternalClient.Value;
@@ -1959,7 +1959,7 @@ PortMapping_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "RemoteHost", TRUE))
+    if (strcmp(ParamName, "RemoteHost") == 0)
     {
         /* collect value */
         *puLong = pNatPMapping->RemoteHost.Value;
@@ -1972,7 +1972,7 @@ PortMapping_GetParamUlongValue
         return  TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_Origin", TRUE))
+    if (strcmp(ParamName, "X_CISCO_COM_Origin") == 0)
     {
         /* collect value */
         *puLong = pNatPMapping->X_CISCO_COM_Origin;
@@ -2039,7 +2039,7 @@ PortMapping_GetParamStringValue
     /* check the parameter name and return the corresponding value */
     
 
-    if( AnscEqualString(ParamName, "Alias", TRUE))
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pNatPMapping->Alias) < *pUlSize)
@@ -2059,7 +2059,7 @@ PortMapping_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "Description", TRUE))
+    if (strcmp(ParamName, "Description") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pNatPMapping->Description) < *pUlSize)
@@ -2080,7 +2080,7 @@ PortMapping_GetParamStringValue
 
     }
 
-    if( AnscEqualString(ParamName, "Interface", TRUE))
+    if (strcmp(ParamName, "Interface") == 0)
     {
         /* collect value */
         pString = CosaUtilGetFullPathNameByKeyword
@@ -2118,7 +2118,7 @@ PortMapping_GetParamStringValue
 
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_InternalClientV6", TRUE))
+    if (strcmp(ParamName, "X_CISCO_COM_InternalClientV6") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pNatPMapping->X_CISCO_COM_InternalClientV6) < *pUlSize)
@@ -2138,7 +2138,7 @@ PortMapping_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "X_RDKCENTRAL_RuleSource", TRUE))
+    if (strcmp(ParamName, "X_RDKCENTRAL_RuleSource") == 0)
     {
         AnscCopyString(pValue, pNatPMapping->X_RDKCENTRAL_RuleSource);
         return 0;
@@ -2197,7 +2197,7 @@ PortMapping_SetParamBoolValue
     #endif
     
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* save update to backup */
         pNatPMapping->bEnabled     = bValue;
@@ -2205,7 +2205,7 @@ PortMapping_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AllInterfaces", TRUE))
+    if (strcmp(ParamName, "AllInterfaces") == 0)
     {
         /* save update to backup */
         pNatPMapping->AllInterfaces = bValue;
@@ -2325,7 +2325,7 @@ PortMapping_SetParamUlongValue
     #endif
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "LeaseDuration", TRUE))
+    if (strcmp(ParamName, "LeaseDuration") == 0)
     {
         /* save update to backup */
         /* pNatPMapping->LeaseDuration = uValue; */
@@ -2339,7 +2339,7 @@ PortMapping_SetParamUlongValue
         return FALSE;
     }
 
-    if( AnscEqualString(ParamName, "ExternalPort", TRUE))
+    if (strcmp(ParamName, "ExternalPort") == 0)
     {
         /* save update to backup */
         pNatPMapping->ExternalPort = (USHORT)uValue;
@@ -2347,7 +2347,7 @@ PortMapping_SetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "ExternalPortEndRange", TRUE))
+    if (strcmp(ParamName, "ExternalPortEndRange") == 0)
     {
         /* save update to backup */
 
@@ -2356,7 +2356,7 @@ PortMapping_SetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "InternalPort", TRUE))
+    if (strcmp(ParamName, "InternalPort") == 0)
     {
         /* save update to backup */
         if ( uValue != 0 )
@@ -2367,7 +2367,7 @@ PortMapping_SetParamUlongValue
         return FALSE;
     }
 
-    if( AnscEqualString(ParamName, "X_RDKCENTRAL_InternalPortEndRange", TRUE))
+    if (strcmp(ParamName, "X_RDKCENTRAL_InternalPortEndRange") == 0)
     {
        /* save update to backup */
        if ( uValue != 0 )
@@ -2378,7 +2378,7 @@ PortMapping_SetParamUlongValue
        return FALSE;
     }
 
-    if( AnscEqualString(ParamName, "Protocol", TRUE))
+    if (strcmp(ParamName, "Protocol") == 0)
     {
         /* save update to backup */
         pNatPMapping->Protocol = (UCHAR)uValue;
@@ -2386,7 +2386,7 @@ PortMapping_SetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "InternalClient", TRUE))
+    if (strcmp(ParamName, "InternalClient") == 0)
     {
         /* save update to backup */
         pNatPMapping->InternalClient.Value = uValue;
@@ -2394,7 +2394,7 @@ PortMapping_SetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "RemoteHost", TRUE))
+    if (strcmp(ParamName, "RemoteHost") == 0)
     {
         /* save update to backup */
         pNatPMapping->RemoteHost.Value = uValue;
@@ -2464,7 +2464,7 @@ PortMapping_SetParamStringValue
 
     /* check the parameter name and set the corresponding value */
 
-    if( AnscEqualString(ParamName, "Alias", TRUE))
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* save update to backup */
         rc = STRCPY_S_NOCLOBBER( (char*)pNat->AliasOfPortMapping, sizeof(pNat->AliasOfPortMapping),pNatPMapping->Alias);
@@ -2482,7 +2482,7 @@ PortMapping_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Description", TRUE))
+    if (strcmp(ParamName, "Description") == 0)
     {
         /* save update to backup */
         rc = STRCPY_S_NOCLOBBER( pNatPMapping->Description, sizeof(pNatPMapping->Description), pString );
@@ -2494,7 +2494,7 @@ PortMapping_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Interface", TRUE))
+    if (strcmp(ParamName, "Interface") == 0)
     {
         /* save update to backup */
         rc = STRCPY_S_NOCLOBBER( pNatPMapping->Interface, sizeof(pNatPMapping->Interface), pString );
@@ -2506,7 +2506,7 @@ PortMapping_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_InternalClientV6", TRUE))
+    if (strcmp(ParamName, "X_CISCO_COM_InternalClientV6") == 0)
     {
         /* save update to backup */
         rc = STRCPY_S_NOCLOBBER( pNatPMapping->X_CISCO_COM_InternalClientV6, sizeof(pNatPMapping->X_CISCO_COM_InternalClientV6), pString );
@@ -2518,7 +2518,7 @@ PortMapping_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_RDKCENTRAL_RuleSource", TRUE))
+    if (strcmp(ParamName, "X_RDKCENTRAL_RuleSource") == 0)
     {
         AnscCopyString( pNatPMapping->X_RDKCENTRAL_RuleSource, pString );
         return TRUE;
@@ -2777,7 +2777,7 @@ NatPortTrigger_GetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         if (CosaDmlNatGetPortTriggerEnable(pBool) != ANSC_STATUS_SUCCESS)
             return FALSE;
@@ -2804,7 +2804,7 @@ NatPortTrigger_SetParamBoolValue
         return FALSE;
     #endif
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         if (CosaDmlNatSetPortTriggerEnable(bValue) != ANSC_STATUS_SUCCESS)
             return FALSE;
@@ -2829,7 +2829,7 @@ X_RDK_PortMapping_GetParamStringValue
     UNREFERENCED_PARAMETER(hInsContext);
     UNREFERENCED_PARAMETER(pValue);
     UNREFERENCED_PARAMETER(pUlSize);
-	if( AnscEqualString(ParamName, "Data", TRUE))
+	if (strcmp(ParamName, "Data") == 0)
 	{
 		CcspTraceWarning(("Data Get Not supported\n"));
 		return 0;
@@ -2878,7 +2878,7 @@ X_RDK_PortMapping_SetParamStringValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Data", TRUE))
+    if (strcmp(ParamName, "Data") == 0)
      {
 	char * decodeMsg =NULL;
 	int decodeMsgSize =0;
@@ -3317,7 +3317,7 @@ PortTrigger_GetParamBoolValue
     PCOSA_DML_NAT_PTRIGGER          pNatPTrigger  = (PCOSA_DML_NAT_PTRIGGER   )pCxtLink->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* Considering there is a global variable for port trigger. It may disable all entries.
            Here Enable will be get from backend */
@@ -3394,7 +3394,7 @@ PortTrigger_GetParamUlongValue
     PCOSA_DML_NAT_PTRIGGER           pNatPTrigger  = (PCOSA_DML_NAT_PTRIGGER   )pCxtLink->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "TriggerProtocol", TRUE))
+    if (strcmp(ParamName, "TriggerProtocol") == 0)
     {
         /* collect value */
         *puLong  = pNatPTrigger->TriggerProtocol;
@@ -3402,7 +3402,7 @@ PortTrigger_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "TriggerPortStart", TRUE))
+    if (strcmp(ParamName, "TriggerPortStart") == 0)
     {
         /* collect value */
         *puLong  = pNatPTrigger->TriggerPortStart;
@@ -3410,7 +3410,7 @@ PortTrigger_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "TriggerPortEnd", TRUE))
+    if (strcmp(ParamName, "TriggerPortEnd") == 0)
     {
         /* collect value */
         *puLong  = pNatPTrigger->TriggerPortEnd;
@@ -3418,7 +3418,7 @@ PortTrigger_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "ForwardProtocol", TRUE))
+    if (strcmp(ParamName, "ForwardProtocol") == 0)
     {
         /* collect value */
         *puLong  = pNatPTrigger->ForwardProtocol;
@@ -3426,7 +3426,7 @@ PortTrigger_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "ForwardPortStart", TRUE))
+    if (strcmp(ParamName, "ForwardPortStart") == 0)
     {
         /* collect value */
         *puLong  = pNatPTrigger->ForwardPortStart;
@@ -3434,7 +3434,7 @@ PortTrigger_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "ForwardPortEnd", TRUE))
+    if (strcmp(ParamName, "ForwardPortEnd") == 0)
     {
         /* collect value */
         *puLong = pNatPTrigger->ForwardPortEnd;
@@ -3499,7 +3499,7 @@ PortTrigger_GetParamStringValue
     errno_t                         rc            = -1;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE))
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pNatPTrigger->Alias) < *pUlSize)
@@ -3519,7 +3519,7 @@ PortTrigger_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "Description", TRUE))
+    if (strcmp(ParamName, "Description") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pNatPTrigger->Description) < *pUlSize)
@@ -3594,7 +3594,7 @@ PortTrigger_SetParamBoolValue
     #endif
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* save update to backup */
         pNatPTrigger->bEnabled     = bValue;
@@ -3668,42 +3668,42 @@ PortTrigger_SetParamUlongValue
     }
 
 #else
-    if( AnscEqualString(ParamName, "TriggerProtocol", TRUE))
+    if (strcmp(ParamName, "TriggerProtocol") == 0)
     {
         pNatPTrigger->TriggerProtocol = uValue;
 
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "ForwardProtocol", TRUE))
+    if (strcmp(ParamName, "ForwardProtocol") == 0)
     {
         pNatPTrigger->ForwardProtocol = uValue;
 
         return TRUE;
     }
 #endif
-    if( AnscEqualString(ParamName, "TriggerPortStart", TRUE))
+    if (strcmp(ParamName, "TriggerPortStart") == 0)
     {
         pNatPTrigger->TriggerPortStart = (USHORT)uValue;
 
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "TriggerPortEnd", TRUE))
+    if (strcmp(ParamName, "TriggerPortEnd") == 0)
     {
         pNatPTrigger->TriggerPortEnd = (USHORT)uValue;
 
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "ForwardPortStart", TRUE))
+    if (strcmp(ParamName, "ForwardPortStart") == 0)
     {
         pNatPTrigger->ForwardPortStart = (USHORT)uValue;
 
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "ForwardPortEnd", TRUE))
+    if (strcmp(ParamName, "ForwardPortEnd") == 0)
     {
         pNatPTrigger->ForwardPortEnd = (USHORT)uValue;
 
@@ -3765,7 +3765,7 @@ PortTrigger_SetParamStringValue
     #endif
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE))
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* save update to backup */
 
@@ -3785,7 +3785,7 @@ PortTrigger_SetParamStringValue
 
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "Description", TRUE))
+    if (strcmp(ParamName, "Description") == 0)
     {
         /* Needs to copy required size of the parameter */
         rc = strcpy_s(pNatPTrigger->Description, sizeof(pNatPTrigger->Description), pString);
@@ -4178,7 +4178,7 @@ NATPassthrough_GetParamBoolValue
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_NATPASS          *pNATPassthrough  = (COSA_DML_NATPASS*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         *pBool = pNATPassthrough->Enable;
         return TRUE;
@@ -4198,22 +4198,22 @@ NATPassthrough_GetParamStringValue
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_NATPASS            *pNATPassthrough  = (COSA_DML_NATPASS*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "Status", TRUE))
+    if (strcmp(ParamName, "Status") == 0)
     {
         AnscCopyString(pValue, pNATPassthrough->Status);
         return 0;
     }
-    if (AnscEqualString(ParamName, "MACAddr", TRUE))
+    if (strcmp(ParamName, "MACAddr") == 0)
     {
         AnscCopyString(pValue, pNATPassthrough->MACAddress);
         return 0;
     }
-    if (AnscEqualString(ParamName, "MACMask", TRUE))
+    if (strcmp(ParamName, "MACMask") == 0)
     {
         AnscCopyString(pValue, pNATPassthrough->MACMask);
         return 0;
     }
-    if (AnscEqualString(ParamName, "Alias", TRUE))
+    if (strcmp(ParamName, "Alias") == 0)
     {
         AnscCopyString(pValue, pNATPassthrough->Alias);
         return 0;
@@ -4232,7 +4232,7 @@ NATPassthrough_SetParamBoolValue
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_NATPASS          *pNATPassthrough  = (COSA_DML_NATPASS*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         pNATPassthrough->Enable = pBool;
         _ansc_snprintf(pNATPassthrough->Status, sizeof(pNATPassthrough->Status), "%s", ((pBool) ? "Enabled" : "Disabled"));
@@ -4251,17 +4251,17 @@ NATPassthrough_SetParamStringValue
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_NATPASS           *pNATPassthrough     = (COSA_DML_NATPASS*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "MACAddr", TRUE))
+    if (strcmp(ParamName, "MACAddr") == 0)
     {
         _ansc_snprintf(pNATPassthrough->MACAddress, sizeof(pNATPassthrough->MACAddress), "%s", strValue);
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "MACMask", TRUE))
+    if (strcmp(ParamName, "MACMask") == 0)
     {
         _ansc_snprintf(pNATPassthrough->MACMask, sizeof(pNATPassthrough->MACMask), "%s", strValue);
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "Alias", TRUE))
+    if (strcmp(ParamName, "Alias") == 0)
     {
         _ansc_snprintf(pNATPassthrough->Alias, sizeof(pNATPassthrough->Alias), "%s", strValue);
         return TRUE;

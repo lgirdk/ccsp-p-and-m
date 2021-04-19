@@ -50,12 +50,12 @@ LgiGateway_GetParamUlongValue
     PCOSA_DATAMODEL_LGI_GATEWAY  pMyObject = (PCOSA_DATAMODEL_LGI_GATEWAY)g_pCosaBEManager->hLgiGateway;
     
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "IPv6LANMode", TRUE))
+    if (strcmp(ParamName, "IPv6LANMode") == 0)
     {
         CosaDmlLgiGwGetIpv6LanMode(NULL, puLong);
         retValue = TRUE;
     }
-    else if (AnscEqualString(ParamName, "ErouterModeControl", TRUE)){
+    else if (strcmp(ParamName, "ErouterModeControl") == 0){
         if (CosaDml_Gateway_GetErouterInitMode(&pMyObject->ErouterInitMode) == ANSC_STATUS_SUCCESS)
         {
             *puLong = pMyObject->ErouterInitMode;
@@ -63,7 +63,7 @@ LgiGateway_GetParamUlongValue
         }
     }
 
-    else if (AnscEqualString(ParamName, "IPv6LeaseTimeRemaining", TRUE))
+    else if (strcmp(ParamName, "IPv6LeaseTimeRemaining") == 0)
     {
         CosaDml_Gateway_GetIPv6LeaseTimeRemaining(puLong);
         retValue = TRUE;
@@ -83,12 +83,12 @@ LgiGateway_SetParamUlongValue
     PCOSA_DATAMODEL_LGI_GATEWAY  pMyObject = (PCOSA_DATAMODEL_LGI_GATEWAY)g_pCosaBEManager->hLgiGateway;
     BOOL retValue = FALSE;
     
-    if( AnscEqualString(ParamName, "IPv6LANMode", TRUE))
+    if (strcmp(ParamName, "IPv6LANMode") == 0)
     {
         pMyObject->ipv6LanMode = uValuepUlong;
         retValue = TRUE;
     }
-    else if (AnscEqualString(ParamName, "ErouterModeControl", TRUE)){
+    else if (strcmp(ParamName, "ErouterModeControl") == 0){
         pMyObject->ErouterInitMode = uValuepUlong;
         retValue = TRUE;
     }
@@ -107,19 +107,19 @@ LgiGateway_GetParamStringValue
 {
     ULONG retVal = -1;
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "DNS_IPv4Preferred", TRUE))
+    if (strcmp(ParamName, "DNS_IPv4Preferred") == 0)
     {
         retVal = (ULONG) CosaDmlLgiGwGetDnsIpv4Preferred(pValue, pUlSize);
     }
-    else if( AnscEqualString(ParamName, "DNS_IPv4Alternate", TRUE))
+    else if (strcmp(ParamName, "DNS_IPv4Alternate") == 0)
     {
         retVal =  (ULONG) CosaDmlLgiGwGetDnsIpv4Alternate(pValue, pUlSize);
     }
-    else if( AnscEqualString(ParamName, "DNS_IPv6Preferred", TRUE))
+    else if (strcmp(ParamName, "DNS_IPv6Preferred") == 0)
     {
         retVal =  (ULONG) CosaDmlLgiGwGetDnsIpv6Preferred(pValue, pUlSize);
     }
-    else if( AnscEqualString(ParamName, "DNS_IPv6Alternate", TRUE))
+    else if (strcmp(ParamName, "DNS_IPv6Alternate") == 0)
     {
         retVal =  (ULONG) CosaDmlLgiGwGetDnsIpv6Alternate(pValue, pUlSize);
     }
@@ -138,22 +138,22 @@ LgiGateway_SetParamStringValue
     PCOSA_DATAMODEL_LGI_GATEWAY  pMyObject = (PCOSA_DATAMODEL_LGI_GATEWAY)g_pCosaBEManager->hLgiGateway;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "DNS_IPv4Preferred", TRUE))
+    if (strcmp(ParamName, "DNS_IPv4Preferred") == 0)
     {
         AnscCopyString(pMyObject->dns_ipv4_preferred, strValue);
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "DNS_IPv4Alternate", TRUE))
+    if (strcmp(ParamName, "DNS_IPv4Alternate") == 0)
     {
         AnscCopyString(pMyObject->dns_ipv4_alternate, strValue);
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "DNS_IPv6Preferred", TRUE))
+    if (strcmp(ParamName, "DNS_IPv6Preferred") == 0)
     {
         AnscCopyString(pMyObject->dns_ipv6_preferred, strValue);
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "DNS_IPv6Alternate", TRUE))
+    if (strcmp(ParamName, "DNS_IPv6Alternate") == 0)
     {
         AnscCopyString(pMyObject->dns_ipv6_alternate, strValue);
         return TRUE;
@@ -169,7 +169,7 @@ LgiGateway_GetParamBoolValue
         BOOL*                       pBool
     )
 {
-    if( AnscEqualString(ParamName, "DNS_Override", TRUE))
+    if (strcmp(ParamName, "DNS_Override") == 0)
     {
         CosaDmlLgiGwGetDnsOverride(pBool);
         return TRUE;
@@ -188,7 +188,7 @@ LgiGateway_SetParamBoolValue
     PCOSA_DATAMODEL_LGI_GATEWAY  pMyObject = (PCOSA_DATAMODEL_LGI_GATEWAY)g_pCosaBEManager->hLgiGateway;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "DNS_Override", TRUE))
+    if (strcmp(ParamName, "DNS_Override") == 0)
     {
         pMyObject->dns_override = bValue;
         return TRUE;

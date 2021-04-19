@@ -42,7 +42,7 @@ LgiWoL_GetParamStringValue (ANSC_HANDLE hInsContext,
                                 ULONG*      pUlSize)
 {
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "MACAddress", TRUE))
+    if (strcmp(ParamName, "MACAddress") == 0)
     {
         //This parameter defined to always return empty string when read
         AnscCopyString(pValue, "");
@@ -61,7 +61,7 @@ LgiWoL_SetParamStringValue (ANSC_HANDLE hInsContext,
     PCOSA_DATAMODEL_LGI_WOL pWoL = (PCOSA_DATAMODEL_LGI_WOL)g_pCosaBEManager->hLgiWoL;
 
     /* check the parameter name and set the corresponding value */
-    if (AnscEqualString(ParamName, "MACAddress", TRUE)) {
+    if (strcmp(ParamName, "MACAddress") == 0) {
        snprintf(pWoL->MACAddress, sizeof(pWoL->MACAddress), "%s", pValue);
        isMACAddressSet = TRUE;
        return TRUE;
@@ -75,12 +75,12 @@ LgiWoL_GetParamUlongValue (ANSC_HANDLE hInsContext,
                            ULONG*      puLong)
 {
     /* check the parameter name and return the corresponding value */
-    if (AnscEqualString(ParamName, "Interval", TRUE)) {
+    if (strcmp(ParamName, "Interval") == 0) {
         if(ANSC_STATUS_SUCCESS == CosaDmlGetInterval(NULL, puLong)) {
             return TRUE;
         }
     }
-    if (AnscEqualString(ParamName, "Retries", TRUE)) {
+    if (strcmp(ParamName, "Retries") == 0) {
         if(ANSC_STATUS_SUCCESS == CosaDmlGetRetries(NULL, puLong)) {
             return TRUE;
         }
@@ -96,11 +96,11 @@ LgiWoL_SetParamUlongValue (ANSC_HANDLE hInsContext,
     PCOSA_DATAMODEL_LGI_WOL pWoL = (PCOSA_DATAMODEL_LGI_WOL)g_pCosaBEManager->hLgiWoL;
 
     /* check the parameter name and set the corresponding value */
-    if (AnscEqualString(ParamName, "Interval", TRUE)) {
+    if (strcmp(ParamName, "Interval") == 0) {
           pWoL->Interval = uLong;
           return TRUE;
     }
-    if (AnscEqualString(ParamName, "Retries", TRUE)) {
+    if (strcmp(ParamName, "Retries") == 0) {
           pWoL->Retries = uLong;
           return TRUE;
     }

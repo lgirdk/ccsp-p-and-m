@@ -41,12 +41,12 @@ LgiCloudUi_GetParamBoolValue
     )
 {
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "HideCustomerDhcpLanChange", TRUE))
+    if (strcmp(ParamName, "HideCustomerDhcpLanChange") == 0)
     {
         CosaDmlGetDhcpLanChangeHide(NULL, pBool);
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "HideSmartWifiSection", TRUE))
+    if (strcmp(ParamName, "HideSmartWifiSection") == 0)
     {
         CosaDmlGetSmartWifiSectionHide(NULL, pBool);
         return TRUE;
@@ -66,12 +66,12 @@ LgiCloudUi_SetParamBoolValue
     PCOSA_DATAMODEL_LGI_CLOUDUI  pMyObject = (PCOSA_DATAMODEL_LGI_CLOUDUI)g_pCosaBEManager->hLgiCloudUi;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "HideCustomerDhcpLanChange", TRUE))
+    if (strcmp(ParamName, "HideCustomerDhcpLanChange") == 0)
     {
         pMyObject->hideDhcpLanChange = bValue;
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "HideSmartWifiSection", TRUE))
+    if (strcmp(ParamName, "HideSmartWifiSection") == 0)
     {
         pMyObject->hideSmartWifi = bValue;
         return TRUE;
