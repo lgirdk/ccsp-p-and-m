@@ -577,32 +577,32 @@ CosaDmlDiGetWebPACfg
 		return ANSC_STATUS_FAILURE;
 	}	
 	fclose(fd);
-	if (AnscEqualString(ParamName, "ServerURL", TRUE))
+	if (strcmp(ParamName, "ServerURL") == 0)
 	{
 		sprintf(str, "grep -r ServerIP %s | awk '{print $2}' | sed 's|[\"\",]||g' > %s", WEBPA_CFG, TMP_WEBPA_CFG);
 		system(str);
 	}
-	if (AnscEqualString(ParamName, "ServerPort", TRUE))
+	if (strcmp(ParamName, "ServerPort") == 0)
 	{
 		sprintf(str, "grep -r ServerPort %s | awk '{print $2}' | sed 's|[,]||g' > %s", WEBPA_CFG, TMP_WEBPA_CFG);
 		system(str);
 	}
-	if (AnscEqualString(ParamName, "DeviceNetworkInterface", TRUE))
+	if (strcmp(ParamName, "DeviceNetworkInterface") == 0)
 	{
 		sprintf(str, "grep -r DeviceNetworkInterface %s | awk '{print $2}' | sed 's|[\"\",]||g' > %s", WEBPA_CFG, TMP_WEBPA_CFG);
 		system(str);
 	}
-	if (AnscEqualString(ParamName, "RetryIntervalInSec", TRUE))
+	if (strcmp(ParamName, "RetryIntervalInSec") == 0)
 	{
 		sprintf(str, "grep -r RetryIntervalInSec %s | awk '{print $2}' | sed 's|[,]||g' > %s", WEBPA_CFG, TMP_WEBPA_CFG);
 		system(str);
 	}
-	if (AnscEqualString(ParamName, "MaxPingWaitTimeInSec", TRUE))
+	if (strcmp(ParamName, "MaxPingWaitTimeInSec") == 0)
 	{
 		sprintf(str, "grep -r MaxPingWaitTimeInSec %s | awk '{print $2}' | sed 's|[,]||g' > %s", WEBPA_CFG, TMP_WEBPA_CFG);
 		system(str);
 	}
-	if (AnscEqualString(ParamName, "Enable", TRUE))
+	if (strcmp(ParamName, "Enable") == 0)
 	{
 		sprintf(str, "grep -r EnablePa %s | awk '{print $2}' | sed 's|[\"\",]||g' > %s", WEBPA_CFG, TMP_WEBPA_CFG);
 		system(str);
@@ -640,32 +640,32 @@ CosaDmlDiSetWebPACfg
 	}
 	fclose(fd);
 	memset(str, 0, 128);
-	if (AnscEqualString(ParamName, "ServerURL", TRUE))
+	if (strcmp(ParamName, "ServerURL") == 0)
 	{
 		sprintf(str, "sed 's/\\(\"ServerIP\": \\).*/\\1\"%s\",/' %s > %s", pValue, WEBPA_CFG, TMP_WEBPA_CFG);
 		system(str);
 	}
-	if (AnscEqualString(ParamName, "ServerPort", TRUE))
+	if (strcmp(ParamName, "ServerPort") == 0)
 	{
 		sprintf(str, "sed 's/\\(\"ServerPort\": \\).*/\\1%s,/' %s > %s", pValue, WEBPA_CFG, TMP_WEBPA_CFG);
 		system(str);
 	}
-	if (AnscEqualString(ParamName, "DeviceNetworkInterface", TRUE))
+	if (strcmp(ParamName, "DeviceNetworkInterface") == 0)
 	{
 		sprintf(str, "sed 's/\\(\"DeviceNetworkInterface\": \\).*/\\1\"%s\",/' %s > %s", pValue, WEBPA_CFG, TMP_WEBPA_CFG);
 		system(str);
 	}
-	if (AnscEqualString(ParamName, "RetryIntervalInSec", TRUE))
+	if (strcmp(ParamName, "RetryIntervalInSec") == 0)
 	{
 		sprintf(str, "sed 's/\\(\"RetryIntervalInSec\": \\).*/\\1%s,/' %s > %s", pValue, WEBPA_CFG, TMP_WEBPA_CFG);
 		system(str);
 	}
-	if (AnscEqualString(ParamName, "MaxPingWaitTimeInSec", TRUE))
+	if (strcmp(ParamName, "MaxPingWaitTimeInSec") == 0)
 	{
 		sprintf(str, "sed 's/\\(\"MaxPingWaitTimeInSec\": \\).*/\\1%s,/' %s > %s", pValue, WEBPA_CFG, TMP_WEBPA_CFG);
 		system(str);
 	}
-	if (AnscEqualString(ParamName, "Enable", TRUE))
+	if (strcmp(ParamName, "Enable") == 0)
 	{
 		sprintf(str, "sed 's/\\(\"EnablePa\": \\).*/\\1\"%s\",/' %s > %s", pValue, WEBPA_CFG, TMP_WEBPA_CFG);
 		system(str);
@@ -1236,7 +1236,7 @@ ULONG COSADmlGetMemoryStatus(char * ParamName)
           /*Error*/
           return 0;
      }
-     if( AnscEqualString(ParamName, "Total", TRUE))
+     if (strcmp(ParamName, "Total") == 0)
      {
 #ifdef  _COSA_INTEL_USG_ARM_
 #if 0
@@ -1275,7 +1275,7 @@ ULONG COSADmlGetMemoryStatus(char * ParamName)
         return si.totalram*si.mem_unit/(1024);
 #endif
      }
-     else if(AnscEqualString(ParamName, "Free", TRUE))
+     else if (strcmp(ParamName, "Free") == 0)
      {
 #ifdef _COSA_INTEL_USG_ARM_
 	if ( platform_hal_GetFreeMemorySize(&tmp) != RETURN_OK )
@@ -1288,7 +1288,7 @@ ULONG COSADmlGetMemoryStatus(char * ParamName)
      }
 
 
-     else if(AnscEqualString(ParamName, "Used", TRUE))
+     else if (strcmp(ParamName, "Used") == 0)
      {
 #ifdef _COSA_INTEL_USG_ARM_
 	if ( platform_hal_GetUsedMemorySize(&tmp) != RETURN_OK )
