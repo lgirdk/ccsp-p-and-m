@@ -3461,7 +3461,7 @@ IPv6Address_GetParamUlongValue
     PCOSA_DML_IP_IF_FULL2           pIPInterface = (PCOSA_DML_IP_IF_FULL2)pCosaContext->hParentTable;
 
     /* check the parameter name and return the corresponding value */
-    if( strcmp(ParamName, "Status ") == 0 )
+    if( strcmp(ParamName, "Status") == 0 )
     {
         /* collect value */
         *puLong = pIPv6Addr->Status;
