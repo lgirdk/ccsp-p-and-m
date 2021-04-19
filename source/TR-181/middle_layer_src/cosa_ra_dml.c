@@ -1768,7 +1768,7 @@ InterfaceSetting1_Validate
 
         if ( pRAInterface2 && 
             ((ULONG)pRAInterface2 != (ULONG)pRAInterface) &&
-             AnscEqualString(pRAInterface2->Cfg.Alias, pRAInterface->Cfg.Alias, TRUE))
+             (strcmp(pRAInterface2->Cfg.Alias, pRAInterface->Cfg.Alias) == 0))
         {
             rc = strcpy_s(pReturnParamName, *puLength, "Alias");
             if ( rc != EOK)
@@ -2699,7 +2699,7 @@ Option5_Validate
 
         if ( pRAOption2 &&
              ((ULONG)pRAOption2 != (ULONG)pRAOption) &&
-             AnscEqualString(pRAOption2->Alias, pRAOption->Alias, TRUE))
+             (strcmp(pRAOption2->Alias, pRAOption->Alias) == 0))
         {
             rc = strcpy_s(pReturnParamName, *puLength, "Alias");
             if ( rc != EOK)
