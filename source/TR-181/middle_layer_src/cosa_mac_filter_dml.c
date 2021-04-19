@@ -170,7 +170,7 @@ MACFilter_GetParamBoolValue
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_FW_MACFILTER          *pFwMACFilter  = (COSA_DML_FW_MACFILTER*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         *pBool = pFwMACFilter->Enable;
         return TRUE;
@@ -190,12 +190,12 @@ MACFilter_GetParamStringValue
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj       = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_FW_MACFILTER           *pFwMACFilter  = (COSA_DML_FW_MACFILTER*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "Hostname", TRUE))
+    if (strcmp(ParamName, "Hostname") == 0)
     {
         AnscCopyString(pValue, pFwMACFilter->Hostname);
         return 0;
     }
-    if (AnscEqualString(ParamName, "MACAddress", TRUE))
+    if (strcmp(ParamName, "MACAddress") == 0)
     {
         AnscCopyString(pValue, pFwMACFilter->MACAddress);
         return 0;
@@ -214,7 +214,7 @@ MACFilter_SetParamBoolValue
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_FW_MACFILTER          *pFwMACFilter  = (COSA_DML_FW_MACFILTER*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         pFwMACFilter->Enable = pBool;
         return TRUE;
@@ -233,7 +233,7 @@ MACFilter_SetParamStringValue
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj          = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_FW_MACFILTER           *pFwMACFilter     = (COSA_DML_FW_MACFILTER*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "Hostname", TRUE))
+    if (strcmp(ParamName, "Hostname") == 0)
     {
         /* Return error for SPV if size is more than expected, currently max limit is sizeof(pFwMACFilter->Hostname)-1 */
         if (strlen (strValue) < sizeof(pFwMACFilter->Hostname))
@@ -242,7 +242,7 @@ MACFilter_SetParamStringValue
             return TRUE;
         }
     }
-    if (AnscEqualString(ParamName, "MACAddress", TRUE))
+    if (strcmp(ParamName, "MACAddress") == 0)
     {
         _ansc_snprintf(pFwMACFilter->MACAddress, sizeof(pFwMACFilter->MACAddress), "%s", strValue);
         return TRUE;
@@ -342,7 +342,7 @@ MacFltTimeMask_GetParamUlongValue
     )
 {
     /* check the parameter name and return the corresponding value */
-    if (AnscEqualString(ParamName, "ScheduleEnable", TRUE)) {
+    if (strcmp(ParamName, "ScheduleEnable") == 0) {
         if(ANSC_STATUS_SUCCESS == CosaDmlFW_MACDayOfWeek_GetBlockTimeBitMaskType(puLong)) {
             return TRUE;
         }
@@ -361,7 +361,7 @@ MacFltTimeMask_SetParamUlongValue
     PCOSA_DATAMODEL_MAC_FILTER      pMacFilter      = (PCOSA_DATAMODEL_MAC_FILTER)g_pCosaBEManager->hMacFilter;
 
     /* check the parameter name and set the corresponding value */
-    if (AnscEqualString(ParamName, "ScheduleEnable", TRUE)) {
+    if (strcmp(ParamName, "ScheduleEnable") == 0) {
         if(ANSC_STATUS_SUCCESS != CosaDmlFW_MACDayOfWeek_SetBlockTimeBitMaskType(ulValue)) {
             return FALSE;
         }
@@ -413,7 +413,7 @@ MacFilter_DayOfWeek_GetParamStringValue
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj        = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_FW_MAC_DAYOFWEEK       *pMacDayOfWeek  = (COSA_DML_FW_MAC_DAYOFWEEK*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "BlockTimeBitMask", TRUE)) {
+    if (strcmp(ParamName, "BlockTimeBitMask") == 0) {
         AnscCopyString(pValue, pMacDayOfWeek->MacDayOfWeek_BlockTimeBitMask);
         return 0;
     }
@@ -434,7 +434,7 @@ MacFilter_DayOfWeek_SetParamStringValue
     int i = 0;
 
     /* check the parameter name and set the corresponding value */
-    if (AnscEqualString(ParamName, "BlockTimeBitMask", TRUE))
+    if (strcmp(ParamName, "BlockTimeBitMask") == 0)
     {
         // Ensure Mask Len is 24 characters
         iMaskLen = strlen(strValue);
