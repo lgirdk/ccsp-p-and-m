@@ -176,7 +176,7 @@ Client1_GetParamBoolValue
     COSA_DML_DNS_STATUS             eClientStatus = COSA_DML_DNS_STATUS_Disabled;
 
     /* check the parameter name and return the corresponding value */
-    if ( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         eClientStatus = CosaDmlIpDnsGetClientStatus(NULL);
@@ -282,7 +282,7 @@ Client1_GetParamUlongValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and return the corresponding value */
-    if ( AnscEqualString(ParamName, "Status", TRUE) )
+    if (strcmp(ParamName, "Status") == 0)
     {
         /* collect value */
         *puLong = (ULONG)CosaDmlIpDnsGetClientStatus(NULL);
@@ -391,7 +391,7 @@ Client1_SetParamBoolValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and set the corresponding value */
-    if ( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* save update to backup */
         CosaDmlDnsEnableClient(NULL, (BOOLEAN)bValue);
@@ -1163,7 +1163,7 @@ Server1_GetParamBoolValue
     PCOSA_DML_DNS_CLIENT_SERVER     pDnsServer   = (PCOSA_DML_DNS_CLIENT_SERVER)pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         *pBool = pDnsServer->bEnabled;
@@ -1263,21 +1263,21 @@ Server1_GetParamUlongValue
     PCOSA_DML_DNS_CLIENT_SERVER     pDnsServer   = (PCOSA_DML_DNS_CLIENT_SERVER)pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Status", TRUE) )
+    if (strcmp(ParamName, "Status") == 0)
     {
         /* collect value */
         *puLong  = pDnsServer->Status;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Type", TRUE) )
+    if (strcmp(ParamName, "Type") == 0)
     {
         /* collect value */
         *puLong  = pDnsServer->Type;
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "X_CISCO_COM_Order", TRUE))
+    if (strcmp(ParamName, "X_CISCO_COM_Order") == 0)
     {
         *puLong  = pDnsServer->Order;
         return TRUE;
@@ -1340,7 +1340,7 @@ Server1_GetParamStringValue
     errno_t   rc = -1;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* collect value */
         rc = strcpy_s(pValue, *pUlSize, pDnsServer->Alias);
@@ -1352,7 +1352,7 @@ Server1_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Interface", TRUE) )
+    if (strcmp(ParamName, "Interface") == 0)
     {
         /* collect value */
         rc = strcpy_s(pValue, *pUlSize, pDnsServer->Interface);
@@ -1364,7 +1364,7 @@ Server1_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "DNSServer", TRUE) )
+    if (strcmp(ParamName, "DNSServer") == 0)
     {
         /* collect value */
         rc = strcpy_s(pValue, *pUlSize, pDnsServer->DNSServer);
@@ -1422,7 +1422,7 @@ Server1_SetParamBoolValue
     PCOSA_DML_DNS_CLIENT_SERVER     pDnsServer   = (PCOSA_DML_DNS_CLIENT_SERVER)pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* save update to backup */
         pDnsServer->bEnabled = bValue;
@@ -1522,7 +1522,7 @@ Server1_SetParamUlongValue
     PCOSA_DML_DNS_CLIENT_SERVER     pDnsServer   = (PCOSA_DML_DNS_CLIENT_SERVER)pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if (AnscEqualString(ParamName, "X_CISCO_COM_Order", TRUE))
+    if (strcmp(ParamName, "X_CISCO_COM_Order") == 0)
     {
         pDnsServer->Order = uValue;
         return TRUE;
@@ -1575,7 +1575,7 @@ Server1_SetParamStringValue
     errno_t   rc = -1;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* save update to backup */
         rc = STRCPY_S_NOCLOBBER(pDnsServer->Alias, sizeof(pDnsServer->Alias), pString);
@@ -1587,7 +1587,7 @@ Server1_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Interface", TRUE) )
+    if (strcmp(ParamName, "Interface") == 0)
     {
        /* Note: Interface is only writable when Type is Static; */
         if ( COSA_DML_DNS_ADDR_SRC_Static  == pDnsServer->Type )
@@ -1605,7 +1605,7 @@ Server1_SetParamStringValue
          return FALSE;
     }
 
-    if( AnscEqualString(ParamName, "DNSServer", TRUE) )
+    if (strcmp(ParamName, "DNSServer") == 0)
     {
         if(( COSA_DML_DNS_ADDR_SRC_Static  == pDnsServer->Type ) && pDnsServer->InstanceNumber <= 2)
         {
@@ -1855,7 +1855,7 @@ Relay_GetParamBoolValue
     COSA_DML_DNS_STATUS             eRelayStatus     = COSA_DML_DNS_STATUS_Disabled;
     
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         eRelayStatus = CosaDmlIpDnsGetRelayStatus(NULL);
@@ -1961,7 +1961,7 @@ Relay_GetParamUlongValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Status", TRUE))
+    if (strcmp(ParamName, "Status") == 0)
     {
         /* collect value */
         *puLong = (ULONG)CosaDmlIpDnsGetRelayStatus(NULL);
@@ -2070,7 +2070,7 @@ Relay_SetParamBoolValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* save update to backup */
         CosaDmlDnsEnableRelay(NULL, (BOOLEAN)bValue);
@@ -2847,7 +2847,7 @@ Forwarding_GetParamBoolValue
     PCOSA_DML_DNS_RELAY_ENTRY       pForward     = (PCOSA_DML_DNS_RELAY_ENTRY)pCosaContext->hContext;
     
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         *pBool = pForward->bEnabled;
         return TRUE;
@@ -2947,19 +2947,19 @@ Forwarding_GetParamUlongValue
     PCOSA_DML_DNS_RELAY_ENTRY       pForward     = (PCOSA_DML_DNS_RELAY_ENTRY)pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Status", TRUE))
+    if (strcmp(ParamName, "Status") == 0)
     {
         *puLong = pForward->Status;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "DNSServer", TRUE))
+    if (strcmp(ParamName, "DNSServer") == 0)
     {
         *puLong = pForward->DNSServer.Value;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Type", TRUE))
+    if (strcmp(ParamName, "Type") == 0)
     {
         *puLong = pForward->Type;
         return TRUE;
@@ -3022,7 +3022,7 @@ Forwarding_GetParamStringValue
     errno_t   rc = -1;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE))
+    if (strcmp(ParamName, "Alias") == 0)
     {
         rc = strcpy_s(pValue, *pUlSize, pForward->Alias);
         if(rc != EOK)
@@ -3034,7 +3034,7 @@ Forwarding_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Interface", TRUE))
+    if (strcmp(ParamName, "Interface") == 0)
     {
         rc = strcpy_s(pValue, *pUlSize, pForward->Interface);
         if(rc != EOK)
@@ -3093,7 +3093,7 @@ Forwarding_SetParamBoolValue
     PCOSA_DML_DNS_RELAY_ENTRY       pForward     = (PCOSA_DML_DNS_RELAY_ENTRY)pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         pForward->bEnabled = bValue;
         return TRUE;
@@ -3193,7 +3193,7 @@ Forwarding_SetParamUlongValue
     PCOSA_DML_DNS_RELAY_ENTRY       pForward     = (PCOSA_DML_DNS_RELAY_ENTRY)pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "DNSServer", TRUE))
+    if (strcmp(ParamName, "DNSServer") == 0)
     {
         if ( COSA_DML_DNS_ADDR_SRC_Static  == pForward->Type )
         {
@@ -3253,7 +3253,7 @@ Forwarding_SetParamStringValue
     errno_t   rc = -1;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE))
+    if (strcmp(ParamName, "Alias") == 0)
     {
         rc = STRCPY_S_NOCLOBBER(pForward->Alias, sizeof(pForward->Alias), pString);
         if(rc != EOK)
@@ -3264,7 +3264,7 @@ Forwarding_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Interface", TRUE))
+    if (strcmp(ParamName, "Interface") == 0)
     {
        /* Note: Interface is only writable when Type is Static; */
         if ( COSA_DML_DNS_ADDR_SRC_Static  == pForward->Type )
@@ -3610,7 +3610,7 @@ NSLookupDiagnostics_GetParamUlongValue
     PDSLH_NSLOOKUP_INFO             pNSLookupDiagInfo   = pMyObject->hDiagNSLookInfo;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "DiagnosticsState", TRUE))
+    if (strcmp(ParamName, "DiagnosticsState") == 0)
     {
         pNSLookupDiagInfo = (PDSLH_NSLOOKUP_INFO)CosaDmlDiagGetResults(DSLH_DIAGNOSTIC_TYPE_NSLookup);
 
@@ -3630,7 +3630,7 @@ NSLookupDiagnostics_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Timeout", TRUE))
+    if (strcmp(ParamName, "Timeout") == 0)
     {
         if ( !pNSLookupDiagInfo )
         {
@@ -3644,7 +3644,7 @@ NSLookupDiagnostics_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "NumberOfRepetitions", TRUE))
+    if (strcmp(ParamName, "NumberOfRepetitions") == 0)
     {
         if ( !pNSLookupDiagInfo )
         {
@@ -3658,7 +3658,7 @@ NSLookupDiagnostics_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SuccessCount", TRUE))
+    if (strcmp(ParamName, "SuccessCount") == 0)
     {
         pNSLookupDiagInfo = (PDSLH_NSLOOKUP_INFO)CosaDmlDiagGetResults(DSLH_DIAGNOSTIC_TYPE_NSLookup);
 
@@ -3740,7 +3740,7 @@ NSLookupDiagnostics_GetParamStringValue
     }
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Interface", TRUE))
+    if (strcmp(ParamName, "Interface") == 0)
     {
         if ( AnscSizeOfString(pNSLookupDiagInfo->Interface) < *pUlSize )
         {
@@ -3761,7 +3761,7 @@ NSLookupDiagnostics_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "HostName", TRUE))
+    if (strcmp(ParamName, "HostName") == 0)
     {
         if ( AnscSizeOfString(pNSLookupDiagInfo->HostName) < *pUlSize )
         {
@@ -3782,7 +3782,7 @@ NSLookupDiagnostics_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "DNSServer", TRUE))
+    if (strcmp(ParamName, "DNSServer") == 0)
     {
         if ( AnscSizeOfString(pNSLookupDiagInfo->DNSServer) < *pUlSize )
         {
@@ -3942,7 +3942,7 @@ NSLookupDiagnostics_SetParamUlongValue
     }
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "DiagnosticsState", TRUE))
+    if (strcmp(ParamName, "DiagnosticsState") == 0)
     {
         if ( (uValue - 1) == (ULONG)DSLH_DIAG_STATE_TYPE_Requested )
         {
@@ -3959,7 +3959,7 @@ NSLookupDiagnostics_SetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Timeout", TRUE))
+    if (strcmp(ParamName, "Timeout") == 0)
     {
         pDiagInfo = (PDSLH_NSLOOKUP_INFO)CosaDmlDiagGetResults(DSLH_DIAGNOSTIC_TYPE_NSLookup);
         
@@ -3975,7 +3975,7 @@ NSLookupDiagnostics_SetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "NumberOfRepetitions", TRUE))
+    if (strcmp(ParamName, "NumberOfRepetitions") == 0)
     {
         pDiagInfo = (PDSLH_NSLOOKUP_INFO)CosaDmlDiagGetResults(DSLH_DIAGNOSTIC_TYPE_NSLookup);
         
@@ -4044,7 +4044,7 @@ NSLookupDiagnostics_SetParamStringValue
     }
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Interface", TRUE))
+    if (strcmp(ParamName, "Interface") == 0)
     {
         pDiagInfo = (PDSLH_NSLOOKUP_INFO)CosaDmlDiagGetResults(DSLH_DIAGNOSTIC_TYPE_NSLookup);
         
@@ -4064,7 +4064,7 @@ NSLookupDiagnostics_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "HostName", TRUE))
+    if (strcmp(ParamName, "HostName") == 0)
     {
         pDiagInfo = (PDSLH_NSLOOKUP_INFO)CosaDmlDiagGetResults(DSLH_DIAGNOSTIC_TYPE_NSLookup);
         
@@ -4084,7 +4084,7 @@ NSLookupDiagnostics_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "DNSServer", TRUE))
+    if (strcmp(ParamName, "DNSServer") == 0)
     {
         pDiagInfo = (PDSLH_NSLOOKUP_INFO)CosaDmlDiagGetResults(DSLH_DIAGNOSTIC_TYPE_NSLookup);
         
@@ -4785,28 +4785,28 @@ Result_GetParamUlongValue
     }
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Status", TRUE))
+    if (strcmp(ParamName, "Status") == 0)
     {
         *puLong = pEchoInfo->Status + 1;
 
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AnswerType", TRUE))
+    if (strcmp(ParamName, "AnswerType") == 0)
     {
         *puLong = pEchoInfo->AnswerType + 1;
 
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "DNSServerIP", TRUE))
+    if (strcmp(ParamName, "DNSServerIP") == 0)
     {
         *puLong = pEchoInfo->DNSServerIP.Value;
 
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "ResponseTime", TRUE))
+    if (strcmp(ParamName, "ResponseTime") == 0)
     {
         *puLong = pEchoInfo->ResponsTime;
 
@@ -4876,7 +4876,7 @@ Result_GetParamStringValue
     }
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "HostNameReturned", TRUE))
+    if (strcmp(ParamName, "HostNameReturned") == 0)
     {
         if ( pEchoInfo->HostNameReturned )
         {
@@ -4902,7 +4902,7 @@ Result_GetParamStringValue
         return ANSC_STATUS_FAILURE;
     }
 
-    if( AnscEqualString(ParamName, "IPAddresses", TRUE))
+    if (strcmp(ParamName, "IPAddresses") == 0)
     {
         if ( pEchoInfo->IPAddresses )
         {
