@@ -164,7 +164,7 @@ NeighborDiscovery_GetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     PCOSA_DATAMODEL_NEIGHDISC pEntry = (PCOSA_DATAMODEL_NEIGHDISC)g_pCosaBEManager->hNeighdisc;
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         CosaDmlNeighdiscGetEnabled(&pEntry->bEnabled);
@@ -373,7 +373,7 @@ NeighborDiscovery_SetParamBoolValue
     PCOSA_DATAMODEL_NEIGHDISC pEntry = (PCOSA_DATAMODEL_NEIGHDISC)g_pCosaBEManager->hNeighdisc;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* save update to backup */
 #ifdef _COSA_DRG_CNS_
@@ -969,21 +969,21 @@ InterfaceSetting2_GetParamBoolValue
     PCOSA_DML_NEIGHDISC_IF_FULL     pNeighdiscInterface = (PCOSA_DML_NEIGHDISC_IF_FULL)pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         *pBool = pNeighdiscInterface->Cfg.bEnabled;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "NUDEnable", TRUE) )
+    if (strcmp(ParamName, "NUDEnable") == 0)
     {
         /* collect value */
         *pBool = pNeighdiscInterface->Cfg.bNUDEnable;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "RSEnable", TRUE) )
+    if (strcmp(ParamName, "RSEnable") == 0)
     {
         /* collect value */
         *pBool = pNeighdiscInterface->Cfg.bRSEnable;
@@ -1084,7 +1084,7 @@ InterfaceSetting2_GetParamUlongValue
     PCOSA_DML_NEIGHDISC_IF_FULL     pNeighdiscInterface = (PCOSA_DML_NEIGHDISC_IF_FULL)pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Status", TRUE) )
+    if (strcmp(ParamName, "Status") == 0)
     {
         /* collect value */
         CosaDmlNeighdiscIfGetInfo
@@ -1099,21 +1099,21 @@ InterfaceSetting2_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "RetransTimer", TRUE) )
+    if (strcmp(ParamName, "RetransTimer") == 0)
     {
         /* collect value */
         *puLong = pNeighdiscInterface->Cfg.RetransTimer;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "RtrSolicitationInterval", TRUE) )
+    if (strcmp(ParamName, "RtrSolicitationInterval") == 0)
     {
         /* collect value */
         *puLong = pNeighdiscInterface->Cfg.RtrSolicitationInterval;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "MaxRtrSolicitations", TRUE) )
+    if (strcmp(ParamName, "MaxRtrSolicitations") == 0)
     {
         /* collect value */
         *puLong = pNeighdiscInterface->Cfg.MaxRtrSolicitations;
@@ -1178,7 +1178,7 @@ InterfaceSetting2_GetParamStringValue
     errno_t                         rc           = -1;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* collect value */
         rc = strcpy_s(pValue, *pUlSize, pNeighdiscInterface->Cfg.Alias);
@@ -1190,7 +1190,7 @@ InterfaceSetting2_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Interface", TRUE) )
+    if (strcmp(ParamName, "Interface") == 0)
     {
         /* collect value */
 #ifdef _COSA_DRG_CNS_
@@ -1277,7 +1277,7 @@ InterfaceSetting2_SetParamBoolValue
     PCOSA_DML_NEIGHDISC_IF_FULL     pNeighdiscInterface = (PCOSA_DML_NEIGHDISC_IF_FULL)pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* save update to backup */
 #ifdef _COSA_DRG_CNS_
@@ -1289,7 +1289,7 @@ InterfaceSetting2_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "NUDEnable", TRUE) )
+    if (strcmp(ParamName, "NUDEnable") == 0)
     {
         /* save update to backup */
 #ifdef _COSA_DRG_CNS_
@@ -1299,7 +1299,7 @@ InterfaceSetting2_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "RSEnable", TRUE) )
+    if (strcmp(ParamName, "RSEnable") == 0)
     {
         /* save update to backup */
 #ifdef _COSA_DRG_CNS_
@@ -1404,21 +1404,21 @@ InterfaceSetting2_SetParamUlongValue
     PCOSA_DML_NEIGHDISC_IF_FULL     pNeighdiscInterface = (PCOSA_DML_NEIGHDISC_IF_FULL)pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "RetransTimer", TRUE) )
+    if (strcmp(ParamName, "RetransTimer") == 0)
     {
         /* save update to backup */
         pNeighdiscInterface->Cfg.RetransTimer = uValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "RtrSolicitationInterval", TRUE) )
+    if (strcmp(ParamName, "RtrSolicitationInterval") == 0)
     {
         /* save update to backup */
         pNeighdiscInterface->Cfg.RtrSolicitationInterval = uValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "MaxRtrSolicitations", TRUE) )
+    if (strcmp(ParamName, "MaxRtrSolicitations") == 0)
     {
         /* save update to backup */
         pNeighdiscInterface->Cfg.MaxRtrSolicitations = uValue;
@@ -1473,7 +1473,7 @@ InterfaceSetting2_SetParamStringValue
     int                             len = 0;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* save update to backup */
         len = (_ansc_strlen(pString) > sizeof(pNeighdiscInterface->Cfg.Alias)-1 ? sizeof(pNeighdiscInterface->Cfg.Alias)-1 : _ansc_strlen(pString));
@@ -1484,7 +1484,7 @@ InterfaceSetting2_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Interface", TRUE) )
+    if (strcmp(ParamName, "Interface") == 0)
     {
         /* save update to backup */
 #ifdef _COSA_DRG_CNS_
@@ -1943,7 +1943,7 @@ NeighborTable_GetParamUlongValue
     PCOSA_DML_NEIGHTABLE_INFO       pNbTblEntry = (PCOSA_DML_NEIGHTABLE_INFO)hInsContext;
     
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Status", TRUE) )
+    if (strcmp(ParamName, "Status") == 0)
     {
         /* collect value */
         *puLong = pNbTblEntry->Status;
@@ -2006,7 +2006,7 @@ NeighborTable_GetParamStringValue
     errno_t                         rc            = -1;
 
     /* check the parameter name and return the corresponding value */    
-    if( AnscEqualString(ParamName, "Address", TRUE))
+    if (strcmp(ParamName, "Address") == 0)
     {
         /* collect value */
         rc = strcpy_s(pValue, *pUlSize, pNbTblEntry->Address);
@@ -2018,7 +2018,7 @@ NeighborTable_GetParamStringValue
         return 0;
     }
    
-    if( AnscEqualString(ParamName, "Interface", TRUE))
+    if (strcmp(ParamName, "Interface") == 0)
     {
         /* collect value */
         rc = strcpy_s(pValue, *pUlSize,  pNbTblEntry->Interface);
@@ -2030,7 +2030,7 @@ NeighborTable_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "MACAddress", TRUE))
+    if (strcmp(ParamName, "MACAddress") == 0)
     {
         /* collect value */
         rc = strcpy_s(pValue, *pUlSize,  pNbTblEntry->MACAddress);

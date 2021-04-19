@@ -538,7 +538,7 @@ User_GetParamBoolValue
     PCOSA_DML_USER                  pUser             = (PCOSA_DML_USER)pCxtLink->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /*
          * Always read password from backend
@@ -551,14 +551,14 @@ User_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "RemoteAccessCapable", TRUE))
+    if (strcmp(ParamName, "RemoteAccessCapable") == 0)
     {
         /* collect value */
         *pBool  =  pUser->RemoteAccessCapable;
         
         return TRUE;
     }
-    if ( AnscEqualString(ParamName, "X_RDKCENTRAL-COM_PasswordReset", TRUE))
+    if (strcmp(ParamName, "X_RDKCENTRAL-COM_PasswordReset") == 0)
     {
         *pBool = FALSE;
         return TRUE;
@@ -610,7 +610,7 @@ User_GetParamIntValue
 	PCOSA_CONTEXT_LINK_OBJECT       pCxtLink          = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
 	PCOSA_DML_USER				   pUser			 = (PCOSA_DML_USER)pCxtLink->hContext;
 
-		if( AnscEqualString(ParamName, "X_RDKCENTRAL-COM_RemainingAttempts", TRUE))
+		if (strcmp(ParamName, "X_RDKCENTRAL-COM_RemainingAttempts") == 0)
 		{
 			/* collect value */
 			char buf[10];
@@ -624,14 +624,14 @@ User_GetParamIntValue
 			}
 		}
 
-		if( AnscEqualString(ParamName, "X_RDKCENTRAL-COM_LoginCounts", TRUE))
+		if (strcmp(ParamName, "X_RDKCENTRAL-COM_LoginCounts") == 0)
 		{
 			/* collect value */
 			*pInt = pUser->LoginCounts ;
 			return TRUE;
 		}
 
-		if( AnscEqualString(ParamName, "X_RDKCENTRAL-COM_LockOutRemainingTime", TRUE))
+		if (strcmp(ParamName, "X_RDKCENTRAL-COM_LockOutRemainingTime") == 0)
 		{
 			/* collect value */
 			*pInt = pUser->LockOutRemainingTime ;
@@ -683,7 +683,7 @@ User_GetParamUlongValue
     PCOSA_DML_USER                  pUser             = (PCOSA_DML_USER)pCxtLink->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "X_CISCO_COM_AccessPermission", TRUE))
+    if (strcmp(ParamName, "X_CISCO_COM_AccessPermission") == 0)
     {
         /* collect value */
         *puLong = pUser->AccessPermission;
@@ -691,14 +691,14 @@ User_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "NumOfFailedAttempts", TRUE))
+    if (strcmp(ParamName, "NumOfFailedAttempts") == 0)
     {
         /* collect value */
         *puLong = pUser->NumOfFailedAttempts;
         return TRUE;
     }
 #if defined(_COSA_FOR_BCI_)
-    if( AnscEqualString(ParamName, "NumOfRestoreFailedAttempt", TRUE))
+    if (strcmp(ParamName, "NumOfRestoreFailedAttempt") == 0)
     {
         /* collect value */
         *puLong = pUser->NumOfRestoreFailedAttempt;
@@ -761,7 +761,7 @@ User_GetParamStringValue
     PCOSA_DML_USER                  pUser             = (PCOSA_DML_USER)pCxtLink->hContext;
     errno_t                         rc                = -1;
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Username", TRUE))
+    if (strcmp(ParamName, "Username") == 0)
     {
         /*
          * Always read password from backend
@@ -786,7 +786,7 @@ User_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "Password", TRUE))
+    if (strcmp(ParamName, "Password") == 0)
     {
         /* collect value */
         /* This is a hidden parameter, so return EMPTY */
@@ -794,7 +794,7 @@ User_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Language", TRUE))
+    if (strcmp(ParamName, "Language") == 0)
     {
         /* collect value */
         if ( AnscSizeOfString(pUser->Language) < *pUlSize)
@@ -813,7 +813,7 @@ User_GetParamStringValue
             return 1;
         }
     }
-    if( AnscEqualString(ParamName, "X_CISCO_COM_Password", TRUE))
+    if (strcmp(ParamName, "X_CISCO_COM_Password") == 0)
     {
         /* Collect Value */
         /* This is an extn parameter to display password */
@@ -872,7 +872,7 @@ User_GetParamStringValue
             return 1;
         }
      }
-     if( AnscEqualString(ParamName, "X_RDKCENTRAL-COM_ComparePassword", TRUE))
+     if (strcmp(ParamName, "X_RDKCENTRAL-COM_ComparePassword") == 0)
      {
         if ( AnscSizeOfString(pUser->X_RDKCENTRAL_COM_ComparePassword) < *pUlSize)
         {
@@ -937,7 +937,7 @@ User_SetParamBoolValue
     PCOSA_DML_USER                  pUser             = (PCOSA_DML_USER)pCxtLink->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* save update to backup */
         pUser->bEnabled   =  bValue;
@@ -945,14 +945,14 @@ User_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "RemoteAccessCapable", TRUE))
+    if (strcmp(ParamName, "RemoteAccessCapable") == 0)
     {
         /* save update to backup */
         pUser->RemoteAccessCapable   =  bValue;
         
         return TRUE;
     }
-    if(AnscEqualString(ParamName,"X_RDKCENTRAL-COM_PasswordReset", TRUE))
+    if (strcmp(ParamName, "X_RDKCENTRAL-COM_PasswordReset") == 0)
     {
         CosaDmlUserResetPassword(bValue,pUser);
         CcspTraceInfo(("Password reset done for %s user\n",pUser->Username));
@@ -1007,7 +1007,7 @@ User_SetParamIntValue
 
 	PCOSA_DML_USER					pUser			  = (PCOSA_DML_USER)pCxtLink->hContext;
 
-	if (AnscEqualString(ParamName, "X_RDKCENTRAL-COM_LoginCounts", TRUE))
+	if (strcmp(ParamName, "X_RDKCENTRAL-COM_LoginCounts") == 0)
 	{
 		if( AnscEqualString(pUser->Username, "cusadmin", TRUE) )
 		{
@@ -1087,7 +1087,7 @@ User_SetParamUlongValue
 
     /* check the parameter name and set the corresponding value */
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_AccessPermission", TRUE))
+    if (strcmp(ParamName, "X_CISCO_COM_AccessPermission") == 0)
     {
         /* save update to backup */
         pUser->AccessPermission   =  uValue;
@@ -1096,7 +1096,7 @@ User_SetParamUlongValue
     }
 
 
-    if( AnscEqualString(ParamName, "NumOfFailedAttempts", TRUE))
+    if (strcmp(ParamName, "NumOfFailedAttempts") == 0)
     {
         /* collect value */
     	char buf[10];
@@ -1161,7 +1161,7 @@ User_SetParamUlongValue
         return TRUE;
     }
     #if defined(_COSA_FOR_BCI_)
-    if( AnscEqualString(ParamName, "NumOfRestoreFailedAttempt", TRUE))
+    if (strcmp(ParamName, "NumOfRestoreFailedAttempt") == 0)
     {
        /* save update to backup */
        pUser->NumOfRestoreFailedAttempt   =  uValue;
@@ -1248,7 +1248,7 @@ User_SetParamStringValue
     int csr_timeout = 0;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Username", TRUE))
+    if (strcmp(ParamName, "Username") == 0)
     {
         return FALSE;    /* In USG, webgui username is not allowed to change */
 #if 0
@@ -1270,7 +1270,7 @@ User_SetParamStringValue
 #endif
     }
 
-    if( AnscEqualString(ParamName, "Password", TRUE) )
+    if (strcmp(ParamName, "Password") == 0)
     {
         syscfg_get (NULL, "user_name_4", csr_user_name, sizeof(csr_user_name));
         if( AnscEqualString(pUser->Username, csr_user_name, TRUE))
@@ -1323,7 +1323,7 @@ User_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_Password", TRUE))
+    if (strcmp(ParamName, "X_CISCO_COM_Password") == 0)
     {
         syscfg_get(NULL, "user_name_1", csr_user_name, sizeof(csr_user_name));
         if( AnscEqualString(pUser->Username, csr_user_name, TRUE))
@@ -1407,7 +1407,7 @@ User_SetParamStringValue
         return TRUE;
     }
 
-    if(AnscEqualString(ParamName,"X_RDKCENTRAL-COM_ComparePassword",TRUE))
+    if (strcmp(ParamName, "X_RDKCENTRAL-COM_ComparePassword") == 0)
     {
         syscfg_get(NULL, "user_name_1", csr_user_name, sizeof(csr_user_name));
         if( AnscEqualString(pUser->Username, csr_user_name, TRUE))
@@ -1431,7 +1431,7 @@ User_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Language", TRUE))
+    if (strcmp(ParamName, "Language") == 0)
     {
         /* save update to backup */
         rc = strcpy_s(pUser->Language,sizeof(pUser->Language), pString);

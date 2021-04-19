@@ -266,7 +266,7 @@ Bridging_GetParamUlongValue
 {
     /* check the parameter name and return the corresponding value */
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "MaxBridgeEntries", TRUE) )
+    if (strcmp(ParamName, "MaxBridgeEntries") == 0)
     {
         /* collect value */
         /* return fixed value*/
@@ -274,7 +274,7 @@ Bridging_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "MaxDBridgeEntries", TRUE) )
+    if (strcmp(ParamName, "MaxDBridgeEntries") == 0)
     {
         /* collect value */
         /* return fixed value*/
@@ -282,21 +282,21 @@ Bridging_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "MaxQBridgeEntries", TRUE) )
+    if (strcmp(ParamName, "MaxQBridgeEntries") == 0)
     {
         /* collect value */
         *puLong = 0;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "MaxVLANEntries", TRUE) )
+    if (strcmp(ParamName, "MaxVLANEntries") == 0)
     {
         /* collect value */
         *puLong = 0;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "MaxFilterEntries", TRUE) )
+    if (strcmp(ParamName, "MaxFilterEntries") == 0)
     {
         /* collect value */
         *puLong = 0;
@@ -770,7 +770,7 @@ Bridge_GetParamBoolValue
     PCOSA_DML_BRG_FULL_ALL          pDmlBridge        = (PCOSA_DML_BRG_FULL_ALL   )pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         *pBool = pDmlBridge->Cfg.bEnabled;
@@ -875,7 +875,7 @@ Bridge_GetParamUlongValue
     PCOSA_DML_BRG_FULL_ALL          pDmlBridge        = (PCOSA_DML_BRG_FULL_ALL   )pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Status", TRUE) )
+    if (strcmp(ParamName, "Status") == 0)
     {
         /* collect value */
         CosaDmlBrgGetInfo(NULL, pDmlBridge->Cfg.InstanceNumber, &pDmlBridge->Info);
@@ -885,7 +885,7 @@ Bridge_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Standard", TRUE) )
+    if (strcmp(ParamName, "Standard") == 0)
     {
         /* collect value */
         *puLong = pDmlBridge->Cfg.Std;
@@ -952,7 +952,7 @@ Bridge_GetParamStringValue
     errno_t       rc = -1;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* collect value */
         rc = strcpy_s(pValue, *pUlSize, pDmlBridge->Cfg.Alias);
@@ -964,7 +964,7 @@ Bridge_GetParamStringValue
         return 0;
     }
 #if defined (MULTILAN_FEATURE)
-    else if( AnscEqualString(ParamName, "Name", TRUE) )
+    else if (strcmp(ParamName, "Name") == 0)
     {
         /* collect value */
         rc = strcpy_s(pValue, *pUlSize, pDmlBridge->Cfg.name);
@@ -1028,7 +1028,7 @@ Bridge_SetParamBoolValue
     PCOSA_DML_BRG_VLAN_FULL         pVLAN         =  (PCOSA_DML_BRG_VLAN_FULL  ) NULL;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* save update to backup */
         pDmlBridge->Cfg.bEnabled = bValue;
@@ -1141,7 +1141,7 @@ Bridge_SetParamUlongValue
     PCOSA_DML_BRG_FULL_ALL          pDmlBridge        = (PCOSA_DML_BRG_FULL_ALL   )pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Standard", TRUE) )
+    if (strcmp(ParamName, "Standard") == 0)
     {
         /* save update to backup */
         pDmlBridge->Cfg.Std = uValue;
@@ -1768,7 +1768,7 @@ Port_GetParamBoolValue
     PCOSA_DML_BRG_PORT_FULL         pPort            = (PCOSA_DML_BRG_PORT_FULL  )pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         *pBool = pPort->Cfg.bEnabled;
@@ -1776,7 +1776,7 @@ Port_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "ManagementPort", TRUE) )
+    if (strcmp(ParamName, "ManagementPort") == 0)
     {
         /* collect value */
         *pBool = pPort->Cfg.bManagementPort;
@@ -1784,7 +1784,7 @@ Port_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IngressFiltering", TRUE) )
+    if (strcmp(ParamName, "IngressFiltering") == 0)
     {
         /* collect value */
         *pBool = pPort->Cfg.bIngressFiltering;
@@ -1792,7 +1792,7 @@ Port_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "PriorityTagging", TRUE) )
+    if (strcmp(ParamName, "PriorityTagging") == 0)
     {
         /* collect value */
         *pBool = pPort->Cfg.bPriorityTagging;
@@ -1848,7 +1848,7 @@ Port_GetParamIntValue
     int retval = ANSC_STATUS_SUCCESS;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "PVID", TRUE) )
+    if (strcmp(ParamName, "PVID") == 0)
     {
         //$HL 7/3/2013
         /* collect value */
@@ -1911,7 +1911,7 @@ Port_GetParamUlongValue
     PCOSA_DML_BRG_PORT_FULL         pPort            = (PCOSA_DML_BRG_PORT_FULL  )pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Status", TRUE) )
+    if (strcmp(ParamName, "Status") == 0)
     {
         /* collect value */
         CosaDmlBrgPortGetInfo(NULL, pDmlBridge->Cfg.InstanceNumber, pPort->Cfg.InstanceNumber, &pPort->Info);
@@ -1921,7 +1921,7 @@ Port_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "LastChange", TRUE) )
+    if (strcmp(ParamName, "LastChange") == 0)
     {
         /* collect value */
         CosaDmlBrgPortGetInfo(NULL, pDmlBridge->Cfg.InstanceNumber, pPort->Cfg.InstanceNumber, &pPort->Info);
@@ -1931,7 +1931,7 @@ Port_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "DefaultUserPriority", TRUE) )
+    if (strcmp(ParamName, "DefaultUserPriority") == 0)
     {
         /* collect value */
         *puLong = pPort->Cfg.DftUserPriority;
@@ -1939,7 +1939,7 @@ Port_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "PriorityRegeneration", TRUE) )
+    if (strcmp(ParamName, "PriorityRegeneration") == 0)
     {
         /* Not implementation here */
         *puLong = 0;
@@ -1947,7 +1947,7 @@ Port_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "PortState", TRUE) )
+    if (strcmp(ParamName, "PortState") == 0)
     {
         /* collect value */
         CosaDmlBrgPortGetInfo(NULL, pDmlBridge->Cfg.InstanceNumber, pPort->Cfg.InstanceNumber, &pPort->Info);
@@ -1957,7 +1957,7 @@ Port_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AcceptableFrameTypes", TRUE) )
+    if (strcmp(ParamName, "AcceptableFrameTypes") == 0)
     {
         /* collect value */
         *puLong = pPort->Cfg.AcceptableFrameTypes;
@@ -1965,7 +1965,7 @@ Port_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_Mode", TRUE) )
+    if (strcmp(ParamName, "X_CISCO_COM_Mode") == 0)
     {
         /* collect value */
         // no need to collect from lower level, because Middle Layer should have the latest
@@ -2042,7 +2042,7 @@ Port_GetParamStringValue
     errno_t  rc   = -1;
       
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* collect value */
         rc = strcpy_s(pValue, *pUlSize, pPort->Cfg.Alias);
@@ -2055,7 +2055,7 @@ Port_GetParamStringValue
     }
 
 
-    if( AnscEqualString(ParamName, "Name", TRUE) )
+    if (strcmp(ParamName, "Name") == 0)
     {
         /* collect value */
         rc = strcpy_s(pValue, *pUlSize, pPort->Info.Name);
@@ -2067,7 +2067,7 @@ Port_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "LowerLayers", TRUE) )
+    if (strcmp(ParamName, "LowerLayers") == 0)
     {
         /* collect value */
 #ifdef _COSA_SIM_
@@ -2558,7 +2558,7 @@ Port_SetParamBoolValue
     }
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* save update to backup */
         pPort->Cfg.bEnabled = bValue;
@@ -2581,7 +2581,7 @@ Port_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "ManagementPort", TRUE) )
+    if (strcmp(ParamName, "ManagementPort") == 0)
     {
         /* save update to backup */
         pPort->Cfg.bManagementPort = bValue;
@@ -2589,7 +2589,7 @@ Port_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IngressFiltering", TRUE) )
+    if (strcmp(ParamName, "IngressFiltering") == 0)
     {
         /* save update to backup */
         pPort->Cfg.bIngressFiltering = bValue;
@@ -2597,7 +2597,7 @@ Port_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "PriorityTagging", TRUE) )
+    if (strcmp(ParamName, "PriorityTagging") == 0)
     {
         /* save update to backup */
         pPort->Cfg.bPriorityTagging = bValue;
@@ -2652,7 +2652,7 @@ Port_SetParamIntValue
     PCOSA_DML_BRG_PORT_FULL         pPort            = (PCOSA_DML_BRG_PORT_FULL  )pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "PVID", TRUE) )
+    if (strcmp(ParamName, "PVID") == 0)
     {
         /* save update to backup */
         pPort->Cfg.PVID = iValue;
@@ -2707,7 +2707,7 @@ Port_SetParamUlongValue
     PCOSA_DML_BRG_PORT_FULL         pPort            = (PCOSA_DML_BRG_PORT_FULL  )pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "DefaultUserPriority", TRUE) )
+    if (strcmp(ParamName, "DefaultUserPriority") == 0)
     {
         /* save update to backup */
         pPort->Cfg.DftUserPriority = (UCHAR)uValue;
@@ -2715,7 +2715,7 @@ Port_SetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "PriorityRegeneration", TRUE) )
+    if (strcmp(ParamName, "PriorityRegeneration") == 0)
     {
         /* Not supported here */
         pPort->Cfg.PriorityRegeneration[0] = '\0';
@@ -2723,7 +2723,7 @@ Port_SetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AcceptableFrameTypes", TRUE) )
+    if (strcmp(ParamName, "AcceptableFrameTypes") == 0)
     {
         /* save update to backup */
         pPort->Cfg.AcceptableFrameTypes = uValue;
@@ -2731,7 +2731,7 @@ Port_SetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "X_CISCO_COM_Mode", TRUE) )
+    if (strcmp(ParamName, "X_CISCO_COM_Mode") == 0)
     {
         /* save update to backup */
         // LinkName is just the sw_X without "-t", even for PassThrough
@@ -3356,7 +3356,7 @@ PortStats_GetParamUlongValue
     CosaDmlBrgPortGetStats(NULL, pDmlBridge->Cfg.InstanceNumber, pPort->Cfg.InstanceNumber, &Stats);
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "ErrorsSent", TRUE) )
+    if (strcmp(ParamName, "ErrorsSent") == 0)
     {
         /* collect value */
         *puLong = Stats.ErrorsSent;
@@ -3364,7 +3364,7 @@ PortStats_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "ErrorsReceived", TRUE) )
+    if (strcmp(ParamName, "ErrorsReceived") == 0)
     {
         /* collect value */
         *puLong = Stats.ErrorsReceived;
@@ -3372,7 +3372,7 @@ PortStats_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "DiscardPacketsSent", TRUE) )
+    if (strcmp(ParamName, "DiscardPacketsSent") == 0)
     {
         /* collect value */
         *puLong = Stats.DiscardPacketsSent;
@@ -3380,7 +3380,7 @@ PortStats_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "DiscardPacketsReceived", TRUE) )
+    if (strcmp(ParamName, "DiscardPacketsReceived") == 0)
     {
         /* collect value */
         *puLong = Stats.DiscardPacketsReceived;
@@ -3388,7 +3388,7 @@ PortStats_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "UnknownProtoPacketsReceived", TRUE) )
+    if (strcmp(ParamName, "UnknownProtoPacketsReceived") == 0)
     {
         /* collect value */
         *puLong = Stats.UnknownProtoPacketsReceived;
@@ -3396,7 +3396,7 @@ PortStats_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "BytesSent", TRUE) )
+    if (strcmp(ParamName, "BytesSent") == 0)
     {
         /* collect value */
         *puLong = Stats.BytesSent;
@@ -3404,7 +3404,7 @@ PortStats_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "BytesReceived", TRUE) )
+    if (strcmp(ParamName, "BytesReceived") == 0)
     {
         /* collect value */
         *puLong = Stats.BytesReceived;
@@ -3412,7 +3412,7 @@ PortStats_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "PacketsSent", TRUE) )
+    if (strcmp(ParamName, "PacketsSent") == 0)
     {
         /* collect value */
         *puLong = Stats.PacketsSent;
@@ -3420,7 +3420,7 @@ PortStats_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "PacketsReceived", TRUE) )
+    if (strcmp(ParamName, "PacketsReceived") == 0)
     {
         /* collect value */
         *puLong = Stats.PacketsReceived;
@@ -3428,7 +3428,7 @@ PortStats_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "UnicastPacketsSent", TRUE) )
+    if (strcmp(ParamName, "UnicastPacketsSent") == 0)
     {
         /* collect value */
         *puLong = Stats.UnicastPacketsSent;
@@ -3436,7 +3436,7 @@ PortStats_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "UnicastPacketsReceived", TRUE) )
+    if (strcmp(ParamName, "UnicastPacketsReceived") == 0)
     {
         /* collect value */
         *puLong = Stats.UnicastPacketsReceived;
@@ -3444,7 +3444,7 @@ PortStats_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "MulticastPacketsSent", TRUE) )
+    if (strcmp(ParamName, "MulticastPacketsSent") == 0)
     {
         /* collect value */
         *puLong = Stats.MulticastPacketsSent;
@@ -3452,7 +3452,7 @@ PortStats_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "MulticastPacketsReceived", TRUE) )
+    if (strcmp(ParamName, "MulticastPacketsReceived") == 0)
     {
         /* collect value */
         *puLong = Stats.MulticastPacketsReceived;
@@ -3460,7 +3460,7 @@ PortStats_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "BroadcastPacketsSent", TRUE) )
+    if (strcmp(ParamName, "BroadcastPacketsSent") == 0)
     {
         /* collect value */
         *puLong = Stats.BroadcastPacketsSent;
@@ -3468,7 +3468,7 @@ PortStats_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "BroadcastPacketsReceived", TRUE) )
+    if (strcmp(ParamName, "BroadcastPacketsReceived") == 0)
     {
         /* collect value */
         *puLong = Stats.BroadcastPacketsReceived;
@@ -3873,7 +3873,7 @@ VLAN_GetParamBoolValue
     PCOSA_DML_BRG_VLAN_FULL         pVLAN            = (PCOSA_DML_BRG_VLAN_FULL  )pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         *pBool = pVLAN->Cfg.bEnabled;
@@ -3927,7 +3927,7 @@ VLAN_GetParamIntValue
     PCOSA_DML_BRG_VLAN_FULL         pVLAN            = (PCOSA_DML_BRG_VLAN_FULL  )pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "VLANID", TRUE) )
+    if (strcmp(ParamName, "VLANID") == 0)
     {
         /* collect value */
         *pInt = pVLAN->Cfg.VLANID;
@@ -4040,7 +4040,7 @@ VLAN_GetParamStringValue
     errno_t rc = -1;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* collect value */
         rc = strcpy_s(pValue, *pUlSize, pVLAN->Cfg.Alias);
@@ -4052,7 +4052,7 @@ VLAN_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Name", TRUE) )
+    if (strcmp(ParamName, "Name") == 0)
     {
         /* collect value */
         rc = strcpy_s(pValue, *pUlSize, pVLAN->Info.Name);
@@ -4111,7 +4111,7 @@ VLAN_SetParamBoolValue
     UNREFERENCED_PARAMETER(bValue);
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* save update to backup */
         //$HL 07/2/2013
@@ -4169,7 +4169,7 @@ VLAN_SetParamIntValue
     PCOSA_DML_BRG_VLAN_FULL         pVLAN            = (PCOSA_DML_BRG_VLAN_FULL  )pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "VLANID", TRUE) )
+    if (strcmp(ParamName, "VLANID") == 0)
     {
         /* save update to backup */
         pVLAN->Cfg.VLANID = iValue;
@@ -4271,7 +4271,7 @@ VLAN_SetParamStringValue
     errno_t  rc = -1;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* save update to backup */
         rc = STRCPY_S_NOCLOBBER(pVLAN->Cfg.Alias, sizeof(pVLAN->Cfg.Alias), pString);
@@ -4283,7 +4283,7 @@ VLAN_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Name", TRUE) )
+    if (strcmp(ParamName, "Name") == 0)
     {
         /* save update to backup */
         AnscCopyString(pVLAN->Info.Name, pString);
@@ -4852,14 +4852,14 @@ VLANPort_GetParamBoolValue
     PCOSA_DML_BRG_VLANPORT_FULL     pVLANPort        = (PCOSA_DML_BRG_VLANPORT_FULL)pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         *pBool = pVLANPort->Cfg.bEnabled;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Untagged", TRUE) )
+    if (strcmp(ParamName, "Untagged") == 0)
     {
         /* collect value */
         *pBool = pVLANPort->Cfg.bUntagged;
@@ -5019,7 +5019,7 @@ VLANPort_GetParamStringValue
     errno_t                         rc              = -1;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* collect value */
         rc = strcpy_s(pValue, *pUlSize, pVLANPort->Cfg.Alias);
@@ -5031,7 +5031,7 @@ VLANPort_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "VLAN", TRUE) )
+    if (strcmp(ParamName, "VLAN") == 0)
     {
         /* collect value */
         if (pVLANPort->Cfg.VLANInsNum > 0)
@@ -5051,7 +5051,7 @@ VLANPort_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Port", TRUE) )
+    if (strcmp(ParamName, "Port") == 0)
     {
         /* collect value */
         if (pVLANPort->Cfg.PortInsNum > 0)
@@ -5118,14 +5118,14 @@ VLANPort_SetParamBoolValue
     PCOSA_DML_BRG_VLANPORT_FULL     pVLANPort        = (PCOSA_DML_BRG_VLANPORT_FULL)pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* save update to backup */
         pVLANPort->Cfg.bEnabled = bValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Untagged", TRUE) )
+    if (strcmp(ParamName, "Untagged") == 0)
     {
         /* save update to backup */
         pVLANPort->Cfg.bUntagged = bValue;
@@ -5276,7 +5276,7 @@ VLANPort_SetParamStringValue
     //AnscTraceFlow(("%s: %s='%s'\n", __func__, ParamName, pString));
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* save update to backup */
         rc = STRCPY_S_NOCLOBBER(pVLANPort->Cfg.Alias, sizeof(pVLANPort->Cfg.Alias), pString);
@@ -5288,7 +5288,7 @@ VLANPort_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "VLAN", TRUE) )
+    if (strcmp(ParamName, "VLAN") == 0)
     {
         /* save update to backup */
         ULONG brInsNum=0, vlanInsNum=0;
@@ -5311,7 +5311,7 @@ VLANPort_SetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "Port", TRUE) )
+    if (strcmp(ParamName, "Port") == 0)
     {
         /* save update to backup */
         ULONG brInsNum=0, portInsNum=0;
@@ -5797,61 +5797,61 @@ Filter_GetParamBoolValue
     /* check the parameter name and return the corresponding value */
     UNREFERENCED_PARAMETER(hInsContext);
     UNREFERENCED_PARAMETER(pBool);
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "EthertypeFilterExclude", TRUE) )
+    if (strcmp(ParamName, "EthertypeFilterExclude") == 0)
     {
         /* collect value */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SourceMACAddressFilterExclude", TRUE) )
+    if (strcmp(ParamName, "SourceMACAddressFilterExclude") == 0)
     {
         /* collect value */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "DestMACAddressFilterExclude", TRUE) )
+    if (strcmp(ParamName, "DestMACAddressFilterExclude") == 0)
     {
         /* collect value */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SourceMACFromVendorClassIDFilterExclude", TRUE) )
+    if (strcmp(ParamName, "SourceMACFromVendorClassIDFilterExclude") == 0)
     {
         /* collect value */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "DestMACFromVendorClassIDFilterExclude", TRUE) )
+    if (strcmp(ParamName, "DestMACFromVendorClassIDFilterExclude") == 0)
     {
         /* collect value */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SourceMACFromClientIDFilterExclude", TRUE) )
+    if (strcmp(ParamName, "SourceMACFromClientIDFilterExclude") == 0)
     {
         /* collect value */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "DestMACFromClientIDFilterExclude", TRUE) )
+    if (strcmp(ParamName, "DestMACFromClientIDFilterExclude") == 0)
     {
         /* collect value */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SourceMACFromUserClassIDFilterExclude", TRUE) )
+    if (strcmp(ParamName, "SourceMACFromUserClassIDFilterExclude") == 0)
     {
         /* collect value */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "DestMACFromUserClassIDFilterExclude", TRUE) )
+    if (strcmp(ParamName, "DestMACFromUserClassIDFilterExclude") == 0)
     {
         /* collect value */
         return TRUE;
@@ -5950,37 +5950,37 @@ Filter_GetParamUlongValue
     /* check the parameter name and return the corresponding value */
     UNREFERENCED_PARAMETER(hInsContext);
     UNREFERENCED_PARAMETER(puLong);
-    if( AnscEqualString(ParamName, "Status", TRUE) )
+    if (strcmp(ParamName, "Status") == 0)
     {
         /* collect value */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Order", TRUE) )
+    if (strcmp(ParamName, "Order") == 0)
     {
         /* collect value */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "VLANIDFilter", TRUE) )
+    if (strcmp(ParamName, "VLANIDFilter") == 0)
     {
         /* collect value */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "EthertypeFilterList", TRUE) )
+    if (strcmp(ParamName, "EthertypeFilterList") == 0)
     {
         /* collect value */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SourceMACFromVendorClassIDMode", TRUE) )
+    if (strcmp(ParamName, "SourceMACFromVendorClassIDMode") == 0)
     {
         /* collect value */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "DestMACFromVendorClassIDMode", TRUE) )
+    if (strcmp(ParamName, "DestMACFromVendorClassIDMode") == 0)
     {
         /* collect value */
         return TRUE;
@@ -6042,67 +6042,67 @@ Filter_GetParamStringValue
     UNREFERENCED_PARAMETER(hInsContext);
     UNREFERENCED_PARAMETER(pValue);
     UNREFERENCED_PARAMETER(pUlSize);
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* collect value */
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Bridge", TRUE) )
+    if (strcmp(ParamName, "Bridge") == 0)
     {
         /* collect value */
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Interface", TRUE) )
+    if (strcmp(ParamName, "Interface") == 0)
     {
         /* collect value */
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "SourceMACAddressFilterList", TRUE) )
+    if (strcmp(ParamName, "SourceMACAddressFilterList") == 0)
     {
         /* collect value */
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "DestMACAddressFilterList", TRUE) )
+    if (strcmp(ParamName, "DestMACAddressFilterList") == 0)
     {
         /* collect value */
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "SourceMACFromVendorClassIDFilter", TRUE) )
+    if (strcmp(ParamName, "SourceMACFromVendorClassIDFilter") == 0)
     {
         /* collect value */
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "DestMACFromVendorClassIDFilter", TRUE) )
+    if (strcmp(ParamName, "DestMACFromVendorClassIDFilter") == 0)
     {
         /* collect value */
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "SourceMACFromClientIDFilter", TRUE) )
+    if (strcmp(ParamName, "SourceMACFromClientIDFilter") == 0)
     {
         /* collect value */
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "DestMACFromClientIDFilter", TRUE) )
+    if (strcmp(ParamName, "DestMACFromClientIDFilter") == 0)
     {
         /* collect value */
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "SourceMACFromUserClassIDFilter", TRUE) )
+    if (strcmp(ParamName, "SourceMACFromUserClassIDFilter") == 0)
     {
         /* collect value */
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "DestMACFromUserClassIDFilter", TRUE) )
+    if (strcmp(ParamName, "DestMACFromUserClassIDFilter") == 0)
     {
         /* collect value */
         return 0;
@@ -6154,61 +6154,61 @@ Filter_SetParamBoolValue
     /* check the parameter name and set the corresponding value */
     UNREFERENCED_PARAMETER(hInsContext);
     UNREFERENCED_PARAMETER(bValue);
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* save update to backup */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "EthertypeFilterExclude", TRUE) )
+    if (strcmp(ParamName, "EthertypeFilterExclude") == 0)
     {
         /* save update to backup */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SourceMACAddressFilterExclude", TRUE) )
+    if (strcmp(ParamName, "SourceMACAddressFilterExclude") == 0)
     {
         /* save update to backup */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "DestMACAddressFilterExclude", TRUE) )
+    if (strcmp(ParamName, "DestMACAddressFilterExclude") == 0)
     {
         /* save update to backup */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SourceMACFromVendorClassIDFilterExclude", TRUE) )
+    if (strcmp(ParamName, "SourceMACFromVendorClassIDFilterExclude") == 0)
     {
         /* save update to backup */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "DestMACFromVendorClassIDFilterExclude", TRUE) )
+    if (strcmp(ParamName, "DestMACFromVendorClassIDFilterExclude") == 0)
     {
         /* save update to backup */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SourceMACFromClientIDFilterExclude", TRUE) )
+    if (strcmp(ParamName, "SourceMACFromClientIDFilterExclude") == 0)
     {
         /* save update to backup */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "DestMACFromClientIDFilterExclude", TRUE) )
+    if (strcmp(ParamName, "DestMACFromClientIDFilterExclude") == 0)
     {
         /* save update to backup */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SourceMACFromUserClassIDFilterExclude", TRUE) )
+    if (strcmp(ParamName, "SourceMACFromUserClassIDFilterExclude") == 0)
     {
         /* save update to backup */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "DestMACFromUserClassIDFilterExclude", TRUE) )
+    if (strcmp(ParamName, "DestMACFromUserClassIDFilterExclude") == 0)
     {
         /* save update to backup */
         return TRUE;
@@ -6307,31 +6307,31 @@ Filter_SetParamUlongValue
     UNREFERENCED_PARAMETER(hInsContext);
     UNREFERENCED_PARAMETER(uValue);
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Order", TRUE) )
+    if (strcmp(ParamName, "Order") == 0)
     {
         /* save update to backup */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "VLANIDFilter", TRUE) )
+    if (strcmp(ParamName, "VLANIDFilter") == 0)
     {
         /* save update to backup */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "EthertypeFilterList", TRUE) )
+    if (strcmp(ParamName, "EthertypeFilterList") == 0)
     {
         /* save update to backup */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SourceMACFromVendorClassIDMode", TRUE) )
+    if (strcmp(ParamName, "SourceMACFromVendorClassIDMode") == 0)
     {
         /* save update to backup */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "DestMACFromVendorClassIDMode", TRUE) )
+    if (strcmp(ParamName, "DestMACFromVendorClassIDMode") == 0)
     {
         /* save update to backup */
         return TRUE;
@@ -6383,67 +6383,67 @@ Filter_SetParamStringValue
     UNREFERENCED_PARAMETER(hInsContext);
     UNREFERENCED_PARAMETER(pString);
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* save update to backup */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Bridge", TRUE) )
+    if (strcmp(ParamName, "Bridge") == 0)
     {
         /* save update to backup */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Interface", TRUE) )
+    if (strcmp(ParamName, "Interface") == 0)
     {
         /* save update to backup */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SourceMACAddressFilterList", TRUE) )
+    if (strcmp(ParamName, "SourceMACAddressFilterList") == 0)
     {
         /* save update to backup */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "DestMACAddressFilterList", TRUE) )
+    if (strcmp(ParamName, "DestMACAddressFilterList") == 0)
     {
         /* save update to backup */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SourceMACFromVendorClassIDFilter", TRUE) )
+    if (strcmp(ParamName, "SourceMACFromVendorClassIDFilter") == 0)
     {
         /* save update to backup */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "DestMACFromVendorClassIDFilter", TRUE) )
+    if (strcmp(ParamName, "DestMACFromVendorClassIDFilter") == 0)
     {
         /* save update to backup */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SourceMACFromClientIDFilter", TRUE) )
+    if (strcmp(ParamName, "SourceMACFromClientIDFilter") == 0)
     {
         /* save update to backup */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "DestMACFromClientIDFilter", TRUE) )
+    if (strcmp(ParamName, "DestMACFromClientIDFilter") == 0)
     {
         /* save update to backup */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SourceMACFromUserClassIDFilter", TRUE) )
+    if (strcmp(ParamName, "SourceMACFromUserClassIDFilter") == 0)
     {
         /* save update to backup */
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "DestMACFromUserClassIDFilter", TRUE) )
+    if (strcmp(ParamName, "DestMACFromUserClassIDFilter") == 0)
     {
         /* save update to backup */
         return TRUE;
