@@ -50,7 +50,7 @@ ParentalControl_GetParamBoolValue
 {
 
     UNREFERENCED_PARAMETER(hInsContext);
-    if (AnscEqualString(ParamName, "RollbackUTC_Local", TRUE))
+    if (strcmp(ParamName, "RollbackUTC_Local") == 0)
     {
         *pBool = FALSE;
         return TRUE;
@@ -69,7 +69,7 @@ ParentalControl_SetParamBoolValue
 {
   
     UNREFERENCED_PARAMETER(hInsContext);
-    if (AnscEqualString(ParamName, "RollbackUTC_Local", TRUE))
+    if (strcmp(ParamName, "RollbackUTC_Local") == 0)
     {
 		#ifdef UTC_ENABLE
 
@@ -105,7 +105,7 @@ MngSites_GetParamBoolValue
     COSA_DATAMODEL_PARENTALCONTROL  *pParCtrl = (COSA_DATAMODEL_PARENTALCONTROL*)g_pCosaBEManager->hParentalControl;
     COSA_DML_MANAGEDSITES           *pMngSites = &pParCtrl->ManagedSites;
 
-    if (AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         *pBool = pMngSites->Enable;
         return TRUE;
@@ -130,7 +130,7 @@ MngSites_SetParamBoolValue
     if((ANSC_STATUS_SUCCESS == is_usg_in_bridge_mode(&pBridgeMode)) && (pBridgeMode == TRUE))
         return FALSE;
 
-    if (AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         pMngSites->Enable = bValue;
         return TRUE;
@@ -201,7 +201,7 @@ MngServs_GetParamBoolValue
     COSA_DATAMODEL_PARENTALCONTROL  *pParCtrl = (COSA_DATAMODEL_PARENTALCONTROL*)g_pCosaBEManager->hParentalControl;
     COSA_DML_MANAGED_SERVS           *pMngServs = &pParCtrl->ManagedServs;
 
-    if (AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         *pBool = pMngServs->Enable;
         return TRUE;
@@ -226,7 +226,7 @@ MngServs_SetParamBoolValue
     if((ANSC_STATUS_SUCCESS == is_usg_in_bridge_mode(&pBridgeMode)) && (pBridgeMode == TRUE))
         return FALSE;
 
-    if (AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         pMngServs->Enable = bValue;
         return TRUE;
@@ -297,12 +297,12 @@ MngDevs_GetParamBoolValue
     COSA_DATAMODEL_PARENTALCONTROL  *pParCtrl = (COSA_DATAMODEL_PARENTALCONTROL*)g_pCosaBEManager->hParentalControl;
     COSA_DML_MANAGED_DEVS           *pMngDevs = &pParCtrl->ManagedDevs;
 
-    if (AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         *pBool = pMngDevs->Enable;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "AllowAll", TRUE))
+    if (strcmp(ParamName, "AllowAll") == 0)
     {
         *pBool = pMngDevs->AllowAll;
         return TRUE;
@@ -327,12 +327,12 @@ MngDevs_SetParamBoolValue
     if((ANSC_STATUS_SUCCESS == is_usg_in_bridge_mode(&pBridgeMode)) && (pBridgeMode == TRUE))
         return FALSE;
 
-    if (AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         pMngDevs->Enable = bValue;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "AllowAll", TRUE))
+    if (strcmp(ParamName, "AllowAll") == 0)
     {
         pMngDevs->AllowAll = bValue;
         return TRUE;
@@ -522,7 +522,7 @@ PcBlkURL_GetParamBoolValue
 
     //AnscTraceWarning(("%s -- param name = %s...\n", __FUNCTION__, ParamName));
 
-    if (AnscEqualString(ParamName, "AlwaysBlock", TRUE))
+    if (strcmp(ParamName, "AlwaysBlock") == 0)
     {
         *pBool = pBlkUrl->AlwaysBlock;
         return TRUE;
@@ -542,7 +542,7 @@ PcBlkURL_GetParamUlongValue(
 
     //AnscTraceWarning(("%s -- param name = %s...\n", __FUNCTION__, ParamName));
 
-    if (AnscEqualString(ParamName, "BlockMethod", TRUE))
+    if (strcmp(ParamName, "BlockMethod") == 0)
     {
         *pUlong = pBlkUrl->BlockMethod;
         return TRUE;
@@ -565,33 +565,33 @@ PcBlkURL_GetParamStringValue
     UNREFERENCED_PARAMETER(pUlSize);
     //AnscTraceWarning(("%s -- param name = %s...\n", __FUNCTION__, ParamName));
 
-    if (AnscEqualString(ParamName, "Site", TRUE))
+    if (strcmp(ParamName, "Site") == 0)
     {
         AnscCopyString(pValue, pBlkUrl->Site);
         return 0;
     }
-    if (AnscEqualString(ParamName, "StartTime", TRUE))
+    if (strcmp(ParamName, "StartTime") == 0)
     {
         AnscCopyString(pValue, pBlkUrl->StartTime);
         return 0;
     }
-    if (AnscEqualString(ParamName, "EndTime", TRUE))
+    if (strcmp(ParamName, "EndTime") == 0)
     {
         AnscCopyString(pValue, pBlkUrl->EndTime);
         return 0;
     }
-    if (AnscEqualString(ParamName, "BlockDays", TRUE))
+    if (strcmp(ParamName, "BlockDays") == 0)
     {
         AnscCopyString(pValue, pBlkUrl->BlockDays);
         return 0;
     }
 #ifdef CONFIG_CISCO_FEATURE_CISCOCONNECT
-    if (AnscEqualString(ParamName, "MAC", TRUE))
+    if (strcmp(ParamName, "MAC") == 0)
     {
         AnscCopyString(pValue, pBlkUrl->MAC);
         return 0;
     }
-    if (AnscEqualString(ParamName, "DeviceName", TRUE))
+    if (strcmp(ParamName, "DeviceName") == 0)
     {
         AnscCopyString(pValue, pBlkUrl->DeviceName);
         return 0;
@@ -617,7 +617,7 @@ PcBlkURL_SetParamBoolValue
     if((ANSC_STATUS_SUCCESS == is_usg_in_bridge_mode(&pBridgeMode)) && (pBridgeMode == TRUE))
         return FALSE;
 
-    if (AnscEqualString(ParamName, "AlwaysBlock", TRUE))
+    if (strcmp(ParamName, "AlwaysBlock") == 0)
     {
         pBlkUrl->AlwaysBlock = bValue;
         return TRUE;
@@ -641,7 +641,7 @@ PcBlkURL_SetParamUlongValue(
     if((ANSC_STATUS_SUCCESS == is_usg_in_bridge_mode(&pBridgeMode)) && (pBridgeMode == TRUE))
         return FALSE;
 
-    if (AnscEqualString(ParamName, "BlockMethod", TRUE))
+    if (strcmp(ParamName, "BlockMethod") == 0)
     {
         pBlkUrl->BlockMethod = ulValue;
         return TRUE;
@@ -747,7 +747,7 @@ PcBlkURL_SetParamStringValue
     if((ANSC_STATUS_SUCCESS == is_usg_in_bridge_mode(&pBridgeMode)) && (pBridgeMode == TRUE))
         return FALSE;
 
-    if (AnscEqualString(ParamName, "Site", TRUE))
+    if (strcmp(ParamName, "Site") == 0)
     {
         len=_ansc_strlen(strValue);
         if(len > BUFF_SIZE)
@@ -762,7 +762,7 @@ PcBlkURL_SetParamStringValue
 	     AnscTraceWarning(("%s -- invalid url = %s\n", __FUNCTION__, strValue));
 	}
     }
-    if (AnscEqualString(ParamName, "StartTime", TRUE))
+    if (strcmp(ParamName, "StartTime") == 0)
     {
         if(_ansc_sscanf(strValue, "%d:%d %c", &HH,&MM,&dump)==2)
         {
@@ -774,7 +774,7 @@ PcBlkURL_SetParamStringValue
             }
         }
     }
-    if (AnscEqualString(ParamName, "EndTime", TRUE))
+    if (strcmp(ParamName, "EndTime") == 0)
     {
         if(_ansc_sscanf(strValue, "%d:%d %c", &HH,&MM,&dump)==2)
         {
@@ -786,7 +786,7 @@ PcBlkURL_SetParamStringValue
             }
         }
     }
-    if (AnscEqualString(ParamName, "BlockDays", TRUE))
+    if (strcmp(ParamName, "BlockDays") == 0)
     {
         len=_ansc_strlen(strValue);
         blockdays=(char *) malloc(sizeof(char)*(len+1));
@@ -831,7 +831,7 @@ PcBlkURL_SetParamStringValue
         return TRUE;
     }
 #ifdef CONFIG_CISCO_FEATURE_CISCOCONNECT
-    if (AnscEqualString(ParamName, "MAC", TRUE))
+    if (strcmp(ParamName, "MAC") == 0)
     {
         int len = strlen(strValue);
         for(;len > 0; len--) {
@@ -840,7 +840,7 @@ PcBlkURL_SetParamStringValue
         _ansc_snprintf(pBlkUrl->MAC, sizeof(pBlkUrl->MAC), "%s", strValue);
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "DeviceName", TRUE))
+    if (strcmp(ParamName, "DeviceName") == 0)
     {
         _ansc_snprintf(pBlkUrl->DeviceName, sizeof(pBlkUrl->DeviceName), "%s", strValue);
         return TRUE;
@@ -1032,7 +1032,7 @@ PcTrustedUser_GetParamBoolValue
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_TRUSTEDUSER             *pTrustedUser    = (COSA_DML_TRUSTEDUSER*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "Trusted", TRUE))
+    if (strcmp(ParamName, "Trusted") == 0)
     {
         *pBool = pTrustedUser->Trusted;
         return TRUE;
@@ -1054,12 +1054,12 @@ PcTrustedUser_GetParamStringValue
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_TRUSTEDUSER             *pTrustedUser    = (COSA_DML_TRUSTEDUSER*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "HostDescription", TRUE))
+    if (strcmp(ParamName, "HostDescription") == 0)
     {
         AnscCopyString(pValue, pTrustedUser->HostDescription);
         return 0;
     }
-    if (AnscEqualString(ParamName, "IPAddress", TRUE))
+    if (strcmp(ParamName, "IPAddress") == 0)
     {
         AnscCopyString(pValue, pTrustedUser->IPAddress);
         return 0;
@@ -1083,7 +1083,7 @@ PcTrustedUser_SetParamBoolValue
     if((ANSC_STATUS_SUCCESS == is_usg_in_bridge_mode(&pBridgeMode)) && (pBridgeMode == TRUE))
         return FALSE;
 
-    if (AnscEqualString(ParamName, "Trusted", TRUE))
+    if (strcmp(ParamName, "Trusted") == 0)
     {
         pTrustedUser->Trusted = bValue;
         return TRUE;
@@ -1111,12 +1111,12 @@ PcTrustedUser_SetParamStringValue
     if((ANSC_STATUS_SUCCESS == is_usg_in_bridge_mode(&pBridgeMode)) && (pBridgeMode == TRUE))
         return FALSE;
 
-    if (AnscEqualString(ParamName, "HostDescription", TRUE))
+    if (strcmp(ParamName, "HostDescription") == 0)
     {
         _ansc_snprintf(pTrustedUser->HostDescription, sizeof(pTrustedUser->HostDescription), "%s", strValue);
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "IPAddress", TRUE))
+    if (strcmp(ParamName, "IPAddress") == 0)
     {
         if(pTrustedUser->IPAddressType == IPADDR_IPV4)
         {
@@ -1148,7 +1148,7 @@ PcTrustedUser_GetParamUlongValue(
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_TRUSTEDUSER             *pTrustedUser    = (COSA_DML_TRUSTEDUSER*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "IPAddressType", TRUE))
+    if (strcmp(ParamName, "IPAddressType") == 0)
     {
         *pUlong = pTrustedUser->IPAddressType;
         return TRUE;
@@ -1171,7 +1171,7 @@ PcTrustedUser_SetParamUlongValue(
     if((ANSC_STATUS_SUCCESS == is_usg_in_bridge_mode(&pBridgeMode)) && (pBridgeMode == TRUE))
         return FALSE;
 
-    if (AnscEqualString(ParamName, "IPAddressType", TRUE))
+    if (strcmp(ParamName, "IPAddressType") == 0)
     {
         pTrustedUser->IPAddressType = ulValue;
         return TRUE;
@@ -1356,7 +1356,7 @@ MSServ_GetParamBoolValue
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_MS_SERV             *pMSServ    = (COSA_DML_MS_SERV*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "AlwaysBlock", TRUE))
+    if (strcmp(ParamName, "AlwaysBlock") == 0)
     {
         *pBool = pMSServ->AlwaysBlock;
         return TRUE;
@@ -1378,22 +1378,22 @@ MSServ_GetParamStringValue
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_MS_SERV             *pMSServ    = (COSA_DML_MS_SERV*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "Description", TRUE))
+    if (strcmp(ParamName, "Description") == 0)
     {
         AnscCopyString(pValue, pMSServ->Description);
         return 0;
     }
-    if (AnscEqualString(ParamName, "StartTime", TRUE))
+    if (strcmp(ParamName, "StartTime") == 0)
     {
         AnscCopyString(pValue, pMSServ->StartTime);
         return 0;
     }
-    if (AnscEqualString(ParamName, "EndTime", TRUE))
+    if (strcmp(ParamName, "EndTime") == 0)
     {
         AnscCopyString(pValue, pMSServ->EndTime);
         return 0;
     }
-    if (AnscEqualString(ParamName, "BlockDays", TRUE))
+    if (strcmp(ParamName, "BlockDays") == 0)
     {
         AnscCopyString(pValue, pMSServ->BlockDays);
         return 0;
@@ -1411,17 +1411,17 @@ MSServ_GetParamUlongValue(
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_MS_SERV             *pMSServ    = (COSA_DML_MS_SERV*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "Protocol", TRUE))
+    if (strcmp(ParamName, "Protocol") == 0)
     {
         *pUlong = pMSServ->Protocol;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "StartPort", TRUE))
+    if (strcmp(ParamName, "StartPort") == 0)
     {
         *pUlong = pMSServ->StartPort;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "EndPort", TRUE))
+    if (strcmp(ParamName, "EndPort") == 0)
     {
         *pUlong = pMSServ->EndPort;
         return TRUE;
@@ -1446,7 +1446,7 @@ MSServ_SetParamBoolValue
     if((ANSC_STATUS_SUCCESS == is_usg_in_bridge_mode(&pBridgeMode)) && (pBridgeMode == TRUE))
         return FALSE;
 
-    if (AnscEqualString(ParamName, "AlwaysBlock", TRUE))
+    if (strcmp(ParamName, "AlwaysBlock") == 0)
     {
         pMSServ->AlwaysBlock = bValue;
         return TRUE;
@@ -1479,7 +1479,7 @@ MSServ_SetParamStringValue
     if((ANSC_STATUS_SUCCESS == is_usg_in_bridge_mode(&pBridgeMode)) && (pBridgeMode == TRUE))
         return FALSE;
 
-    if (AnscEqualString(ParamName, "Description", TRUE))
+    if (strcmp(ParamName, "Description") == 0)
     {
         /* check if description doesn't hold certain spl charaters */
         if((strValue == NULL) || (*strValue=='\0'))
@@ -1506,7 +1506,7 @@ MSServ_SetParamStringValue
     if(AnscValidStringCheck((PUCHAR)strValue) != TRUE)
         return FALSE;
 
-    if (AnscEqualString(ParamName, "StartTime", TRUE))
+    if (strcmp(ParamName, "StartTime") == 0)
     {
         if(_ansc_sscanf(strValue, "%d:%d %c", &HH,&MM,&dump)==2)
         {
@@ -1517,7 +1517,7 @@ MSServ_SetParamStringValue
             }
         }
     }
-    if (AnscEqualString(ParamName, "EndTime", TRUE))
+    if (strcmp(ParamName, "EndTime") == 0)
     {
         if(_ansc_sscanf(strValue, "%d:%d %c", &HH,&MM,&dump)==2)
         {
@@ -1528,7 +1528,7 @@ MSServ_SetParamStringValue
             }
         }
     }
-    if (AnscEqualString(ParamName, "BlockDays", TRUE))
+    if (strcmp(ParamName, "BlockDays") == 0)
     {
         len=_ansc_strlen(strValue);
         blockdays=(char *) malloc(sizeof(char)*(len+1));
@@ -1593,12 +1593,12 @@ MSServ_SetParamUlongValue(
     if((ANSC_STATUS_SUCCESS == is_usg_in_bridge_mode(&pBridgeMode)) && (pBridgeMode == TRUE))
         return FALSE;
 
-    if (AnscEqualString(ParamName, "Protocol", TRUE))
+    if (strcmp(ParamName, "Protocol") == 0)
     {
         pMSServ->Protocol = ulValue;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "StartPort", TRUE))
+    if (strcmp(ParamName, "StartPort") == 0)
     {
         if((ulValue >= MIN_PORT) && (ulValue <= MAX_PORT))
         {
@@ -1606,7 +1606,7 @@ MSServ_SetParamUlongValue(
             return TRUE;
         }
     }
-    if (AnscEqualString(ParamName, "EndPort", TRUE))
+    if (strcmp(ParamName, "EndPort") == 0)
     {
         if((ulValue >= pMSServ->StartPort) && (ulValue <= MAX_PORT))
         {
@@ -1795,7 +1795,7 @@ MSTrustedUser_GetParamBoolValue
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_MS_TRUSTEDUSER             *pMSTrustedUser    = (COSA_DML_MS_TRUSTEDUSER*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "Trusted", TRUE))
+    if (strcmp(ParamName, "Trusted") == 0)
     {
         *pBool = pMSTrustedUser->Trusted;
         return TRUE;
@@ -1817,12 +1817,12 @@ MSTrustedUser_GetParamStringValue
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_MS_TRUSTEDUSER             *pMSTrustedUser    = (COSA_DML_MS_TRUSTEDUSER*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "HostDescription", TRUE))
+    if (strcmp(ParamName, "HostDescription") == 0)
     {
         AnscCopyString(pValue, pMSTrustedUser->HostDescription);
         return 0;
     }
-    if (AnscEqualString(ParamName, "IPAddress", TRUE))
+    if (strcmp(ParamName, "IPAddress") == 0)
     {
         AnscCopyString(pValue, pMSTrustedUser->IPAddress);
         return 0;
@@ -1840,7 +1840,7 @@ MSTrustedUser_GetParamUlongValue(
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_MS_TRUSTEDUSER             *pMSTrustedUser    = (COSA_DML_MS_TRUSTEDUSER*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "IPAddressType", TRUE))
+    if (strcmp(ParamName, "IPAddressType") == 0)
     {
         *pUlong = pMSTrustedUser->IPAddressType;
         return TRUE;
@@ -1864,7 +1864,7 @@ MSTrustedUser_SetParamBoolValue
     if((ANSC_STATUS_SUCCESS == is_usg_in_bridge_mode(&pBridgeMode)) && (pBridgeMode == TRUE))
         return FALSE;
 
-    if (AnscEqualString(ParamName, "Trusted", TRUE))
+    if (strcmp(ParamName, "Trusted") == 0)
     {
         pMSTrustedUser->Trusted = bValue;
         return TRUE;
@@ -1892,12 +1892,12 @@ MSTrustedUser_SetParamStringValue
     if(AnscValidStringCheck((PUCHAR)strValue) != TRUE)
         return FALSE;
 
-    if (AnscEqualString(ParamName, "HostDescription", TRUE))
+    if (strcmp(ParamName, "HostDescription") == 0)
     {
         _ansc_snprintf(pMSTrustedUser->HostDescription, sizeof(pMSTrustedUser->HostDescription), "%s", strValue);
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "IPAddress", TRUE))
+    if (strcmp(ParamName, "IPAddress") == 0)
     {
         if(pMSTrustedUser->IPAddressType == IPADDR_IPV4)
         {
@@ -1933,7 +1933,7 @@ MSTrustedUser_SetParamUlongValue(
     if((ANSC_STATUS_SUCCESS == is_usg_in_bridge_mode(&pBridgeMode)) && (pBridgeMode == TRUE))
         return FALSE;
 
-    if (AnscEqualString(ParamName, "IPAddressType", TRUE))
+    if (strcmp(ParamName, "IPAddressType") == 0)
     {
         pMSTrustedUser->IPAddressType = ulValue;
         return TRUE;
@@ -2122,7 +2122,7 @@ MDDev_GetParamBoolValue
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_MD_DEV             *pMDDev    = (COSA_DML_MD_DEV*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "AlwaysBlock", TRUE))
+    if (strcmp(ParamName, "AlwaysBlock") == 0)
     {
         *pBool = pMDDev->AlwaysBlock;
         return TRUE;
@@ -2144,27 +2144,27 @@ MDDev_GetParamStringValue
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_MD_DEV             *pMDDev    = (COSA_DML_MD_DEV*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "Description", TRUE))
+    if (strcmp(ParamName, "Description") == 0)
     {
         AnscCopyString(pValue, pMDDev->Description);
         return 0;
     }
-    if (AnscEqualString(ParamName, "MACAddress", TRUE))
+    if (strcmp(ParamName, "MACAddress") == 0)
     {
         AnscCopyString(pValue, pMDDev->MACAddress);
         return 0;
     }
-    if (AnscEqualString(ParamName, "StartTime", TRUE))
+    if (strcmp(ParamName, "StartTime") == 0)
     {
         AnscCopyString(pValue, pMDDev->StartTime);
         return 0;
     }
-    if (AnscEqualString(ParamName, "EndTime", TRUE))
+    if (strcmp(ParamName, "EndTime") == 0)
     {
         AnscCopyString(pValue, pMDDev->EndTime);
         return 0;
     }
-    if (AnscEqualString(ParamName, "BlockDays", TRUE))
+    if (strcmp(ParamName, "BlockDays") == 0)
     {
         AnscCopyString(pValue, pMDDev->BlockDays);
         return 0;
@@ -2183,7 +2183,7 @@ MDDev_GetParamUlongValue(
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_MD_DEV             *pMDDev    = (COSA_DML_MD_DEV*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "Type", TRUE))
+    if (strcmp(ParamName, "Type") == 0)
     {
         *pUlong = pMDDev->Type;
         return TRUE;
@@ -2207,7 +2207,7 @@ MDDev_SetParamBoolValue
     if((ANSC_STATUS_SUCCESS == is_usg_in_bridge_mode(&pBridgeMode)) && (pBridgeMode == TRUE))
         return FALSE;
 
-    if (AnscEqualString(ParamName, "AlwaysBlock", TRUE))
+    if (strcmp(ParamName, "AlwaysBlock") == 0)
     {
         pMDDev->AlwaysBlock = bValue;
         return TRUE;
@@ -2241,7 +2241,7 @@ MDDev_SetParamStringValue
     char *arr[7];
     BOOL is_space=TRUE;
 
-    if (AnscEqualString(ParamName, "Description", TRUE))
+    if (strcmp(ParamName, "Description") == 0)
     {
         /* check if description doesn't hold certain spl charaters */
         if((strValue == NULL) || (*strValue=='\0'))
@@ -2268,7 +2268,7 @@ MDDev_SetParamStringValue
     if(AnscValidStringCheck((PUCHAR)strValue) != TRUE)
         return FALSE;
 
-    if (AnscEqualString(ParamName, "MACAddress", TRUE))
+    if (strcmp(ParamName, "MACAddress") == 0)
     {
         if((_ansc_strlen(strValue)) != 17)
             return FALSE;
@@ -2285,7 +2285,7 @@ MDDev_SetParamStringValue
             return TRUE;
         }
     }
-    if (AnscEqualString(ParamName, "StartTime", TRUE))
+    if (strcmp(ParamName, "StartTime") == 0)
     {
         if(_ansc_sscanf(strValue, "%d:%d %c", &HH,&MM,&dump)==2)
         {  
@@ -2296,7 +2296,7 @@ MDDev_SetParamStringValue
             }
         }
     }
-    if (AnscEqualString(ParamName, "EndTime", TRUE))
+    if (strcmp(ParamName, "EndTime") == 0)
     {
         if(_ansc_sscanf(strValue, "%d:%d %c", &HH,&MM,&dump)==2)
         {
@@ -2307,7 +2307,7 @@ MDDev_SetParamStringValue
             }
         }
     }
-    if (AnscEqualString(ParamName, "BlockDays", TRUE))
+    if (strcmp(ParamName, "BlockDays") == 0)
     {
         len=_ansc_strlen(strValue);
         blockdays=(char *) malloc(sizeof(char)*(len+1));
@@ -2369,7 +2369,7 @@ MDDev_SetParamUlongValue(
     if((ANSC_STATUS_SUCCESS == is_usg_in_bridge_mode(&pBridgeMode)) && (pBridgeMode == TRUE))
         return FALSE;
 
-    if (AnscEqualString(ParamName, "Type", TRUE))
+    if (strcmp(ParamName, "Type") == 0)
     {
         pMDDev->Type = ulValue;
         return TRUE;
@@ -2452,35 +2452,35 @@ MDRed_GetParamStringValue
     COSA_DML_MD_RED                 *pMDRed = &pParCtrl->MDRedirect;
     char IPv4[17] = "0"; 
 
-    if (AnscEqualString(ParamName, "HTTP_Server_IP", TRUE))
+    if (strcmp(ParamName, "HTTP_Server_IP") == 0)
     { 
         syscfg_get(NULL, "HTTP_Server_IP", IPv4, sizeof(IPv4));
         AnscCopyString(pValue, IPv4);
         return 0;
     }
-    if (AnscEqualString(ParamName, "HTTPS_Server_IP", TRUE))
+    if (strcmp(ParamName, "HTTPS_Server_IP") == 0)
     {
         syscfg_get(NULL, "HTTPS_Server_IP", IPv4, sizeof(IPv4));
         AnscCopyString(pValue, IPv4);
         return 0;
     }
-    if (AnscEqualString(ParamName, "Default_Server_IP", TRUE))
+    if (strcmp(ParamName, "Default_Server_IP") == 0)
     {
         syscfg_get(NULL, "Default_Server_IP", IPv4, sizeof(IPv4));
         AnscCopyString(pValue, IPv4);
         return 0;
     }
-    if (AnscEqualString(ParamName, "HTTP_Server_IPv6", TRUE))
+    if (strcmp(ParamName, "HTTP_Server_IPv6") == 0)
     {
         AnscCopyString(pValue, pMDRed->HTTP_Server_IPv6);
         return 0;
     }
-    if (AnscEqualString(ParamName, "HTTPS_Server_IPv6", TRUE))
+    if (strcmp(ParamName, "HTTPS_Server_IPv6") == 0)
     {
         AnscCopyString(pValue, pMDRed->HTTPS_Server_IPv6);
         return 0;
     }
-    if (AnscEqualString(ParamName, "Default_Server_IPv6", TRUE))
+    if (strcmp(ParamName, "Default_Server_IPv6") == 0)
     {
         AnscCopyString(pValue, pMDRed->Default_Server_IPv6);
         return 0;

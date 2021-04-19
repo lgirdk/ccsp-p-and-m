@@ -45,24 +45,24 @@ LgiPlume_GetParamBoolValue
     )
 {
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "SONAdminStatus", TRUE))
+    if (strcmp(ParamName, "SONAdminStatus") == 0)
     {
         return CosaDmlGetPlumeAdminStatus(NULL, pValue);
     }
 
-    if( AnscEqualString(ParamName, "SONOperationalStatus", TRUE))
+    if (strcmp(ParamName, "SONOperationalStatus") == 0)
     {
         return CosaDmlGetPlumeOperationalStatus(NULL, pValue);
     }
-    if( AnscEqualString(ParamName, "SONDFSEnable", TRUE))
+    if (strcmp(ParamName, "SONDFSEnable") == 0)
     {
         return CosaDmlGetPlumeDFSEnable(NULL, pValue);
     }
-    if( AnscEqualString(ParamName, "NativeAtmBsControl", TRUE))
+    if (strcmp(ParamName, "NativeAtmBsControl") == 0)
     {
         return CosaDmlGetPlumeNativeAtmBsControl(NULL, pValue);
     }
-    if( AnscEqualString(ParamName, "SONLogpullEnable", TRUE))
+    if (strcmp(ParamName, "SONLogpullEnable") == 0)
     {
         return CosaDmlGetPlumeLogpullEnable(NULL, pValue);
     }
@@ -81,7 +81,7 @@ LgiPlume_SetParamBoolValue
     PCOSA_DATAMODEL_LGI_PLUME  pMyObject = (PCOSA_DATAMODEL_LGI_PLUME)g_pCosaBEManager->hLgiPlume;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "SONAdminStatus", TRUE))
+    if (strcmp(ParamName, "SONAdminStatus") == 0)
     {
         if (pMyObject->plumeAdminStatus != value) {
             pMyObject->plumeAdminStatus = value;
@@ -90,7 +90,7 @@ LgiPlume_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SONOperationalStatus", TRUE))
+    if (strcmp(ParamName, "SONOperationalStatus") == 0)
     {
         if (pMyObject->plumeOperationalStatus != value) {
             pMyObject->plumeOperationalStatus = value;
@@ -99,7 +99,7 @@ LgiPlume_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SONDFSEnable", TRUE))
+    if (strcmp(ParamName, "SONDFSEnable") == 0)
     {
         if (pMyObject->plumeDFSEnable != value) {
             pMyObject->plumeDFSEnable = value;
@@ -108,13 +108,13 @@ LgiPlume_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "NativeAtmBsControl", TRUE))
+    if (strcmp(ParamName, "NativeAtmBsControl") == 0)
     {
         pMyObject->plumeNativeAtmBsControl = value;
         pMyObject->bPlumeNativeAtmBsControlChanged = 1;
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "SONLogpullEnable", TRUE))
+    if (strcmp(ParamName, "SONLogpullEnable") == 0)
     {
         pMyObject->plumeLogpullEnable = value;
         return TRUE;
@@ -133,7 +133,7 @@ LgiPlume_GetParamStringValue
     )
 {
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "SONURL", TRUE))
+    if (strcmp(ParamName, "SONURL") == 0)
     {
         return CosaDmlGetPlumeUrl(NULL, pValue, pulSize);
     }
@@ -152,7 +152,7 @@ LgiPlume_SetParamStringValue
     PCOSA_DATAMODEL_LGI_PLUME  pMyObject = (PCOSA_DATAMODEL_LGI_PLUME)g_pCosaBEManager->hLgiPlume;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "SONURL", TRUE))
+    if (strcmp(ParamName, "SONURL") == 0)
     {
         if(0 != strcmp(pMyObject->plumeUrl, pValue))
         {

@@ -367,7 +367,7 @@ Entry_GetParamUlongValue
     PCOSA_DML_DIAGNOSTICS_ENTRY            pDiagGroupEntry = (PCOSA_DML_DIAGNOSTICS_ENTRY)hInsContext;
     
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Level", TRUE))
+    if (strcmp(ParamName, "Level") == 0)
     {
         /* collect value */
         *puLong = pDiagGroupEntry->Level; 
@@ -429,21 +429,21 @@ Entry_GetParamStringValue
     PCOSA_DML_DIAGNOSTICS_ENTRY     pDiagEntry = (PCOSA_DML_DIAGNOSTICS_ENTRY)hInsContext;
     
     /* check the parameter name and return the corresponding value */    
-    if( AnscEqualString(ParamName, "Time", TRUE))
+    if (strcmp(ParamName, "Time") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pDiagEntry->Time);
         return 0;
     }
    
-    if( AnscEqualString(ParamName, "Tag", TRUE))
+    if (strcmp(ParamName, "Tag") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pDiagEntry->Tag);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Message", TRUE))
+    if (strcmp(ParamName, "Message") == 0)
     {
         /* collect value */
         if ( (_ansc_strlen(pDiagEntry->pMessage)+1) < *pUlSize )
@@ -725,7 +725,7 @@ Eventlog_GetParamUlongValue
     PCOSA_DML_DIAGNOSTICS_ENTRY  pDiagGroupEventlog = (PCOSA_DML_DIAGNOSTICS_ENTRY)hInsContext;
     
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Level", TRUE))
+    if (strcmp(ParamName, "Level") == 0)
     {
         /* collect value */
         *puLong = pDiagGroupEventlog->Level; 
@@ -787,21 +787,21 @@ Eventlog_GetParamStringValue
     PCOSA_DML_DIAGNOSTICS_ENTRY pDiagEventlog = (PCOSA_DML_DIAGNOSTICS_ENTRY)hInsContext;
     
     /* check the parameter name and return the corresponding value */    
-    if( AnscEqualString(ParamName, "Time", TRUE))
+    if (strcmp(ParamName, "Time") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pDiagEventlog->Time);
         return 0;
     }
    
-    if( AnscEqualString(ParamName, "Tag", TRUE))
+    if (strcmp(ParamName, "Tag") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pDiagEventlog->Tag);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Message", TRUE))
+    if (strcmp(ParamName, "Message") == 0)
     {
         /* collect value */
         if ( (_ansc_strlen(pDiagEventlog->pMessage)+1) < *pUlSize )
@@ -831,7 +831,7 @@ X_CISCO_COM_Diagnostics_GetParamStringValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
     ULONG logSize = *pUlSize;
-    if( AnscEqualString(ParamName, "DumpAllSyslog", TRUE))
+    if (strcmp(ParamName, "DumpAllSyslog") == 0)
     {
         if((ANSC_STATUS_FAILURE == CosaDmlDiagnosticsGetAllSyslog(pValue, &logSize)) != ANSC_STATUS_SUCCESS)
         {
@@ -845,7 +845,7 @@ X_CISCO_COM_Diagnostics_GetParamStringValue
         return 0;
     }
  
-    if( AnscEqualString(ParamName, "DumpAllEventlog", TRUE))
+    if (strcmp(ParamName, "DumpAllEventlog") == 0)
     {
         if((ANSC_STATUS_FAILURE == CosaDmlDiagnosticsGetAllEventlog(pValue, &logSize)) != ANSC_STATUS_SUCCESS)
         {

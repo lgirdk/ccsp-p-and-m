@@ -265,7 +265,7 @@ Firewall_GetParamUlongValue
    UNREFERENCED_PARAMETER(hInsContext);
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Config", TRUE))
+    if (strcmp(ParamName, "Config") == 0)
     {
         /* collect value */
         *puLong = pFirewallCfg->FirewallLevel;
@@ -331,7 +331,7 @@ Firewall_GetParamStringValue
     UNREFERENCED_PARAMETER(pUlSize);
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Version", TRUE))
+    if (strcmp(ParamName, "Version") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pFirewallCfg->Version);
@@ -339,7 +339,7 @@ Firewall_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "LastChange", TRUE))
+    if (strcmp(ParamName, "LastChange") == 0)
     {
         pFirewallCfg = AnscAllocateMemory(sizeof(COSA_DML_FIREWALL_CFG));
 
@@ -499,7 +499,7 @@ Firewall_SetParamUlongValue
     PCOSA_DATAMODEL_FIREWALL        pCosaDMFirewall = (PCOSA_DATAMODEL_FIREWALL)g_pCosaBEManager->hFirewall;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Config", TRUE))
+    if (strcmp(ParamName, "Config") == 0)
     {
         /* save update to backup */
         pCosaDMFirewall->FirewallConfig.FirewallLevel = uValue;
@@ -711,27 +711,27 @@ V4_GetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if (AnscEqualString(ParamName, "BlockFragIPPkts", TRUE)) {
+    if (strcmp(ParamName, "BlockFragIPPkts") == 0) {
 
         CosaDmlGatewayV4GetBlockFragIPPkts(pBool);
         return TRUE;
     }
-    else if (AnscEqualString(ParamName, "PortScanProtect", TRUE)) {
+    else if (strcmp(ParamName, "PortScanProtect") == 0) {
 
       CosaDmlGatewayV4GetPortScanProtect(pBool);
       return TRUE;
     }
-    else if (AnscEqualString(ParamName, "IPFloodDetect", TRUE)) {
+    else if (strcmp(ParamName, "IPFloodDetect") == 0) {
 
       CosaDmlGatewayV4GetIPFloodDetect(pBool);
       return TRUE;
     }
-    else if (AnscEqualString(ParamName, "ICMPFloodDetect", TRUE)) {
+    else if (strcmp(ParamName, "ICMPFloodDetect") == 0) {
 
       CosaDmlGatewayV4GetICMPFloodDetect(pBool);
       return TRUE;
     }
-    else if (AnscEqualString(ParamName, "Enable", TRUE)) {
+    else if (strcmp(ParamName, "Enable") == 0) {
 
       CosaDmlGatewayV4GetFwEnable(pBool);
       return TRUE;
@@ -779,27 +779,27 @@ V4_SetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if (AnscEqualString(ParamName, "BlockFragIPPkts", TRUE)) {
+    if (strcmp(ParamName, "BlockFragIPPkts") == 0) {
 
         CosaDmlGatewayV4SetBlockFragIPPkts(bValue);
         return TRUE;
     }
-    else if (AnscEqualString(ParamName, "PortScanProtect", TRUE)) {
+    else if (strcmp(ParamName, "PortScanProtect") == 0) {
 
       CosaDmlGatewayV4SetPortScanProtect(bValue);
       return TRUE;
     }
-    else if (AnscEqualString(ParamName, "IPFloodDetect", TRUE)) {
+    else if (strcmp(ParamName, "IPFloodDetect") == 0) {
 
       CosaDmlGatewayV4SetIPFloodDetect(bValue);
       return TRUE;
     }
-    else if (AnscEqualString(ParamName, "ICMPFloodDetect", TRUE)) {
+    else if (strcmp(ParamName, "ICMPFloodDetect") == 0) {
 
       CosaDmlGatewayV4SetICMPFloodDetect(bValue);
       return TRUE;
     }
-    else if (AnscEqualString(ParamName, "Enable", TRUE)) {
+    else if (strcmp(ParamName, "Enable") == 0) {
 
       CosaDmlGatewayV4SetFwEnable(bValue);
       return TRUE;
@@ -810,7 +810,7 @@ V4_SetParamBoolValue
 
 BOOL V4_GetParamUlongValue ( ANSC_HANDLE hInsContext, char* ParamName, ULONG* puLong )
 {
-    if (AnscEqualString(ParamName, "ScheduleEnable", TRUE))
+    if (strcmp(ParamName, "ScheduleEnable") == 0)
     {
         if(ANSC_STATUS_SUCCESS == CosaDmlFW_V4DayOfWeek_GetBlockTimeBitMaskType(puLong))
 	{
@@ -818,7 +818,7 @@ BOOL V4_GetParamUlongValue ( ANSC_HANDLE hInsContext, char* ParamName, ULONG* pu
         }
     }
 
-    if (AnscEqualString(ParamName, "ICMPFloodDetectRate", TRUE))
+    if (strcmp(ParamName, "ICMPFloodDetectRate") == 0)
     {
         if(ANSC_STATUS_SUCCESS == CosaDmlGatewayV4GetICMPFloodDetectRate(puLong))
         {
@@ -833,7 +833,7 @@ BOOL V4_SetParamUlongValue ( ANSC_HANDLE hInsContext, char* ParamName, ULONG ulV
 {
     PCOSA_DATAMODEL_FIREWALL pCosaDMFirewall = (PCOSA_DATAMODEL_FIREWALL)g_pCosaBEManager->hFirewall;
 
-    if (AnscEqualString(ParamName, "ScheduleEnable", TRUE))
+    if (strcmp(ParamName, "ScheduleEnable") == 0)
     {
         if(ANSC_STATUS_SUCCESS != CosaDmlFW_V4DayOfWeek_SetBlockTimeBitMaskType(ulValue))
 	{
@@ -843,7 +843,7 @@ BOOL V4_SetParamUlongValue ( ANSC_HANDLE hInsContext, char* ParamName, ULONG ulV
         pCosaDMFirewall->V4DayOfWeekBlockTimeBitMaskType = ulValue;
     }
 
-    if (AnscEqualString(ParamName, "ICMPFloodDetectRate", TRUE))
+    if (strcmp(ParamName, "ICMPFloodDetectRate") == 0)
     {
         if(ANSC_STATUS_SUCCESS != CosaDmlGatewayV4SetICMPFloodDetectRate(ulValue))
         {
@@ -1060,7 +1060,7 @@ BOOL FW_V4_IpFilter_GetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj            = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_FW_IPFILTER            *pFwIpFilter        = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         *pBool = pFwIpFilter->Enable;
         return TRUE;
@@ -1073,27 +1073,27 @@ ULONG FW_V4_IpFilter_GetParamStringValue ( ANSC_HANDLE hInsContext, char* ParamN
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj            = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_FW_IPFILTER            *pFwIpFilter        = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "Description", TRUE))
+    if (strcmp(ParamName, "Description") == 0)
     {
         AnscCopyString(pValue, pFwIpFilter->Description);
         return 0;
     }
-    if (AnscEqualString(ParamName, "SrcStartAddr", TRUE))
+    if (strcmp(ParamName, "SrcStartAddr") == 0)
     {
         AnscCopyString(pValue, pFwIpFilter->SrcStartIPAddress);
         return 0;
     }
-    if (AnscEqualString(ParamName, "SrcEndAddr", TRUE))
+    if (strcmp(ParamName, "SrcEndAddr") == 0)
     {
         AnscCopyString(pValue, pFwIpFilter->SrcEndIPAddress);
         return 0;
     }
-    if (AnscEqualString(ParamName, "DstStartAddr", TRUE))
+    if (strcmp(ParamName, "DstStartAddr") == 0)
     {
         AnscCopyString(pValue, pFwIpFilter->DstStartIPAddress);
         return 0;
     }
-    if (AnscEqualString(ParamName, "DstEndAddr", TRUE))
+    if (strcmp(ParamName, "DstEndAddr") == 0)
     {
         AnscCopyString(pValue, pFwIpFilter->DstEndIPAddress);
         return 0;
@@ -1107,37 +1107,37 @@ BOOL FW_V4_IpFilter_GetParamUlongValue ( ANSC_HANDLE hInsContext, char *ParamNam
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_FW_IPFILTER           *pFwIpFilter   = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "SrcPortStart", TRUE))
+    if (strcmp(ParamName, "SrcPortStart") == 0)
     {
         *pUlong = pFwIpFilter->SrcStartPort;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "SrcPortEnd", TRUE))
+    if (strcmp(ParamName, "SrcPortEnd") == 0)
     {
         *pUlong = pFwIpFilter->SrcEndPort;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "DstPortStart", TRUE))
+    if (strcmp(ParamName, "DstPortStart") == 0)
     {
         *pUlong = pFwIpFilter->DstStartPort;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "DstPortEnd", TRUE))
+    if (strcmp(ParamName, "DstPortEnd") == 0)
     {
         *pUlong = pFwIpFilter->DstEndPort;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "Protocol", TRUE))
+    if (strcmp(ParamName, "Protocol") == 0)
     {
         *pUlong = pFwIpFilter->ProtocolType;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "Action", TRUE))
+    if (strcmp(ParamName, "Action") == 0)
     {
         *pUlong = pFwIpFilter->FilterAction;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "Direction", TRUE))
+    if (strcmp(ParamName, "Direction") == 0)
     {
         *pUlong = pFwIpFilter->FilterDirec;
         return TRUE;
@@ -1151,7 +1151,7 @@ BOOL FW_V4_IpFilter_SetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj            = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_FW_IPFILTER           *pFwIpFilter     = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         pFwIpFilter->Enable = bValue;
         return TRUE;
@@ -1165,22 +1165,22 @@ BOOL FW_V4_IpFilter_SetParamStringValue ( ANSC_HANDLE hInsContext, char* ParamNa
     COSA_DML_FW_IPFILTER           *pFwIpFilter     = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
     unsigned char buf[sizeof(struct in_addr)];
 
-    if (AnscEqualString(ParamName, "Description", TRUE))
+    if (strcmp(ParamName, "Description") == 0)
     {
         _ansc_snprintf(pFwIpFilter->Description, sizeof(pFwIpFilter->Description), "%s", strValue);
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "SrcStartAddr", TRUE))
+    if (strcmp(ParamName, "SrcStartAddr") == 0)
     {
         _ansc_snprintf(pFwIpFilter->SrcStartIPAddress, sizeof(pFwIpFilter->SrcStartIPAddress), "%s", strValue);
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "SrcEndAddr", TRUE))
+    if (strcmp(ParamName, "SrcEndAddr") == 0)
     {
         _ansc_snprintf(pFwIpFilter->SrcEndIPAddress, sizeof(pFwIpFilter->SrcEndIPAddress), "%s", strValue);
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "DstStartAddr", TRUE))
+    if (strcmp(ParamName, "DstStartAddr") == 0)
     {
        if(inet_pton(AF_INET,strValue,buf))
        {
@@ -1188,7 +1188,7 @@ BOOL FW_V4_IpFilter_SetParamStringValue ( ANSC_HANDLE hInsContext, char* ParamNa
                return TRUE;
        }
     }
-    if (AnscEqualString(ParamName, "DstEndAddr", TRUE))
+    if (strcmp(ParamName, "DstEndAddr") == 0)
     {
         _ansc_snprintf(pFwIpFilter->DstEndIPAddress, sizeof(pFwIpFilter->DstEndIPAddress), "%s", strValue);
         return TRUE;
@@ -1202,37 +1202,37 @@ BOOL FW_V4_IpFilter_SetParamUlongValue ( ANSC_HANDLE hInsContext, char *ParamNam
     PCOSA_CONTEXT_LINK_OBJECT     pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_FW_IPFILTER         *pFwIpFilter   = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "SrcPortStart", TRUE))
+    if (strcmp(ParamName, "SrcPortStart") == 0)
     {
         pFwIpFilter->SrcStartPort = ulValue;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "SrcPortEnd", TRUE))
+    if (strcmp(ParamName, "SrcPortEnd") == 0)
     {
         pFwIpFilter->SrcEndPort = ulValue;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "DstPortStart", TRUE))
+    if (strcmp(ParamName, "DstPortStart") == 0)
     {
         pFwIpFilter->DstStartPort = ulValue;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "DstPortEnd", TRUE))
+    if (strcmp(ParamName, "DstPortEnd") == 0)
     {
         pFwIpFilter->DstEndPort = ulValue;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "Protocol", TRUE))
+    if (strcmp(ParamName, "Protocol") == 0)
     {
         pFwIpFilter->ProtocolType= ulValue;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "Action", TRUE))
+    if (strcmp(ParamName, "Action") == 0)
     {
         pFwIpFilter->FilterAction= ulValue;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "Direction", TRUE))
+    if (strcmp(ParamName, "Direction") == 0)
     {
         pFwIpFilter->FilterDirec= ulValue;
         return TRUE;
@@ -1308,7 +1308,7 @@ ULONG V4_IPFilter_DayOfWeek_GetParamStringValue ( ANSC_HANDLE hInsContext, char*
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj        = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_FW_V4_DAYOFWEEK       *pV4DayOfWeek    = (COSA_DML_FW_V4_DAYOFWEEK*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "BlockTimeBitMask", TRUE)) {
+    if (strcmp(ParamName, "BlockTimeBitMask") == 0) {
         AnscCopyString(pValue, pV4DayOfWeek->V4DayOfWeek_BlockTimeBitMask);
         return 0;
     }
@@ -1323,7 +1323,7 @@ BOOL V4_IPFilter_DayOfWeek_SetParamStringValue ( ANSC_HANDLE hInsContext, char* 
     int i = 0;
 
     /* check the parameter name and set the corresponding value */
-    if (AnscEqualString(ParamName, "BlockTimeBitMask", TRUE))
+    if (strcmp(ParamName, "BlockTimeBitMask") == 0)
     {
         // Ensure Mask Len is 24 characters
         iMaskLen = strlen(strValue);
@@ -1438,22 +1438,22 @@ V6_GetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if (AnscEqualString(ParamName, "BlockFragIPPkts", TRUE)) {
+    if (strcmp(ParamName, "BlockFragIPPkts") == 0) {
 
         CosaDmlGatewayV6GetBlockFragIPPkts(pBool);
         return TRUE;
     }
-    else if (AnscEqualString(ParamName, "PortScanProtect", TRUE)) {
+    else if (strcmp(ParamName, "PortScanProtect") == 0) {
 
       CosaDmlGatewayV6GetPortScanProtect(pBool);
       return TRUE;
     }
-    else if (AnscEqualString(ParamName, "IPFloodDetect", TRUE)) {
+    else if (strcmp(ParamName, "IPFloodDetect") == 0) {
 
       CosaDmlGatewayV6GetIPFloodDetect(pBool);
       return TRUE;
     }
-    else if (AnscEqualString(ParamName, "Enable", TRUE)) {
+    else if (strcmp(ParamName, "Enable") == 0) {
 
       CosaDmlGatewayV6GetFwEnable(pBool);
       return TRUE;
@@ -1501,22 +1501,22 @@ V6_SetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if (AnscEqualString(ParamName, "BlockFragIPPkts", TRUE)) {
+    if (strcmp(ParamName, "BlockFragIPPkts") == 0) {
 
         CosaDmlGatewayV6SetBlockFragIPPkts(bValue);
         return TRUE;
     }
-    else if (AnscEqualString(ParamName, "PortScanProtect", TRUE)) {
+    else if (strcmp(ParamName, "PortScanProtect") == 0) {
 
       CosaDmlGatewayV6SetPortScanProtect(bValue);
       return TRUE;
     }
-    else if (AnscEqualString(ParamName, "IPFloodDetect", TRUE)) {
+    else if (strcmp(ParamName, "IPFloodDetect") == 0) {
 
       CosaDmlGatewayV6SetIPFloodDetect(bValue);
       return TRUE;
     }
-    else if (AnscEqualString(ParamName, "Enable", TRUE)) {
+    else if (strcmp(ParamName, "Enable") == 0) {
 
       CosaDmlGatewayV6SetFwEnable(bValue);
       return TRUE;
@@ -1528,7 +1528,7 @@ V6_SetParamBoolValue
 BOOL V6_GetParamUlongValue ( ANSC_HANDLE hInsContext, char* ParamName, ULONG* puLong )
 {
     /* check the parameter name and return the corresponding value */
-    if (AnscEqualString(ParamName, "ScheduleEnable", TRUE)) {
+    if (strcmp(ParamName, "ScheduleEnable") == 0) {
         if(ANSC_STATUS_SUCCESS == CosaDmlFW_V6DayOfWeek_GetBlockTimeBitMaskType(puLong)) {
             return TRUE;
         }
@@ -1540,7 +1540,7 @@ BOOL V6_SetParamUlongValue ( ANSC_HANDLE hInsContext, char* ParamName, ULONG ulV
 {
     PCOSA_DATAMODEL_FIREWALL        pCosaDMFirewall = (PCOSA_DATAMODEL_FIREWALL)g_pCosaBEManager->hFirewall;
     /* check the parameter name and set the corresponding value */
-    if (AnscEqualString(ParamName, "ScheduleEnable", TRUE)) {
+    if (strcmp(ParamName, "ScheduleEnable") == 0) {
         if(ANSC_STATUS_SUCCESS != CosaDmlFW_V6DayOfWeek_SetBlockTimeBitMaskType(ulValue)) {
             return FALSE;
         }
@@ -1756,7 +1756,7 @@ BOOL FW_V6_IpFilter_GetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName
 {
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_FW_IPFILTER            *pFwIpFilter  = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
-    if (AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         *pBool = pFwIpFilter->Enable;
         return TRUE;
@@ -1769,17 +1769,17 @@ ULONG FW_V6_IpFilter_GetParamStringValue ( ANSC_HANDLE hInsContext, char* ParamN
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_FW_IPFILTER            *pFwIpFilter  = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "Description", TRUE))
+    if (strcmp(ParamName, "Description") == 0)
     {
         AnscCopyString(pValue, pFwIpFilter->Description);
         return 0;
     }
-    if (AnscEqualString(ParamName, "SrcStartAddr", TRUE))
+    if (strcmp(ParamName, "SrcStartAddr") == 0)
     {
         AnscCopyString(pValue, pFwIpFilter->SrcStartIPAddress);
         return 0;
     }
-    if (AnscEqualString(ParamName, "DstStartAddr", TRUE))
+    if (strcmp(ParamName, "DstStartAddr") == 0)
     {
         AnscCopyString(pValue, pFwIpFilter->DstStartIPAddress);
         return 0;
@@ -1793,47 +1793,47 @@ BOOL FW_V6_IpFilter_GetParamUlongValue ( ANSC_HANDLE hInsContext, char *ParamNam
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_FW_IPFILTER           *pFwIpFilter   = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "SrcPortStart", TRUE))
+    if (strcmp(ParamName, "SrcPortStart") == 0)
     {
         *pUlong = pFwIpFilter->SrcStartPort;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "SrcPortEnd", TRUE))
+    if (strcmp(ParamName, "SrcPortEnd") == 0)
     {
         *pUlong = pFwIpFilter->SrcEndPort;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "DstPortStart", TRUE))
+    if (strcmp(ParamName, "DstPortStart") == 0)
     {
         *pUlong = pFwIpFilter->DstStartPort;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "DstPortEnd", TRUE))
+    if (strcmp(ParamName, "DstPortEnd") == 0)
     {
         *pUlong = pFwIpFilter->DstEndPort;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "IPv6SrcPrefixLen", TRUE))
+    if (strcmp(ParamName, "IPv6SrcPrefixLen") == 0)
     {
         *pUlong = pFwIpFilter->IPv6SrcPrefixLen;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "IPv6DstPrefixLen", TRUE))
+    if (strcmp(ParamName, "IPv6DstPrefixLen") == 0)
     {
         *pUlong = pFwIpFilter->IPv6DstPrefixLen;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "Protocol", TRUE))
+    if (strcmp(ParamName, "Protocol") == 0)
     {
         *pUlong = pFwIpFilter->ProtocolType;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "Action", TRUE))
+    if (strcmp(ParamName, "Action") == 0)
     {
         *pUlong = pFwIpFilter->FilterAction;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "Direction", TRUE))
+    if (strcmp(ParamName, "Direction") == 0)
     {
         *pUlong = pFwIpFilter->FilterDirec;
         return TRUE;
@@ -1846,7 +1846,7 @@ BOOL FW_V6_IpFilter_SetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName
 {
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj        = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_FW_IPFILTER           *pFwIpFilter     = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
-    if (AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         pFwIpFilter->Enable = bValue;
         return TRUE;
@@ -1860,17 +1860,17 @@ BOOL FW_V6_IpFilter_SetParamStringValue ( ANSC_HANDLE hInsContext, char* ParamNa
     COSA_DML_FW_IPFILTER           *pFwIpFilter     = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
     unsigned char buf[sizeof(struct in6_addr)];
 
-    if (AnscEqualString(ParamName, "Description", TRUE))
+    if (strcmp(ParamName, "Description") == 0)
     {
         _ansc_snprintf(pFwIpFilter->Description, sizeof(pFwIpFilter->Description), "%s", strValue);
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "SrcStartAddr", TRUE))
+    if (strcmp(ParamName, "SrcStartAddr") == 0)
     {
         _ansc_snprintf(pFwIpFilter->SrcStartIPAddress, sizeof(pFwIpFilter->SrcStartIPAddress), "%s", strValue);
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "DstStartAddr", TRUE))
+    if (strcmp(ParamName, "DstStartAddr") == 0)
     {
        if(inet_pton(AF_INET6,strValue,buf))
        {
@@ -1888,27 +1888,27 @@ BOOL FW_V6_IpFilter_SetParamUlongValue ( ANSC_HANDLE hInsContext, char *ParamNam
     PCOSA_CONTEXT_LINK_OBJECT     pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_FW_IPFILTER         *pFwIpFilter   = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "SrcPortStart", TRUE))
+    if (strcmp(ParamName, "SrcPortStart") == 0)
     {
         pFwIpFilter->SrcStartPort = ulValue;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "SrcPortEnd", TRUE))
+    if (strcmp(ParamName, "SrcPortEnd") == 0)
     {
         pFwIpFilter->SrcEndPort = ulValue;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "DstPortStart", TRUE))
+    if (strcmp(ParamName, "DstPortStart") == 0)
     {
         pFwIpFilter->DstStartPort = ulValue;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "DstPortEnd", TRUE))
+    if (strcmp(ParamName, "DstPortEnd") == 0)
     {
         pFwIpFilter->DstEndPort = ulValue;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "IPv6SrcPrefixLen", TRUE))
+    if (strcmp(ParamName, "IPv6SrcPrefixLen") == 0)
     {
         if((ulValue == 0) || (ulValue >= 64 && ulValue <= 128))
         {
@@ -1916,22 +1916,22 @@ BOOL FW_V6_IpFilter_SetParamUlongValue ( ANSC_HANDLE hInsContext, char *ParamNam
             return TRUE;
         }
     }
-    if (AnscEqualString(ParamName, "IPv6DstPrefixLen", TRUE))
+    if (strcmp(ParamName, "IPv6DstPrefixLen") == 0)
     {
         pFwIpFilter->IPv6DstPrefixLen = ulValue;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "Protocol", TRUE))
+    if (strcmp(ParamName, "Protocol") == 0)
     {
         pFwIpFilter->ProtocolType= ulValue;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "Action", TRUE))
+    if (strcmp(ParamName, "Action") == 0)
     {
         pFwIpFilter->FilterAction = ulValue;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "Direction", TRUE))
+    if (strcmp(ParamName, "Direction") == 0)
     {
         pFwIpFilter->FilterDirec = ulValue;
         return TRUE;
@@ -2007,7 +2007,7 @@ ULONG V6_IPFilter_DayOfWeek_GetParamStringValue ( ANSC_HANDLE hInsContext, char*
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj        = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_FW_V6_DAYOFWEEK       *pV6DayOfWeek    = (COSA_DML_FW_V6_DAYOFWEEK*)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "BlockTimeBitMask", TRUE)) {
+    if (strcmp(ParamName, "BlockTimeBitMask") == 0) {
         AnscCopyString(pValue, pV6DayOfWeek->V6DayOfWeek_BlockTimeBitMask);
         return 0;
     }
@@ -2022,7 +2022,7 @@ BOOL V6_IPFilter_DayOfWeek_SetParamStringValue ( ANSC_HANDLE hInsContext, char* 
     int i = 0;
 
     /* check the parameter name and set the corresponding value */
-    if (AnscEqualString(ParamName, "BlockTimeBitMask", TRUE))
+    if (strcmp(ParamName, "BlockTimeBitMask") == 0)
     {
         // Ensure Mask Len is 24 characters
         iMaskLen = strlen(strValue);
