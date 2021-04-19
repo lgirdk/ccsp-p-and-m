@@ -546,7 +546,7 @@ Host_GetParamBoolValue
     PLmObjectHost pHost = (PLmObjectHost) hInsContext;
     int i = 0;
     for(; i<LM_HOST_NumBoolPara; i++){
-        if( AnscEqualString(ParamName, lmHosts.pHostBoolParaName[i], TRUE))
+        if (strcmp(ParamName, lmHosts.pHostBoolParaName[i]) == 0)
         {
             /* collect value */
             *pBool = pHost->bBoolParaValue[i];
@@ -708,7 +708,7 @@ Host_GetParamUlongValue
     PLmObjectHost pHost = (PLmObjectHost) hInsContext;
     int i = 0;
     for(; i<LM_HOST_NumUlongPara; i++){
-        if( AnscEqualString(ParamName, COSA_HOSTS_Extension1_Name, TRUE))
+        if (strcmp(ParamName, COSA_HOSTS_Extension1_Name) == 0)
         {
             time_t currentTime = time(NULL);
             if(currentTime > pHost->activityChangeTime){
@@ -718,7 +718,7 @@ Host_GetParamUlongValue
             }
             return TRUE;
         }
-        else if( AnscEqualString(ParamName, lmHosts.pHostUlongParaName[i], TRUE))
+        else if (strcmp(ParamName, lmHosts.pHostUlongParaName[i]) == 0)
         {
             /* collect value */
             *puLong = pHost->ulUlongParaValue[i];
@@ -802,7 +802,7 @@ Host_GetParamStringValue
     errno_t rc = -1;
     int i = 0;
     for(; i<LM_HOST_NumStringPara; i++){
-        if( AnscEqualString(ParamName, lmHosts.pHostStringParaName[i], TRUE))
+        if (strcmp(ParamName, lmHosts.pHostStringParaName[i]) == 0)
         {
             /* collect value */
             if (! pHost->pStringParaValue[i]) {
@@ -1506,7 +1506,7 @@ Host_IPv4Address_GetParamStringValue
     errno_t rc = -1;
     int i = 0;
     for(; i<LM_HOST_IPv4Address_NumStringPara; i++){
-        if( AnscEqualString(ParamName, lmHosts.pIPv4AddressStringParaName[i], TRUE))
+        if (strcmp(ParamName, lmHosts.pIPv4AddressStringParaName[i]) == 0)
         {
             /* collect value */
             if (! pIPv4Address->pStringParaValue[i]) {
@@ -1815,7 +1815,7 @@ Host_IPv6Address_GetParamStringValue
     errno_t rc = -1;
     int i = 0;
     for(; i<LM_HOST_IPv6Address_NumStringPara; i++){
-        if( AnscEqualString(ParamName, lmHosts.pIPv6AddressStringParaName[i], TRUE))
+        if (strcmp(ParamName, lmHosts.pIPv6AddressStringParaName[i]) == 0)
         {
             /* collect value */
             if (! pIPv6Address->pStringParaValue[i]) {
