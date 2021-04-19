@@ -1609,7 +1609,7 @@ SentOption_GetEntryStatus
 {
     PCOSA_CONTEXT_DHCPC_LINK_OBJECT pCxtLink          = (PCOSA_CONTEXT_DHCPC_LINK_OBJECT)hInsContext;
 
-    if( AnscEqualString(StatusName, "Committed", TRUE))
+    if( strcmp(StatusName, "Committed") == 0)
     {
         /* collect value */
         if ( pCxtLink->bNew )
@@ -3704,7 +3704,7 @@ Server_GetParamStringValue
     UNREFERENCED_PARAMETER(pValue);
     UNREFERENCED_PARAMETER(pUlSize);
     /* check the parameter name and return the corresponding value */
-    if(AnscEqualString(ParamName, "StaticClientsData", TRUE) || AnscEqualString(ParamName, "Lan", TRUE))
+    if ((strcmp(ParamName, "StaticClientsData") == 0) || (strcmp(ParamName, "Lan") == 0))
     {
         CcspTraceWarning(("Data Get Not supported\n"));
         return 0;

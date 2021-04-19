@@ -2588,8 +2588,7 @@ PortMapping_Validate
             pSListEntry       = AnscSListGetNextEntry(pSListEntry);
 
             pPortMapping2     = (PCOSA_DML_NAT_PMAPPING)pCxtLink2->hContext;
-
-            if ( AnscEqualString( pPortMapping2->Alias, pPortMapping->Alias, TRUE ) )
+            if (strcmp(pPortMapping2->Alias, pPortMapping->Alias) == 0)
             {
                 if ( pCxtLink2 == pCxtLink )
                 {
@@ -3637,7 +3636,7 @@ PortTrigger_SetParamUlongValue
 #if 1
     /* XB3/BWG don't need filter output/input packet protocol. Those two DM need to be set as same value. 
      * For some reason SNMP cannot set those DM both, so set it in here */  
-    if( AnscEqualString(ParamName, "TriggerProtocol", TRUE) || AnscEqualString(ParamName, "ForwardProtocol", TRUE))
+    if ((strcmp(ParamName, "TriggerProtocol") == 0) || (strcmp(ParamName, "ForwardProtocol") == 0))
     {
         pNatPTrigger->TriggerProtocol = uValue;
         pNatPTrigger->ForwardProtocol = uValue;
@@ -3866,7 +3865,7 @@ PortTrigger_Validate
 
             pPortTrigger2     = (PCOSA_DML_NAT_PTRIGGER)pCxtLink2->hContext;
 
-            if ( AnscEqualString( pPortTrigger2->Alias, pPortTrigger->Alias, TRUE ) )
+            if (strcmp(pPortTrigger2->Alias, pPortTrigger->Alias) == 0)
             {
                 if ( pCxtLink2 == pCxtLink )
                 {

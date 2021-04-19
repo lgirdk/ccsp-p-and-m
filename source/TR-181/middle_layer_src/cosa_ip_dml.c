@@ -1920,7 +1920,8 @@ Interface2_Validate
 
         if ( pIPInterface2 && 
             ((ULONG)pIPInterface2 != (ULONG)pIPInterface) &&
-             AnscEqualString(pIPInterface2->Cfg.Alias, pIPInterface->Cfg.Alias, TRUE))
+             (strcmp(pIPInterface2->Cfg.Alias, pIPInterface->Cfg.Alias) == 0))
+
         {
             rc = strcpy_s(pReturnParamName, *puLength, "Alias");
             if(rc != EOK)
@@ -2898,7 +2899,8 @@ IPv4Address_Validate
 
         if ( pIPv4Addr2 &&
             ((ULONG)pIPv4Addr2 != (ULONG)pIPv4Addr) &&
-             AnscEqualString(pIPv4Addr2->Alias, pIPv4Addr->Alias, TRUE))
+             (strcmp(pIPv4Addr2->Alias, pIPv4Addr->Alias) == 0))
+
         {
             rc = strcpy_s(pReturnParamName, *puLength, "Alias");
             if(rc != EOK)
@@ -4183,7 +4185,7 @@ IPv6Address_Validate
 
         if ( pIPv6Addr2 &&
             ((ULONG)pIPv6Addr2 != (ULONG)pIPv6Addr ) &&
-             AnscEqualString(pIPv6Addr2->Alias, pIPv6Addr->Alias, TRUE))
+             (strcmp(pIPv6Addr2->Alias, pIPv6Addr->Alias) == 0))
         {
             rc = STRCPY_S_NOCLOBBER(pReturnParamName, *puLength, "Alias");
             if(rc != EOK)
@@ -5564,7 +5566,8 @@ IPv6Prefix_Validate
 
         if ( pIPv6Pre2 &&
             ((ULONG)pIPv6Pre2 != (ULONG)pIPv6Pre ) &&
-             AnscEqualString(pIPv6Pre2->Alias, pIPv6Pre->Alias, TRUE))
+             (strcmp(pIPv6Pre2->Alias, pIPv6Pre->Alias) == 0))
+
         {
             rc = STRCPY_S_NOCLOBBER(pReturnParamName, *puLength, "Alias");
             if(rc != EOK)

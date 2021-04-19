@@ -3449,7 +3449,7 @@ Snmpv3DHKickstart_SetParamBoolValue
             bRet = TRUE;
         }
     }
-    else if (strcmp(ParamName, "RFCUpdateDone") == 0)    // RFCUpdateDone comes from RFCPostProcess.sh
+    else if (strcmp(ParamName, "RFCUpdateDone") == 0)
     {
         if( pKickstart != NULL )
         {
@@ -3731,7 +3731,7 @@ Snmpv3DHKickstart_SetParamUlongValue
     if( pKickstart != NULL )
     {
         /* check the parameter name and return the corresponding value */
-        if( AnscEqualString(ParamName, "KickstartTotal", TRUE) && uValue <= MAX_KICKSTART_ROWS )
+        if ((strcmp(ParamName, "KickstartTotal") == 0) && uValue <= MAX_KICKSTART_ROWS )
         {
             pKickstart->KickstartTotal = uValue;
             CcspTraceInfo(("Snmpv3DHKickstart_SetParamUlongValue: KickstartTotal = %lu\n", (unsigned long)pKickstart->KickstartTotal));
@@ -7771,15 +7771,15 @@ OAUTH_GetParamStringValue
         retval = 0;
         bAuthModeCheck = TRUE;
     }
-    else if( AnscEqualString(ParamName, "ServerUrl", TRUE) == TRUE )
+    else if (strcmp(ParamName, "ServerUrl") == 0)
     {
         retval = 0;
     }
-    else if( AnscEqualString(ParamName, "TokenEndpoint", TRUE) == TRUE )
+    else if (strcmp(ParamName, "TokenEndpoint") == 0)
     {
         retval = 0;
     }
-    else if( AnscEqualString(ParamName, "ClientId", TRUE) == TRUE )
+    else if (strcmp(ParamName, "ClientId") == 0)
     {
         retval = 0;
     }
@@ -15591,7 +15591,8 @@ SwitchToDibbler_SetParamBoolValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
      /* This set API is only for XB3,AXB6 devices */
-if( AnscEqualString(ParamName, "Enable", TRUE))
+
+    if (strcmp(ParamName, "Enable") == 0)
     {
         char buf[8];
         char event[8];
@@ -16224,7 +16225,8 @@ SwitchToUDHCPC_SetParamBoolValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
      /* This set API is only for XB3,AXB6 devices */
-if( AnscEqualString(ParamName, "Enable", TRUE))
+
+    if (strcmp(ParamName, "Enable") == 0)
     {
         char buf[8];
         char event[8];
@@ -21498,7 +21500,7 @@ mTlsLogUpload_GetParamBoolValue
  )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( (pBool != NULL) && (AnscEqualString(ParamName, "Enable", TRUE)))
+    if( (pBool != NULL) && (strcmp(ParamName, "Enable") == 0))
     {
         char value[8] = {'\0'};
         if( syscfg_get(NULL, "mTlsLogUpload_Enable", value, sizeof(value)) == 0 ) {

@@ -1085,7 +1085,7 @@ Interface_Validate
     {
         if (
                 ((ULONG)pEthernetPortFull != (ULONG)&pMyObject->EthernetPortFullTable[ulIndex]) &&
-                AnscEqualString(pEthernetPortFull->Cfg.Alias, pMyObject->EthernetPortFullTable[ulIndex].Cfg.Alias, TRUE)
+                (strcmp(pEthernetPortFull->Cfg.Alias, pMyObject->EthernetPortFullTable[ulIndex].Cfg.Alias) == 0)
             )
         {
             rc = strcpy_s(pReturnParamName, *puLength, "Alias");
@@ -2750,7 +2750,7 @@ Link_Validate
         if ( 
                  pEntry2 && 
                  ((ULONG)pEntry2 != (ULONG)pEntry) && 
-                 AnscEqualString(pEntry->Cfg.Alias, pEntry2->Cfg.Alias, TRUE) 
+                  (strcmp(pEntry->Cfg.Alias, pEntry2->Cfg.Alias) == 0)
            )
         {
             rc = strcpy_s(pReturnParamName, *puLength, "Alias");
@@ -4010,7 +4010,7 @@ VLANTermination_Validate
         if ( 
                  pEntry2 && 
                  ((ULONG)pEntry2 != (ULONG)pEntry) && 
-                 AnscEqualString(pEntry->Cfg.Alias, pEntry2->Cfg.Alias, TRUE) 
+                 (strcmp(pEntry->Cfg.Alias, pEntry2->Cfg.Alias) == 0)
            )
         {
             rc = strcpy_s(pReturnParamName, *puLength, "Alias");
@@ -4028,7 +4028,7 @@ VLANTermination_Validate
                  pEntry2 && 
                  ((ULONG)pEntry2 != (ULONG)pEntry) && 
                  pEntry2->Cfg.bEnabled &&
-                 AnscEqualString(pEntry->Cfg.EthLinkName, pEntry2->Cfg.EthLinkName, TRUE)  &&
+                 (strcmp(pEntry->Cfg.EthLinkName, pEntry2->Cfg.EthLinkName) == 0) &&
                  pEntry->Cfg.VLANID == pEntry2->Cfg.VLANID
            )
         {
