@@ -537,7 +537,7 @@ CosaUtilGetLowerLayers
                 }
             }
 #if defined (INTEL_PUMA7)
-            else if ( AnscEqualString(pTableStringToken->Name, "Device.GRE.Tunnel.", TRUE ) )
+            else if (strcmp(pTableStringToken->Name, "Device.GRE.Tunnel.") == 0)
             {
                 ulNumOfEntries =  CosaGetParamValueUlong("Device.GRE.TunnelNumberOfEntries");
                 CcspTraceInfo(("----------CosaUtilGetLowerLayers, tunnelnum:%lu\n", ulNumOfEntries));

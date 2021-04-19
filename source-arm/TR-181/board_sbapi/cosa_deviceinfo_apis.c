@@ -1911,7 +1911,7 @@ ULONG COSADmlGetCpuUsage()
 
 int COSADmlSetMemoryStatus(char * ParamName, ULONG val)
 {
-    if(AnscEqualString(ParamName, "X_RDKCENTRAL-COM_FreeMemThreshold", TRUE))
+    if (strcmp(ParamName, "X_RDKCENTRAL-COM_FreeMemThreshold") == 0)
      {
             char buf[10];
 	    memset(buf,0,sizeof(buf));
@@ -2000,7 +2000,7 @@ ULONG COSADmlGetMemoryStatus(char * ParamName)
         return tmp;
 #endif
      }
-     else if(AnscEqualString(ParamName, "X_RDKCENTRAL-COM_FreeMemThreshold", TRUE))
+     else if (strcmp(ParamName, "X_RDKCENTRAL-COM_FreeMemThreshold") == 0)
      {
 	char buf[10];
 	memset(buf,0, sizeof(buf));

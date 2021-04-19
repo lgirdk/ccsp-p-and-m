@@ -308,7 +308,7 @@ WMMdownstreamMap_GetParamBoolValue
 	char buf[8];
 	memset (buf, 0, sizeof(buf));
 	UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
 		syscfg_get( NULL, "WMMdownstreamMap_enable", buf, sizeof(buf));
             if (strcmp(buf, "true") == 0)
@@ -364,7 +364,7 @@ WMMdownstreamMap_SetParamBoolValue
 	 if (IsBoolSame(hInsContext, ParamName, bValue, WMMdownstreamMap_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         if( bValue == TRUE)
