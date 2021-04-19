@@ -937,7 +937,7 @@ DeviceInfo_GetParamStringValue
         return 0;
     }
     
-    if (AnscEqualString(ParamName, "X_RDK_FirmwareName", TRUE))
+    if (strcmp(ParamName, "X_RDK_FirmwareName") == 0)
     {
 
 	    CosaDmlDiGetFirmwareName(NULL, pValue,pulSize);
@@ -8409,7 +8409,7 @@ ULONG
     UNREFERENCED_PARAMETER(pulSize);
     errno_t   rc   = -1;
 
-    if( AnscEqualString(ParamName, "S3SigningUrl", TRUE))
+    if (strcmp(ParamName, "S3SigningUrl") == 0)
     {
         /* collect value */
         char buf[64] = {'\0'};
@@ -8471,7 +8471,7 @@ BOOL
     if (IsStringSame(hInsContext, ParamName, pString, CrashUpload_GetParamStringValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "S3SigningUrl", TRUE))
+    if (strcmp(ParamName, "S3SigningUrl") == 0)
     {
         if (syscfg_set_commit(NULL, "CrashUpload_S3SigningUrl", pString) != 0)
         {
@@ -9494,7 +9494,7 @@ ErrorsReceived_RFC_GetParamBoolValue
     if (!ParamName || !pBool)
         return FALSE;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
        /* Collect Value */
        char *strValue = NULL;
@@ -9556,7 +9556,7 @@ ErrorsReceived_RFC_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, ErrorsReceived_RFC_GetParamBoolValue))
         return TRUE;
     
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
        int retPsmGet = CCSP_SUCCESS;
 
@@ -11380,7 +11380,7 @@ PeriodicFWCheck_GetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and return the corresponding value */
 
-	if( AnscEqualString(ParamName, "Enable", TRUE))
+	if (strcmp(ParamName, "Enable") == 0)
 		{
 			/* collect value */
 			char buf[8];
@@ -11441,7 +11441,7 @@ PeriodicFWCheck_SetParamBoolValue
 	    if (IsBoolSame(hInsContext, ParamName, bValue, PeriodicFWCheck_GetParamBoolValue))
 	        return TRUE;
 
- 	    if( AnscEqualString(ParamName, "Enable", TRUE))
+ 	    if (strcmp(ParamName, "Enable") == 0)
 		{
 			/* collect value */
 			if( bValue == TRUE)
@@ -12599,7 +12599,7 @@ WebUIRemoteMgtOption_GetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         char value[8] = {0};
 	/* collect value */
@@ -12661,7 +12661,7 @@ WebUIRemoteMgtOption_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, WebUIRemoteMgtOption_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         if (syscfg_set_commit(NULL, "WebUIRemoteMgtOptionEnable", (bValue == TRUE) ? "true" : "false") != 0)
         {
@@ -12720,7 +12720,7 @@ CognitiveMotionDetection_GetParamBoolValue
     /* RDKB-38634: TR-181 implementation
      * DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CognitiveMotionDetection.Enable
      */
-    if(AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         if (syscfg_get(NULL, COGNITIVE_WIFIMOTION_CFG, buf, sizeof(buf)) != 0)
         {
@@ -12795,7 +12795,7 @@ CognitiveMotionDetection_SetParamBoolValue
     /* RDKB-38634: TR-181 implementation
      * DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CognitiveMotionDetection.Enable
      */
-    if(AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         char *value = (bValue == TRUE) ? "true" : "false";
 
@@ -16267,12 +16267,12 @@ Syndication_GetParamStringValue
         return  update_pValue(pValue,pulSize, pMyObject->UiBrand.PauseScreenFileLocation.ActiveValue);
      }
 //Prash
-    if( AnscEqualString(ParamName, "MeshRedirectorURL", TRUE))
+    if (strcmp(ParamName, "MeshRedirectorURL") == 0)
     {        
         /* collect value */
         return  update_pValue(pValue,pulSize, pMyObject->MeshRedirectorURL.ActiveValue);
     }
-    if( AnscEqualString(ParamName, "AdvsecRedirectorURL", TRUE))
+    if (strcmp(ParamName, "AdvsecRedirectorURL") == 0)
     {
         /* collect value */
         return update_pValue(pValue, pulSize, pMyObject->AdvsecRedirectorURL.ActiveValue);
@@ -16293,19 +16293,19 @@ Syndication_GetParamStringValue
 	}
     }
 #endif
-    if( AnscEqualString(ParamName, "XconfURL", TRUE))
+    if (strcmp(ParamName, "XconfURL") == 0)
     {
         return  update_pValue(pValue,pulSize, pMyObject->XconfURL.ActiveValue);
     }
-    if( AnscEqualString(ParamName, "LogUploadURL", TRUE))
+    if (strcmp(ParamName, "LogUploadURL") == 0)
     {
         return  update_pValue(pValue,pulSize, pMyObject->LogUploadURL.ActiveValue);
     }
-    if( AnscEqualString(ParamName, "Telemetry", TRUE))
+    if (strcmp(ParamName, "Telemetry") == 0)
     {
         return  update_pValue(pValue,pulSize, pMyObject->TelemetryURL.ActiveValue);
     }
-    if( AnscEqualString(ParamName, "CrashPortal", TRUE))
+    if (strcmp(ParamName, "CrashPortal") == 0)
     {
         return  update_pValue(pValue,pulSize, pMyObject->CrashPortalURL.ActiveValue);
     }
@@ -21899,7 +21899,7 @@ LnFUseXPKI_SetParamBoolValue
  )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         if (syscfg_set_commit(NULL, "LnFUseXPKI_Enable", (bValue == FALSE) ? "false" : "true") != 0) {

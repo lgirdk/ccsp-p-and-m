@@ -215,7 +215,7 @@ DeviceInfo_GetParamBoolValue_Custom
 
 	return TRUE;
     }
-    if (AnscEqualString(ParamName, "X_RDKCENTRAL-COM_EnableMoCAforXi5", TRUE))
+    if (strcmp(ParamName, "X_RDKCENTRAL-COM_EnableMoCAforXi5") == 0)
     {
        *pBool = pMyObject->bEnableMoCAforXi5;
            return TRUE;
@@ -593,7 +593,7 @@ DeviceInfo_SetParamBoolValue_Custom
         return TRUE;
     }
 #endif
-    if ( AnscEqualString( ParamName, "X_RDKCENTRAL-COM_EnableMoCAforXi5", TRUE ) )
+    if (strcmp(ParamName, "X_RDKCENTRAL-COM_EnableMoCAforXi5") == 0)
     {
                /* No need to process same value received case */
                if( pMyObject->bEnableMoCAforXi5 == bValue )
