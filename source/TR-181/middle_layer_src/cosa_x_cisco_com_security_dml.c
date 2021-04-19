@@ -211,7 +211,7 @@ X_CISCO_COM_Security_GetParamBoolValue
 
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "ApplyFirewallSettings", TRUE))
+    if (strcmp(ParamName, "ApplyFirewallSettings") == 0)
     {
         /* collect value */
         *pBool = pSecurityCfg->ApplyFirewallSettings;
@@ -219,7 +219,7 @@ X_CISCO_COM_Security_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "BlockPingMessages", TRUE))
+    if (strcmp(ParamName, "BlockPingMessages") == 0)
     {
         /* Collect Value */
         char buf[5] = {0};
@@ -239,7 +239,7 @@ X_CISCO_COM_Security_GetParamBoolValue
          return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "CleanLog", TRUE))
+    if (strcmp(ParamName, "CleanLog") == 0)
     {
         /* collect value */
         *pBool = pSecurityCfg->CleanLog;
@@ -247,7 +247,7 @@ X_CISCO_COM_Security_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "TriggerEmailLog", TRUE))
+    if (strcmp(ParamName, "TriggerEmailLog") == 0)
     {
         /* collect value */
         *pBool = pSecurityCfg->TriggerEmailLog;
@@ -255,7 +255,7 @@ X_CISCO_COM_Security_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "EmailEnable", TRUE))
+    if (strcmp(ParamName, "EmailEnable") == 0)
     {
         /* collect value */
         *pBool = pSecurityCfg->EmailEnable;
@@ -263,7 +263,7 @@ X_CISCO_COM_Security_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "EmailParentalControlBreach", TRUE))
+    if (strcmp(ParamName, "EmailParentalControlBreach") == 0)
     {
         /* collect value */
         *pBool = pSecurityCfg->EmailParentalControlBreach;
@@ -271,7 +271,7 @@ X_CISCO_COM_Security_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "EmailAlertsOrWarnings", TRUE))
+    if (strcmp(ParamName, "EmailAlertsOrWarnings") == 0)
     {
         /* collect value */
         *pBool = pSecurityCfg->EmailAlertsOrWarnings;
@@ -279,7 +279,7 @@ X_CISCO_COM_Security_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "EmailFirewallBreach", TRUE))
+    if (strcmp(ParamName, "EmailFirewallBreach") == 0)
     {
         /* collect value */
         *pBool = pSecurityCfg->EmailFirewallBreach;
@@ -287,7 +287,7 @@ X_CISCO_COM_Security_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "EmailSendLogs", TRUE))
+    if (strcmp(ParamName, "EmailSendLogs") == 0)
     {
         /* collect value */
         *pBool = pSecurityCfg->EmailSendLogs;
@@ -446,7 +446,7 @@ X_CISCO_COM_Security_GetParamStringValue
     PCOSA_DML_SECURITY_CFG          pSecurityCfg    = &pCosaDMSecurity->SecurityConfig;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "FilterWebTraffic", TRUE))
+    if (strcmp(ParamName, "FilterWebTraffic") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pSecurityCfg->FilterWebTraffic);
@@ -454,7 +454,7 @@ X_CISCO_COM_Security_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "TrafficDetect", TRUE))
+    if (strcmp(ParamName, "TrafficDetect") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pSecurityCfg->TrafficDetect);
@@ -462,7 +462,7 @@ X_CISCO_COM_Security_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "FilterLanTraffic", TRUE))
+    if (strcmp(ParamName, "FilterLanTraffic") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pSecurityCfg->FilterLanTraffic);
@@ -470,7 +470,7 @@ X_CISCO_COM_Security_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "AllowPassthrough", TRUE))
+    if (strcmp(ParamName, "AllowPassthrough") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pSecurityCfg->AllowPassthrough);
@@ -478,7 +478,7 @@ X_CISCO_COM_Security_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "EmailSendTo", TRUE))
+    if (strcmp(ParamName, "EmailSendTo") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pSecurityCfg->EmailSendTo);
@@ -486,7 +486,7 @@ X_CISCO_COM_Security_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "EmailServer", TRUE))
+    if (strcmp(ParamName, "EmailServer") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pSecurityCfg->EmailServer);
@@ -494,7 +494,7 @@ X_CISCO_COM_Security_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "EmailUserName", TRUE))
+    if (strcmp(ParamName, "EmailUserName") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pSecurityCfg->EmailUserName);
@@ -502,7 +502,7 @@ X_CISCO_COM_Security_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "EmailPassword", TRUE))
+    if (strcmp(ParamName, "EmailPassword") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pSecurityCfg->EmailPassword);
@@ -510,7 +510,7 @@ X_CISCO_COM_Security_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "EmailFromAddress", TRUE))
+    if (strcmp(ParamName, "EmailFromAddress") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pSecurityCfg->EmailFromAddress);
@@ -565,7 +565,7 @@ X_CISCO_COM_Security_SetParamBoolValue
     PCOSA_DML_SECURITY_CFG          pSecurityCfg    = &pCosaDMSecurity->SecurityConfig;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "ApplyFirewallSettings", TRUE))
+    if (strcmp(ParamName, "ApplyFirewallSettings") == 0)
     {
         /* save update to backup */
         pSecurityCfg->ApplyFirewallSettings = bValue;
@@ -573,7 +573,7 @@ X_CISCO_COM_Security_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "BlockPingMessages", TRUE))
+    if (strcmp(ParamName, "BlockPingMessages") == 0)
     {
         char buf[5];
         int value;
@@ -599,7 +599,7 @@ X_CISCO_COM_Security_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "CleanLog", TRUE))
+    if (strcmp(ParamName, "CleanLog") == 0)
     {
         /* save update to backup */
         pSecurityCfg->CleanLog = bValue;
@@ -608,7 +608,7 @@ X_CISCO_COM_Security_SetParamBoolValue
     }
 
 
-    if( AnscEqualString(ParamName, "TriggerEmailLog", TRUE))
+    if (strcmp(ParamName, "TriggerEmailLog") == 0)
     {
         /* save update to backup */
         pSecurityCfg->TriggerEmailLog = bValue;
@@ -616,7 +616,7 @@ X_CISCO_COM_Security_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "EmailEnable", TRUE))
+    if (strcmp(ParamName, "EmailEnable") == 0)
     {
         /* save update to backup */
         pSecurityCfg->EmailEnable = bValue;
@@ -624,7 +624,7 @@ X_CISCO_COM_Security_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "EmailParentalControlBreach", TRUE))
+    if (strcmp(ParamName, "EmailParentalControlBreach") == 0)
     {
         /* save update to backup */
         pSecurityCfg->EmailParentalControlBreach = bValue;
@@ -632,7 +632,7 @@ X_CISCO_COM_Security_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "EmailAlertsOrWarnings", TRUE))
+    if (strcmp(ParamName, "EmailAlertsOrWarnings") == 0)
     {
         /* save update to backup */
         pSecurityCfg->EmailAlertsOrWarnings = bValue;
@@ -640,7 +640,7 @@ X_CISCO_COM_Security_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "EmailFirewallBreach", TRUE))
+    if (strcmp(ParamName, "EmailFirewallBreach") == 0)
     {
         /* save update to backup */
         pSecurityCfg->EmailFirewallBreach = bValue;
@@ -648,7 +648,7 @@ X_CISCO_COM_Security_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "EmailSendLogs", TRUE))
+    if (strcmp(ParamName, "EmailSendLogs") == 0)
     {
         /* save update to backup */
         pSecurityCfg->EmailSendLogs = bValue;
@@ -1176,7 +1176,7 @@ Firewall1_GetParamBoolValue
     }
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "L2TPPassthrough", TRUE))
+    if (strcmp(ParamName, "L2TPPassthrough") == 0)
     {
         /* collect value */
         *pBool = pFirewallCfg->L2TPPassthrough;
@@ -1184,7 +1184,7 @@ Firewall1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "PPTPPassthrough", TRUE))
+    if (strcmp(ParamName, "PPTPPassthrough") == 0)
     {
         /* collect value */
         *pBool = pFirewallCfg->PPTPPassthrough;
@@ -1192,7 +1192,7 @@ Firewall1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IPSecPassthrough", TRUE))
+    if (strcmp(ParamName, "IPSecPassthrough") == 0)
     {
         /* collect value */
         *pBool = pFirewallCfg->IPSecPassthrough;
@@ -1200,7 +1200,7 @@ Firewall1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FilterNATRedirection", TRUE))
+    if (strcmp(ParamName, "FilterNATRedirection") == 0)
     {
         /* collect value */
         *pBool = pFirewallCfg->FilterNATRedirection;
@@ -1208,7 +1208,7 @@ Firewall1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FilterMulticast", TRUE))
+    if (strcmp(ParamName, "FilterMulticast") == 0)
     {
         /* collect value */
         *pBool = pFirewallCfg->FilterMulticast;
@@ -1216,7 +1216,7 @@ Firewall1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FilterMulticastV6", TRUE))
+    if (strcmp(ParamName, "FilterMulticastV6") == 0)
     {
         /* collect value */
         *pBool = pFirewallCfg->FilterMulticastV6;
@@ -1224,7 +1224,7 @@ Firewall1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FilterAnonymousInternetRequests", TRUE))
+    if (strcmp(ParamName, "FilterAnonymousInternetRequests") == 0)
     {
         /* collect value */
         *pBool = pFirewallCfg->FilterAnonymousInternetRequests;
@@ -1232,7 +1232,7 @@ Firewall1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FilterAnonymousInternetRequestsV6", TRUE))
+    if (strcmp(ParamName, "FilterAnonymousInternetRequestsV6") == 0)
     {
         /* collect value */
         *pBool = pFirewallCfg->FilterAnonymousInternetRequestsV6;
@@ -1240,7 +1240,7 @@ Firewall1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "WebBlockCookies", TRUE))
+    if (strcmp(ParamName, "WebBlockCookies") == 0)
     {
         /* collect value */
         *pBool = pFirewallCfg->WebBlockCookies;
@@ -1248,7 +1248,7 @@ Firewall1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "WebBlockActiveX", TRUE))
+    if (strcmp(ParamName, "WebBlockActiveX") == 0)
     {
         /* collect value */
         *pBool = pFirewallCfg->WebBlockActiveX;
@@ -1256,7 +1256,7 @@ Firewall1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "WebBlockJava", TRUE))
+    if (strcmp(ParamName, "WebBlockJava") == 0)
     {
         /* collect value */
         *pBool = pFirewallCfg->WebBlockJava;
@@ -1264,7 +1264,7 @@ Firewall1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "WebBlockProxy", TRUE))
+    if (strcmp(ParamName, "WebBlockProxy") == 0)
     {
         /* collect value */
         *pBool = pFirewallCfg->WebBlockProxy;
@@ -1272,7 +1272,7 @@ Firewall1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FilterHTTP", TRUE))
+    if (strcmp(ParamName, "FilterHTTP") == 0)
     {
         /* collect value */
         *pBool = pFirewallCfg->FilterHTTP;
@@ -1280,7 +1280,7 @@ Firewall1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FilterHTTPV6", TRUE))
+    if (strcmp(ParamName, "FilterHTTPV6") == 0)
     {
         /* collect value */
         *pBool = pFirewallCfg->FilterHTTPV6;
@@ -1288,7 +1288,7 @@ Firewall1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FilterHTTPs", TRUE))
+    if (strcmp(ParamName, "FilterHTTPs") == 0)
     {
         /* collect value */
         *pBool = pFirewallCfg->FilterHTTPs;
@@ -1296,7 +1296,7 @@ Firewall1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FilterHTTPsV6", TRUE))
+    if (strcmp(ParamName, "FilterHTTPsV6") == 0)
     {
         /* collect value */
         *pBool = pFirewallCfg->FilterHTTPsV6;
@@ -1304,7 +1304,7 @@ Firewall1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FilterP2P", TRUE))
+    if (strcmp(ParamName, "FilterP2P") == 0)
     {
         /* collect value */
         *pBool = pFirewallCfg->FilterP2P;
@@ -1312,7 +1312,7 @@ Firewall1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FilterP2PV6", TRUE))
+    if (strcmp(ParamName, "FilterP2PV6") == 0)
     {
         /* collect value */
         *pBool = pFirewallCfg->FilterP2PV6;
@@ -1320,7 +1320,7 @@ Firewall1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FilterIdent", TRUE))
+    if (strcmp(ParamName, "FilterIdent") == 0)
     {
         /* collect value */
         *pBool = pFirewallCfg->FilterIdent;
@@ -1328,7 +1328,7 @@ Firewall1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FilterIdentV6", TRUE))
+    if (strcmp(ParamName, "FilterIdentV6") == 0)
     {
         /* collect value */
         *pBool = pFirewallCfg->FilterIdentV6;
@@ -1336,7 +1336,7 @@ Firewall1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "TrueStaticIpEnable", TRUE))
+    if (strcmp(ParamName, "TrueStaticIpEnable") == 0)
     {
         /* collect value */
         *pBool = pFirewallCfg->TrueStaticIpEnable;
@@ -1344,7 +1344,7 @@ Firewall1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "TrueStaticIpEnableV6", TRUE))
+    if (strcmp(ParamName, "TrueStaticIpEnableV6") == 0)
     {
         /* collect value */
         *pBool = pFirewallCfg->TrueStaticIpEnableV6;
@@ -1352,7 +1352,7 @@ Firewall1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SmartPktDectionEnable", TRUE))
+    if (strcmp(ParamName, "SmartPktDectionEnable") == 0)
     {
         /* collect value */
         *pBool = pFirewallCfg->SmartPktDectionEnable;
@@ -1360,7 +1360,7 @@ Firewall1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SmartPktDectionEnableV6", TRUE))
+    if (strcmp(ParamName, "SmartPktDectionEnableV6") == 0)
     {
         /* collect value */
         *pBool = pFirewallCfg->SmartPktDectionEnableV6;
@@ -1368,7 +1368,7 @@ Firewall1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "WanPingEnable", TRUE))
+    if (strcmp(ParamName, "WanPingEnable") == 0)
     {
         /* collect value */
         *pBool = pFirewallCfg->WanPingEnable;
@@ -1376,7 +1376,7 @@ Firewall1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "WanPingEnableV6", TRUE))
+    if (strcmp(ParamName, "WanPingEnableV6") == 0)
     {
         /* collect value */
         *pBool = pFirewallCfg->WanPingEnableV6;
@@ -1480,7 +1480,7 @@ Firewall1_GetParamUlongValue
     CosaDmlFirewallGetConfig2(NULL, pFirewallCfg); //ARRISXB6-1181 ARRISXB6-7324
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "FirewallLevel", TRUE))
+    if (strcmp(ParamName, "FirewallLevel") == 0)
     {
         /* collect value */
         *puLong = pFirewallCfg->FirewallLevel;
@@ -1488,7 +1488,7 @@ Firewall1_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FirewallLevelV6", TRUE))
+    if (strcmp(ParamName, "FirewallLevelV6") == 0)
     {
         /* collect value */
         *puLong = pFirewallCfg->FirewallLevelV6;
@@ -1602,7 +1602,7 @@ Firewall1_SetParamBoolValue
         return FALSE;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "L2TPPassthrough", TRUE))
+    if (strcmp(ParamName, "L2TPPassthrough") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.L2TPPassthrough = bValue;
@@ -1610,7 +1610,7 @@ Firewall1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "PPTPPassthrough", TRUE))
+    if (strcmp(ParamName, "PPTPPassthrough") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.PPTPPassthrough = bValue;
@@ -1618,7 +1618,7 @@ Firewall1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IPSecPassthrough", TRUE))
+    if (strcmp(ParamName, "IPSecPassthrough") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.IPSecPassthrough = bValue;
@@ -1626,7 +1626,7 @@ Firewall1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FilterNATRedirection", TRUE))
+    if (strcmp(ParamName, "FilterNATRedirection") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.FilterNATRedirection = bValue;
@@ -1634,7 +1634,7 @@ Firewall1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FilterMulticast", TRUE))
+    if (strcmp(ParamName, "FilterMulticast") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.FilterMulticast = bValue;
@@ -1642,7 +1642,7 @@ Firewall1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FilterMulticastV6", TRUE))
+    if (strcmp(ParamName, "FilterMulticastV6") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.FilterMulticastV6 = bValue;
@@ -1650,7 +1650,7 @@ Firewall1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FilterAnonymousInternetRequests", TRUE))
+    if (strcmp(ParamName, "FilterAnonymousInternetRequests") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.FilterAnonymousInternetRequests = bValue;
@@ -1658,7 +1658,7 @@ Firewall1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FilterAnonymousInternetRequestsV6", TRUE))
+    if (strcmp(ParamName, "FilterAnonymousInternetRequestsV6") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.FilterAnonymousInternetRequestsV6 = bValue;
@@ -1666,7 +1666,7 @@ Firewall1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "WebBlockCookies", TRUE))
+    if (strcmp(ParamName, "WebBlockCookies") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.WebBlockCookies = bValue;
@@ -1674,7 +1674,7 @@ Firewall1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "WebBlockActiveX", TRUE))
+    if (strcmp(ParamName, "WebBlockActiveX") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.WebBlockActiveX = bValue;
@@ -1682,7 +1682,7 @@ Firewall1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "WebBlockJava", TRUE))
+    if (strcmp(ParamName, "WebBlockJava") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.WebBlockJava = bValue;
@@ -1690,7 +1690,7 @@ Firewall1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "WebBlockProxy", TRUE))
+    if (strcmp(ParamName, "WebBlockProxy") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.WebBlockProxy = bValue;
@@ -1698,7 +1698,7 @@ Firewall1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FilterHTTP", TRUE))
+    if (strcmp(ParamName, "FilterHTTP") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.FilterHTTP = bValue;
@@ -1706,7 +1706,7 @@ Firewall1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FilterHTTPV6", TRUE))
+    if (strcmp(ParamName, "FilterHTTPV6") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.FilterHTTPV6 = bValue;
@@ -1714,7 +1714,7 @@ Firewall1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FilterHTTPs", TRUE))
+    if (strcmp(ParamName, "FilterHTTPs") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.FilterHTTPs = bValue;
@@ -1722,7 +1722,7 @@ Firewall1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FilterHTTPsV6", TRUE))
+    if (strcmp(ParamName, "FilterHTTPsV6") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.FilterHTTPsV6 = bValue;
@@ -1730,7 +1730,7 @@ Firewall1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FilterP2P", TRUE))
+    if (strcmp(ParamName, "FilterP2P") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.FilterP2P = bValue;
@@ -1738,7 +1738,7 @@ Firewall1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FilterP2PV6", TRUE))
+    if (strcmp(ParamName, "FilterP2PV6") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.FilterP2PV6 = bValue;
@@ -1746,7 +1746,7 @@ Firewall1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FilterIdent", TRUE))
+    if (strcmp(ParamName, "FilterIdent") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.FilterIdent = bValue;
@@ -1754,7 +1754,7 @@ Firewall1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FilterIdentV6", TRUE))
+    if (strcmp(ParamName, "FilterIdentV6") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.FilterIdentV6 = bValue;
@@ -1762,7 +1762,7 @@ Firewall1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "TrueStaticIpEnable", TRUE))
+    if (strcmp(ParamName, "TrueStaticIpEnable") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.TrueStaticIpEnable = bValue;
@@ -1770,7 +1770,7 @@ Firewall1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "TrueStaticIpEnableV6", TRUE))
+    if (strcmp(ParamName, "TrueStaticIpEnableV6") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.TrueStaticIpEnableV6 = bValue;
@@ -1778,7 +1778,7 @@ Firewall1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SmartPktDectionEnable", TRUE))
+    if (strcmp(ParamName, "SmartPktDectionEnable") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.SmartPktDectionEnable = bValue;
@@ -1786,7 +1786,7 @@ Firewall1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SmartPktDectionEnableV6", TRUE))
+    if (strcmp(ParamName, "SmartPktDectionEnableV6") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.SmartPktDectionEnableV6 = bValue;
@@ -1794,7 +1794,7 @@ Firewall1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "WanPingEnable", TRUE))
+    if (strcmp(ParamName, "WanPingEnable") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.WanPingEnable = bValue;
@@ -1802,7 +1802,7 @@ Firewall1_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "WanPingEnableV6", TRUE))
+    if (strcmp(ParamName, "WanPingEnableV6") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.WanPingEnableV6 = bValue;
@@ -1902,7 +1902,7 @@ Firewall1_SetParamUlongValue
     PCOSA_DATAMODEL_SECURITY        pCosaDMSecurity = (PCOSA_DATAMODEL_SECURITY)g_pCosaBEManager->hSecurity;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "FirewallLevel", TRUE))
+    if (strcmp(ParamName, "FirewallLevel") == 0)
     {
         /* save update to backup */
         if(CosaGetParamValueBool("Device.X_RDKCENTRAL-COM_VideoService.Enabled") && uValue == 1)
@@ -1931,7 +1931,7 @@ Firewall1_SetParamUlongValue
     }
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "FirewallLevelV6", TRUE))
+    if (strcmp(ParamName, "FirewallLevelV6") == 0)
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.FirewallLevelV6 = uValue;
@@ -2263,7 +2263,7 @@ InternetAccess_GetParamUlongValue
     UNREFERENCED_PARAMETER(hInsContext);
     UNREFERENCED_PARAMETER(puLong);
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "NumberOfPolicies", TRUE))
+    if (strcmp(ParamName, "NumberOfPolicies") == 0)
     {
         /* collect value */
         /*
@@ -2326,7 +2326,7 @@ InternetAccess_GetParamStringValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "DumpAllFWlog", TRUE))
+    if (strcmp(ParamName, "DumpAllFWlog") == 0)
     {
         ULONG logSize = *pUlSize;
         if((ANSC_STATUS_FAILURE == CosaDmlIaGetALLLogEntries(pValue, &logSize)) != ANSC_STATUS_SUCCESS)
@@ -2669,7 +2669,7 @@ AccessPolicy_GetParamBoolValue
     PCOSA_DML_IA_POLICY2            pDmlIAPolicy = (PCOSA_DML_IA_POLICY2     )pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         *pBool = pDmlIAPolicy->bEnabled;
@@ -2677,7 +2677,7 @@ AccessPolicy_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "LanHostsIsEffective", TRUE) )
+    if (strcmp(ParamName, "LanHostsIsEffective") == 0)
     {
         /* collect value */
         *pBool = pDmlIAPolicy->LanHost.bUseLanHosts;
@@ -2685,7 +2685,7 @@ AccessPolicy_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "EnableLanHostMACAddresses", TRUE))
+    if (strcmp(ParamName, "EnableLanHostMACAddresses") == 0)
     {
         /* collect value */
         *pBool = pDmlIAPolicy->EnableLanHostMACAddresses;
@@ -2693,7 +2693,7 @@ AccessPolicy_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AllowLanHostMACAddresses", TRUE) )
+    if (strcmp(ParamName, "AllowLanHostMACAddresses") == 0)
     {
         /* collect value */
         *pBool = pDmlIAPolicy->AllowLanHostMACAddresses;
@@ -2795,7 +2795,7 @@ AccessPolicy_GetParamUlongValue
 
     /* check the parameter name and return the corresponding value */
 
-    if( AnscEqualString(ParamName, "NumberOfApplications", TRUE))
+    if (strcmp(ParamName, "NumberOfApplications") == 0)
     {
         /* collect value */
         *puLong = AnscSListQueryDepth(&pDmlIAPolicy->AppList);
@@ -2803,7 +2803,7 @@ AccessPolicy_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "NumberOfKeywords", TRUE))
+    if (strcmp(ParamName, "NumberOfKeywords") == 0)
     {
         /* collect value */
         *puLong = AnscSListQueryDepth(&pDmlIAPolicy->KeywordList);
@@ -2811,7 +2811,7 @@ AccessPolicy_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "NumberOfURLs", TRUE))
+    if (strcmp(ParamName, "NumberOfURLs") == 0)
     {
         /* collect value */
         *puLong = AnscSListQueryDepth(&pDmlIAPolicy->URLList);
@@ -2876,7 +2876,7 @@ AccessPolicy_GetParamStringValue
     int                             pre_buf_size = 1023;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE))
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pDmlIAPolicy->Alias);
@@ -2884,7 +2884,7 @@ AccessPolicy_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "LanHostMACAddresses", TRUE) )
+    if (strcmp(ParamName, "LanHostMACAddresses") == 0)
     {
         /* collect value */
 
@@ -2925,7 +2925,7 @@ AccessPolicy_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "LanHostIPAddresses", TRUE) )
+    if (strcmp(ParamName, "LanHostIPAddresses") == 0)
     {
         /* collect value */
 
@@ -2956,7 +2956,7 @@ AccessPolicy_GetParamStringValue
         }
     }
 
-    if( AnscEqualString(ParamName, "LanHostIPRange", TRUE) )
+    if (strcmp(ParamName, "LanHostIPRange") == 0)
     {
         /* collect value */
 
@@ -3039,7 +3039,7 @@ AccessPolicy_SetParamBoolValue
     PCOSA_DML_IA_POLICY2            pDmlIAPolicy    = (PCOSA_DML_IA_POLICY2     )pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* save update to backup */
         pDmlIAPolicy->bEnabled = bValue;
@@ -3047,7 +3047,7 @@ AccessPolicy_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "LanHostsIsEffective", TRUE) )
+    if (strcmp(ParamName, "LanHostsIsEffective") == 0)
     {
         /*the backend doesn't support setting to LanHostsIsEffective to false*/
         if (bValue == TRUE) 
@@ -3058,7 +3058,7 @@ AccessPolicy_SetParamBoolValue
         }
     }
     
-    if( AnscEqualString(ParamName, "EnableLanHostMACAddresses", TRUE))
+    if (strcmp(ParamName, "EnableLanHostMACAddresses") == 0)
     {
         /* save update to backup */
         pDmlIAPolicy->EnableLanHostMACAddresses = bValue;
@@ -3066,7 +3066,7 @@ AccessPolicy_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AllowLanHostMACAddresses", TRUE) )
+    if (strcmp(ParamName, "AllowLanHostMACAddresses") == 0)
     {
         /*the backend doesn't support setting to LanHostsIsEffective to false*/
         if (bValue == TRUE) 
@@ -3219,7 +3219,7 @@ AccessPolicy_SetParamStringValue
     USHORT                          ulCount         = 0;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE))
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* save update to backup */
         AnscCopyString(pDmlIAPolicy->Alias, pString);
@@ -3227,7 +3227,7 @@ AccessPolicy_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "LanHostMACAddresses", TRUE) )
+    if (strcmp(ParamName, "LanHostMACAddresses") == 0)
     {
         /* save update to backup */
 
@@ -3265,7 +3265,7 @@ AccessPolicy_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "LanHostIPAddresses", TRUE) )
+    if (strcmp(ParamName, "LanHostIPAddresses") == 0)
     {
         /* save update to backup */
 
@@ -3301,7 +3301,7 @@ AccessPolicy_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "LanHostIPRange", TRUE) )
+    if (strcmp(ParamName, "LanHostIPRange") == 0)
     {
         /* save update to backup */
         char * str = NULL;
@@ -3594,7 +3594,7 @@ Schedule_GetParamBoolValue
     PCOSA_DML_IA_POLICY_SCH         pSchedule    = (PCOSA_DML_IA_POLICY_SCH  )&pDmlIAPolicy->Schedule;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "IncludeSaturday", TRUE))
+    if (strcmp(ParamName, "IncludeSaturday") == 0)
     {
         /* collect value */
         *pBool = pSchedule->IncludeSaturday;
@@ -3602,7 +3602,7 @@ Schedule_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IncludeFriday", TRUE))
+    if (strcmp(ParamName, "IncludeFriday") == 0)
     {
         /* collect value */
         *pBool = pSchedule->IncludeFriday;
@@ -3610,7 +3610,7 @@ Schedule_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IncludeThursday", TRUE))
+    if (strcmp(ParamName, "IncludeThursday") == 0)
     {
         /* collect value */
         *pBool = pSchedule->IncludeThursday;
@@ -3618,7 +3618,7 @@ Schedule_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IncludeWednesday", TRUE))
+    if (strcmp(ParamName, "IncludeWednesday") == 0)
     {
         /* collect value */
         *pBool = pSchedule->IncludeWednesday;
@@ -3626,7 +3626,7 @@ Schedule_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IncludeTuesday", TRUE))
+    if (strcmp(ParamName, "IncludeTuesday") == 0)
     {
         /* collect value */
         *pBool = pSchedule->IncludeTuesday;
@@ -3634,7 +3634,7 @@ Schedule_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IncludeMonday", TRUE))
+    if (strcmp(ParamName, "IncludeMonday") == 0)
     {
         /* collect value */
         *pBool = pSchedule->IncludeMonday;
@@ -3642,7 +3642,7 @@ Schedule_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IncludeSunday", TRUE))
+    if (strcmp(ParamName, "IncludeSunday") == 0)
     {
         /* collect value */
         *pBool = pSchedule->IncludeSunday;
@@ -3650,7 +3650,7 @@ Schedule_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AllowAccess", TRUE))
+    if (strcmp(ParamName, "AllowAccess") == 0)
     {
         /* collect value */
         *pBool = pSchedule->AllowAccess;
@@ -3658,7 +3658,7 @@ Schedule_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AllDay", TRUE))
+    if (strcmp(ParamName, "AllDay") == 0)
     {
         /* collect value */
         *pBool = pSchedule->AllDay;
@@ -3817,7 +3817,7 @@ Schedule_GetParamStringValue
     PCOSA_DML_IA_POLICY_SCH         pSchedule    = (PCOSA_DML_IA_POLICY_SCH  )&pDmlIAPolicy->Schedule;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "EndTime", TRUE))
+    if (strcmp(ParamName, "EndTime") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pSchedule->EndTime);
@@ -3825,7 +3825,7 @@ Schedule_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "StartTime", TRUE))
+    if (strcmp(ParamName, "StartTime") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pSchedule->StartTime);
@@ -3880,7 +3880,7 @@ Schedule_SetParamBoolValue
     PCOSA_DML_IA_POLICY_SCH         pSchedule    = (PCOSA_DML_IA_POLICY_SCH  )&pDmlIAPolicy->Schedule;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "IncludeSaturday", TRUE))
+    if (strcmp(ParamName, "IncludeSaturday") == 0)
     {
         /* save update to backup */
         pSchedule->IncludeSaturday = bValue;
@@ -3888,7 +3888,7 @@ Schedule_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IncludeFriday", TRUE))
+    if (strcmp(ParamName, "IncludeFriday") == 0)
     {
         /* save update to backup */
         pSchedule->IncludeFriday = bValue;
@@ -3896,7 +3896,7 @@ Schedule_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IncludeThursday", TRUE))
+    if (strcmp(ParamName, "IncludeThursday") == 0)
     {
         /* save update to backup */
         pSchedule->IncludeThursday = bValue;
@@ -3904,7 +3904,7 @@ Schedule_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IncludeWednesday", TRUE))
+    if (strcmp(ParamName, "IncludeWednesday") == 0)
     {
         /* save update to backup */
         pSchedule->IncludeWednesday = bValue;
@@ -3912,7 +3912,7 @@ Schedule_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IncludeTuesday", TRUE))
+    if (strcmp(ParamName, "IncludeTuesday") == 0)
     {
         /* save update to backup */
         pSchedule->IncludeTuesday = bValue;
@@ -3920,7 +3920,7 @@ Schedule_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IncludeMonday", TRUE))
+    if (strcmp(ParamName, "IncludeMonday") == 0)
     {
         /* save update to backup */
         pSchedule->IncludeMonday = bValue;
@@ -3928,7 +3928,7 @@ Schedule_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "IncludeSunday", TRUE))
+    if (strcmp(ParamName, "IncludeSunday") == 0)
     {
         /* save update to backup */
         pSchedule->IncludeSunday = bValue;
@@ -3936,7 +3936,7 @@ Schedule_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AllowAccess", TRUE))
+    if (strcmp(ParamName, "AllowAccess") == 0)
     {
         /* save update to backup */
         pSchedule->AllowAccess = bValue;
@@ -3944,7 +3944,7 @@ Schedule_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AllDay", TRUE))
+    if (strcmp(ParamName, "AllDay") == 0)
     {
         /* save update to backup */
         pSchedule->AllDay = bValue;
@@ -4093,7 +4093,7 @@ Schedule_SetParamStringValue
     PCOSA_DML_IA_POLICY_SCH         pSchedule    = (PCOSA_DML_IA_POLICY_SCH  )&pDmlIAPolicy->Schedule;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "EndTime", TRUE))
+    if (strcmp(ParamName, "EndTime") == 0)
     {
         /* save update to backup */
         AnscCopyString(pSchedule->EndTime, pString);
@@ -4101,7 +4101,7 @@ Schedule_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "StartTime", TRUE))
+    if (strcmp(ParamName, "StartTime") == 0)
     {
         /* save update to backup */
         AnscCopyString(pSchedule->StartTime, pString);
@@ -4698,7 +4698,7 @@ BlockedURL_GetParamStringValue
     PCOSA_DML_IA_POLICY_URL         pURL             = (PCOSA_DML_IA_POLICY_URL  )pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE))
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pURL->Alias);
@@ -4706,7 +4706,7 @@ BlockedURL_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "URL", TRUE))
+    if (strcmp(ParamName, "URL") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pURL->Url);
@@ -4901,7 +4901,7 @@ BlockedURL_SetParamStringValue
     PCOSA_DML_IA_POLICY_URL         pURL             = (PCOSA_DML_IA_POLICY_URL  )pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE))
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* collect value */
         AnscCopyString(pURL->Alias, pString);
@@ -4909,7 +4909,7 @@ BlockedURL_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "URL", TRUE))
+    if (strcmp(ParamName, "URL") == 0)
     {
         /* collect value */
         AnscCopyString(pURL->Url, pString);
@@ -5548,7 +5548,7 @@ BlockedKeyword_GetParamStringValue
     PCOSA_DML_IA_POLICY_KEYWORD     pKeyword         = (PCOSA_DML_IA_POLICY_KEYWORD )pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE))
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pKeyword->Alias);
@@ -5556,7 +5556,7 @@ BlockedKeyword_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Keyword", TRUE))
+    if (strcmp(ParamName, "Keyword") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pKeyword->Keyword);
@@ -5751,7 +5751,7 @@ BlockedKeyword_SetParamStringValue
     PCOSA_DML_IA_POLICY_KEYWORD     pKeyword         = (PCOSA_DML_IA_POLICY_KEYWORD )pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE))
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* collect value */
         AnscCopyString(pKeyword->Alias, pString);
@@ -5759,7 +5759,7 @@ BlockedKeyword_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Keyword", TRUE))
+    if (strcmp(ParamName, "Keyword") == 0)
     {
         /* save update to backup */
         AnscCopyString(pKeyword->Keyword, pString);
@@ -6247,7 +6247,7 @@ BlockedApplication_GetParamBoolValue
     PCOSA_DML_IA_POLICY_APP         pApp             = (PCOSA_DML_IA_POLICY_APP  )pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "IsWellKnown", TRUE))
+    if (strcmp(ParamName, "IsWellKnown") == 0)
     {
         /* collect value */
         *pBool = pApp->IsWellKnown;
@@ -6348,7 +6348,7 @@ BlockedApplication_GetParamUlongValue
     PCOSA_DML_IA_POLICY_APP         pApp             = (PCOSA_DML_IA_POLICY_APP  )pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "EndPortNumber", TRUE))
+    if (strcmp(ParamName, "EndPortNumber") == 0)
     {
         /* collect value */
         *puLong = pApp->EndPortNumber;
@@ -6356,7 +6356,7 @@ BlockedApplication_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "StartPortNumber", TRUE))
+    if (strcmp(ParamName, "StartPortNumber") == 0)
     {
         /* collect value */
         *puLong = pApp->StartPortNumber;
@@ -6364,7 +6364,7 @@ BlockedApplication_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Protocol", TRUE))
+    if (strcmp(ParamName, "Protocol") == 0)
     {
         /* collect value */
         *puLong = pApp->Protocol;
@@ -6428,7 +6428,7 @@ BlockedApplication_GetParamStringValue
     PCOSA_DML_IA_POLICY_APP         pApp             = (PCOSA_DML_IA_POLICY_APP  )pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE))
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pApp->Alias);
@@ -6482,7 +6482,7 @@ BlockedApplication_SetParamBoolValue
     PCOSA_DML_IA_POLICY_APP         pApp             = (PCOSA_DML_IA_POLICY_APP  )pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "IsWellKnown", TRUE))
+    if (strcmp(ParamName, "IsWellKnown") == 0)
     {
         /* save update to backup */
 #ifdef _COSA_DRG_CNS_
@@ -6595,7 +6595,7 @@ BlockedApplication_SetParamUlongValue
     PCOSA_DML_IA_POLICY_APP         pApp             = (PCOSA_DML_IA_POLICY_APP  )pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "EndPortNumber", TRUE))
+    if (strcmp(ParamName, "EndPortNumber") == 0)
     {
         /* save update to backup */
 
@@ -6604,7 +6604,7 @@ BlockedApplication_SetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "StartPortNumber", TRUE))
+    if (strcmp(ParamName, "StartPortNumber") == 0)
     {
         /* save update to backup */
         pApp->StartPortNumber = (USHORT)uValue;
@@ -6612,7 +6612,7 @@ BlockedApplication_SetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Protocol", TRUE))
+    if (strcmp(ParamName, "Protocol") == 0)
     {
         /* save update to backup */
         pApp->Protocol = uValue;
@@ -6666,7 +6666,7 @@ BlockedApplication_SetParamStringValue
     PCOSA_DML_IA_POLICY_APP         pApp             = (PCOSA_DML_IA_POLICY_APP  )pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE))
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* save update to backup */
         AnscCopyString(pApp->Alias, pString);
@@ -7186,7 +7186,7 @@ LogEntry_GetParamUlongValue
 
     /* check the parameter name and return the corresponding value */
 
-    if( AnscEqualString(ParamName, "SourceIP", TRUE))
+    if (strcmp(ParamName, "SourceIP") == 0)
     {
         /* collect value */
         *puLong = pLogEntry->SourceIP.Value;
@@ -7194,7 +7194,7 @@ LogEntry_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "TargetIP", TRUE))
+    if (strcmp(ParamName, "TargetIP") == 0)
     {
         /* collect value */
         *puLong = pLogEntry->TargetIP.Value;
@@ -7202,7 +7202,7 @@ LogEntry_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Count", TRUE))
+    if (strcmp(ParamName, "Count") == 0)
     {
         /* collect value */
         *puLong = pLogEntry->Count;
@@ -7266,7 +7266,7 @@ LogEntry_GetParamStringValue
 
     /* check the parameter name and return the corresponding value */
 
-    if( AnscEqualString(ParamName, "OccuranceTime", TRUE))
+    if (strcmp(ParamName, "OccuranceTime") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pLogEntry->OccuranceTime);
@@ -7274,7 +7274,7 @@ LogEntry_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "User", TRUE))
+    if (strcmp(ParamName, "User") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pLogEntry->User);
@@ -7282,7 +7282,7 @@ LogEntry_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Action", TRUE))
+    if (strcmp(ParamName, "Action") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pLogEntry->Action);
@@ -7290,7 +7290,7 @@ LogEntry_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Description", TRUE))
+    if (strcmp(ParamName, "Description") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pLogEntry->Description);

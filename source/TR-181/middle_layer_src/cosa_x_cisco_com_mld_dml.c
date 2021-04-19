@@ -166,14 +166,14 @@ X_CISCO_COM_MLD_GetParamBoolValue
     CosaDmlMldGetCfg(NULL, pCfg);
     
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         *pBool = pCfg->bEnabled;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SnoopingEnable", TRUE))
+    if (strcmp(ParamName, "SnoopingEnable") == 0)
     {
         /* collect value */
         *pBool = pCfg->bSnoopingEnabled;
@@ -274,7 +274,7 @@ X_CISCO_COM_MLD_GetParamUlongValue
     PCOSA_DML_MLD_INFO             pInfo     = &(pMyObject->MldFull.Info);
     
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Status", TRUE))
+    if (strcmp(ParamName, "Status") == 0)
     {
         /* collect value */
         CosaDmlMldGetInfo(NULL, pInfo);
@@ -386,14 +386,14 @@ X_CISCO_COM_MLD_SetParamBoolValue
     PCOSA_DML_MLD_CFG              pCfg      = &(pMyObject->MldFull.Cfg);
     
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* save update to backup */
         pCfg->bEnabled = bValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SnoopingEnable", TRUE))
+    if (strcmp(ParamName, "SnoopingEnable") == 0)
     {
         /* save update to backup */
         pCfg->bSnoopingEnabled = bValue;
@@ -1057,14 +1057,14 @@ Group1_GetParamStringValue
     PCOSA_DML_MLD_GROUP            pMldGroupEntry = (PCOSA_DML_MLD_GROUP)hInsContext;
     
     /* check the parameter name and return the corresponding value */    
-    if( AnscEqualString(ParamName, "GroupAddress", TRUE))
+    if (strcmp(ParamName, "GroupAddress") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pMldGroupEntry->GroupAddress);
         return 0;
     }
    
-    if( AnscEqualString(ParamName, "Interfaces", TRUE))
+    if (strcmp(ParamName, "Interfaces") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, pMldGroupEntry->Interfaces);
