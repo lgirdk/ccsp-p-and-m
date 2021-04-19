@@ -1420,7 +1420,7 @@ Interface3_Validate
         if ( 
                  pEntry2 && 
                  ((ULONG)pEntry2 != (ULONG)pEntry) && 
-                 AnscEqualString(pEntry->Cfg.Alias, pEntry2->Cfg.Alias, TRUE) 
+                 (strcmp(pEntry->Cfg.Alias, pEntry2->Cfg.Alias) == 0)
            )
         {
             rc = strcpy_s(pReturnParamName, *puLength, "Alias");

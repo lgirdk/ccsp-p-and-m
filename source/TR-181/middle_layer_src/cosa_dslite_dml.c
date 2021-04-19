@@ -768,7 +768,7 @@ InterfaceSetting4_Validate
 
             pDsliteTunnel2 = (PCOSA_DML_DSLITE)pCxtLink->hContext;
 
-            if( AnscEqualString(pDsliteTunnel2->alias, pDsliteTunnel->alias, TRUE) )
+            if (strcmp(pDsliteTunnel2->alias, pDsliteTunnel->alias) == 0)
             {
                 if ( (ANSC_HANDLE)pCxtLink == hInsContext )
                 {

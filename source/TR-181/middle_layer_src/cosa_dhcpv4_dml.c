@@ -1605,7 +1605,7 @@ SentOption_GetEntryStatus
 {
     PCOSA_CONTEXT_DHCPC_LINK_OBJECT pCxtLink          = (PCOSA_CONTEXT_DHCPC_LINK_OBJECT)hInsContext;
 
-    if( AnscEqualString(StatusName, "Committed", TRUE))
+    if( strcmp(StatusName, "Committed") == 0)
     {
         /* collect value */
         if ( pCxtLink->bNew )
@@ -3715,7 +3715,7 @@ Server_GetParamStringValue
     UNREFERENCED_PARAMETER(pValue);
     UNREFERENCED_PARAMETER(pUlSize);
     /* check the parameter name and return the corresponding value */
-    if(AnscEqualString(ParamName, "StaticClientsData", TRUE) || AnscEqualString(ParamName, "Lan", TRUE))
+    if ((strcmp(ParamName, "StaticClientsData") == 0) || (strcmp(ParamName, "Lan") == 0))
     {
         CcspTraceWarning(("Data Get Not supported\n"));
         return 0;
@@ -8122,7 +8122,7 @@ StaticAddress_Validate
             bFound = TRUE;
             break;
         }
-        if(AnscEqualString(pDhcpStaAddr->Chaddr, pDhcpStaAddr2->Chaddr, TRUE ))
+        if (strcmp(pDhcpStaAddr->Chaddr, pDhcpStaAddr2->Chaddr) == 0)
         {
             if ( (ANSC_HANDLE)pCxtLink2 == hInsContext || strcmp(temp, "0:0:0:0:0:0") == 0)
             {
@@ -8134,7 +8134,7 @@ StaticAddress_Validate
         }
         inet_ntop(AF_INET, &pDhcpStaAddr->Yiaddr.Value, YiaddrIP1, sizeof(YiaddrIP1));
         inet_ntop(AF_INET, &pDhcpStaAddr2->Yiaddr.Value, YiaddrIP2, sizeof(YiaddrIP2));
-        if(AnscEqualString(YiaddrIP1, YiaddrIP2, TRUE ))
+        if (strcmp(YiaddrIP1, YiaddrIP2) == 0)
         {
             if ( (ANSC_HANDLE)pCxtLink2 == hInsContext || strcmp(YiaddrIP2, "0.0.0.0") == 0)
             {

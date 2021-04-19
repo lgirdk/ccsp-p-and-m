@@ -1563,7 +1563,7 @@ InterfaceSetting2_Validate
 
         if ( pNeighdiscInterface2 && 
             ((ULONG)pNeighdiscInterface2 != (ULONG)pNeighdiscInterface) &&
-             AnscEqualString(pNeighdiscInterface2->Cfg.Alias, pNeighdiscInterface->Cfg.Alias, TRUE))
+             (strcmp(pNeighdiscInterface2->Cfg.Alias, pNeighdiscInterface->Cfg.Alias) == 0))
         {
             rc = strcpy_s(pReturnParamName, *puLength, "Alias");
             if(rc != EOK)

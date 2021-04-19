@@ -1100,7 +1100,7 @@ Router_Validate
 
         if ( pRouter2 && 
             ((ULONG)pRouter2 != (ULONG)pRouter) &&
-             AnscEqualString(pRouter2->Cfg.Alias, pRouter->Cfg.Alias, TRUE))
+	      (strcmp(pRouter2->Cfg.Alias, pRouter->Cfg.Alias) == 0))
         {
             rc = strcpy_s(pReturnParamName, *puLength, "Alias");
             if ( rc != EOK)
@@ -3005,7 +3005,7 @@ IPv4Forwarding_Validate
 
         if ( pRouterForward2 &&
             ((ULONG)pRouterForward2 != (ULONG)pRouterForward) &&
-             AnscEqualString(pRouterForward2->Alias, pRouterForward->Alias, TRUE))
+             (strcmp(pRouterForward2->Alias, pRouterForward->Alias) == 0))
         {
             rc = strcpy_s(pReturnParamName, *puLength, "Alias");
             if ( rc != EOK)
@@ -4252,7 +4252,7 @@ IPv6Forwarding_Validate
 
         if ( pRouterForward2 &&
             ((ULONG)pRouterForward2 != (ULONG)pRouterForward) &&
-             AnscEqualString(pRouterForward2->Alias, pRouterForward->Alias, TRUE))
+             (strcmp(pRouterForward2->Alias, pRouterForward->Alias) == 0))
         {
             rc = strcpy_s(pReturnParamName, *puLength, "Alias");
             if ( rc != EOK)
