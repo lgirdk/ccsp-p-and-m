@@ -679,6 +679,8 @@ CosaDmlDynamicDns_Host_AddEntry
         COSA_DML_DDNS_HOST *pEntry
     )
 {
+    //To fix the issue that CosaDmlDynamicDns_Host_SetConf fails if ins isn't 1. 
+    CosaDmlDynamicDns_Host_SetValues(0,pEntry->InstanceNumber, pEntry->Alias);
     return ANSC_STATUS_SUCCESS;
 }
 
