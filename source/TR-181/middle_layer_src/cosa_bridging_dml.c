@@ -1289,7 +1289,7 @@ Bridge_Validate
 
         pDmlBridge2 = (PCOSA_DML_BRG_FULL_ALL)pCosaContext2->hContext;
 
-        if ( pDmlBridge2 && ((ULONG)pDmlBridge2 != (ULONG)pDmlBridge) && AnscEqualString(pDmlBridge2->Cfg.Alias, pDmlBridge->Cfg.Alias, TRUE))
+        if ( pDmlBridge2 && ((ULONG)pDmlBridge2 != (ULONG)pDmlBridge) && (strcmp(pDmlBridge2->Cfg.Alias, pDmlBridge->Cfg.Alias) == 0))
         {
             rc = strcpy_s(pReturnParamName, *puLength, "Alias");
             if(rc != EOK)
@@ -2936,7 +2936,7 @@ Port_Validate
 
         pPort2 = (PCOSA_DML_BRG_PORT_FULL)pCosaContext2->hContext;
 
-        if ( pPort2 && ((ULONG)pPort2 != (ULONG)pPort) && AnscEqualString(pPort->Cfg.Alias, pPort2->Cfg.Alias, TRUE))
+        if ( pPort2 && ((ULONG)pPort2 != (ULONG)pPort) && (strcmp(pPort->Cfg.Alias, pPort2->Cfg.Alias) == 0))
         {
             rc = strcpy_s(pReturnParamName, *puLength, "Alias");
             if(rc != EOK)
@@ -4192,7 +4192,7 @@ VLAN_Validate
         pVLAN2 = (PCOSA_DML_BRG_VLAN_FULL)pCosaContext2->hContext;
 
         // check against duplicate of Alias
-        if ( pVLAN2 && ((ULONG)pVLAN2 != (ULONG)pVLAN) && AnscEqualString(pVLAN->Cfg.Alias, pVLAN2->Cfg.Alias, TRUE))
+        if ( pVLAN2 && ((ULONG)pVLAN2 != (ULONG)pVLAN) && (strcmp(pVLAN->Cfg.Alias, pVLAN2->Cfg.Alias) == 0))
         {
             rc = strcpy_s(pReturnParamName, *puLength, "Alias");
             if(rc != EOK)
@@ -5256,8 +5256,7 @@ VLANPort_Validate
         pVLANPort2 = (PCOSA_DML_BRG_VLANPORT_FULL)pCosaContext2->hContext;
 
         // check against duplicate alias
-        if ( pVLANPort2 && ((ULONG)pVLANPort2 != (ULONG)pVLANPort) &&
-             AnscEqualString(pVLANPort->Cfg.Alias, pVLANPort2->Cfg.Alias, TRUE))
+        if ( pVLANPort2 && ((ULONG)pVLANPort2 != (ULONG)pVLANPort) && (strcmp(pVLANPort->Cfg.Alias, pVLANPort2->Cfg.Alias) == 0))
         {
             rc = strcpy_s(pReturnParamName, *puLength, "Alias");
             if(rc != EOK)
