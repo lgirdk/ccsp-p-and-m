@@ -78,6 +78,7 @@
 
 #ifdef _ANSC_LINUX
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/ioctl.h>
@@ -306,7 +307,7 @@ CosaUtilGetLowerLayers
     while ((pTableStringToken = AnscTcUnlinkToken(pTableListTokenChain)))
     {
             /* CID: 56300 Array compared against 0*/
-            if ( AnscEqualString(pTableStringToken->Name, "Device.Ethernet.Interface.", TRUE ) )
+            if (strcmp(pTableStringToken->Name, "Device.Ethernet.Interface.") == 0)
             {
                 ulNumOfEntries =       CosaGetParamValueUlong("Device.Ethernet.InterfaceNumberOfEntries");
 
@@ -331,7 +332,7 @@ CosaUtilGetLowerLayers
                
                         ulEntryNameLen = sizeof(ucEntryNameValue);
                         if ( ( 0 == CosaGetParamValueString(ucEntryParamName, ucEntryNameValue, &ulEntryNameLen)) &&
-                             AnscEqualString(ucEntryNameValue, (char*)pKeyword, TRUE ) )
+                             (strcmp(ucEntryNameValue, (char*)pKeyword) == 0) )
                         {
                             pMatchedLowerLayer =  (PUCHAR)AnscCloneString(ucEntryFullPath);
 
@@ -340,7 +341,7 @@ CosaUtilGetLowerLayers
                     }
                 }
             }
-            else if ( AnscEqualString(pTableStringToken->Name, "Device.IP.Interface.", TRUE ) )
+            else if (strcmp(pTableStringToken->Name, "Device.IP.Interface.") == 0)
             {
                 ulNumOfEntries =       CosaGetParamValueUlong("Device.IP.InterfaceNumberOfEntries");
                 for ( i = 0 ; i < ulNumOfEntries; i++ )
@@ -365,7 +366,7 @@ CosaUtilGetLowerLayers
 
                         ulEntryNameLen = sizeof(ucEntryNameValue);
                         if ( ( 0 == CosaGetParamValueString(ucEntryParamName, ucEntryNameValue, &ulEntryNameLen)) &&
-                             AnscEqualString(ucEntryNameValue, (char*)pKeyword, TRUE ) )
+                             (strcmp(ucEntryNameValue, (char*)pKeyword) == 0) )
                         {
                             pMatchedLowerLayer =  (PUCHAR)AnscCloneString(ucEntryFullPath);
 
@@ -374,16 +375,16 @@ CosaUtilGetLowerLayers
                     }
                 }
             }
-            else if ( AnscEqualString(pTableStringToken->Name, "Device.USB.Interface.", TRUE ) )
+            else if (strcmp(pTableStringToken->Name, "Device.USB.Interface.") == 0)
             {
             }
-            else if ( AnscEqualString(pTableStringToken->Name, "Device.HPNA.Interface.", TRUE ) )
+            else if (strcmp(pTableStringToken->Name, "Device.HPNA.Interface.") == 0)
             {
             }
-            else if ( AnscEqualString(pTableStringToken->Name, "Device.DSL.Interface.", TRUE ) )
+            else if (strcmp(pTableStringToken->Name, "Device.DSL.Interface.") == 0)
             {
             }
-            else if ( AnscEqualString(pTableStringToken->Name, "Device.WiFi.Radio.", TRUE ) )
+            else if (strcmp(pTableStringToken->Name, "Device.WiFi.Radio.") == 0)
             {
                 ulNumOfEntries =       CosaGetParamValueUlong("Device.WiFi.RadioNumberOfEntries");
 
@@ -418,10 +419,10 @@ CosaUtilGetLowerLayers
                     }
                 }
             }
-            else if ( AnscEqualString(pTableStringToken->Name, "Device.HomePlug.Interface.", TRUE ) )
+            else if (strcmp(pTableStringToken->Name, "Device.HomePlug.Interface.") == 0)
             {
             }
-            else if ( AnscEqualString(pTableStringToken->Name, "Device.MoCA.Interface.", TRUE ) )
+            else if (strcmp(pTableStringToken->Name, "Device.MoCA.Interface.") == 0)
             {
 
                 parameterValStruct_t varStruct;
@@ -484,7 +485,7 @@ CosaUtilGetLowerLayers
                 }
 
             }
-            else if ( AnscEqualString(pTableStringToken->Name, "Device.X_CISCO_COM_GRE.Interface.", TRUE ) )
+            else if (strcmp(pTableStringToken->Name, "Device.X_CISCO_COM_GRE.Interface.") == 0)
             {
                 ulNumOfEntries =       CosaGetParamValueUlong("Device.X_CISCO_COM_GRE.InterfaceNumberOfEntries");
 
@@ -510,7 +511,7 @@ CosaUtilGetLowerLayers
                
                         ulEntryNameLen = sizeof(ucEntryNameValue);
                         if ( ( 0 == CosaGetParamValueString(ucEntryParamName, ucEntryNameValue, &ulEntryNameLen)) &&
-                             AnscEqualString(ucEntryNameValue, (char*)pKeyword, TRUE ) )
+                             (strcmp(ucEntryNameValue, (char*)pKeyword) == 0) )
                         {
                             pMatchedLowerLayer =  (PUCHAR)AnscCloneString(ucEntryFullPath);
 
@@ -519,16 +520,16 @@ CosaUtilGetLowerLayers
                     }
                 }
             }
-            else if ( AnscEqualString(pTableStringToken->Name, "Device.UPA.Interface.", TRUE ) )
+            else if (strcmp(pTableStringToken->Name, "Device.UPA.Interface.") == 0)
             {
             }
-            else if ( AnscEqualString(pTableStringToken->Name, "Device.ATM.Link.", TRUE ) )
+            else if (strcmp(pTableStringToken->Name, "Device.ATM.Link.") == 0)
             {
             }
-            else if ( AnscEqualString(pTableStringToken->Name, "Device.PTM.Link.", TRUE ) )
+            else if (strcmp(pTableStringToken->Name, "Device.PTM.Link.") == 0)
             {
             }
-            else if ( AnscEqualString(pTableStringToken->Name, "Device.Ethernet.Link.", TRUE ) )
+            else if (strcmp(pTableStringToken->Name, "Device.Ethernet.Link.") == 0)
             {
                 ulNumOfEntries =       CosaGetParamValueUlong("Device.Ethernet.LinkNumberOfEntries");
 
@@ -554,7 +555,7 @@ CosaUtilGetLowerLayers
                
                         ulEntryNameLen = sizeof(ucEntryNameValue);
                         if ( ( 0 == CosaGetParamValueString(ucEntryParamName, ucEntryNameValue, &ulEntryNameLen)) &&
-                             AnscEqualString(ucEntryNameValue, (char*)pKeyword, TRUE ) )
+                             (strcmp(ucEntryNameValue, (char*)pKeyword) == 0) )
                         {
                             pMatchedLowerLayer =  (PUCHAR)AnscCloneString(ucEntryFullPath);
 
@@ -563,10 +564,10 @@ CosaUtilGetLowerLayers
                     }
                 }
             }
-            else if ( AnscEqualString(pTableStringToken->Name, "Device.Ethernet.VLANTermination.", TRUE ) )
+            else if (strcmp(pTableStringToken->Name, "Device.Ethernet.VLANTermination.") == 0)
             {
             }
-            else if ( AnscEqualString(pTableStringToken->Name, "Device.WiFi.SSID.", TRUE ) )
+            else if (strcmp(pTableStringToken->Name, "Device.WiFi.SSID.") == 0)
             {
                 parameterValStruct_t varStruct;
                 ulNumOfEntries = 0;
@@ -625,7 +626,7 @@ CosaUtilGetLowerLayers
                     i++;
                 }
             }
-            else if ( AnscEqualString(pTableStringToken->Name, "Device.Bridging.Bridge.", TRUE ) )
+            else if (strcmp(pTableStringToken->Name, "Device.Bridging.Bridge.") == 0)
             {
                 ulNumOfEntries =  CosaGetParamValueUlong("Device.Bridging.BridgeNumberOfEntries");
                 CcspTraceInfo(("----------CosaUtilGetLowerLayers, bridgenum:%lu\n", ulNumOfEntries));
@@ -678,10 +679,10 @@ CosaUtilGetLowerLayers
                     }
                 }
             }
-            else if ( AnscEqualString(pTableStringToken->Name, "Device.PPP.Interface.", TRUE ) )
+            else if (strcmp(pTableStringToken->Name, "Device.PPP.Interface.") == 0)
             {
             }
-            else if ( AnscEqualString(pTableStringToken->Name, "Device.DSL.Channel.", TRUE ) )
+            else if (strcmp(pTableStringToken->Name, "Device.DSL.Channel.") == 0)
             {
             }
             
@@ -1256,7 +1257,7 @@ CosaUtilGetFullPathNameByKeyword
                
                         ulEntryNameLen = sizeof(ucEntryNameValue);
                         if ( ( 0 == CosaGetParamValueString(ucEntryParamName, ucEntryNameValue, &ulEntryNameLen)) &&
-                             AnscEqualString(ucEntryNameValue, (char*)pKeyword, TRUE ) )
+                             (strcmp(ucEntryNameValue, (char*)pKeyword) == 0) )
                         {
                             pMatchedLowerLayer =  (PUCHAR)AnscCloneString(ucEntryFullPath);
 
