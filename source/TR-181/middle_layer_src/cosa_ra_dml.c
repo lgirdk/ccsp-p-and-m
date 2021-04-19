@@ -167,7 +167,7 @@ RouterAdvertisement_GetParamBoolValue
     PCOSA_DATAMODEL_RA pEntry = (PCOSA_DATAMODEL_RA)g_pCosaBEManager->hRA;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         CosaDmlRAGetEnabled(&pEntry->bEnabled);
@@ -377,7 +377,7 @@ RouterAdvertisement_SetParamBoolValue
     PCOSA_DATAMODEL_RA pEntry = (PCOSA_DATAMODEL_RA)g_pCosaBEManager->hRA;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* save update to backup */
         pEntry->bEnabled = bValue;
@@ -1017,7 +1017,7 @@ InterfaceSetting1_GetParamBoolValue
     }
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         *pBool = pRAInterface->Cfg.bEnabled;
@@ -1025,28 +1025,28 @@ InterfaceSetting1_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AdvManagedFlag", TRUE) )
+    if (strcmp(ParamName, "AdvManagedFlag") == 0)
     {
         /* collect value */
         *pBool = pRAInterface->Cfg.bAdvManagedFlag;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AdvOtherConfigFlag", TRUE) )
+    if (strcmp(ParamName, "AdvOtherConfigFlag") == 0)
     {
         /* collect value */
         *pBool = pRAInterface->Cfg.bAdvOtherConfigFlag;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AdvMobileAgentFlag", TRUE) )
+    if (strcmp(ParamName, "AdvMobileAgentFlag") == 0)
     {
         /* collect value */
         *pBool = pRAInterface->Cfg.bAdvMobileAgentFlag;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AdvNDProxyFlag", TRUE) )
+    if (strcmp(ParamName, "AdvNDProxyFlag") == 0)
     {
         /* collect value */
         *pBool = pRAInterface->Cfg.bAdvNDProxyFlag;
@@ -1148,7 +1148,7 @@ InterfaceSetting1_GetParamUlongValue
     PCOSA_DML_RA_IF_FULL2           pRAInterface = (PCOSA_DML_RA_IF_FULL2)pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Status", TRUE) )
+    if (strcmp(ParamName, "Status") == 0)
     {
         /* collect value */
         CosaDmlRaIfGetInfo
@@ -1162,7 +1162,7 @@ InterfaceSetting1_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "MaxRtrAdvInterval", TRUE) )
+    if (strcmp(ParamName, "MaxRtrAdvInterval") == 0)
     {
         CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg);
 
@@ -1171,7 +1171,7 @@ InterfaceSetting1_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "MinRtrAdvInterval", TRUE) )
+    if (strcmp(ParamName, "MinRtrAdvInterval") == 0)
     {
         CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg);
 
@@ -1180,7 +1180,7 @@ InterfaceSetting1_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AdvDefaultLifetime", TRUE) )
+    if (strcmp(ParamName, "AdvDefaultLifetime") == 0)
     {
         CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg);
 
@@ -1189,7 +1189,7 @@ InterfaceSetting1_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AdvPreferredRouterFlag", TRUE) )
+    if (strcmp(ParamName, "AdvPreferredRouterFlag") == 0)
     {
         CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg);
 
@@ -1198,7 +1198,7 @@ InterfaceSetting1_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AdvLinkMTU", TRUE) )
+    if (strcmp(ParamName, "AdvLinkMTU") == 0)
     {
         CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg);
 
@@ -1207,7 +1207,7 @@ InterfaceSetting1_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AdvReachableTime", TRUE) )
+    if (strcmp(ParamName, "AdvReachableTime") == 0)
     {
         CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg);
 
@@ -1216,7 +1216,7 @@ InterfaceSetting1_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AdvRetransTimer", TRUE) )
+    if (strcmp(ParamName, "AdvRetransTimer") == 0)
     {
         CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg);
 
@@ -1225,7 +1225,7 @@ InterfaceSetting1_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AdvCurHopLimit", TRUE) )
+    if (strcmp(ParamName, "AdvCurHopLimit") == 0)
     {
         CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg);
 
@@ -1292,7 +1292,7 @@ InterfaceSetting1_GetParamStringValue
 
     UNREFERENCED_PARAMETER(pUlSize);
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if (strcmp(ParamName, "Alias") == 0)
     {
         CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg);
         /* collect value */
@@ -1305,7 +1305,7 @@ InterfaceSetting1_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Interface", TRUE) )
+    if (strcmp(ParamName, "Interface") == 0)
     {
         /* collect value */
 #ifdef _COSA_DRG_CNS_
@@ -1348,7 +1348,7 @@ InterfaceSetting1_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "ManualPrefixes", TRUE) )
+    if (strcmp(ParamName, "ManualPrefixes") == 0)
     {
         CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg);
         /* collect value */
@@ -1361,7 +1361,7 @@ InterfaceSetting1_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Prefixes", TRUE) )
+    if (strcmp(ParamName, "Prefixes") == 0)
     {
         /* collect value */
         CosaDmlRaIfGetInfo
@@ -1426,35 +1426,35 @@ InterfaceSetting1_SetParamBoolValue
     PCOSA_DML_RA_IF_FULL2           pRAInterface = (PCOSA_DML_RA_IF_FULL2)pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* save update to backup */
         pRAInterface ->Cfg.bEnabled = bValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AdvManagedFlag", TRUE) )
+    if (strcmp(ParamName, "AdvManagedFlag") == 0)
     {
         /* save update to backup */
         pRAInterface ->Cfg.bAdvManagedFlag = bValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AdvOtherConfigFlag", TRUE) )
+    if (strcmp(ParamName, "AdvOtherConfigFlag") == 0)
     {
         /* save update to backup */
         pRAInterface ->Cfg.bAdvOtherConfigFlag = bValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AdvMobileAgentFlag", TRUE) )
+    if (strcmp(ParamName, "AdvMobileAgentFlag") == 0)
     {
         /* save update to backup */
         pRAInterface ->Cfg.bAdvMobileAgentFlag = bValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AdvNDProxyFlag", TRUE) )
+    if (strcmp(ParamName, "AdvNDProxyFlag") == 0)
     {
         /* save update to backup */
         pRAInterface ->Cfg.bAdvNDProxyFlag = bValue;
@@ -1556,56 +1556,56 @@ InterfaceSetting1_SetParamUlongValue
     PCOSA_DML_RA_IF_FULL2           pRAInterface = (PCOSA_DML_RA_IF_FULL2)pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "MaxRtrAdvInterval", TRUE) )
+    if (strcmp(ParamName, "MaxRtrAdvInterval") == 0)
     {
         /* save update to backup */
         pRAInterface->Cfg.MaxRtrAdvInterval = uValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "MinRtrAdvInterval", TRUE) )
+    if (strcmp(ParamName, "MinRtrAdvInterval") == 0)
     {
         /* save update to backup */
         pRAInterface->Cfg.MinRtrAdvInterval = uValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AdvDefaultLifetime", TRUE) )
+    if (strcmp(ParamName, "AdvDefaultLifetime") == 0)
     {
         /* save update to backup */
         pRAInterface->Cfg.AdvDefaultLifetime = uValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AdvPreferredRouterFlag", TRUE) )
+    if (strcmp(ParamName, "AdvPreferredRouterFlag") == 0)
     {
         /* save update to backup */
         pRAInterface->Cfg.AdvPreferredRouterFlag = uValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AdvLinkMTU", TRUE) )
+    if (strcmp(ParamName, "AdvLinkMTU") == 0)
     {
         /* save update to backup */
         pRAInterface->Cfg.AdvLinkMTU = uValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AdvReachableTime", TRUE) )
+    if (strcmp(ParamName, "AdvReachableTime") == 0)
     {
         /* save update to backup */
         pRAInterface->Cfg.AdvReachableTime = uValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AdvRetransTimer", TRUE) )
+    if (strcmp(ParamName, "AdvRetransTimer") == 0)
     {
         /* save update to backup */
         pRAInterface->Cfg.AdvRetransTimer = uValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "AdvCurHopLimit", TRUE) )
+    if (strcmp(ParamName, "AdvCurHopLimit") == 0)
     {
         /* save update to backup */
         pRAInterface->Cfg.AdvCurHopLimit = uValue;
@@ -1660,7 +1660,7 @@ InterfaceSetting1_SetParamStringValue
     int                             len = 0;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* save update to backup */
         len = (_ansc_strlen(pString) > sizeof(pRAInterface->Cfg.Alias)-1 ? sizeof(pRAInterface->Cfg.Alias)-1 : _ansc_strlen(pString));
@@ -1671,7 +1671,7 @@ InterfaceSetting1_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Interface", TRUE) )
+    if (strcmp(ParamName, "Interface") == 0)
     {
         /* save update to backup */
 #ifdef _COSA_DRG_CNS_
@@ -1687,7 +1687,7 @@ InterfaceSetting1_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "ManualPrefixes", TRUE) )
+    if (strcmp(ParamName, "ManualPrefixes") == 0)
     {
         /* save update to backup */
         len = (_ansc_strlen(pString) > sizeof(pRAInterface->Cfg.ManualPrefixes)-1 ? sizeof(pRAInterface->Cfg.ManualPrefixes)-1 : _ansc_strlen(pString));
@@ -2209,7 +2209,7 @@ Option5_GetParamBoolValue
     PCOSA_DML_RA_OPTION             pOption      = (PCOSA_DML_RA_OPTION)pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         *pBool = pOption->bEnabled;
@@ -2311,7 +2311,7 @@ Option5_GetParamUlongValue
     PCOSA_DML_RA_OPTION             pOption      = (PCOSA_DML_RA_OPTION)pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Tag", TRUE) )
+    if (strcmp(ParamName, "Tag") == 0)
     {
         /* collect value */
         *puLong = pOption->Tag;        
@@ -2376,7 +2376,7 @@ Option5_GetParamStringValue
     errno_t                         rc                      = -1;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* collect value */
         rc = strcpy_s(pValue, *pUlSize, pOption->Alias);
@@ -2388,7 +2388,7 @@ Option5_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Value", TRUE) )
+    if (strcmp(ParamName, "Value") == 0)
     {
         /* collect value */
         rc = strcpy_s(pValue, *pUlSize, pOption->Value);
@@ -2447,7 +2447,7 @@ Option5_SetParamBoolValue
     PCOSA_DML_RA_OPTION             pOption      = (PCOSA_DML_RA_OPTION)pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* save update to backup */
         pOption->bEnabled = bValue;
@@ -2549,7 +2549,7 @@ Option5_SetParamUlongValue
     PCOSA_DML_RA_OPTION             pOption      = (PCOSA_DML_RA_OPTION)pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Tag", TRUE) )
+    if (strcmp(ParamName, "Tag") == 0)
     {
         /* save update to backup */
         pOption->Tag = uValue;
@@ -2603,7 +2603,7 @@ Option5_SetParamStringValue
     PCOSA_DML_RA_OPTION             pOption      = (PCOSA_DML_RA_OPTION)pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "Alias", TRUE) )
+    if (strcmp(ParamName, "Alias") == 0)
     {
         /* save update to backup */
         int len = 0;
@@ -2616,7 +2616,7 @@ Option5_SetParamStringValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Value", TRUE) )
+    if (strcmp(ParamName, "Value") == 0)
     {
         /* save update to backup */
         int len = 0;
