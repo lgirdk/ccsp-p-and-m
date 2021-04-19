@@ -3427,7 +3427,7 @@ AccessPolicy_Validate
         if ( 
                  pSecurityIAPolicy && 
                  ((ULONG)pSecurityIAPolicy != (ULONG)pDmlIAPolicy) && 
-                 AnscEqualString(pSecurityIAPolicy->Alias, pDmlIAPolicy->Alias, TRUE) 
+                  (strcmp(pSecurityIAPolicy->Alias, pDmlIAPolicy->Alias) == 0)
            )
         {
             AnscCopyString(pReturnParamName, "Alias");
@@ -4979,7 +4979,7 @@ BlockedURL_Validate
         if ( 
                  pURLEntry && 
                  ((ULONG)pURLEntry != (ULONG)pURL) && 
-                 AnscEqualString(pURLEntry->Alias, pURL->Alias, TRUE) 
+                 (strcmp(pURLEntry->Alias, pURL->Alias) == 0)
            )
         {
             AnscCopyString(pReturnParamName, "Alias");
@@ -5829,7 +5829,7 @@ BlockedKeyword_Validate
         if ( 
                  pKeywordEntry && 
                  ((ULONG)pKeywordEntry != (ULONG)pKeyword) && 
-                 AnscEqualString(pKeywordEntry->Alias, pKeyword->Alias, TRUE) 
+                 (strcmp(pKeywordEntry->Alias, pKeyword->Alias) == 0)
            )
         {
             AnscCopyString(pReturnParamName, "Alias");
@@ -6736,7 +6736,7 @@ BlockedApplication_Validate
         if ( 
                  pAppEntry && 
                  ((ULONG)pAppEntry != (ULONG)pApp) && 
-                 AnscEqualString(pAppEntry->Alias, pApp->Alias, TRUE) 
+                 (strcmp(pAppEntry->Alias, pApp->Alias) == 0)
            )
         {
             AnscCopyString(pReturnParamName, "Alias");
