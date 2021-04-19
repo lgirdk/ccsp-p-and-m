@@ -172,7 +172,7 @@ X_CISCO_COM_DeviceControl_GetParamBoolValue
     /* check the parameter name and return the corresponding value */
     //CcspTraceWarning(("-----DeviceControl_GetParamBoolValue,Trying to get parameter '%s'\n", ParamName));
     
-    if( AnscEqualString(ParamName, "ErouterEnable", TRUE)) {
+    if (strcmp(ParamName, "ErouterEnable") == 0) {
         retStatus = CosaDmlDcGetErouterEnabled(NULL,pBool);
         if (retStatus != ANSC_STATUS_SUCCESS) {
             return FALSE;
@@ -180,7 +180,7 @@ X_CISCO_COM_DeviceControl_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "MultiHomedBridgingStatus", TRUE))
+    if (strcmp(ParamName, "MultiHomedBridgingStatus") == 0)
     {
         /* collect value */
         retStatus = CosaDmlDcGetMultiHomedBridgingStatus(NULL,buf,&uSize);
@@ -196,42 +196,42 @@ X_CISCO_COM_DeviceControl_GetParamBoolValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "WanSecondIPRipAdvertised", TRUE))
+    if (strcmp(ParamName, "WanSecondIPRipAdvertised") == 0)
     {
         if (CosaDmlDcGetWanSecondIPRipAdvertised(NULL, pBool) != ANSC_STATUS_SUCCESS)
             return FALSE;
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "ResetDefaultEnable", TRUE))
+    if (strcmp(ParamName, "ResetDefaultEnable") == 0)
     {
         if (CosaDmlDcGetResetDefaultEnable(NULL, pBool) != ANSC_STATUS_SUCCESS)
             return FALSE;
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "ReinitCmMac", TRUE))
+    if (strcmp(ParamName, "ReinitCmMac") == 0)
     {
 		/* Always return false for this parameter while a GET operation.*/
        *pBool = FALSE;
 		return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "IGMPProxyEnable", TRUE))
+    if (strcmp(ParamName, "IGMPProxyEnable") == 0)
     {
         if (CosaDmlDcGetIGMPProxyEnable(NULL, pBool) != ANSC_STATUS_SUCCESS)
             return FALSE;
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "DNSProxyEnable", TRUE))
+    if (strcmp(ParamName, "DNSProxyEnable") == 0)
     {
         if (CosaDmlDcGetDNSProxyEnable(NULL, pBool) != ANSC_STATUS_SUCCESS)
             return FALSE;
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "TelnetEnable", TRUE))
+    if (strcmp(ParamName, "TelnetEnable") == 0)
     {
 	#if defined(_CBR_PRODUCT_REQ_)
             return FALSE;
@@ -241,90 +241,90 @@ X_CISCO_COM_DeviceControl_GetParamBoolValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "SSHEnable", TRUE))
+    if (strcmp(ParamName, "SSHEnable") == 0)
     {
         if (CosaDmlDcGetSSHEnable(NULL, pBool) != ANSC_STATUS_SUCCESS)
             return FALSE;
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "HNAPEnable", TRUE))
+    if (strcmp(ParamName, "HNAPEnable") == 0)
     {
         if (CosaDmlDcGetHNAPEnable(NULL, pBool) != ANSC_STATUS_SUCCESS)
             return FALSE;
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "EnableStaticNameServer", TRUE))
+    if (strcmp(ParamName, "EnableStaticNameServer") == 0)
     {
         if (CosaDmlDcGetEnableStaticNameServer(NULL, pBool) != ANSC_STATUS_SUCCESS)
             return FALSE;
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "ReleaseWan", TRUE))
+    if (strcmp(ParamName, "ReleaseWan") == 0)
     {
         if (CosaDmlDcGetReleaseWan(NULL, pBool) != ANSC_STATUS_SUCCESS)
             return FALSE;
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "RenewWan", TRUE))
+    if (strcmp(ParamName, "RenewWan") == 0)
     {
         if (CosaDmlDcGetRenewWan(NULL, pBool) != ANSC_STATUS_SUCCESS)
             return FALSE;
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "EnableZeroConfig", TRUE))
+    if (strcmp(ParamName, "EnableZeroConfig") == 0)
     {
         if (CosaDmlDcGetEnableZeroConfig(NULL, pBool) != ANSC_STATUS_SUCCESS)
             return FALSE;
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "HTTPEnable", TRUE))
+    if (strcmp(ParamName, "HTTPEnable") == 0)
     {
         if (CosaDmlDcGetHTTPEnable(NULL, pBool) != ANSC_STATUS_SUCCESS)
             return FALSE;
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "HTTPSEnable", TRUE))
+    if (strcmp(ParamName, "HTTPSEnable") == 0)
     {
         if (CosaDmlDcGetHTTPSEnable(NULL, pBool) != ANSC_STATUS_SUCCESS)
             return FALSE;
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "IGMPSnoopingEnable", TRUE))
+    if (strcmp(ParamName, "IGMPSnoopingEnable") == 0)
     {
         if (CosaDmlDcGetIGMPSnoopingEnable(NULL, pBool) != ANSC_STATUS_SUCCESS)
             return FALSE;
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "EnableMonitorUserChangedParams", TRUE))
+    if (strcmp(ParamName, "EnableMonitorUserChangedParams") == 0)
     {
         *pBool = pMyObject->EnableMonitorUserChangedParams;
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "EnableMsoRemoteMgmt", TRUE))
+    if (strcmp(ParamName, "EnableMsoRemoteMgmt") == 0)
     {
         if (CosaDmlDcGetMsoRemoteMgmtEnable(NULL, pBool) != ANSC_STATUS_SUCCESS)
             return FALSE;
         return TRUE;
     }
  
-    if (AnscEqualString(ParamName, "EnableCusadminRemoteMgmt", TRUE))
+    if (strcmp(ParamName, "EnableCusadminRemoteMgmt") == 0)
     {
         if (CosaDmlDcGetCusadminRemoteMgmtEnable(NULL, pBool) != ANSC_STATUS_SUCCESS)
             return FALSE;
         return TRUE;
     }
     
-    if (AnscEqualString(ParamName, "XHSEthernetPortEnable", TRUE))
+    if (strcmp(ParamName, "XHSEthernetPortEnable") == 0)
     {
         if (CosaDmlDcGetHSEthernetPortEnable(NULL, pBool) != ANSC_STATUS_SUCCESS)
             return FALSE;
@@ -335,7 +335,7 @@ X_CISCO_COM_DeviceControl_GetParamBoolValue
      * The access remains active for a 5 minute period during which the configured username and password remains valid (Default=FALSE)
      * To be used with Device.X_LGI-COM_DeviceControl.SSH.Username and Device.X_LGI-COM_DeviceControl.SSH.Password
      */
-    if(AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {      
         return TRUE;
     }
@@ -440,7 +440,7 @@ X_CISCO_COM_DeviceControl_GetParamUlongValue
     COSA_DML_WanAddrMode            wanAddrMode;
     ULONG                           ipAddr;
 
-    if( AnscEqualString(ParamName, "MultiHomedHSDFlag", TRUE))
+    if (strcmp(ParamName, "MultiHomedHSDFlag") == 0)
     {
         /* collect value */
         retStatus = CosaDmlDcGetMultiHomedHSDFlag(NULL,buf,&uSize);
@@ -461,7 +461,7 @@ X_CISCO_COM_DeviceControl_GetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "MultiHomedUIPageControl", TRUE))
+    if (strcmp(ParamName, "MultiHomedUIPageControl") == 0)
     {
         /* collect value */
         retStatus = CosaDmlDcGetMultiHomedUIPageControl(NULL,buf,&uSize);
@@ -480,7 +480,7 @@ X_CISCO_COM_DeviceControl_GetParamUlongValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "WanAddressMode", TRUE))
+    if (strcmp(ParamName, "WanAddressMode") == 0)
     {
         if (CosaDmlDcGetWanAddressMode(NULL, &wanAddrMode) != ANSC_STATUS_SUCCESS)
             return FALSE;
@@ -489,7 +489,7 @@ X_CISCO_COM_DeviceControl_GetParamUlongValue
 
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "WanStaticIPAddress", TRUE))
+    if (strcmp(ParamName, "WanStaticIPAddress") == 0)
     {
         if (CosaDmlDcGetWanStaticIPAddress(NULL, &ipAddr) != ANSC_STATUS_SUCCESS)
             return FALSE;
@@ -497,7 +497,7 @@ X_CISCO_COM_DeviceControl_GetParamUlongValue
         *puLong = ipAddr;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "WanStaticSubnetMask", TRUE))
+    if (strcmp(ParamName, "WanStaticSubnetMask") == 0)
     {
         if (CosaDmlDcGetWanStaticSubnetMask(NULL, &ipAddr) != ANSC_STATUS_SUCCESS)
             return FALSE;
@@ -505,7 +505,7 @@ X_CISCO_COM_DeviceControl_GetParamUlongValue
         *puLong = ipAddr;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "WanStaticGatewayIP", TRUE))
+    if (strcmp(ParamName, "WanStaticGatewayIP") == 0)
     {
         if (CosaDmlDcGetWanStaticGatewayIP(NULL, &ipAddr) != ANSC_STATUS_SUCCESS)
             return FALSE;
@@ -513,7 +513,7 @@ X_CISCO_COM_DeviceControl_GetParamUlongValue
         *puLong = ipAddr;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "WanSecondIPAddress", TRUE))
+    if (strcmp(ParamName, "WanSecondIPAddress") == 0)
     {
         if (CosaDmlDcGetWanSecondIPAddr(NULL, &ipAddr) != ANSC_STATUS_SUCCESS)
             return FALSE;
@@ -521,7 +521,7 @@ X_CISCO_COM_DeviceControl_GetParamUlongValue
         *puLong = ipAddr;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "WanBackupDefaultGateway", TRUE))
+    if (strcmp(ParamName, "WanBackupDefaultGateway") == 0)
     {
         if (CosaDmlDcGetWanBackupDefaultGateway(NULL, &ipAddr) != ANSC_STATUS_SUCCESS)
             return FALSE;
@@ -530,7 +530,7 @@ X_CISCO_COM_DeviceControl_GetParamUlongValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "NameServer1", TRUE))
+    if (strcmp(ParamName, "NameServer1") == 0)
     {
         if (CosaDmlDcGetWanNameServer(NULL, &ipAddr, 1) != ANSC_STATUS_SUCCESS)
             return FALSE;
@@ -539,7 +539,7 @@ X_CISCO_COM_DeviceControl_GetParamUlongValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "NameServer2", TRUE))
+    if (strcmp(ParamName, "NameServer2") == 0)
     {
         if (CosaDmlDcGetWanNameServer(NULL, &ipAddr, 2) != ANSC_STATUS_SUCCESS)
             return FALSE;
@@ -548,13 +548,13 @@ X_CISCO_COM_DeviceControl_GetParamUlongValue
         return TRUE;
     }
 /*
-    if (AnscEqualString(ParamName, "NameServer1", TRUE))
+    if (strcmp(ParamName, "NameServer1") == 0)
     {
        *puLong = pMyObject->NameServer1.Value;
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "NameServer2", TRUE))
+    if (strcmp(ParamName, "NameServer2") == 0)
     {
 
        *puLong = pMyObject->NameServer2.Value;
@@ -562,7 +562,7 @@ X_CISCO_COM_DeviceControl_GetParamUlongValue
     }
     */
 
-    if (AnscEqualString(ParamName, "DeviceMode", TRUE))
+    if (strcmp(ParamName, "DeviceMode") == 0)
     {
         if (CosaDmlDcGetDeviceMode(NULL, &ipAddr) != ANSC_STATUS_SUCCESS)
             return FALSE;
@@ -571,7 +571,7 @@ X_CISCO_COM_DeviceControl_GetParamUlongValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "HTTPPort", TRUE))
+    if (strcmp(ParamName, "HTTPPort") == 0)
     {
         if (CosaDmlDcGetHTTPPort(NULL, puLong) != ANSC_STATUS_SUCCESS)
             return FALSE;
@@ -579,7 +579,7 @@ X_CISCO_COM_DeviceControl_GetParamUlongValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "HTTPSPort", TRUE))
+    if (strcmp(ParamName, "HTTPSPort") == 0)
     {
         if (CosaDmlDcGetHTTPSPort(NULL, puLong) != ANSC_STATUS_SUCCESS)
             return FALSE;
@@ -587,21 +587,21 @@ X_CISCO_COM_DeviceControl_GetParamUlongValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "ReinitMacThreshold", TRUE))
+    if (strcmp(ParamName, "ReinitMacThreshold") == 0)
     {
 	*puLong = pMyObject->ReinitMacThreshold;
 
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "WebUITimeout", TRUE))
+    if (strcmp(ParamName, "WebUITimeout") == 0)
     {
         CosaDmlDcGetWebUITimeout(NULL, puLong);
 
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "PowerSavingModeStatus", TRUE))
+    if (strcmp(ParamName, "PowerSavingModeStatus") == 0)
     {
         if (CosaDmlDcGetPowerSavingModeStatus(NULL, puLong) != ANSC_STATUS_SUCCESS)
             return FALSE;
@@ -609,7 +609,7 @@ X_CISCO_COM_DeviceControl_GetParamUlongValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "NoOfGuests", TRUE))
+    if (strcmp(ParamName, "NoOfGuests") == 0)
     {
         *puLong = CosaDmlDcGetNoOfGuests();
 
@@ -617,7 +617,7 @@ X_CISCO_COM_DeviceControl_GetParamUlongValue
     }
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "MocaHardwareStatus", TRUE))
+    if (strcmp(ParamName, "MocaHardwareStatus") == 0)
     {
         /* collect value */
         *puLong = CosaDmlGetMocaHardwareStatus(NULL);
@@ -678,7 +678,7 @@ X_CISCO_COM_DeviceControl_GetParamStringValue
     UNREFERENCED_PARAMETER(hInsContext);
     PCOSA_DATAMODEL_DEVICECONTROL   pMyObject = (PCOSA_DATAMODEL_DEVICECONTROL)g_pCosaBEManager->hDeviceControl;
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "RebootDevice", TRUE) )
+    if (strcmp(ParamName, "RebootDevice") == 0)
     {
         /* collect value */
         if (CosaDmlDcGetRebootDevice(NULL, pValue) != ANSC_STATUS_SUCCESS)
@@ -687,7 +687,7 @@ X_CISCO_COM_DeviceControl_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "FactoryReset", TRUE) )
+    if (strcmp(ParamName, "FactoryReset") == 0)
     {
         /* collect value */
         if (CosaDmlDcGetFactoryReset(NULL, pValue) != ANSC_STATUS_SUCCESS)
@@ -696,7 +696,7 @@ X_CISCO_COM_DeviceControl_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "UserChangedFlags", TRUE) )
+    if (strcmp(ParamName, "UserChangedFlags") == 0)
     {
         /* collect value */
         if (CosaDmlDcGetUserChangedFlags(NULL, pValue) != ANSC_STATUS_SUCCESS)
@@ -705,7 +705,7 @@ X_CISCO_COM_DeviceControl_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "DeviceConfigStatus", TRUE) )
+    if (strcmp(ParamName, "DeviceConfigStatus") == 0)
     {
         /* collect value */
         if (CosaDmlDcGetDeviceConfigStatus(NULL, pValue) != ANSC_STATUS_SUCCESS)
@@ -714,7 +714,7 @@ X_CISCO_COM_DeviceControl_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "DeviceConfigIgnore", TRUE) )
+    if (strcmp(ParamName, "DeviceConfigIgnore") == 0)
     {
         /* collect value */
         if (CosaDmlDcGetDeviceConfigIgnore(NULL, pValue) != ANSC_STATUS_SUCCESS)
@@ -723,7 +723,7 @@ X_CISCO_COM_DeviceControl_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "SNMPEnable", TRUE) )
+    if (strcmp(ParamName, "SNMPEnable") == 0)
     {
         /* collect value */
         if (CosaDmlDcGetSNMPEnable(NULL, pValue) != ANSC_STATUS_SUCCESS)
@@ -732,7 +732,7 @@ X_CISCO_COM_DeviceControl_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "UserOpComponents", TRUE))
+    if (strcmp(ParamName, "UserOpComponents") == 0)
     {
         int n = 0;
         *pValue = '\0';
@@ -742,61 +742,61 @@ X_CISCO_COM_DeviceControl_GetParamStringValue
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "UserChangedParams", TRUE))
+    if (strcmp(ParamName, "UserChangedParams") == 0)
     {
         return CosaDevCtrlReg_GetUserChangedParams(pMyObject, pValue, pulSize);
     }
 
-    if( AnscEqualString(ParamName, "HostName", TRUE))
+    if (strcmp(ParamName, "HostName") == 0)
     {
         return CosaDmlDcGetWanHostName(NULL, pValue);
     }
 
-    if( AnscEqualString(ParamName, "DomainName", TRUE))
+    if (strcmp(ParamName, "DomainName") == 0)
     {
         return CosaDmlDcGetWanDomainName(NULL, pValue);
     }
     
     /*get wan static Domain name (readonly)*/    
-    if( AnscEqualString(ParamName, "WanStaticDomainName", TRUE))
+    if (strcmp(ParamName, "WanStaticDomainName") == 0)
     {
         return CosaDmlDcGetWanStaticDomainName(NULL, pValue);
     }
 
-    if( AnscEqualString(ParamName, "GuestPassword", TRUE))
+    if (strcmp(ParamName, "GuestPassword") == 0)
     {
         return CosaDmlDcGetGuestPassword(NULL, pValue);
     }
 
-    if( AnscEqualString(ParamName, "ParentalControlPassword", TRUE))
+    if (strcmp(ParamName, "ParentalControlPassword") == 0)
     {
         return CosaDmlDcGetParConPassword(NULL, pValue);
     }
 
-    if( AnscEqualString(ParamName, "ParentalControlDefaultPwd", TRUE))
+    if (strcmp(ParamName, "ParentalControlDefaultPwd") == 0)
     {
         return CosaDmlDcGetDefaultParConPassword(NULL, pValue);
     }
 
-    if( AnscEqualString(ParamName, "ParentalControlQuestion", TRUE))
+    if (strcmp(ParamName, "ParentalControlQuestion") == 0)
     {
         return CosaDmlDcGetParConQuestion(NULL, pValue);
     }
 
-    if( AnscEqualString(ParamName, "ParentalControlAnswer", TRUE))
+    if (strcmp(ParamName, "ParentalControlAnswer") == 0)
     {
         return CosaDmlDcGetParConAnswer(NULL, pValue);
     }
 
     /*This parameter is used to configure password for the SSH session.Need to be explicitly configured for a session and there must be no default password.*/
-    if( AnscEqualString(ParamName, "Username", TRUE))
+    if (strcmp(ParamName, "Username") == 0)
     {
       AnscCopyString(pValue,"");
       fprintf(stderr,"\n %s %d ParamName:%s pValue:%s  ***TODO*** \n",__func__,__LINE__,ParamName,pValue);
       return 0;
     }
     /*This parameter is used to configure username for the SSH session.Need to be explicitly configured for a session and there must be no default username.*/
-    if( AnscEqualString(ParamName, "Password", TRUE))
+    if (strcmp(ParamName, "Password") == 0)
     { 
       AnscCopyString(pValue,"");
       fprintf(stderr,"\n %s %d ParamName:%s pValue:%s ***TODO*** \n",__func__,__LINE__,ParamName,pValue);
@@ -851,7 +851,7 @@ X_CISCO_COM_DeviceControl_SetParamBoolValue
 
     /* check the parameter name and set the corresponding value */
     
-    if (AnscEqualString(ParamName, "ErouterEnable", TRUE)) {
+    if (strcmp(ParamName, "ErouterEnable") == 0) {
         
         retStatus = CosaDmlDcSetErouterEnabled(NULL, bValue);
         if (retStatus != ANSC_STATUS_SUCCESS)
@@ -860,7 +860,7 @@ X_CISCO_COM_DeviceControl_SetParamBoolValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "WanSecondIPRipAdvertised", TRUE))
+    if (strcmp(ParamName, "WanSecondIPRipAdvertised") == 0)
     {
         pMyObject->WanSecIPRIPAdv = bValue;
 
@@ -871,7 +871,7 @@ X_CISCO_COM_DeviceControl_SetParamBoolValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "ResetDefaultEnable", TRUE))
+    if (strcmp(ParamName, "ResetDefaultEnable") == 0)
     {
         pMyObject->ResetDefaultEnable = bValue;
 
@@ -883,7 +883,7 @@ X_CISCO_COM_DeviceControl_SetParamBoolValue
     }
 
     /* check the parameter name and set the corresponding value */
-    if (AnscEqualString(ParamName, "ReinitCmMac", TRUE))
+    if (strcmp(ParamName, "ReinitCmMac") == 0)
     {
         if(bValue == 1)
         {
@@ -905,7 +905,7 @@ X_CISCO_COM_DeviceControl_SetParamBoolValue
     }
 
 
-    if (AnscEqualString(ParamName, "IGMPProxyEnable", TRUE))
+    if (strcmp(ParamName, "IGMPProxyEnable") == 0)
     {
         retStatus = CosaDmlDcSetIGMPProxyEnable(NULL, bValue);
         if (retStatus != ANSC_STATUS_SUCCESS)
@@ -914,7 +914,7 @@ X_CISCO_COM_DeviceControl_SetParamBoolValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "DNSProxyEnable", TRUE))
+    if (strcmp(ParamName, "DNSProxyEnable") == 0)
     {
         retStatus = CosaDmlDcSetDNSProxyEnable(NULL, bValue);
         if (retStatus != ANSC_STATUS_SUCCESS)
@@ -923,7 +923,7 @@ X_CISCO_COM_DeviceControl_SetParamBoolValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "TelnetEnable", TRUE))
+    if (strcmp(ParamName, "TelnetEnable") == 0)
     {
 	#if defined(_CBR_PRODUCT_REQ_)
             return FALSE;
@@ -937,7 +937,7 @@ X_CISCO_COM_DeviceControl_SetParamBoolValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "SSHEnable", TRUE))
+    if (strcmp(ParamName, "SSHEnable") == 0)
     {
         pMyObject->SSHEnable = bValue;
 
@@ -948,7 +948,7 @@ X_CISCO_COM_DeviceControl_SetParamBoolValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "HNAPEnable", TRUE))
+    if (strcmp(ParamName, "HNAPEnable") == 0)
     {
         pMyObject->HNAPEnable = bValue;
 
@@ -959,7 +959,7 @@ X_CISCO_COM_DeviceControl_SetParamBoolValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "EnableStaticNameServer", TRUE))
+    if (strcmp(ParamName, "EnableStaticNameServer") == 0)
     {
         pMyObject->EnableStaticNameServer = bValue;
 
@@ -970,7 +970,7 @@ X_CISCO_COM_DeviceControl_SetParamBoolValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "EnableZeroConfig", TRUE))
+    if (strcmp(ParamName, "EnableZeroConfig") == 0)
     {
         pMyObject->EnableZeroConfig = bValue;
         retStatus = CosaDmlDcSetEnableZeroConfig(NULL, pMyObject->EnableZeroConfig);
@@ -980,7 +980,7 @@ X_CISCO_COM_DeviceControl_SetParamBoolValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "ReleaseWan", TRUE))
+    if (strcmp(ParamName, "ReleaseWan") == 0)
     {
         retStatus = CosaDmlDcSetReleaseWan(NULL, pMyObject->ReleaseWan);
         if (retStatus != ANSC_STATUS_SUCCESS)
@@ -989,7 +989,7 @@ X_CISCO_COM_DeviceControl_SetParamBoolValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "RenewWan", TRUE))
+    if (strcmp(ParamName, "RenewWan") == 0)
     {
         retStatus = CosaDmlDcSetRenewWan(NULL, pMyObject->RenewWan);
         if (retStatus != ANSC_STATUS_SUCCESS)
@@ -998,7 +998,7 @@ X_CISCO_COM_DeviceControl_SetParamBoolValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "HTTPEnable", TRUE))
+    if (strcmp(ParamName, "HTTPEnable") == 0)
     {
         pMyObject->HTTPEnable = bValue;
         pMyObject->WebServerChanged = TRUE;
@@ -1006,7 +1006,7 @@ X_CISCO_COM_DeviceControl_SetParamBoolValue
         return TRUE;
     }
  
-    if (AnscEqualString(ParamName, "HTTPSEnable", TRUE))
+    if (strcmp(ParamName, "HTTPSEnable") == 0)
     {
         pMyObject->HTTPSEnable = bValue;
         pMyObject->WebServerChanged = TRUE;
@@ -1014,7 +1014,7 @@ X_CISCO_COM_DeviceControl_SetParamBoolValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "IGMPSnoopingEnable", TRUE))
+    if (strcmp(ParamName, "IGMPSnoopingEnable") == 0)
     {
         pMyObject->IGMPSnoopingEnable = bValue;
 
@@ -1025,14 +1025,14 @@ X_CISCO_COM_DeviceControl_SetParamBoolValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "EnableMonitorUserChangedParams", TRUE))
+    if (strcmp(ParamName, "EnableMonitorUserChangedParams") == 0)
     {
         pMyObject->EnableMonitorUserChangedParams = bValue;
 
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "EnableMsoRemoteMgmt", TRUE))
+    if (strcmp(ParamName, "EnableMsoRemoteMgmt") == 0)
     {
         pMyObject->EnableMsoRemoteMgmt = bValue;
 
@@ -1043,7 +1043,7 @@ X_CISCO_COM_DeviceControl_SetParamBoolValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "EnableCusadminRemoteMgmt", TRUE))
+    if (strcmp(ParamName, "EnableCusadminRemoteMgmt") == 0)
     {
         pMyObject->EnableCusadminRemoteMgmt = bValue;
 
@@ -1054,7 +1054,7 @@ X_CISCO_COM_DeviceControl_SetParamBoolValue
         return TRUE;
     }
     
-    if (AnscEqualString(ParamName, "XHSEthernetPortEnable", TRUE))
+    if (strcmp(ParamName, "XHSEthernetPortEnable") == 0)
     {
 //         if (CosaDmlDcSetHSEthernetPortEnable(NULL, bValue) != ANSC_STATUS_SUCCESS)
 //             return FALSE;
@@ -1067,7 +1067,7 @@ X_CISCO_COM_DeviceControl_SetParamBoolValue
      * The access remains active for a 5 minute period during which the configured username and password remains valid (Default=FALSE)
      * To be used with Device.X_LGI-COM_DeviceControl.SSH.Username and Device.X_LGI-COM_DeviceControl.SSH.Password
      */    
-    if(AnscEqualString(ParamName, "Enable", TRUE) )
+    if (strcmp(ParamName, "Enable") == 0)
     {
       fprintf(stderr,"\n %s %d  *** TODO ***",__func__,__LINE__);
       return TRUE;
@@ -1170,7 +1170,7 @@ X_CISCO_COM_DeviceControl_SetParamUlongValue
     /* check the parameter name and set the corresponding value */
 
     //CcspTraceWarning(("--------X_CISCO_COM_DeviceControl_SetParamUlongValue...\n"));
-    if( AnscEqualString(ParamName, "MultiHomedHSDFlag", TRUE))
+    if (strcmp(ParamName, "MultiHomedHSDFlag") == 0)
     {
         pMyObject->HsdFlag = uValue;
         pMyObject->Mode = uValue;
@@ -1182,7 +1182,7 @@ X_CISCO_COM_DeviceControl_SetParamUlongValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "MultiHomedUIPageControl", TRUE))
+    if (strcmp(ParamName, "MultiHomedUIPageControl") == 0)
     {
         pMyObject->UIPageControl = uValue;
 
@@ -1193,7 +1193,7 @@ X_CISCO_COM_DeviceControl_SetParamUlongValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "WanAddressMode", TRUE))
+    if (strcmp(ParamName, "WanAddressMode") == 0)
     {
         pMyObject->WanAddrMode = uValue;
 
@@ -1203,7 +1203,7 @@ X_CISCO_COM_DeviceControl_SetParamUlongValue
 
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "WanStaticIPAddress", TRUE))
+    if (strcmp(ParamName, "WanStaticIPAddress") == 0)
     {
         pMyObject->WanIPAddr.Value = uValue;
 
@@ -1216,7 +1216,7 @@ X_CISCO_COM_DeviceControl_SetParamUlongValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "WanStaticSubnetMask", TRUE))
+    if (strcmp(ParamName, "WanStaticSubnetMask") == 0)
     {
         pMyObject->WanSubnetMask.Value = uValue;
 
@@ -1229,7 +1229,7 @@ X_CISCO_COM_DeviceControl_SetParamUlongValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "WanStaticGatewayIP", TRUE))
+    if (strcmp(ParamName, "WanStaticGatewayIP") == 0)
     {
         pMyObject->WanGateway.Value = uValue;
 
@@ -1242,7 +1242,7 @@ X_CISCO_COM_DeviceControl_SetParamUlongValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "WanSecondIPAddress", TRUE))
+    if (strcmp(ParamName, "WanSecondIPAddress") == 0)
     {
         pMyObject->WanSecIPAddr.Value = uValue;
 
@@ -1253,7 +1253,7 @@ X_CISCO_COM_DeviceControl_SetParamUlongValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "WanBackupDefaultGateway", TRUE))
+    if (strcmp(ParamName, "WanBackupDefaultGateway") == 0)
     {
         pMyObject->WanBackupGateway.Value = uValue;
 
@@ -1264,7 +1264,7 @@ X_CISCO_COM_DeviceControl_SetParamUlongValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "NameServer1", TRUE))
+    if (strcmp(ParamName, "NameServer1") == 0)
     {
         pMyObject->NameServer1.Value = uValue;
 
@@ -1275,7 +1275,7 @@ X_CISCO_COM_DeviceControl_SetParamUlongValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "NameServer2", TRUE))
+    if (strcmp(ParamName, "NameServer2") == 0)
     {
         pMyObject->NameServer2.Value = uValue;
 
@@ -1286,7 +1286,7 @@ X_CISCO_COM_DeviceControl_SetParamUlongValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "DeviceMode", TRUE))
+    if (strcmp(ParamName, "DeviceMode") == 0)
     {
         switch(uValue){
             case(COSA_DML_DEVICE_MODE_Bridge):
@@ -1304,7 +1304,7 @@ X_CISCO_COM_DeviceControl_SetParamUlongValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "HTTPPort", TRUE))
+    if (strcmp(ParamName, "HTTPPort") == 0)
     {
         if (IsPortInUse(uValue))
         {
@@ -1319,7 +1319,7 @@ X_CISCO_COM_DeviceControl_SetParamUlongValue
         }
     }
 
-    if (AnscEqualString(ParamName, "HTTPSPort", TRUE))
+    if (strcmp(ParamName, "HTTPSPort") == 0)
     {
         if (IsPortInUse(uValue))
         {
@@ -1334,7 +1334,7 @@ X_CISCO_COM_DeviceControl_SetParamUlongValue
         }
     }
 
-    if (AnscEqualString(ParamName, "ReinitMacThreshold", TRUE))
+    if (strcmp(ParamName, "ReinitMacThreshold") == 0)
     {
 	retStatus = CosaDmlDcSetReinitMacThreshold(NULL, uValue);
 	if (retStatus != ANSC_STATUS_SUCCESS)
@@ -1345,7 +1345,7 @@ X_CISCO_COM_DeviceControl_SetParamUlongValue
         return TRUE;
     }
  
-    if (AnscEqualString(ParamName, "WebUITimeout", TRUE))
+    if (strcmp(ParamName, "WebUITimeout") == 0)
     {
         pMyObject->WebUITimeout = uValue;
 
@@ -1356,7 +1356,7 @@ X_CISCO_COM_DeviceControl_SetParamUlongValue
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "NoOfGuests", TRUE))
+    if (strcmp(ParamName, "NoOfGuests") == 0)
     {
         pMyObject->NoOfGuests = uValue;
 
@@ -1935,34 +1935,34 @@ LanMngm_GetParamBoolValue
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     PCOSA_DML_LAN_MANAGEMENT        pLanMngm    = (PCOSA_DML_LAN_MANAGEMENT)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "LanDhcpServer", TRUE))
+    if (strcmp(ParamName, "LanDhcpServer") == 0)
     {
         *pBool = pLanMngm->LanDhcpServer;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "LanNaptEnable", TRUE))
+    if (strcmp(ParamName, "LanNaptEnable") == 0)
     {
 
         *pBool = pLanMngm->LanNaptEnable;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "LanDhcp125", TRUE))
+    if (strcmp(ParamName, "LanDhcp125") == 0)
     {
         *pBool = pLanMngm->LanDhcp125;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "LanHnap", TRUE))
+    if (strcmp(ParamName, "LanHnap") == 0)
     {
         *pBool = pLanMngm->LanHnap;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "LanUpnp", TRUE))
+    if (strcmp(ParamName, "LanUpnp") == 0)
     {
         *pBool = pLanMngm->LanUpnp;
         return TRUE;
     }
 
-    if (AnscEqualString(ParamName, "LanNaptOnDhcp", TRUE))
+    if (strcmp(ParamName, "LanNaptOnDhcp") == 0)
     {
         *pBool = pLanMngm->LanNaptType;
         return TRUE;
@@ -1997,32 +1997,32 @@ LanMngm_GetParamUlongValue
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     PCOSA_DML_LAN_MANAGEMENT        pLanMngm    = (PCOSA_DML_LAN_MANAGEMENT)pLinkObj->hContext;
 
-    if (AnscEqualString(ParamName, "LanMode", TRUE))
+    if (strcmp(ParamName, "LanMode") == 0)
     {
         *pUlong = pLanMngm->LanMode;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "LanNetwork", TRUE))
+    if (strcmp(ParamName, "LanNetwork") == 0)
     {
         *pUlong = pLanMngm->LanNetwork.Value;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "LanNetworksAllow", TRUE))
+    if (strcmp(ParamName, "LanNetworksAllow") == 0)
     {
         *pUlong = pLanMngm->LanNetworksAllow;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "LanSubnetMask", TRUE))
+    if (strcmp(ParamName, "LanSubnetMask") == 0)
     {
         *pUlong = pLanMngm->LanSubnetMask.Value;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "LanIPAddress", TRUE))
+    if (strcmp(ParamName, "LanIPAddress") == 0)
     {
         *pUlong = pLanMngm->LanIPAddress.Value;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "LanTos", TRUE))
+    if (strcmp(ParamName, "LanTos") == 0)
     {
         *pUlong = pLanMngm->LanTos;
         return TRUE;
@@ -2071,32 +2071,32 @@ LanMngm_SetParamBoolValue
        (TRUE == bridgeMode))
         return FALSE;
     
-    if (AnscEqualString(ParamName, "LanDhcpServer", TRUE))
+    if (strcmp(ParamName, "LanDhcpServer") == 0)
     {
         pLanMngm->LanDhcpServer = bValue;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "LanNaptEnable", TRUE))
+    if (strcmp(ParamName, "LanNaptEnable") == 0)
     {
         pLanMngm->LanNaptEnable = bValue;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "LanDhcp125", TRUE))
+    if (strcmp(ParamName, "LanDhcp125") == 0)
     {
         pLanMngm->LanDhcp125 = bValue;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "LanHnap", TRUE))
+    if (strcmp(ParamName, "LanHnap") == 0)
     {
         pLanMngm->LanHnap = bValue;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "LanUpnp", TRUE))
+    if (strcmp(ParamName, "LanUpnp") == 0)
     {
         pLanMngm->LanUpnp = bValue;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "LanNaptOnDhcp", TRUE))
+    if (strcmp(ParamName, "LanNaptOnDhcp") == 0)
     {
         pLanMngm->LanNaptType = bValue;
         return TRUE;
@@ -2138,7 +2138,7 @@ LanMngm_SetParamUlongValue
     if (!(deviceMode-1)) 
         return FALSE;
 
-    if (AnscEqualString(ParamName, "LanMode", TRUE))
+    if (strcmp(ParamName, "LanMode") == 0)
     {
 	#if !defined(_PLATFORM_RASPBERRYPI_)
 	//RDKB-27656 : Bridge Mode must not set to true using WEBPA & dmcli in ETHWAN mode
@@ -2174,17 +2174,17 @@ LanMngm_SetParamUlongValue
        (TRUE == bridgeMode))
         return FALSE;
 
-    if (AnscEqualString(ParamName, "LanNetwork", TRUE))
+    if (strcmp(ParamName, "LanNetwork") == 0)
     {
         pLanMngm->LanNetwork.Value = uValuepUlong;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "LanNetworksAllow", TRUE))
+    if (strcmp(ParamName, "LanNetworksAllow") == 0)
     {
         pLanMngm->LanNetworksAllow = uValuepUlong;
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "LanSubnetMask", TRUE))
+    if (strcmp(ParamName, "LanSubnetMask") == 0)
     {
         if (Dhcpv4_Lan_MutexTryLock() != 0)
         {
@@ -2197,7 +2197,7 @@ LanMngm_SetParamUlongValue
         Dhcpv4_Lan_MutexUnLock();
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "LanIPAddress", TRUE))
+    if (strcmp(ParamName, "LanIPAddress") == 0)
     {
         if (Dhcpv4_Lan_MutexTryLock() != 0)
         {
@@ -2210,7 +2210,7 @@ LanMngm_SetParamUlongValue
         Dhcpv4_Lan_MutexUnLock();
         return TRUE;
     }
-    if (AnscEqualString(ParamName, "LanTos", TRUE))
+    if (strcmp(ParamName, "LanTos") == 0)
     {
         pLanMngm->LanTos = uValuepUlong;
         return TRUE;
@@ -2444,73 +2444,73 @@ WebAccessLevel_GetParamIntValue
     UNREFERENCED_PARAMETER(hInsContext);
     //CcspTraceWarning(("-----WebAccessLevel_GetParamIntValue,Trying to get parameter '%s'\n", ParamName)); 
 	
-    if (AnscEqualString(ParamName, "HomeUser_Lan_Level", TRUE))
+    if (strcmp(ParamName, "HomeUser_Lan_Level") == 0)
     {
         CosaDmlDcGetWebAccessLevel(NULL, 1, 1, (ULONG*)pInt);
         return TRUE;
     }
 
-	if (AnscEqualString(ParamName, "HomeUser_RfCM_Level", TRUE))
+	if (strcmp(ParamName, "HomeUser_RfCM_Level") == 0)
     {
         CosaDmlDcGetWebAccessLevel(NULL, 1, 2, (ULONG*)pInt);
         return TRUE;
     }
 
-	if (AnscEqualString(ParamName, "HomeUser_Mta_Level", TRUE))
+	if (strcmp(ParamName, "HomeUser_Mta_Level") == 0)
     {
         CosaDmlDcGetWebAccessLevel(NULL, 1, 16, (ULONG*)pInt);
         return TRUE;
     }
 
-	if (AnscEqualString(ParamName, "HomeUser_WanRG_Level", TRUE))
+	if (strcmp(ParamName, "HomeUser_WanRG_Level") == 0)
     {
         CosaDmlDcGetWebAccessLevel(NULL, 1, 40, (ULONG*)pInt);
         return TRUE;
     }
 
-	if (AnscEqualString(ParamName, "CusAdmin_Lan_Level", TRUE))
+	if (strcmp(ParamName, "CusAdmin_Lan_Level") == 0)
     {
         CosaDmlDcGetWebAccessLevel(NULL, 5, 1, (ULONG*)pInt);
         return TRUE;
     }
 
-	if (AnscEqualString(ParamName, "CusAdmin_RfCM_Level", TRUE))
+	if (strcmp(ParamName, "CusAdmin_RfCM_Level") == 0)
     {
         CosaDmlDcGetWebAccessLevel(NULL, 5, 2, (ULONG*)pInt);
         return TRUE;
     }
 
-	if (AnscEqualString(ParamName, "CusAdmin_Mta_Level", TRUE))
+	if (strcmp(ParamName, "CusAdmin_Mta_Level") == 0)
     {
         CosaDmlDcGetWebAccessLevel(NULL, 5, 16, (ULONG*)pInt);
         return TRUE;
     }
 
-	if (AnscEqualString(ParamName, "CusAdmin_WanRG_Level", TRUE))
+	if (strcmp(ParamName, "CusAdmin_WanRG_Level") == 0)
     {
         CosaDmlDcGetWebAccessLevel(NULL, 5, 40, (ULONG*)pInt);
         return TRUE;
     }
 
-	if (AnscEqualString(ParamName, "AdvUser_Lan_Level", TRUE))
+	if (strcmp(ParamName, "AdvUser_Lan_Level") == 0)
     {
         CosaDmlDcGetWebAccessLevel(NULL, 10, 1, (ULONG*)pInt);
         return TRUE;
     }
 
-	if (AnscEqualString(ParamName, "AdvUser_RfCM_Level", TRUE))
+	if (strcmp(ParamName, "AdvUser_RfCM_Level") == 0)
     {
         CosaDmlDcGetWebAccessLevel(NULL, 10, 2, (ULONG*)pInt);
         return TRUE;
     }
 
-	if (AnscEqualString(ParamName, "AdvUser_Mta_Level", TRUE))
+	if (strcmp(ParamName, "AdvUser_Mta_Level") == 0)
     {
         CosaDmlDcGetWebAccessLevel(NULL, 10, 16, (ULONG*)pInt);
         return TRUE;
     }
 
-	if (AnscEqualString(ParamName, "AdvUser_WanRG_Level", TRUE))
+	if (strcmp(ParamName, "AdvUser_WanRG_Level") == 0)
     {
         CosaDmlDcGetWebAccessLevel(NULL, 10, 40, (ULONG*)pInt);
         return TRUE;
@@ -2579,7 +2579,7 @@ WebAccessLevel_SetParamIntValue
     UNREFERENCED_PARAMETER(hInsContext);
     //CcspTraceWarning(("-----WebAccessLevel_SetParamIntValue,Trying to get parameter '%s'\n", ParamName)); 
 	
-    if (AnscEqualString(ParamName, "HomeUser_Lan_Level", TRUE))
+    if (strcmp(ParamName, "HomeUser_Lan_Level") == 0)
     {
         if (CosaDmlDcSetWebAccessLevel(NULL, 1, 1, iValue) != ANSC_STATUS_SUCCESS)
             return FALSE;
@@ -2587,7 +2587,7 @@ WebAccessLevel_SetParamIntValue
         return TRUE;
     }
 
-	if (AnscEqualString(ParamName, "HomeUser_RfCM_Level", TRUE))
+	if (strcmp(ParamName, "HomeUser_RfCM_Level") == 0)
     {
         if (CosaDmlDcSetWebAccessLevel(NULL, 1, 2, iValue) != ANSC_STATUS_SUCCESS)
             return FALSE;
@@ -2595,7 +2595,7 @@ WebAccessLevel_SetParamIntValue
         return TRUE;
     }
 
-	if (AnscEqualString(ParamName, "HomeUser_Mta_Level", TRUE))
+	if (strcmp(ParamName, "HomeUser_Mta_Level") == 0)
     {
         if (CosaDmlDcSetWebAccessLevel(NULL, 1, 16, iValue) != ANSC_STATUS_SUCCESS)
             return FALSE;
@@ -2603,7 +2603,7 @@ WebAccessLevel_SetParamIntValue
         return TRUE;
     }
 
-	if (AnscEqualString(ParamName, "HomeUser_WanRG_Level", TRUE))
+	if (strcmp(ParamName, "HomeUser_WanRG_Level") == 0)
     {
         if (CosaDmlDcSetWebAccessLevel(NULL, 1, 40, iValue) != ANSC_STATUS_SUCCESS)
             return FALSE;
@@ -2611,7 +2611,7 @@ WebAccessLevel_SetParamIntValue
         return TRUE;
     }
 
-	if (AnscEqualString(ParamName, "CusAdmin_Lan_Level", TRUE))
+	if (strcmp(ParamName, "CusAdmin_Lan_Level") == 0)
     {
         if (CosaDmlDcSetWebAccessLevel(NULL, 5, 1, iValue) != ANSC_STATUS_SUCCESS)
             return FALSE;
@@ -2619,7 +2619,7 @@ WebAccessLevel_SetParamIntValue
         return TRUE;
     }
 
-	if (AnscEqualString(ParamName, "CusAdmin_RfCM_Level", TRUE))
+	if (strcmp(ParamName, "CusAdmin_RfCM_Level") == 0)
     {
         if (CosaDmlDcSetWebAccessLevel(NULL, 5, 2, iValue) != ANSC_STATUS_SUCCESS)
             return FALSE;
@@ -2627,7 +2627,7 @@ WebAccessLevel_SetParamIntValue
         return TRUE;
     }
 
-	if (AnscEqualString(ParamName, "CusAdmin_Mta_Level", TRUE))
+	if (strcmp(ParamName, "CusAdmin_Mta_Level") == 0)
     {
         if (CosaDmlDcSetWebAccessLevel(NULL, 5, 16, iValue) != ANSC_STATUS_SUCCESS)
             return FALSE;
@@ -2635,7 +2635,7 @@ WebAccessLevel_SetParamIntValue
         return TRUE;
     }
 
-	if (AnscEqualString(ParamName, "CusAdmin_WanRG_Level", TRUE))
+	if (strcmp(ParamName, "CusAdmin_WanRG_Level") == 0)
     {
         if (CosaDmlDcSetWebAccessLevel(NULL, 5, 40, iValue) != ANSC_STATUS_SUCCESS)
             return FALSE;
@@ -2643,7 +2643,7 @@ WebAccessLevel_SetParamIntValue
         return TRUE;
     }
 
-	if (AnscEqualString(ParamName, "AdvUser_Lan_Level", TRUE))
+	if (strcmp(ParamName, "AdvUser_Lan_Level") == 0)
     {
         if (CosaDmlDcSetWebAccessLevel(NULL, 10, 1, iValue) != ANSC_STATUS_SUCCESS)
             return FALSE;
@@ -2651,7 +2651,7 @@ WebAccessLevel_SetParamIntValue
         return TRUE;
     }
 
-	if (AnscEqualString(ParamName, "AdvUser_RfCM_Level", TRUE))
+	if (strcmp(ParamName, "AdvUser_RfCM_Level") == 0)
     {
         if (CosaDmlDcSetWebAccessLevel(NULL, 10, 2, iValue) != ANSC_STATUS_SUCCESS)
             return FALSE;
@@ -2659,7 +2659,7 @@ WebAccessLevel_SetParamIntValue
         return TRUE;
     }
 
-	if (AnscEqualString(ParamName, "AdvUser_Mta_Level", TRUE))
+	if (strcmp(ParamName, "AdvUser_Mta_Level") == 0)
     {
         if (CosaDmlDcSetWebAccessLevel(NULL, 10, 16, iValue) != ANSC_STATUS_SUCCESS)
             return FALSE;
@@ -2667,7 +2667,7 @@ WebAccessLevel_SetParamIntValue
         return TRUE;
     }
 
-	if (AnscEqualString(ParamName, "AdvUser_WanRG_Level", TRUE))
+	if (strcmp(ParamName, "AdvUser_WanRG_Level") == 0)
     {
         if (CosaDmlDcSetWebAccessLevel(NULL, 10, 40, iValue) != ANSC_STATUS_SUCCESS)
             return FALSE;

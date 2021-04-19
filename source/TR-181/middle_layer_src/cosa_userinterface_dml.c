@@ -172,30 +172,30 @@ UserInterface_GetParamBoolValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
     PCOSA_DATAMODEL_USERINTERFACE   pMyObject = (PCOSA_DATAMODEL_USERINTERFACE)g_pCosaBEManager->hUserinterface;
-    if( AnscEqualString(ParamName, "PasswordReset", TRUE))
+    if (strcmp(ParamName, "PasswordReset") == 0)
     {
         *pBool = FALSE;
         return TRUE;
     }
 
-     if( AnscEqualString(ParamName, "PasswordLockoutEnable", TRUE))
+     if (strcmp(ParamName, "PasswordLockoutEnable") == 0)
     {
         *pBool = pMyObject->UserInterfaceCfg.bPasswordLockoutEnable;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "HTTPSecurityHeaderEnable", TRUE))
+    if (strcmp(ParamName, "HTTPSecurityHeaderEnable") == 0)
     {
         *pBool = pMyObject->UserInterfaceCfg.bHTTPSecurityHeaderEnable;
         return TRUE;
     }
-	if( AnscEqualString(ParamName, "Enable", TRUE))
+	if (strcmp(ParamName, "Enable") == 0)
 	{
 		*pBool = pMyObject->UserInterfaceCfg.bLocalUiEnable;
 		return TRUE;
 	}
     /* LGI ADD START - Public DNS*/
-    if( AnscEqualString(ParamName, "X_LGI-COM_ShowDNSConfigPage", TRUE))
+    if (strcmp(ParamName, "X_LGI-COM_ShowDNSConfigPage") == 0)
     {
         *pBool = pMyObject->UserInterfaceCfg.bShowDNSConfigPage;
         return TRUE;
@@ -224,7 +224,7 @@ UserInterface_SetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     PCOSA_DATAMODEL_USERINTERFACE   pMyObject = (PCOSA_DATAMODEL_USERINTERFACE)g_pCosaBEManager->hUserinterface;
 
-	if( AnscEqualString(ParamName, "PasswordReset", TRUE))
+	if (strcmp(ParamName, "PasswordReset") == 0)
     {
         if(bValue == TRUE)
 		{
@@ -234,24 +234,24 @@ UserInterface_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "PasswordLockoutEnable", TRUE))
+    if (strcmp(ParamName, "PasswordLockoutEnable") == 0)
     {
         pMyObject->UserInterfaceCfg.bPasswordLockoutEnable = bValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "HTTPSecurityHeaderEnable", TRUE))
+    if (strcmp(ParamName, "HTTPSecurityHeaderEnable") == 0)
     {
         pMyObject->UserInterfaceCfg.bHTTPSecurityHeaderEnable = bValue;
         return TRUE;
     }
-	if( AnscEqualString(ParamName, "Enable", TRUE))
+	if (strcmp(ParamName, "Enable") == 0)
 	{
 		pMyObject->UserInterfaceCfg.bLocalUiEnable = bValue;
 		return TRUE;
 	}
     /* LGI ADD START - Public DNS */
-    if( AnscEqualString(ParamName, "X_LGI-COM_ShowDNSConfigPage", TRUE))
+    if (strcmp(ParamName, "X_LGI-COM_ShowDNSConfigPage") == 0)
     {
         pMyObject->UserInterfaceCfg.bShowDNSConfigPage = bValue;
         return TRUE;
@@ -305,24 +305,24 @@ UserInterface_GetParamUlongValue
     /* CosaDmlRaGetCfg(NULL, &pMyObject->RaCfg); */
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "PasswordLockoutAttempts", TRUE))
+    if (strcmp(ParamName, "PasswordLockoutAttempts") == 0)
     {
         *puLong = pMyObject->UserInterfaceCfg.PasswordLockoutAttempts;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "PasswordLockoutTime", TRUE))
+    if (strcmp(ParamName, "PasswordLockoutTime") == 0)
     {
         *puLong = pMyObject->UserInterfaceCfg.PasswordLockoutTime;
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "MaxPasswordLockoutTimes", TRUE))
+    if (strcmp(ParamName, "MaxPasswordLockoutTimes") == 0)
     {
         *puLong = pMyObject->UserInterfaceCfg.MaxPasswordLockoutTimes;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "LoginFailureWindow", TRUE))
+    if (strcmp(ParamName, "LoginFailureWindow") == 0)
     {
         *puLong = pMyObject->UserInterfaceCfg.LoginFailureWindow;
         return TRUE;
@@ -372,24 +372,24 @@ UserInterface_SetParamUlongValue
     UNREFERENCED_PARAMETER(hInsContext);
     PCOSA_DATAMODEL_USERINTERFACE   pMyObject = (PCOSA_DATAMODEL_USERINTERFACE)g_pCosaBEManager->hUserinterface;
 
-    if( AnscEqualString(ParamName, "PasswordLockoutAttempts", TRUE))
+    if (strcmp(ParamName, "PasswordLockoutAttempts") == 0)
     {
         pMyObject->UserInterfaceCfg.PasswordLockoutAttempts = uValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "PasswordLockoutTime", TRUE))
+    if (strcmp(ParamName, "PasswordLockoutTime") == 0)
     {
         pMyObject->UserInterfaceCfg.PasswordLockoutTime = uValue;
         return TRUE;
     }
-    if( AnscEqualString(ParamName, "MaxPasswordLockoutTimes", TRUE))
+    if (strcmp(ParamName, "MaxPasswordLockoutTimes") == 0)
     {
         pMyObject->UserInterfaceCfg.MaxPasswordLockoutTimes = uValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "LoginFailureWindow", TRUE))
+    if (strcmp(ParamName, "LoginFailureWindow") == 0)
     {
         pMyObject->UserInterfaceCfg.LoginFailureWindow = uValue;
         return TRUE;
@@ -593,37 +593,37 @@ RemoteAccess_GetParamBoolValue
     /* CosaDmlRaGetCfg(NULL, &pMyObject->RaCfg); */
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         *pBool = pMyObject->RaCfg.bEnabled;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "UpgradePermission", TRUE))
+    if (strcmp(ParamName, "UpgradePermission") == 0)
     {
         *pBool = pMyObject->RaCfg.UpgradePermission;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FromAnyIP", TRUE))
+    if (strcmp(ParamName, "FromAnyIP") == 0)
     {
         *pBool = pMyObject->RaCfg.bFromAnyIp;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "HttpEnable", TRUE))
+    if (strcmp(ParamName, "HttpEnable") == 0)
     {
         *pBool = pMyObject->RaCfg.HttpEnable;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "HttpsEnable", TRUE))
+    if (strcmp(ParamName, "HttpsEnable") == 0)
     {
         *pBool = pMyObject->RaCfg.HttpsEnable;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "TelnetEnable", TRUE))
+    if (strcmp(ParamName, "TelnetEnable") == 0)
     {
 	#if defined(_CBR_PRODUCT_REQ_)
             return FALSE;
@@ -632,7 +632,7 @@ RemoteAccess_GetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SSHEnable", TRUE))
+    if (strcmp(ParamName, "SSHEnable") == 0)
     {
         *pBool = pMyObject->RaCfg.SSHEnable;
         return TRUE;
@@ -733,37 +733,37 @@ RemoteAccess_GetParamUlongValue
     /* CosaDmlRaGetCfg(NULL, &pMyObject->RaCfg); */
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "StartIp", TRUE))
+    if (strcmp(ParamName, "StartIp") == 0)
     {
         *puLong = pMyObject->RaCfg.StartIp.Value;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "EndIp", TRUE))
+    if (strcmp(ParamName, "EndIp") == 0)
     {
         *puLong = pMyObject->RaCfg.EndIp.Value;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "HttpPort", TRUE))
+    if (strcmp(ParamName, "HttpPort") == 0)
     {
         *puLong = pMyObject->RaCfg.HttpPort;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "HttpsPort", TRUE))
+    if (strcmp(ParamName, "HttpsPort") == 0)
     {
         *puLong = pMyObject->RaCfg.HttpsPort;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "TelnetPort", TRUE))
+    if (strcmp(ParamName, "TelnetPort") == 0)
     {
         *puLong = pMyObject->RaCfg.TelnetPort;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SSHPort", TRUE))
+    if (strcmp(ParamName, "SSHPort") == 0)
     {
         *puLong = pMyObject->RaCfg.SSHPort;
         return TRUE;
@@ -824,19 +824,19 @@ RemoteAccess_GetParamStringValue
     UNREFERENCED_PARAMETER(pUlSize);
     PCOSA_DATAMODEL_USERINTERFACE   pMyObject = (PCOSA_DATAMODEL_USERINTERFACE)g_pCosaBEManager->hUserinterface;
 
-    if( AnscEqualString(ParamName, "SupportedProtocols", TRUE))
+    if (strcmp(ParamName, "SupportedProtocols") == 0)
     {
         AnscCopyString(pValue, pMyObject->RaCfg.SupportedProtocols);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "StartIpV6", TRUE))
+    if (strcmp(ParamName, "StartIpV6") == 0)
     {
         AnscCopyString(pValue, pMyObject->RaCfg.StartIpV6);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "EndIpV6", TRUE))
+    if (strcmp(ParamName, "EndIpV6") == 0)
     {
         AnscCopyString(pValue, pMyObject->RaCfg.EndIpV6);
         return 0;
@@ -885,39 +885,39 @@ RemoteAccess_SetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     PCOSA_DATAMODEL_USERINTERFACE   pMyObject = (PCOSA_DATAMODEL_USERINTERFACE)g_pCosaBEManager->hUserinterface;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         pMyObject->RaCfg.bEnabled = bValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "UpgradePermission", TRUE))
+    if (strcmp(ParamName, "UpgradePermission") == 0)
     {
         pMyObject->RaCfg.UpgradePermission = bValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "FromAnyIP", TRUE))
+    if (strcmp(ParamName, "FromAnyIP") == 0)
     {
         pMyObject->RaCfg.bFromAnyIp = bValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "HttpEnable", TRUE))
+    if (strcmp(ParamName, "HttpEnable") == 0)
     {
         pMyObject->RaCfg.HttpEnable = bValue;
         CcspTraceNotice(("RA_HTTP_split:Feature Switch Remote Access HTTP %d\n", bValue));
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "HttpsEnable", TRUE))
+    if (strcmp(ParamName, "HttpsEnable") == 0)
     {
         pMyObject->RaCfg.HttpsEnable = bValue;
         CcspTraceNotice(("RA_HTTPS_split :Feature Switch Remote Access HTTPS %d\n",bValue));
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "TelnetEnable", TRUE))
+    if (strcmp(ParamName, "TelnetEnable") == 0)
     {
 	#if defined(_CBR_PRODUCT_REQ_)
             return FALSE;
@@ -926,7 +926,7 @@ RemoteAccess_SetParamBoolValue
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SSHEnable", TRUE))
+    if (strcmp(ParamName, "SSHEnable") == 0)
     {
         pMyObject->RaCfg.SSHEnable = bValue;
         return TRUE;
@@ -1027,7 +1027,7 @@ RemoteAccess_SetParamUlongValue
     /*for single computer startIp and EndIp will be equal;
     if its set to empty in UI, default value 255.255.255.255 is taken. */
     
-    if( AnscEqualString(ParamName, "StartIp", TRUE))
+    if (strcmp(ParamName, "StartIp") == 0)
     {
         if((uValue == val) || (uValue <= pMyObject->RaCfg.EndIp.Value))
         {
@@ -1035,7 +1035,7 @@ RemoteAccess_SetParamUlongValue
             return TRUE;
         }
     }
-    if( AnscEqualString(ParamName, "EndIp", TRUE))
+    if (strcmp(ParamName, "EndIp") == 0)
     {
         if((uValue == val) || (uValue >= pMyObject->RaCfg.StartIp.Value))
         {
@@ -1044,25 +1044,25 @@ RemoteAccess_SetParamUlongValue
         }
     }
 
-    if( AnscEqualString(ParamName, "HttpPort", TRUE))
+    if (strcmp(ParamName, "HttpPort") == 0)
     {
         pMyObject->RaCfg.HttpPort = uValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "HttpsPort", TRUE))
+    if (strcmp(ParamName, "HttpsPort") == 0)
     {
         pMyObject->RaCfg.HttpsPort = uValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "TelnetPort", TRUE))
+    if (strcmp(ParamName, "TelnetPort") == 0)
     {
         pMyObject->RaCfg.TelnetPort = uValue;
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "SSHPort", TRUE))
+    if (strcmp(ParamName, "SSHPort") == 0)
     {
         pMyObject->RaCfg.SSHPort = uValue;
         return TRUE;
@@ -1118,7 +1118,7 @@ RemoteAccess_SetParamStringValue
     /*for single computer startIpv6 and EndIpv6 will be equal;
     if its set to empty in UI, default value "x" is taken. */
     
-    if( AnscEqualString(ParamName, "StartIpV6", TRUE))
+    if (strcmp(ParamName, "StartIpV6") == 0)
     {
         if((strcmp(pString,val)==0) || (is_Ipv6_address((PUCHAR)pString)))
         {
@@ -1126,7 +1126,7 @@ RemoteAccess_SetParamStringValue
             return TRUE;
         }
     }
-    if( AnscEqualString(ParamName, "EndIpV6", TRUE))
+    if (strcmp(ParamName, "EndIpV6") == 0)
     {
         if((strcmp(pString,val)==0) || (is_Ipv6_address((PUCHAR)pString)))
         {
@@ -1386,21 +1386,21 @@ iprange_GetParamStringValue
     PCOSA_DML_UI_IPRANGE_ENTRY      piprange      = (PCOSA_DML_UI_IPRANGE_ENTRY)pCosaContext->hContext;
 
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "StartIP", TRUE))
+    if (strcmp(ParamName, "StartIP") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, piprange->StartIP);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "EndIP", TRUE))
+    if (strcmp(ParamName, "EndIP") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, piprange->EndIP);
         return 0;
     }
 
-    if( AnscEqualString(ParamName, "Desp", TRUE))
+    if (strcmp(ParamName, "Desp") == 0)
     {
         /* collect value */
         AnscCopyString(pValue, piprange->Desp);
@@ -1423,21 +1423,21 @@ iprange_SetParamStringValue
     PCOSA_DML_UI_IPRANGE_ENTRY      piprange      = (PCOSA_DML_UI_IPRANGE_ENTRY)pCosaContext->hContext;
 
     /* check the parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "StartIP", TRUE))
+    if (strcmp(ParamName, "StartIP") == 0)
     {
         /* save update to backup */
          AnscCopyString(piprange->StartIP, pString);
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "EndIP", TRUE))
+    if (strcmp(ParamName, "EndIP") == 0)
     {
         /* save update to backup */
          AnscCopyString(piprange->EndIP, pString);
         return TRUE;
     }
 
-    if( AnscEqualString(ParamName, "Desp", TRUE))
+    if (strcmp(ParamName, "Desp") == 0)
     {
         /* save update to backup */
          AnscCopyString(piprange->Desp, pString);
