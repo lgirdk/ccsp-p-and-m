@@ -742,6 +742,9 @@ CosaDmlDynamicDns_Host_SetConf
     snprintf(status_path, sizeof(status_path), SYSCFG_HOST_STATUS_KEY, index + 1);
     snprintf(name_path, sizeof(name_path), SYSCFG_HOST_NAME_KEY, index + 1);
 
+	if((g_DDNSHost[index].Enable != pEntry->Enable) && (g_DDNSHost[index].Name[0] != '\0'))
+		isHostchanged = TRUE;
+
     g_DDNSHost[index].Status = pEntry->Status;
     g_DDNSHost[index].Enable         = pEntry->Enable;
     if(strcmp(g_DDNSHost[index].Name, pEntry->Name) != 0)
