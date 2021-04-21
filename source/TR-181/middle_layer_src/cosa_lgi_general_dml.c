@@ -299,6 +299,18 @@ LgiGeneral_GetParamStringValue
           return 1;
         }
     }
+    if (strcmp(ParamName, "DataModelSpecification") == 0)
+    {
+        if (AnscSizeOfString(pMyObject->DataModelSpecification) < *pulSize){
+          AnscCopyString(pValue, pMyObject->DataModelSpecification);
+          return 0;
+        }
+        else
+        {
+          *pulSize = AnscSizeOfString(pMyObject->DataModelSpecification);
+          return 1;
+        }
+    }
     if (strcmp(ParamName, "WebUISkin") == 0)
     {
         if (AnscSizeOfString(pMyObject->WebUISkin) < *pulSize){
