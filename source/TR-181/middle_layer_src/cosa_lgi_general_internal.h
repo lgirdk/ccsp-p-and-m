@@ -38,6 +38,7 @@ _COSA_DATAMODEL_LGI_GENERAL_CLASS_CONTENT
     BOOL                            FirstInstallState;
     BOOL                            TroubleshootWizardEnable;
     char                            DataModelVersion[32];
+    char                            DataModelSpecification[32];
     BOOL                            FirstInstallWizardEnable;
     char                            WebUISkin[16];
     BOOL                            UserBridgeModeAllowed;
