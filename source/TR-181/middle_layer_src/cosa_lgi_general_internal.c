@@ -128,9 +128,9 @@ CosaLgiGeneralInitialize
 
     CosaDmlGiGetUserBridgeModeAllowed(NULL, &pMyObject->UserBridgeModeAllowed);
 
-    /*Initializing the DataModelVersion with default value 1.01.01.
-    Further implementation of this parameter is still under design discussion*/
-    AnscCopyString(pMyObject->DataModelVersion, "1.01.01");
+    /* Further implementation of this parameter is still under design discussion*/
+    AnscCopyString(pMyObject->DataModelVersion, "12.0.1");
+    AnscCopyString(pMyObject->DataModelSpecification, "12.0.1");
 
     return returnStatus;
 }
