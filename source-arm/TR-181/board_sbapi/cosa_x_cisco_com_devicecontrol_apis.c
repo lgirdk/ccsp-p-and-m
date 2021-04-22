@@ -1806,39 +1806,6 @@ void* restoreAllDBs(void* arg)
     // syscfg.db on the ATOM side during factory reset.
 #if defined(_COSA_INTEL_USG_ARM_)
     {
-        #define DATA_SIZE 1024
-        FILE *fp1;
-        char buf[DATA_SIZE] = {0};
-        char *urlPtr = NULL;
-
-        // Grab the ATOM RPC IP address
-        // sprintf(cmd1, "cat /etc/device.properties | grep ATOM_ARPING_IP | cut -f 2 -d\"=\"");
-
-        fp1 = fopen("/etc/device.properties", "r");
-        if (fp1 == NULL) {
-            CcspTraceError(("Error opening properties file! \n"));
-            return NULL;
-        }
-
-        while (fgets(buf, DATA_SIZE, fp1) != NULL) {
-            // Look for ATOM_ARPING_IP
-            if (strstr(buf, "ATOM_ARPING_IP") != NULL) {
-                buf[strcspn(buf, "\r\n")] = 0; // Strip off any carriage returns
-
-                // grab URL from string
-                urlPtr = strstr(buf, "=");
-                urlPtr++;
-                break;
-            }
-        }
-
-        if (fclose(fp1) != 0) {
-            /* Error reported by pclose() */
-            CcspTraceError(("Error closing properties file! \n"));
-        }
-
-        if (urlPtr != NULL && urlPtr[0] != 0 && strlen(urlPtr) > 0) {
-            CcspTraceInfo(("Reported an ATOM IP of %s \n", urlPtr));
             pid_t pid = fork();
 
             if (pid == -1)
@@ -1854,25 +1821,22 @@ void* restoreAllDBs(void* arg)
             {
                 // we are the child
 #ifdef ARRIS_XB3_PLATFORM_CHANGES
-                char *args[] = {"rpcclient", urlPtr, "/bin/rm -f /nvram/syscfg.db /nvram/.keys/vyinerkyo.wyr", (char *) 0 };
+                char *args[] = {"rpcclient2", "/bin/rm -f /nvram/syscfg.db /nvram/.keys/vyinerkyo.wyr", (char *) 0 };
 #else
-                char *args[] = {"rpcclient", urlPtr, "/bin/rm -f /nvram/syscfg.db", (char *) 0 };
+                char *args[] = {"rpcclient2", "/bin/rm -f /nvram/syscfg.db", (char *) 0 };
 #endif
                 execv(args[0], args);
                 _exit(EXIT_FAILURE);   // exec never returns
-            }
-        }
+            }        
     }
 #endif
 
         // Need to remove lxy database
 #if defined(_LXY_CXB3_ATOM_IP_)
-        #define ATOM_IP "169.254.101.2"
-        v_secure_system("/usr/bin/rpcclient "ATOM_IP" \""RM_L2_PATH"\"");
+        v_secure_system("/usr/bin/rpcclient2 \""RM_L2_PATH"\"");
 #endif
 #if defined(_LXY_AXB3_ATOM_IP_)
-        #define ATOM_IP "192.168.254.254"
-        v_secure_system("/usr/bin/rpcclient "ATOM_IP" \""RM_L2_PATH"\"");
+        v_secure_system("/usr/bin/rpcclient2 \""RM_L2_PATH"\"");
 #endif
 #if defined(_ARRIS_XB6_PRODUCT_REQ_)
         #define PEER_INTERFACE_IP "192.168.254.253"
@@ -4527,66 +4491,33 @@ CosaDmlLanMngm_SetConf(ULONG ins, PCOSA_DML_LAN_MANAGEMENT pLanMngm)
         // Send subnet change message to ATOM so that MESH is notified.
         {
             #define DATA_SIZE 1024
-            FILE *fp1;
-            char buf[DATA_SIZE] = {0};
-            char *urlPtr = NULL;
             errno_t safec_rc = -1;
 
-            // Grab the ATOM RPC IP address
-            // sprintf(cmd1, "cat /etc/device.properties | grep ATOM_ARPING_IP | cut -f 2 -d\"=\"");
+            pid_t pid = fork();
 
-            fp1 = fopen("/etc/device.properties", "r");
-            if (fp1 == NULL) {
-                CcspTraceError(("Error opening properties file! \n"));
-                Utopia_Free(&utctx, 0);
-                return FALSE;
+            if (pid == -1)
+            {
+              // error, failed to fork()
             }
-
-            while (fgets(buf, DATA_SIZE, fp1) != NULL) {
-                // Look for ATOM_ARPING_IP
-                if (strstr(buf, "ATOM_ARPING_IP") != NULL) {
-                    buf[strcspn(buf, "\r\n")] = 0; // Strip off any carriage returns
-
-                    // grab URL from string
-                    urlPtr = strstr(buf, "=");
-                    urlPtr++;
-                    break;
-                }
+            else if (pid > 0)
+            {
+                int status;
+                waitpid(pid, &status, 0); // wait here until the child completes
             }
-
-            if (fclose(fp1) != 0) {
-                /* Error reported by pclose() */
-                CcspTraceError(("Error closing properties file! \n"));
-            }
-
-            if (urlPtr != NULL && urlPtr[0] != 0 && strlen(urlPtr) > 0) {
-                CcspTraceInfo(("Reported an ATOM IP of %s \n", urlPtr));
-                pid_t pid = fork();
-
-                if (pid == -1)
+            else
+            {
+                // we are the child
+                char cmd[DATA_SIZE] = {0};
+                CcspTraceInfo(("Sending subnet_change notification to ATOM\n"));
+                safec_rc = sprintf_s(cmd, sizeof(cmd), "/usr/bin/sysevent set subnet_change \"RDK|%s|%s\"",
+                        lan.ipaddr,lan.netmask);
+                if(safec_rc < EOK)
                 {
-                    // error, failed to fork()
+                    ERR_CHK(safec_rc);
                 }
-                else if (pid > 0)
-                {
-                    int status;
-                    waitpid(pid, &status, 0); // wait here until the child completes
-                }
-                else
-                {
-                    // we are the child
-                    char cmd[DATA_SIZE] = {0};
-                    CcspTraceInfo(("Sending subnet_change notification to ATOM IP %s \n", urlPtr));
-                    safec_rc = sprintf_s(cmd, sizeof(cmd), "/usr/bin/sysevent set subnet_change \"RDK|%s|%s\"",
-                            lan.ipaddr,lan.netmask);
-                    if(safec_rc < EOK)
-                    {
-                        ERR_CHK(safec_rc);
-                    }
-                    char *args[] = {"rpcclient", urlPtr, cmd, (char *) 0 };
-                    execv(args[0], args);
-                    _exit(EXIT_FAILURE);   // exec never returns
-                }
+                char *args[] = {"rpcclient2", cmd, (char *) 0 };
+                execv(args[0], args);
+                _exit(EXIT_FAILURE);   // exec never returns
             }
         }
 #elif defined(ENABLE_FEATURE_MESHWIFI)
@@ -5047,36 +4978,26 @@ void CosaDmlDcSaveWiFiHealthStatusintoNVRAM( void  )
 			( 0 == strcmp( acBoxType, "XB3" ) )
 		  )
 		{
-			char acAtomArpingIP[ 64 ] = { 0 };
+			pid_t pid = fork( );
 			
-			if( 0 == CheckAndGetDevicePropertiesEntry( acAtomArpingIP, sizeof( acAtomArpingIP ),"ATOM_ARPING_IP" ) )
+			if ( pid == -1 )
 			{
-				if ( acAtomArpingIP[ 0 ] != '\0' )
-				{
-					CcspTraceInfo(("%s Reported an ATOM IP of %s \n", __FUNCTION__, acAtomArpingIP));
-					
-					pid_t pid = fork( );
-				
-					if ( pid == -1 )
-					{
-						// error, failed to fork()
-					}
-					else if ( pid > 0 )
-					{
-						int status;
-						waitpid( pid, &status, 0 ); // wait here until the child completes
-					}
-					else
-					{
-						// we are the child
-						char *args[ ] = {"/usr/bin/rpcclient", acAtomArpingIP, "/bin/sh /usr/ccsp/wifi/wifivAPPercentage.sh", (char *) 0 };
+				// error, failed to fork()
+			}
+			else if ( pid > 0 )
+			{
+				int status;
+				waitpid( pid, &status, 0 ); // wait here until the child completes
+			}
+			else
+			{
+				// we are the child
+				char *args[ ] = {"/usr/bin/rpcclient2", "/bin/sh /usr/ccsp/wifi/wifivAPPercentage.sh", (char *) 0 };
 
-						CcspTraceInfo(("%s - Taking Backup of wifivAPPercentage\n",__FUNCTION__));
-						
-						execv( args[ 0 ], args );
-						_exit(EXIT_FAILURE);   // exec never returns
-					}
-				}
+				CcspTraceInfo(("%s - Taking Backup of wifivAPPercentage\n",__FUNCTION__));
+				
+				execv( args[ 0 ], args );
+				_exit(EXIT_FAILURE);   // exec never returns
 			}
 		}
 		else
