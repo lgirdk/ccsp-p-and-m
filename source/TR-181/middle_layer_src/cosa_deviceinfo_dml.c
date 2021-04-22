@@ -527,12 +527,6 @@ DeviceInfo_GetParamBoolValue
         return TRUE;
     }
 
-    if (strcmp(ParamName, "CustomDataModelEnabled") == 0)
-    {
-        CosaDmlGiGetCustomDataModelEnabled(NULL, pBool);
-        return TRUE;
-    }
-
   bReturnValue =
         DeviceInfo_GetParamBoolValue_Custom
             (
@@ -1076,7 +1070,6 @@ DeviceInfo_SetParamBoolValue
         BOOL                        bValue
     )
 {
-    PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
     BOOL                            bReturnValue;
 #if defined(_PLATFORM_RASPBERRYPI_)
     id =getuid();    
@@ -1118,12 +1111,6 @@ DeviceInfo_SetParamBoolValue
         {
             v_secure_system("/rdklogger/onboardLogUpload.sh delete &");
         }
-        return TRUE;
-    }
-
-    if (strcmp(ParamName, "CustomDataModelEnabled") == 0)
-    {
-        pMyObject->CustomDataModelEnabled = bValue;
         return TRUE;
     }
 
@@ -2120,14 +2107,6 @@ DeviceInfo_Commit
     PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 
     CosaDmlDiSetProvisioningCode(NULL, (char *)pMyObject->ProvisioningCode);
-
-    //RDKB-33819: TR069 restart is not required for BWG platforms
-#if !defined _CBR_PRODUCT_REQ_ && !defined _BWG_PRODUCT_REQ_
-    if(pMyObject->CustomDataModelEnabled)
-    {
-        CosaDmlGiSetCustomDataModelEnabled(NULL, pMyObject->CustomDataModelEnabled);
-    }
-#endif
 
     return 0;
 }
