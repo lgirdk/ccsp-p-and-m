@@ -184,8 +184,6 @@ CosaDeviceInfoInitialize
 	rc = STRCPY_S_NOCLOBBER( pMyObject->DeviceManageableNotification, sizeof(pMyObject->DeviceManageableNotification), "0" );
 	ERR_CHK(rc);
 
-	CosaDmlGiGetCustomDataModelEnabled(NULL, &pMyObject->CustomDataModelEnabled);
-
 	//Get TR69CertLocation
 	CosaDmlDiGetSyndicationTR69CertLocation( (ANSC_HANDLE)pMyObject,
 											  pMyObject->TR69CertLocation.ActiveValue );
