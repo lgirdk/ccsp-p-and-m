@@ -18,7 +18,7 @@
 #include "cosa_lgi_plume_apis.h"
 #include "cosa_lgi_plume_internal.h"
 
-#define ATOM_IP_ADDRESS      "192.168.254.254"
+
 
 /***********************************************************************
  *
@@ -197,13 +197,13 @@ LgiPlume_Commit
     if(pMyObject->bNeedPlumeServiceRestart)
     {
         /* Use WiFi lock when running the plume agent to avoid running it when WiFi is down*/
-        system("rpcclient " ATOM_IP_ADDRESS " '(flock 200; (exec 200>&-; /etc/plume_init.sh restart;) ) 200> /var/run/lock/resetlock-wlan'");
+        system("rpcclient2  '(flock 200; (exec 200>&-; /etc/plume_init.sh restart;) ) 200> /var/run/lock/resetlock-wlan'");
     }
     if(pMyObject->bPlumeUrlChanged)
     {
         // Send URL change event to RDK Mesh
         char cmd[256] = {0};
-        snprintf(cmd, sizeof(cmd), "rpcclient " ATOM_IP_ADDRESS " '/usr/bin/sysevent set mesh_url \"RDK|%s\"'", pMyObject->plumeUrl);
+        snprintf(cmd, sizeof(cmd), "rpcclient2 '/usr/bin/sysevent set mesh_url \"RDK|%s\"'", pMyObject->plumeUrl);
         system(cmd);
     }
     pMyObject->bNeedPlumeServiceRestart = 0;
