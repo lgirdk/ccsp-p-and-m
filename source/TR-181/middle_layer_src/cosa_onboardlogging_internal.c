@@ -94,15 +94,12 @@ ANSC_STATUS DisableOnboardLogging(ANSC_HANDLE hThisObject)
     ANSC_STATUS                 returnStatus = ANSC_STATUS_SUCCESS;
     PCOSA_DATAMODEL_ONBOARDLOGGING     pMyObject    = (PCOSA_DATAMODEL_ONBOARDLOGGING)hThisObject;
     v_secure_system("touch /nvram/DISABLE_ONBOARD_LOGGING");
-    char *boxType = NULL, *atomIp = NULL;
+    char *boxType = NULL;
     if(getValueFromDevicePropsFile("BOX_TYPE", &boxType) == 0)
     {
         if(strcmp(boxType, "XB3") == 0)
         {
-            if(getValueFromDevicePropsFile("ATOM_ARPING_IP", &atomIp) == 0)
-            {
-                v_secure_system("/usr/bin/rpcclient %s 'touch /nvram/DISABLE_ONBOARD_LOGGING'", atomIp);
-            }
+           v_secure_system("/usr/bin/rpcclient2 'touch /nvram/DISABLE_ONBOARD_LOGGING'");
         }
     }
     pMyObject->bEnable = FALSE;
@@ -114,15 +111,12 @@ ANSC_STATUS EnableOnboardLogging(ANSC_HANDLE hThisObject)
     ANSC_STATUS                 returnStatus = ANSC_STATUS_SUCCESS;
     PCOSA_DATAMODEL_ONBOARDLOGGING     pMyObject    = (PCOSA_DATAMODEL_ONBOARDLOGGING)hThisObject;
     v_secure_system("rm -rf /nvram/DISABLE_ONBOARD_LOGGING");
-    char *boxType = NULL, *atomIp = NULL;
+    char *boxType = NULL;
     if(getValueFromDevicePropsFile("BOX_TYPE", &boxType) == 0)
     {
         if(strcmp(boxType, "XB3") == 0)
         {
-            if(getValueFromDevicePropsFile("ATOM_ARPING_IP", &atomIp) == 0)
-            {
-                v_secure_system("/usr/bin/rpcclient %s 'rm -rf /nvram/DISABLE_ONBOARD_LOGGING'", atomIp);
-            }
+           v_secure_system("/usr/bin/rpcclient2 'rm -rf /nvram/DISABLE_ONBOARD_LOGGING'");
         }
     }
     pMyObject->bEnable = TRUE;
