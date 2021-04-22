@@ -3551,57 +3551,44 @@ void CosaDmlDcSaveWiFiHealthStatusintoNVRAM( void  )
 {
 #if ! defined (_DISABLE_WIFI_HEALTH_STATS_TO_NVRAM_)
 
-	char acBoxType[ 16 ] = { 0 };
+        char acBoxType[ 16 ] = { 0 };
 
-	// Get BOX TYPE from device properties
-	if( 0 == CheckAndGetDevicePropertiesEntry( acBoxType, sizeof( acBoxType ),"BOX_TYPE" ) )
-	{
-		CcspTraceInfo(("%s - Box Type is %s \n",__FUNCTION__, acBoxType));
+        // Get BOX TYPE from device properties
+        if( 0 == CheckAndGetDevicePropertiesEntry( acBoxType, sizeof( acBoxType ),"BOX_TYPE" ) )
+        {
+                CcspTraceInfo(("%s - Box Type is %s \n",__FUNCTION__, acBoxType));
 
-		// If it is XB3 then we need to do RPC client operation to do further
-		// If it is non-XB3 then we need to do operation here itself
-		if( ( acBoxType[ 0 ] != '\0' ) && \
-			( 0 == strcmp( acBoxType, "XB3" ) )
-		  )
-		{
-			char acAtomArpingIP[ 64 ] = { 0 };
-			
-			if( 0 == CheckAndGetDevicePropertiesEntry( acAtomArpingIP, sizeof( acAtomArpingIP ),"ATOM_ARPING_IP" ) )
-			{
-				if ( acAtomArpingIP[ 0 ] != '\0' )
-				{
-					CcspTraceInfo(("%s Reported an ATOM IP of %s \n", __FUNCTION__, acAtomArpingIP));
-					
-					pid_t pid = fork( );
-				
-					if ( pid == -1 )
-					{
-						// error, failed to fork()
-					}
-					else if ( pid > 0 )
-					{
-						int status;
-						waitpid( pid, &status, 0 ); // wait here until the child completes
-					}
-					else
-					{
-						// we are the child
-						char *args[ ] = {"/usr/bin/rpcclient", acAtomArpingIP, "/bin/sh /usr/ccsp/wifi/wifivAPPercentage.sh", (char *) 0 };
-
-						CcspTraceInfo(("%s - Taking Backup of  wifivAPPercentage\n",__FUNCTION__));
-						
-						execv( args[ 0 ], args );
-						_exit(EXIT_FAILURE);   // exec never returns
-					}
-				}
-			}
-		}
-		else
-		{
-			CcspTraceInfo(("%s - Taking Backup of  wifivAPPercentage\n",__FUNCTION__));
-			system( "sh /usr/ccsp/wifi/wifivAPPercentage.sh" );
-		}
-	}
+                // If it is XB3 then we need to do RPC client operation to do further
+                // If it is non-XB3 then we need to do operation here itself
+                if( ( acBoxType[ 0 ] != '\0' ) && \
+                    ( 0 == strcmp( acBoxType, "XB3" ) )
+                  )
+                {
+                   pid_t pid = fork( );
+                   if ( pid == -1 ) 
+                   {
+                      // error, failed to fork()
+                   }
+                   else if ( pid > 0 )
+                   {
+                      int status;
+                      waitpid( pid, &status, 0 ); // wait here until the child completes
+                   }
+                   else
+                   {
+                        // we are the child
+                         char *args[ ] = {"/usr/bin/rpcclient2 /bin/sh /usr/ccsp/wifi/wifivAPPercentage.sh", (char *) 0 };
+                         CcspTraceInfo(("%s - Taking Backup of  wifivAPPercentage\n",__FUNCTION__));
+                         execv( args[ 0 ], args );
+                         _exit(EXIT_FAILURE);   // exec never returns
+                   }
+                }
+                else
+                {
+                        CcspTraceInfo(("%s - Taking Backup of  wifivAPPercentage\n",__FUNCTION__));
+                        system( "sh /usr/ccsp/wifi/wifivAPPercentage.sh" );
+                }
+        }
 
 #endif
 }
