@@ -735,45 +735,9 @@ if(id != 0)
 
 #if defined(_COSA_INTEL_USG_ARM_) 
     {
-        #define DATA_SIZE 1024
-        FILE *fp1;
-        char buf[DATA_SIZE] = {0};
-        char *urlPtr = NULL;
-
-        // Grab the ATOM RPC IP address
-        // sprintf(cmd1, "cat /etc/device.properties | grep ATOM_ARPING_IP | cut -f 2 -d\"=\"");
-
-        fp1 = fopen("/etc/device.properties", "r");
-        if (fp1 == NULL) {
-            CcspTraceError(("Error opening properties file! \n"));
-            return FALSE;
-        }
-
-        CcspTraceInfo(("Searching for ATOM ARP IP\n"));
-
-        while (fgets(buf, DATA_SIZE, fp1) != NULL) {
-            // Look for ATOM_ARPING_IP
-            if (strstr(buf, "ATOM_ARPING_IP") != NULL) {
-                buf[strcspn(buf, "\r\n")] = 0; // Strip off any carriage returns
-
-                // grab URL from string
-                urlPtr = strstr(buf, "=");
-                urlPtr++;
-                break;
-            }
-        }
-
-        if (fclose(fp1) != 0) {
-            /* Error reported by pclose() */
-            CcspTraceError(("Error closing properties file! \n"));
-        }
-
-        if (urlPtr != NULL && urlPtr[0] != 0 && strlen(urlPtr) > 0) {
-            CcspTraceInfo(("Reported an ATOM IP of %s \n", urlPtr));
-            CcspTraceInfo(("PAM_DBG:-----------------touch pam_initialized in atom ----------------\n"));
-            v_secure_system("/usr/bin/rpcclient %s '/bin/touch /tmp/pam_initialized'&", urlPtr);
-            CcspTraceInfo(("PAM_DBG:-----------------created pam_initialized in atom ----------------\n"));
-        }
+        CcspTraceInfo(("PAM_DBG:-----------------touch pam_initialized in atom ----------------\n"));
+        v_secure_system("/usr/bin/rpcclient2  '/bin/touch /tmp/pam_initialized'&");
+        CcspTraceInfo(("PAM_DBG:-----------------created pam_initialized in atom ----------------\n"));
     }
 #endif
 
