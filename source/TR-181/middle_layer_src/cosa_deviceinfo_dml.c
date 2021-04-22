@@ -171,8 +171,7 @@ void *handleBleRestart(void *arg);
 #define MAX_USE_LEN 8
 // Box type will be XB3
 #define BOX_TYPE_LEN 5
-// ATOM IP length
-#define IP_LEN 20
+
 
 #ifdef COLUMBO_HWTEST
 //RDKB-33114: Default values defined here due to objects not being persistent by design
@@ -180,15 +179,6 @@ void *handleBleRestart(void *arg);
 #define DEFAULT_HWST_PTR_DRAM_THRESHOLD 20
 #define DEFAULT_HWST_PTR_FREQUENCY 720
 #define HWSELFTEST_START_MIN_SPACE (200*1024) //200KB
-#endif
-
-#if defined(_COSA_INTEL_XB3_ARM_)
-#if defined(_LXY_CXB3_ATOM_IP_)
-#define ATOM_IP "169.254.101.2"
-#elif defined(_LXY_AXB3_ATOM_IP_)
-#define ATOM_IP "192.168.254.254"
-#endif
-static const char *atomIp = ATOM_IP;
 #endif
 
 #if defined(_PLATFORM_RASPBERRYPI_)
@@ -13922,7 +13912,7 @@ CredDwnld_SetParamBoolValue
 
 #if defined(_COSA_INTEL_XB3_ARM_)
         // To address muliple processor platforms
-        v_secure_system("/usr/bin/rpcclient %s '" SYSTEMCTL_CMD "' &", atomIp );
+        v_secure_system("/usr/bin/rpcclient2 '" SYSTEMCTL_CMD "' &");
         return TRUE;
 #endif
         v_secure_system( "systemctl start lxydnld.service &" );
@@ -14119,7 +14109,7 @@ CredDwnld_SetParamStringValue
 
 #if defined(_COSA_INTEL_XB3_ARM_)
             // To address muliple processor platforms
-            v_secure_system("/usr/bin/rpcclient %s '" SYSTEMCTL_CMD "' &", atomIp );
+            v_secure_system("/usr/bin/rpcclient2 '" SYSTEMCTL_CMD "' &" );
             return TRUE;
 #endif
             v_secure_system( "systemctl start lxydnld.service &" );
@@ -20944,7 +20934,7 @@ NonRootSupport_SetParamBoolValue
 {
   UNREFERENCED_PARAMETER(hInsContext);
   char buf[8] = {0};
-  char *boxType = NULL, *atomIp = NULL;
+  char *boxType = NULL;
   if (strcmp(ParamName, "Enable") == 0)
   {
      if(bValue)
@@ -20967,11 +20957,7 @@ NonRootSupport_SetParamBoolValue
           {
               if(strcmp(boxType, "XB3") ==0)
               {
-                  atomIp=getenv("ATOM_ARPING_IP");
-                  if(atomIp != NULL)
-                  {
-                     v_secure_system("rpcclient %s \"syscfg set NonRootSupport '%s'; syscfg commit\"", atomIp, buf);
-                  }
+                v_secure_system("rpcclient2  \"syscfg set NonRootSupport '%s'; syscfg commit\"", buf);
               } 
           }
 

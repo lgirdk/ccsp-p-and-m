@@ -1895,34 +1895,10 @@ CosaDmlDiGetProcessorSpeed
 #endif
 
 #ifdef SA_CUSTOM
-    char out_val[100]={0};
     char out2[100]={0};
-    FILE *fp1=NULL;
-    char *urlPtr = NULL;
-
-    fp1 = fopen("/etc/device.properties", "r");
-    if (fp1 == NULL)
-    {
-        CcspTraceError(("Error opening properties file! \n"));
-        return FALSE;
-    }
-
-    while (fgets(out_val,100, fp1) != NULL)
-    {
-        // Look for ATOM_ARPING_IP
-        if (strstr(out_val, "ATOM_ARPING_IP") != NULL)
-        {
-            out_val[strcspn(out_val, "\r\n")] = 0; // Strip off any carriage returns
-
-            // grab URL from string
-            urlPtr = strstr(out_val, "=");
-            urlPtr++;
-            break;
-        }
-    }
-    fclose(fp1);
+    
     sprintf(out2,"\"cat /proc/cpuinfo\"");
-    fp = v_secure_popen("r", "rpcclient %s %s",urlPtr,out2);
+    fp = v_secure_popen("r", "rpcclient2 %s",out2);
 #else
     fp = popen("cat /proc/cpuinfo", "r");
 #endif
