@@ -53,7 +53,6 @@ v6Count=0
 
 export PATH=$PATH:/fss/gw
 source /etc/utopia/service.d/log_capture_path.sh
-ATOM_RPC_IP=`cat /etc/device.properties | grep ATOM_ARPING_IP | cut -f 2 -d"="`
 BOX_TYPE=`cat /etc/device.properties | grep BOX_TYPE | cut -f 2 -d"="`
 MODEL_NUM=`cat /etc/device.properties | grep MODEL_NUM  | cut -f2 -d=`
 
@@ -65,8 +64,8 @@ if [ "$BOX_TYPE" = "XB3" ]; then
 	if [ "$LAST_REBOOT_REASON" = "factory-reset" ]
 	then
 	    echo_t "Network Response: Removing onboard files from ATOM on factory reset"
-		rpcclient $ATOM_RPC_IP "rm /nvram/.device_onboarded"
-		rpcclient $ATOM_RPC_IP "rm /nvram/DISABLE_ONBOARD_LOGGING"
+		rpcclient2 "rm /nvram/.device_onboarded"
+		rpcclient2 "rm /nvram/DISABLE_ONBOARD_LOGGING"
 	fi
 fi
 fi
@@ -595,8 +594,8 @@ if [ -f "/etc/ONBOARD_LOGGING_ENABLE" ]; then
 		else
 		    echo_t "Network Response: Creating /nvram/.device_onboarded file"
 		    touch /nvram/.device_onboarded
-		    if [ -e "/usr/bin/rpcclient" ] && [ "$BOX_TYPE" == "XB3" ]; then
-		        rpcclient $ATOM_RPC_IP "/bin/touch /nvram/.device_onboarded"
+		    if [ -e "/usr/bin/rpcclient2" ] && [ "$BOX_TYPE" == "XB3" ]; then
+		        rpcclient2 "/bin/touch /nvram/.device_onboarded"
 		    fi
 		fi
     else
@@ -604,8 +603,8 @@ if [ -f "/etc/ONBOARD_LOGGING_ENABLE" ]; then
         if [ -f "/nvram/.device_onboarded" ]
         then
             rm -rf /nvram/.device_onboarded
-            if [ -e "/usr/bin/rpcclient" ] && [ "$BOX_TYPE" == "XB3" ]; then
-                rpcclient $ATOM_RPC_IP "rm /nvram/.device_onboarded"
+            if [ -e "/usr/bin/rpcclient2" ] && [ "$BOX_TYPE" == "XB3" ]; then
+                rpcclient2 "rm /nvram/.device_onboarded"
             fi
         fi
     fi
