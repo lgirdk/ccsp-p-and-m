@@ -101,7 +101,6 @@ _COSA_DATAMODEL_DEVICEINFO_CLASS_CONTENT
 	BOOL		FirmwareDownloadCompletedNotification;
 	CHAR 		FirmwareDownloadStartedNotification[128];
 	CHAR 		DeviceManageableNotification[64];
-	BOOL            CustomDataModelEnabled;
 	COSA_BOOTSTRAP_STR 		TR69CertLocation;
         COSA_BOOTSTRAP_STR              XconfURL;
         COSA_BOOTSTRAP_STR              LogUploadURL;

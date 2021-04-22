@@ -1036,13 +1036,6 @@
             <syntax>bool</syntax>
             <writable>true</writable>
         </parameter>
-         <parameter>
-            <name>CustomDataModelEnabled</name>
-            <description>Parameter to control the Custom Data model </description>
-            <type>boolean</type>
-            <syntax>bool</syntax>
-            <writable>true</writable>
-         </parameter>
 	<!-- placeholder for Xi5 parameter start -->
 	<!-- placeholder for Xi5 parameter end -->
 <?else?>
