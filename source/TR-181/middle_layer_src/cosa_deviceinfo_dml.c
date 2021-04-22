@@ -68,8 +68,6 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <syscfg/syscfg.h>
-#include "ansc_platform.h"
 #include "cosa_deviceinfo_dml.h"
 #include "dml_tr181_custom_cfg.h"
 #include "cimplog.h"
@@ -488,12 +486,6 @@ DeviceInfo_GetParamBoolValue
     if( AnscEqualString(ParamName, "X_RDKCENTRAL-COM_OnBoarding_DeleteLogs", TRUE))
     {
         *pBool = FALSE ;
-        return TRUE;
-    }
-
-    if (AnscEqualString(ParamName, "CustomDataModelEnabled", TRUE))
-    {
-        CosaDmlGiGetCustomDataModelEnabled(NULL, pBool);
         return TRUE;
     }
 
@@ -1052,7 +1044,6 @@ DeviceInfo_SetParamBoolValue
         BOOL                        bValue
     )
 {
-    PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
     BOOL                            bReturnValue;
 #if defined(_PLATFORM_RASPBERRYPI_)
     id =getuid();    
@@ -1106,12 +1097,6 @@ DeviceInfo_SetParamBoolValue
         {
             v_secure_system("/rdklogger/onboardLogUpload.sh delete &");
         }
-        return TRUE;
-    }
-
-    if( AnscEqualString(ParamName, "CustomDataModelEnabled", TRUE))
-    {
-        pMyObject->CustomDataModelEnabled = bValue;
         return TRUE;
     }
 
@@ -2172,14 +2157,6 @@ DeviceInfo_Commit
     PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 
     CosaDmlDiSetProvisioningCode(NULL, (char *)pMyObject->ProvisioningCode);
-
-    //RDKB-33819: TR069 restart is not required for BWG platforms
-#if !defined _CBR_PRODUCT_REQ_ && !defined _BWG_PRODUCT_REQ_
-    if(pMyObject->CustomDataModelEnabled)
-    {
-        CosaDmlGiSetCustomDataModelEnabled(NULL, pMyObject->CustomDataModelEnabled);
-    }
-#endif
 
     return 0;
 }
