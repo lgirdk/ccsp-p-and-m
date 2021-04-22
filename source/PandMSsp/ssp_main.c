@@ -77,7 +77,7 @@
 #define DEBUG_INI_NAME  "/etc/debug.ini"
 // With WAN boot time optimization, in few cases P&M initialization is further delayed
 // Since there is no evidence of P&M APIs being hung, increasing the timeout period to one more minute.
-#define PAM_CRASH_TIMEOUT 360  //seconds
+#define PAM_CRASH_TIMEOUT 420  //seconds
 #define PAM_INIT_FILE "/tmp/pam_initialized"
 
 //  Existing pam_initialized is removed from systemd/selfheal . Created this file to determine if component is coming after crashed to sync values from server.
