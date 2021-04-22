@@ -24,8 +24,7 @@ if [ "$1" == "" ]; then
 	exit 0;
 fi
 
-ATOM_RPC_IP=`cat /etc/device.properties | grep ATOM_ARPING_IP | cut -f 2 -d"="`
-if [ -e "/usr/bin/rpcclient" ]; then
+if [ -e "/usr/bin/rpcclient2" ]; then
 	#for Puma6
-	rpcclient $ATOM_RPC_IP "/usr/ccsp/wifi/sec_pushown.sh --ip4=\"$1\""
+	rpcclient2  "/usr/ccsp/wifi/sec_pushown.sh --ip4=\"$1\""
 fi
