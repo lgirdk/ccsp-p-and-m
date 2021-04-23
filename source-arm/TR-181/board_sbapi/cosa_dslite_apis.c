@@ -70,14 +70,17 @@ CosaDmlSetDsliteEnable
     UtopiaContext ctx;
     boolean_t read_dslite_enable;
     BOOL dns_override = FALSE;
-    ULONG   deviceMode;
 
-   if (CosaDmlDcGetDeviceMode(NULL, &deviceMode) == ANSC_STATUS_SUCCESS) {
-       if((deviceMode == COSA_DML_DEVICE_MODE_Ipv4 ) || (deviceMode == COSA_DML_DEVICE_MODE_Dualstack )) {
-           CcspTraceWarning(("Cannot set DSLite, the device mode is ipv4 or dualstack \n" ));
-           return ANSC_STATUS_FAILURE;
-       }
-   }
+    if (bEnabled == TRUE)
+    {
+        ULONG deviceMode;
+        if (CosaDmlDcGetDeviceMode(NULL, &deviceMode) == ANSC_STATUS_SUCCESS) {
+            if ((deviceMode == COSA_DML_DEVICE_MODE_Ipv4 ) || (deviceMode == COSA_DML_DEVICE_MODE_Dualstack )) {
+                CcspTraceWarning(("Cannot set DSLite, the device mode is ipv4 or dualstack \n" ));
+                return ANSC_STATUS_FAILURE;
+            }
+        }
+    }
 
     if(!Utopia_Init(&ctx))
         return ANSC_STATUS_FAILURE;
