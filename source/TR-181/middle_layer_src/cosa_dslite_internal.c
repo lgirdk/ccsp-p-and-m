@@ -21,7 +21,7 @@
 #include "poam_irepfo_interface.h"
 #include "sys_definitions.h"
 #include "slap_vho_exported_api.h"
-
+#include "cosa_x_cisco_com_devicecontrol_internal.h"
 extern void * g_pDslhDmlAgent;
 
 /**********************************************************************
@@ -300,6 +300,14 @@ CosaDsliteBackendGetInfo
             break;
         }
 
+        ULONG   deviceMode;
+        if (CosaDmlDcGetDeviceMode(NULL, &deviceMode) == ANSC_STATUS_SUCCESS) {
+         if((deviceMode == COSA_DML_DEVICE_MODE_Ipv4 ) || (deviceMode == COSA_DML_DEVICE_MODE_Dualstack )) {
+          CosaDmlSetDsliteEnable(NULL, FALSE);
+          pCosaDslite->active = FALSE;
+          CosaDmlDsliteSetCfg(NULL, pCosaDslite);
+         }
+        }  
         pDsliteCxtLink = (PCOSA_CONTEXT_LINK_OBJECT)AnscAllocateMemory( sizeof(COSA_CONTEXT_LINK_OBJECT) );
         if ( !pDsliteCxtLink )
         {
