@@ -1487,6 +1487,11 @@ V6_GetParamBoolValue
       CosaDmlGatewayV6GetIPFloodDetect(pBool);
       return TRUE;
     }
+    else if (strcmp(ParamName, "ICMPFloodDetect") == 0) {
+
+      CosaDmlGatewayV6GetICMPFloodDetect(pBool);
+      return TRUE;
+    }
     else if (strcmp(ParamName, "Enable") == 0) {
 
       CosaDmlGatewayV6GetFwEnable(pBool);
@@ -1550,6 +1555,11 @@ V6_SetParamBoolValue
       CosaDmlGatewayV6SetIPFloodDetect(bValue);
       return TRUE;
     }
+    else if (strcmp(ParamName, "ICMPFloodDetect") == 0) {
+
+      CosaDmlGatewayV6SetICMPFloodDetect(bValue);
+      return TRUE;
+    }
     else if (strcmp(ParamName, "Enable") == 0) {
 
       CosaDmlGatewayV6SetFwEnable(bValue);
@@ -1567,6 +1577,11 @@ BOOL V6_GetParamUlongValue ( ANSC_HANDLE hInsContext, char* ParamName, ULONG* pu
             return TRUE;
         }
     }
+    if (strcmp(ParamName, "ICMPFloodDetectRate") == 0) {
+        if(ANSC_STATUS_SUCCESS == CosaDmlGatewayV6GetICMPFloodDetectRate(puLong)) {
+            return TRUE;
+        }
+    }
     return FALSE;
 }
 
@@ -1579,6 +1594,11 @@ BOOL V6_SetParamUlongValue ( ANSC_HANDLE hInsContext, char* ParamName, ULONG ulV
             return FALSE;
         }
         pCosaDMFirewall->V6DayOfWeekBlockTimeBitMaskType = ulValue;
+    }
+    if (strcmp(ParamName, "ICMPFloodDetectRate") == 0) {
+        if(ANSC_STATUS_SUCCESS != CosaDmlGatewayV6SetICMPFloodDetectRate(ulValue)) {
+            return FALSE;
+        }
     }
     return TRUE;
 }
