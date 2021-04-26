@@ -1191,6 +1191,26 @@ CosaDmlGatewayV6GetIPFloodDetect
     return ANSC_STATUS_SUCCESS;
 }
 
+ULONG CosaDmlGatewayV6GetICMPFloodDetect (BOOL *pValue)
+{
+    char buf[8];
+
+    syscfg_get(NULL, "v6_ICMPFloodDetect", buf, sizeof(buf));
+    *pValue = (strcmp(buf, "1") == 0);
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS CosaDmlGatewayV6GetICMPFloodDetectRate (ULONG *puLong)
+{
+    char buf[12];
+
+    syscfg_get(NULL, "v6_ICMPFloodDetectRate", buf, sizeof(buf));
+    *puLong = atoi(buf);
+
+    return ANSC_STATUS_SUCCESS;
+}
+
 /**********************************************************************
 
     caller:     COSA DML
@@ -1292,6 +1312,22 @@ CosaDmlGatewayV6SetIPFloodDetect
     {
         syscfg_commit();
     }
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ULONG CosaDmlGatewayV6SetICMPFloodDetect (BOOL bValue)
+{
+    syscfg_set(NULL, "v6_ICMPFloodDetect", bValue ? "1" : "0");
+    syscfg_commit();
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS CosaDmlGatewayV6SetICMPFloodDetectRate (ULONG ulValue)
+{
+    syscfg_set_u(NULL, "v6_ICMPFloodDetectRate", ulValue);
+    syscfg_commit();
 
     return ANSC_STATUS_SUCCESS;
 }
