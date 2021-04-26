@@ -10563,6 +10563,10 @@
 
                 <func_SetParamBoolValue>V6_SetParamBoolValue</func_SetParamBoolValue>
 
+                <func_GetParamUlongValue>V6_GetParamUlongValue</func_GetParamUlongValue>
+
+                <func_SetParamUlongValue>V6_SetParamUlongValue</func_SetParamUlongValue>
+
                 <func_Validate>V6_Validate</func_Validate>
 
                 <func_Commit>V6_Commit</func_Commit>
@@ -10616,6 +10620,30 @@
                   <type>boolean</type>
 
                   <syntax>bool</syntax>
+
+                  <writable>true</writable>
+
+                </parameter>
+
+                <parameter>
+
+                  <name>ICMPFloodDetect</name>
+
+                  <type>boolean</type>
+
+                  <syntax>bool</syntax>
+
+                  <writable>true</writable>
+
+                </parameter>
+
+                <parameter>
+
+                  <name>ICMPFloodDetectRate</name>
+
+                  <type>unsignedInt</type>
+
+                  <syntax>uint32</syntax>
 
                   <writable>true</writable>
 
