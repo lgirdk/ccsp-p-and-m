@@ -421,6 +421,18 @@ CosaDmlGatewayV6GetIPFloodDetect
     );
 
 ULONG
+CosaDmlGatewayV6GetICMPFloodDetect
+    (
+        BOOL *pBool
+    );
+
+ANSC_STATUS
+CosaDmlGatewayV6GetICMPFloodDetectRate
+    (
+        ULONG *puLong
+    );
+
+ULONG
 CosaDmlGatewayV6SetBlockFragIPPkts
     (
         BOOL bValue
@@ -436,6 +448,18 @@ ULONG
 CosaDmlGatewayV6SetIPFloodDetect
     (
         BOOL bValue
+    );
+
+ULONG
+CosaDmlGatewayV6GetICMPFloodDetect
+    (
+        BOOL *pBool
+    );
+
+ANSC_STATUS
+CosaDmlGatewayV6GetICMPFloodDetectRate
+    (
+        ULONG *puLong
     );
 
 // LGI ADD START
