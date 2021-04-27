@@ -114,7 +114,14 @@
 #include "cosa_onboardlogging_internal.h"
 #include "cosa_x_cisco_com_diagnostics_internal.h"
 #include "cosa_lanmanagement_internal.h"
+
+/*
+   Temp workaround to avoid redefinition of IPADDR_IPV4, PROTO_TCP, etc
+*/
+#if 0
 #include "cosa_x_comcast_com_parentalcontrol_internal.h"
+#endif
+
 #include "cosa_x_cisco_com_rlog_internal.h"
 #include "cosa_x_cisco_com_hotspot_internal.h"
 #include "libHotspotApi.h"
