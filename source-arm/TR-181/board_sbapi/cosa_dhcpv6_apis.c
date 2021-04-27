@@ -8180,11 +8180,9 @@ dhcpv6c_dbg_thrd(void * in)
             char * pString = NULL;
             char objName[128] = {0};
 
-#ifndef MULTILAN_FEATURE
             int  ret = 0;
             char globalIP[128] = {0};
             BOOL bRestartLan = FALSE;
-#endif
 
 #ifdef _HUB4_PRODUCT_REQ_
             char hub4_valid_lft[64] = {0};
