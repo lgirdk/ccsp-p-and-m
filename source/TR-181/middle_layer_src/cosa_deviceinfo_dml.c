@@ -9060,12 +9060,13 @@ Feature_GetParamBoolValue
                else
                    *pBool = FALSE;
            }
-           return TRUE;
+          
          #else
                 CcspTraceError(("bridge utils not supported ..!! \n",__FUNCTION__));
-                return FALSE;
-
+                *pBool = FALSE;
          #endif
+        
+         return TRUE;
     }
 
     return FALSE;
