@@ -201,7 +201,7 @@ CosaNatInitialize
         (PPOAM_IREP_FOLDER_OBJECT)pPoamIrepFoCOSA->GetFolder
             (
                 (ANSC_HANDLE)pPoamIrepFoCOSA,
-                COSA_IREP_FOLDER_NAME_NAT
+                COSA_IREP_FOLDER_NAME_PORTMAPPING
             );
 
     if ( !pPoamIrepFoNat )
@@ -212,7 +212,7 @@ CosaNatInitialize
             pPoamIrepFoCOSA->AddFolder
                 (
                     (ANSC_HANDLE)pPoamIrepFoCOSA,
-                    COSA_IREP_FOLDER_NAME_NAT,
+                    COSA_IREP_FOLDER_NAME_PORTMAPPING,
                     0
                 );
 
