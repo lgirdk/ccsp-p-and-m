@@ -3413,7 +3413,7 @@
 					</parameters>
 
 		</object>
-
+<!-- FEATURE_SUPPORT_RADIUSGREYLIST
 		 <object>
                         <name>RadiusGreyList</name>
 
@@ -3444,7 +3444,7 @@
                                         </parameters>
 
                 </object>
-
+-->
 
 		<object>
                         <name>UniqueTelemetryId</name>
