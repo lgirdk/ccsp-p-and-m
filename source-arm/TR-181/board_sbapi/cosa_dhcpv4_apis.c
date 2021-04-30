@@ -3917,13 +3917,16 @@ CosaDmlDhcpsGetClient
     if(poolCfg.InstanceNumber == 1) {
         snprintf(ucEntryNameValue, sizeof(ucEntryNameValue), "%s", poolCfg.Interface);
     } else {
-        snprintf(ucEntryParamName, sizeof(ucEntryParamName), "%s.Name", poolCfg.Interface);
-        /* CID 75074 fix*/
-        int rc = 1;
-        rc = CosaGetParamValueString(ucEntryParamName, ucEntryNameValue, &ulEntryNameLen );
-        if (rc == -1)
+        if(strlen(poolCfg.Interface) > 0)
         {
-            CcspTraceWarning(("%s CosaGetParamValueString Failed\n", __FUNCTION__ ));
+            snprintf(ucEntryParamName, sizeof(ucEntryParamName), "%s.Name", poolCfg.Interface);
+            /* CID 75074 fix*/
+            int rc = 1;
+            rc = CosaGetParamValueString(ucEntryParamName, ucEntryNameValue, &ulEntryNameLen );
+            if (rc == -1)
+            {
+                CcspTraceWarning(("%s CosaGetParamValueString Failed\n", __FUNCTION__ ));
+            }
         }
     }
     ret = _cosa_get_dhcps_client(ulPoolInstanceNumber, (unsigned char*)ucEntryNameValue, poolCfg.MinAddress.Value, poolCfg.MaxAddress.Value);
