@@ -2686,6 +2686,10 @@ CosaDmlFirewallGetConfig2
     pCfg->SmartPktDectionEnableV6 = (fw.smart_pkt_dection_enable_v6 == true) ? TRUE : FALSE;
     pCfg->WanPingEnable = (fw.wan_ping_enable == true) ? TRUE : FALSE;
     pCfg->WanPingEnableV6 = (fw.wan_ping_enable_v6 == true) ? TRUE : FALSE;
+   
+    pCfg->IPSecPassthrough = (fw.allow_ipsec_passthru  == true) ? TRUE : FALSE;
+    pCfg->L2TPPassthrough = (fw.allow_l2tp_passthru == true) ? TRUE : FALSE;
+    pCfg->PPTPPassthrough = (fw.allow_pptp_passthru == true) ? TRUE : FALSE;
 
     pCfg->IPSecPassthrough = (fw.allow_ipsec_passthru == true) ? TRUE: FALSE;
     pCfg->L2TPPassthrough =  (fw.allow_l2tp_passthru == true) ? TRUE: FALSE;
@@ -6171,23 +6175,7 @@ CosaDmlIaInit
 {
     UNREFERENCED_PARAMETER(hDml);
     UNREFERENCED_PARAMETER(phContext);
-    int rc = -1, ret = -1;
-    UtopiaContext ctx;
-    email_notification_t emailSetting;
 
-    if(!Utopia_Init(&ctx))
-        return ANSC_STATUS_FAILURE;
-
-    rc = Utopia_GetEmailNotificationSetting(&ctx, &emailSetting);
-
-    Utopia_Free(&ctx, 0);
-
-    if(!rc)
-        ret = gen_email_files(&emailSetting);
-    
-    if(rc != 0 || ret != 0)
-        return ANSC_STATUS_FAILURE;
-    else 
         return ANSC_STATUS_SUCCESS;
 }
 #endif
