@@ -2686,6 +2686,10 @@ CosaDmlFirewallGetConfig2
     pCfg->SmartPktDectionEnableV6 = (fw.smart_pkt_dection_enable_v6 == true) ? TRUE : FALSE;
     pCfg->WanPingEnable = (fw.wan_ping_enable == true) ? TRUE : FALSE;
     pCfg->WanPingEnableV6 = (fw.wan_ping_enable_v6 == true) ? TRUE : FALSE;
+   
+    pCfg->IPSecPassthrough = (fw.allow_ipsec_passthru  == true) ? TRUE : FALSE;
+    pCfg->L2TPPassthrough = (fw.allow_l2tp_passthru == true) ? TRUE : FALSE;
+    pCfg->PPTPPassthrough = (fw.allow_pptp_passthru == true) ? TRUE : FALSE;
 
     value[0] = '\0';
     Utopia_Get(&ctx, UtopiaValue_Firewall_Level, value, sizeof(value));
@@ -2786,6 +2790,10 @@ CosaDmlFirewallSetConfig2
     fw.smart_pkt_dection_enable_v6 = (pCfg->SmartPktDectionEnableV6 == FALSE) ? 0 : 1;
     fw.wan_ping_enable = (pCfg->WanPingEnable == FALSE) ? 0 : 1;
     fw.wan_ping_enable_v6 = (pCfg->WanPingEnableV6 == FALSE) ? 0 : 1;
+
+    fw.allow_ipsec_passthru = (pCfg->IPSecPassthrough == FALSE) ? 0 : 1;
+    fw.allow_l2tp_passthru = (pCfg->L2TPPassthrough == FALSE) ? 0 : 1;
+    fw.allow_pptp_passthru = (pCfg->PPTPPassthrough == FALSE) ? 0 : 1;
 
     switch(pCfg->FirewallLevel)
     {
@@ -6161,23 +6169,7 @@ CosaDmlIaInit
 {
     UNREFERENCED_PARAMETER(hDml);
     UNREFERENCED_PARAMETER(phContext);
-    int rc = -1, ret = -1;
-    UtopiaContext ctx;
-    email_notification_t emailSetting;
 
-    if(!Utopia_Init(&ctx))
-        return ANSC_STATUS_FAILURE;
-
-    rc = Utopia_GetEmailNotificationSetting(&ctx, &emailSetting);
-
-    Utopia_Free(&ctx, 0);
-
-    if(!rc)
-        ret = gen_email_files(&emailSetting);
-    
-    if(rc != 0 || ret != 0)
-        return ANSC_STATUS_FAILURE;
-    else 
         return ANSC_STATUS_SUCCESS;
 }
 #endif
