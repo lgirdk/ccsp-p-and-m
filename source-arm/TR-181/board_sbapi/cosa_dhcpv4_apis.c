@@ -3897,8 +3897,11 @@ CosaDmlDhcpsGetClient
     if(poolCfg.InstanceNumber == 1) {
         snprintf(ucEntryNameValue, sizeof(ucEntryNameValue), "%s", poolCfg.Interface);
     } else {
-        snprintf(ucEntryParamName, sizeof(ucEntryParamName), "%s.Name", poolCfg.Interface);
-        CosaGetParamValueString(ucEntryParamName, ucEntryNameValue, &ulEntryNameLen );
+        if(strlen(poolCfg.Interface) > 0)
+        {
+          snprintf(ucEntryParamName, sizeof(ucEntryParamName), "%s.Name", poolCfg.Interface);
+          CosaGetParamValueString(ucEntryParamName, ucEntryNameValue, &ulEntryNameLen );
+        }
     }
     ret = _cosa_get_dhcps_client(ulPoolInstanceNumber, (unsigned char*)ucEntryNameValue, poolCfg.MinAddress.Value, poolCfg.MaxAddress.Value);
 
