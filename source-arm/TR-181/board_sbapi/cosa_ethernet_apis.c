@@ -415,6 +415,12 @@ CosaDmlEthPortGetEntry
         g_EthEntries[ulIndex].control->getCfg(g_EthEntries + ulIndex, &pEntry->Cfg);
         AnscCopyMemory(&pEntry->StaticInfo, &g_EthIntSInfo[ulIndex], sizeof(COSA_DML_ETH_PORT_SINFO));
         g_EthEntries[ulIndex].control->getDInfo(g_EthEntries + ulIndex, &pEntry->DynamicInfo);
+        pEntry->Cfg.InstanceNumber = g_EthEntries[ulIndex].instanceNumber;
+        AnscCopyString(pEntry->Cfg.Alias, g_EthEntries[ulIndex].Alias);
+        if (g_EthEntries[ulIndex].instanceNumber != 0)
+        {
+            CosaDmlEEEPortGetCfg(g_EthEntries[ulIndex].instanceNumber, &pEntry->Cfg);
+        }
     }
     else
     {
