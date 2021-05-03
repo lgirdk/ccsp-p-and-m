@@ -480,7 +480,6 @@ Interface_GetParamBoolValue
     if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
-         CosaDmlEthPortGetCfg(NULL, &pEthernetPortFull->Cfg);
         *pBool = pEthernetPortFull->Cfg.bEnabled;
         return TRUE;
     }
@@ -561,7 +560,6 @@ Interface_GetParamIntValue
     if (strcmp(ParamName, "MaxBitRate") == 0)
     {
         /* collect value */
-	CosaDmlEthPortGetCfg(NULL, &pEthernetPortFull->Cfg);
 	*pInt = pEthernetPortFull->Cfg.MaxBitRate;
         return TRUE;
     }
@@ -624,8 +622,6 @@ Interface_GetParamUlongValue
     if (strcmp(ParamName, "LastChange") == 0)
     {
         /* collect value */
-        CosaDmlEthPortGetDinfo(NULL, pEthernetPortFull->Cfg.InstanceNumber, &pEthernetPortFull->DynamicInfo);
-        
         *puLong = AnscGetTimeIntervalInSeconds(pEthernetPortFull->DynamicInfo.LastChange, AnscGetTickInSeconds());
         return TRUE;
     }
