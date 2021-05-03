@@ -109,6 +109,7 @@ typedef struct _EthCtlFn {
     int (*setCfg)(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_CFG pCfg);
     int (*getStats)(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_STATS pStats);
     int (*getDInfo)(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_DINFO pDinfo);
+    int (*getEntry)(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_FULL pEntry);
 } EthIntControlFuncs, *PEthIntControlFuncs;
 
 /// Map key to interface object
