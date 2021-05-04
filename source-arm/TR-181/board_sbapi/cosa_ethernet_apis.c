@@ -145,6 +145,7 @@ int puma6_getSwitchCfg(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_CFG pcfg);
 int puma6_setSwitchCfg(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_CFG pcfg); 
 int puma6_getSwitchDInfo(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_DINFO pDinfo);
 int puma6_getSwitchStats(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_STATS pStats);
+int puma6_getEntry(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_FULL pEntry);
 
 
 COSA_DML_ETH_PORT_SINFO      g_EthIntSInfo[] = 
@@ -189,6 +190,7 @@ static int getIfCfg(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_CFG pcfg);
 static int setIfCfg(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_CFG pcfg);
 static int getIfStats(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_STATS pStats);
 static int getIfDInfo(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_DINFO pDinfo);
+static int getIfEntry(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_FULL pEntry);
 #endif
 
 static int getIfStats2(const PUCHAR pName, PCOSA_DML_ETH_STATS pStats);
@@ -197,14 +199,16 @@ static const EthIntControlFuncs ifFuncs = {
     getIfCfg,
     setIfCfg,
     getIfStats,
-    getIfDInfo
+    getIfDInfo,
+    getIfEntry
 };
 
 static const EthIntControlFuncs swFuncs = {
     puma6_getSwitchCfg,
     puma6_setSwitchCfg,
     puma6_getSwitchStats,
-    puma6_getSwitchDInfo
+    puma6_getSwitchDInfo,
+    puma6_getEntry
 };
 
 static const int g_PortIDs[]={
@@ -412,15 +416,10 @@ CosaDmlEthPortGetEntry
 #if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
     if (ulIndex < g_EthernetIntNum)
     {
-        g_EthEntries[ulIndex].control->getCfg(g_EthEntries + ulIndex, &pEntry->Cfg);
         AnscCopyMemory(&pEntry->StaticInfo, &g_EthIntSInfo[ulIndex], sizeof(COSA_DML_ETH_PORT_SINFO));
-        g_EthEntries[ulIndex].control->getDInfo(g_EthEntries + ulIndex, &pEntry->DynamicInfo);
+        g_EthEntries[ulIndex].control->getEntry(g_EthEntries + ulIndex, pEntry);
         pEntry->Cfg.InstanceNumber = g_EthEntries[ulIndex].instanceNumber;
         AnscCopyString(pEntry->Cfg.Alias, g_EthEntries[ulIndex].Alias);
-        if (g_EthEntries[ulIndex].instanceNumber != 0)
-        {
-            CosaDmlEEEPortGetCfg(g_EthEntries[ulIndex].instanceNumber, &pEntry->Cfg);
-        }
     }
     else
     {
@@ -1546,6 +1545,186 @@ int puma6_getSwitchStats(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_STATS pStats){
     return ANSC_STATUS_SUCCESS;
 }
 
+int puma6_getEntry(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_FULL pEntry)
+{
+    CCSP_HAL_ETHSW_PORT         port        = *((PCCSP_HAL_ETHSW_PORT)eth->hwid);
+    CCSP_HAL_ETH_FULL_CFG       fullEntry;
+    PCOSA_DML_ETH_PORT_CFG      pcfg = &(pEntry->Cfg);
+    PCOSA_DML_ETH_PORT_DINFO    pDinfo = &(pEntry->DynamicInfo);
+    INT                         status;
+
+    status = CcspHalEthSwGetPortEntry(port, &fullEntry);
+    if ( status == RETURN_OK )
+    {
+        switch ( fullEntry.linkStatus )
+        {
+            case CCSP_HAL_ETHSW_LINK_Up:
+            {
+                pDinfo->Status = COSA_DML_IF_STATUS_Up;
+                break;
+            }
+            case CCSP_HAL_ETHSW_LINK_Down:
+            {
+                pDinfo->Status = COSA_DML_IF_STATUS_Down;
+                break;
+            }
+            case CCSP_HAL_ETHSW_LINK_Disconnected:
+            {
+                pDinfo->Status = COSA_DML_IF_STATUS_Down;
+                break;
+            }
+            default:
+            {
+                pDinfo->Status = COSA_DML_IF_STATUS_Down;
+                break;
+            }
+        }
+
+        switch ( fullEntry.currLinkRate )
+        {
+            case CCSP_HAL_ETHSW_LINK_10Mbps:
+            {
+                pDinfo->CurrentBitRate = 10;
+                break;
+            }
+            case CCSP_HAL_ETHSW_LINK_100Mbps:
+            {
+                pDinfo->CurrentBitRate = 100;
+                break;
+            }
+            case CCSP_HAL_ETHSW_LINK_1Gbps:
+            {
+                pDinfo->CurrentBitRate = 1000;
+                break;
+            }
+#ifdef _2_5G_ETHERNET_SUPPORT_
+            case CCSP_HAL_ETHSW_LINK_2_5Gbps:
+            {
+                pDinfo->CurrentBitRate = 2500;
+                break;
+            }
+            case CCSP_HAL_ETHSW_LINK_5Gbps:
+            {
+                pDinfo->CurrentBitRate = 5000;
+                break;
+            }
+#endif // _2_5G_ETHERNET_SUPPORT_
+            case CCSP_HAL_ETHSW_LINK_10Gbps:
+            {
+                pDinfo->CurrentBitRate = 10000;
+                break;
+            }
+            case CCSP_HAL_ETHSW_LINK_Auto:
+            {
+                pDinfo->CurrentBitRate = 0;
+                break;
+            }
+            default:
+            {
+                pDinfo->CurrentBitRate = 0;
+                break;
+            }
+        }
+
+        switch ( fullEntry.adminStatus )
+        {
+            case CCSP_HAL_ETHSW_AdminUp:
+            {
+                pcfg->bEnabled = TRUE;
+                break;
+            }
+            case CCSP_HAL_ETHSW_AdminDown:
+            {
+                pcfg->bEnabled = FALSE;
+                break;
+            }
+            default:
+            {
+                pcfg->bEnabled = TRUE;
+                break;
+            }
+        }
+
+	switch ( fullEntry.maxBitRate )
+        {
+            case CCSP_HAL_ETHSW_LINK_10Mbps:
+            {
+                pcfg->MaxBitRate = 10;
+                break;
+            }
+            case CCSP_HAL_ETHSW_LINK_100Mbps:
+            {
+                pcfg->MaxBitRate = 100;
+                break;
+            }
+            case CCSP_HAL_ETHSW_LINK_1Gbps:
+            {
+                pcfg->MaxBitRate = 1000;
+                break;
+            }
+#ifdef _2_5G_ETHERNET_SUPPORT_
+            case CCSP_HAL_ETHSW_LINK_2_5Gbps:
+            {
+                pcfg->MaxBitRate = 2500;
+                break;
+            }
+            case CCSP_HAL_ETHSW_LINK_5Gbps:
+            {
+                pcfg->MaxBitRate = 5000;
+                break;
+            }
+#endif // _2_5G_ETHERNET_SUPPORT_
+            case CCSP_HAL_ETHSW_LINK_10Gbps:
+            {
+                pcfg->MaxBitRate = 10000;
+                break;
+            }
+            case CCSP_HAL_ETHSW_LINK_Auto:
+            {
+                pcfg->MaxBitRate = -1;
+                break;
+            }
+            default:
+            {
+                pcfg->MaxBitRate = -1;
+                break;
+            }
+        }
+
+        switch ( fullEntry.duplexMode )
+        {
+            case CCSP_HAL_ETHSW_DUPLEX_Auto:
+            {
+                pcfg->DuplexMode = COSA_DML_ETH_DUPLEX_Auto;
+                break;
+            }
+            case CCSP_HAL_ETHSW_DUPLEX_Half:
+            {
+                pcfg->DuplexMode = COSA_DML_ETH_DUPLEX_Half;
+                break;
+            }
+            case CCSP_HAL_ETHSW_DUPLEX_Full:
+            {
+                pcfg->DuplexMode = COSA_DML_ETH_DUPLEX_Full;
+                break;
+            }
+            default:
+            {
+                pcfg->DuplexMode = COSA_DML_ETH_DUPLEX_Auto;
+                break;
+            }
+        }
+
+	pcfg->bEEEEnabled = fullEntry.bEEEPortEnable;
+    }
+    else
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    return ANSC_STATUS_SUCCESS;
+}
+
 static int getIfCfg(PCosaEthInterfaceInfo pEthIf, PCOSA_DML_ETH_PORT_CFG pCfg)
 {    
     if ( getIfStatus( (PUCHAR)pEthIf->sInfo->Name, NULL ) == COSA_DML_IF_STATUS_Up )
@@ -1615,6 +1794,28 @@ static int getIfDInfo(PCosaEthInterfaceInfo pEthIf, PCOSA_DML_ETH_PORT_DINFO pIn
     
     return 0;
 }
+
+static int getIfEntry(PCosaEthInterfaceInfo pEthIf, PCOSA_DML_ETH_PORT_FULL pEntry)
+{
+    PCOSA_DML_ETH_PORT_CFG      pCfg = &(pEntry->Cfg);
+    PCOSA_DML_ETH_PORT_DINFO    pDinfo = &(pEntry->DynamicInfo);
+
+    pDinfo->Status = getIfStatus((PUCHAR)pEthIf->sInfo->Name, NULL);
+    if ( pDinfo->Status == COSA_DML_IF_STATUS_Up )
+    {
+        pCfg->bEnabled = TRUE;
+    }
+    else
+    {
+        pCfg->bEnabled = FALSE;
+    }
+
+    pCfg->DuplexMode = COSA_DML_ETH_DUPLEX_Auto;
+    pCfg->MaxBitRate = 1000;
+
+    return 0;
+}
+
 #endif
 
 /*
