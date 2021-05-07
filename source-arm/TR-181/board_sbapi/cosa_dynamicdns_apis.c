@@ -202,6 +202,14 @@ static int UtSetBool(const char *path, BOOLEAN val)
     return ANSC_STATUS_SUCCESS;
 }
 
+static int resetDynamicDNSStatus(void)
+{
+    syscfg_set(NULL, "ddns_client_Status", "1"); /* CLIENT_CONNECTING=1 */
+    syscfg_set(NULL, "ddns_host_status_1", "2"); /* HOST_UPDATE_NEEDED=2 */
+
+    return ANSC_STATUS_SUCCESS;
+}
+
 /***********************************************************************
  APIs for Object:
 
@@ -417,6 +425,8 @@ CosaDmlDynamicDns_Client_AddEntry
     Utopia_Free(&ctx, !rc);
     if (CosaDmlDynamicDns_GetEnable() && pEntry->Enable == TRUE)
     {
+        /* reset the DynamicDNS client and host status before restart*/
+        resetDynamicDNSStatus();
         CcspTraceInfo(("%s Going to restart dynamic dns service",__FUNCTION__));
         v_secure_system("/etc/utopia/service.d/service_dynamic_dns.sh dynamic_dns-restart &");
     }
@@ -516,6 +526,8 @@ CosaDmlDynamicDns_Client_SetConf
 
     if (isUserconfChanged == TRUE)
     {
+        /* reset the DynamicDNS client and host status before restart*/
+        resetDynamicDNSStatus();
         CcspTraceInfo(("%s Going to restart dynamic dns service",__FUNCTION__));
         v_secure_system("/etc/utopia/service.d/service_dynamic_dns.sh dynamic_dns-restart &");
     }
@@ -737,7 +749,7 @@ CosaDmlDynamicDns_Host_SetConf
     BOOLEAN isHostchanged = FALSE;
 
     char enable_path[sizeof(SYSCFG_HOST_ENABLE_KEY) + 1] = {0};
-    char status_path[sizeof(SYSCFG_HOST_STATUS_KEY) + 1] = {0};
+    // char status_path[sizeof(SYSCFG_HOST_STATUS_KEY) + 1] = {0};
     char name_path[sizeof(SYSCFG_HOST_NAME_KEY) + 1] = {0};
 
     if ((index = DynamicDns_Host_InsGetIndex(ins)) == -1 || (!g_DDNSHost))
@@ -746,27 +758,30 @@ CosaDmlDynamicDns_Host_SetConf
     }
 
     snprintf(enable_path, sizeof(enable_path), SYSCFG_HOST_ENABLE_KEY, index + 1);
-    snprintf(status_path, sizeof(status_path), SYSCFG_HOST_STATUS_KEY, index + 1);
+    // snprintf(status_path, sizeof(status_path), SYSCFG_HOST_STATUS_KEY, index + 1);
     snprintf(name_path, sizeof(name_path), SYSCFG_HOST_NAME_KEY, index + 1);
 
-	if((g_DDNSHost[index].Enable != pEntry->Enable) && (g_DDNSHost[index].Name[0] != '\0'))
-		isHostchanged = TRUE;
+    if(g_DDNSHost[index].Enable != pEntry->Enable)
+    {
+        isHostchanged = TRUE;
+        g_DDNSHost[index].Enable = pEntry->Enable;
+        UtSetBool(enable_path, g_DDNSHost[index].Enable);
+    }
 
-    g_DDNSHost[index].Status = pEntry->Status;
-    g_DDNSHost[index].Enable         = pEntry->Enable;
+    // g_DDNSHost[index].Status = pEntry->Status;
     if(strcmp(g_DDNSHost[index].Name, pEntry->Name) != 0)
     {
         isHostchanged = TRUE;
+        _ansc_strncpy(g_DDNSHost[index].Name, pEntry->Name, sizeof(g_DDNSHost[index].Name)-1);
+        UtSetString(name_path, g_DDNSHost[index].Name);
     }
-    _ansc_strncpy(g_DDNSHost[index].Name,       pEntry->Name,       sizeof(g_DDNSHost[index].Name)-1);
 
-   /* Set syscfg variable */
-    UtSetBool(enable_path, g_DDNSHost[index].Enable);
-    UtSetString(name_path, g_DDNSHost[index].Name);
-    UtSetUlong(status_path, g_DDNSHost[index].Status);
-
-    if (CosaDmlDynamicDns_GetEnable() && (g_DDNSHost[index].Enable == TRUE) && (isHostchanged == TRUE))
+    if (CosaDmlDynamicDns_GetEnable() && (g_DDNSHost[index].Enable == TRUE)
+            && (isHostchanged == TRUE) && (g_DDNSHost[index].Name[0] != '\0'))
     {
+        /* reset the DynamicDNS client and host status before restart*/
+        resetDynamicDNSStatus();
+        g_DDNSHost[index].Status = 2; /* HOST_UPDATE_NEEDED=2 */
         CcspTraceInfo(("%s Going to restart dynamic dns service",__FUNCTION__));
         v_secure_system("/etc/utopia/service.d/service_dynamic_dns.sh dynamic_dns-restart &");
     }
