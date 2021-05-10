@@ -830,12 +830,6 @@ User_GetParamStringValue
                 || AnscEqualString(pUser->Username, "mso", TRUE) )
             {
                AnscCopyString(pUser->HashedPassword, "");
-               returnStatus = CosaDmlUserSetCfg(NULL, pUser);
-
-               if ( returnStatus != ANSC_STATUS_SUCCESS)
-               {
-                  CosaDmlUserGetCfg(NULL, pUser);
-               }
             }
             AnscCopyString(pValue, pUser->HashedPassword);
             return 0;
@@ -1505,6 +1499,9 @@ User_Commit
     PCOSA_CONTEXT_LINK_OBJECT       pCxtLink          = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     PCOSA_DML_USER                  pUser             = (PCOSA_DML_USER)pCxtLink->hContext;
     PCOSA_DATAMODEL_USERS           pUsers            = (PCOSA_DATAMODEL_USERS)g_pCosaBEManager->hUsers;
+    char csr_user_name[16];
+
+    syscfg_get(NULL, "user_name_1", csr_user_name, sizeof(csr_user_name));
 
     if ( pCxtLink->bNew )
     {
@@ -1526,7 +1523,10 @@ User_Commit
     }
     else
     {
-        returnStatus = CosaDmlUserSetCfg(NULL, pUser);
+        if( !AnscEqualString(pUser->Username, csr_user_name, TRUE))
+        {
+            returnStatus = CosaDmlUserSetCfg(NULL, pUser);
+        }
 
         if ( returnStatus != ANSC_STATUS_SUCCESS)
         {
