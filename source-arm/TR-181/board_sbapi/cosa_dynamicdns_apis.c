@@ -48,6 +48,7 @@ typedef struct {
     char Name[64];
     char SupportedProtocols[64];
     char Protocol[16];
+    char ServerAddress[64];
 } DDNS_SERVICE;
 
 DDNS_SERVICE gDdnsServices[] =
@@ -64,31 +65,36 @@ DDNS_SERVICE gDdnsServices[] =
         "no-ip",
         "No-IP.com",
         "HTTP",
-        "HTTP"
+        "HTTP",
+        "www.no-ip.com"
     },
     {
         "dyndns",
         "Dyn.com",
         "HTTP",
-        "HTTP"
+        "HTTP",
+        "www.dyndns.org"
     },
     {
         "duckdns",
         "DuckDNS.org",
         "HTTPS",
-        "HTTPS"
+        "HTTPS",
+        "www.duckdns.org"
     },
     {
         "afraid",
         "FreeDNS.afraid.org",
         "HTTPS",
-        "HTTPS"
+        "HTTPS",
+        "www.freedns.afraid.org"
     },
     {
         "changeip",
         "ChangeIP.com",
         "HTTP",
-        "HTTP"
+        "HTTP",
+        "www.changeip.com"
     }
 };
 
@@ -829,6 +835,7 @@ void CosaInitializeTr181DdnsServiceProviderList()
         ULONG index = 0;
         char enable_path[sizeof(SYSCFG_SERVER_ENABLE_KEY) + 1] = {0};
         char servicename_path[sizeof(SYSCFG_SERVER_SERVICENAME_KEY) +1] = {0};
+        char serveraddress_path[sizeof(SYSCFG_SERVER_SERVERADDRESS_KEY) +1] = {0};
         g_NrDynamicDnsServer = sizeof(gDdnsServices)/sizeof(DDNS_SERVICE);
         g_DDNSServer = (COSA_DML_DDNS_SERVER *)AnscAllocateMemory(g_NrDynamicDnsServer * sizeof(COSA_DML_DDNS_SERVER));
        for(index = 0; index<g_NrDynamicDnsServer; index++)
@@ -853,6 +860,10 @@ void CosaInitializeTr181DdnsServiceProviderList()
                 snprintf(g_DDNSServer[index].Name, sizeof(g_DDNSServer[index].Name), gDdnsServices[index].Name);
                 snprintf(g_DDNSServer[index].SupportedProtocols, sizeof(g_DDNSServer[index].SupportedProtocols), gDdnsServices[index].SupportedProtocols);
                 snprintf(g_DDNSServer[index].Protocol, sizeof(g_DDNSServer[index].Protocol), gDdnsServices[index].Protocol);
+
+                snprintf(g_DDNSServer[index].ServerAddress, sizeof(g_DDNSServer[index].ServerAddress), gDdnsServices[index].ServerAddress);
+                snprintf(serveraddress_path, sizeof(serveraddress_path), SYSCFG_SERVER_SERVERADDRESS_KEY, index + 1);
+                UtSetString(serveraddress_path, g_DDNSServer[index].ServerAddress);
             }
         }
     }
