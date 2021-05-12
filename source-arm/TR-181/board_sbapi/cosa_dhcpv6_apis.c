@@ -8717,8 +8717,7 @@ dhcpv6c_dbg_thrd(void * in)
                         }
                         else
                         {
-                            commonSyseventSet("ipv6_addr-unset", "");
-                            commonSyseventSet("ipv6_addr-set", "");
+                            commonSyseventSet("ipv6_addr-renew", "");
                         }
 #endif
 
