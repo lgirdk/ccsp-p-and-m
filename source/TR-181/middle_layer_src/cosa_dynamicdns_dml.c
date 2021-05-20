@@ -524,7 +524,11 @@ DDNSClient_Validate
         _ansc_strcpy(pReturnParamName, "Enable");
         return FALSE;
     }
-
+    if (CosaDmlDynamicDns_Client_SetConf(pClientEntry->InstanceNumber, pClientEntry) != ANSC_STATUS_SUCCESS)
+    {
+        CosaDmlDynamicDns_Client_GetConf(pClientEntry->InstanceNumber, pClientEntry);
+	return FALSE;
+    }
     return TRUE;
 #endif
 
@@ -558,11 +562,14 @@ DDNSClient_Commit
     }
     else
     {
+/*To fix the issue that the setv still succeed when ddns info username/password/hostname is wrong.
+ move to Validate function because the data model doesn't handle commit function's return value.
         if (CosaDmlDynamicDns_Client_SetConf(pClientEntry->InstanceNumber, pClientEntry) != ANSC_STATUS_SUCCESS)
         {
             CosaDmlDynamicDns_Client_GetConf(pClientEntry->InstanceNumber, pClientEntry);
             return -1;
         }
+*/
     }
 
     return 0;
@@ -940,7 +947,11 @@ DDNSHostname_Validate
         _ansc_strcpy(pReturnParamName, "Enable");
         return FALSE;
     }
-
+    if (CosaDmlDynamicDns_Host_SetConf(pHostEntry->InstanceNumber, pHostEntry) != ANSC_STATUS_SUCCESS)
+    {
+        CosaDmlDynamicDns_Host_GetConf(pHostEntry->InstanceNumber, pHostEntry);
+        return FALSE;
+    }
     return TRUE;
 #endif
 
@@ -974,11 +985,15 @@ DDNSHostname_Commit
     }
     else
     {
+/*To fix the issue that the setv still succeed when ddns info like username/password/hostname is wrong.
+ move to Validate function because the data model doesn't handle commit function's return value.
+
         if (CosaDmlDynamicDns_Host_SetConf(pHostEntry->InstanceNumber, pHostEntry) != ANSC_STATUS_SUCCESS)
         {
             CosaDmlDynamicDns_Host_GetConf(pHostEntry->InstanceNumber, pHostEntry);
             return -1;
         }
+*/
     }
 
     return 0;
