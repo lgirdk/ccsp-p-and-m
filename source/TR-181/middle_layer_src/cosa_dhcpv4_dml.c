@@ -5855,7 +5855,8 @@ Pool_GetParamUlongValue
     if (strcmp(ParamName, "MinAddress") == 0)
     {
         /* collect value */
-	*puLong  = pPool->Cfg.MinAddress.Value;
+        CosaDmlDhcpsGetPoolCfg(NULL,&poolTemp.Cfg);
+        *puLong  = poolTemp.Cfg.MinAddress.Value;
 
         return TRUE;
     }
@@ -5863,7 +5864,8 @@ Pool_GetParamUlongValue
     if (strcmp(ParamName, "MaxAddress") == 0)
     {
         /* collect value */
-	*puLong  = pPool->Cfg.MaxAddress.Value;
+        CosaDmlDhcpsGetPoolCfg(NULL,&poolTemp.Cfg);
+        *puLong  = poolTemp.Cfg.MaxAddress.Value;
 
         return TRUE;
     }
