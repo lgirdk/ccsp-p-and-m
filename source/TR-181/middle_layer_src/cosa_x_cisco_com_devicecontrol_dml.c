@@ -2002,6 +2002,7 @@ LanMngm_GetParamUlongValue
 {
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     PCOSA_DML_LAN_MANAGEMENT        pLanMngm    = (PCOSA_DML_LAN_MANAGEMENT)pLinkObj->hContext;
+    CosaDmlLanMngm_GetConf(pLanMngm->InstanceNumber, pLanMngm);
 
     if (strcmp(ParamName, "LanMode") == 0)
     {
