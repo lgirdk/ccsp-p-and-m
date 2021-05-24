@@ -4634,14 +4634,16 @@ CosaDmlLAN_Validate_ModifyLanIP(COSA_DML_LAN_Allowed_Subnet *pLanAllowedSubnet, 
     if(iMatchFound)
     {
         syscfg_get(NULL, "arLanAllowedSubnet_1::SubnetIP", buff, sizeof(buff));
+        sscanf(buff,"%d.%d.%d.%d",&temp[0],&temp[1],&temp[2],&temp[3]);
+
+        sprintf(buff, "%d.%d.%d.%d", temp[0], temp[1], temp[2], 1);
         PSM_Set_Record_Value2(bus_handle, g_Subsystem, "dmsb.l3net.4.V4Addr", ccsp_string, buff);
         syscfg_set(NULL, "lan_ipaddr", buff);
 
-        sscanf(buff,"%d.%d.%d.%d",&temp[0],&temp[1],&temp[2],&temp[3]);
-         _ansc_sprintf(tmpbuff, "%d.%d.%d.%s",temp[0], temp[1], temp[2], "2");
+        sprintf(tmpbuff, "%d.%d.%d.%d", temp[0], temp[1], temp[2], 2);
         syscfg_set(NULL, "dhcp_start", tmpbuff);
 
-         _ansc_sprintf(tmpbuff, "%d.%d.%d.%s",temp[0], temp[1], temp[2], "253");
+        sprintf(tmpbuff, "%d.%d.%d.%d", temp[0], temp[1], temp[2], 253);
         syscfg_set(NULL, "dhcp_end", tmpbuff);
 
         syscfg_get(NULL, "arLanAllowedSubnet_1::SubnetMask", buff, sizeof(buff));
@@ -4649,6 +4651,7 @@ CosaDmlLAN_Validate_ModifyLanIP(COSA_DML_LAN_Allowed_Subnet *pLanAllowedSubnet, 
         syscfg_set(NULL, "lan_netmask", buff);
 
         syscfg_commit();
+        system("sysevent set ipv4-resync 4");
     }
     return ANSC_STATUS_SUCCESS;
 }
