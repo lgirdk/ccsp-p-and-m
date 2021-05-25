@@ -4208,11 +4208,6 @@ NATPassthrough_DelEntry
     PCOSA_CONTEXT_LINK_OBJECT      pLinkObj           = (PCOSA_CONTEXT_LINK_OBJECT)hInstance;
     COSA_DML_NATPASS          *pNATPassthrough        = (COSA_DML_NATPASS*)pLinkObj->hContext;
 
-    if (CosaDmlFW_NATPassthrough_DelEntry(pLinkObj->InstanceNumber) != ANSC_STATUS_SUCCESS)
-    {
-        return -1;
-    }
-
     AnscSListPopEntryByLink((PSLIST_HEADER)&pMyObject->NATPassthroughList, &pLinkObj->Linkage);
 
     if (pLinkObj->bNew)
