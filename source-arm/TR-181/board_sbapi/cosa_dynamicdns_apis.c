@@ -216,387 +216,6 @@ static int resetDynamicDNSStatus(void)
     return ANSC_STATUS_SUCCESS;
 }
 
-/***********************************************************************
- APIs for Object:
-
-    DyanmicDNS.
-
-    *  CosaDmlDynamicDns_GetEnable
-    *  CosaDmlDynamicDns_GetsupportedServices
-    *  CosaDmlDynamicDns_SetEnable
-***********************************************************************/
-
-BOOL
-CosaDmlDynamicDns_GetEnable()
-{
-   char buf[8] = {0};
-
-   if ((!syscfg_init()) &&
-       (!syscfg_get(NULL, "dynamic_dns_enable", buf, sizeof(buf))))
-   {
-       return (strcmp(buf, "1") == 0);
-   }
-   return 0;
-}
-
-ULONG
-CosaDmlDynamicDns_GetsupportedServices
-    (
-        char*  supportedServices
-    )
-{
-    char buf[128] = {0};
-    errno_t rc = -1;
-
-    if ((!syscfg_init()) &&
-        (!syscfg_get( NULL, "ddns_service_providers_list", buf, sizeof(buf))))
-    {
-        /* destination buffer supportedServices is declared as an array size of 1024 bytes in the calling func. */
-        rc = strcpy_s(supportedServices, 1024, buf);
-        if(rc != EOK)
-        {
-            ERR_CHK(rc);
-            return -1;
-        }
-        return 0;
-    }
-    return -1;
-}
-
-ULONG
-CosaDmlDynamicDns_SetEnable
-    (
-        BOOL  bValue
-    )
-{
-   char buf[8] = {0};
-   errno_t rc = -1;
-
-   if (!syscfg_init())
-   {
-       syscfg_get(NULL, "dslite_enable", buf, sizeof(buf));
-       if((strcmp(buf, "1") == 0) && bValue == TRUE){
-           return -1;
-       }
-       rc = strcpy_s(buf, sizeof(buf), ((bValue == FALSE) ? "0" : "1"));
-       if(rc != EOK)
-       {
-           ERR_CHK(rc);
-           return -1;
-       }
-       syscfg_set(NULL, "dynamic_dns_enable", buf);
-       if(bValue == FALSE)
-       {
-          syscfg_set(NULL, "arddnsclient_1::enable", buf);
-          syscfg_set(NULL, "ddns_host_enable_1", buf);
-       }
-       syscfg_commit();
-       return 0;
-   }
-   return -1;
-}
-
-/***********************************************************************
- APIs for Object:
-
-    DyanmicDNS.
-
-    *  CosaDmlDynamicDns_Client_GetNumberOfEntries
-    *  CosaDmlDynamicDns_Client_GetEntryByIndex
-    *  CosaDmlDynamicDns_Client_SetValues
-    *  CosaDmlDynamicDns_Client_AddEntry
-    *  CosaDmlDynamicDns_Client_DelEntry
-    *  CosaDmlDynamicDns_Client_GetConf
-    *  CosaDmlDynamicDns_Client_SetConf
-***********************************************************************/
-
-static int g_NrDynamicDnsClient =  0;
-
-static int
-DynamicDns_Client_InsGetIndex
-    (
-        ULONG ins
-    )
-{
-    int i, ins_num, ret = -1;
-    UtopiaContext ctx;
-
-    CosaDmlDynamicDns_Client_GetNumberOfEntries();
-    if (!Utopia_Init(&ctx))
-        return ANSC_STATUS_FAILURE;
-
-    for (i = 0; i < g_NrDynamicDnsClient; i++)
-    {
-        Utopia_GetDynamicDnsClientInsNumByIndex(&ctx, i, &ins_num);
-        if (ins_num == ins) {
-            ret = i;
-            break;
-        }
-    }
-    Utopia_Free(&ctx, 0);
-
-    return ret;
-}
-
-ULONG
-CosaDmlDynamicDns_Client_GetNumberOfEntries(void)
-{
-    UtopiaContext ctx;
-
-    if(!Utopia_Init(&ctx))
-        return ANSC_STATUS_FAILURE;
-
-    Utopia_GetNumberOfDynamicDnsClient(&ctx, &g_NrDynamicDnsClient);
-    Utopia_Free(&ctx, 0);
-    return g_NrDynamicDnsClient;
-}
-
-ANSC_STATUS
-CosaDmlDynamicDns_Client_GetEntryByIndex
-    (
-        ULONG index,
-        COSA_DML_DDNS_CLIENT *pEntry
-    )
-{
-    UtopiaContext ctx;
-    DynamicDnsClient_t  DDNSclient = {0};
-
-    if (index >= g_NrDynamicDnsClient || !Utopia_Init(&ctx))
-    {
-        return ANSC_STATUS_FAILURE;
-    }
-
-    Utopia_GetDynamicDnsClientByIndex(&ctx, index, &DDNSclient);
-
-    pEntry->InstanceNumber = DDNSclient.InstanceNumber;
-    pEntry->Enable = DDNSclient.Enable;
-    pEntry->Status = DDNSclient.Status;
-    pEntry->LastError = DDNSclient.LastError;
-    _ansc_strncpy(pEntry->Alias,    DDNSclient.Alias,    sizeof(pEntry->Alias)-1);
-    _ansc_strncpy(pEntry->Username, DDNSclient.Username, sizeof(pEntry->Username)-1);
-    _ansc_strncpy(pEntry->Password, DDNSclient.Password, sizeof(pEntry->Password)-1);
-    _ansc_strncpy(pEntry->Server,   DDNSclient.Server,   sizeof(pEntry->Server)-1);
-
-    Utopia_Free(&ctx, 0);
-    return ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
-CosaDmlDynamicDns_Client_SetValues
-    (
-        ULONG index,
-        ULONG ins,
-        const char *alias
-    )
-{
-    int rc = -1;
-    UtopiaContext ctx;
-
-    if (index >= g_NrDynamicDnsClient || !Utopia_Init(&ctx))
-    {
-        return ANSC_STATUS_FAILURE;
-    }
-
-    rc = Utopia_SetDynamicDnsClientInsAndAliasByIndex(&ctx, index, ins, alias);
-    Utopia_Free(&ctx, !rc);
-
-    return (rc != 0) ? ANSC_STATUS_FAILURE : ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
-CosaDmlDynamicDns_Client_AddEntry
-    (
-        COSA_DML_DDNS_CLIENT *pEntry
-    )
-{
-    int rc = -1;
-    UtopiaContext ctx;
-    DynamicDnsClient_t  DDNSclient = {0};
-
-    if (!Utopia_Init(&ctx))
-    {
-        return ANSC_STATUS_FAILURE;
-    }
-
-    DDNSclient.InstanceNumber = pEntry->InstanceNumber;
-    DDNSclient.Enable         = pEntry->Enable;
-    _ansc_strncpy(DDNSclient.Alias,    pEntry->Alias,    sizeof(DDNSclient.Alias)-1);
-    _ansc_strncpy(DDNSclient.Username, pEntry->Username, sizeof(DDNSclient.Username)-1);
-    _ansc_strncpy(DDNSclient.Password, pEntry->Password, sizeof(DDNSclient.Password)-1);
-    _ansc_strncpy(DDNSclient.Server,   pEntry->Server,   sizeof(DDNSclient.Server)-1);
-
-    rc = Utopia_AddDynamicDnsClient(&ctx, &DDNSclient);
-
-    Utopia_GetNumberOfDynamicDnsClient(&ctx, &g_NrDynamicDnsClient);
-    Utopia_Free(&ctx, !rc);
-    if (CosaDmlDynamicDns_GetEnable() && pEntry->Enable == TRUE)
-    {
-        /* reset the DynamicDNS client and host status before restart*/
-        resetDynamicDNSStatus();
-        CcspTraceInfo(("%s Going to restart dynamic dns service",__FUNCTION__));
-        if(access("/var/tmp/updating_ddns_server.txt", F_OK ) == 0 ) {
-            vsystem("/etc/utopia/service.d/service_dynamic_dns.sh dynamic_dns-restart &");
-        } else {
-            rc = update_ddns_server();
-        }
-    }
-
-    return (rc != 0) ? ANSC_STATUS_FAILURE : ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
-CosaDmlDynamicDns_Client_DelEntry
-    (
-        ULONG ins
-    )
-{
-    int rc = -1;
-    UtopiaContext ctx;
-
-    if (!Utopia_Init(&ctx))
-        return ANSC_STATUS_FAILURE;
-
-    rc = Utopia_DelDynamicDnsClient(&ctx, ins);
-    Utopia_GetNumberOfDynamicDnsClient(&ctx, &g_NrDynamicDnsClient);
-    Utopia_Free(&ctx, !rc);
-
-    return (rc != 0) ? ANSC_STATUS_FAILURE : ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
-CosaDmlDynamicDns_Client_GetConf
-    (
-        ULONG ins,
-        COSA_DML_DDNS_CLIENT *pEntry
-    )
-{
-    int index;
-
-    if ((index = DynamicDns_Client_InsGetIndex(ins)) == -1)
-    {
-        return ANSC_STATUS_FAILURE;
-    }
-
-    return CosaDmlDynamicDns_Client_GetEntryByIndex(index, pEntry);
-}
-
-ANSC_STATUS
-CosaDmlDynamicDns_Client_SetConf
-    (
-        ULONG ins,
-        COSA_DML_DDNS_CLIENT *pEntry
-    )
-{
-    int index, rc = -1;
-    char enable_path[sizeof(SYSCFG_HOST_ENABLE_KEY) + 1] = {0};
-    BOOLEAN enable = FALSE, isUserconfChanged = FALSE;
-    UtopiaContext ctx;
-    DynamicDnsClient_t  DDNSclient = {0};
-
-    if ((index = DynamicDns_Client_InsGetIndex(ins)) == -1 || !Utopia_Init(&ctx))
-    {
-        return ANSC_STATUS_FAILURE;
-    }
-
-    if (index >= g_NrDynamicDnsClient)
-    {
-        return ANSC_STATUS_FAILURE;
-    }
-
-    Utopia_GetDynamicDnsClientByIndex(&ctx, index, &DDNSclient);
-    if (CosaDmlDynamicDns_GetEnable() && pEntry->Enable == TRUE &&
-       ((strcmp(DDNSclient.Username, pEntry->Username) != 0) ||
-       (strcmp(DDNSclient.Password, pEntry->Password) != 0) ||
-       (strcmp(DDNSclient.Server, pEntry->Server) != 0)))
-    {
-        CcspTraceInfo(("%s UserConf changed \n",__FUNCTION__));
-        isUserconfChanged = TRUE;
-    }
-
-    DDNSclient.InstanceNumber = pEntry->InstanceNumber;
-    DDNSclient.Enable         = pEntry->Enable;
-    _ansc_strncpy(DDNSclient.Alias,    pEntry->Alias,    sizeof(DDNSclient.Alias)-1);
-    _ansc_strncpy(DDNSclient.Username, pEntry->Username, sizeof(DDNSclient.Username)-1);
-    _ansc_strncpy(DDNSclient.Password, pEntry->Password, sizeof(DDNSclient.Password)-1);
-    _ansc_strncpy(DDNSclient.Server,   pEntry->Server,   sizeof(DDNSclient.Server)-1);
-
-    rc = Utopia_SetDynamicDnsClientByIndex(&ctx, index, &DDNSclient);
-    Utopia_Free(&ctx, !rc);
-
-    snprintf(enable_path, sizeof(enable_path), SYSCFG_HOST_ENABLE_KEY, ins);
-    UtGetBool(enable_path, &enable);
-    if (enable != pEntry->Enable)
-    {
-        UtSetBool(enable_path, pEntry->Enable);
-        if (pEntry->Enable == TRUE && CosaDmlDynamicDns_GetEnable()) {
-            CcspTraceInfo(("%s UserConf changed - Enable changed from false to true \n",__FUNCTION__));
-            isUserconfChanged = TRUE;
-        }
-    }
-
-    if (isUserconfChanged == TRUE)
-    {
-        /* reset the DynamicDNS client and host status before restart*/
-        resetDynamicDNSStatus();
-        CcspTraceInfo(("%s Going to restart dynamic dns service",__FUNCTION__));
-        if(access("/var/tmp/updating_ddns_server.txt", F_OK ) == 0 ) {
-            vsystem("/etc/utopia/service.d/service_dynamic_dns.sh dynamic_dns-restart &");
-        } else {
-            rc = update_ddns_server();
-        }
-    }
-
-    return (rc != 0) ? ANSC_STATUS_FAILURE : ANSC_STATUS_SUCCESS;
-}
-
-ULONG
-CosaDmlDynamicDns_GetClientStatus()
-{
-   char buf[8] = {0};
-   unsigned long pVal = 6;
-
-   if ((!syscfg_init()) &&
-       (!syscfg_get(NULL, "ddns_client_Status", buf, sizeof(buf))))
-   {
-       if(buf[0] != '\0')
-       {
-           pVal = atoi(buf);
-       }
-   }
-   return pVal;
-}
-
-ULONG
-CosaDmlDynamicDns_GetClientLastError()
-{
-   char buf[8] = {0};
-   unsigned long pVal = 1;
-
-   if ((!syscfg_init()) &&
-       (!syscfg_get(NULL, "ddns_client_Lasterror", buf, sizeof(buf))))
-   {
-      if(buf[0] != '\0')
-       {
-           pVal = atoi(buf);
-       }
-   }
-   return pVal;
-}
-
-
-/***********************************************************************
- APIs for Object:
-
-    DyanmicDNS.Client.{i}.Host.{i}
-
-    *  CosaDmlDynamicDns_Host_GetNumberOfEntries
-    *  CosaDmlDynamicDns_Host_GetEntryByIndex
-    *  CosaDmlDynamicDns_Host_SetValues
-    *  CosaDmlDynamicDns_Host_AddEntry
-    *  CosaDmlDynamicDns_Host_DelEntry
-    *  CosaDmlDynamicDns_Host_GetConf
-    *  CosaDmlDynamicDns_Host_SetConf
-***********************************************************************/
 
 //#CLIENT Status
 #define CLIENT_CONNECTING 1
@@ -1248,6 +867,392 @@ EXIT:
 #endif
 }
 
+/***********************************************************************
+ APIs for Object:
+
+    DyanmicDNS.
+
+    *  CosaDmlDynamicDns_GetEnable
+    *  CosaDmlDynamicDns_GetsupportedServices
+    *  CosaDmlDynamicDns_SetEnable
+***********************************************************************/
+
+BOOL
+CosaDmlDynamicDns_GetEnable()
+{
+   char buf[8] = {0};
+
+   if ((!syscfg_init()) &&
+       (!syscfg_get(NULL, "dynamic_dns_enable", buf, sizeof(buf))))
+   {
+       return (strcmp(buf, "1") == 0);
+   }
+   return 0;
+}
+
+ULONG
+CosaDmlDynamicDns_GetsupportedServices
+    (
+        char*  supportedServices
+    )
+{
+    char buf[128] = {0};
+    errno_t rc = -1;
+
+    if ((!syscfg_init()) &&
+        (!syscfg_get( NULL, "ddns_service_providers_list", buf, sizeof(buf))))
+    {
+        /* destination buffer supportedServices is declared as an array size of 1024 bytes in the calling func. */
+        rc = strcpy_s(supportedServices, 1024, buf);
+        if(rc != EOK)
+        {
+            ERR_CHK(rc);
+            return -1;
+        }
+        return 0;
+    }
+    return -1;
+}
+
+ULONG
+CosaDmlDynamicDns_SetEnable
+    (
+        BOOL  bValue
+    )
+{
+   char buf[8] = {0};
+   errno_t rc = -1;
+
+   if (!syscfg_init())
+   {
+       syscfg_get(NULL, "dslite_enable", buf, sizeof(buf));
+       if((strcmp(buf, "1") == 0) && bValue == TRUE){
+           return -1;
+       }
+       rc = strcpy_s(buf, sizeof(buf), ((bValue == FALSE) ? "0" : "1"));
+       if(rc != EOK)
+       {
+           ERR_CHK(rc);
+           return -1;
+       }
+       syscfg_set(NULL, "dynamic_dns_enable", buf);
+       if(bValue == FALSE)
+       {
+          syscfg_set(NULL, "arddnsclient_1::enable", buf);
+          syscfg_set(NULL, "ddns_host_enable_1", buf);
+       }
+       syscfg_commit();
+       return 0;
+   }
+   return -1;
+}
+
+/***********************************************************************
+ APIs for Object:
+
+    DyanmicDNS.
+
+    *  CosaDmlDynamicDns_Client_GetNumberOfEntries
+    *  CosaDmlDynamicDns_Client_GetEntryByIndex
+    *  CosaDmlDynamicDns_Client_SetValues
+    *  CosaDmlDynamicDns_Client_AddEntry
+    *  CosaDmlDynamicDns_Client_DelEntry
+    *  CosaDmlDynamicDns_Client_GetConf
+    *  CosaDmlDynamicDns_Client_SetConf
+***********************************************************************/
+
+static int g_NrDynamicDnsClient =  0;
+
+static int
+DynamicDns_Client_InsGetIndex
+    (
+        ULONG ins
+    )
+{
+    int i, ins_num, ret = -1;
+    UtopiaContext ctx;
+
+    CosaDmlDynamicDns_Client_GetNumberOfEntries();
+    if (!Utopia_Init(&ctx))
+        return ANSC_STATUS_FAILURE;
+
+    for (i = 0; i < g_NrDynamicDnsClient; i++)
+    {
+        Utopia_GetDynamicDnsClientInsNumByIndex(&ctx, i, &ins_num);
+        if (ins_num == ins) {
+            ret = i;
+            break;
+        }
+    }
+    Utopia_Free(&ctx, 0);
+
+    return ret;
+}
+
+ULONG
+CosaDmlDynamicDns_Client_GetNumberOfEntries(void)
+{
+    UtopiaContext ctx;
+
+    if(!Utopia_Init(&ctx))
+        return ANSC_STATUS_FAILURE;
+
+    Utopia_GetNumberOfDynamicDnsClient(&ctx, &g_NrDynamicDnsClient);
+    Utopia_Free(&ctx, 0);
+    return g_NrDynamicDnsClient;
+}
+
+ANSC_STATUS
+CosaDmlDynamicDns_Client_GetEntryByIndex
+    (
+        ULONG index,
+        COSA_DML_DDNS_CLIENT *pEntry
+    )
+{
+    UtopiaContext ctx;
+    DynamicDnsClient_t  DDNSclient = {0};
+
+    if (index >= g_NrDynamicDnsClient || !Utopia_Init(&ctx))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    Utopia_GetDynamicDnsClientByIndex(&ctx, index, &DDNSclient);
+
+    pEntry->InstanceNumber = DDNSclient.InstanceNumber;
+    pEntry->Enable = DDNSclient.Enable;
+    pEntry->Status = DDNSclient.Status;
+    pEntry->LastError = DDNSclient.LastError;
+    _ansc_strncpy(pEntry->Alias,    DDNSclient.Alias,    sizeof(pEntry->Alias)-1);
+    _ansc_strncpy(pEntry->Username, DDNSclient.Username, sizeof(pEntry->Username)-1);
+    _ansc_strncpy(pEntry->Password, DDNSclient.Password, sizeof(pEntry->Password)-1);
+    _ansc_strncpy(pEntry->Server,   DDNSclient.Server,   sizeof(pEntry->Server)-1);
+
+    Utopia_Free(&ctx, 0);
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaDmlDynamicDns_Client_SetValues
+    (
+        ULONG index,
+        ULONG ins,
+        const char *alias
+    )
+{
+    int rc = -1;
+    UtopiaContext ctx;
+
+    if (index >= g_NrDynamicDnsClient || !Utopia_Init(&ctx))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    rc = Utopia_SetDynamicDnsClientInsAndAliasByIndex(&ctx, index, ins, alias);
+    Utopia_Free(&ctx, !rc);
+
+    return (rc != 0) ? ANSC_STATUS_FAILURE : ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaDmlDynamicDns_Client_AddEntry
+    (
+        COSA_DML_DDNS_CLIENT *pEntry
+    )
+{
+    int rc = -1;
+    UtopiaContext ctx;
+    DynamicDnsClient_t  DDNSclient = {0};
+
+    if (!Utopia_Init(&ctx))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    DDNSclient.InstanceNumber = pEntry->InstanceNumber;
+    DDNSclient.Enable         = pEntry->Enable;
+    _ansc_strncpy(DDNSclient.Alias,    pEntry->Alias,    sizeof(DDNSclient.Alias)-1);
+    _ansc_strncpy(DDNSclient.Username, pEntry->Username, sizeof(DDNSclient.Username)-1);
+    _ansc_strncpy(DDNSclient.Password, pEntry->Password, sizeof(DDNSclient.Password)-1);
+    _ansc_strncpy(DDNSclient.Server,   pEntry->Server,   sizeof(DDNSclient.Server)-1);
+
+    rc = Utopia_AddDynamicDnsClient(&ctx, &DDNSclient);
+
+    Utopia_GetNumberOfDynamicDnsClient(&ctx, &g_NrDynamicDnsClient);
+    Utopia_Free(&ctx, !rc);
+    if (CosaDmlDynamicDns_GetEnable() && pEntry->Enable == TRUE)
+    {
+        /* reset the DynamicDNS client and host status before restart*/
+        resetDynamicDNSStatus();
+        CcspTraceInfo(("%s Going to restart dynamic dns service",__FUNCTION__));
+        if(access("/var/tmp/updating_ddns_server.txt", F_OK ) == 0 ) {
+            vsystem("/etc/utopia/service.d/service_dynamic_dns.sh dynamic_dns-restart &");
+        } else {
+            rc = update_ddns_server();
+        }
+    }
+
+    return (rc != 0) ? ANSC_STATUS_FAILURE : ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaDmlDynamicDns_Client_DelEntry
+    (
+        ULONG ins
+    )
+{
+    int rc = -1;
+    UtopiaContext ctx;
+
+    if (!Utopia_Init(&ctx))
+        return ANSC_STATUS_FAILURE;
+
+    rc = Utopia_DelDynamicDnsClient(&ctx, ins);
+    Utopia_GetNumberOfDynamicDnsClient(&ctx, &g_NrDynamicDnsClient);
+    Utopia_Free(&ctx, !rc);
+
+    return (rc != 0) ? ANSC_STATUS_FAILURE : ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaDmlDynamicDns_Client_GetConf
+    (
+        ULONG ins,
+        COSA_DML_DDNS_CLIENT *pEntry
+    )
+{
+    int index;
+
+    if ((index = DynamicDns_Client_InsGetIndex(ins)) == -1)
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    return CosaDmlDynamicDns_Client_GetEntryByIndex(index, pEntry);
+}
+
+ANSC_STATUS
+CosaDmlDynamicDns_Client_SetConf
+    (
+        ULONG ins,
+        COSA_DML_DDNS_CLIENT *pEntry
+    )
+{
+    int index, rc = -1;
+    char enable_path[sizeof(SYSCFG_HOST_ENABLE_KEY) + 1] = {0};
+    BOOLEAN enable = FALSE, isUserconfChanged = FALSE;
+    UtopiaContext ctx;
+    DynamicDnsClient_t  DDNSclient = {0};
+	char client_status[2];
+
+    if ((index = DynamicDns_Client_InsGetIndex(ins)) == -1 || !Utopia_Init(&ctx))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    if (index >= g_NrDynamicDnsClient)
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+	syscfg_get(NULL,"ddns_client_Status", client_status, sizeof(client_status));
+	
+
+    Utopia_GetDynamicDnsClientByIndex(&ctx, index, &DDNSclient);
+    if (CosaDmlDynamicDns_GetEnable() && pEntry->Enable == TRUE &&
+       ((strcmp(DDNSclient.Username, pEntry->Username) != 0) ||
+       (strcmp(DDNSclient.Password, pEntry->Password) != 0) ||
+       (strcmp(DDNSclient.Server, pEntry->Server) != 0)) ||
+       (atoi(client_status) != CLIENT_UPDATED))
+    {
+        CcspTraceInfo(("%s UserConf changed \n",__FUNCTION__));
+        isUserconfChanged = TRUE;
+    }
+
+    DDNSclient.InstanceNumber = pEntry->InstanceNumber;
+    DDNSclient.Enable         = pEntry->Enable;
+    _ansc_strncpy(DDNSclient.Alias,    pEntry->Alias,    sizeof(DDNSclient.Alias)-1);
+    _ansc_strncpy(DDNSclient.Username, pEntry->Username, sizeof(DDNSclient.Username)-1);
+    _ansc_strncpy(DDNSclient.Password, pEntry->Password, sizeof(DDNSclient.Password)-1);
+    _ansc_strncpy(DDNSclient.Server,   pEntry->Server,   sizeof(DDNSclient.Server)-1);
+
+    rc = Utopia_SetDynamicDnsClientByIndex(&ctx, index, &DDNSclient);
+    Utopia_Free(&ctx, !rc);
+
+    snprintf(enable_path, sizeof(enable_path), SYSCFG_HOST_ENABLE_KEY, ins);
+    UtGetBool(enable_path, &enable);
+    if (enable != pEntry->Enable)
+    {
+        UtSetBool(enable_path, pEntry->Enable);
+        if (pEntry->Enable == TRUE && CosaDmlDynamicDns_GetEnable()) {
+            CcspTraceInfo(("%s UserConf changed - Enable changed from false to true \n",__FUNCTION__));
+            isUserconfChanged = TRUE;
+        }
+    }
+
+    if (isUserconfChanged == TRUE)
+    {
+        /* reset the DynamicDNS client and host status before restart*/
+        resetDynamicDNSStatus();
+        CcspTraceInfo(("%s Going to restart dynamic dns service",__FUNCTION__));
+        if(access("/var/tmp/updating_ddns_server.txt", F_OK ) == 0 ) {
+            vsystem("/etc/utopia/service.d/service_dynamic_dns.sh dynamic_dns-restart &");
+        } else {
+            rc = update_ddns_server();
+        }
+    }
+
+    return (rc != 0) ? ANSC_STATUS_FAILURE : ANSC_STATUS_SUCCESS;
+}
+
+ULONG
+CosaDmlDynamicDns_GetClientStatus()
+{
+   char buf[8] = {0};
+   unsigned long pVal = 6;
+
+   if ((!syscfg_init()) &&
+       (!syscfg_get(NULL, "ddns_client_Status", buf, sizeof(buf))))
+   {
+       if(buf[0] != '\0')
+       {
+           pVal = atoi(buf);
+       }
+   }
+   return pVal;
+}
+
+ULONG
+CosaDmlDynamicDns_GetClientLastError()
+{
+   char buf[8] = {0};
+   unsigned long pVal = 1;
+
+   if ((!syscfg_init()) &&
+       (!syscfg_get(NULL, "ddns_client_Lasterror", buf, sizeof(buf))))
+   {
+      if(buf[0] != '\0')
+       {
+           pVal = atoi(buf);
+       }
+   }
+   return pVal;
+}
+
+
+/***********************************************************************
+ APIs for Object:
+
+    DyanmicDNS.Client.{i}.Host.{i}
+
+    *  CosaDmlDynamicDns_Host_GetNumberOfEntries
+    *  CosaDmlDynamicDns_Host_GetEntryByIndex
+    *  CosaDmlDynamicDns_Host_SetValues
+    *  CosaDmlDynamicDns_Host_AddEntry
+    *  CosaDmlDynamicDns_Host_DelEntry
+    *  CosaDmlDynamicDns_Host_GetConf
+    *  CosaDmlDynamicDns_Host_SetConf
+***********************************************************************/
 static int g_NrDynamicDnsHost =  0;
 COSA_DML_DDNS_HOST *g_DDNSHost = NULL;
 
@@ -1415,6 +1420,7 @@ CosaDmlDynamicDns_Host_SetConf
     char enable_path[sizeof(SYSCFG_HOST_ENABLE_KEY) + 1] = {0};
     // char status_path[sizeof(SYSCFG_HOST_STATUS_KEY) + 1] = {0};
     char name_path[sizeof(SYSCFG_HOST_NAME_KEY) + 1] = {0};
+	char host_status[2];
 
     if ((index = DynamicDns_Host_InsGetIndex(ins)) == -1 || (!g_DDNSHost))
     {
@@ -1439,6 +1445,10 @@ CosaDmlDynamicDns_Host_SetConf
         _ansc_strncpy(g_DDNSHost[index].Name, pEntry->Name, sizeof(g_DDNSHost[index].Name)-1);
         UtSetString(name_path, g_DDNSHost[index].Name);
     }
+
+ 	syscfg_get(NULL,"ddns_host_status_1", host_status, sizeof(host_status));
+	if(atoi(host_status) != HOST_REGISTERED)
+		isHostchanged = TRUE;
 
     if (CosaDmlDynamicDns_GetEnable() && (g_DDNSHost[index].Enable == TRUE)
             && (isHostchanged == TRUE) && (g_DDNSHost[index].Name[0] != '\0'))
