@@ -78,6 +78,7 @@
 #include "plugin_main_apis.h"
 #include "poam_irepfo_interface.h"
 #include "sys_definitions.h"
+#include <syscfg/syscfg.h>
 
 extern void * g_pDslhDmlAgent;
 
