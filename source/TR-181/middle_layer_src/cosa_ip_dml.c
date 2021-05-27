@@ -76,6 +76,7 @@
 #include "cosa_ip_internal.h"
 #include "safec_lib_common.h"
 #include "cosa_apis_busutil.h"
+#include <syscfg/syscfg.h>
 
 static ULONG last_tick;
 #define REFRESH_INTERVAL 120
