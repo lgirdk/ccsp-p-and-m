@@ -5672,18 +5672,20 @@
                     <name>SupportedProtocols</name>
                     <type>string</type>
                     <syntax>string</syntax>
+                     <writable>false</writable>
+
                 </parameter>
                 <parameter>
                     <name>Port</name>
                     <type>unsignedInt</type>
                     <syntax>uint32</syntax>
-                    <writable>true</writable>
+                    <writable>false</writable>
                 </parameter>
                 <parameter>
                     <name>Protocol</name>
                     <type>string</type>
                     <syntax>string</syntax>
-                    <writable>true</writable>
+                    <writable>false</writable>
                 </parameter>
             </parameters>
         </object>
