@@ -498,6 +498,18 @@ DDNSClient_Validate
           return FALSE;
         }
     }
+    if (pLinkObj->bNew)
+    {
+        printf("ofw-1121: first Clent_validate after addojbect\n");
+        pLinkObj->bNew = FALSE;
+        if (CosaDmlDynamicDns_Client_AddEntry(pClientEntry) != ANSC_STATUS_SUCCESS)
+        {
+            printf("ofw-1121: firt Clent_validate CosaDmlDynamicDns_Client_AddEntry failed\n");
+            return FALSE;
+        }
+        printf("ofw-1121: firt Clent_validate after addojbect\n");
+        CosaDynamicDns_ClientDelInfo((ANSC_HANDLE)pDynamicDns, (ANSC_HANDLE)pLinkObj);
+    }
     if (CosaDmlDynamicDns_Client_SetConf(pClientEntry->InstanceNumber, pClientEntry) != ANSC_STATUS_SUCCESS)
     {
         CosaDmlDynamicDns_Client_GetConf(pClientEntry->InstanceNumber, pClientEntry);
@@ -515,7 +527,7 @@ DDNSClient_Commit
     PCOSA_CONTEXT_LINK_OBJECT    pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_DDNS_CLIENT         *pClientEntry = (COSA_DML_DDNS_CLIENT *)pLinkObj->hContext;
     PCOSA_DATAMODEL_TR181_DDNS   pDynamicDns   = (PCOSA_DATAMODEL_TR181_DDNS)g_pCosaBEManager->hDynamicDns;
-
+#if 0
     if (pLinkObj->bNew)
     {
         pLinkObj->bNew = FALSE;
@@ -536,7 +548,7 @@ DDNSClient_Commit
         }
 */
     }
-
+#endif
     return 0;
 }
 
@@ -842,7 +854,10 @@ DDNSHostname_Validate
 {
     PCOSA_CONTEXT_LINK_OBJECT    pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_DDNS_HOST           *pHostEntry   = (COSA_DML_DDNS_HOST *)pLinkObj->hContext;
+    PCOSA_DATAMODEL_TR181_DDNS     pDynamicDns   = (PCOSA_DATAMODEL_TR181_DDNS)g_pCosaBEManager->hDynamicDns;
     errno_t                      rc            = -1;
+
+    printf("ofw-1121: DDNSHostname_Validate pHostEntry %08x\n",pHostEntry);
 
     if(pHostEntry->Enable && !CosaDmlDynamicDns_GetEnable())
     {
@@ -853,6 +868,21 @@ DDNSHostname_Validate
           return FALSE;
         }
     }
+
+    if (pLinkObj->bNew)
+    {
+		
+        if (CosaDmlDynamicDns_Host_AddEntry(pHostEntry) != ANSC_STATUS_SUCCESS)
+        {	
+            printf("ofw-1121: DDNSHostname_Validate first validate after addobject failed\n");
+            return FALSE;
+        }
+        CosaDynamicDns_HostDelInfo((ANSC_HANDLE)pDynamicDns, (ANSC_HANDLE)pLinkObj);
+        pLinkObj->bNew = FALSE;
+        printf("ofw-1121: DDNSHostname_Validate first validate after addobject succeed\n");
+    }
+
+
     if (CosaDmlDynamicDns_Host_SetConf(pHostEntry->InstanceNumber, pHostEntry) != ANSC_STATUS_SUCCESS)
     {
         CosaDmlDynamicDns_Host_GetConf(pHostEntry->InstanceNumber, pHostEntry);
@@ -870,7 +900,7 @@ DDNSHostname_Commit
     PCOSA_CONTEXT_LINK_OBJECT    pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_DDNS_HOST           *pHostEntry   = (COSA_DML_DDNS_HOST *)pLinkObj->hContext;
     PCOSA_DATAMODEL_TR181_DDNS     pDynamicDns   = (PCOSA_DATAMODEL_TR181_DDNS)g_pCosaBEManager->hDynamicDns;
-
+#if 0
     if (pLinkObj->bNew)
     {
         if (CosaDmlDynamicDns_Host_AddEntry(pHostEntry) != ANSC_STATUS_SUCCESS)
@@ -892,7 +922,7 @@ DDNSHostname_Commit
         }
 */
     }
-
+#endif
     return 0;
 }
 
