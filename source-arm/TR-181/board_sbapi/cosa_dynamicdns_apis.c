@@ -1060,6 +1060,8 @@ CosaDmlDynamicDns_Client_AddEntry
 
     Utopia_GetNumberOfDynamicDnsClient(&ctx, &g_NrDynamicDnsClient);
     Utopia_Free(&ctx, !rc);
+
+#if 0
     if (CosaDmlDynamicDns_GetEnable() && pEntry->Enable == TRUE)
     {
         /* reset the DynamicDNS client and host status before restart*/
@@ -1071,7 +1073,7 @@ CosaDmlDynamicDns_Client_AddEntry
             rc = update_ddns_server();
         }
     }
-
+#endif
     return (rc != 0) ? ANSC_STATUS_FAILURE : ANSC_STATUS_SUCCESS;
 }
 
@@ -1125,6 +1127,12 @@ CosaDmlDynamicDns_Client_SetConf
     UtopiaContext ctx;
     DynamicDnsClient_t  DDNSclient = {0};
 
+	ULONG InsNumber;
+	ANSC_HANDLE pHostnameInsContext = NULL;
+    PCOSA_CONTEXT_LINK_OBJECT    pHostLinkObj = NULL;
+    COSA_DML_DDNS_HOST           *pHostEntry = NULL;
+	bool bReadyUpdate = FALSE;
+
     if ((index = DynamicDns_Client_InsGetIndex(ins)) == -1 || !Utopia_Init(&ctx))
     {
         return ANSC_STATUS_FAILURE;
@@ -1169,7 +1177,24 @@ CosaDmlDynamicDns_Client_SetConf
         }
     }
 
-    if (isUserconfChanged == TRUE)
+
+	pHostnameInsContext = DDNSHostname_GetEntry(NULL, 0, &InsNumber);
+	if(pHostnameInsContext != NULL) {
+		pHostLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)pHostnameInsContext;
+		pHostEntry   = (COSA_DML_DDNS_HOST *)pHostLinkObj->hContext;
+		printf("ofw-1121: CosaDmlDynamicDns_Client_SetConf pHostEntry %08x InsNumber %d pClientEntry->Enable %d Server %s Username %s Password %s pHostEntry->Enable %d Hostname %s\n",pHostEntry,InsNumber,pEntry->Enable,pEntry->Server,pEntry->Username,pEntry->Password,pHostEntry->Enable,pHostEntry->Name);
+	}
+
+
+	if((pEntry->Enable) && (pEntry->Server[0] != '\0') && (pEntry->Username[0] != '\0') && (pEntry->Password[0] != '\0') && pHostEntry && (pHostEntry->Enable) && (pHostEntry->Name[0]!='\0')) {
+		bReadyUpdate  = TRUE;
+		printf("ofw-1121: READY to verify and update ddns server\n");
+	} else {
+		printf("ofw-1121: NOT READY to verify and update ddns server\n");
+	}
+
+
+    if ((isUserconfChanged == TRUE) && (bReadyUpdate  == TRUE))
     {
         /* reset the DynamicDNS client and host status before restart*/
         resetDynamicDNSStatus();
@@ -1399,6 +1424,13 @@ CosaDmlDynamicDns_Host_SetConf
     char name_path[sizeof(SYSCFG_HOST_NAME_KEY) + 1] = {0};
 	char host_status[2];
 
+
+	ULONG InsNumber;
+	ANSC_HANDLE pClientInsContext = NULL;
+    PCOSA_CONTEXT_LINK_OBJECT    pClientLinkObj = NULL;
+    COSA_DML_DDNS_CLIENT           *pClientEntry = NULL;
+	BOOL bReadyUpdate = FALSE;
+
     if ((index = DynamicDns_Host_InsGetIndex(ins)) == -1 || (!g_DDNSHost))
     {
         return ANSC_STATUS_FAILURE;
@@ -1427,7 +1459,23 @@ CosaDmlDynamicDns_Host_SetConf
 	if(atoi(host_status) != HOST_REGISTERED)
 		isHostchanged = TRUE;
 
-    if (CosaDmlDynamicDns_GetEnable() && (g_DDNSHost[index].Enable == TRUE)
+
+	pClientInsContext = DDNSClient_GetEntry(NULL, 0, &InsNumber);
+	if(pClientInsContext) {
+		pClientLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)pClientInsContext;
+		pClientEntry   = (COSA_DML_DDNS_CLIENT *)pClientLinkObj->hContext;
+		printf("ofw-1121: CosaDmlDynamicDns_Host_SetConf pClientEntry %08x InsNumber %d pClientEntry->Enable %d Server %s Username %s Password %s pHostEntry->Enable %d Hostname %s\n",pClientEntry,InsNumber,pClientEntry->Enable,pClientEntry->Server,pClientEntry->Username,pClientEntry->Password,pEntry->Enable,pEntry->Name);
+	}
+
+
+	if((pClientInsContext) && (pClientEntry->Enable) && (pClientEntry->Server[0] != '\0') && (pClientEntry->Username[0] != '\0') && (pClientEntry->Password[0] != '\0') && (pEntry->Enable) && (pEntry->Name[0]!='\0')) {
+		bReadyUpdate  = TRUE;
+		printf("ofw-1121: READY to verify and update ddns server\n");	
+	} else {
+		printf("ofw-1121: NOT READY to verify and update ddns server\n");
+	}
+
+    if (bReadyUpdate && CosaDmlDynamicDns_GetEnable() && (g_DDNSHost[index].Enable == TRUE)
             && (isHostchanged == TRUE) && (g_DDNSHost[index].Name[0] != '\0'))
     {
         /* reset the DynamicDNS client and host status before restart*/
