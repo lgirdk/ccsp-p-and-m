@@ -710,7 +710,7 @@ int  update_ddns_server(void)
                     printf("%s: found succeed register_success or update_success string in file /var/tmp/ipupdate.%s\n",FUNC_NAME,server_servicename);
                     ddns_return_status_success = TRUE;
                 } else if(hostname_error(server_servicename,buf) && strstr(command, buf)) {
-                    printf("%s: found succeed hostname_error string in file /var/tmp/ipupdate.%s\n",FUNC_NAME,server_servicename);
+                    printf("%s: found hostname_error string in file /var/tmp/ipupdate.%s\n",FUNC_NAME,server_servicename);
                     ddns_return_status_success = FALSE;
                     client_Lasterror = MISCONFIGURATION_ERROR;
                     strcpy(return_status,"error");
@@ -719,7 +719,7 @@ int  update_ddns_server(void)
                     || (general_error(server_servicename,buf) && strstr(command, buf))
                     || (token_error(server_servicename,buf) && strstr(command, buf))
 					|| (strstr(command, "KO"))) {
-                    printf("%s: found succeed username_error or password_error or general_error or token_error string in file /var/tmp/ipupdate.%s\n",FUNC_NAME,server_servicename);
+                    printf("%s: found username_error or password_error or general_error or token_error string in file /var/tmp/ipupdate.%s\n",FUNC_NAME,server_servicename);
                     ddns_return_status_success = FALSE;
                     client_Lasterror = AUTHENTICATION_ERROR;
                     strcpy(return_status,"error-auth");
@@ -1067,7 +1067,7 @@ CosaDmlDynamicDns_Client_AddEntry
     Utopia_GetNumberOfDynamicDnsClient(&ctx, &g_NrDynamicDnsClient);
     Utopia_Free(&ctx, !rc);
 
-#if 0
+#if 1
     if (CosaDmlDynamicDns_GetEnable() && pEntry->Enable == TRUE)
     {
         /* reset the DynamicDNS client and host status before restart*/
@@ -1188,7 +1188,7 @@ CosaDmlDynamicDns_Client_SetConf
 	if(pHostnameInsContext != NULL) {
 		pHostLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)pHostnameInsContext;
 		pHostEntry   = (COSA_DML_DDNS_HOST *)pHostLinkObj->hContext;
-		printf("ofw-1121: CosaDmlDynamicDns_Client_SetConf pHostEntry %08x InsNumber %d pClientEntry->Enable %d Server %s Username %s Password %s pHostEntry->Enable %d Hostname %s\n",pHostEntry,InsNumber,pEntry->Enable,pEntry->Server,pEntry->Username,pEntry->Password,pHostEntry->Enable,pHostEntry->Name);
+		printf("ofw-1121: Client_SetConf pClientEntry->Enable %d Server %s Username %s Password %s pHostEntry->Enable %d Hostname %s pHostEntry %08x InsNumber %d \n",pEntry->Enable,pEntry->Server,pEntry->Username,pEntry->Password,pHostEntry->Enable,pHostEntry->Name,pHostEntry,InsNumber);
 	}
 
 
@@ -1470,7 +1470,7 @@ CosaDmlDynamicDns_Host_SetConf
 	if(pClientInsContext) {
 		pClientLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)pClientInsContext;
 		pClientEntry   = (COSA_DML_DDNS_CLIENT *)pClientLinkObj->hContext;
-		printf("ofw-1121: CosaDmlDynamicDns_Host_SetConf pClientEntry %08x InsNumber %d pClientEntry->Enable %d Server %s Username %s Password %s pHostEntry->Enable %d Hostname %s\n",pClientEntry,InsNumber,pClientEntry->Enable,pClientEntry->Server,pClientEntry->Username,pClientEntry->Password,pEntry->Enable,pEntry->Name);
+		printf("ofw-1121: Host_SetConf pClientEntry->Enable %d Server %s Username %s Password %s pHostEntry->Enable %d Hostname %s pClientEntry %08x InsNumber %d\n",pClientEntry->Enable,pClientEntry->Server,pClientEntry->Username,pClientEntry->Password,pEntry->Enable,pEntry->Name,pClientEntry,InsNumber);
 	}
 
 
