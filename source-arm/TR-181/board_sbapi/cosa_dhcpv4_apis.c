@@ -4613,7 +4613,7 @@ CosaDmlLAN_Validate_ModifyLanIP(COSA_DML_LAN_Allowed_Subnet *pLanAllowedSubnet, 
 
     if(iMatchFound)
     {
-        syscfg_get(NULL, "arLanAllowedSubnet_1::SubnetIP", buff, sizeof(buff));
+        syscfg_get(NULL, "default_LanAllowedSubnet", buff, sizeof(buff));
         sscanf(buff,"%d.%d.%d.%d",&temp[0],&temp[1],&temp[2],&temp[3]);
 
         sprintf(buff, "%d.%d.%d.%d", temp[0], temp[1], temp[2], 1);
