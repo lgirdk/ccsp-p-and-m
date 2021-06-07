@@ -10976,6 +10976,22 @@ LanAllowedSubnetTable_Validate
        }
     }
 
+    if(AnscSizeOfString(pLanAllowedSubnet->Alias))
+    {
+        noOfAllowedSubnet = CosaDmlLAN_Allowed_Subnet_GetNumberOfEntries();
+        for (index = 0; index < noOfAllowedSubnet; index++)
+        {
+            CosaDmlLAN_Allowed_Subnet_GetEntryByIndex(index, &LanAllowedSubnetExist);
+            if ((strncmp(LanAllowedSubnetExist.Alias, pLanAllowedSubnet->Alias, sizeof(LanAllowedSubnetExist.Alias)) == 0))
+            {
+                CcspTraceError(("FUNC - %s: ERROR: Alias %s Already exist\n", __FUNCTION__, pLanAllowedSubnet->Alias));
+                AnscCopyString(pReturnParamName, "Alias");
+                *puLength = AnscSizeOfString("Alias");
+                return FALSE;
+            }
+        }
+    }
+
     //   DUPLICATE / OVERLAP Value Check
     if (AnscSizeOfString(pLanAllowedSubnet->SubnetIP))
     {
