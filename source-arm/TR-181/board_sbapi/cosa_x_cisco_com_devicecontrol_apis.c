@@ -1517,6 +1517,8 @@ CosaDmlDcResetBr0(char *ip, char *sub) {
 		return ANSC_STATUS_FAILURE;
 	}	
 
+	commonSyseventSet("refresh-switch", "true");
+
 	ret = CcspBaseIf_setParameterValues(
 				bus_handle,
 				ppComponents[0]->componentName,
