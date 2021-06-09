@@ -1949,7 +1949,12 @@ Port_GetParamUlongValue
         /* collect value */
         CosaDmlBrgPortGetInfo(NULL, pDmlBridge->Cfg.InstanceNumber, pPort->Cfg.InstanceNumber, &pPort->Info);
 
-        *puLong = pPort->Info.PortState;
+        if (pPort->Info.PortState == 0) {
+            //if no portState information default to disabled
+            *puLong = COSA_DML_BRG_PORT_STATE_Disabled;
+        } else {
+            *puLong = pPort->Info.PortState;
+        }
 
         return TRUE;
     }
