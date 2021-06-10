@@ -4443,5 +4443,17 @@ int CosaDmlChkDesp(char *desp)
         return FALSE;
     return TRUE;
 } 
+
+void CosaDmlNatDelDynPortMappings (void)
+{
+    int index, count = 0;
+
+    Utopia_GetDynPortMappingCount(&count);
+    for (index = count; index > 0; index--)
+    {
+        Utopia_DeleteDynPortMappingIndex(index);
+    }
+}
+
 #endif
 
