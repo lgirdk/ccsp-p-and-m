@@ -416,6 +416,10 @@ Device_SetParamBoolValue
 
     if (strcmp(ParamName, "UPnPIGD") == 0)
     {
+        if (bValue == false)
+        {
+            CosaDmlNatDelDynPortMappings();
+        }    
         /* save update to backup */
         pMyObject->bUpnpDevIgdEnable = bValue;
         CosaDmlUpnpDevEnableIgd(NULL, pMyObject->bUpnpDevIgdEnable);
