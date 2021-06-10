@@ -401,6 +401,9 @@ Device_SetParamBoolValue
         BOOL                        bValue
     )
 {
+    PCOSA_DML_NAT_PMAPPING pNatPMapping = NULL;
+    ULONG count;
+    int index, tmp;        
     UNREFERENCED_PARAMETER(hInsContext);
     PCOSA_DATAMODEL_UPNP            pMyObject    = (PCOSA_DATAMODEL_UPNP)g_pCosaBEManager->hUpnp;
     
@@ -416,6 +419,22 @@ Device_SetParamBoolValue
 
     if (strcmp(ParamName, "UPnPIGD") == 0)
     {
+        if (bValue == false)
+        {
+            pNatPMapping = CosaDmlNatGetPortMappings(NULL, &count);
+            if (pNatPMapping)
+            {
+                tmp = (pNatPMapping->InstanceNumber) + count;
+                for (index = 0; index <= tmp; index++)
+                {
+
+                    if (strcmp(pNatPMapping[index].RuleSource, "UPnP") == 0)
+                    {
+                        CosaDmlNatDelPortMapping(NULL, pNatPMapping[index].InstanceNumber);
+                    }
+                }
+            }
+        }    
         /* save update to backup */
         pMyObject->bUpnpDevIgdEnable = bValue;
         CosaDmlUpnpDevEnableIgd(NULL, pMyObject->bUpnpDevIgdEnable);
