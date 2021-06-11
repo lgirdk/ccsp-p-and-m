@@ -4640,10 +4640,10 @@ CosaDmlLAN_Validate_ModifyLanIP(COSA_DML_LAN_Allowed_Subnet *pLanAllowedSubnet, 
         PSM_Set_Record_Value2(bus_handle, g_Subsystem, "dmsb.l3net.4.V4Addr", ccsp_string, buff);
         syscfg_set(NULL, "lan_ipaddr", buff);
 
-        sprintf(tmpbuff, "%d.%d.%d.%d", temp[0], temp[1], temp[2], 2);
+        sprintf(tmpbuff, "%d.%d.%d.%d", temp[0], temp[1], temp[2], 10);
         syscfg_set(NULL, "dhcp_start", tmpbuff);
 
-        sprintf(tmpbuff, "%d.%d.%d.%d", temp[0], temp[1], temp[2], 253);
+        sprintf(tmpbuff, "%d.%d.%d.%d", temp[0], temp[1], temp[2], 254);
         syscfg_set(NULL, "dhcp_end", tmpbuff);
 
         syscfg_get(NULL, "arLanAllowedSubnet_1::SubnetMask", buff, sizeof(buff));
