@@ -117,6 +117,8 @@
   #include "linux/if.h"
 #endif
 
+extern void *g_pDslhDmlAgent;
+
 static int saveID(char* ifName, char* pAlias, ULONG ulInstanceNumber);
 static int loadID(char* ifName, char* pAlias, ULONG* ulInstanceNumber);
 //static int saveLinkID(char* ifName, char* pAlias, ULONG ulInstanceNumber);
@@ -529,6 +531,54 @@ CosaDmlEthPortGetCfg
     pCfg->InstanceNumber = pEthIf->instanceNumber;
 
     return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS CosaDmlEEEPortGetPsmCfg (ULONG ulInstanceNumber, PCOSA_DML_ETH_PORT_CFG pCfg)
+{
+    char recName[50];
+    char *strValue = NULL;
+    int retPsmGet;
+    int portIdx;
+
+    portIdx = getPortID(ulInstanceNumber);
+
+    if ((portIdx < CCSP_HAL_ETHSW_EthPort1) || (portIdx > CCSP_HAL_ETHSW_EthPort4))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    snprintf(recName, sizeof(recName), "Device.Ethernet.Interface.%d.EEEEnable", portIdx);
+    retPsmGet = PSM_Get_Record_Value2(g_MessageBusHandle, g_GetSubsystemPrefix(g_pDslhDmlAgent), recName, NULL, &strValue);
+    if ((retPsmGet == CCSP_SUCCESS) && (strValue != NULL))
+    {
+        pCfg->bEEEEnabled = (strcasecmp(strValue, "true") == 0) ? TRUE : FALSE;
+        ((CCSP_MESSAGE_BUS_INFO *)g_MessageBusHandle)->freefunc(strValue);
+    }
+
+    return retPsmGet;
+}
+
+ANSC_STATUS CosaDmlEEEPortSetPsmCfg (ULONG ulInstanceNumber, PCOSA_DML_ETH_PORT_CFG pCfg)
+{
+    char recName[50];
+    int retPsmSet;
+    int portIdx;
+
+    portIdx = getPortID(ulInstanceNumber);
+
+    if ((portIdx < CCSP_HAL_ETHSW_EthPort1) || (portIdx > CCSP_HAL_ETHSW_EthPort4))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    snprintf(recName, sizeof(recName), "Device.Ethernet.Interface.%d.EEEEnable", portIdx);
+    retPsmSet = PSM_Set_Record_Value2(g_MessageBusHandle, g_GetSubsystemPrefix(g_pDslhDmlAgent), recName, ccsp_string, pCfg->bEEEEnabled ? "true" : "false");
+    if (retPsmSet != CCSP_SUCCESS)
+    {
+        CcspTraceWarning(("%s - PSM_Set_Record_Value2 error %d setting %s\n", __FUNCTION__, retPsmSet, recName));
+    }
+
+    return retPsmSet;
 }
 
 ANSC_STATUS
@@ -1713,7 +1763,9 @@ int puma6_getEntry(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_FULL pEntry)
             }
         }
 
-	pcfg->bEEEEnabled = fullEntry.bEEEPortEnable;
+        /* Get value from PSM and set in HAL */
+        CosaDmlEEEPortGetPsmCfg(port,pcfg);
+        CosaDmlEEEPortSetCfg(port,pcfg);
     }
     else
     {

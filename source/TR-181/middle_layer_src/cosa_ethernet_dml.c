@@ -500,6 +500,7 @@ Interface_GetParamBoolValue
 
     if (strcmp(ParamName, "EEEEnable") == 0)
     {
+        CosaDmlEEEPortGetPsmCfg(pEthernetPortFull->Cfg.InstanceNumber, &pEthernetPortFull->Cfg);
         *pBool = pEthernetPortFull->Cfg.bEEEEnabled;
         return TRUE;
     }
@@ -871,6 +872,8 @@ Interface_SetParamBoolValue
     if (strcmp(ParamName, "EEEEnable") == 0)
     {
         pEthernetPortFull->Cfg.bEEEEnabled = bValue;
+        CosaDmlEEEPortSetPsmCfg(pEthernetPortFull->Cfg.InstanceNumber, &pEthernetPortFull->Cfg);
+        CosaDmlEEEPortSetCfg(pEthernetPortFull->Cfg.InstanceNumber, &pEthernetPortFull->Cfg);
         return TRUE;
     }
 
