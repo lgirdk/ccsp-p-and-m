@@ -1547,6 +1547,11 @@ int puma6_getSwitchStats(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_STATS pStats){
 
 int puma6_getEntry(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_FULL pEntry)
 {
+    char *strValue = NULL;
+    char recName[256];
+    extern ANSC_HANDLE bus_handle;
+    extern char g_Subsystem[32];
+    char *eeeenabled = "Device.Ethernet.Interface.%d.EEEEnable";
     CCSP_HAL_ETHSW_PORT         port        = *((PCCSP_HAL_ETHSW_PORT)eth->hwid);
     CCSP_HAL_ETH_FULL_CFG       fullEntry;
     PCOSA_DML_ETH_PORT_CFG      pcfg = &(pEntry->Cfg);
@@ -1715,7 +1720,19 @@ int puma6_getEntry(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_FULL pEntry)
             }
         }
 
-	pcfg->bEEEEnabled = fullEntry.bEEEPortEnable;
+        /*Reading eeeenable value from psm*/
+        sprintf(recName, eeeenabled, port);
+        if (CCSP_SUCCESS == PSM_Get_Record_Value2(bus_handle,
+                                                  g_Subsystem, recName, NULL, &strValue))
+            if (0 == strcmp(strValue, "true"))
+            {
+                pcfg->bEEEEnabled = TRUE;
+            }
+            else
+            {
+                pcfg->bEEEEnabled = FALSE;
+            }
+            ((CCSP_MESSAGE_BUS_INFO *)bus_handle)->freefunc(strValue);
     }
     else
     {
