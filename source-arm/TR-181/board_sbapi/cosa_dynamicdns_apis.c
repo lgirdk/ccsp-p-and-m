@@ -243,7 +243,7 @@ static int resetDynamicDNSStatus(void)
 
 
 #define GENERAL_FILE "/tmp/ddns-general.trace"
-#define OUTPUT_FILE "/var/tmp/ez-ipupdate.out"
+#define OUTPUT_FILE "/var/tmp/ipupdate.out"
 #define UPDATING_CHECK_FILE "/var/tmp/updating_ddns_server.txt"
 
 //For service dyndns: searching keywords in OUTPUT_FILE /var/tmp/ez-ipupdate.out
@@ -633,8 +633,8 @@ int  update_ddns_server(void)
         sprintf(command,"/usr/bin/curl --interface erouter0 -o /var/tmp/ipupdate.%s --url 'http://nic.changeip.com/nic/update?u=%s&p=%s&hostname=%s&ip=%s' --trace-ascii %s > %s 2>&1",
                 server_servicename,client_username,client_password,host_name,wan_ipaddr,GENERAL_FILE,OUTPUT_FILE);
     } else if (strcmp(server_servicename,"dyndns") == 0) {
-        sprintf(command, "/usr/bin/ez-ipupdate --interface=erouter0  --max-interval=2073600 --service-type=%s --user=%s:%s --host=%s --address=%s > %s 2>&1",
-                server_servicename,client_username,client_password,host_name,wan_ipaddr,OUTPUT_FILE);
+        sprintf(command, "/usr/bin/curl --interface erouter0 -o /var/tmp/ipupdate.%s --user %s:%s --url 'http://members.dyndns.org/nic/update?hostname=%s&myip=%s' --trace-ascii %s > %s 2>&1",
+                server_servicename,client_username,client_password,host_name,wan_ipaddr,GENERAL_FILE,OUTPUT_FILE);
     } else if (strcmp(server_servicename,"afraid") == 0) {
         sprintf(command, "/usr/bin/curl --interface erouter0 -o /var/tmp/ipupdate.%s --user %s:%s --insecure --url 'https://freedns.afraid.org/nic/update?hostname=%s&myip=%s' --trace-ascii %s > %s 2>&1",
                 server_servicename,client_username,client_password,host_name,wan_ipaddr,GENERAL_FILE,OUTPUT_FILE);
@@ -651,113 +651,71 @@ int  update_ddns_server(void)
     ret = system(command);
 
     //analyze the result of command and set syscfg ddns_client_Lasterror / sysevent ddns_return_status here based on the error
-    if(strcmp(server_servicename,"dyndns") == 0) {       //service dyndns
-        if(0 == ret) { // usr/bin/ez-ipupdate succeed
-            printf("%s: servicename %s command succeed\n",FUNC_NAME,server_servicename);
-            ddns_return_status_success = TRUE;
+    if(0 == ret) { ///usr/bin/curl succeed
+        printf("%s: servicename %s command succeed\n",FUNC_NAME,server_servicename);
 
-        } else { ///usr/bin/ez-ipupdate failed
-            printf("%s: servicename %s command failed\n",FUNC_NAME,server_servicename);
+        sprintf(buf, "/var/tmp/ipupdate.%s",server_servicename);
+        output_file = fopen(buf, "r");
+        if (output_file == NULL) {
             ddns_return_status_success = FALSE;
-
-            output_file = fopen(OUTPUT_FILE, "r");
-            if (output_file == NULL) {
-                printf("%s: failed to open %s\n",FUNC_NAME, OUTPUT_FILE);
-                client_Lasterror = DNS_ERROR;
-                strcpy(return_status,"error");
-                goto EXIT;
-            }
-            while(fgets(command,COMMAND_BUF_LENGTH, output_file) != NULL) {
-                if(strstr(command, DYNDNS_ERROR_CONNECTING)) {
-                    printf("%s: found error %s in file %s\n",FUNC_NAME,DYNDNS_ERROR_CONNECTING,OUTPUT_FILE);
-                    client_Lasterror = CONNECTION_ERROR;
-                    strcpy(return_status,"error-connect");
-                } else if(strstr(command, DYNDNS_AUTHENTICATION_FAIL)) {
-                    printf("%s: found error %s in file %s\n",FUNC_NAME,DYNDNS_AUTHENTICATION_FAIL,OUTPUT_FILE);
-                    client_Lasterror = AUTHENTICATION_ERROR;
-                    strcpy(return_status,"error-auth");
-                } else if(strstr(command, DYNDNS_INVALID_HOSTNAME)) {
-                    printf("%s: found error %s in file %s\n",FUNC_NAME,DYNDNS_INVALID_HOSTNAME,OUTPUT_FILE);
-                    client_Lasterror = MISCONFIGURATION_ERROR;
-                    strcpy(return_status,"error");
-                } else if(strstr(command, DYNDNS_MALFORMED_HOSTNAME)) {
-                    printf("%s: found error %s in file %s\n",FUNC_NAME,DYNDNS_MALFORMED_HOSTNAME,OUTPUT_FILE);
-                    client_Lasterror = MISCONFIGURATION_ERROR;
-                    strcpy(return_status,"error");
-                } else {
-                    client_Lasterror = DNS_ERROR;   //by default
-                    strcpy(return_status,"error");
-                }
-            }
-            fclose(output_file);
+            client_Lasterror = DNS_ERROR;
+            strcpy(return_status,"error");
+            printf("%s: failed to open %s\n",FUNC_NAME, buf);
+            goto EXIT;
         }
-    } else { //service !dyndns
-        if(0 == ret) { ///usr/bin/curl succeed
-            printf("%s: servicename %s command succeed\n",FUNC_NAME,server_servicename);
-
-            sprintf(buf, "/var/tmp/ipupdate.%s",server_servicename);
-            output_file = fopen(buf, "r");
-            if (output_file == NULL) {
-                ddns_return_status_success = FALSE;
-                client_Lasterror = DNS_ERROR;
-                strcpy(return_status,"error");
-                printf("%s: failed to open %s\n",FUNC_NAME, buf);
-                goto EXIT;
+        while(fgets(command,COMMAND_BUF_LENGTH, output_file) != NULL) {
+            if((register_success(server_servicename,buf) && strstr(command, buf))
+                 || (update_success(server_servicename,buf) && strstr(command, buf))) {
+                  printf("%s: found succeed register_success or update_success string in file /var/tmp/ipupdate.%s\n",FUNC_NAME,server_servicename);
+                  ddns_return_status_success = TRUE;
+            } else if(hostname_error(server_servicename,buf) && strstr(command, buf)) {
+                  printf("%s: found hostname_error string in file /var/tmp/ipupdate.%s\n",FUNC_NAME,server_servicename);
+                  ddns_return_status_success = FALSE;
+                  client_Lasterror = MISCONFIGURATION_ERROR;
+                  strcpy(return_status,"error");
+            } else if((username_error(server_servicename,buf) && strstr(command, buf))
+                  || (password_error(server_servicename,buf) && strstr(command, buf))
+                  || (general_error(server_servicename,buf) && strstr(command, buf))
+                  || (token_error(server_servicename,buf) && strstr(command, buf))
+				|| (strstr(command, "KO"))) {
+                  printf("%s: found username_error or password_error or general_error or token_error string in file /var/tmp/ipupdate.%s\n",FUNC_NAME,server_servicename);
+                  ddns_return_status_success = FALSE;
+                  client_Lasterror = AUTHENTICATION_ERROR;
+                  strcpy(return_status,"error-auth");
+            } else {
+                  ddns_return_status_success = FALSE;
+                  printf("%s: didn't find expected result in file /var/tmp/ipupdate.%s\n",FUNC_NAME,server_servicename);
+                  client_Lasterror = AUTHENTICATION_ERROR;
+                  strcpy(return_status,"error-auth");
             }
-            while(fgets(command,COMMAND_BUF_LENGTH, output_file) != NULL) {
-                if((register_success(server_servicename,buf) && strstr(command, buf))
-                    || (update_success(server_servicename,buf) && strstr(command, buf))) {
-                    printf("%s: found succeed register_success or update_success string in file /var/tmp/ipupdate.%s\n",FUNC_NAME,server_servicename);
-                    ddns_return_status_success = TRUE;
-                } else if(hostname_error(server_servicename,buf) && strstr(command, buf)) {
-                    printf("%s: found hostname_error string in file /var/tmp/ipupdate.%s\n",FUNC_NAME,server_servicename);
-                    ddns_return_status_success = FALSE;
-                    client_Lasterror = MISCONFIGURATION_ERROR;
-                    strcpy(return_status,"error");
-                } else if((username_error(server_servicename,buf) && strstr(command, buf))
-                    || (password_error(server_servicename,buf) && strstr(command, buf))
-                    || (general_error(server_servicename,buf) && strstr(command, buf))
-                    || (token_error(server_servicename,buf) && strstr(command, buf))
-					|| (strstr(command, "KO"))) {
-                    printf("%s: found username_error or password_error or general_error or token_error string in file /var/tmp/ipupdate.%s\n",FUNC_NAME,server_servicename);
-                    ddns_return_status_success = FALSE;
-                    client_Lasterror = AUTHENTICATION_ERROR;
-                    strcpy(return_status,"error-auth");
-                } else {
-                    ddns_return_status_success = FALSE;
-                    printf("%s: didn't find expected result in file /var/tmp/ipupdate.%s\n",FUNC_NAME,server_servicename);
-                    client_Lasterror = AUTHENTICATION_ERROR;
-                    strcpy(return_status,"error-auth");
-                }
-            }
-            fclose(output_file);
-        } else {    ///usr/bin/curl failed
-
-            printf("%s: servicename %s command failed\n",FUNC_NAME,server_servicename);
-            ddns_return_status_success = FALSE;
-
-            output_file = fopen(GENERAL_FILE, "r");
-            if (output_file == NULL) {
-                client_Lasterror = DNS_ERROR;
-                strcpy(return_status,"error");
-                printf("%s: failed to open %s\n",FUNC_NAME, GENERAL_FILE);
-                goto EXIT;
-            }
-            while(fgets(command,COMMAND_BUF_LENGTH, output_file) != NULL) {
-                if((strstr(command, CONNECTING1_ERROR)) || (strstr(command, CONNECTING2_ERROR))) {
-                    printf("%s: found error %s or %s in file %s\n",FUNC_NAME,CONNECTING1_ERROR,CONNECTING2_ERROR, GENERAL_FILE);
-                    client_Lasterror = CONNECTION_ERROR;
-                    strcpy(return_status,"error-connect");
-                } else {
-                    printf("%s: found error %s or no keyword in file %s\n",FUNC_NAME,RESOLVE_ERRO,GENERAL_FILE);
-                    client_Lasterror = CONNECTION_ERROR;
-                    strcpy(return_status,"error");
-                }
-            }
-            fclose(output_file);
         }
+        fclose(output_file);
+    } else {    ///usr/bin/curl failed
+        CcspTraceWarning(("%s: servicename %s command failed\n",FUNC_NAME,server_servicename));
+        printf("%s: servicename %s command failed\n",FUNC_NAME,server_servicename);
+        ddns_return_status_success = FALSE;
+
+        output_file = fopen(GENERAL_FILE, "r");
+        if (output_file == NULL) {
+             client_Lasterror = DNS_ERROR;
+             strcpy(return_status,"error");
+             printf("%s: failed to open %s\n",FUNC_NAME, GENERAL_FILE);
+             goto EXIT;
+        }
+        while(fgets(command,COMMAND_BUF_LENGTH, output_file) != NULL) {
+             if((strstr(command, CONNECTING1_ERROR)) || (strstr(command, CONNECTING2_ERROR))) {
+                 printf("%s: found error %s or %s in file %s\n",FUNC_NAME,CONNECTING1_ERROR,CONNECTING2_ERROR, GENERAL_FILE);
+                 client_Lasterror = CONNECTION_ERROR;
+                 strcpy(return_status,"error-connect");
+             } else {
+                 printf("%s: found error %s or no keyword in file %s\n",FUNC_NAME,RESOLVE_ERRO,GENERAL_FILE);
+                 client_Lasterror = CONNECTION_ERROR;
+                 strcpy(return_status,"error");
+             }
+        }
+        fclose(output_file);
     }
-
+ 
 EXIT:
 
     if(ddns_return_status_success == TRUE) {
@@ -830,7 +788,7 @@ EXIT:
         sysevent_set(se_fd, se_token, "ddns_updated_time", "0", 0);
 
         syscfg_commit();
-        printf("%s: return -1 because curl or ez-ipupdate command return !0 or found error message in output file\n",FUNC_NAME);
+        printf("%s: return -1 because curl command return !0 or found error message in output file\n",FUNC_NAME);
         ret = -1;
     }
 
@@ -1751,11 +1709,6 @@ CosaDmlDynamicDns_Server_SetConf
     if ((index = DynamicDns_Server_InsGetIndex(ins)) == -1 || (!g_DDNSServer))
     {
         return ANSC_STATUS_FAILURE;
-    }
-
-    if (vsystem("killall -9 ez-ipupdate") != 0)
-    {
-       fprintf(stderr, "%s: fail to killall ez-ipupdate\n", __FUNCTION__);
     }
 
     snprintf(enable_path, sizeof(enable_path), SYSCFG_SERVER_ENABLE_KEY, index + 1);
