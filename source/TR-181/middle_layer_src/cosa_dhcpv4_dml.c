@@ -10981,6 +10981,10 @@ LanAllowedSubnetTable_Validate
         noOfAllowedSubnet = CosaDmlLAN_Allowed_Subnet_GetNumberOfEntries();
         for (index = 0; index < noOfAllowedSubnet; index++)
         {
+            // Avoid checking duplicate entry for the same index
+            if (LANAllowedSubnet_InsGetIndex(pLanAllowedSubnet->InstanceNumber) == index)
+                continue;
+
             CosaDmlLAN_Allowed_Subnet_GetEntryByIndex(index, &LanAllowedSubnetExist);
             if ((strncmp(LanAllowedSubnetExist.Alias, pLanAllowedSubnet->Alias, sizeof(LanAllowedSubnetExist.Alias)) == 0))
             {
