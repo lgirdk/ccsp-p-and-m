@@ -11109,6 +11109,8 @@
 
             <syntax>string</syntax>
 
+            <notify>off</notify>
+
             <writable>true</writable>
 
           </parameter>
@@ -11132,6 +11134,8 @@
             <type>unsignedInt</type>
 
             <syntax>uint32</syntax>
+
+            <notify>off</notify>
 
             <writable>true</writable>
 
