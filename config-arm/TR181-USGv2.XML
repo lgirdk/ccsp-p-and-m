@@ -4771,8 +4771,6 @@
 
               <syntax>uint32</syntax>
 
-              <notify>off</notify>
-
             </parameter>
 
             <parameter>
