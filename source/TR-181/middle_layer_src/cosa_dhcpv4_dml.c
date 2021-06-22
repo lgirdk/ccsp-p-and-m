@@ -8094,7 +8094,6 @@ StaticAddress_Validate
     int                             rc                = -1;
     int                             i                 = 0;
     ULONG                           ipaddr, netmask, gateway;
-    char 			    			temp[20], YiaddrIP1[64],YiaddrIP2[64];
 
     /* Parent hasn't set, we don't permit child is set.*/
     if ( pCxtPoolLink->bNew )
@@ -8113,7 +8112,6 @@ StaticAddress_Validate
         pSListEntry       = AnscSListGetNextEntry(pSListEntry);
 
         pDhcpStaAddr2  = (PCOSA_DML_DHCPS_SADDR)pCxtLink2->hContext;
-        sprintf(temp, "%x:%x:%x:%x:%x:%x", pDhcpStaAddr2->Chaddr[0],pDhcpStaAddr2->Chaddr[1],pDhcpStaAddr2->Chaddr[2],pDhcpStaAddr2->Chaddr[3],pDhcpStaAddr2->Chaddr[4],pDhcpStaAddr2->Chaddr[5]);
         if( DHCPV4_STATICADDRESS_ENTRY_MATCH2(pDhcpStaAddr->Alias, pDhcpStaAddr2->Alias ) )
         {
             if ( (ANSC_HANDLE)pCxtLink2 == hInsContext )
@@ -8124,9 +8122,9 @@ StaticAddress_Validate
             bFound = TRUE;
             break;
         }
-        if (strcmp(pDhcpStaAddr->Chaddr, pDhcpStaAddr2->Chaddr) == 0)
+        if (memcmp(pDhcpStaAddr->Chaddr, pDhcpStaAddr2->Chaddr, 6) == 0)
         {
-            if ( (ANSC_HANDLE)pCxtLink2 == hInsContext || strcmp(temp, "0:0:0:0:0:0") == 0)
+            if ( (ANSC_HANDLE)pCxtLink2 == hInsContext || memcmp(pDhcpStaAddr2->Chaddr, "\x00\x00\x00\x00\x00\x00", 6) == 0)
             {
                 continue;
             }
@@ -8134,11 +8132,9 @@ StaticAddress_Validate
             bFound = TRUE;
             break;
         }
-        inet_ntop(AF_INET, &pDhcpStaAddr->Yiaddr.Value, YiaddrIP1, sizeof(YiaddrIP1));
-        inet_ntop(AF_INET, &pDhcpStaAddr2->Yiaddr.Value, YiaddrIP2, sizeof(YiaddrIP2));
-        if (strcmp(YiaddrIP1, YiaddrIP2) == 0)
+        if (pDhcpStaAddr->Yiaddr.Value == pDhcpStaAddr2->Yiaddr.Value)
         {
-            if ( (ANSC_HANDLE)pCxtLink2 == hInsContext || strcmp(YiaddrIP2, "0.0.0.0") == 0)
+            if ( (ANSC_HANDLE)pCxtLink2 == hInsContext || pDhcpStaAddr2->Yiaddr.Value == 0)
             {
                 continue;
             }
