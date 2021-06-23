@@ -8731,7 +8731,7 @@ dhcpv6c_dbg_thrd(void * in)
 			#ifdef _COSA_INTEL_XB3_ARM_
                         v_secure_system("ip -6 route add %s dev %s table erouter", v6pref, COSA_DML_DHCPV6_SERVER_IFNAME);
 			#endif
-#ifndef _PLATFORM_PUMA6_ARM_
+#ifndef _PUMA6_ARM_
                         CosaDmlDHCPv6sTriggerRestart(FALSE);
 #if defined(_COSA_BCM_ARM_) || defined(INTEL_PUMA7)
                         CcspTraceWarning((" %s dhcpv6_assign_global_ip to brlan0 \n", __FUNCTION__));
@@ -8788,7 +8788,7 @@ dhcpv6c_dbg_thrd(void * in)
 			    CcspTraceWarning(("%s: setting lan-restart\n", __FUNCTION__));
                             commonSyseventSet("lan-restart", "1");
                         }
-#endif //_PLATFORM_PUMA6_ARM_
+#endif //_PUMA6_ARM_
 #endif
 #else
 #if defined(FEATURE_RDKB_WAN_MANAGER)
