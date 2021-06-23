@@ -138,12 +138,20 @@ static int writeToJson(char *data, char *file);
 #include "ccsp_vendor.h"
 #endif
 
+#ifdef _PUMA6_ARM_
+#define CONFIG_TI_GW_DESCRIPTION "DOCSIS 3.0 Cable Modem"
+#endif
+
 /*
    Temp fallback definitions - not expected to be used.
 */
 #ifndef CONFIG_VENDOR_NAME
 #define CONFIG_VENDOR_NAME "Liberty Global"
-#define CONFIG_VENDOR_ID "0x5C353B"
+#endif
+#ifndef CONFIG_VENDOR_ID
+#define CONFIG_VENDOR_ID "123456"
+#endif
+#ifndef CONFIG_TI_GW_DESCRIPTION
 #define CONFIG_TI_GW_DESCRIPTION "Cable Modem"
 #endif
 
