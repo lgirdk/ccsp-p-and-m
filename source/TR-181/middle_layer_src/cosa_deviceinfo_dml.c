@@ -1918,7 +1918,7 @@ DeviceInfo_SetParamStringValue
 	  if(ANSC_STATUS_SUCCESS != ret)
 	    return FALSE;
 
-        if (syscfg_set(NULL, "redirection_url", wrapped_inputparam) != 0)
+        if (syscfg_set(NULL, "redirection_url", pString) != 0)
         {
             AnscTraceWarning(("syscfg_set failed\n"));
             return FALSE;
@@ -1931,9 +1931,9 @@ DeviceInfo_SetParamStringValue
                 return FALSE;
             }
             char url[400];
-            snprintf(url,sizeof(url),"/etc/whitelist.sh %s",wrapped_inputparam);
+            snprintf(url,sizeof(url),"/etc/whitelist.sh '%s'", pString);
             system(url);
-            AnscCopyString(pMyObject->WebURL, wrapped_inputparam);
+            AnscCopyString(pMyObject->WebURL, pString);
             CcspTraceWarning(("CaptivePortal:Cloud URL is changed, new URL is %s ...\n",pMyObject->WebURL));
             return TRUE;
        }
