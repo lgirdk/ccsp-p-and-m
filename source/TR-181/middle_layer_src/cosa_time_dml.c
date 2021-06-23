@@ -695,12 +695,12 @@ Time_SetParamStringValue
 	    return FALSE;
 
         /* save update to backup */
-        AnscCopyString(pMyObject->TimeCfg.NTPServer1.ActiveValue, wrapped_inputparam);
+        AnscCopyString(pMyObject->TimeCfg.NTPServer1.ActiveValue, pString);
     	CcspTraceWarning(("Service_NTP : Setting NTPServer as %s \n",pMyObject->TimeCfg.NTPServer1.ActiveValue)); 
 
         AnscCopyString(pMyObject->TimeCfg.NTPServer1.UpdateSource, requestorStr);
         if( (PartnerID[ 0 ] != '\0') )
-             UpdateJsonParam("Device.Time.NTPServer1",PartnerID, wrapped_inputparam, requestorStr, currentTime);
+             UpdateJsonParam("Device.Time.NTPServer1",PartnerID, pString, requestorStr, currentTime);
         return TRUE;
     }
 
@@ -713,10 +713,10 @@ Time_SetParamStringValue
 	    return FALSE;
 
         /* save update to backup */
-        AnscCopyString(pMyObject->TimeCfg.NTPServer2.ActiveValue, wrapped_inputparam);
+        AnscCopyString(pMyObject->TimeCfg.NTPServer2.ActiveValue, pString);
         AnscCopyString(pMyObject->TimeCfg.NTPServer2.UpdateSource, requestorStr);
         if( (PartnerID[ 0 ] != '\0') )
-             UpdateJsonParam("Device.Time.NTPServer2",PartnerID, wrapped_inputparam, requestorStr, currentTime);
+             UpdateJsonParam("Device.Time.NTPServer2",PartnerID, pString, requestorStr, currentTime);
         return TRUE;
     }
 
@@ -729,10 +729,10 @@ Time_SetParamStringValue
 	    return FALSE;
 
         /* save update to backup */
-        AnscCopyString(pMyObject->TimeCfg.NTPServer3.ActiveValue, wrapped_inputparam);
+        AnscCopyString(pMyObject->TimeCfg.NTPServer3.ActiveValue, pString);
         AnscCopyString(pMyObject->TimeCfg.NTPServer3.UpdateSource, requestorStr);
         if( (PartnerID[ 0 ] != '\0') )
-             UpdateJsonParam("Device.Time.NTPServer3",PartnerID, wrapped_inputparam, requestorStr, currentTime);
+             UpdateJsonParam("Device.Time.NTPServer3",PartnerID, pString, requestorStr, currentTime);
         return TRUE;
     }
 
@@ -745,10 +745,10 @@ Time_SetParamStringValue
 	    return FALSE;
 
         /* save update to backup */
-        AnscCopyString(pMyObject->TimeCfg.NTPServer4.ActiveValue, wrapped_inputparam);
+        AnscCopyString(pMyObject->TimeCfg.NTPServer4.ActiveValue, pString);
         AnscCopyString(pMyObject->TimeCfg.NTPServer4.UpdateSource, requestorStr);
         if( (PartnerID[ 0 ] != '\0') )
-             UpdateJsonParam("Device.Time.NTPServer4",PartnerID, wrapped_inputparam, requestorStr, currentTime);
+             UpdateJsonParam("Device.Time.NTPServer4",PartnerID, pString, requestorStr, currentTime);
         return TRUE;
     }
 
@@ -761,10 +761,10 @@ Time_SetParamStringValue
 	    return FALSE;
 
         /* save update to backup */
-        AnscCopyString(pMyObject->TimeCfg.NTPServer5.ActiveValue, wrapped_inputparam);
+        AnscCopyString(pMyObject->TimeCfg.NTPServer5.ActiveValue, pString);
         AnscCopyString(pMyObject->TimeCfg.NTPServer5.UpdateSource, requestorStr);
         if( (PartnerID[ 0 ] != '\0') )
-             UpdateJsonParam("Device.Time.NTPServer5",PartnerID, wrapped_inputparam, requestorStr, currentTime);
+             UpdateJsonParam("Device.Time.NTPServer5",PartnerID, pString, requestorStr, currentTime);
         return TRUE;
     }
 
