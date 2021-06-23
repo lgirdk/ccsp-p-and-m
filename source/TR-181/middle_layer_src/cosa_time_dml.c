@@ -797,7 +797,7 @@ Time_SetParamStringValue
             return FALSE;
 
         /* save update to backup */
-        rc = strcpy_s(pMyObject->TimeCfg.NTPServer1.ActiveValue,sizeof(pMyObject->TimeCfg.NTPServer1.ActiveValue), wrapped_inputparam);
+        rc = strcpy_s(pMyObject->TimeCfg.NTPServer1.ActiveValue,sizeof(pMyObject->TimeCfg.NTPServer1.ActiveValue), pString);
         if(rc != EOK)
         {
             ERR_CHK(rc);
@@ -812,7 +812,7 @@ Time_SetParamStringValue
             return FALSE;
         }
         if( (PartnerID[ 0 ] != '\0') )
-             UpdateJsonParam("Device.Time.NTPServer1",PartnerID, wrapped_inputparam, requestorStr, currentTime);
+             UpdateJsonParam("Device.Time.NTPServer1",PartnerID, pString, requestorStr, currentTime);
         return TRUE;
     }
 
@@ -825,7 +825,7 @@ Time_SetParamStringValue
             return FALSE;
 
         /* save update to backup */
-        rc = strcpy_s(pMyObject->TimeCfg.NTPServer2.ActiveValue,sizeof(pMyObject->TimeCfg.NTPServer2.ActiveValue), wrapped_inputparam);
+        rc = strcpy_s(pMyObject->TimeCfg.NTPServer2.ActiveValue,sizeof(pMyObject->TimeCfg.NTPServer2.ActiveValue), pString);
         if(rc != EOK)
         {
             ERR_CHK(rc);
@@ -838,7 +838,7 @@ Time_SetParamStringValue
             return FALSE;
         }
         if( (PartnerID[ 0 ] != '\0') )
-             UpdateJsonParam("Device.Time.NTPServer2",PartnerID, wrapped_inputparam, requestorStr, currentTime);
+             UpdateJsonParam("Device.Time.NTPServer2",PartnerID, pString, requestorStr, currentTime);
         return TRUE;
     }
 
@@ -851,7 +851,7 @@ Time_SetParamStringValue
             return FALSE;
 
         /* save update to backup */
-        rc = strcpy_s(pMyObject->TimeCfg.NTPServer3.ActiveValue,sizeof(pMyObject->TimeCfg.NTPServer3.ActiveValue), wrapped_inputparam);
+        rc = strcpy_s(pMyObject->TimeCfg.NTPServer3.ActiveValue,sizeof(pMyObject->TimeCfg.NTPServer3.ActiveValue), pString);
         if(rc != EOK)
         {
             ERR_CHK(rc);
@@ -864,7 +864,7 @@ Time_SetParamStringValue
             return FALSE;
         }
         if( (PartnerID[ 0 ] != '\0') )
-             UpdateJsonParam("Device.Time.NTPServer3",PartnerID, wrapped_inputparam, requestorStr, currentTime);
+             UpdateJsonParam("Device.Time.NTPServer3",PartnerID, pString, requestorStr, currentTime);
         return TRUE;
     }
 
@@ -877,7 +877,7 @@ Time_SetParamStringValue
             return FALSE;
 
         /* save update to backup */
-        rc = strcpy_s(pMyObject->TimeCfg.NTPServer4.ActiveValue,sizeof(pMyObject->TimeCfg.NTPServer4.ActiveValue), wrapped_inputparam);
+        rc = strcpy_s(pMyObject->TimeCfg.NTPServer4.ActiveValue,sizeof(pMyObject->TimeCfg.NTPServer4.ActiveValue), pString);
         if(rc != EOK)
         {
             ERR_CHK(rc);
@@ -890,7 +890,7 @@ Time_SetParamStringValue
             return FALSE;
         }
         if( (PartnerID[ 0 ] != '\0') )
-             UpdateJsonParam("Device.Time.NTPServer4",PartnerID, wrapped_inputparam, requestorStr, currentTime);
+             UpdateJsonParam("Device.Time.NTPServer4",PartnerID, pString, requestorStr, currentTime);
         return TRUE;
     }
 
@@ -903,7 +903,7 @@ Time_SetParamStringValue
             return FALSE;
 
         /* save update to backup */
-        rc = strcpy_s(pMyObject->TimeCfg.NTPServer5.ActiveValue,sizeof(pMyObject->TimeCfg.NTPServer5.ActiveValue), wrapped_inputparam);
+        rc = strcpy_s(pMyObject->TimeCfg.NTPServer5.ActiveValue,sizeof(pMyObject->TimeCfg.NTPServer5.ActiveValue), pString);
         if(rc != EOK)
         {
             ERR_CHK(rc);
@@ -916,7 +916,7 @@ Time_SetParamStringValue
             return FALSE;
         }
         if( (PartnerID[ 0 ] != '\0') )
-             UpdateJsonParam("Device.Time.NTPServer5",PartnerID, wrapped_inputparam, requestorStr, currentTime);
+             UpdateJsonParam("Device.Time.NTPServer5",PartnerID, pString, requestorStr, currentTime);
         return TRUE;
     }
 
