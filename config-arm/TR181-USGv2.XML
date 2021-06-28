@@ -17534,7 +17534,7 @@
             <name>ManualPrefixes</name>
             <type>string</type>
             <syntax>string</syntax>
-            <writable>true</writable>
+            <writable>false</writable>
           </parameter>
           <parameter>
             <name>Prefixes</name>
@@ -17575,43 +17575,43 @@
             <name>AdvMobileAgentFlag</name>
             <type>boolean</type>
             <syntax>bool</syntax>
-            <writable>true</writable>
+            <writable>false</writable>
           </parameter>
           <parameter>
             <name>AdvPreferredRouterFlag</name>
             <type>string: High(1),Medium(2),Low(3)</type>
             <syntax>uint32/mapped</syntax>
-            <writable>true</writable>
+            <writable>false</writable>
           </parameter>
           <parameter>
             <name>AdvNDProxyFlag</name>
             <type>boolean</type>
             <syntax>bool</syntax>
-            <writable>true</writable>
+            <writable>false</writable>
           </parameter>
           <parameter>
             <name>AdvLinkMTU</name>
             <type>unsignedInt</type>
             <syntax>uint32</syntax>
-            <writable>true</writable>
+            <writable>false</writable>
           </parameter>
           <parameter>
             <name>AdvReachableTime</name>
             <type>unsignedInt[1:3600000]</type>
             <syntax>uint32</syntax>
-            <writable>true</writable>
+            <writable>false</writable>
           </parameter>
           <parameter>
             <name>AdvRetransTimer</name>
             <type>unsignedInt</type>
             <syntax>uint32</syntax>
-            <writable>true</writable>
+            <writable>false</writable>
           </parameter>
           <parameter>
             <name>AdvCurHopLimit</name>
             <type>unsignedInt[1:255]</type>
             <syntax>uint32</syntax>
-            <writable>true</writable>
+            <writable>false</writable>
           </parameter>
           <parameter>
             <name>OptionNumberOfEntries</name>
