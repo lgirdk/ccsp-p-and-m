@@ -73,7 +73,7 @@
 #include "autoconf.h"
 #include "dml_tr181_custom_cfg_custom.h"            /* include customer specific configurations */
 
-#define  CFG_TR181_BRIDGE_ETH4_SYSCFG               1
+#define  CFG_TR181_BRIDGE_ETH4_SYSCFG               0
 #define  CFG_TR181_DHCPv4_CLIENT_IfName             "erouter0"
 #define  CFG_TR181_DHCPv6_CLIENT_IfName             "erouter0"
 #define  CFG_TR181_DHCPv6_SERVER_IfName             "brlan0"
