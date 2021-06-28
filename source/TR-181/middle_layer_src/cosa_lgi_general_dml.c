@@ -101,6 +101,8 @@ LgiGeneral_GetParamBoolValue
         BOOL*                       pBool
     )
 {
+    BOOL dsliteEnabled;
+
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "FirstInstallWizardEnable") == 0)
     {
@@ -121,7 +123,12 @@ LgiGeneral_GetParamBoolValue
     }
     if (strcmp(ParamName, "UserBridgeModeAllowed") == 0)
     {
-        CosaDmlGiGetUserBridgeModeAllowed(NULL, pBool);
+        CosaDmlGetDsliteEnable(NULL, &dsliteEnabled);
+        if (TRUE == dsliteEnabled) {
+            *pBool = FALSE;
+        } else {
+            CosaDmlGiGetUserBridgeModeAllowed(NULL, pBool);
+        }
         return TRUE;
     }
     // LGI ADD END
