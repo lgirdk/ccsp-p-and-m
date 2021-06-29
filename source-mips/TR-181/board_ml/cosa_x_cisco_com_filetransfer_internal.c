@@ -71,7 +71,7 @@
 #include "cosa_x_cisco_com_filetransfer_internal.h"
 #include "dml_tr181_custom_cfg.h"
 
-#ifdef   CONFIG_CISCO_FILE_TRANSFER
+#if CONFIG_CISCO_FILE_TRANSFER
 
 /**********************************************************************
 

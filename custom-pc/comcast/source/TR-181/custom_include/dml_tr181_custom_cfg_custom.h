@@ -70,7 +70,7 @@
 #ifndef  _DML_TR181_CUSTOM_CFG_CUSTOM_H_
 #define  _DML_TR181_CUSTOM_CFG_CUSTOM_H_
 
-#define  CONFIG_CISCO_FILE_TRANSFER                 1
+#define  CONFIG_CISCO_FILE_TRANSFER                 0
 
 /*
  *  Configuration for True Static IP is moved to board specific
