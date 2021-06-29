@@ -70,7 +70,7 @@
 #include "dml_tr181_custom_cfg.h"
 #include "safec_lib_common.h"
 
-#ifdef   CONFIG_CISCO_FILE_TRANSFER
+#if CONFIG_CISCO_FILE_TRANSFER
 
 /**********************************************************************  
 
