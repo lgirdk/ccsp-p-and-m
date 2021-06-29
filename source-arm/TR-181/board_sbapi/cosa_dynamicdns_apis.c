@@ -480,6 +480,7 @@ int  update_ddns_server(void)
     printf("%s: into 0503\n",FUNC_NAME);
     sprintf(buf, "touch %s",UPDATING_CHECK_FILE);
     system(buf);
+    memset(buf, 0, sizeof(buf));
 
     se_fd = s_sysevent_connect(&se_token);
     if (se_fd < 0) {
@@ -558,43 +559,68 @@ int  update_ddns_server(void)
         goto EXIT;
     }
 
-    //get and check Client.Username and Client.Password
+    //get and check Server.Name
+    sprintf(command,"ddns_server_servicename_%d",server_index);
+    if(syscfg_get( NULL, command, server_servicename, sizeof(server_servicename)) == 0) { //1:no-ip 2:dyndns 3:duckdns 4:afraid 5:changeip
+        printf("%s 12: server_servicename %s\n",FUNC_NAME,server_servicename);
+    }
+    if(server_servicename[0] == '\0') {
+        printf("%s: FAILED because server_servicename is NULL\n",FUNC_NAME);
+        ddns_return_status_success = FALSE;
+        client_status = CLIENT_ERROR_MISCONFIGURED;
+        host_status_1 = HOST_ERROR;
+        client_Lasterror = MISCONFIGURATION_ERROR;
+        goto EXIT;
+    }
+
+
+
+    //get and check Client.Username
     if(syscfg_get( NULL, "arddnsclient_1::Username", client_username, sizeof(client_username)) == 0) {
         printf("%s 9: client_username %s\n",FUNC_NAME,client_username);
     }
-
-    if(syscfg_get( NULL, "arddnsclient_1::Password", client_password, sizeof(client_password)) == 0) {
-        int i,j;
-        char pwd;
-        size_t len = strlen(client_password);
-        printf("%s 10-1: client_password %s\n",FUNC_NAME,client_password);
-        j=0;
-        command[0] = '\0';
-        for(i=0;i<len;i++){
-            pwd = client_password[i];
-            if((pwd!='-') && (pwd != '_') && (pwd!='.') && (pwd!='~') && (!((pwd>='0')&&(pwd<='9'))) && (!((pwd>='A')&&(pwd<='Z'))) && (!((pwd>='a')&&(pwd<='z')))) {
-                command[j] = '%';
-                command[j+1] = bin2hex(pwd >> 4);
-                command[j+2] = bin2hex(pwd & 0x0F);
-                command[j+3] = 0;
-                j+=3;
-            } else {
-                command[j] = pwd;
-                command[j+1] = '\0';
-                j++;
-            }
-        }
-        strcpy(client_password, command);
-        printf("%s 10-2: converted client_password %s\n",FUNC_NAME,client_password);
-    }
-    if((client_username[0] == '\0') || (client_password[0] == '\0')) {
-        printf("%s: FAILED because client_username or client_password is NULL %s %s\n",FUNC_NAME,client_username,client_password);
+    if(client_username[0] == '\0') {
+        printf("%s: FAILED because client_username %s\n",FUNC_NAME,client_username);
         ddns_return_status_success = FALSE;
         client_status = CLIENT_ERROR;
         host_status_1 = HOST_ERROR;
         client_Lasterror = AUTHENTICATION_ERROR;
         strcpy(return_status,"error-auth");
         goto EXIT;
+    }
+
+    if(strcmp(server_servicename,"duckdns")) {
+        if(syscfg_get( NULL, "arddnsclient_1::Password", client_password, sizeof(client_password)) == 0) {
+            int i,j;
+            char pwd;
+            size_t len = strlen(client_password);
+            j=0;
+            command[0] = '\0';
+            for(i=0;i<len;i++){
+                pwd = client_password[i];
+                if((pwd!='-') && (pwd != '_') && (pwd!='.') && (pwd!='~') && (!((pwd>='0')&&(pwd<='9'))) && (!((pwd>='A')&&(pwd<='Z'))) && (!((pwd>='a')&&(pwd<='z')))) {
+                    command[j] = '%';
+                    command[j+1] = bin2hex(pwd >> 4);
+                    command[j+2] = bin2hex(pwd & 0x0F);
+                    command[j+3] = 0;
+                    j+=3;
+                } else {
+                    command[j] = pwd;
+                    command[j+1] = '\0';
+                    j++;
+                }
+            }
+            strcpy(client_password, command);
+        }
+        if(client_password[0] == '\0') {
+            printf("%s: FAILED because client_password is NULL %s %s\n",FUNC_NAME,client_password);
+            ddns_return_status_success = FALSE;
+            client_status = CLIENT_ERROR;
+            host_status_1 = HOST_ERROR;
+            client_Lasterror = AUTHENTICATION_ERROR;
+            strcpy(return_status,"error-auth");
+            goto EXIT;
+        }
     }
 
     //get and check Host.hostname
@@ -607,20 +633,6 @@ int  update_ddns_server(void)
         client_status = CLIENT_ERROR;
         host_status_1 = HOST_ERROR;
         client_Lasterror = DNS_ERROR;
-        goto EXIT;
-    }
-
-    //get and check Server.Name
-    sprintf(command,"ddns_server_servicename_%d",server_index);
-    if(syscfg_get( NULL, command, server_servicename, sizeof(server_servicename)) == 0) { //1:no-ip 2:dyndns 3:duckdns 4:afraid 5:changeip
-        printf("%s 12: server_servicename %s\n",FUNC_NAME,server_servicename);
-    }
-    if(server_servicename[0] == '\0') {
-        printf("%s: FAILED because server_servicename is NULL\n",FUNC_NAME);
-        ddns_return_status_success = FALSE;
-        client_status = CLIENT_ERROR_MISCONFIGURED;
-        host_status_1 = HOST_ERROR;
-        client_Lasterror = MISCONFIGURATION_ERROR;
         goto EXIT;
     }
 
@@ -643,7 +655,7 @@ int  update_ddns_server(void)
                 server_servicename,client_username,client_password,host_name,wan_ipaddr,GENERAL_FILE,OUTPUT_FILE);
     } else if(strcmp(server_servicename,"duckdns")==0) {
         sprintf(command, "/usr/bin/curl --interface erouter0 -o /var/tmp/ipupdate.%s -g --insecure --url 'https://www.duckdns.org/update?domains=%s&token=%s&ip=%s&verbose=true' --trace-ascii %s > %s 2>&1",
-                server_servicename,host_name,client_password,wan_ipaddr,GENERAL_FILE,OUTPUT_FILE);
+                server_servicename,host_name,client_username,wan_ipaddr,GENERAL_FILE,OUTPUT_FILE);
     }
     printf("%s: servicename %s, command is %s\n",FUNC_NAME,server_servicename,command);
 
@@ -668,6 +680,7 @@ int  update_ddns_server(void)
                  || (update_success(server_servicename,buf) && strstr(command, buf))) {
                   printf("%s: found succeed register_success or update_success string in file /var/tmp/ipupdate.%s\n",FUNC_NAME,server_servicename);
                   ddns_return_status_success = TRUE;
+                  break;
             } else if(hostname_error(server_servicename,buf) && strstr(command, buf)) {
                   printf("%s: found hostname_error string in file /var/tmp/ipupdate.%s\n",FUNC_NAME,server_servicename);
                   ddns_return_status_success = FALSE;
@@ -1091,11 +1104,11 @@ CosaDmlDynamicDns_Client_SetConf
     UtopiaContext ctx;
     DynamicDnsClient_t  DDNSclient = {0};
 
-	ULONG InsNumber;
-	ANSC_HANDLE pHostnameInsContext = NULL;
+    ULONG InsNumber;
+    ANSC_HANDLE pHostnameInsContext = NULL;
     PCOSA_CONTEXT_LINK_OBJECT    pHostLinkObj = NULL;
     COSA_DML_DDNS_HOST           *pHostEntry = NULL;
-	bool bReadyUpdate = FALSE;
+    bool bReadyUpdate = FALSE;
 
     if ((index = DynamicDns_Client_InsGetIndex(ins)) == -1 || !Utopia_Init(&ctx))
     {
@@ -1146,17 +1159,25 @@ CosaDmlDynamicDns_Client_SetConf
 	if(pHostnameInsContext != NULL) {
 		pHostLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)pHostnameInsContext;
 		pHostEntry   = (COSA_DML_DDNS_HOST *)pHostLinkObj->hContext;
-		printf("ofw-1121: Client_SetConf pClientEntry->Enable %d Server %s Username %s Password %s pHostEntry->Enable %d Hostname %s pHostEntry %08x InsNumber %d \n",pEntry->Enable,pEntry->Server,pEntry->Username,pEntry->Password,pHostEntry->Enable,pHostEntry->Name,pHostEntry,InsNumber);
+		printf(" Client_SetConf pClientEntry->Enable %d Server %s Username %s pHostEntry->Enable %d Hostname %s pHostEntry %08x InsNumber %d \n",pEntry->Enable,pEntry->Server,pEntry->Username,pHostEntry->Enable,pHostEntry->Name,pHostEntry,InsNumber);
 	}
 
 
-	if((pEntry->Enable) && (pEntry->Server[0] != '\0') && (pEntry->Username[0] != '\0') && (pEntry->Password[0] != '\0') && pHostEntry && (pHostEntry->Enable) && (pHostEntry->Name[0]!='\0')) {
-		bReadyUpdate  = TRUE;
-		printf("ofw-1121: READY to verify and update ddns server\n");
-	} else {
-		printf("ofw-1121: NOT READY to verify and update ddns server\n");
-	}
-
+    if((pEntry->Enable) && (pEntry->Server[0] != '\0') && (pEntry->Username[0] != '\0') && pHostEntry && (pHostEntry->Enable) && (pHostEntry->Name[0]!='\0')) {
+        if(strstr(pHostEntry->Name,"duckdns") == NULL) { //Check whether password is null or not for services other than duckdns
+            if(pEntry->Password[0] != '\0') {
+                 printf(" READY to verify and update ddns server\n");
+                 bReadyUpdate  = TRUE;
+            } else {
+                    printf("NOT READY to verify and update ddns server\n");
+            }
+        } else {// for duckdns no need to check password
+            printf(" READY to verify and update ddns server\n");
+            bReadyUpdate  = TRUE;
+        }
+    } else {
+            printf(" NOT READY to verify and update ddns server\n");
+    }
 
     if ((isUserconfChanged == TRUE) && (bReadyUpdate  == TRUE))
     {
@@ -1428,15 +1449,24 @@ CosaDmlDynamicDns_Host_SetConf
 	if(pClientInsContext) {
 		pClientLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)pClientInsContext;
 		pClientEntry   = (COSA_DML_DDNS_CLIENT *)pClientLinkObj->hContext;
-		printf("ofw-1121: Host_SetConf pClientEntry->Enable %d Server %s Username %s Password %s pHostEntry->Enable %d Hostname %s pClientEntry %08x InsNumber %d\n",pClientEntry->Enable,pClientEntry->Server,pClientEntry->Username,pClientEntry->Password,pEntry->Enable,pEntry->Name,pClientEntry,InsNumber);
+		printf(" Host_SetConf pClientEntry->Enable %d Server %s Username %s pHostEntry->Enable %d Hostname %s pClientEntry %08x InsNumber %d\n",pClientEntry->Enable,pClientEntry->Server,pClientEntry->Username,pEntry->Enable,pEntry->Name,pClientEntry,InsNumber);
 	}
 
 
-	if((pClientInsContext) && (pClientEntry->Enable) && (pClientEntry->Server[0] != '\0') && (pClientEntry->Username[0] != '\0') && (pClientEntry->Password[0] != '\0') && (pEntry->Enable) && (pEntry->Name[0]!='\0')) {
-		bReadyUpdate  = TRUE;
-		printf("ofw-1121: READY to verify and update ddns server\n");	
-	} else {
-		printf("ofw-1121: NOT READY to verify and update ddns server\n");
+	if((pClientInsContext) && (pClientEntry->Enable) && (pClientEntry->Server[0] != '\0') && (pClientEntry->Username[0] != '\0') && (pEntry->Enable) && (pEntry->Name[0]!='\0')) {
+            if(strstr(pEntry->Name,"duckdns") == NULL) { //Check whether password is null or not for services other than duckdns
+                if(pClientEntry->Password[0] != '\0') {
+                    printf(" READY to verify and update ddns server\n");
+                    bReadyUpdate  = TRUE;
+                } else {
+                    printf("NOT READY to verify and update ddns server\n");
+                }
+            } else {// for duckdns no need to check password
+                    printf(" READY to verify and update ddns server\n");
+                    bReadyUpdate  = TRUE;
+            }
+        } else {
+            printf(" NOT READY to verify and update ddns server\n");
 	}
 
     if (bReadyUpdate && CosaDmlDynamicDns_GetEnable() && (g_DDNSHost[index].Enable == TRUE)
