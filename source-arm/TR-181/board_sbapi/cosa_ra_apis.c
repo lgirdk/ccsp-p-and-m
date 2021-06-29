@@ -307,9 +307,9 @@ static int LoadRaInterface(PCOSA_DML_RA_IF_FULL raif, ULONG ulIndex)
     raif->Cfg.bAdvMobileAgentFlag   = FALSE;
     raif->Cfg.bAdvNDProxyFlag       = FALSE;
     raif->Cfg.AdvLinkMTU            = 0;
-    raif->Cfg.AdvReachableTime      = 0;
+    raif->Cfg.AdvReachableTime      = 1;
     raif->Cfg.AdvRetransTimer       = 0;
-    raif->Cfg.AdvCurHopLimit        = 0;
+    raif->Cfg.AdvCurHopLimit        = 1;
     snprintf(raif->Cfg.Alias, sizeof(raif->Cfg.Alias), "cpe-RA-Interface-%d",raif->Cfg.InstanceNumber);
     snprintf(raif->Cfg.Interface, sizeof(raif->Cfg.Interface), "%s", raConf[ulIndex].interface);
 
@@ -469,9 +469,11 @@ CosaDmlRaIfSetCfg
 {
     UNREFERENCED_PARAMETER(hContext);
     UtopiaContext utctx = {0};
-    char out[8] = {0};
+    char out[12];
 	unsigned int  managedFlag = 0;
 	unsigned int  otherFlag   = 0;
+	unsigned int  ra_interval = 0;
+	unsigned int  ra_lifetime = 0;
 
     enum {
         DHCPV6_SERVER_TYPE_STATEFUL  =1,
@@ -483,6 +485,7 @@ CosaDmlRaIfSetCfg
 	
 	if (Utopia_Init(&utctx))
 	{
+		out[0] = 0;
 		Utopia_RawGet(&utctx,NULL,"router_managed_flag",out,sizeof(out));
 		if ( out[0] == '1' )
 			managedFlag = 1;
@@ -492,8 +495,18 @@ CosaDmlRaIfSetCfg
 		if ( out[0] == '1' )
 			otherFlag = 1;
 
+		out[0] = 0;
+		Utopia_RawGet(&utctx,NULL,"ra_interval",out,sizeof(out));
+		ra_interval = atoi(out);
+
+		out[0] = 0;
+		Utopia_RawGet(&utctx,NULL,"ra_lifetime",out,sizeof(out));
+		ra_lifetime = atoi(out);
+
 		if ( ( !(pCfg->bAdvManagedFlag)     == !managedFlag ) && 
-			 ( !(pCfg->bAdvOtherConfigFlag) == !otherFlag   ) )
+		     ( !(pCfg->bAdvOtherConfigFlag) == !otherFlag   ) &&
+		     (   pCfg->MinRtrAdvInterval    == ra_interval  ) &&
+		     (   pCfg->AdvDefaultLifetime   == ra_lifetime  ) )
                 {
                     Utopia_Free(&utctx,0);
                     return ANSC_STATUS_FAILURE;
@@ -501,6 +514,12 @@ CosaDmlRaIfSetCfg
 
 		Utopia_RawSet(&utctx, NULL, "router_managed_flag", pCfg->bAdvManagedFlag ? "1" : "0");
 		Utopia_RawSet(&utctx, NULL, "router_other_flag", pCfg->bAdvOtherConfigFlag ? "1" : "0");
+
+		snprintf(out, sizeof(out), "%u", pCfg->MinRtrAdvInterval);
+		Utopia_RawSet(&utctx,NULL,"ra_interval",out);
+
+		snprintf(out, sizeof(out), "%u", pCfg->AdvDefaultLifetime);
+		Utopia_RawSet(&utctx,NULL,"ra_lifetime",out);
 
 		Utopia_Free(&utctx,1);
 
