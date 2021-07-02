@@ -785,7 +785,7 @@ CosaDNSRegGetInfo
             }
            
             pDnsServer->InstanceNumber = ulInstanceNumber;
-            rc = strcpy_s(pDnsServer->Alias, sizeof(pDnsServer->Alias),pAlias);
+            rc = strcpy_s(pDnsServer->Alias, sizeof(pDnsServer->Alias), pAlias ? pAlias : "");
             ERR_CHK(rc);
 
             pCosaContext->bNew             = TRUE;
@@ -856,7 +856,7 @@ CosaDNSRegGetInfo
                 }
 
                 pForward->InstanceNumber = ulInstanceNumber;
-                rc = strcpy_s(pForward->Alias, sizeof(pForward->Alias),pAlias);
+                rc = strcpy_s(pForward->Alias, sizeof(pForward->Alias), pAlias ? pAlias : "");
                 ERR_CHK(rc);
 
                 pCosaContext2->bNew             = TRUE;
