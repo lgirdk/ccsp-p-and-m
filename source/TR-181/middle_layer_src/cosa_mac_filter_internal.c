@@ -448,7 +448,7 @@ CosaFwReg_MACFilterGetInfo(
             return ANSC_STATUS_RESOURCES;
         }
 
-        AnscCopyString(pEntry->Alias, pAlias);
+        AnscCopyString(pEntry->Alias, pAlias ? pAlias : "");
 
         pEntry->InstanceNumber = ulInstanceNumber;
 
@@ -742,7 +742,7 @@ CosaFwReg_MacDayOfWeekGetInfo(
             return ANSC_STATUS_RESOURCES;
         }
 
-        AnscCopyString(pEntry->Alias, pAlias);
+        AnscCopyString(pEntry->Alias, pAlias ? pAlias : "");
         pEntry->InstanceNumber = ulInstanceNumber;
 
         pCosaContext->InstanceNumber        = ulInstanceNumber;
