@@ -889,7 +889,7 @@ CosaBridgingRegGetInfo
             pDmlBridge->ulNextVLANPortInsNum = 1;
             pDmlBridge->Cfg.bAllowDelete = TRUE;
             pDmlBridge->Cfg.InstanceNumber = ulInstanceNumber;
-            AnscCopyString(pDmlBridge->Cfg.Alias, pAlias);
+            AnscCopyString(pDmlBridge->Cfg.Alias, pAlias ? pAlias : "");
 
             pCosaContext->InstanceNumber   = ulInstanceNumber;
             pCosaContext->bNew             = TRUE;
@@ -1017,7 +1017,7 @@ CosaBridgingRegGetInfo
                 }
 
                 pPort->Cfg.InstanceNumber = ulInstanceNumber;
-                AnscCopyString(pPort->Cfg.Alias, pAlias);
+                AnscCopyString(pPort->Cfg.Alias, pAlias ? pAlias : "");
                 pPort->Cfg.bAllowDelete = TRUE;
                 pCosaContext2->InstanceNumber  = ulInstanceNumber;
                 pCosaContext2->hContext        = (ANSC_HANDLE)pPort;

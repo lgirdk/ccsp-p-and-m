@@ -1204,7 +1204,7 @@ CosaSecurityIARegGetInfo
             pDmlIAPolicy->ulNextAppInsNum = 1;
 
             pDmlIAPolicy->InstanceNumber = ulInstanceNumber;
-            AnscCopyString(pDmlIAPolicy->Alias, pAlias);
+            AnscCopyString(pDmlIAPolicy->Alias, pAlias ? pAlias : "");
 
             pCosaContext->InstanceNumber   = ulInstanceNumber;
             pCosaContext->bNew             = TRUE;
@@ -1325,7 +1325,7 @@ CosaSecurityIARegGetInfo
                 }
 
                 pURL->InstanceNumber = ulInstanceNumber;
-                AnscCopyString(pURL->Alias, pAlias);
+                AnscCopyString(pURL->Alias, pAlias ? pAlias : "");
 
                 pCosaContext2->InstanceNumber   = ulInstanceNumber;
                 pCosaContext2->hContext         = (ANSC_HANDLE)pURL;
@@ -1359,7 +1359,7 @@ CosaSecurityIARegGetInfo
                 }
 
                 pKeyword->InstanceNumber = ulInstanceNumber;
-                AnscCopyString(pKeyword->Alias, pAlias);
+                AnscCopyString(pKeyword->Alias, pAlias ? pAlias : "");
 
                 pCosaContext2->InstanceNumber   = ulInstanceNumber;
                 pCosaContext2->hContext         = (ANSC_HANDLE)pKeyword;
@@ -1393,7 +1393,7 @@ CosaSecurityIARegGetInfo
                 }
 
                 pApp->InstanceNumber = ulInstanceNumber;
-                AnscCopyString(pApp->Alias, pAlias);
+                AnscCopyString(pApp->Alias, pAlias ? pAlias : "");
 
                 pCosaContext2->InstanceNumber   = ulInstanceNumber;
                 pCosaContext2->hContext         = (ANSC_HANDLE)pApp;

@@ -1214,7 +1214,7 @@ CosaDhcpv6RegGetDhcpv6Info
 
         /* save alias and instanceNumber */
         pDhcpv6Client->Cfg.InstanceNumber = uInstanceNumber;
-        AnscCopyString( (char *)pDhcpv6Client->Cfg.Alias, pAliasClient );
+        AnscCopyString( (char *)pDhcpv6Client->Cfg.Alias, pAliasClient ? pAliasClient : "");
         if (pAliasClient)
         {
             AnscFreeMemory(pAliasClient);
@@ -1364,7 +1364,7 @@ CosaDhcpv6RegGetDhcpv6Info
 
             /* save alias and instanceNumber */
             pDhcpv6SntOpt->InstanceNumber = uInstanceNumber;
-            AnscCopyString((char *) pDhcpv6SntOpt->Alias, pAliasSentOption );
+            AnscCopyString((char *) pDhcpv6SntOpt->Alias, pAliasSentOption ? pAliasSentOption : "");
             if (pAliasSentOption)
             {
                 AnscFreeMemory(pAliasSentOption);
@@ -1534,7 +1534,7 @@ ClientEnd:
         
         /* save alias and instanceNumber */
         pDhcpv6Pool->Cfg.InstanceNumber = uInstanceNumber;
-        AnscCopyString((char *) pDhcpv6Pool->Cfg.Alias, pAliasPool );
+        AnscCopyString((char *) pDhcpv6Pool->Cfg.Alias, pAliasPool ? pAliasPool : "");
         if (pAliasPool)
         {
             AnscFreeMemory(pAliasPool);
@@ -1682,7 +1682,7 @@ ClientEnd:
             
             /* save alias and instanceNumber */
             pDhcpv6PoolOption->InstanceNumber = uInstanceNumber;
-            AnscCopyString((char *)pDhcpv6PoolOption->Alias, pAliasPoolOption );
+            AnscCopyString((char *)pDhcpv6PoolOption->Alias, pAliasPoolOption ? pAliasPoolOption : "");
             if (pAliasPoolOption)
             {
                 AnscFreeMemory(pAliasPoolOption);

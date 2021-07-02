@@ -603,7 +603,7 @@ CosaEthLinkRegGetInfo
             return ANSC_STATUS_RESOURCES;
         }
 
-        AnscCopyString(pEntry->Cfg.Alias, pAlias);
+        AnscCopyString(pEntry->Cfg.Alias, pAlias ? pAlias : "");
 
         pEntry->Cfg.InstanceNumber = ulInstanceNumber;
 
@@ -1019,7 +1019,7 @@ CosaEthVlanTerminationRegGetInfo
             return ANSC_STATUS_RESOURCES;
         }
 
-        AnscCopyString(pEntry->Cfg.Alias, pAlias);
+        AnscCopyString(pEntry->Cfg.Alias, pAlias ? pAlias : "");
 
         pEntry->Cfg.InstanceNumber = ulInstanceNumber;
 

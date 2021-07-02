@@ -782,7 +782,7 @@ CosaPcReg_BlkUrlGetInfo(
             return ANSC_STATUS_RESOURCES;
         }
 
-        AnscCopyString(pEntry->Alias, pAlias);
+        AnscCopyString(pEntry->Alias, pAlias ? pAlias : "");
 
         pEntry->InstanceNumber = ulInstanceNumber;
 
@@ -1084,7 +1084,7 @@ CosaPcReg_TrustedUserGetInfo(
             return ANSC_STATUS_RESOURCES;
         }
 
-        AnscCopyString(pEntry->Alias, pAlias);
+        AnscCopyString(pEntry->Alias, pAlias ? pAlias : "");
 
         pEntry->InstanceNumber = ulInstanceNumber;
 
@@ -1386,7 +1386,7 @@ CosaPcReg_MSServGetInfo(
             return ANSC_STATUS_RESOURCES;
         }
 
-        AnscCopyString(pEntry->Alias, pAlias);
+        AnscCopyString(pEntry->Alias, pAlias ? pAlias : "");
 
         pEntry->InstanceNumber = ulInstanceNumber;
 
@@ -1689,7 +1689,7 @@ CosaPcReg_MSTrustedUserGetInfo(
             return ANSC_STATUS_RESOURCES;
         }
 
-        AnscCopyString(pEntry->Alias, pAlias);
+        AnscCopyString(pEntry->Alias, pAlias ? pAlias : "");
 
         pEntry->InstanceNumber = ulInstanceNumber;
 
@@ -1991,7 +1991,7 @@ CosaPcReg_MDDevGetInfo(
             return ANSC_STATUS_RESOURCES;
         }
 
-        AnscCopyString(pEntry->Alias, pAlias);
+        AnscCopyString(pEntry->Alias, pAlias ? pAlias : "");
 
         pEntry->InstanceNumber = ulInstanceNumber;
 

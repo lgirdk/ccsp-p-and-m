@@ -760,7 +760,7 @@ CosaFwReg_V4_IpFilterGetInfo
             return ANSC_STATUS_RESOURCES;
         }
 
-        AnscCopyString(pEntry->Alias, pAlias);
+        AnscCopyString(pEntry->Alias, pAlias ? pAlias : "");
 
         pEntry->InstanceNumber = ulInstanceNumber;
 
@@ -1141,7 +1141,7 @@ CosaFwReg_V6_IpFilterGetInfo
             return ANSC_STATUS_RESOURCES;
         }
 
-        AnscCopyString(pEntry->Alias, pAlias);
+        AnscCopyString(pEntry->Alias, pAlias ? pAlias : "");
 
         pEntry->InstanceNumber = ulInstanceNumber;
 
@@ -1513,7 +1513,7 @@ CosaFwReg_V4DayOfWeekGetInfo
             return ANSC_STATUS_RESOURCES;
         }
 
-        AnscCopyString(pEntry->Alias, pAlias);
+        AnscCopyString(pEntry->Alias, pAlias ? pAlias : "");
         pEntry->InstanceNumber = ulInstanceNumber;
 
         pCosaContext->InstanceNumber        = ulInstanceNumber;
@@ -1657,7 +1657,7 @@ CosaFwReg_V6DayOfWeekGetInfo
             return ANSC_STATUS_RESOURCES;
         }
 
-        AnscCopyString(pEntry->Alias, pAlias);
+        AnscCopyString(pEntry->Alias, pAlias ? pAlias : "");
         pEntry->InstanceNumber = ulInstanceNumber;
 
         pCosaContext->InstanceNumber        = ulInstanceNumber;

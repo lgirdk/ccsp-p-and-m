@@ -745,7 +745,7 @@ CosaRaRegGetInfo
             pRAInterface->ulNextOptionInsNum    = 1;
             
             pRAInterface->Cfg.InstanceNumber = ulInstanceNumber;
-            AnscCopyString(pRAInterface->Cfg.Alias, pAlias);
+            AnscCopyString(pRAInterface->Cfg.Alias, pAlias ? pAlias : "");
 
             pCosaContext->InstanceNumber   = ulInstanceNumber;
             pCosaContext->bNew             = TRUE;
@@ -856,7 +856,7 @@ CosaRaRegGetInfo
                 }
 
                 pRAOption->InstanceNumber = ulInstanceNumber;
-                AnscCopyString(pRAOption->Alias, pAlias);
+                AnscCopyString(pRAOption->Alias, pAlias ? pAlias : "");
 
                 pSubCosaContext->InstanceNumber  = ulInstanceNumber;
                 pSubCosaContext->hContext        = (ANSC_HANDLE)pRAOption;

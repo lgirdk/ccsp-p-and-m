@@ -580,14 +580,7 @@ CosaDdnsRegGetDdnsInfo
         }
 
         pDdnsService->InstanceNumber = ulInstanceNumber;
-        if(pAlias) /*RDKB-6744, CID-33330, use only after null check*/
-        {
-            AnscCopyString(pDdnsService->Alias, pAlias);
-        }
-        else
-        {
-            AnscCopyString(pDdnsService->Alias, "");
-        }
+        AnscCopyString(pDdnsService->Alias, pAlias ? pAlias : "");
 
         if(pAlias) /*RDKB-6744, CID-33330,free only after null check*/
         {

@@ -891,7 +891,7 @@ CosaIpRegGetInfo
             pIPInterface->ulNextIPV6PreInsNum = 1;
             
             pIPInterface->Cfg.InstanceNumber = ulInstanceNumber;
-            AnscCopyString(pIPInterface->Cfg.Alias, pAlias);
+            AnscCopyString(pIPInterface->Cfg.Alias, pAlias ? pAlias : "");
 
             pCosaContext->InstanceNumber   = ulInstanceNumber;
             pCosaContext->bNew             = TRUE;
@@ -1009,7 +1009,7 @@ CosaIpRegGetInfo
                 }
 
                 pIPv4Addr->InstanceNumber = ulInstanceNumber;
-                AnscCopyString(pIPv4Addr->Alias, pAlias);
+                AnscCopyString(pIPv4Addr->Alias, pAlias ? pAlias : "");
 
                 pSubCosaContext->InstanceNumber  = ulInstanceNumber;
                 pSubCosaContext->hContext        = (ANSC_HANDLE)pIPv4Addr;
@@ -1046,7 +1046,7 @@ CosaIpRegGetInfo
                 }
 
                 pIPv6Addr->InstanceNumber = ulInstanceNumber;
-                AnscCopyString(pIPv6Addr->Alias, pAlias);
+                AnscCopyString(pIPv6Addr->Alias, pAlias ? pAlias : "");
 
                 pSubCosaContext->InstanceNumber  = ulInstanceNumber;
                 pSubCosaContext->hContext        = (ANSC_HANDLE)pIPv6Addr;
@@ -1084,7 +1084,7 @@ CosaIpRegGetInfo
                 }
 
                 pIPv6Pre->InstanceNumber = ulInstanceNumber;
-                AnscCopyString(pIPv6Pre->Alias, pAlias);
+                AnscCopyString(pIPv6Pre->Alias, pAlias ? pAlias : "");
 
                 pSubCosaContext->InstanceNumber  = ulInstanceNumber;
                 pSubCosaContext->hContext        = (ANSC_HANDLE)pIPv6Pre;

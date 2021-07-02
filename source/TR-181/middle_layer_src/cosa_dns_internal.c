@@ -755,7 +755,7 @@ CosaDNSRegGetInfo
             }
            
             pDnsServer->InstanceNumber = ulInstanceNumber;
-            AnscCopyString(pDnsServer->Alias, pAlias);
+            AnscCopyString(pDnsServer->Alias, pAlias ? pAlias : "");
 
             pCosaContext->bNew             = TRUE;
             pCosaContext->hParentTable     = NULL;
@@ -825,7 +825,7 @@ CosaDNSRegGetInfo
                 }
 
                 pForward->InstanceNumber = ulInstanceNumber;
-                AnscCopyString(pForward->Alias, pAlias);
+                AnscCopyString(pForward->Alias, pAlias ? pAlias : "");
 
                 pCosaContext2->bNew             = TRUE;
                 pCosaContext2->hParentTable     = NULL;

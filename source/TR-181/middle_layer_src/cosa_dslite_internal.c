@@ -566,7 +566,7 @@ CosaDsliteRegGetDsliteInfo
 
         /* save alias and instanceNumber */
         pCosaDslite->InstanceNumber = uInstanceNumber;
-        AnscCopyString( pCosaDslite->alias, pAliasDslite );
+        AnscCopyString( pCosaDslite->alias, pAliasDslite ? pAliasDslite : "");
 
         /* Create one link point */
         pCosaDsliteContext = (PCOSA_CONTEXT_LINK_OBJECT)AnscAllocateMemory(sizeof(COSA_CONTEXT_LINK_OBJECT));

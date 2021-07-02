@@ -582,7 +582,7 @@ CosaDevCtrlReg_GetLanMngmInfo(
             return ANSC_STATUS_RESOURCES;
         }
 
-        AnscCopyString(pEntry->Alias, pAlias);
+        AnscCopyString(pEntry->Alias, pAlias ? pAlias : "");
 
         pEntry->InstanceNumber = ulInstanceNumber;
 

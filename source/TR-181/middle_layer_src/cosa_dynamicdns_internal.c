@@ -570,7 +570,7 @@ CosaDynamicDns_ClientGetInfo
         }
 
         pClientEntry->InstanceNumber = ulInstanceNumber;
-        AnscCopyString(pClientEntry->Alias, pAlias);
+        AnscCopyString(pClientEntry->Alias, pAlias ? pAlias : "");
 
         /*Copy the current entry into COSA_CONTEXT_LINK_OBJECT */
         pCosaContext->InstanceNumber        = ulInstanceNumber;
@@ -841,7 +841,7 @@ CosaDynamicDns_HostGetInfo
         }
 
         pHostEntry->InstanceNumber = ulInstanceNumber;
-        AnscCopyString(pHostEntry->Alias, pAlias);
+        AnscCopyString(pHostEntry->Alias, pAlias ? pAlias : "");
 
         /*Copy the current entry into COSA_CONTEXT_LINK_OBJECT */
         pCosaContext->InstanceNumber        = ulInstanceNumber;
@@ -1112,7 +1112,7 @@ CosaDynamicDns_ServerGetInfo
         }
 
         pServerEntry->InstanceNumber = ulInstanceNumber;
-        AnscCopyString(pServerEntry->Alias, pAlias);
+        AnscCopyString(pServerEntry->Alias, pAlias ? pAlias : "");
         /*Copy the current entry into COSA_CONTEXT_LINK_OBJECT */
         pCosaContext->InstanceNumber        = ulInstanceNumber;
         pCosaContext->bNew                  = TRUE;

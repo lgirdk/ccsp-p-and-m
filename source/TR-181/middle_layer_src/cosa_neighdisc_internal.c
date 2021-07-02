@@ -583,7 +583,7 @@ CosaNeighdiscRegGetInfo
             }
 
             pNeighdiscInterface->Cfg.InstanceNumber = ulInstanceNumber;
-            AnscCopyString(pNeighdiscInterface->Cfg.Alias, pAlias);
+            AnscCopyString(pNeighdiscInterface->Cfg.Alias, pAlias ? pAlias : "");
 
             pCosaContext->InstanceNumber   = ulInstanceNumber;
             pCosaContext->bNew             = TRUE;

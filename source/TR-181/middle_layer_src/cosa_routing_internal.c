@@ -1015,7 +1015,7 @@ CosaRoutingRegGetInfo
             pRouter->ulNextIPv6ForwardInsNum = 1;
             
             pRouter->Cfg.InstanceNumber = ulInstanceNumber;
-            AnscCopyString(pRouter->Cfg.Alias, pAlias);
+            AnscCopyString(pRouter->Cfg.Alias, pAlias ? pAlias : "");
 
             pCosaContext->InstanceNumber   = ulInstanceNumber;
             pCosaContext->bNew             = TRUE;
@@ -1134,7 +1134,7 @@ CosaRoutingRegGetInfo
                 }
 
                 pRouterForward->InstanceNumber = ulInstanceNumber;
-                AnscCopyString(pRouterForward->Alias, pAlias);
+                AnscCopyString(pRouterForward->Alias, pAlias ? pAlias : "");
 
                 pSubCosaContext->InstanceNumber   = ulInstanceNumber;
                 pSubCosaContext->hContext         = (ANSC_HANDLE)pRouterForward;
@@ -1217,7 +1217,7 @@ CosaRoutingRegGetInfo
                 }
 
                 pRouterIPv6Forward->InstanceNumber = ulInstanceNumber;
-                AnscCopyString(pRouterIPv6Forward->Alias, pAlias);
+                AnscCopyString(pRouterIPv6Forward->Alias, pAlias ? pAlias : "");
 
                 pSubCosaContext->InstanceNumber   = ulInstanceNumber;
                 pSubCosaContext->hContext         = (ANSC_HANDLE)pRouterIPv6Forward;
@@ -1252,7 +1252,7 @@ CosaRoutingRegGetInfo
                 }
 
                 pRipIF->InstanceNumber = ulInstanceNumber;
-                AnscCopyString(pRipIF->Alias, pAlias);
+                AnscCopyString(pRipIF->Alias, pAlias ? pAlias : "");
 
                 pCosaContext2->InstanceNumber   = ulInstanceNumber;
                 pCosaContext2->hContext         = (ANSC_HANDLE)pRipIF;
