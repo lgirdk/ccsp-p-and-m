@@ -753,7 +753,7 @@ CosaNatRegGetNatInfo
 
         /* save alias and instanceNumber */
         pCosaNat->InstanceNumber = uInstanceNumber;
-        rc = strcpy_s(pCosaNat->Alias, sizeof(pCosaNat->Alias), pAliasNat);
+        rc = strcpy_s(pCosaNat->Alias, sizeof(pCosaNat->Alias), pAliasNat ? pAliasNat : "");
         ERR_CHK(rc);
 
         /* Create one link point */
@@ -895,7 +895,7 @@ CosaNatRegGetNatInfo
 
         /* save alias and instanceNumber */
         pCosaNatPt->InstanceNumber = uInstanceNumber;
-        rc = strcpy_s(pCosaNatPt->Alias, sizeof(pCosaNatPt->Alias), pAliasNat);
+        rc = strcpy_s(pCosaNatPt->Alias, sizeof(pCosaNatPt->Alias), pAliasNat ? pAliasNat : "");
         ERR_CHK(rc);
 
         CcspTraceWarning(("!!!!!! pCosaNatPt->InstanceNumber: %d, pCosaNatPt->Alias: %s !!!!!!\n", pCosaNatPt->InstanceNumber, pCosaNatPt->Alias));
