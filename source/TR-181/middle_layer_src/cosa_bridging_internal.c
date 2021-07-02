@@ -924,7 +924,7 @@ CosaBridgingRegGetInfo
             pDmlBridge->ulNextVLANPortInsNum = 1;
             pDmlBridge->Cfg.bAllowDelete = TRUE;
             pDmlBridge->Cfg.InstanceNumber = ulInstanceNumber;
-            rc = strcpy_s(pDmlBridge->Cfg.Alias, sizeof(pDmlBridge->Cfg.Alias), pAlias);
+            rc = strcpy_s(pDmlBridge->Cfg.Alias, sizeof(pDmlBridge->Cfg.Alias), pAlias ? pAlias : "");
             ERR_CHK(rc);
             pCosaContext->InstanceNumber   = ulInstanceNumber;
             pCosaContext->bNew             = TRUE;
@@ -1052,7 +1052,7 @@ CosaBridgingRegGetInfo
                 }
 
                 pPort->Cfg.InstanceNumber = ulInstanceNumber;
-                rc = strcpy_s(pPort->Cfg.Alias, sizeof(pPort->Cfg.Alias), pAlias);
+                rc = strcpy_s(pPort->Cfg.Alias, sizeof(pPort->Cfg.Alias), pAlias ? pAlias : "");
                 ERR_CHK(rc);
                 pPort->Cfg.bAllowDelete = TRUE;
                 pCosaContext2->InstanceNumber  = ulInstanceNumber;
