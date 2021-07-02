@@ -1250,7 +1250,7 @@ CosaDhcpv6RegGetDhcpv6Info
 
         /* save alias and instanceNumber */
         pDhcpv6Client->Cfg.InstanceNumber = uInstanceNumber;
-        rc = STRCPY_S_NOCLOBBER( (char *)pDhcpv6Client->Cfg.Alias, sizeof(pDhcpv6Client->Cfg.Alias), pAliasClient );
+        rc = STRCPY_S_NOCLOBBER( (char *)pDhcpv6Client->Cfg.Alias, sizeof(pDhcpv6Client->Cfg.Alias), pAliasClient ? pAliasClient : "");
         ERR_CHK(rc);
         if (pAliasClient)
         {
@@ -1401,7 +1401,7 @@ CosaDhcpv6RegGetDhcpv6Info
 
             /* save alias and instanceNumber */
             pDhcpv6SntOpt->InstanceNumber = uInstanceNumber;
-            rc = STRCPY_S_NOCLOBBER((char *) pDhcpv6SntOpt->Alias, sizeof(pDhcpv6SntOpt->Alias), pAliasSentOption );
+            rc = STRCPY_S_NOCLOBBER((char *) pDhcpv6SntOpt->Alias, sizeof(pDhcpv6SntOpt->Alias), pAliasSentOption ? pAliasSentOption : "");
             ERR_CHK(rc);
             if (pAliasSentOption)
             {
@@ -1572,7 +1572,7 @@ ClientEnd:
         
         /* save alias and instanceNumber */
         pDhcpv6Pool->Cfg.InstanceNumber = uInstanceNumber;
-        rc = STRCPY_S_NOCLOBBER( (char *)pDhcpv6Pool->Cfg.Alias, sizeof(pDhcpv6Pool->Cfg.Alias), pAliasPool );
+        rc = STRCPY_S_NOCLOBBER( (char *)pDhcpv6Pool->Cfg.Alias, sizeof(pDhcpv6Pool->Cfg.Alias), pAliasPool ? pAliasPool : "");
         ERR_CHK(rc);
         if (pAliasPool)
         {
@@ -1721,7 +1721,7 @@ ClientEnd:
             
             /* save alias and instanceNumber */
             pDhcpv6PoolOption->InstanceNumber = uInstanceNumber;
-            rc = STRCPY_S_NOCLOBBER((char *)pDhcpv6PoolOption->Alias, sizeof(pDhcpv6PoolOption->Alias), pAliasPoolOption );
+            rc = STRCPY_S_NOCLOBBER((char *)pDhcpv6PoolOption->Alias, sizeof(pDhcpv6PoolOption->Alias), pAliasPoolOption ? pAliasPoolOption : "");
             ERR_CHK(rc);
             if (pAliasPoolOption)
             {
