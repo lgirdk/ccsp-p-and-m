@@ -889,7 +889,17 @@ CosaBridgingRegGetInfo
             pDmlBridge->ulNextVLANPortInsNum = 1;
             pDmlBridge->Cfg.bAllowDelete = TRUE;
             pDmlBridge->Cfg.InstanceNumber = ulInstanceNumber;
-            AnscCopyString(pDmlBridge->Cfg.Alias, pAlias ? pAlias : "");
+
+            if (pAlias)
+            {
+                /*
+                   Note that AnscAllocateMemory() zero's memory, so there's no need
+                   to do anything to initialise Cfg.Alias if pAlias is NULL.
+                */
+                AnscCopyString(pDmlBridge->Cfg.Alias, pAlias);
+                AnscFreeMemory(pAlias);
+                pAlias = NULL;
+            }
 
             pCosaContext->InstanceNumber   = ulInstanceNumber;
             pCosaContext->bNew             = TRUE;
@@ -1017,7 +1027,18 @@ CosaBridgingRegGetInfo
                 }
 
                 pPort->Cfg.InstanceNumber = ulInstanceNumber;
-                AnscCopyString(pPort->Cfg.Alias, pAlias ? pAlias : "");
+
+                if (pAlias)
+                {
+                    /*
+                       Note that AnscAllocateMemory() zero's memory, so there's no need
+                       to do anything to initialise Cfg.Alias if pAlias is NULL.
+                    */
+                    AnscCopyString(pPort->Cfg.Alias, pAlias);
+                    AnscFreeMemory(pAlias);
+                    pAlias = NULL;
+                }
+
                 pPort->Cfg.bAllowDelete = TRUE;
                 pCosaContext2->InstanceNumber  = ulInstanceNumber;
                 pCosaContext2->hContext        = (ANSC_HANDLE)pPort;
