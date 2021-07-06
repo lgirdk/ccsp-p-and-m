@@ -11086,7 +11086,7 @@ LanAllowedSubnetTable_Validate
 
 	if (10 == subnetIP[0])                                                        /* 10.x.x.x/8 - 10.x.x.x/24*/
 	{
-            if (0 == retCnt || !isValidSubnetMask(lanSubnetBuf.Value & 0xFFFFFFFF) ||
+            if (0 == retCnt || !isValidSubnetMask(htonl(lanSubnetBuf.Value) & 0xFFFFFFFF) ||
                 !(255 == subnetFirstMask && 255 >= subnetSecondMask &&
                   255 >= subnetThirdMask && 0 == subnetFourthMask))
             {
@@ -11096,7 +11096,7 @@ LanAllowedSubnetTable_Validate
 	}
 	else if (172 == subnetIP[0] && 16 <= subnetIP[1] && 31 >= subnetIP[1])        /*172.16.x.x/16 - 172.31.x.x/24 */
 	{
-	    if (0 == retCnt || !isValidSubnetMask(lanSubnetBuf.Value & 0xFFFFFFFF) ||
+	    if (0 == retCnt || !isValidSubnetMask(htonl(lanSubnetBuf.Value) & 0xFFFFFFFF) ||
                 !(255 == subnetFirstMask && 255 == subnetSecondMask &&
                   255 >= subnetThirdMask && 0 == subnetFourthMask))
 	    {
@@ -11106,7 +11106,7 @@ LanAllowedSubnetTable_Validate
 	}
 	else                                                                          /* 192.168.0.x/24 */
 	{
-	    if (0 == retCnt || !isValidSubnetMask(lanSubnetBuf.Value & 0xFFFFFFFF) ||
+	    if (0 == retCnt || !isValidSubnetMask(htonl(lanSubnetBuf.Value) & 0xFFFFFFFF) ||
                 !(255 == subnetFirstMask && 255 == subnetSecondMask &&
                   255 == subnetThirdMask && 0 == subnetFourthMask))
             {
