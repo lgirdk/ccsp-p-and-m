@@ -10937,6 +10937,7 @@ LanAllowedSubnetTable_SetParamStringValue
 {
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj         = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_LAN_Allowed_Subnet *pLanAllowedSubnet = (COSA_DML_LAN_Allowed_Subnet*)pLinkObj->hContext;
+    unsigned char buf[sizeof(struct in_addr)];
 
     if (pLinkObj->InstanceNumber == DEFAULT_LAN_SUBNET_INST)
     {
@@ -10951,8 +10952,11 @@ LanAllowedSubnetTable_SetParamStringValue
     }
     if (strcmp(ParamName, "LanAllowedSubnetIP") == 0)
     {
-        _ansc_snprintf(pLanAllowedSubnet->SubnetIP, sizeof(pLanAllowedSubnet->SubnetIP), "%s", pString);
-        return TRUE;
+       if(inet_pton(AF_INET,pString,buf))
+       {
+            _ansc_snprintf(pLanAllowedSubnet->SubnetIP, sizeof(pLanAllowedSubnet->SubnetIP), "%s", pString);
+            return TRUE;
+       }
     }
     if (strcmp(ParamName, "Alias") == 0)
     {
