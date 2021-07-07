@@ -1041,7 +1041,7 @@ CosaDmlDcSetWanStaticIPAddress
 {
     UNREFERENCED_PARAMETER(hContext);
     UtopiaContext utctx;
-    char buf[256];
+    char buf[32];
     errno_t safec_rc = -1;
 
     if (!Utopia_Init(&utctx))
@@ -1072,7 +1072,7 @@ CosaDmlDcSetWanStaticSubnetMask
 {
     UNREFERENCED_PARAMETER(hContext);
     UtopiaContext utctx;
-    char buf[256];
+    char buf[32];
     errno_t safec_rc = -1;
 
     if (!Utopia_Init(&utctx))
@@ -1103,7 +1103,7 @@ CosaDmlDcSetWanStaticGatewayIP
 {
     UNREFERENCED_PARAMETER(hContext);
     UtopiaContext utctx;
-    char buf[256];
+    char buf[32];
     errno_t  safec_rc = -1;
 
     if (!Utopia_Init(&utctx))
@@ -1174,7 +1174,7 @@ CosaDmlDcSetWanNameServer
 {
     UNREFERENCED_PARAMETER(hContext);
     UtopiaContext utctx;
-    char buf[256];
+    char buf[32];
     errno_t safec_rc = -1;
 
     if (!Utopia_Init(&utctx))
