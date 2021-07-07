@@ -5318,22 +5318,23 @@ static int is_pool_invalid(void *hInsContext)
     return(0);
 }
 
-static BOOL isValidSubnetMask(u_int32_t netmask)
+static BOOL isValidSubnetMask (uint32_t nm)
 {
     int i = 32;
+    uint32_t netmask = ntohl (nm);
 
     while (i > 0 && !(netmask & 0x01))
     {
         i--;
-	netmask >>= 1;
+        netmask >>= 1;
     }
 
     while (i > 0)
     {
         if (!(netmask & 0x01))
             return FALSE;
-	i--;
-	netmask >>= 1;
+        i--;
+        netmask >>= 1;
     }
 
     return TRUE;
@@ -11003,48 +11004,67 @@ LanAllowedSubnetTable_Validate
         ULONG*                      puLength
     )
 {
-    unsigned int subnetFirstMask = 0, subnetSecondMask = 0, subnetThirdMask = 0, subnetFourthMask = 0;
     unsigned int noOfAllowedSubnet = 0, index = 0;
     PCOSA_CONTEXT_LINK_OBJECT    pLinkObj           = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_LAN_Allowed_Subnet  *pLanAllowedSubnet = (COSA_DML_LAN_Allowed_Subnet*)pLinkObj->hContext;
     COSA_DML_LAN_Allowed_Subnet  LanAllowedSubnetExist;
-    ANSC_IPV4_ADDRESS               lanSubnetBuf;
+    ANSC_IPV4_ADDRESS lanSubnetMaskBuf;
+    ANSC_IPV4_ADDRESS lanSubnetIPBuf;
 
-    if (AnscSizeOfString(pLanAllowedSubnet->SubnetMask))
+    if (pLanAllowedSubnet->SubnetMask[0] != 0)
     {
-        inet_pton(AF_INET, pLanAllowedSubnet->SubnetMask, &lanSubnetBuf);
-
-        if (!(sscanf(pLanAllowedSubnet->SubnetMask, "%d.%d.%d.%d", &subnetFirstMask, &subnetSecondMask,
-              &subnetThirdMask, &subnetFourthMask) == 4) ||
-              !((subnetFirstMask <= 255) && (subnetSecondMask <= 255) && (subnetThirdMask <= 255) && (subnetFourthMask <= 255)))
+        /* Can the string be parsed? */
+        if (inet_pton (AF_INET, pLanAllowedSubnet->SubnetMask, &lanSubnetMaskBuf) != 1)
         {
             return FALSE;
         }
 
-        if (lanSubnetBuf.Value == 0x000000FE ||  //7
-            lanSubnetBuf.Value == 0x000000FC ||  //6
-            lanSubnetBuf.Value == 0x000000F8 ||  //5
-            lanSubnetBuf.Value == 0x000000F0 ||  //4
-            lanSubnetBuf.Value == 0x000000E0 ||  //3
-            lanSubnetBuf.Value == 0x000000C0 ||  //2
-            lanSubnetBuf.Value == 0x00000080 ||  //1
-            lanSubnetBuf.Value == 0x00000000 ||  //0
-            lanSubnetBuf.Value == 0xFEFFFFFF)
-       {
+        /* Are bits set in a valid order? */
+        if (!isValidSubnetMask (lanSubnetMaskBuf.Value))
+        {
             return FALSE;
-       }
+        }
+
+        /* is the subnet size allowed? */
+        if (lanSubnetMaskBuf.Value == htonl(0x00000000) ||  //0
+            lanSubnetMaskBuf.Value == htonl(0x80000000) ||  //1
+            lanSubnetMaskBuf.Value == htonl(0xC0000000) ||  //2
+            lanSubnetMaskBuf.Value == htonl(0xE0000000) ||  //3
+            lanSubnetMaskBuf.Value == htonl(0xF0000000) ||  //4
+            lanSubnetMaskBuf.Value == htonl(0xF8000000) ||  //5
+            lanSubnetMaskBuf.Value == htonl(0xFC000000) ||  //6
+            lanSubnetMaskBuf.Value == htonl(0xFE000000) ||  //7
+
+            lanSubnetMaskBuf.Value == htonl(0xFFFFFF80) ||  //25
+            lanSubnetMaskBuf.Value == htonl(0xFFFFFFC0) ||  //26
+            lanSubnetMaskBuf.Value == htonl(0xFFFFFFE0) ||  //27
+            lanSubnetMaskBuf.Value == htonl(0xFFFFFFF0) ||  //28
+            lanSubnetMaskBuf.Value == htonl(0xFFFFFFF8) ||  //29
+            lanSubnetMaskBuf.Value == htonl(0xFFFFFFFC) ||  //30
+            lanSubnetMaskBuf.Value == htonl(0xFFFFFFFE) ||  //31
+            lanSubnetMaskBuf.Value == htonl(0xFFFFFFFF))    //32
+        {
+            return FALSE;
+        }
+    }
+    else
+    {
+        lanSubnetMaskBuf.Value = htonl(0x00000000); /* default value is never used, but avoid possible compiler warnings */
     }
 
-    if(AnscSizeOfString(pLanAllowedSubnet->Alias))
+    if (pLanAllowedSubnet->Alias[0] != 0)
     {
         noOfAllowedSubnet = CosaDmlLAN_Allowed_Subnet_GetNumberOfEntries();
         for (index = 0; index < noOfAllowedSubnet; index++)
         {
             // Avoid checking duplicate entry for the same index
             if (LANAllowedSubnet_InsGetIndex(pLanAllowedSubnet->InstanceNumber) == index)
+            {
                 continue;
+            }
 
             CosaDmlLAN_Allowed_Subnet_GetEntryByIndex(index, &LanAllowedSubnetExist);
+
             if ((strncmp(LanAllowedSubnetExist.Alias, pLanAllowedSubnet->Alias, sizeof(LanAllowedSubnetExist.Alias)) == 0))
             {
                 CcspTraceError(("FUNC - %s: ERROR: Alias %s Already exist\n", __FUNCTION__, pLanAllowedSubnet->Alias));
@@ -11055,8 +11075,8 @@ LanAllowedSubnetTable_Validate
         }
     }
 
-    //   DUPLICATE / OVERLAP Value Check
-    if (AnscSizeOfString(pLanAllowedSubnet->SubnetIP))
+    // DUPLICATE / OVERLAP Value Check
+    if (pLanAllowedSubnet->SubnetIP[0] != 0)
     {
         noOfAllowedSubnet = CosaDmlLAN_Allowed_Subnet_GetNumberOfEntries();
         for (index = 0; index < noOfAllowedSubnet; index++)
@@ -11078,76 +11098,74 @@ LanAllowedSubnetTable_Validate
             }
         }
 
-        //   RANGE IP Check
-        if (sscanf(pLanAllowedSubnet->SubnetIP, "%d.%d.%d.%d", &subnetFirstMask, &subnetSecondMask,
-              &subnetThirdMask, &subnetFourthMask) == 4)
+        // RANGE IP Check
+        if (inet_pton (AF_INET, pLanAllowedSubnet->SubnetIP, &lanSubnetIPBuf) != 1)
         {
-            //Range 10.0.0.0   -   10.255.255.255
-            if (subnetFirstMask == 10)
-            {
-                if ((subnetSecondMask > 255) || (subnetThirdMask > 255) || (subnetFourthMask > 253))
-                    return FALSE;
-            }
-            //Range 172.16.0.0   -   172.31.255.255
-            else if (subnetFirstMask == 172)
-            {
-                if (!(subnetSecondMask >=16 && subnetSecondMask <=31) || (subnetThirdMask > 255) || (subnetFourthMask > 253))
-                    return FALSE;
-            }
-            //Range 192.168.0.0 – 192.168.255.255
-            else if ((subnetFirstMask == 192) && (subnetSecondMask == 168))
-            {
-                if ((subnetThirdMask > 255) || (subnetFourthMask > 253))
-                    return FALSE;
-            }
-	    // Invalid Private IP range
-	    else {
-                return FALSE;
-	    }
+            return FALSE;
         }
-    }
 
-    /* MVXREQ-674: Auto-correct subnet mask according to the subnet IP.
-     * If the subnet mask is not correct as per RFC 1918,
-     * set the subnet mask as default mask of that network class.
-     */
-    if (AnscSizeOfString(pLanAllowedSubnet->SubnetIP))
-    {
-        unsigned int subnetIP[4];
-	int retCnt = 0;
-	sscanf(pLanAllowedSubnet->SubnetIP, "%d.%d.%d.%d", &subnetIP[0], &subnetIP[1], &subnetIP[2], &subnetIP[3]);
-	retCnt = sscanf(pLanAllowedSubnet->SubnetMask, "%d.%d.%d.%d", &subnetFirstMask, &subnetSecondMask, &subnetThirdMask, &subnetFourthMask);
+        // Range 10.0.0.0  -  10.255.255.255
+        if (lanSubnetIPBuf.Dot[0] == 10)
+        {
+            if (lanSubnetIPBuf.Dot[3] > 253)
+                return FALSE;
+        }
+        // Range 172.16.0.0  -  172.31.255.255
+        else if (lanSubnetIPBuf.Dot[0] == 172)
+        {
+            if ((lanSubnetIPBuf.Dot[1] < 16) || (lanSubnetIPBuf.Dot[1] > 31) || (lanSubnetIPBuf.Dot[3] > 253))
+                return FALSE;
+        }
+        // Range 192.168.0.0  -  192.168.255.255
+        else if ((lanSubnetIPBuf.Dot[0] == 192) && (lanSubnetIPBuf.Dot[1] == 168))
+        {
+            if (lanSubnetIPBuf.Dot[3] > 253)
+                return FALSE;
+        }
 
-	if (10 == subnetIP[0])                                                        /* 10.x.x.x/8 - 10.x.x.x/24*/
-	{
-            if (0 == retCnt || !isValidSubnetMask(htonl(lanSubnetBuf.Value) & 0xFFFFFFFF) ||
-                !(255 == subnetFirstMask && 255 >= subnetSecondMask &&
-                  255 >= subnetThirdMask && 0 == subnetFourthMask))
+        /* MVXREQ-674: Auto-correct subnet mask according to the subnet IP.
+         * If the subnet mask is not correct as per RFC 1918,
+         * set the subnet mask as default mask of that network class.
+         */
+        if (lanSubnetIPBuf.Dot[0] == 10)
+        {
+            /* 10.x.x.x/8 - 10.x.x.x/24 */
+
+            if ((pLanAllowedSubnet->SubnetMask[0] == 0) ||
+                (lanSubnetMaskBuf.Dot[0] != 255) ||
+                (lanSubnetMaskBuf.Dot[3] != 0))
             {
                 /* Setting default Subnet Mask for class A network */
-                _ansc_snprintf(pLanAllowedSubnet->SubnetMask, sizeof(pLanAllowedSubnet->SubnetMask), "%s", "255.0.0.0");
+                strcpy (pLanAllowedSubnet->SubnetMask, "255.0.0.0");
             }
-	}
-	else if (172 == subnetIP[0] && 16 <= subnetIP[1] && 31 >= subnetIP[1])        /*172.16.x.x/16 - 172.31.x.x/24 */
-	{
-	    if (0 == retCnt || !isValidSubnetMask(htonl(lanSubnetBuf.Value) & 0xFFFFFFFF) ||
-                !(255 == subnetFirstMask && 255 == subnetSecondMask &&
-                  255 >= subnetThirdMask && 0 == subnetFourthMask))
-	    {
+        }
+        else if (lanSubnetIPBuf.Dot[0] == 172)
+        {
+            /* 172.16.x.x/16 - 172.31.x.x/24 */
+
+            if ((pLanAllowedSubnet->SubnetMask[0] == 0) ||
+                (lanSubnetMaskBuf.Dot[0] != 255) ||
+                (lanSubnetMaskBuf.Dot[1] != 255) ||
+                (lanSubnetMaskBuf.Dot[3] != 0))
+            {
                 /* Setting default Subnet Mask for class B network */
-                _ansc_snprintf(pLanAllowedSubnet->SubnetMask, sizeof(pLanAllowedSubnet->SubnetMask), "%s", "255.255.0.0");
-	    }
-	}
-	else                                                                          /* 192.168.0.x/24 */
-	{
-	    if (0 == retCnt || !isValidSubnetMask(htonl(lanSubnetBuf.Value) & 0xFFFFFFFF) ||
-                !(255 == subnetFirstMask && 255 == subnetSecondMask &&
-                  255 == subnetThirdMask && 0 == subnetFourthMask))
+                strcpy (pLanAllowedSubnet->SubnetMask, "255.255.0.0");
+            }
+        }
+        else
+        {
+            /* 192.168.0.x/24 */
+
+            if ((pLanAllowedSubnet->SubnetMask[0] == 0) ||
+                (lanSubnetMaskBuf.Dot[0] != 255) ||
+                (lanSubnetMaskBuf.Dot[1] != 255) ||
+                (lanSubnetMaskBuf.Dot[2] != 255) ||
+                (lanSubnetMaskBuf.Dot[3] != 0))
             {
                 /* Setting default Subnet Mask for class C network */
-                _ansc_snprintf(pLanAllowedSubnet->SubnetMask, sizeof(pLanAllowedSubnet->SubnetMask), "%s", "255.255.255.0");
+                strcpy (pLanAllowedSubnet->SubnetMask, "255.255.255.0");
             }
-	}
+        }
     }
 
     return TRUE;
