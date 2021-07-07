@@ -1005,12 +1005,12 @@ ANSC_STATUS
 CosaDmlDcSetWanStaticIPAddress
     (
         ANSC_HANDLE                 hContext,
-        ULONG           ipAddr
+        uint32_t                    ipAddr
     )
 {
     UNREFERENCED_PARAMETER(hContext);
     UtopiaContext utctx;
-    char buf[256];
+    char buf[32];
 
     if (!Utopia_Init(&utctx))
     {
@@ -1031,12 +1031,12 @@ ANSC_STATUS
 CosaDmlDcSetWanStaticSubnetMask
     (
         ANSC_HANDLE                 hContext,
-        ULONG           ipAddr
+        uint32_t                    ipAddr
     )
 {
     UNREFERENCED_PARAMETER(hContext);
     UtopiaContext utctx;
-    char buf[256];
+    char buf[32];
 
     if (!Utopia_Init(&utctx))
     {
@@ -1057,12 +1057,12 @@ ANSC_STATUS
 CosaDmlDcSetWanStaticGatewayIP
     (
         ANSC_HANDLE                 hContext,
-        ULONG           ipAddr
+        uint32_t                    ipAddr
     )
 {
     UNREFERENCED_PARAMETER(hContext);
     UtopiaContext utctx;
-    char buf[256];
+    char buf[32];
 
     if (!Utopia_Init(&utctx))
     {
@@ -1083,7 +1083,7 @@ ANSC_STATUS
 CosaDmlDcSetWanSecondIPAddr
     (
         ANSC_HANDLE                 hContext,
-        ULONG           ipAddr
+        uint32_t                    ipAddr
     )
 {
     UNREFERENCED_PARAMETER(hContext);
@@ -1109,7 +1109,7 @@ ANSC_STATUS
 CosaDmlDcSetWanBackupDefaultGateway
     (
         ANSC_HANDLE                 hContext,
-        ULONG           ipAddr
+        uint32_t                    ipAddr
     )
 {
     UNREFERENCED_PARAMETER(hContext);
@@ -1122,13 +1122,13 @@ ANSC_STATUS
 CosaDmlDcSetWanNameServer
     (
         ANSC_HANDLE                 hContext,
-        ULONG                       ipAddr,
+        uint32_t                    ipAddr,
         int                         nameServerNo
     )
 {
     UNREFERENCED_PARAMETER(hContext);
     UtopiaContext utctx;
-    char buf[256];
+    char buf[32];
 
     if (!Utopia_Init(&utctx))
     {
