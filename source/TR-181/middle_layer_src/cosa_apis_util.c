@@ -1488,50 +1488,73 @@ _EXIT:
 }
 
 
-
-#define NET_STATS_FILE "/proc/net/dev"
-int CosaUtilGetIfStats(char * ifname, PCOSA_DML_IF_STATS pStats)
+/*
+   Note: this function duplicates getIfStats2(), except that in this
+   case the results are returned in a COSA_DML_IF_STATS struct and in
+   getIfStats2() results are returned in a COSA_DML_ETH_STATS struct.
+   The return values are encoded differently too.
+*/
+int CosaUtilGetIfStats (char *ifname, PCOSA_DML_IF_STATS pStats)
 {
-    int    i;
-    FILE * fp;
-    char buf[1024] = {0} ;
-    char * p;
-    int    ret = 0;
+    FILE *fp;
+    char buf[512];
+    char *device = ifname;
+    int device_len;
+    int result = -1;
 
-    fp = fopen(NET_STATS_FILE, "r");
-    
-    if (fp)
-    {
-        i = 0;
-        while (fgets(buf, sizeof(buf), fp))
+    /*
+       The data types in COSA_DML_IF_STATS are currently ULONG, which is
+       not enough to hold 64bit byte and packet counter values. As a
+       workaround, use local variables to hold those values during parsing.
+       Note that fixing this isn't a simple change as the data types in
+       COSA_DML_IF_STATS reflect those used in the data model (ie we need
+       to change the data model in order to return 64bit byte and packet
+       counters...).
+    */
+    unsigned long long rx_bytes;
+    unsigned long long rx_packets;
+    unsigned long long tx_bytes;
+    unsigned long long tx_packets;
+
+    memset (pStats, 0, sizeof(COSA_DML_IF_STATS));
+
+    if ((fp = fopen ("/proc/net/dev", "r")) == NULL)
+        return -1;
+    if (fgets (buf, sizeof(buf), fp) == NULL)
+        goto done;
+    if (fgets (buf, sizeof(buf), fp) == NULL)
+        goto done;
+
+    device_len = strlen (device);
+
+    while (fgets (buf, sizeof(buf), fp) != NULL) {
+        char *p = buf;
+        while ((*p == ' ') || (*p == '\t'))
+            p++;
+        if (strncmp (p, device, device_len) != 0)
+            continue;
+        p += device_len;
+        if (*p++ != ':')
+            continue;
+
+        if (sscanf (p, "%llu%llu%lu%lu%*u%*u%*u%*u%llu%llu%lu%lu",
+                       &rx_bytes, &rx_packets, &pStats->ErrorsReceived, &pStats->DiscardPacketsReceived,
+                       &tx_bytes, &tx_packets, &pStats->ErrorsSent, &pStats->DiscardPacketsSent) == 8)
         {
-            if (++i <= 2) continue;
-            
-            if ((p = strchr(buf, ':')))
-            {
-                if (strstr(buf, ifname))
-                {
-                    memset(pStats, 0, sizeof(*pStats));
-                    if (sscanf(p+1, "%lu %lu %lu %lu %*d %*d %*d %*d %lu %lu %lu %lu %*d %*d %*d %*d", 
-                               &pStats->BytesReceived, &pStats->PacketsReceived, &pStats->ErrorsReceived, &pStats->DiscardPacketsReceived,
-                               &pStats->BytesSent, &pStats->PacketsSent, &pStats->ErrorsSent, &pStats->DiscardPacketsSent
-                            ) == 8)
-                    {
-                        /*found*/
-                        ret = TRUE;
-                        goto _EXIT;
-                    }
-                }
-                else continue;
-            }
-            else continue;
+            pStats->BytesSent       = (ULONG) tx_bytes;      /* Truncate !! */
+            pStats->BytesReceived   = (ULONG) rx_bytes;      /* Truncate !! */
+            pStats->PacketsSent     = (ULONG) tx_packets;    /* Truncate !! */
+            pStats->PacketsReceived = (ULONG) rx_packets;    /* Truncate !! */
+            result = 0;
         }
-        
-    }   
 
-_EXIT:
-    fclose(fp);
-    return ret;
+        break;
+    }
+
+done:
+    fclose (fp);
+
+    return (result == 0) ? TRUE : 0;	/* map result to return value (TRUE for success, 0 for failure) */
 }
 
 ULONG NetmaskToNumber(char *netmask)
