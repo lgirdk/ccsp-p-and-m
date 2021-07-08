@@ -1501,235 +1501,82 @@ static int getIfDInfo(PCosaEthInterfaceInfo pEthIf, PCOSA_DML_ETH_PORT_DINFO pIn
 }
 #endif
 
+/*
+   Note: this function duplicates CosaUtilGetIfStats(), except that in
+   this case the results are returned in a COSA_DML_ETH_STATS struct and
+   in CosaUtilGetIfStats() results are returned in a COSA_DML_IF_STATS
+   struct. The return values are encoded differently too.
+*/
 static int getIfStats2(const PUCHAR pName, PCOSA_DML_ETH_STATS pStats)
 {
-#if 1
     FILE *fp;
     char buf[512];
-    char *tok, *delim = ": \t\r\n", *sp, *ptr;
-    int idx;
+    char *device = (char *) pName;
+    int device_len;
+    int result = -1;
+
+    /*
+       The data types in COSA_DML_ETH_STATS are currently ULONG, which is
+       not enough to hold 64bit byte and packet counter values. As a
+       workaround, use local variables to hold those values during parsing.
+       Note that fixing this isn't a simple change as the data types in
+       COSA_DML_ETH_STATS reflect those used in the data model (ie we need
+       to change the data model in order to return 64bit byte and packet
+       counters...).
+    */
+    unsigned long long rx_bytes;
+    unsigned long long rx_packets;
+    unsigned long long tx_bytes;
+    unsigned long long tx_packets;
+
+    memset (pStats, 0, sizeof(COSA_DML_ETH_STATS));
 
 #ifdef _HUB4_PRODUCT_REQ_
-    if ((fp = fopen("/proc/net/dev_extstats", "rb")) == NULL)
+    if ((fp = fopen ("/proc/net/dev_extstats", "r")) == NULL)
 #else
-    if ((fp = fopen("/proc/net/dev", "rb")) == NULL)
+    if ((fp = fopen ("/proc/net/dev", "r")) == NULL)
 #endif /* _HUB4_PRODUCT_REQ_ */
         return -1;
+    if (fgets (buf, sizeof(buf), fp) == NULL)
+        goto done;
+    if (fgets (buf, sizeof(buf), fp) == NULL)
+        goto done;
 
-    /* skip head line */
-    if (fgets(buf, sizeof(buf), fp) == NULL) {
-        fclose(fp);
-        return -1;
-    }
+    device_len = strlen (device);
 
-    while (fgets(buf, sizeof(buf), fp) != NULL) {
-        if (strstr(buf, (char *)pName) == NULL)
+    while (fgets (buf, sizeof(buf), fp) != NULL) {
+        char *p = buf;
+        while ((*p == ' ') || (*p == '\t'))
+            p++;
+        if (strncmp (p, device, device_len) != 0)
+            continue;
+        p += device_len;
+        if (*p++ != ':')
             continue;
 
-        for (idx = 1, ptr = buf;
-                (tok = strtok_r(ptr, delim, &sp)) != NULL; idx++) {
-            ptr = NULL;
-            switch (idx) {
-            case 2:
-                pStats->BytesReceived = (ULONG)atol(tok);
-                break;
-            case 3:
-                pStats->PacketsReceived = (ULONG)atol(tok);
-                break;
-            case 4:
-                pStats->ErrorsReceived = (ULONG)atol(tok);
-                break;
-            case 5:
-                pStats->DiscardPacketsReceived = (ULONG)atol(tok);
-                break;
-            case 10:
-                pStats->BytesSent = (ULONG)atol(tok);
-                break;
-            case 11:
-                pStats->PacketsSent = (ULONG)atol(tok);
-                break;
-            case 12:
-                pStats->ErrorsSent = (ULONG)atol(tok);
-                break;
-            case 13:
-                pStats->DiscardPacketsSent = (ULONG)atol(tok);
-                break;
 #ifdef _HUB4_PRODUCT_REQ_
-            case 9:
-                pStats->MulticastPacketsReceived = (ULONG)atol(tok);
-                break;
-            case 18:
-                pStats->MulticastPacketsSent = (ULONG)atol(tok);
-                break;
-            case 21:
-                pStats->UnicastPacketsReceived = (ULONG)atol(tok);
-                break;
-            case 22:
-                pStats->UnicastPacketsSent = (ULONG)atol(tok);
-                break;
-            case 23:
-                pStats->BroadcastPacketsReceived = (ULONG)atol(tok);
-                break;
-            case 24:
-                pStats->BroadcastPacketsSent = (ULONG)atol(tok);
-                break;
-            case 25:
-                pStats->UnknownProtoPacketsReceived = (ULONG)atol(tok);
-                break;
-#endif /* _HUB4_PRODUCT_REQ_ */
-            default:
-                break;
-            }
-        }
-    }
 
-    fclose(fp);
-    return 0;
+#error "Fixme: sscanf() parsing of /proc/net/dev_extstats not yet implemented..."
 
 #else
-    UCHAR strCmd[512] = {0};
-    UCHAR strBuf[128] = {0};
-    FILE  *pFile      = NULL;
-    errno_t rc        = -1;
-    
-    rc = sprintf_s
-        (
-            strCmd,
-            sizeof(strCmd),
-            "cat /proc/net/dev | grep %s | tr : \" \" | awk '{print $2}'",
-            pName
-        );
-    if(rc < EOK)
-    {
-        ERR_CHK(rc);
-        return -1;
-    }
-    pFile = popen(strCmd, "r");
-    fread(strBuf, sizeof(char), sizeof(strBuf), pFile);
-    pStats->BytesReceived = _ansc_atoi(strBuf);
-    pclose(pFile);
-
-    rc = sprintf_s
-        (
-            strCmd,
-            sizeof(strCmd),
-            "cat /proc/net/dev | grep %s | tr : \" \" | awk '{print $3}'",
-            pName
-        );
-    if(rc < EOK)
-    {
-        ERR_CHK(rc);
-        return -1;
-    }
-    pFile = popen(strCmd, "r");
-    fread(strBuf, sizeof(char), sizeof(strBuf), pFile);
-    pStats->PacketsReceived= _ansc_atoi(strBuf);
-    pclose(pFile);
-
-    rc = sprintf_s
-        (
-            strCmd,
-            sizeof(strCmd),
-            "cat /proc/net/dev | grep %s | tr : \" \" | awk '{print $4}'",
-            pName
-        );
-    if(rc < EOK)
-    {
-        ERR_CHK(rc);
-        return -1;
-    }
-    pFile = popen(strCmd, "r");
-    fread(strBuf, sizeof(char), sizeof(strBuf), pFile);
-    pStats->ErrorsReceived= _ansc_atoi(strBuf);
-    pclose(pFile);
-
-    rc = sprintf_s
-        (
-            strCmd,
-            sizeof(strCmd),
-            "cat /proc/net/dev | grep %s | tr : \" \" | awk '{print $5}'",
-            pName
-        );
-    if(rc < EOK)
-    {
-        ERR_CHK(rc);
-        return -1;
-    }
-    pFile = popen(strCmd, "r");
-    fread(strBuf, sizeof(char), sizeof(strBuf), pFile);
-    pStats->DiscardPacketsReceived = _ansc_atoi(strBuf);
-    pclose(pFile);
-
-    rc = sprintf_s
-        (
-            strCmd,
-            sizeof(strCmd),
-            "cat /proc/net/dev | grep %s | tr : \" \" | awk '{print $10}'",
-            pName
-        );
-    if(rc < EOK)
-    {
-        ERR_CHK(rc);
-        return -1;
-    }
-    pFile = popen(strCmd, "r");
-    fread(strBuf, sizeof(char), sizeof(strBuf), pFile);
-    pStats->BytesSent= _ansc_atoi(strBuf);
-    pclose(pFile);
-
-    rc = sprintf_s
-        (
-            strCmd,
-            sizeof(strCmd),
-            "cat /proc/net/dev | grep %s | tr : \" \" | awk '{print $11}'",
-            pName
-        );
-    if(rc < EOK)
-    {
-        ERR_CHK(rc);
-        return -1;
-    }
-    pFile = popen(strCmd, "r");
-    fread(strBuf, sizeof(char), sizeof(strBuf), pFile);
-    pStats->PacketsSent = _ansc_atoi(strBuf);
-    pclose(pFile);
-
-    rc = sprintf_s
-        (
-            strCmd,
-            sizeof(strCmd),
-            "cat /proc/net/dev | grep %s | tr : \" \" | awk '{print $12}'",
-            pName
-        );
-    if(rc < EOK)
-    {
-        ERR_CHK(rc);
-        return -1;
-    }
-    pFile = popen(strCmd, "r");
-    fread(strBuf, sizeof(char), sizeof(strBuf), pFile);
-    pStats->ErrorsSent= _ansc_atoi(strBuf);
-    pclose(pFile);
-
-    rc = sprintf_s
-        (
-            strCmd,
-            sizeof(strCmd),
-            "cat /proc/net/dev | grep %s | tr : \" \" | awk '{print $13}'",
-            pName
-        );
-    if(rc < EOK)
-    {
-        ERR_CHK(rc);
-        return -1;
-    }
-    pFile = popen(strCmd, "r");
-    fread(strBuf, sizeof(char), sizeof(strBuf), pFile);
-    pStats->DiscardPacketsSent= _ansc_atoi(strBuf);
-    pclose(pFile);
-
-    return 0;
+        if (sscanf (p, "%llu%llu%lu%lu%*u%*u%*u%*u%llu%llu%lu%lu",
+                       &rx_bytes, &rx_packets, &pStats->ErrorsReceived, &pStats->DiscardPacketsReceived,
+                       &tx_bytes, &tx_packets, &pStats->ErrorsSent, &pStats->DiscardPacketsSent) == 8)
+        {
+            pStats->BytesSent       = (ULONG) tx_bytes;      /* Truncate !! */
+            pStats->BytesReceived   = (ULONG) rx_bytes;      /* Truncate !! */
+            pStats->PacketsSent     = (ULONG) tx_packets;    /* Truncate !! */
+            pStats->PacketsReceived = (ULONG) rx_packets;    /* Truncate !! */
+            result = 0;
+        }
 #endif
+        break;
+    }
+
+done:
+    fclose (fp);
+
+    return result;
 }
 
 static int setIfStatus(struct ifreq *pIfr)
