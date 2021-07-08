@@ -473,12 +473,15 @@ CosaDmlRaIfSetCfg
 {
     UNREFERENCED_PARAMETER(hContext);
     UtopiaContext utctx = {0};
+    char syscfgName[36];
     char out[16];
 	unsigned int  managedFlag = 0;
 	unsigned int  otherFlag   = 0;
 	unsigned int  ra_interval = 0;
 	unsigned int  ra_lifetime = 0;
     unsigned int  mtu   = 0;
+    bool breset = false;
+    unsigned int rc;
     enum {
         DHCPV6_SERVER_TYPE_STATEFUL  =1,
         DHCPV6_SERVER_TYPE_STATELESS
@@ -490,48 +493,99 @@ CosaDmlRaIfSetCfg
 	if (Utopia_Init(&utctx))
 	{
 		out[0] = 0;
-		Utopia_RawGet(&utctx,NULL,"router_managed_flag",out,sizeof(out));
+		if(pCfg->InstanceNumber == 1)
+		    strcpy(syscfgName,"router_managed_flag");
+		else
+        	    sprintf(syscfgName, "router_managed_flag_%d",pCfg->InstanceNumber);
+		Utopia_RawGet(&utctx,NULL,syscfgName,out,sizeof(out));
 		if ( out[0] == '1' )
 			managedFlag = 1;
 
 		out[0] = 0;
-		Utopia_RawGet(&utctx,NULL,"router_other_flag",out,sizeof(out));
+		if(pCfg->InstanceNumber == 1)
+		    strcpy(syscfgName,"router_other_flag");
+		else
+        	sprintf(syscfgName, "router_other_flag_%d",pCfg->InstanceNumber);
+		Utopia_RawGet(&utctx,NULL,syscfgName,out,sizeof(out));
 		if ( out[0] == '1' )
 			otherFlag = 1;
 
 		out[0] = 0;
-		Utopia_RawGet(&utctx,NULL,"ra_interval",out,sizeof(out));
-		ra_interval = atoi(out);
+		if(pCfg->InstanceNumber == 1)
+		    strcpy(syscfgName,"ra_interval");
+		else
+        	    sprintf(syscfgName, "ra_interval_%d",pCfg->InstanceNumber);
+		rc = Utopia_RawGet(&utctx,NULL,syscfgName,out,sizeof(out));
+		if(rc == 1)
+			ra_interval = atoi(out);
+		else
+			breset = true;
 
 		out[0] = 0;
-		Utopia_RawGet(&utctx,NULL,"ra_lifetime",out,sizeof(out));
-		ra_lifetime = atoi(out);
+		if(pCfg->InstanceNumber == 1)
+		    strcpy(syscfgName,"ra_lifetime");
+		else
+        	    sprintf(syscfgName, "ra_lifetime_%d",pCfg->InstanceNumber);
+		rc = Utopia_RawGet(&utctx,NULL,syscfgName,out,sizeof(out));
+		if(rc == 1)
+		    ra_lifetime = atoi(out);
+		else
+		    breset = true;
 
 		out[0] = 0;
-		Utopia_RawGet(&utctx,NULL,"router_mtu",out,sizeof(out));
-		mtu = atoi(out);
+		if(pCfg->InstanceNumber == 1)
+		    strcpy(syscfgName,"router_mtu");
+		else
+        	    sprintf(syscfgName, "router_mtu_%d",pCfg->InstanceNumber);
+		rc = Utopia_RawGet(&utctx,NULL,syscfgName,out,sizeof(out));
+		if(rc == 1)
+		    mtu = atoi(out);
+		else
+		    breset = true;
 
 		if ( ( !(pCfg->bAdvManagedFlag)     == !managedFlag ) && 
 		     ( !(pCfg->bAdvOtherConfigFlag) == !otherFlag   ) &&
 		     (   pCfg->MinRtrAdvInterval    == ra_interval  ) &&
 		     (   pCfg->AdvDefaultLifetime   == ra_lifetime  ) &&
-		     (   pCfg->AdvLinkMTU           == mtu          ) )
+		     (   pCfg->AdvLinkMTU           == mtu          ) &&
+		     (   breset                     == false        ) )
                 {
                     Utopia_Free(&utctx,0);
                     return ANSC_STATUS_FAILURE;
                 }
 
-		Utopia_RawSet(&utctx, NULL, "router_managed_flag", pCfg->bAdvManagedFlag ? "1" : "0");
-		Utopia_RawSet(&utctx, NULL, "router_other_flag", pCfg->bAdvOtherConfigFlag ? "1" : "0");
+		if(pCfg->InstanceNumber == 1)
+		    strcpy(syscfgName,"router_managed_flag");
+		else
+        	    sprintf(syscfgName, "router_managed_flag_%d",pCfg->InstanceNumber);
+		Utopia_RawSet(&utctx, NULL, syscfgName, pCfg->bAdvManagedFlag ? "1" : "0");
 
+		if(pCfg->InstanceNumber == 1)
+		    strcpy(syscfgName,"router_other_flag");
+		else
+        	sprintf(syscfgName, "router_other_flag_%d",pCfg->InstanceNumber);
+		Utopia_RawSet(&utctx, NULL, syscfgName, pCfg->bAdvOtherConfigFlag ? "1" : "0");
+
+		if(pCfg->InstanceNumber == 1)
+		    strcpy(syscfgName,"ra_interval");
+		else
+        	    sprintf(syscfgName, "ra_interval_%d",pCfg->InstanceNumber);
 		snprintf(out, sizeof(out), "%u", pCfg->MinRtrAdvInterval);
-		Utopia_RawSet(&utctx,NULL,"ra_interval",out);
+		Utopia_RawSet(&utctx,NULL,syscfgName,out);
 
+		if(pCfg->InstanceNumber == 1)
+		    strcpy(syscfgName,"ra_lifetime");
+		else
+        	    sprintf(syscfgName, "ra_lifetime_%d",pCfg->InstanceNumber);
 		snprintf(out, sizeof(out), "%u", pCfg->AdvDefaultLifetime);
-		Utopia_RawSet(&utctx,NULL,"ra_lifetime",out);
+		Utopia_RawSet(&utctx,NULL,syscfgName,out);
 
+		if(pCfg->InstanceNumber == 1)
+		    strcpy(syscfgName,"router_mtu");
+		else
+        	    sprintf(syscfgName, "router_mtu_%d",pCfg->InstanceNumber);
 		snprintf(out, sizeof(out), "%u", pCfg->AdvLinkMTU);
-		Utopia_RawSet(&utctx,NULL,"router_mtu",out);
+		Utopia_RawSet(&utctx,NULL,syscfgName,out);
 
 		Utopia_Free(&utctx,1);
 
