@@ -195,7 +195,7 @@ static int getIfEntry(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_FULL pEntry)
 
 static int getIfStats2(const PUCHAR pName, PCOSA_DML_ETH_STATS pStats);
 
-EthIntControlFuncs ifFuncs = {
+static const EthIntControlFuncs ifFuncs = {
     getIfCfg,
     setIfCfg,
     getIfStats,
@@ -203,7 +203,7 @@ EthIntControlFuncs ifFuncs = {
     getIfEntry
 };
 
-EthIntControlFuncs swFuncs = {
+static const EthIntControlFuncs swFuncs = {
     puma6_getSwitchCfg,
     puma6_setSwitchCfg,
     puma6_getSwitchStats,
@@ -211,7 +211,7 @@ EthIntControlFuncs swFuncs = {
     puma6_getEntry
 };
 
-int g_PortIDs[]={
+static const int g_PortIDs[]={
 #if defined(ETH_6_PORTS)
     CCSP_HAL_ETHSW_EthPort1,
     CCSP_HAL_ETHSW_EthPort2,
@@ -236,7 +236,7 @@ int g_PortIDs[]={
 #endif
 };
 
-CosaEthInterfaceInfo g_EthEntries[] = 
+static CosaEthInterfaceInfo g_EthEntries[] = 
     {
 #if defined(ETH_2_PORTS)
         {g_EthIntSInfo + 0, {'\0'}, 0, 0, &swFuncs, g_PortIDs + 0, {0}},
