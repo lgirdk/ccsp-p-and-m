@@ -3871,12 +3871,10 @@ CosaDmlDhcpsARPing
 #endif
     if ( _get_shell_output2(fp, "Received 0")) //MNG return "Received 0 response(s)". MV2 return "Received 0 reply". So Making it generic.
     {
-        /*1 packets transmitted, 0 packets received, 100% packet loss*/
         return ANSC_STATUS_FAILURE;
     } 
     else
     {
-        /*1 packets transmitted, 1 packets received, 0% packet loss*/
         return ANSC_STATUS_SUCCESS;
     }
 }
