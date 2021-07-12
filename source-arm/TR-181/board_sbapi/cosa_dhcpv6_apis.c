@@ -7916,6 +7916,8 @@ dhcpv6c_dbg_thrd(void * in)
 
 #ifdef _HUB4_PRODUCT_REQ_
             char ula_address[64] = {0};
+#endif//_HUB4_PRODUCT_REQ_
+
 #if defined(FEATURE_RDKB_WAN_MANAGER)
             int hub4_valid_lft = 0;
             int hub4_preferred_lft = 0;
@@ -7923,7 +7925,6 @@ dhcpv6c_dbg_thrd(void * in)
             char hub4_valid_lft[64] = {0};
             char hub4_preferred_lft[64] = {0};
 #endif
-#endif//_HUB4_PRODUCT_REQ_
             /*the format is :
              add 2000::ba7a:1ed4:99ea:cd9f :: 0 t1
              action, address, prefix, pref_len 3600
