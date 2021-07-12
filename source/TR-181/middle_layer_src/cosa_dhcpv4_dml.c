@@ -10888,8 +10888,6 @@ LanAllowedSubnetTable_DelEntry
         return ANSC_STATUS_FAILURE;
     }
 
-    AnscSListPopEntryByLink((PSLIST_HEADER)&pMyObject->LanAllowedSubnetList, &pLinkObj->Linkage);
-
     if (pLinkObj->bNew)
     {
         CosaLanAllowedSubnetListDelInfo((ANSC_HANDLE)pMyObject, (ANSC_HANDLE)pLinkObj);
@@ -10900,8 +10898,10 @@ LanAllowedSubnetTable_DelEntry
     }
 
     CosaDmlLAN_Validate_ModifyLanIP(pLanAllowedSubnet, pLinkObj->InstanceNumber);
-    AnscFreeMemory(pLanAllowedSubnet);
-    AnscFreeMemory(pLinkObj);
+    AnscZeroMemory(pLanAllowedSubnet->SubnetIP, sizeof(pLanAllowedSubnet->SubnetIP));
+    AnscZeroMemory(pLanAllowedSubnet->SubnetMask, sizeof(pLanAllowedSubnet->SubnetMask));
+    AnscZeroMemory(pLanAllowedSubnet->Alias, sizeof(pLanAllowedSubnet->Alias));
+
     return ANSC_STATUS_SUCCESS;
 }
 
