@@ -903,6 +903,8 @@ CosaDmlDynamicDns_SetEnable
        syscfg_set(NULL, "ddns_host_enable_1", buf);
        syscfg_commit();
 
+       update_ddns_server();
+
        return 0;
 }
 
