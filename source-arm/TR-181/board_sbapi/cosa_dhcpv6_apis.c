@@ -3487,6 +3487,15 @@ int CosaDmlDHCPv6sTriggerRestart(BOOL OnlyTrigger)
 void CosaDmlDhcpv6sRestartOnRaChanged(ULONG dhcpv6ServerType)
 {
     g_dhcpv6_server_type = dhcpv6ServerType;
+    UtopiaContext utctx  = {0};
+
+    /*Set the dhcpv6 server type*/
+    if(!Utopia_Init(&utctx))
+        return;
+
+    SETI_INTO_UTOPIA(DHCPV6S_NAME,  "", 0, "", 0, "servertype", g_dhcpv6_server_type)
+    Utopia_Free(&utctx,1);
+
     isRaFlagSet = TRUE;
     CosaDmlDHCPv6sTriggerRestart(FALSE);
 }
