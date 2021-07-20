@@ -7635,7 +7635,7 @@
 
             <name>MaxMTUSize</name>
 
-            <type>unsignedInt[64:65535]</type>
+            <type>unsignedInt[1280:1500]</type>
 
             <syntax>uint32</syntax>
 
