@@ -3876,7 +3876,6 @@ static BOOL validateClientIPAddress(ULONG client_ip_address)
 
 BOOL CosaDmlNatChkPortMappingClient(ULONG client)
 {
-#if !defined (MULTILAN_FEATURE)
     UtopiaContext                   Ctx;
     lanSetting_t lan;
     ULONG ipaddr = 0xffffffff, netmask = 0xffffffff;
@@ -3885,7 +3884,6 @@ BOOL CosaDmlNatChkPortMappingClient(ULONG client)
     ULONG dhcpIPAddressStart  =0xffffffff, dhcpIPAddressEnd = 0xffffffff;
 
     ULONG startIP, endIP, checkIP;
-#endif
 
     BOOL ret;
 
@@ -3894,7 +3892,6 @@ BOOL CosaDmlNatChkPortMappingClient(ULONG client)
         return TRUE;
     }
 
-#if !defined (MULTILAN_FEATURE)
     if (!Utopia_Init(&Ctx))
     {
         CcspTraceWarning(("%s Error initializing context\n", __FUNCTION__));
@@ -3917,13 +3914,9 @@ BOOL CosaDmlNatChkPortMappingClient(ULONG client)
     inet_pton(AF_INET, lan.netmask, &netmask);
 
     if((client != ipaddr) &&
-	(checkIP >= startIP && checkIP <= endIP) && //check that client(checkIP) is in DHCP range or not
         !IPv4Addr_IsBroadcast(client, ipaddr, netmask) &&
         !IPv4Addr_IsNetworkAddr(client, ipaddr, netmask) &&
         (IPv4Addr_IsSameNetwork(client, ipaddr, netmask) || IPv4Addr_IsSameNetwork(client, 0xac100c00, 0xffffff00)))
-#else
-	if(validateClientIPAddress(client))
-#endif
         ret =  TRUE; 
 #ifdef CONFIG_CISCO_HOME_SECURITY 
     else if(_Check_HS_PF_client(client) == TRUE)
