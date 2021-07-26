@@ -11197,7 +11197,7 @@
 
           <name>PortMapping</name>
 
-          <objectType>writableTable</objectType>
+          <objectType>dynWritableTable</objectType>
 
           <maxInstance>128</maxInstance>
 
