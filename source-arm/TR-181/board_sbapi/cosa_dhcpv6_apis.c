@@ -2003,6 +2003,7 @@ CosaDmlDhcpv6Init
             /* DHCPv6 is used for both addresses and other configuration settings.
             This combination is known as DHCPv6 stateful, in which DHCPv6 is assigning stateful addresses to IPv6 hosts. */
             Utopia_RawSet(&utctx, NULL, "router_managed_flag", "1");
+            Utopia_RawSet(&utctx, NULL, "router_managed_flag_2", "1");
             Utopia_RawSet(&utctx, NULL, "router_autonomous_flag", "0");
         }
         else if (g_dhcpv6_server_type == DHCPV6_SERVER_TYPE_STATELESS)
@@ -2011,15 +2012,18 @@ CosaDmlDhcpv6Init
             Neighboring routers are configured to advertise non-link-local address prefixes from which IPv6 hosts derive stateless addresses.
             This combination is known as DHCPv6 stateless: DHCPv6 is not assigning stateful addresses to IPv6 hosts, but stateless configuration settings.*/
             Utopia_RawSet(&utctx, NULL, "router_managed_flag", "0");
+            Utopia_RawSet(&utctx, NULL, "router_managed_flag_2", "0");
             Utopia_RawSet(&utctx, NULL, "router_autonomous_flag", "1");
         }
         else
         {
             /* Hosts use both stateless and stateful address configuration concurrently. */
             Utopia_RawSet(&utctx, NULL, "router_managed_flag", "1");
+            Utopia_RawSet(&utctx, NULL, "router_managed_flag_2", "1");
             Utopia_RawSet(&utctx, NULL, "router_autonomous_flag", "1");
         }
         Utopia_RawSet(&utctx, NULL, "router_other_flag", "1");
+        Utopia_RawSet(&utctx, NULL, "router_other_flag_2", "1");
     }
     else
     {
@@ -2027,6 +2031,8 @@ CosaDmlDhcpv6Init
         Hosts use router advertisements for non-link-local addresses and other methods (such as manual configuration) to configure other settings. */
         Utopia_RawSet(&utctx, NULL, "router_managed_flag", "0");
         Utopia_RawSet(&utctx, NULL, "router_other_flag", "0");
+        Utopia_RawSet(&utctx, NULL, "router_managed_flag_2", "0");
+        Utopia_RawSet(&utctx, NULL, "router_other_flag_2", "0");
         Utopia_RawSet(&utctx, NULL, "router_autonomous_flag", "1");
     }
 
@@ -3492,19 +3498,23 @@ int CosaDmlDHCPv6sTriggerRestart(BOOL OnlyTrigger)
             if (g_dhcpv6_server_type == DHCPV6_SERVER_TYPE_STATEFUL)
             {
                 Utopia_RawSet(&utctx, NULL, "router_managed_flag", "1");
+                Utopia_RawSet(&utctx, NULL, "router_managed_flag_2", "1");
                 Utopia_RawSet(&utctx, NULL, "router_autonomous_flag", "0");
             }
             else if (g_dhcpv6_server_type == DHCPV6_SERVER_TYPE_STATELESS)
             {
                 Utopia_RawSet(&utctx, NULL, "router_managed_flag", "0");
+                Utopia_RawSet(&utctx, NULL, "router_managed_flag_2", "0");
                 Utopia_RawSet(&utctx, NULL, "router_autonomous_flag", "1");
             }
             else
             {
                 Utopia_RawSet(&utctx, NULL, "router_managed_flag", "1");
+                Utopia_RawSet(&utctx, NULL, "router_managed_flag_2", "1");
                 Utopia_RawSet(&utctx, NULL, "router_autonomous_flag", "1");
             }
             Utopia_RawSet(&utctx, NULL, "router_other_flag", "1");
+            Utopia_RawSet(&utctx, NULL, "router_other_flag_2", "1");
             Utopia_Free(&utctx, 1);
          }
 
@@ -3594,6 +3604,8 @@ static int _dibbler_server_operation(char * arg)
                     Utopia_RawSet(&utctx, NULL, "router_managed_flag", "0");
                     Utopia_RawSet(&utctx, NULL, "router_other_flag", "0");
                     Utopia_RawSet(&utctx, NULL, "router_autonomous_flag", "1");
+                    Utopia_RawSet(&utctx, NULL, "router_managed_flag_2", "0");
+                    Utopia_RawSet(&utctx, NULL, "router_other_flag_2", "0");
                     Utopia_Free(&utctx, 1);
 
                     system("sysevent set zebra-restart");
