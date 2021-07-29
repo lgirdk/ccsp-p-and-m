@@ -2064,7 +2064,7 @@ int vsystem(const char *fmt, ...)
     if (n >= sizeof(cmd))
         return -1;
 
-    //fprintf(stderr, "%s: %s\n", __FUNCTION__, cmd);
+    fprintf(stderr, "%s: %s\n", __FUNCTION__, cmd);
     return system(cmd);
 }
 
