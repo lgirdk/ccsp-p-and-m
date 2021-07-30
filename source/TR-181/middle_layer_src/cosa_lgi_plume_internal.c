@@ -111,6 +111,7 @@ CosaLgiPlumeInitialize
     CosaDmlGetPlumeOperationalStatus(NULL, &pMyObject->plumeOperationalStatus);
     CosaDmlGetPlumeDFSEnable(NULL, &pMyObject->plumeDFSEnable);
     CosaDmlGetPlumeNativeAtmBsControl(NULL, &pMyObject->plumeNativeAtmBsControl);
+    CosaDmlGetPlumeLogpullEnable(NULL, &pMyObject->plumeLogpullEnable);
     pMyObject->bNeedPlumeServiceRestart = 0;
     pMyObject->bPlumeUrlChanged = 0;
     pMyObject->bPlumeNativeAtmBsControlChanged = 0;
