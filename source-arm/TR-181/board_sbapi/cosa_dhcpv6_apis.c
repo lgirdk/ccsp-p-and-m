@@ -9237,6 +9237,8 @@ dhcpv6c_dbg_thrd(void * in)
 /* Service IPv6 will assign IP address and prefix allocation,
    for all lan interfaces.
 */
+#if 0 /* Not required for MVx platforms with MULTILAN feature enabled */
+
 #if !defined(_COSA_INTEL_XB3_ARM_)
                         // not the best place to add route, just to make it work
                         // delegated prefix need to route to LAN interface
@@ -9289,7 +9291,6 @@ dhcpv6c_dbg_thrd(void * in)
                         }
 #endif
 
-#ifndef _PUMA6_ARM_
                         CosaDmlDHCPv6sTriggerRestart(FALSE);
 #if defined(_COSA_BCM_ARM_) || defined(INTEL_PUMA7)
                         CcspTraceWarning((" %s dhcpv6_assign_global_ip to brlan0 \n", __FUNCTION__));
@@ -9346,7 +9347,7 @@ dhcpv6c_dbg_thrd(void * in)
 			    CcspTraceWarning(("%s: setting lan-restart\n", __FUNCTION__));
                             commonSyseventSet("lan-restart", "1");
                         }
-#endif //_PUMA6_ARM_
+#endif
 #endif
 #else
 #if defined(FEATURE_RDKB_WAN_MANAGER)
