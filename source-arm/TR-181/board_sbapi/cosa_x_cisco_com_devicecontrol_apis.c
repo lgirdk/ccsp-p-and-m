@@ -4169,7 +4169,7 @@ static void update_port_forward_table(ULONG lan_ipaddr, ULONG lan_netmask)
     {
         for (index = count-1; index >= 0; index--)
         {
-            if(is_ipaddr_invalid(lan_ipaddr, lan_netmask, pNatPMapping[index].InternalClient.Value))
+            if(is_ipaddr_invalid(lan_ipaddr, lan_netmask, ntohl(pNatPMapping[index].InternalClient.Value)))
             {
                 snprintf(objName, sizeof(objName), "%s.%d.", ROOTOBJ, pNatPMapping[index].InstanceNumber);
                 CcspBaseIf_DeleteTblRow(bus_handle,
