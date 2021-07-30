@@ -11092,6 +11092,10 @@ LanAllowedSubnetTable_Validate
             if (lanSubnetIPBuf.Dot[3] > 253)
                 return FALSE;
         }
+        else
+        {
+            return FALSE;
+        }
 
         /* MVXREQ-674: Auto-correct subnet mask according to the subnet IP.
          * If the subnet mask is not correct as per RFC 1918,
