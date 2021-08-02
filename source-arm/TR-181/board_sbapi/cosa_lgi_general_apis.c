@@ -348,3 +348,36 @@ CosaDmlGiSetUserBridgeModeAllowed
 
     return ANSC_STATUS_SUCCESS;
 }
+
+ANSC_STATUS CosaDmlGiGetLedDSErrorTimer ( ANSC_HANDLE hContext, int *pValue )
+{
+    *pValue = platform_hal_GetLedDSErrorTimer();
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS CosaDmlGiSetLedDSErrorTimer ( ANSC_HANDLE hContext, int value )
+{
+    return platform_hal_SetLedDSErrorTimer(value);
+}
+
+ANSC_STATUS CosaDmlGiGetLedUSErrorTimer ( ANSC_HANDLE hContext, int *pValue )
+{
+    *pValue = platform_hal_GetLedUSErrorTimer();
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS CosaDmlGiSetLedUSErrorTimer ( ANSC_HANDLE hContext, int value )
+{
+    return platform_hal_SetLedUSErrorTimer(value);
+}
+
+ANSC_STATUS CosaDmlGiGetLedRegistrationErrorTimer ( ANSC_HANDLE hContext, int *pValue )
+{
+    *pValue = platform_hal_GetLedRegistrationErrorTimer();
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS CosaDmlGiSetLedRegistrationErrorTimer ( ANSC_HANDLE hContext, int value )
+{
+    return platform_hal_SetLedRegistrationErrorTimer(value);
+}
