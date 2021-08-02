@@ -347,6 +347,31 @@ LgiGeneral_GetParamStringValue
     return -1;
 }
 
+BOOL LgiGeneral_GetParamIntValue ( ANSC_HANDLE hInsContext, char *ParamName, int *pInt )
+{
+    PCOSA_DATAMODEL_LGI_GENERAL  pMyObject = (PCOSA_DATAMODEL_LGI_GENERAL)g_pCosaBEManager->hLgiGeneral;
+
+    if (strcmp(ParamName, "DSErrorConditionTimer") == 0)
+    {
+        *pInt = pMyObject->LedDSErrorTimer;
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "USErrorConditionTimer") == 0)
+    {
+        *pInt = pMyObject->LedUSErrorTimer;
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "RegistrationErrorConditionTimer") == 0)
+    {
+        *pInt = pMyObject->LedRegistrationErrorTimer;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
 BOOL
 LgiGeneral_SetParamBoolValue
     (
@@ -378,6 +403,32 @@ LgiGeneral_SetParamBoolValue
         pMyObject->UserBridgeModeAllowed = bValue;
         return TRUE;
     }
+    return FALSE;
+}
+
+BOOL LgiGeneral_SetParamIntValue ( ANSC_HANDLE hInsContext, char *ParamName, int value )
+{
+    /* check the parameter name and return the corresponding value */
+    PCOSA_DATAMODEL_LGI_GENERAL  pMyObject = (PCOSA_DATAMODEL_LGI_GENERAL)g_pCosaBEManager->hLgiGeneral;
+
+    if (strcmp(ParamName, "DSErrorConditionTimer") == 0)
+    {
+        pMyObject->LedDSErrorTimer = value;
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "USErrorConditionTimer") == 0)
+    {
+        pMyObject->LedUSErrorTimer = value;
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "RegistrationErrorConditionTimer") == 0)
+    {
+        pMyObject->LedRegistrationErrorTimer = value;
+        return TRUE;
+    }
+
     return FALSE;
 }
 
@@ -499,6 +550,9 @@ LgiGeneral_Commit
     CosaDmlGiSetWebUISkin(NULL, pMyObject->WebUISkin);
     CosaDmlGiSetCustomerId(NULL, pMyObject->CustomerId);
     CosaDmlGiSetUserBridgeModeAllowed(NULL, pMyObject->UserBridgeModeAllowed);
+    CosaDmlGiSetLedDSErrorTimer(NULL, pMyObject->LedDSErrorTimer);
+    CosaDmlGiSetLedUSErrorTimer(NULL, pMyObject->LedUSErrorTimer);
+    CosaDmlGiSetLedRegistrationErrorTimer(NULL, pMyObject->LedRegistrationErrorTimer);
     CosaDmlGiSaveSettings();
     return 0;
 }
