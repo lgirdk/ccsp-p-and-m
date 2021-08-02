@@ -579,8 +579,10 @@ int  update_ddns_server(void)
     if(syscfg_get( NULL, "arddnsclient_1::Username", client_username, sizeof(client_username)) == 0) {
         printf("%s 9: client_username %s\n",FUNC_NAME,client_username);
     }
-    if(client_username[0] == '\0') {
-        printf("%s: FAILED because client_username %s\n",FUNC_NAME,client_username);
+
+    /*Throw Authentication error if the username is NULL or username contains '@' for no-ip*/
+    if((client_username[0] == '\0')|| ((!strcmp(server_servicename,"no-ip"))&& (strchr(client_username,'@')))) {
+        printf("%s: FAILED because client_username is NULL or username contains '@' for no-ip\n",FUNC_NAME);
         ddns_return_status_success = FALSE;
         client_status = CLIENT_ERROR;
         host_status_1 = HOST_ERROR;
@@ -589,6 +591,7 @@ int  update_ddns_server(void)
         goto EXIT;
     }
 
+    /*Do password validation if the service is not duckdns. Duckdns not required any password for login*/
     if(strcmp(server_servicename,"duckdns")) {
         if(syscfg_get( NULL, "arddnsclient_1::Password", client_password, sizeof(client_password)) == 0) {
             int i,j;
@@ -613,7 +616,7 @@ int  update_ddns_server(void)
             strcpy(client_password, command);
         }
         if(client_password[0] == '\0') {
-            printf("%s: FAILED because client_password is NULL %s %s\n",FUNC_NAME,client_password);
+            printf("%s: FAILED because client_password is NULL \n",FUNC_NAME);
             ddns_return_status_success = FALSE;
             client_status = CLIENT_ERROR;
             host_status_1 = HOST_ERROR;
