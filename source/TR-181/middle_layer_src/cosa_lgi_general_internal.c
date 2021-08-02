@@ -127,6 +127,9 @@ CosaLgiGeneralInitialize
     CosaDmlGiGetDefaultAdminPassword(NULL, pMyObject->DefaultAdminPassword, &size_DefaultAdminPassword);
 
     CosaDmlGiGetUserBridgeModeAllowed(NULL, &pMyObject->UserBridgeModeAllowed);
+    CosaDmlGiGetLedDSErrorTimer(NULL, &pMyObject->LedDSErrorTimer);
+    CosaDmlGiGetLedUSErrorTimer(NULL, &pMyObject->LedUSErrorTimer);
+    CosaDmlGiGetLedRegistrationErrorTimer(NULL, &pMyObject->LedRegistrationErrorTimer);
 
     /* Further implementation of this parameter is still under design discussion*/
     AnscCopyString(pMyObject->DataModelVersion, "2.1.0");
