@@ -45,6 +45,9 @@ _COSA_DATAMODEL_LGI_GENERAL_CLASS_CONTENT
     ULONG                           lockout_period;
     ULONG                           max_lockout_periods;
     BOOL                            UserBridgeModeAllowed;
+    int                             LedDSErrorTimer;
+    int                             LedUSErrorTimer;
+    int                             LedRegistrationErrorTimer;
 }
 COSA_DATAMODEL_LGI_GENERAL, *PCOSA_DATAMODEL_LGI_GENERAL;
 
