@@ -170,4 +170,11 @@ CosaDmlGiSetUserBridgeModeAllowed
     BOOL                        bValue
 );
 
+ANSC_STATUS CosaDmlGiGetLedDSErrorTimer (ANSC_HANDLE hContext, int *pValue);
+ANSC_STATUS CosaDmlGiSetLedDSErrorTimer (ANSC_HANDLE hContext, int value);
+ANSC_STATUS CosaDmlGiGetLedUSErrorTimer (ANSC_HANDLE hContext, int *pValue);
+ANSC_STATUS CosaDmlGiSetLedUSErrorTimer (ANSC_HANDLE hContext, int value);
+ANSC_STATUS CosaDmlGiGetLedRegistrationErrorTimer (ANSC_HANDLE hContext, int *pValue);
+ANSC_STATUS CosaDmlGiSetLedRegistrationErrorTimer (ANSC_HANDLE hContext, int value);
+
 #endif
