@@ -764,6 +764,49 @@
                     </parameter>
                 </parameters>
             </object>
+            <object>
+              <name>LED</name>
+              <objectType>object</objectType>
+              <functions>
+                  <func_GetParamIntValue>LgiGeneral_GetParamIntValue</func_GetParamIntValue>
+                  <func_SetParamIntValue>LgiGeneral_SetParamIntValue</func_SetParamIntValue>
+                  <func_Validate>LgiGeneral_Validate</func_Validate>
+                  <func_Commit>LgiGeneral_Commit</func_Commit>
+                  <func_Rollback>LgiGeneral_Rollback</func_Rollback>
+              </functions>
+              <parameters>
+                  <parameter>
+                      <name>DSErrorConditionTimer</name>
+                      <description>
+                          This timer describes the time in seconds after which the LED should display an error condition
+                          if Booting stage 3, DS scanning, has not completed inside the configured period.
+                      </description>
+                      <type>int[10:600]</type>
+                      <syntax>int</syntax>
+                      <writable>true</writable>
+                  </parameter>
+                  <parameter>
+                      <name>USErrorConditionTimer</name>
+                      <description>
+                          This timer describes the time in seconds after which the LED should display an error condition
+                          if Booting stage 4, US scanning, has not completed inside the configured period.
+                      </description>
+                      <type>int[10:600]</type>
+                      <syntax>int</syntax>
+                      <writable>true</writable>
+                  </parameter>
+                  <parameter>
+                      <name>RegistrationErrorConditionTimer</name>
+                      <description>
+                          This timer describes the time in seconds after which the LED should display an error condition
+                          if Booting stage 5, Registration (DHCP/TFTP), has not completed inside the configured period.
+                      </description>
+                      <type>int[10:600]</type>
+                      <syntax>int</syntax>
+                      <writable>true</writable>
+                  </parameter>
+              </parameters>
+            </object>
           </objects>
 
     </object>
