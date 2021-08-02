@@ -131,6 +131,9 @@ CosaLgiGeneralInitialize
     CosaDmlGiGetLoginSecurity(NULL, &pMyObject->max_lockout_periods, "max_lockout_periods");
 
     CosaDmlGiGetUserBridgeModeAllowed(NULL, &pMyObject->UserBridgeModeAllowed);
+    CosaDmlGiGetLedDSErrorTimer(NULL, &pMyObject->LedDSErrorTimer);
+    CosaDmlGiGetLedUSErrorTimer(NULL, &pMyObject->LedUSErrorTimer);
+    CosaDmlGiGetLedRegistrationErrorTimer(NULL, &pMyObject->LedRegistrationErrorTimer);
 
     /* Further implementation of this parameter is still under design discussion*/
     AnscCopyString(pMyObject->DataModelVersion, "2.1.0");
