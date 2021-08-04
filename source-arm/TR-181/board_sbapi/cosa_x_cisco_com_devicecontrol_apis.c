@@ -4222,7 +4222,7 @@ static void update_ip_reservation_table(ULONG lan_ipaddr, ULONG lan_netmask)
         {
             memset(pStaticAddr, 0, sizeof(COSA_DML_DHCPS_SADDR));
             CosaDmlDhcpsGetSaddr(NULL, 1, index, pStaticAddr);
-            if(is_ipaddr_invalid(lan_ipaddr, lan_netmask, pStaticAddr->Yiaddr.Value))
+            if(is_ipaddr_invalid(lan_ipaddr, lan_netmask, ntohl(pStaticAddr->Yiaddr.Value)))
             {
                 snprintf(objName, sizeof(objName), "%s.%d.", ROOTOBJ, pStaticAddr->InstanceNumber);
                 CcspBaseIf_DeleteTblRow(bus_handle,
