@@ -81,6 +81,9 @@
 #endif
 #include "safec_lib_common.h"
 
+#define REFRESH_INTERVAL 10
+#define TIME_NO_NEGATIVE(x) ((long)(x) < 0 ? 0 : (x))
+
 ANSC_STATUS
 COSAGetParamValueByPathName
     (
@@ -1583,9 +1586,21 @@ Stats_GetParamUlongValue
     )
 {
     PCOSA_DML_ETH_PORT_FULL         pEthernetPortFull = (PCOSA_DML_ETH_PORT_FULL)hInsContext;
-    COSA_DML_ETH_STATS              stats;
+    static COSA_DML_ETH_STATS       stats;
+    static ULONG last_tick = 0;
+    static ULONG last_instance_number = 0;
 
-    CosaDmlEthPortGetStats(NULL, pEthernetPortFull->Cfg.InstanceNumber, &stats);
+    if (!last_tick)
+    {
+        last_tick = AnscGetTickInSeconds();
+    }
+
+    if ((last_instance_number != pEthernetPortFull->Cfg.InstanceNumber) || (last_tick < TIME_NO_NEGATIVE(AnscGetTickInSeconds() - REFRESH_INTERVAL)))
+    {
+        CosaDmlEthPortGetStats(NULL, pEthernetPortFull->Cfg.InstanceNumber, &stats);
+        last_tick = 0;
+    }
+    last_instance_number = pEthernetPortFull->Cfg.InstanceNumber;
     
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "BytesSent") == 0)
