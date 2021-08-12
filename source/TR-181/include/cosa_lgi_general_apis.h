@@ -134,6 +134,12 @@ CosaDmlGiSetWebUISkin
 );
 
 ULONG
+CosaDmlLGiSetUiHashPassword
+(
+    char                        *pValue
+);
+
+ULONG
 CosaDmlGiGetLanHostname
 (
     ANSC_HANDLE                 hContext,
