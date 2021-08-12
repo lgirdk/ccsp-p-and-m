@@ -17,8 +17,11 @@
 #include <syscfg/syscfg.h>
 
 #include "cosa_lgi_general_apis.h"
+#include "plugin_main_apis.h"
 
 #include <platform_hal.h>
+
+extern void* g_pDslhDmlAgent;
 
 ULONG
 CosaDmlGiGetFirstInstallWizardEnable
@@ -299,6 +302,21 @@ ULONG CosaDmlGiSetWebUISkin ( ANSC_HANDLE hContext, char *pValue )
 {
     syscfg_set (NULL, "Web_UI_Skin", pValue);
 
+    return ANSC_STATUS_SUCCESS;
+}
+
+ULONG
+CosaDmlLGiSetUiHashPassword
+    (
+        char                        *pValue
+    )
+{
+    char name[64];
+    ULONG size = sizeof(name);
+    syscfg_set(NULL, "hash_password_3", pValue);
+    syscfg_commit();
+    //Get the datamodel to update the structure
+    g_GetParamValueString(g_pDslhDmlAgent, "Device.Users.User.3.X_CISCO_COM_Password", name, &size);
     return ANSC_STATUS_SUCCESS;
 }
 
