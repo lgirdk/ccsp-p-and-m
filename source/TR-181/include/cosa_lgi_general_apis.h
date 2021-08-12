@@ -134,6 +134,12 @@ CosaDmlGiSetWebUISkin
 );
 
 ULONG
+CosaDmlLGiSetUiHashPassword
+(
+    char                        *pValue
+);
+
+ULONG
 CosaDmlGiGetAvailableLanguages
 (
     ANSC_HANDLE                 hContext,

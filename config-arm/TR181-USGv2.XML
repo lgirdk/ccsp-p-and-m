@@ -617,6 +617,18 @@
                 <writable>false</writable>
 
             </parameter>
+            <parameter>
+
+                <name>UiPasswordRestore</name>
+
+                <type>string</type>
+
+                <syntax>string</syntax>
+
+                <writable>true</writable>
+
+            </parameter>
+
 
              <parameter>
 

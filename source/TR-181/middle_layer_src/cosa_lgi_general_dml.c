@@ -342,6 +342,12 @@ LgiGeneral_GetParamStringValue
           return 1;
         }
     }
+    if (strcmp(ParamName, "UiPasswordRestore") == 0)
+    {
+        //return empty string
+        pValue[0] = '\0';
+        return 0;
+    }
     // LGI ADD END
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return -1;
@@ -517,6 +523,11 @@ LgiGeneral_SetParamStringValue
         {
             return FALSE;
         }
+    }
+    if (strcmp(ParamName, "UiPasswordRestore") == 0)
+    {
+        CosaDmlLGiSetUiHashPassword(strValue);
+        return TRUE;
     }
     return FALSE;
 }
