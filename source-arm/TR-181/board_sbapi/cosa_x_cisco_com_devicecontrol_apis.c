@@ -1911,6 +1911,26 @@ void* backuplogs(void *thread)
     return NULL;
 }
 
+#if defined (_LG_OFW_) && ! defined (_PUMA6_ARM_)
+static void *rebootDeviceAfterWifiReset (void *thread)
+{
+	void *ret;
+	int s;
+	if(thread != NULL)
+	{
+		pthread_t thread_id = (pthread_t) thread;
+		CcspTraceWarning(("FactoryReset:%s Wait for WiFi reset to complete\n",__FUNCTION__));
+		s = pthread_join(thread_id, &ret);
+		if (!s)
+			CcspTraceWarning(("FactoryReset:%s WiFi reset is now completed\n",__FUNCTION__));
+	}
+	pthread_detach(pthread_self());
+
+	v_secure_system("sleep 5 && reboot &");
+	return NULL;
+}
+#endif
+
 void* resetWiFi(void* arg)
 {
     UNREFERENCED_PARAMETER(arg);
@@ -1955,7 +1975,7 @@ void* resetWiFi(void* arg)
 		CcspTraceError(("FactoryReset:%s SettingX_CISCO_COM_FactoryReset returned error for param '%s'  ...\n",__FUNCTION__,faultParam));  
 		bus_info->freefunc(faultParam);
 	}
-#if defined (_XB6_PRODUCT_REQ_) || defined(_COSA_BCM_MIPS_) || (defined(_HUB4_PRODUCT_REQ_) && !defined(_SR300_PRODUCT_REQ_))
+#if (defined (_XB6_PRODUCT_REQ_) || defined(_COSA_BCM_MIPS_) || (defined(_HUB4_PRODUCT_REQ_) && !defined(_SR300_PRODUCT_REQ_))) && !defined(_LG_OFW_)
 	faultParam = NULL;
 #if defined (_TRI_BAND_WIFI_)
 	parameterValStruct_t val1 = { "Device.WiFi.X_CISCO_COM_FactoryResetRadioAndAp", "1,2,3;1,2,17", ccsp_string};
@@ -2412,6 +2432,16 @@ CosaDmlDcSetFactoryReset
            
            if (!pthread_create(&wifiThread, NULL, &resetWiFi, NULL))
 		   wifiThreadStarted=1;
+
+#if defined (_LG_OFW_) && ! defined (_PUMA6_ARM_)
+           pthread_t reboot_device;
+
+           /* Reboot the device in case of WiFi alone factory reset */
+           if (factory_reset_mask == FR_WIFI)
+           {
+               pthread_create(&reboot_device, NULL, &rebootDeviceAfterWifiReset, (void *) wifiThread);
+           }
+#endif
 	}
 	if (factory_reset_mask & FR_NONE){
 	}
