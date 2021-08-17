@@ -4594,33 +4594,19 @@ ANSC_STATUS
 CosaDmlLAN_Validate_ModifyLanIP(COSA_DML_LAN_Allowed_Subnet *pLanAllowedSubnet, ULONG ins)
 {
     char buff[17];
-    char temp[4];
+    int temp[4];
     int iMatchFound = 0;
-    char IPbuf[4], Maskbuf[4];
-    unsigned int subnetIPAllowed, subnetMaskAllowed;
-    unsigned int lanIPCfgd;
+    unsigned int subnetFirstMask = 0, subnetSecondMask = 0, subnetThirdMask = 0, subnetFourthMask = 0;
 
     syscfg_get(NULL, "lan_ipaddr", buff, sizeof(buff));
     if (sscanf(buff,"%d.%d.%d.%d",&temp[0],&temp[1],&temp[2],&temp[3]) == 4)
     {
-        lanIPCfgd = ((temp[0]<<24) | (temp[1]<<16) | (temp[2]<<8) | temp[3]);
-
         CosaDmlLAN_Allowed_Subnet_GetEntryByIndex(ins, pLanAllowedSubnet);
-
-        if (sscanf(pLanAllowedSubnet->SubnetIP, "%d.%d.%d.%d", &IPbuf[0], &IPbuf[1], &IPbuf[2], &IPbuf[3]) == 4)
+        if (sscanf(pLanAllowedSubnet->SubnetIP, "%d.%d.%d.%d", &subnetFirstMask, &subnetSecondMask, &subnetThirdMask, &subnetFourthMask) == 4)
         {
-            subnetIPAllowed = ((IPbuf[0]<<24) | (IPbuf[1]<<16) | (IPbuf[2]<<8) | IPbuf[3]);
-
-            if (sscanf(pLanAllowedSubnet->SubnetMask,"%d.%d.%d.%d",&Maskbuf[0],&Maskbuf[1],&Maskbuf[2],&Maskbuf[3]) == 4) {
-                subnetMaskAllowed = ((Maskbuf[0]<<24) | (Maskbuf[1]<<16) | (Maskbuf[2]<<8) | Maskbuf[3]);
-
-                CcspTraceInfo(("LanIP=0x%08x,AllowedIP=0x%08x, AllowedMask=0x%08x, AllowedNet=0x%08x, CfgdNet=0x%08x\n",
-                    lanIPCfgd,subnetIPAllowed,subnetMaskAllowed,
-                    (subnetIPAllowed & subnetMaskAllowed),(lanIPCfgd & subnetMaskAllowed)));
-
-                if ( (subnetIPAllowed & subnetMaskAllowed) == (lanIPCfgd & subnetMaskAllowed) ) {
-                    iMatchFound = 1;
-                }
+            if ((subnetFirstMask == temp[0]) && (subnetSecondMask == temp[1]) && (subnetThirdMask == temp[2]))
+            {
+                iMatchFound =1;
             }
         }
     }
@@ -4646,6 +4632,7 @@ CosaDmlLAN_Validate_ModifyLanIP(COSA_DML_LAN_Allowed_Subnet *pLanAllowedSubnet, 
         syscfg_set(NULL, "lan_netmask", buff);
 
         syscfg_commit();
+        commonSyseventSet("refresh-switch", "true");
         system("sysevent set ipv4-resync 4");
     }
     return ANSC_STATUS_SUCCESS;
