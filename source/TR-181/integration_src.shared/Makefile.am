@@ -18,26 +18,14 @@
 ##########################################################################
 AM_CFLAGS = -D_ANSC_LINUX
 AM_CFLAGS += -D_ANSC_USER
+AM_CFLAGS += -D_ANSC_LITTLE_ENDIAN_
 
 ACLOCAL_AMFLAGS = -I m4
 
 noinst_LTLIBRARIES = libCcspPandM_integration_src_shared.la
 
 libCcspPandM_integration_src_shared_la_CPPFLAGS = -I$(top_srcdir)/source/TR-181/board_sbapi -I$(top_srcdir)/source/TR-181/middle_layer_src -I$(top_srcdir)/custom/comcast/source/TR-181/custom_include -I$(top_srcdir)/custom/comcast/source/TR-181/custom_ml -I$(top_srcdir)/custom/comcast -I$(top_srcdir)/source/TR-181/include $(CPPFLAGS)
-
-if CCSP_ARCH_ARM
-AM_CFLAGS += -D_ANSC_LITTLE_ENDIAN_
 libCcspPandM_integration_src_shared_la_CPPFLAGS += -I$(top_srcdir)/source-arm/TR-181/board_include
-endif
-
-if CCSP_ARCH_MIPS
-libCcspPandM_integration_src_shared_la_CPPFLAGS += -I$(top_srcdir)/source-mips/TR-181/board_include
-endif
-
-if CCSP_ARCH_PC
-AM_CFLAGS += -D_ANSC_LITTLE_ENDIAN_
-libCcspPandM_integration_src_shared_la_CPPFLAGS += -I$(top_srcdir)/source-pc/TR-181/board_include
-endif
 
 libCcspPandM_integration_src_shared_la_SOURCES = cosa_ethernet_apis_multilan.c cosa_ip_apis_multilan.c cosa_x_cisco_com_multilan_apis.c
 libCcspPandM_integration_src_shared_la_LDFLAGS = -lccsp_common

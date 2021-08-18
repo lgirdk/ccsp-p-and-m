@@ -18,6 +18,7 @@
 ##########################################################################
 AM_CFLAGS = -D_ANSC_LINUX
 AM_CFLAGS += -D_ANSC_USER
+AM_CFLAGS += -D_ANSC_LITTLE_ENDIAN_
 
 ACLOCAL_AMFLAGS = -I m4
 
@@ -27,16 +28,4 @@ libCcspPandM_comcast_sbapi_la_CPPFLAGS = -I$(top_srcdir)/source/TR-181/board_ml 
 libCcspPandM_comcast_sbapi_la_SOURCES = cosa_deviceinfo_apis_custom.c cosa_x_cisco_com_hotspot_apis.c cosa_x_cisco_com_truestaticip_apis.c cosa_x_comcast-com_gre_apis.c cosa_x_cisco_com_gre_apis.c cosa_x_comcast_com_gre_apis.c
 libCcspPandM_comcast_sbapi_la_LDFLAGS = -lccsp_common
 
-if CCSP_ARCH_ARM
-AM_CFLAGS += -D_ANSC_LITTLE_ENDIAN_
 libCcspPandM_comcast_sbapi_la_CPPFLAGS += -I$(top_srcdir)/source-arm/TR-181/board_include
-endif
-
-if CCSP_ARCH_MIPS
-libCcspPandM_comcast_sbapi_la_CPPFLAGS += -I$(top_srcdir)/source-mips/TR-181/board_include
-endif
-
-if CCSP_ARCH_PC
-AM_CFLAGS += -D_ANSC_LITTLE_ENDIAN_
-libCcspPandM_comcast_sbapi_la_CPPFLAGS += -I$(top_srcdir)/source-pc/TR-181/board_include
-endif
