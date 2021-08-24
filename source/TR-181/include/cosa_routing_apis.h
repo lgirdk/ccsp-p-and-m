@@ -74,6 +74,10 @@
 /***********************************
     Actual definition declaration
 ************************************/
+/*we don't use it now. 
+Define the format of _COSA_DML_ROUTING_V6_ENTRY.Interface. if it's defined it's "Device.IP.Interface.{i}.", otherwise it's ifname like erouter0
+*/
+//#define USE_TR181_PATH
 
 #define MAXINSTANCE 128
 
