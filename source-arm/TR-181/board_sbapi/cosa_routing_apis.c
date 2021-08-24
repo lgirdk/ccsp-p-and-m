@@ -2790,9 +2790,6 @@ ULONG g_NumOfRipEntry = 2;
 #define MAX_RTENTRY         256
 #define NELEM(a)            (sizeof(a) / sizeof((a)[0]))
 
-/*we don't use it now*/
-//#define USE_TR181_PATH
-
 /**
  * PSM parameters:
  *
