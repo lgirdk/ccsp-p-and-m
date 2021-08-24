@@ -2608,9 +2608,6 @@ int safe_strcpy(char * dst, char * src, int dst_size);
 #define MAX_RTENTRY         256
 #define NELEM(a)            (sizeof(a) / sizeof((a)[0]))
 
-/*we don't use it now*/
-//#define USE_TR181_PATH
-
 /**
  * PSM parameters:
  *
