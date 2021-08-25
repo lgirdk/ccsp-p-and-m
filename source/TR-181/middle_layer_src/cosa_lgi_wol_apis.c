@@ -17,6 +17,7 @@
 #include "cosa_lgi_wol_apis.h"
 #include <syscfg/syscfg.h>
 #include <pthread.h>
+#include <ctype.h>
 
 #include <linux/if_packet.h>
 #include <sys/ioctl.h>
@@ -192,23 +193,23 @@ CosaDmlSetRetries
 ANSC_STATUS
 isMacValid(char *MacAddress)
 {
-    char mac_part[3] = {0};
-    byte mac_byte = 0;
-    byte mac_idx = 0;
+    int i;
 
-    while(MacAddress[mac_idx] != 0 && mac_idx < BUFF_LEN){
-        if(mac_idx != 15 && MacAddress[mac_idx + 2] != SEPERATOR)
+    for (i = 0; i < 6; i++)
+    {
+        if ((isxdigit(MacAddress[0])) &&
+            (isxdigit(MacAddress[1])) &&
+            (MacAddress[2] == ((i == 5) ? 0 : ':')))
+        {
+            MacAddress += 3;
+        }
+        else
+        {
             return ANSC_STATUS_FAILURE;
-        strncpy(mac_part, MacAddress+mac_idx,2);
-        mac_byte = (byte)strtol(mac_part, NULL, 16);
-        if(mac_byte == 0 && strcmp(mac_part,"00"))
-            return ANSC_STATUS_FAILURE;
-        mac_idx += 3;
+        }
     }
 
-    if(mac_idx == BUFF_LEN)
-        return ANSC_STATUS_SUCCESS;
-    return ANSC_STATUS_FAILURE;
+    return ANSC_STATUS_SUCCESS;
 }
 
 void wolScheduler(void *arg)
