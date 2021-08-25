@@ -9275,7 +9275,7 @@
 
               <syntax>string</syntax>
 
-              <writable>false</writable>
+              <writable>true</writable>
 
             </parameter>
 
