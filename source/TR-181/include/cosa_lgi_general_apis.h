@@ -176,6 +176,8 @@ CosaDmlGiSetUserBridgeModeAllowed
     BOOL                        bValue
 );
 
+ANSC_STATUS CosaDmlGiGetSKU (ANSC_HANDLE hContext, char *pValue, ULONG ulSize);
+
 ANSC_STATUS CosaDmlGiGetLedDSErrorTimer (ANSC_HANDLE hContext, int *pValue);
 ANSC_STATUS CosaDmlGiSetLedDSErrorTimer (ANSC_HANDLE hContext, int value);
 ANSC_STATUS CosaDmlGiGetLedUSErrorTimer (ANSC_HANDLE hContext, int *pValue);
