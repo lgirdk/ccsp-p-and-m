@@ -115,6 +115,67 @@ CosaDmlGiGetTroubleshootWizardEnable
     return ANSC_STATUS_SUCCESS;
 }
 
+ANSC_STATUS CosaDmlGiGetSKU (ANSC_HANDLE hContext, char *pValue, ULONG ulSize)
+{
+    char buf[20];
+    char *sku = NULL;
+    int customerId = 0;
+    ULONG len;
+
+    if (syscfg_get (NULL, "Customer_Index", buf, sizeof(buf)) == 0)
+    {
+        customerId = atoi(buf);
+    }
+
+    buf[0] = 0;
+    len = sizeof(buf);
+    CosaDmlDiGetProductClass (hContext, buf, &len);
+
+    if (strcmp (buf, "CH7465LG") == 0)
+    {
+        if (customerId == 6)
+        {
+            sku = "Nextgen WiFi";
+        }
+        else if (customerId == 8)
+        {
+            sku = "Hub 3";
+        }
+    }
+    else if (strcmp (buf, "MERCV2P") == 0)
+    {
+        if (customerId == 8)
+        {
+            sku = "Hub 5";
+        }
+        else if (customerId == 20)
+        {
+            sku = "SmartWifi modem";
+        }
+        else if (customerId == 41)
+        {
+            sku = "Virgin Media Hub 6";
+        }
+        else if (customerId == 51)
+        {
+            sku = "Connect Box 3";
+        }
+        else if (customerId == 53)
+        {
+            sku = "Giga Connect Box 6";
+        }
+    }
+
+    if (sku == NULL)
+    {
+        sku = "Connect Box";
+    }
+
+    snprintf (pValue, ulSize, sku);
+
+    return ANSC_STATUS_SUCCESS;
+}
+
 ANSC_STATUS
 CosaDmlGiGetCustomerId
     (
