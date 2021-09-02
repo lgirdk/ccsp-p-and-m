@@ -109,6 +109,8 @@ CosaLgiGeneralInitialize
 
     CosaDmlGiGetCustomerId(NULL, &pMyObject->CustomerId);
 
+    CosaDmlGiGetSKU(NULL, pMyObject->SKUName, sizeof(pMyObject->SKUName));
+
     CosaDmlGiGetFirstInstallWizardEnable(NULL, &pMyObject->FirstInstallWizardEnable);
 
     memset(pMyObject->CAppName, 0, sizeof(pMyObject->CAppName));
