@@ -348,6 +348,18 @@ LgiGeneral_GetParamStringValue
         pValue[0] = '\0';
         return 0;
     }
+    if (strcmp(ParamName, "SKUName") == 0)
+    {
+        if (AnscSizeOfString(pMyObject->SKUName) < *pulSize){
+          AnscCopyString(pValue, pMyObject->SKUName);
+          return 0;
+        }
+        else
+        {
+          *pulSize = AnscSizeOfString(pMyObject->SKUName);
+          return 1;
+        }
+    }
     // LGI ADD END
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return -1;
