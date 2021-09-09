@@ -851,10 +851,33 @@ CosaDmlTimeGetLocalTime
     time_t t;
 #if defined(UTC_ENABLE) && !defined(_XF3_PRODUCT_REQ_)
 struct tm *pLcltime, temp;
+struct tm *pLcloffset, tempoffset;
+time_t t_offset;
    time(&t);
-   t = t + getOffset();
+   t_offset = getOffset();
+   t = t + t_offset;
+#if 0
+   /* Fixme: review... should this version be used? */
    gmtime_r(&t, &temp); // already adjusted for TZ with offset
+#else
+   localtime_r(&t, &temp);
+#endif
    pLcltime = &temp;
+
+   localtime_r(&t_offset, &tempoffset);
+   pLcloffset = &tempoffset;
+
+    _ansc_sprintf(pCurrLocalTime, "%.4u-%.2u-%.2uT%.2u:%.2u:%.2u%c%.2u:%.2u",
+            (pLcltime->tm_year)+1900,
+            (pLcltime->tm_mon)+1,
+            pLcltime->tm_mday,
+            pLcltime->tm_hour,
+            pLcltime->tm_min,
+            pLcltime->tm_sec,
+            (t_offset?'+':'-'),
+            pLcloffset->tm_hour,
+            pLcloffset->tm_min);
+
 #else
     struct tm *pLcltime;
 #ifdef _XF3_PRODUCT_REQ_
@@ -868,7 +891,6 @@ struct tm *pLcltime, temp;
     t = time(NULL);
 #endif
     pLcltime = localtime(&t);
-#endif
     _ansc_sprintf(pCurrLocalTime, "%.4u-%.2u-%.2u %.2u:%.2u:%.2u",
             (pLcltime->tm_year)+1900,
             (pLcltime->tm_mon)+1,
@@ -876,6 +898,7 @@ struct tm *pLcltime, temp;
             pLcltime->tm_hour,
             pLcltime->tm_min,
             pLcltime->tm_sec);
+#endif
 
     return ANSC_STATUS_SUCCESS;
 }
