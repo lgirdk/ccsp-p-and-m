@@ -3302,7 +3302,7 @@ IPv6Forwarding_AddEntry
         pSubCosaContext->hPoamIrepUpperFo = pMyObject->hIrepFolderRouterHA;
         pSubCosaContext->bNew             = TRUE;
 
-        CosaSListPushEntryByInsNum((PSLIST_HEADER)&pRouter->IPv6ForwardList, pSubCosaContext);
+        CosaSListPushEntryByInsNum((PSLIST_HEADER)&pRouter->IPv6ForwardList, (PCOSA_CONTEXT_LINK_OBJECT)pSubCosaContext);
 
         CosaRoutingRegAddInfo
         (
