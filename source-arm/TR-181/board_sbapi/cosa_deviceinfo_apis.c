@@ -2125,7 +2125,7 @@ static void getLocalTime (char *pValue, int len)
     time_t t = time(NULL);
     struct tm *pLocalTime = localtime(&t);
 
-    snprintf(pValue, len, "%.4u-%.2u-%.2u %.2u:%.2u:%.2u",
+    snprintf(pValue, len, "%.4u-%.2u-%.2uT%.2u:%.2u:%.2uZ",
              pLocalTime->tm_year + 1900,
              pLocalTime->tm_mon + 1,
              pLocalTime->tm_mday,
