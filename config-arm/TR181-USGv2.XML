@@ -12285,6 +12285,8 @@
               <type>string(64)</type>
 
               <syntax>string</syntax>
+		
+              <notify>off</notify>
 
               <writable>true</writable>
 
