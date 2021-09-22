@@ -2367,7 +2367,10 @@ LanMngm_Commit
             Dhcpv4_Lan_MutexUnLock();
             return -1;
         } 
-#if !defined(_COSA_BCM_MIPS_) && !defined(_ENABLE_DSL_SUPPORT_) 
+/* CosaDmlDcResetBr0()/Device.WiFi.X_RDKCENTRAL-COM_Br0_Sync is not required to be set for OFW platforms,
+ * as the br0 interface doesn't need to have an IP address in bridge mode.
+ */
+#if 0
         else {
 
 			char ip[64]={0};
