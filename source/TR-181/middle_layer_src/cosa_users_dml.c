@@ -1206,24 +1206,29 @@ User_SetParamUlongValue
 
 **********************************************************************/
 
-BOOL isvalid_pwd(char *str)
+static BOOL isvalid_pwd (char *str)
 {
     #define LEN_MIN 8
-    #define LEN_MAX 20
+    #define LEN_MAX 31
     int len,i=0;
     if(str==NULL)
-        return FALSE;
+        goto invalid;
     len=strlen(str);
     if(len<LEN_MIN || len>LEN_MAX)
-        return FALSE;
+        goto invalid;
     while(str[i]!='\0')
     {
         if(isgraph(str[i])!=0)
             i++;
         else
-            return FALSE;
+            goto invalid;
     }
+
     return TRUE;
+
+invalid:
+    CcspTraceInfo(("Invalid password:only %u-%u characters allowed [A-Z,a-z,0-9]\n", LEN_MIN, LEN_MAX));
+    return FALSE;
 }
 
 BOOL
@@ -1365,7 +1370,6 @@ User_SetParamStringValue
                 }
                 else
                 {
-		    CcspTraceInfo(("Invalid password:only 8-20 characters allowed [A-Z,a-z,0-9]\n"));
                     return FALSE;
                 }
 	}
@@ -1380,7 +1384,6 @@ User_SetParamStringValue
 		}
 		else
 		{
-                    CcspTraceInfo(("Invalid password:only 8-20 characters allowed [A-Z,a-z,0-9]\n"));
                     return FALSE;
                 }
         }
