@@ -558,7 +558,7 @@
 
                 <syntax>uint32</syntax>
 
-                <writable>true</writable>
+                <writable>false</writable>
 
              </parameter>
             <parameter>
