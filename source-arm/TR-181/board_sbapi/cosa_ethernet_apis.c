@@ -99,7 +99,7 @@
 
 #ifdef _COSA_SIM_
 /*Removed code for simulator, because this is usg platform*/
-#elif  (_COSA_INTEL_USG_ARM_ || _COSA_DRG_TPG_ || _COSA_BCM_MIPS_)
+#elif  (_COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_)
 
 #include "cosa_ethernet_apis_ext.h"
 #include "cosa_drg_common.h"
