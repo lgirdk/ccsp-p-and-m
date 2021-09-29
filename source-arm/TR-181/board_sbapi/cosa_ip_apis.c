@@ -73,7 +73,7 @@
 
 extern void* g_pDslhDmlAgent;
 
-#if ( defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_DRG_TPG_) || defined(_COSA_BCM_MIPS_))
+#if ( defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_MIPS_))
 #include <net/if.h>
 #include <sys/ioctl.h>
 #include <ctype.h>
