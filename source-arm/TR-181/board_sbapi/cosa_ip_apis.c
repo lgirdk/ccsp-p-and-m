@@ -392,14 +392,6 @@ CosaDmlIpInit
     {
         return  returnStatus;
     }
-#elif defined(_COSA_DRG_TPG_)
-    rc = strcpy_s((char *)g_ipif_names[0],sizeof(g_ipif_names[0]), "lan0");
-    ERR_CHK(rc);
-    rc = strcpy_s((char *)g_ipif_names[1],sizeof(g_ipif_names[1]), "wan0");
-    ERR_CHK(rc);
-    rc = strcpy_s((char *)g_ipif_names[2],sizeof(g_ipif_names[2]), "lo");
-    ERR_CHK(rc);
-    g_ipif_num = 3;
 #endif
 
     syscfg_init();
