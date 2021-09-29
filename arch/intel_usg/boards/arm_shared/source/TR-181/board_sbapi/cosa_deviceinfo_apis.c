@@ -95,16 +95,11 @@
 
 // this file is in integration_src.intel_usg_arm directory
 
-#elif (_COSA_INTEL_USG_ARM_ || _COSA_DRG_TPG_)
+#elif (_COSA_INTEL_USG_ARM_)
 
 #include "ccsp_psm_helper.h"            // for PSM_Get_Record_Value2
 #include "dmsb_tr181_psm_definitions.h" // for DMSB_TR181_PSM_DeviceInfo_Root/ProductClass
 
-#if   _COSA_INTEL_USG_ARM_
-//#include "libplat_flash.h"
-#endif
-
- 
 #include <utctx.h>
 #include <utctx_api.h>
 #include <utapi.h>
@@ -182,9 +177,7 @@ CosaDmlDiGetManufacturerOUI
  /*
     UCHAR strMaceMG[128];
     memset(strMaceMG,0,128);
-#ifdef _COSA_DRG_TPG_
-    plat_GetFlashValue("macmgwan", strMaceMG);
-#elif _COSA_INTEL_USG_ARM_
+#if _COSA_INTEL_USG_ARM_
     //    SaPermanentDb_GetFactoryId(pValue);
     ProdDb_GetCmMacAddress(strMaceMG);
 #if 0
