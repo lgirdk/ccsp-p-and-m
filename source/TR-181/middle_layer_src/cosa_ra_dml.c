@@ -839,10 +839,6 @@ InterfaceSetting1_AddEntry
     
     UNREFERENCED_PARAMETER(hInsContext);
 
-#ifdef _COSA_DRG_CNS_
-    /*not supported*/
-    return NULL;
-#endif
 
     pRAInterface = (PCOSA_DML_RA_IF_FULL2)AnscAllocateMemory(sizeof(COSA_DML_RA_IF_FULL2));
 
@@ -941,11 +937,6 @@ InterfaceSetting1_DelEntry
     PCOSA_CONTEXT_LINK_OBJECT       pCosaContext  = (PCOSA_CONTEXT_LINK_OBJECT)hInstance;
     PCOSA_DML_RA_IF_FULL2           pRAInterface  = (PCOSA_DML_RA_IF_FULL2)pCosaContext->hContext;
 
-#ifdef _COSA_DRG_CNS_
-    /*not supported*/
-    return ANSC_STATUS_FAILURE;
-        
-#endif
 
     if (!pCosaContext->bNew)
         CosaDmlRaIfDelEntry(NULL, pRAInterface->Cfg.InstanceNumber);
@@ -1301,23 +1292,6 @@ InterfaceSetting1_GetParamStringValue
     if (strcmp(ParamName, "Interface") == 0)
     {
         /* collect value */
-#ifdef _COSA_DRG_CNS_
-        PUCHAR                          pString = NULL;
-        pString = CosaUtilGetFullPathNameByKeyword
-            (
-                "Device.IP.Interface.",
-                "Name",
-                "brlan0"
-                );
-        if (pString)
-        {
-            AnscCopyString(pValue, pString);
-            AnscCopyString(pRAInterface->Cfg.Interface, pString);
-            AnscFreeMemory(pString);
-        }
-        
-        return 0;
-#endif
 
         CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg, ulIndex);
         AnscCopyString(pValue, pRAInterface->Cfg.Interface);
@@ -1641,10 +1615,6 @@ InterfaceSetting1_SetParamStringValue
     if (strcmp(ParamName, "Interface") == 0)
     {
         /* save update to backup */
-#ifdef _COSA_DRG_CNS_
-        /*not supported*/
-        return FALSE;
-#endif
 
         len = (_ansc_strlen(pString) > sizeof(pRAInterface->Cfg.Interface)-1 ? sizeof(pRAInterface->Cfg.Interface)-1 : _ansc_strlen(pString));
         

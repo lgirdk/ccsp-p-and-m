@@ -1896,9 +1896,6 @@ Link_AddEntry
     PCOSA_DML_ETH_LINK_FULL         pEntry                  = (PCOSA_DML_ETH_LINK_FULL  )NULL;
     PCOSA_CONTEXT_LINK_OBJECT       pCosaContext            = (PCOSA_CONTEXT_LINK_OBJECT)NULL;
 
-#if defined(_COSA_DRG_CNS_) || defined(_COSA_DRG_TPG_)
-    return NULL;
-#endif
 
     pEntry = (PCOSA_DML_ETH_LINK_FULL)AnscAllocateMemory(sizeof(COSA_DML_ETH_LINK_FULL));
     if (!pEntry)
@@ -1981,9 +1978,6 @@ Link_DelEntry
     PSLIST_HEADER                   pListHead               = (PSLIST_HEADER            )&pMyObject->EthernetLinkList;
     PSINGLE_LINK_ENTRY              pSLinkEntry             = NULL;
 
-#if defined(_COSA_DRG_CNS_) || defined(_COSA_DRG_TPG_)
-    return ANSC_STATUS_FAILURE;
-#endif
 
     CosaDmlEthLinkDelEntry(pMyObject->hSbContext, pEntry->Cfg.InstanceNumber);
 

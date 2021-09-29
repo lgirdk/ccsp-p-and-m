@@ -502,9 +502,6 @@ Interface3_AddEntry
     PCOSA_DML_PPP_IF_FULL           pEntry                  = (PCOSA_DML_PPP_IF_FULL    )NULL;
     PCOSA_CONTEXT_LINK_OBJECT       pCosaContext            = (PCOSA_CONTEXT_LINK_OBJECT)NULL;
 
-#ifdef _COSA_DRG_CNS_
-    return NULL;
-#endif
 
     pEntry = (PCOSA_DML_PPP_IF_FULL)AnscAllocateMemory(sizeof(COSA_DML_PPP_IF_FULL));
     if (!pEntry)
@@ -587,9 +584,6 @@ Interface3_DelEntry
     PSLIST_HEADER                   pListHead               = (PSLIST_HEADER            )&pMyObject->IfList;
     PSINGLE_LINK_ENTRY              pSLinkEntry             = NULL;
 
-#ifdef _COSA_DRG_CNS_
-    return ANSC_STATUS_FAILURE;
-#endif
 
     CosaDmlPppIfDelEntry(NULL, pEntry->Cfg.InstanceNumber);
 
@@ -1175,10 +1169,6 @@ Interface3_SetParamUlongValue
     if (strcmp(ParamName, "MaxMRUSize") == 0)
     {
         /* save update to backup */
-#ifdef _COSA_DRG_CNS_
-        /*not supported*/
-        return FALSE;
-#endif
 
 
         pEntry->Cfg.MaxMRUSize = uValue;
@@ -1188,11 +1178,6 @@ Interface3_SetParamUlongValue
     if (strcmp(ParamName, "ConnectionTrigger") == 0)
     {
         /* save update to backup */
-#ifdef _COSA_DRG_CNS_
-        /*don't support manual*/
-        if (uValue == COSA_DML_PPP_CONN_TRIGGER_Manual) 
-            return FALSE;
-#endif
         
 
         pEntry->Cfg.ConnectionTrigger = uValue;
@@ -2332,10 +2317,6 @@ IPCP_SetParamBoolValue
     if (strcmp(ParamName, "PassthroughEnable") == 0)
     {
         /* save update to backup */
-#ifdef _COSA_DRG_CNS_
-        /*not supported*/
-        return FALSE;
-#endif
         pEntry->Cfg.PassthroughEnable = bValue;
         return TRUE;
     }
@@ -2484,10 +2465,6 @@ IPCP_SetParamStringValue
     if (strcmp(ParamName, "PassthroughDHCPPool") == 0)
     {
         /* save update to backup */
-#ifdef _COSA_DRG_CNS_
-        /*not supported*/
-        return FALSE;
-#endif
         AnscCopyString(pEntry->Cfg.PassthroughDHCPPool, pString);
         return TRUE;
     }

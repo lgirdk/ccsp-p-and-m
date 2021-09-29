@@ -473,10 +473,6 @@ Client3_AddEntry
     PCOSA_CONTEXT_DHCPCV6_LINK_OBJECT pCxtLink        = NULL;
     PCOSA_DML_DHCPCV6_FULL            pDhcpc          = NULL;
 
-#if (defined _COSA_DRG_CNS_)  || (defined _COSA_DRG_TPG_)
-    /*not supported*/
-    return NULL;
-#endif
     
     pDhcpc  = (PCOSA_DML_DHCPCV6_FULL)AnscAllocateMemory( sizeof(COSA_DML_DHCPCV6_FULL) );
     if ( !pDhcpc )
@@ -569,10 +565,6 @@ Client3_DelEntry
     /* Normally, two sublinks are empty because our framework will firstly 
             call delEntry for them before coming here. We needn't care them.
          */
-#if (defined _COSA_DRG_CNS_)  || (defined _COSA_DRG_TPG_)
-    /*not supported*/
-    return ANSC_STATUS_FAILURE;
-#endif
 
 
     if ( !pCxtLink->bNew )
@@ -1251,10 +1243,6 @@ Client3_SetParamStringValue
     ERR_CHK(rc);
     if((ind == 0) && (rc == EOK))
     {
-#if defined _COSA_DRG_CNS_  || defined _COSA_DRG_TPG_
-        /*not supported*/
-        return FALSE;
-#endif
 
         /* save update to backup */
         rc = STRCPY_S_NOCLOBBER((char *)pDhcpc->Cfg.Interface, sizeof(pDhcpc->Cfg.Interface), pString);
@@ -4325,9 +4313,6 @@ Pool1_AddEntry
         return NULL;
 #endif
 #endif
-#if defined _COSA_DRG_CNS_  || defined _COSA_DRG_TPG_
-    return NULL;
-#endif
     
     pPool  = (PCOSA_DML_DHCPSV6_POOL_FULL)AnscAllocateMemory( sizeof(COSA_DML_DHCPSV6_POOL_FULL) );
     if ( !pPool )
@@ -4422,9 +4407,6 @@ Pool1_DelEntry
 	/* We just have one Pool. Not permit to add/delete. */
 	return ANSC_STATUS_FAILURE;
 #endif
-#endif
-#if defined _COSA_DRG_CNS_  || defined _COSA_DRG_TPG_
-    return ANSC_STATUS_FAILURE;
 #endif
 
     /* Normally, two sublinks are empty because our framework will firstly 
@@ -4971,15 +4953,8 @@ Pool1_GetParamStringValue
     {
         /* collect value */
 #ifdef CISCO_CONFIG_DHCPV6_PREFIX_DELEGATION
-	#ifdef _COSA_DRG_CNS_
-	        return CosaDmlDhcpv6sGetIAPDPrefixes(&pPool->Cfg, pValue, pUlSize);
-	#else
 	        return CosaDmlDhcpv6sGetIAPDPrefixes2(&pPool->Cfg, pValue, pUlSize);
-	#endif
 #else
-	#ifdef _COSA_DRG_CNS_
-	        return CosaDmlDhcpv6sGetIAPDPrefixes(&pPool->Cfg, pValue, pUlSize);
-	#endif
 #endif
 
         if ( AnscSizeOfString((const char*)pPool->Info.IAPDPrefixes) < *pUlSize)
@@ -5125,9 +5100,6 @@ Pool1_SetParamBoolValue
     if (strcmp(ParamName, "VendorClassIDExclude") == 0)
     {
         /* save update to backup */
-#if defined _COSA_DRG_CNS_  || defined _COSA_DRG_TPG_
-        return FALSE;
-#endif
 
         pPool->Cfg.VendorClassIDExclude   = bValue;
 
@@ -5137,9 +5109,6 @@ Pool1_SetParamBoolValue
     if (strcmp(ParamName, "UserClassIDExclude") == 0)
     {
         /* save update to backup */
-#if defined _COSA_DRG_CNS_  || defined _COSA_DRG_TPG_
-        return FALSE;
-#endif
 
         pPool->Cfg.UserClassIDExclude   = bValue;
 
@@ -5424,10 +5393,6 @@ Pool1_SetParamStringValue
     if((!ind) && (rc == EOK))
     {
        /* save update to backup */
-#if defined _COSA_DRG_CNS_  || defined _COSA_DRG_TPG_
-       /*not supported*/
-       return FALSE;
-#endif
 /*#if defined (MULTILAN_FEATURE)
        rc = sprintf_s(pPool->Cfg.Interface,sizeof(pPool->Cfg.Interface), "%s.", pString);
        if(rc < EOK)
@@ -5465,9 +5430,6 @@ Pool1_SetParamStringValue
     if((!ind) && (rc == EOK))
     {
        /* save update to backup */
-#if defined _COSA_DRG_CNS_  || defined _COSA_DRG_TPG_
-       return FALSE;
-#endif
        rc = STRCPY_S_NOCLOBBER(pPool->Cfg.VendorClassID,sizeof(pPool->Cfg.VendorClassID), pString);
        if(rc != EOK)
        {
@@ -5482,9 +5444,6 @@ Pool1_SetParamStringValue
     if((!ind) && (rc == EOK))
     {
        /* save update to backup */
-#if defined _COSA_DRG_CNS_  || defined _COSA_DRG_TPG_
-       return FALSE;
-#endif
 
       rc = STRCPY_S_NOCLOBBER((char *)pPool->Cfg.UserClassID,sizeof(pPool->Cfg.UserClassID), pString);
       if(rc != EOK)
@@ -8488,10 +8447,6 @@ Option4_SetParamStringValue
     ERR_CHK(rc);
     if((!ind) && (rc == EOK))
     {
-#if defined _COSA_DRG_CNS_  || defined _COSA_DRG_TPG_
-       /*not supported*/
-       return FALSE;
-#endif
 
 	   /* save update to backup */
        rc = STRCPY_S_NOCLOBBER((char *)pDhcpOption->PassthroughClient,sizeof(pDhcpOption->PassthroughClient), pString);

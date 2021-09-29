@@ -228,95 +228,6 @@ CosaDmlUserGetCfg
 }
 
   
-#elif ( defined _COSA_DRG_TPG_ )
-
-
-ANSC_STATUS
-CosaDmlUserInit
-    (
-        ANSC_HANDLE                 hDml,
-        PANSC_HANDLE                phContext
-    )
-{
-    return ANSC_STATUS_SUCCESS;
-}
-
-ULONG
-CosaDmlUserGetNumberOfEntries
-    (
-        ANSC_HANDLE                 hContext
-    )
-{
-    ANSC_STATUS                     returnStatus      = ANSC_STATUS_SUCCESS;
-
-    return 0;
-
-}
-
-ANSC_STATUS
-CosaDmlUserGetEntry
-    (
-        ANSC_HANDLE                 hContext,
-        ULONG                       ulIndex,
-        PCOSA_DML_USER              pEntry
-    )
-{
-    return ANSC_STATUS_SUCCESS;
-
-}
-
-ANSC_STATUS
-CosaDmlUserSetValues
-    (
-        ANSC_HANDLE                 hContext,
-        ULONG                       ulIndex,
-        ULONG                       ulInstanceNumber
-    )
-{
-    return ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
-CosaDmlUserAddEntry
-    (
-        ANSC_HANDLE                 hContext,
-        PCOSA_DML_USER              pEntry
-    )
-{
-    return ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
-CosaDmlUserDelEntry
-    (
-        ANSC_HANDLE                 hContext,
-        ULONG                       ulInstanceNumber
-    )
-{
-    return ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
-CosaDmlUserSetCfg
-    (
-        ANSC_HANDLE                 hContext,
-        PCOSA_DML_USER              pEntry      /* Identified by InstanceNumber */
-    )
-{
-    return ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
-CosaDmlUserGetCfg
-    (
-        ANSC_HANDLE                 hContext,
-        PCOSA_DML_USER              pEntry      /* Identified by InstanceNumber */
-    )
-{
-    return ANSC_STATUS_SUCCESS;
-
-}
-  
 #elif (defined _COSA_INTEL_USG_ARM_) || (defined  _COSA_BCM_MIPS_)
 #undef _COSA_SIM_
 
@@ -655,7 +566,6 @@ user_validatepwd
 
    if(fromDB[0] == '\0')
    {
-     #if defined(_HUB4_PRODUCT_REQ_) || defined(INTEL_PUMA7) && defined(_XB7_PRODUCT_REQ_) || defined(_PLATFORM_RASPBERRYPI_) || 1
          if (platform_hal_getUIDefaultPassword(guiPassword) == RETURN_OK )
          {
              strcpy(pEntry->Password, guiPassword);
@@ -665,20 +575,6 @@ user_validatepwd
              strcpy(pEntry->Password, "password");
          }
          user_hashandsavepwd(hContext,pEntry->Password,pEntry);
-     #else
-         FILE *ptr;
-         char buff[10];
-         if ((ptr=v_secure_popen("r", "/usr/bin/configparamgen jx lkiprgpkmqfk:3"))!=NULL)
-         if (NULL == ptr) {
-             return ANSC_STATUS_FAILURE;
-         }
-         if (NULL == fgets(buff, 9, ptr)) {
-             v_secure_pclose(ptr);
-             return ANSC_STATUS_FAILURE;
-         }
-         v_secure_pclose(ptr);
-         user_hashandsavepwd(hContext,buff,pEntry);
-     #endif
    }
 #if !defined(_HUB4_PRODUCT_REQ_)
    //TODO: Avoid the hardcoded password . This change will be done as part of CMXB7-1766
@@ -846,21 +742,8 @@ CosaDmlUserResetPassword
    
    if(!strcmp(pEntry->Username,"admin"))
    {
-     #if defined(_HUB4_PRODUCT_REQ_) || defined(INTEL_PUMA7) && defined(_XB7_PRODUCT_REQ_) || defined(_PLATFORM_RASPBERRYPI_) || 1
          //TODO: Avoid the hardcoded password . This change will be done as part of CMXB7-1766
          strcpy(defPassword,"password");
-     #else
-         FILE *ptr;
-         if ((ptr=v_secure_popen("r", "/usr/bin/configparamgen jx lkiprgpkmqfk:3"))!=NULL)
-         if (NULL == ptr) {
-             return ANSC_STATUS_FAILURE;
-         }
-         if (NULL == fgets(defPassword, 9, ptr)) {
-             v_secure_pclose(ptr);
-             return ANSC_STATUS_FAILURE;
-         }
-         v_secure_pclose(ptr);
-     #endif
    } 
 #if defined(_COSA_FOR_BCI_)
    else if(!strcmp(pEntry->Username,"cusadmin"))

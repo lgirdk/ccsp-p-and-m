@@ -6774,23 +6774,6 @@ InterfaceSetting3_GetParamStringValue
     if (strcmp(ParamName, "Interface") == 0)
     {
         /* collect value */
-#ifdef _COSA_DRG_CNS_
-        PUCHAR                          pString = NULL;
-        pString = CosaUtilGetFullPathNameByKeyword
-            (
-                "Device.IP.Interface.",
-                "Name",
-                COSA_DML_ROUTEINFO_IFNAME
-                );
-        if (pString)
-        {
-            AnscCopyString(pValue, pString);
-            AnscCopyString(pEntry->Interface, pString);
-            AnscFreeMemory(pString);
-        }
-        
-        return 0;
-#endif
 
         AnscCopyString(pValue, pEntry->Interface);
         return 0;
