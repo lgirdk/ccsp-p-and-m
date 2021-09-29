@@ -100,9 +100,7 @@
 #include "ccsp_psm_helper.h"            // for PSM_Get_Record_Value2
 #include "dmsb_tr181_psm_definitions.h" // for DMSB_TR181_PSM_DeviceInfo_Root/ProductClass
 
-#ifdef _COSA_DRG_TPG_
-#include "libplat.h"
-#elif _COSA_INTEL_USG_ARM_
+#if   _COSA_INTEL_USG_ARM_
 //#include "libplat_flash.h"
 #endif
 
@@ -241,26 +239,6 @@ CosaDmlDiGetModelName
         return ANSC_STATUS_SUCCESS;
     }
 
-#elif _COSA_DRG_TPG_
-
-    UCHAR model[128];
-    char temp[16];
-
-    memset(model,0,128);
-    plat_GetFlashValue("model", model);
-    
-    snprintf(temp, sizeof(temp), "%x%x",model[0],model[1]);
-    
-    if((0 == strcmp(temp,"f4c"))||(0 == strcmp(temp,"3916")))
-    {
-        AnscCopyString(pValue, "DRG 3916");
-    }
-    else
-    {
-        AnscCopyString(pValue, "UnKNOWN");
-    }
-    return ANSC_STATUS_SUCCESS;
-
 #endif
 }
 
@@ -317,10 +295,7 @@ CosaDmlDiGetSerialNumber
     UCHAR unitsn[128];
     memset(unitsn,0,128);
 
-#ifdef _COSA_DRG_TPG_
-    plat_GetFlashValue("unitsn", unitsn);
-    sprintf(pValue, "%c%c%c%c%c%c%c",unitsn[0],unitsn[1],unitsn[2],unitsn[3],unitsn[4],unitsn[5],unitsn[6]);
-#elif _COSA_INTEL_USG_ARM_
+#if   _COSA_INTEL_USG_ARM_
 
     if (platform_hal_GetSerialNumber(pValue) != RETURN_OK )
         return ANSC_STATUS_FAILURE;
@@ -347,14 +322,6 @@ CosaDmlDiGetHardwareVersion
         return ANSC_STATUS_SUCCESS;
     }
 
-#elif _COSA_DRG_TPG_
-//Replace this with syscfg if we are pulling this from Cable modem later on 
-    UCHAR hwVersion[128];
-    memset(hwVersion,0,128);    
-    plat_GetFlashValue("hwid", hwVersion);
-    sprintf(pValue, "%X%X",hwVersion[0],hwVersion[1]);
-    *pulSize = AnscSizeOfString(pValue);
-    return ANSC_STATUS_SUCCESS;
 #endif  
 }
 
@@ -420,10 +387,7 @@ CosaDmlDiGetProvisioningCode
 #endif
 
 // Provisioning Code sent to ACS is Serial Number of the device
-#ifdef _COSA_DRG_TPG_
-    plat_GetFlashValue("unitsn", unitsn);
-    sprintf(pValue, "%c%c%c%c%c%c%c",unitsn[0],unitsn[1],unitsn[2],unitsn[3],unitsn[4],unitsn[5],unitsn[6]);
-#elif _COSA_INTEL_USG_ARM_
+#if   _COSA_INTEL_USG_ARM_
 
     if (platform_hal_GetSerialNumber(pValue) != RETURN_OK )
         return ANSC_STATUS_FAILURE;
