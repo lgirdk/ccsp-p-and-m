@@ -143,13 +143,7 @@ syscfg_get_bool(const char *key, BOOL *bvalue)
 static int
 syscfg_set_bool(const char *key, BOOL bvalue)
 {
-    char value[MAX_LINE];
-
-    snprintf(value, sizeof(value), "%d", bvalue ? 1 : 0);
-    if (syscfg_set(NULL, key, value) != 0)
-        return -1;
-
-    return 0;
+    return syscfg_set_u(NULL, key, bvalue ? 1 : 0);
 }
 
 static int 
@@ -168,13 +162,7 @@ syscfg_get_ulong(const char *key, ULONG *ulvalue)
 static int
 syscfg_set_ulong(const char *key, ULONG ulvalue)
 {
-    char value[MAX_LINE];
-
-    snprintf(value, sizeof(value), "%lu", ulvalue);
-    if (syscfg_set(NULL, key, value) != 0)
-        return -1;
-
-    return 0;
+    return syscfg_set_u(NULL, key, ulvalue);
 }
 
 static int 
