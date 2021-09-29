@@ -364,11 +364,6 @@ CosaDmlIpInit
     {
         return  returnStatus;
     }
-#elif defined(_COSA_DRG_TPG_)
-    AnscCopyString((char *)g_ipif_names[0], "lan0");
-    AnscCopyString((char *)g_ipif_names[1], "wan0");
-    AnscCopyString((char *)g_ipif_names[2], "lo");
-    g_ipif_num = 3;
 #endif
 
     syscfg_init();
