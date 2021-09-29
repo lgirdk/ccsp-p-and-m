@@ -420,10 +420,6 @@ COSA_Async_Init
             pMoca->Remove(pMoca);
             g_pCosaBEManager->hMoCA = (ANSC_HANDLE)CosaMoCACreate();
         }
-#elif defined(_COSA_DRG_CNS_)
-        PCOSA_DATAMODEL_MOCA pMoca = g_pCosaBEManager->hMoCA;
-        pMoca->Remove(pMoca);
-        g_pCosaBEManager->hMoCA = (ANSC_HANDLE)CosaMoCACreate();
 #endif
 
     }
@@ -457,14 +453,6 @@ COSA_IsObjSupported
 
 #endif
 
-#if (defined(_COSA_DRG_CNS_))
-
-    if (strcmp(pObjName, "Device.DNS.Client.") == 0)
-    {
-        return FALSE;
-    }        
-
-#endif
 
     return TRUE;
 }
