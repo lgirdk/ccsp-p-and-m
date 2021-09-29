@@ -42,10 +42,6 @@
 #include "utapi/utapi_util.h"
 #include "cosa_drg_common.h"
 #include "cosa_apis_util.h"
-#ifdef _COSA_DRG_TPG_
-int gLanSwDev = -1;
-int gWanSwDev = -1;
-#endif
 
 int commonSyseventFd = -1;
 token_t commonSyseventToken;
