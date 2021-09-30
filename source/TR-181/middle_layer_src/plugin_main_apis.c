@@ -157,6 +157,8 @@
 // LGI ADD START
 #include "cosa_lgi_wol_apis.h"
 #include "cosa_lgi_wol_internal.h"
+#include "cosa_lgi_applications_apis.h"
+#include "cosa_lgi_applications_internal.h"
 // LGI ADD END
 
 #if  defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED) ||  defined(RBUS_BUILD_FLAG_ENABLE) || defined (_HUB4_PRODUCT_REQ_)
@@ -503,6 +505,10 @@ if(id != 0)
     AnscTraceWarning(("  CosaTemperatureStatusCreate done!\n"));
     // LGI ADD END
 
+ 
+    pMyObject->hLgiApplications = (ANSC_HANDLE)CosaLgiApplicationsCreate();
+    AnscTraceWarning(("  CosaLgiApplicationsCreate done !\n"));
+
     printf("PandM DM initialization done!\n");
     CcspTraceWarning(("RDKB_SYSTEM_BOOT_UP_LOG : PandM DM initialization done!\n"));
     //Unknown Reboot Reason 
@@ -785,6 +791,11 @@ CosaBackEndManagerRemove
         CosaLgiWoLRemove((ANSC_HANDLE)pMyObject->hLgiWoL);
     }
     //LGI ADD END
+    
+    if (pMyObject->hLgiApplications)
+    {
+        CosaLgiApplicationsRemove((ANSC_HANDLE)pMyObject->hLgiApplications);
+    }
 
     if (pMyObject->hLgiPlume)
     {
