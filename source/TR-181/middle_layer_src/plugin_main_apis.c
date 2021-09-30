@@ -159,6 +159,9 @@
 #include "cosa_lgi_wol_internal.h"
 // LGI ADD END
 
+#include "cosa_lgi_applications_apis.h"
+#include "cosa_lgi_applications_internal.h"
+
 static void CheckAndSetRebootReason();
 
 #if defined(_PLATFORM_RASPBERRYPI_)
@@ -484,6 +487,10 @@ if(id != 0)
     AnscTraceWarning(("  CosaTemperatureStatusCreate done!\n"));
     // LGI ADD END
 
+ 
+    pMyObject->hLgiApplications = (ANSC_HANDLE)CosaLgiApplicationsCreate();
+    AnscTraceWarning(("  CosaLgiApplicationsCreate done !\n"));
+
     printf("PandM DM initialization done!\n");
     CcspTraceWarning(("RDKB_SYSTEM_BOOT_UP_LOG : PandM DM initialization done!\n"));
     //Unknown Reboot Reason 
@@ -766,6 +773,11 @@ CosaBackEndManagerRemove
         CosaLgiWoLRemove((ANSC_HANDLE)pMyObject->hLgiWoL);
     }
     //LGI ADD END
+    
+    if (pMyObject->hLgiApplications)
+    {
+        CosaLgiApplicationsRemove((ANSC_HANDLE)pMyObject->hLgiApplications);
+    }
 
     if (pMyObject->hLgiPlume)
     {

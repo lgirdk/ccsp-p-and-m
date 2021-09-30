@@ -128,3 +128,4 @@ libCcspPandM_middle_layer_src_la_SOURCES += cosa_x_lgi_com_gateway_apis.c cosa_x
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_general_dml.c cosa_lgi_general_internal.c
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_plume_apis.c cosa_lgi_plume_dml.c cosa_lgi_plume_internal.c
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_userinterface_apis.c cosa_lgi_userinterface_dml.c
+libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_applications_dml.c cosa_lgi_applications_apis.c cosa_lgi_applications_internal.c
