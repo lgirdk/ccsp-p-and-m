@@ -4669,7 +4669,7 @@ RIP_SetParamBoolValue
     PCOSA_DATAMODEL_ROUTING         pMyObject     = (PCOSA_DATAMODEL_ROUTING)g_pCosaBEManager->hRouting; 
     PCOSA_DML_RIP_CFG               pCfg          = &(pMyObject->RIPCfg);
     
-    BRIDGE_MODE_JUDGEMENT_IFTRUE_RETURNFALSE
+    BRIDGE_AND_IPv6_MODE_JUDGEMENT_IFTRUE_RETURNFALSE
 
     /* check the parameter name and set the corresponding value */
     if (strcmp(ParamName, "Enable") == 0)
@@ -4775,7 +4775,7 @@ RIP_SetParamUlongValue
     PCOSA_DATAMODEL_ROUTING         pMyObject     = (PCOSA_DATAMODEL_ROUTING)g_pCosaBEManager->hRouting; 
     PCOSA_DML_RIP_CFG               pCfg          = &(pMyObject->RIPCfg);
 
-    BRIDGE_MODE_JUDGEMENT_IFTRUE_RETURNFALSE
+    BRIDGE_AND_IPv6_MODE_JUDGEMENT_IFTRUE_RETURNFALSE
     #define MIN 1
     #define MAX 15
     
@@ -5212,21 +5212,14 @@ InterfaceSetting_GetParamBoolValue
     if (strcmp(ParamName, "AcceptRA") == 0)
     {
         /* collect value */
-        if(!pCfg->Enable) 
-            *pBool = FALSE;
-        else
-            *pBool = pRipIF->AcceptRA;
-
+        *pBool = pRipIF->AcceptRA;
         return TRUE;
     }
 
     if (strcmp(ParamName, "SendRA") == 0)
     {
         /* collect value */
-        if(!pCfg->Enable) 
-            *pBool = FALSE;
-        else
-            *pBool = pRipIF->SendRA;        
+        *pBool = pRipIF->SendRA;
 
         return TRUE;
     }
@@ -5329,6 +5322,13 @@ InterfaceSetting_GetParamUlongValue
     {
         /* collect value */        
         *puLong = pRipIF->Status;  
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "X_LGI-COM_UpdateInterval") == 0)
+    {
+        /* collect value */
+        *puLong  = pRipIF->X_LGI_COM_UpdateInterval;
         return TRUE;
     }
 
@@ -5446,26 +5446,7 @@ InterfaceSetting_GetParamStringValue
     if (strcmp(ParamName, "Interface") == 0)
     {
         /* collect value */
-        if ((_ansc_strcmp(pRipIF->Alias, COSA_RIPD_IF1_NAME ) == 0 ) ||
-            (_ansc_strcmp(pRipIF->Alias, "cpe" ) == 0 ) ||
-            (_ansc_strcmp(pRipIF->Alias, "Ethernet" ) == 0 ) )
-        {
-            rc = strcpy_s(pValue, *pUlSize, "Ethernet");
-            if ( rc != EOK)
-            {
-                ERR_CHK(rc);
-                return -1;
-            }
-        }
-        else
-        {
-            rc = strcpy_s(pValue, *pUlSize, "Cable");
-            if ( rc != EOK)
-            {
-                ERR_CHK(rc);
-                return -1;
-            }
-        }
+        AnscCopyString(pValue, pRipIF->Interface);
         return 0;
     }
 
@@ -5538,7 +5519,7 @@ InterfaceSetting_SetParamBoolValue
     PCOSA_CONTEXT_LINK_OBJECT       pCosaContext   = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     PCOSA_DML_RIP_IF_CFG           pRipIF         = (PCOSA_DML_RIP_IF_CFG)pCosaContext->hContext;
 
-    BRIDGE_MODE_JUDGEMENT_IFTRUE_RETURNFALSE
+    BRIDGE_AND_IPv6_MODE_JUDGEMENT_IFTRUE_RETURNFALSE
 
     /* check the parameter name and set the corresponding value */
     if (strcmp(ParamName, "Enable") == 0)
@@ -5655,7 +5636,13 @@ InterfaceSetting_SetParamUlongValue
     PCOSA_CONTEXT_LINK_OBJECT       pCosaContext   = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     PCOSA_DML_RIP_IF_CFG           pRipIF         = (PCOSA_DML_RIP_IF_CFG)pCosaContext->hContext;
 
-    BRIDGE_MODE_JUDGEMENT_IFTRUE_RETURNFALSE
+    BRIDGE_AND_IPv6_MODE_JUDGEMENT_IFTRUE_RETURNFALSE
+
+    if (strcmp(ParamName, "X_LGI-COM_UpdateInterval") == 0)
+    {
+        pRipIF->X_LGI_COM_UpdateInterval  = uValue;
+        return TRUE;
+    }
 
     /* check the parameter name and set the corresponding value */
     if (strcmp(ParamName, "X_CISCO_COM_SendVersion") == 0)
@@ -5742,7 +5729,7 @@ InterfaceSetting_SetParamStringValue
     errno_t                         rc             = -1;
     int                             ind            = -1;
 
-    BRIDGE_MODE_JUDGEMENT_IFTRUE_RETURNFALSE
+    BRIDGE_AND_IPv6_MODE_JUDGEMENT_IFTRUE_RETURNFALSE
 
     /* check if pString doesn't hold null or whitespaces */
     if(AnscValidStringCheck(pString) != TRUE)
@@ -5799,7 +5786,7 @@ InterfaceSetting_SetParamStringValue
     if((rc == EOK) && (!ind))
     {
         /* save update to backup */
-        rc = STRCPY_S_NOCLOBBER(pRipIF->Alias, sizeof(pRipIF->Alias), pString);
+        rc = STRCPY_S_NOCLOBBER(pRipIF->Interface, sizeof(pRipIF->Interface), pString);
         if(rc != EOK)
         {
             ERR_CHK(rc);
