@@ -9484,7 +9484,19 @@
               <writable>true</writable>
 
             </parameter>
-            
+
+            <parameter>
+
+                <name>X_LGI-COM_UpdateInterval</name>
+
+                <type>unsignedInt[0:1800]</type>
+
+                <syntax>uint32</syntax>
+
+                <writable>true</writable>
+
+            </parameter>
+
             <parameter>
             
                 <name>X_CISCO_COM_AuthenticationType</name>
