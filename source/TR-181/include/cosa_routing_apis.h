@@ -217,9 +217,8 @@ _COSA_DML_RIP_IF_CFG
     BOOLEAN                         SendRA;
     USHORT                          X_CISCO_COM_SendVersion;
     USHORT                          X_CISCO_COM_ReceiveVersion;
-    
     ULONG                           X_CISCO_COM_Neighbor;
-    
+    ULONG                           X_LGI_COM_UpdateInterval;
     ULONG                           X_CISCO_COM_AuthenticationType;
     ULONG                           X_CISCO_COM_Md5KeyID;    
     CHAR                            X_CISCO_COM_Md5KeyValue[128];
@@ -332,13 +331,8 @@ COSA_PRI_ROUTER_FULL, *PCOSA_PRI_ROUTER_FULL;
 #define COSA_ZEBRA_TMP_CONF     "./zebra_tmp.conf"
 #define COSA_ZEBRA_CUR_CONF     "./zebra.conf"
 #else
-#if defined (_BWG_PRODUCT_REQ_)
 #define COSA_RIPD_TMP_CONF      "/var/ripd_tmp.conf"
 #define COSA_RIPD_CUR_CONF      "/var/ripd.conf"
-#else
-#define COSA_RIPD_TMP_CONF      "/etc/ripd_tmp.conf"
-#define COSA_RIPD_CUR_CONF      "/etc/ripd.conf"
-#endif
 #define COSA_ZEBRA_TMP_CONF     "/etc/zebra_tmp.conf"
 #define COSA_ZEBRA_CUR_CONF     "/etc/zebra.conf"
 #endif
@@ -380,8 +374,8 @@ typedef struct _COSA_DML_RIPD_CONF
     BOOL   If1Enable;
     BOOL   If1SendEnable;
     BOOL   If1ReceiveEnable;
-    CHAR   If1Alias[16];
-    CHAR   If1Name[16];
+    CHAR   If1Alias[25];
+    CHAR   If1Name[25];
     CHAR   If1Md5KeyValue[32];
     CHAR   If1SimplePassword[32];
     CHAR   If1KeyChainName[16];
