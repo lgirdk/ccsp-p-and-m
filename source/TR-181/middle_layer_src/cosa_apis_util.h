@@ -73,6 +73,7 @@
 #define  _COSA_APIS_UTIL_H
 
 #include "cosa_dml_api_common.h"
+#include "syscfg/syscfg.h"
 
 typedef struct StaticRoute 
 {
@@ -233,6 +234,15 @@ PUCHAR CosaUtilFindBridgePath(char* pBridgeName);
         BOOL bridgeMode;                                                        \
         if ((ANSC_STATUS_SUCCESS == is_usg_in_bridge_mode(&bridgeMode)) &&      \
             (TRUE == bridgeMode))                                               \
+            return FALSE;                                                       \
+    }                                                                           \
+
+#define BRIDGE_AND_IPv6_MODE_JUDGEMENT_IFTRUE_RETURNFALSE                       \
+    {                                                                           \
+        char buff[8];                                                           \
+        syscfg_get(NULL, "last_erouter_mode", buff, sizeof(buff));              \
+        int mode = atoi(buff);                                                  \
+        if(mode == 0 || mode == 2)                                              \
             return FALSE;                                                       \
     }                                                                           \
 
