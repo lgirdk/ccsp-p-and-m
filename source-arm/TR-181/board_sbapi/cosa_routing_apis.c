@@ -638,7 +638,10 @@ void _get_shell_output3 (FILE *fp, char *buf, size_t len)
 static int CosaRipdOperation(char * arg)
 {
     char *base = basename(COSA_RIPD_BIN);
-    
+
+    /* Allow/block ripv2 multicast packets accordingly */
+    system("sysevent set firewall-restart");
+
     if (!strncmp(arg, "stop", 4))
     {
         /* Zebra's configuration is controlled by Utopia. So we need not restart this one */
@@ -648,7 +651,7 @@ static int CosaRipdOperation(char * arg)
     {
         if ( CosaDmlRIPCurrentConfig.Enable && (CosaDmlRIPCurrentConfig.If1ReceiveEnable || CosaDmlRIPCurrentConfig.If1SendEnable ) )
         {
-            v_secure_system(COSA_RIPD_BIN " -d -f " COSA_RIPD_CUR_CONF " -u root -g root -i " RIPD_PID_FILE " &");
+            v_secure_system(COSA_RIPD_BIN " -d -f " COSA_RIPD_CUR_CONF " -A 127.0.0.1 -u root -g root -i " RIPD_PID_FILE " &");
         }
     }
     else if (!strncmp(arg, "restart", 7))
@@ -871,7 +874,8 @@ void CosaDmlGenerateRipdConfigFile(ANSC_HANDLE  hContext )
 
         if ( pConf->Enable && pConf->If1Enable && (_ansc_strlen(pConf->If1Name) > 0 ) )
         {
-            fprintf(fp, "interface %s\n", pConf->If1Name);
+            /* RIPv2 request/response should only go through erouter0 interface */
+            fprintf(fp, "interface erouter0\n");
             fprintf(fp, " ip rip send version %s\n", (pConf->If1SendVersion==COSA_RIP_VERSION_1)?"1":((pConf->If1SendVersion==COSA_RIP_VERSION_2)?"2":"1 2") );
             fprintf(fp, " ip rip receive version %s\n", (pConf->If1ReceiveVersion==COSA_RIP_VERSION_1)?"1":((pConf->If1ReceiveVersion==COSA_RIP_VERSION_2)?"2":"1 2") );
             {
@@ -922,7 +926,15 @@ void CosaDmlGenerateRipdConfigFile(ANSC_HANDLE  hContext )
         fprintf(fp, "router rip\n");
         /* CID: 58193 Identical code for different branches*/
         fprintf(fp, " version %s\n", (pConf->Version==COSA_RIP_VERSION_1)?"1":((pConf->Version==COSA_RIP_VERSION_2)?"2":"1 2") );
-        fprintf(fp, " timers basic %lu %lu %lu\n", pConf->UpdateTime, pConf->TimoutTime, pConf->CollectionTime);
+        if(pConf->UpdateTime == 0)
+        {
+            /* ripd daemon doesn't support zero as updatetime. So set it to default 30 sec */
+            fprintf(fp, " timers basic %lu %lu %lu\n", 30, pConf->TimoutTime, pConf->CollectionTime);
+        }
+        else
+        {
+            fprintf(fp, " timers basic %lu %lu %lu\n", pConf->UpdateTime, pConf->TimoutTime, pConf->CollectionTime);
+        }
         fprintf(fp, " default-metric %lu\n", pConf->DefaultMetric );
         fprintf(fp, " no redistribute connected\n");
 
@@ -933,7 +945,8 @@ void CosaDmlGenerateRipdConfigFile(ANSC_HANDLE  hContext )
         
         if ( pConf->Enable && pConf->If1Enable && (_ansc_strlen(pConf->If1Name) > 0 ))
         {
-            fprintf(fp, " network %s\n", pConf->If1Name);
+            /* RIPv2 request/response should only go through erouter0 interface */
+            fprintf(fp, " network erouter0\n");
         }
         
         //this is for true static ip subnet
@@ -1018,8 +1031,11 @@ void CosaDmlGenerateRipdConfigFile(ANSC_HANDLE  hContext )
             AnscFreeMemory(pstaticRoute);
         }
 
-        if ( pConf->Enable && pConf->If1Enable && !pConf->If1SendEnable && (_ansc_strlen(pConf->If1Name) > 0) )
+        /* If updatetime is zero then don't send periodic route update */
+        if ( pConf->Enable && pConf->If1Enable && (!pConf->If1SendEnable || pConf->UpdateTime == 0) && (_ansc_strlen(pConf->If1Name) > 0) )
+        {
             fprintf(fp, " distribute-list 1 out %s\n", pConf->If1Name );
+        }
         if ( pConf->Enable && pConf->If1Enable && !pConf->If1ReceiveEnable && (_ansc_strlen(pConf->If1Name) > 0) )
             fprintf(fp, " distribute-list 1 in %s\n", pConf->If1Name );
 
@@ -1117,13 +1133,13 @@ CosaDmlRipGetCfg
 
     pCfg->Enable = CosaDmlRIPCurrentConfig.Enable;
     pCfg->Mode   = COSA_DML_RIP_MODE_Both;
-    pCfg->X_CISCO_COM_UpdateInterval = CosaDmlRIPCurrentConfig.UpdateTime;
+    // pCfg->X_CISCO_COM_UpdateInterval = CosaDmlRIPCurrentConfig.UpdateTime;
     pCfg->X_CISCO_COM_DefaultMetric  = CosaDmlRIPCurrentConfig.DefaultMetric;
 
 #if 1
     AnscTraceWarning(("pCfg->Enable :%s\n", pCfg->Enable?"TRUE":"FALSE"));    
     AnscTraceWarning(("pCfg->Mode :%u\n", pCfg->Mode));
-    AnscTraceWarning(("pCfg->X_CISCO_COM_UpdateInterval :%lu\n", pCfg->X_CISCO_COM_UpdateInterval));
+    // AnscTraceWarning(("pCfg->X_CISCO_COM_UpdateInterval :%lu\n", pCfg->X_CISCO_COM_UpdateInterval));
     AnscTraceWarning(("pCfg->X_CISCO_COM_DefaultMetric :%lu\n", pCfg->X_CISCO_COM_DefaultMetric));
 #endif
 
@@ -1239,12 +1255,12 @@ CosaDmlRipSetCfg
 
     AnscTraceWarning(("CosaDmlRipSetCfg -- starts.\n"));
     CosaDmlRIPCurrentConfig.Enable        = pCfg->Enable;
-    CosaDmlRIPCurrentConfig.UpdateTime    = pCfg->X_CISCO_COM_UpdateInterval;
+    // CosaDmlRIPCurrentConfig.UpdateTime    = pCfg->X_CISCO_COM_UpdateInterval;
     CosaDmlRIPCurrentConfig.DefaultMetric = pCfg->X_CISCO_COM_DefaultMetric;
 
 #if 1
     AnscTraceWarning(("CosaDmlRIPCurrentConfig.Enable :%s\n", CosaDmlRIPCurrentConfig.Enable?"TRUE":"FALSE"));    
-    AnscTraceWarning(("CosaDmlRIPCurrentConfig.X_CISCO_COM_UpdateInterval :%lu\n", CosaDmlRIPCurrentConfig.UpdateTime));
+    // AnscTraceWarning(("CosaDmlRIPCurrentConfig.X_CISCO_COM_UpdateInterval :%lu\n", CosaDmlRIPCurrentConfig.UpdateTime));
     AnscTraceWarning(("CosaDmlRIPCurrentConfig.DefaultMetric :%lu\n", CosaDmlRIPCurrentConfig.DefaultMetric));
 #endif
 
@@ -1365,6 +1381,7 @@ CosaDmlRipIfGetCfg
         /*pEntry->Version                      = COSA_RIP_VERSION_2;          */
         pEntry->AcceptRA                     = pConf->If1ReceiveEnable;                      
         pEntry->SendRA                       = pConf->If1SendEnable;                           
+        pEntry->X_LGI_COM_UpdateInterval     = pConf->UpdateTime;
         pEntry->X_CISCO_COM_ReceiveVersion   = pConf->If1ReceiveVersion;
         pEntry->X_CISCO_COM_SendVersion      = pConf->If1SendVersion;                          
 	//Stauts will be based on either SendEnable or ReceiveEnable enabled.(TCCBR-2764)
@@ -1394,6 +1411,7 @@ CosaDmlRipIfGetCfg
     AnscTraceWarning(("pEntry->AcceptRA :%s\n", pEntry->AcceptRA?"TRUE":"FALSE"));
     AnscTraceWarning(("pEntry->SendRA :%s\n", pEntry->SendRA?"TRUE":"FALSE"));
     AnscTraceWarning(("pEntry->X_CISCO_COM_ReceiveVersion :%d\n", pEntry->X_CISCO_COM_ReceiveVersion));
+    AnscTraceWarning(("pEntry->X_LGI_COM_UpdateInterval :%d\n", pEntry->X_LGI_COM_UpdateInterval));
     AnscTraceWarning(("pEntry->X_CISCO_COM_SendVersion :%d\n",pEntry->X_CISCO_COM_SendVersion));
     AnscTraceWarning(("pEntry->Status :%d\n", pEntry->Status));
     AnscTraceWarning(("pEntry->X_CISCO_COM_Neighbor :0X%lx\n", pEntry->X_CISCO_COM_Neighbor));
@@ -1539,6 +1557,7 @@ CosaDmlRipIfSetCfg
         pConf->If1SendEnable       = pEntry->SendRA;      
         pConf->If1ReceiveEnable    = pEntry->AcceptRA;      
         pConf->If1Neighbor         = pEntry->X_CISCO_COM_Neighbor;
+        pConf->UpdateTime          = pEntry->X_LGI_COM_UpdateInterval;
 
 	// Status should reflect on runtime itself instead of after reboot(TCCBR-2764)
 	pEntry->Status =( (pEntry->Enable) && (pEntry->SendRA == TRUE || pEntry->AcceptRA == TRUE)) ? 2 : 1;
@@ -1548,24 +1567,6 @@ CosaDmlRipIfSetCfg
         ERR_CHK(rc);
         rc = strcpy_s(pConf->If1SimplePassword,sizeof(pConf->If1SimplePassword), pEntry->X_CISCO_COM_SimplePassword );
         ERR_CHK(rc);
-
-        //this is for true static ip feature.
-        rc = strcpy_s(pConf->If1Alias,sizeof(pConf->If1Alias), pEntry->Alias);
-        ERR_CHK(rc);
-        if ((_ansc_strcmp(pEntry->Alias, COSA_RIPD_IF1_NAME ) == 0 ) ||
-            (_ansc_strcmp(pEntry->Alias, "cpe" ) == 0 ) ||
-            (_ansc_strcmp(pEntry->Alias, "Ethernet" ) == 0 ) )
-        {
-            rc = strcpy_s(pConf->If1Name,sizeof(pConf->If1Name), COSA_RIPD_IF1_NAME);
-            ERR_CHK(rc);
-        }
-            
-        else
-        {
-            rc = strcpy_s(pConf->If1Name,sizeof(pConf->If1Name), COSA_RIPD_IF2_NAME);
-            ERR_CHK(rc);
-        }
-
     }
     else
     {
@@ -1581,6 +1582,7 @@ CosaDmlRipIfSetCfg
     AnscTraceWarning(("pConf->If1ReceiveEnable :%s\n", pConf->If1ReceiveEnable?"TRUE":"FALSE"));
     AnscTraceWarning(("pConf->If1Neighbor :0X%lx\n", pConf->If1Neighbor));
     AnscTraceWarning(("pConf->If1AuthenticateType :%lu\n", pConf->If1AuthenticateType));
+    AnscTraceWarning(("pConf->UpdateTime :%lu\n", pEntry->X_LGI_COM_UpdateInterval));
     AnscTraceWarning(("pConf->If1KeyID :%lu\n", pConf->If1KeyID));
     AnscTraceWarning(("pConf->If1Md5KeyValue :%s\n", pConf->If1Md5KeyValue));
 //    AnscTraceWarning(("pConf->If1SimplePassword :%s\n", pConf->If1SimplePassword));
@@ -3583,9 +3585,21 @@ CosaDmlRoutingInit
 {
     ANSC_STATUS                     returnStatus = ANSC_STATUS_SUCCESS;
     DSLHDMAGNT_CALLBACK *  pEntry = NULL;
+    char buff[8];
+    int mode = 0;
     UNREFERENCED_PARAMETER(phContext);
     CosaDmlRouteInfoInit();
     CosaDmlGetRipdConfiguration();
+    CosaDmlGenerateRipdConfigFile(NULL);
+    if(CosaDmlRIPCurrentConfig.Enable)
+    {
+        syscfg_get(NULL, "last_erouter_mode", buff, sizeof(buff));
+        mode = atoi(buff);
+        if(!(mode == 0 || mode == 2))
+        {
+            CosaRipdOperation("restart");
+        }
+    }
 
     g_RoutingEntryInMiddleLayer = hDml;
     pEntry = (PDSLHDMAGNT_CALLBACK)AnscAllocateMemory(sizeof(*pEntry));
