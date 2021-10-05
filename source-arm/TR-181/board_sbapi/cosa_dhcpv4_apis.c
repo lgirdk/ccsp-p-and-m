@@ -4594,17 +4594,32 @@ CosaDmlLAN_Validate_ModifyLanIP(COSA_DML_LAN_Allowed_Subnet *pLanAllowedSubnet, 
     char buff[17];
     int temp[4];
     int iMatchFound = 0;
-    unsigned int subnetFirstMask = 0, subnetSecondMask = 0, subnetThirdMask = 0, subnetFourthMask = 0;
+    int IPbuf[4], Maskbuf[4];
+    unsigned int subnetIPAllowed, subnetMaskAllowed;
+    unsigned int lanIPCfgd;
 
     syscfg_get(NULL, "lan_ipaddr", buff, sizeof(buff));
     if (sscanf(buff,"%d.%d.%d.%d",&temp[0],&temp[1],&temp[2],&temp[3]) == 4)
     {
+        lanIPCfgd = (((temp[0]&0xff)<<24) | ((temp[1]&0xff)<<16) | ((temp[2]&0xff)<<8) | (temp[3]&0xff));
+
         CosaDmlLAN_Allowed_Subnet_GetEntryByIndex(ins, pLanAllowedSubnet);
-        if (sscanf(pLanAllowedSubnet->SubnetIP, "%d.%d.%d.%d", &subnetFirstMask, &subnetSecondMask, &subnetThirdMask, &subnetFourthMask) == 4)
+
+        if (sscanf(pLanAllowedSubnet->SubnetIP, "%d.%d.%d.%d", &IPbuf[0], &IPbuf[1], &IPbuf[2], &IPbuf[3]) == 4)
         {
-            if ((subnetFirstMask == temp[0]) && (subnetSecondMask == temp[1]) && (subnetThirdMask == temp[2]))
-            {
-                iMatchFound =1;
+            subnetIPAllowed = (((IPbuf[0]&0xff)<<24) | ((IPbuf[1]&0xff)<<16) | ((IPbuf[2]&0xff)<<8) | (IPbuf[3]&0xff));
+
+            if (sscanf(pLanAllowedSubnet->SubnetMask,"%d.%d.%d.%d",&Maskbuf[0],&Maskbuf[1],&Maskbuf[2],&Maskbuf[3]) == 4) {
+
+                subnetMaskAllowed = (((Maskbuf[0]&0xff)<<24) | ((Maskbuf[1]&0xff)<<16) | ((Maskbuf[2]&0xff)<<8) | (Maskbuf[3]&0xff));
+
+                CcspTraceInfo(("LanIP=0x%08x,AllowedIP=0x%08x, AllowedMask=0x%08x, AllowedNet=0x%08x, CfgdNet=0x%08x\n",
+                    lanIPCfgd,subnetIPAllowed,subnetMaskAllowed,
+                    (subnetIPAllowed & subnetMaskAllowed),(lanIPCfgd & subnetMaskAllowed)));
+
+                if ( (subnetIPAllowed & subnetMaskAllowed) == (lanIPCfgd & subnetMaskAllowed) ) {
+                    iMatchFound = 1;
+                }
             }
         }
     }
