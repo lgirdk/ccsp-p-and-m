@@ -22,44 +22,13 @@
 /**********************************************************************
                 FUNCTION PROTOTYPES
 **********************************************************************/
-ULONG
-CosaDmlSetMACAddress
-(
-    ANSC_HANDLE                 hContext,
-    char                        *pValue
-);
 
-ANSC_STATUS
-CosaDmlGetInterval
-(
-    ANSC_HANDLE                 hContext,
-    ULONG                       *puLong
-);
+ULONG CosaDmlSetMACAddress ( ANSC_HANDLE hContext, char *pValue );
+ANSC_STATUS CosaDmlGetInterval ( ANSC_HANDLE hContext, ULONG *puLong );
+ANSC_STATUS CosaDmlSetInterval ( ANSC_HANDLE hContext, ULONG uLong );
+ANSC_STATUS CosaDmlGetRetries ( ANSC_HANDLE hContext, ULONG *puLong );
+ANSC_STATUS CosaDmlSetRetries ( ANSC_HANDLE hContext, ULONG uLong );
+ANSC_STATUS isMacValid (char *MacAddress);
+void initMac (void);
 
-ANSC_STATUS
-CosaDmlSetInterval
-(
-    ANSC_HANDLE                 hContext,
-    ULONG                       uLong
-);
-
-ANSC_STATUS
-CosaDmlGetRetries
-(
-    ANSC_HANDLE                 hContext,
-    ULONG                       *puLong
-);
-
-ANSC_STATUS
-CosaDmlSetRetries
-(
-    ANSC_HANDLE                 hContext,
-    ULONG                       uLong
-);
-
-ANSC_STATUS isMacValid(char *MacAddress);
-void wolScheduler();
-int sendWolEtherPacket(char *interface_name, char *mac);
-void initMac();
 #endif
-
