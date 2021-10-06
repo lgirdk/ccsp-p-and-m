@@ -11005,27 +11005,6 @@ LanAllowedSubnetTable_Validate
             return FALSE;
         }
 
-        /* is the subnet size allowed? */
-        if (lanSubnetMaskBuf.Value == htonl(0x00000000) ||  //0
-            lanSubnetMaskBuf.Value == htonl(0x80000000) ||  //1
-            lanSubnetMaskBuf.Value == htonl(0xC0000000) ||  //2
-            lanSubnetMaskBuf.Value == htonl(0xE0000000) ||  //3
-            lanSubnetMaskBuf.Value == htonl(0xF0000000) ||  //4
-            lanSubnetMaskBuf.Value == htonl(0xF8000000) ||  //5
-            lanSubnetMaskBuf.Value == htonl(0xFC000000) ||  //6
-            lanSubnetMaskBuf.Value == htonl(0xFE000000) ||  //7
-
-            lanSubnetMaskBuf.Value == htonl(0xFFFFFF80) ||  //25
-            lanSubnetMaskBuf.Value == htonl(0xFFFFFFC0) ||  //26
-            lanSubnetMaskBuf.Value == htonl(0xFFFFFFE0) ||  //27
-            lanSubnetMaskBuf.Value == htonl(0xFFFFFFF0) ||  //28
-            lanSubnetMaskBuf.Value == htonl(0xFFFFFFF8) ||  //29
-            lanSubnetMaskBuf.Value == htonl(0xFFFFFFFC) ||  //30
-            lanSubnetMaskBuf.Value == htonl(0xFFFFFFFE) ||  //31
-            lanSubnetMaskBuf.Value == htonl(0xFFFFFFFF))    //32
-        {
-            return FALSE;
-        }
     }
     else
     {
