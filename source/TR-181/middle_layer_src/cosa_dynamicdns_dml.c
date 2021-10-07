@@ -588,6 +588,7 @@ DDNSClient_Rollback
     {
         return 0;
     }
+    pClientEntry->Enable = 0;
     return -1;
 #endif
 #if !defined(DDNS_BROADBANDFORUM)
