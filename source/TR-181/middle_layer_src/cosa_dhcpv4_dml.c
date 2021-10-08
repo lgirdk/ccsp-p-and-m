@@ -6143,6 +6143,41 @@ Pool_GetParamStringValue
     {
         if ( CosaDmlGetIpaddrString(pValue, pUlSize, &pPool->Cfg.DNSServers[0].Value, COSA_DML_DHCP_MAX_ENTRIES ) )
         {
+            //update the size approriately so we can collect from syscfg db
+            int Vlen=AnscSizeOfString(pValue);
+            int rbufsz=*pUlSize - Vlen;
+            int addcoma=0;
+            if (Vlen > 0)
+                addcoma=1;
+
+            char tmpbuf[64];
+            int len;
+
+            /*
+             * Collect from syscfg db, syscfg updated through 
+             * Device.X_LGI-COM_Gateway.DNS_IPv4Alternate" & "Device.X_LGI-COM_Gateway.DNS_IPv4Preferred"
+            */
+            syscfg_get(NULL,"dns_ipv4_preferred",tmpbuf,sizeof(tmpbuf));
+            len=AnscSizeOfString(tmpbuf);
+            if ((len > 0) && (rbufsz > (len+1))){
+                if (addcoma) {
+                    strcat(pValue,",");
+                    len+=1;
+                }
+                strcat(pValue,tmpbuf);
+                rbufsz-=len;
+                addcoma=1;
+            }
+
+            syscfg_get(NULL,"dns_ipv4_alternate",tmpbuf,sizeof(tmpbuf));
+            len=AnscSizeOfString(tmpbuf);
+            if ((len > 0) && (rbufsz > (len+1))){
+                if (addcoma) {
+                    strcat(pValue,",");
+                }
+                strcat(pValue,tmpbuf);
+            }
+
             return 0;
         }
         else
