@@ -1915,6 +1915,11 @@ DeviceInfo_SetParamStringValue
                CcspTraceInfo(("RDKB_REBOOT : Reboot Device triggered through Factory reset from GUI\n"));
                OnboardLog("RDKB_REBOOT : Reboot Device triggered through Factory reset from GUI\n");
 			 
+               if (syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_LastRebootReason", "Reboot Factory reset UI") != 0)
+               {
+                   AnscTraceWarning(("syscfg_set failed\n"));
+               }
+
                #if defined (_ARRIS_XB6_PRODUCT_REQ_) //ARRISXB6-7328, ARRISXB6-7332
                ARRIS_RESET_REASON("RDKB_REBOOT : Reboot Device triggered through Factory reset from GUI\n");
                #endif
