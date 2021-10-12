@@ -2244,11 +2244,15 @@ CosaDmlDcSetFactoryReset
 		Utopia_Free(&utctx,1);
 		//system("reboot");i
 		//Set LastRebootReason before device bootup
-		CcspTraceWarning(("FactoryReset:%s Set LastRebootReason to factory-reset ...\n",__FUNCTION__));
-		if ((syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_LastRebootReason", "factory-reset") != 0))
+		//Set LastRebootReason if not already set from UI
+		if(syscfg_get(NULL, "X_RDKCENTRAL-COM_LastRebootReason", value, sizeof(value)) || strcmp("Reboot Factory reset UI", value))
 		{
-                        AnscTraceWarning(("syscfg_set failed\n"));
-			return -1;
+			CcspTraceWarning(("FactoryReset:%s Set LastRebootReason to factory-reset ...\n",__FUNCTION__));
+			if ((syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_LastRebootReason", "factory-reset") != 0))
+			{
+				AnscTraceWarning(("syscfg_set failed\n"));
+				return -1;
+			}
 		}
 
         char partnerId[20];
