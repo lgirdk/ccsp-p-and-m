@@ -2249,89 +2249,39 @@ LanMngm_Validate
     PCOSA_DML_LAN_MANAGEMENT        pLanMngm    = (PCOSA_DML_LAN_MANAGEMENT)pLinkObj->hContext;
 
     /* check subnetmask */
+#if defined(_PLATFORM_RASPBERRYPI_) || defined (_HUB4_PRODUCT_REQ_) || defined(_PLATFORM_TURRIS_)
     /* Subnet mask MUST accept ONLY the following IP addresses: */
     /* 255.255.255.0, 255.255.0.0, 255.0.0.0, 255.255.255.128, 255.255.255.252 */
-#if defined(_XB6_PRODUCT_REQ_)  || defined(_PLATFORM_RASPBERRYPI_) || defined (_HUB4_PRODUCT_REQ_) || defined(_PLATFORM_TURRIS_)
-    if(pLanMngm->LanSubnetMask.Value != 0x00FFFFFF &&
-       pLanMngm->LanSubnetMask.Value != 0x0000FFFF &&
-       pLanMngm->LanSubnetMask.Value != 0x000000FF &&  
-       pLanMngm->LanSubnetMask.Value != 0x80FFFFFF && 
-       pLanMngm->LanSubnetMask.Value != 0xFCFFFFFF )
-#elif defined(_BCI_FEATURE_REQ)
-#ifdef _CBR_PRODUCT_REQ_
-    if(pLanMngm->LanSubnetMask.Value != 0x000000FF &&   //8
-       pLanMngm->LanSubnetMask.Value != 0x000080FF &&   //9
-       pLanMngm->LanSubnetMask.Value != 0x0000C0FF &&   //10
-       pLanMngm->LanSubnetMask.Value != 0x0000E0FF &&     //11
-       pLanMngm->LanSubnetMask.Value != 0x0000F0FF &&     //12
-       pLanMngm->LanSubnetMask.Value != 0x0000F8FF &&   //13
-       pLanMngm->LanSubnetMask.Value != 0x0000FCFF &&   //14
-       pLanMngm->LanSubnetMask.Value != 0x0000FEFF &&   //15
-       pLanMngm->LanSubnetMask.Value != 0x0000FFFF &&   //16
-       pLanMngm->LanSubnetMask.Value != 0x0080FFFF &&   //17
-       pLanMngm->LanSubnetMask.Value != 0x00C0FFFF &&   //18
-       pLanMngm->LanSubnetMask.Value != 0x00E0FFFF &&   //19
-       pLanMngm->LanSubnetMask.Value != 0x00F0FFFF &&   //20
-       pLanMngm->LanSubnetMask.Value != 0x00F8FFFF &&   //21
-       pLanMngm->LanSubnetMask.Value != 0x00FCFFFF &&   //22
-       pLanMngm->LanSubnetMask.Value != 0x00FEFFFF &&   //23
-       pLanMngm->LanSubnetMask.Value != 0x00FFFFFF &&   //24
-       pLanMngm->LanSubnetMask.Value != 0x80FFFFFF &&   //25
-       pLanMngm->LanSubnetMask.Value != 0xC0FFFFFF &&   //26
-       pLanMngm->LanSubnetMask.Value != 0xE0FFFFFF &&   //27
-       pLanMngm->LanSubnetMask.Value != 0xF0FFFFFF &&   //28
-       pLanMngm->LanSubnetMask.Value != 0xF8FFFFFF )   //29
+    if(pLanMngm->LanSubnetMask.Value != htonl(0xFF000000) &&   //8
+       pLanMngm->LanSubnetMask.Value != htonl(0xFFFF0000) &&   //16
+       pLanMngm->LanSubnetMask.Value != htonl(0xFFFFFF00) &&   //24
+       pLanMngm->LanSubnetMask.Value != htonl(0xFFFFFF80) &&   //25
+       pLanMngm->LanSubnetMask.Value != htonl(0xFFFFFFFC) )    //30
 #else
-    if(pLanMngm->LanSubnetMask.Value != 0xFF000000 &&   //8
-       pLanMngm->LanSubnetMask.Value != 0xFF800000 &&   //9
-       pLanMngm->LanSubnetMask.Value != 0xFFC00000 &&   //10
-       pLanMngm->LanSubnetMask.Value != 0xFFE00000 &&     //11
-       pLanMngm->LanSubnetMask.Value != 0xFFF00000 &&     //12
-       pLanMngm->LanSubnetMask.Value != 0xFFF80000 &&   //13
-       pLanMngm->LanSubnetMask.Value != 0xFFFC0000 &&   //14
-       pLanMngm->LanSubnetMask.Value != 0xFFFE0000 &&   //15
-       pLanMngm->LanSubnetMask.Value != 0xFFFF0000 &&   //16
-       pLanMngm->LanSubnetMask.Value != 0xFFFF8000 &&   //17
-       pLanMngm->LanSubnetMask.Value != 0xFFFFC000 &&   //18
-       pLanMngm->LanSubnetMask.Value != 0xFFFFE000 &&   //19
-       pLanMngm->LanSubnetMask.Value != 0xFFFFF000 &&   //20
-       pLanMngm->LanSubnetMask.Value != 0xFFFFF800 &&   //21
-       pLanMngm->LanSubnetMask.Value != 0xFFFFFC00 &&   //22
-       pLanMngm->LanSubnetMask.Value != 0xFFFFFE00 &&   //23
-       pLanMngm->LanSubnetMask.Value != 0xFFFFFF00 &&   //24
-       pLanMngm->LanSubnetMask.Value != 0xFFFFFF80 &&   //25
-       pLanMngm->LanSubnetMask.Value != 0xFFFFFFC0 &&   //26
-       pLanMngm->LanSubnetMask.Value != 0xFFFFFFE0 &&   //27
-       pLanMngm->LanSubnetMask.Value != 0xFFFFFFF0 &&   //28
-       pLanMngm->LanSubnetMask.Value != 0xFFFFFFF8 &&   //29
-       pLanMngm->LanSubnetMask.Value != 0xFFFFFFFC &&   //30
-       pLanMngm->LanSubnetMask.Value != 0xFFFFFFFE )   //31
-#endif     
-#else
-    if(pLanMngm->LanSubnetMask.Value != 0xFF000000 &&   //8
-       pLanMngm->LanSubnetMask.Value != 0xFF800000 &&   //9
-       pLanMngm->LanSubnetMask.Value != 0xFFC00000 &&   //10
-       pLanMngm->LanSubnetMask.Value != 0xFFE00000 &&   //11
-       pLanMngm->LanSubnetMask.Value != 0xFFF00000 &&   //12
-       pLanMngm->LanSubnetMask.Value != 0xFFF80000 &&   //13
-       pLanMngm->LanSubnetMask.Value != 0xFFFC0000 &&   //14
-       pLanMngm->LanSubnetMask.Value != 0xFFFE0000 &&   //15
-       pLanMngm->LanSubnetMask.Value != 0xFFFF0000 &&   //16
-       pLanMngm->LanSubnetMask.Value != 0xFFFF8000 &&   //17
-       pLanMngm->LanSubnetMask.Value != 0xFFFFC000 &&   //18
-       pLanMngm->LanSubnetMask.Value != 0xFFFFE000 &&   //19
-       pLanMngm->LanSubnetMask.Value != 0xFFFFF000 &&   //20
-       pLanMngm->LanSubnetMask.Value != 0xFFFFF800 &&   //21
-       pLanMngm->LanSubnetMask.Value != 0xFFFFFC00 &&   //22
-       pLanMngm->LanSubnetMask.Value != 0xFFFFFE00 &&   //23
-       pLanMngm->LanSubnetMask.Value != 0xFFFFFF00 &&   //24
-       pLanMngm->LanSubnetMask.Value != 0xFFFFFF80 &&   //25
-       pLanMngm->LanSubnetMask.Value != 0xFFFFFFC0 &&   //26
-       pLanMngm->LanSubnetMask.Value != 0xFFFFFFE0 &&   //27
-       pLanMngm->LanSubnetMask.Value != 0xFFFFFFF0 &&   //28
-       pLanMngm->LanSubnetMask.Value != 0xFFFFFFF8 &&   //29
-       pLanMngm->LanSubnetMask.Value != 0xFFFFFFFC &&   //30
-       pLanMngm->LanSubnetMask.Value != 0xFFFFFFFE )    //31
+    if(pLanMngm->LanSubnetMask.Value != htonl(0xFF000000) &&   //8
+       pLanMngm->LanSubnetMask.Value != htonl(0xFF800000) &&   //9
+       pLanMngm->LanSubnetMask.Value != htonl(0xFFC00000) &&   //10
+       pLanMngm->LanSubnetMask.Value != htonl(0xFFE00000) &&   //11
+       pLanMngm->LanSubnetMask.Value != htonl(0xFFF00000) &&   //12
+       pLanMngm->LanSubnetMask.Value != htonl(0xFFF80000) &&   //13
+       pLanMngm->LanSubnetMask.Value != htonl(0xFFFC0000) &&   //14
+       pLanMngm->LanSubnetMask.Value != htonl(0xFFFE0000) &&   //15
+       pLanMngm->LanSubnetMask.Value != htonl(0xFFFF0000) &&   //16
+       pLanMngm->LanSubnetMask.Value != htonl(0xFFFF8000) &&   //17
+       pLanMngm->LanSubnetMask.Value != htonl(0xFFFFC000) &&   //18
+       pLanMngm->LanSubnetMask.Value != htonl(0xFFFFE000) &&   //19
+       pLanMngm->LanSubnetMask.Value != htonl(0xFFFFF000) &&   //20
+       pLanMngm->LanSubnetMask.Value != htonl(0xFFFFF800) &&   //21
+       pLanMngm->LanSubnetMask.Value != htonl(0xFFFFFC00) &&   //22
+       pLanMngm->LanSubnetMask.Value != htonl(0xFFFFFE00) &&   //23
+       pLanMngm->LanSubnetMask.Value != htonl(0xFFFFFF00) &&   //24
+       pLanMngm->LanSubnetMask.Value != htonl(0xFFFFFF80) &&   //25
+       pLanMngm->LanSubnetMask.Value != htonl(0xFFFFFFC0) &&   //26
+       pLanMngm->LanSubnetMask.Value != htonl(0xFFFFFFE0) &&   //27
+       pLanMngm->LanSubnetMask.Value != htonl(0xFFFFFFF0) &&   //28
+       pLanMngm->LanSubnetMask.Value != htonl(0xFFFFFFF8) &&   //29
+       pLanMngm->LanSubnetMask.Value != htonl(0xFFFFFFFC) &&   //30
+       pLanMngm->LanSubnetMask.Value != htonl(0xFFFFFFFE) )    //31
 #endif
     {
         CcspTraceWarning(("RDKB_LAN_CONFIG_CHANGED: Modified LanSubnetMask doesn't meet the conditions,reverting back to old value  ...\n"));
