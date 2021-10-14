@@ -35,6 +35,12 @@ ULONG CosaDmlApplicationsSamKnowsGetEnabled ( ANSC_HANDLE hContext, BOOL *pValue
 
 ULONG CosaDmlApplicationsSamKnowsSetEnabled ( ANSC_HANDLE hContext, BOOL bValue )
 {
+    char buf[8];
+    syscfg_get (NULL, "skenable", buf, sizeof(buf));
+    BOOL skenabled = (strcmp (buf, "0") == 0) ? 0 : 1;
+
+    if(skenabled == bValue)
+	    return ANSC_STATUS_SUCCESS;
 
     if (syscfg_set (NULL, "skenable", bValue ? "1" : "0") == 0)
     {

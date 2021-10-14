@@ -56,10 +56,8 @@ ANSC_STATUS CosaLgiApplicationsInitialize ( ANSC_HANDLE hThisObject )
     ULONG propertyStrLen = SAMKNOWS_PROPERTY_STRING_LEN;
     CosaDmlApplicationsSamKnowsGetProperty(NULL, pMyObject->SamKnowsProperty, &propertyStrLen);
 
-    if (pMyObject->SamKnowsEnable == TRUE) {
+    if (pMyObject->SamKnowsEnable == TRUE && (access( "/tmp/samknows/unitid", F_OK ) != 0)) {
       system("/etc/init.d/samknows_ispmon start &");
-    } else {
-      system("/etc/init.d/samknows_ispmon stop &");
     }
 
     return returnStatus;
