@@ -2371,6 +2371,11 @@ CosaDmlDcSetFactoryReset
 	moca_factoryReset();
 #endif
 #endif
+
+#if defined (_PUMA6_ARM_)
+	docsis_FactoryReset();
+#endif
+
 	pthread_t other;
         pthread_create(&other, NULL, &restoreAllDBs, NULL);
 	}
