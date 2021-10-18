@@ -2300,6 +2300,11 @@ CosaDmlDcSetFactoryReset
 	CcspTraceWarning (("***** New API call to MOCA FactoryReset: Restoring MOCA to factory defaults  ...\n")); //ARRISXB6-7326
 	moca_factoryReset();
 #endif
+
+#if defined (_PUMA6_ARM_)
+	docsis_FactoryReset();
+#endif
+
 	pthread_t other;
         pthread_create(&other, NULL, &restoreAllDBs, NULL);
 	}
