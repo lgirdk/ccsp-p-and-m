@@ -346,6 +346,9 @@ BOOL GreTunnelIf_GetParamUlongValue ( ANSC_HANDLE hInsContext, char* ParamName, 
 
     if (strcmp(ParamName, "VLANID") == 0)
     {
+        if(CosaDml_GreTunnelIfGetVlanId(1, ins, &pGreTuIf->VLANID) != ANSC_STATUS_SUCCESS)
+            return FALSE;
+
         *pUlong = pGreTuIf->VLANID;
         return TRUE;
     } 
@@ -456,8 +459,10 @@ BOOL GreTunnel_SetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName, BOO
 
     if (strcmp(ParamName, "Enable") == 0)
     {
+#if !defined (_LG_MV2_PLUS_)
         pGreTu->Enable = bValue;
         pGreTu->ChangeFlag |= GRETU_CF_ENABLE;
+#endif
         return TRUE;
     }
 	if (strcmp(ParamName, "HotSpotReset") == 0)
