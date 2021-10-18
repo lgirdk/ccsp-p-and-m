@@ -346,6 +346,9 @@ BOOL GreTunnelIf_GetParamUlongValue ( ANSC_HANDLE hInsContext, char* ParamName, 
 
     if (strcmp(ParamName, "VLANID") == 0)
     {
+        if(CosaDml_GreTunnelIfGetVlanId(1, ins, &pGreTuIf->VLANID) != ANSC_STATUS_SUCCESS)
+            return FALSE;
+
         *pUlong = pGreTuIf->VLANID;
         return TRUE;
     } 
