@@ -1751,6 +1751,15 @@ static void *setGreVlan(void *arg)
 
     PortNumberOfEntries = g_GetParamValueUlong(g_pDslhDmlAgent,bridgePortDM);
 
+#if defined(_LG_MV2_PLUS_)
+    char val[28];
+    snprintf(val, sizeof(val), "%d %d", param->tuIns, param->OldVlan);
+    if (sysevent_set(sysevent_fd, sysevent_token, "update-vlanID", val, 0)) {
+        CcspTraceError(("sysevent set update-vlanID to %d failed\n", param->tuIns));
+    } else {
+        CcspTraceError(("sysevent set update-vlanID to %d\n", param->tuIns));
+    }
+#else
     for(i = 1; i <= PortNumberOfEntries ; i++)
     {
         snprintf(bridgePortDM,sizeof(bridgePortDM),"%sPort.%d.Name",bridgeDM,i);
@@ -1781,6 +1790,7 @@ static void *setGreVlan(void *arg)
         }
 
     }
+#endif
 
     if(bridgeDM)
         free(bridgeDM);
@@ -1796,17 +1806,23 @@ CosaDml_GreTunnelIfSetVlanId(ULONG tuIns, ULONG ins, INT vlanId)
 {
     char psmRec[MAX_GRE_PSM_REC + 1];
     char psmVal[16];
+    int oldvlan = 0;
+    int i;
 
     PCOSA_DML_BRIDGE_GET_PARM param = NULL;
 
     if (tuIns != 1)
         return ANSC_STATUS_FAILURE;
 
-    /* save to PSM */
-    snprintf(psmRec, sizeof(psmRec), GRETUIF_PARAM_VLANID, tuIns, ins);
-    snprintf(psmVal, sizeof(psmVal), "%d", vlanId);
-    if (GrePsmSet(psmRec, psmVal) != 0)
-        return ANSC_STATUS_FAILURE;
+    GreTunnelIfPsmGetInt(GRETUIF_PARAM_VLANID, tuIns, ins, &oldvlan);
+
+    /* update the psm values to both interfaces */
+    for (i = 1; i <= 2; i++) {
+        snprintf(psmRec, sizeof(psmRec), GRETUIF_PARAM_VLANID, tuIns, i);
+        snprintf(psmVal, sizeof(psmVal), "%d", vlanId);
+        if (GrePsmSet(psmRec, psmVal) != 0)
+            return ANSC_STATUS_FAILURE;
+    }
 
     param = (PCOSA_DML_BRIDGE_GET_PARM)AnscAllocateMemory(sizeof(COSA_DML_BRIDGE_GET_PARM));
 
@@ -1816,6 +1832,7 @@ CosaDml_GreTunnelIfSetVlanId(ULONG tuIns, ULONG ins, INT vlanId)
     param->tuIns = tuIns;
     param->ifIns = ins;
     param->VLANID = vlanId;
+    param->OldVlan = oldvlan;
 
     pthread_t setvlan;
     if(pthread_create(&setvlan, NULL, &setGreVlan, (void *)param))
