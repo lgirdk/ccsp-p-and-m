@@ -72,6 +72,7 @@
 #include "secure_wrapper.h"
 #include <openssl/hmac.h>
 #include <syscfg/syscfg.h>
+#include <platform_hal.h>
 #include "safec_lib_common.h"
 
 #define SIZE_OF_HASHPASSWORD  32
