@@ -579,8 +579,8 @@ user_validatepwd
 
    if(fromDB[0] == '\0')
    {
-         char guiPassword[40]= {'\0'};
-         if (platform_hal_getUIDefaultPassword(guiPassword) == RETURN_OK )
+         char guiPassword[40];
+         if (platform_hal_getUIDefaultPassword(guiPassword, sizeof(guiPassword)) == RETURN_OK )
          {
              strcpy(pEntry->Password, guiPassword);
          }
