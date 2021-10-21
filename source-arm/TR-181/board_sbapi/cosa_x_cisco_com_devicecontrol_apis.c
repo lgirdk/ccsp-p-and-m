@@ -1774,6 +1774,16 @@ CosaDmlDcSetRebootDevice
     }
 #endif
    
+    char temp[8];
+    syscfg_get(NULL, "X_RDKCENTRAL-COM_LastRebootCounter", temp, sizeof(temp));
+
+    if (strcmp(temp, "1") != 0)
+    {
+        CcspTraceWarning(("Reboot Device:%s Set LastRebootReason to  Reboot CLI...\n",__FUNCTION__));
+        syscfg_set(NULL, "X_RDKCENTRAL-COM_LastRebootReason", "Reboot CLI");
+        syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_LastRebootCounter", "1");
+    }
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -2380,6 +2390,9 @@ CosaDmlDcSetFactoryReset
         pthread_create(&other, NULL, &restoreAllDBs, NULL);
 	}
 	if (factory_reset_mask & FR_ROUTER) {
+		char temp[8];
+		char *reason = NULL;
+
    		CcspTraceWarning(("FactoryReset:%s Restoring router to factory defaults  ...\n",__FUNCTION__));
 		tok = FACTORY_RESET_ROUTER_VALUE;
 		if (!Utopia_Init(&utctx))
@@ -2398,15 +2411,35 @@ CosaDmlDcSetFactoryReset
 		//system("reboot");i
 		//Set LastRebootReason before device bootup
 		//Set LastRebootReason if not already set from UI
-		if(syscfg_get(NULL, "X_RDKCENTRAL-COM_LastRebootReason", value, sizeof(value)) || strcmp("Reboot Factory reset UI", value))
+		syscfg_get(NULL, "X_RDKCENTRAL-COM_LastRebootCounter", temp, sizeof(temp));
+
+		if (strcmp(temp, "1") != 0)
 		{
 			CcspTraceWarning(("FactoryReset:%s Set LastRebootReason to factory-reset ...\n",__FUNCTION__));
-			if ((syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_LastRebootReason", "factory-reset") != 0))
+			reason = "Reboot Factory reset CLI";
+			if ((syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_LastRebootReason", reason) != 0))
 			{
 				AnscTraceWarning(("syscfg_set failed\n"));
 				return -1;
 			}
 		}
+
+#if (_LG_MV2_PLUS_)
+		FILE *fp = fopen("/nvram/reboot_reason", "w+");
+		if (fp == NULL)
+		{
+			CcspTraceWarning(("%s failed to open /nvram/reboot_reason\n", __FUNCTION__));
+			return ANSC_STATUS_FAILURE;
+		}
+		if (reason == NULL)
+		{
+			syscfg_get(NULL, "X_RDKCENTRAL-COM_LastRebootReason", value, sizeof(value));
+			reason = value;
+		}
+
+		fprintf(fp, "%s", reason);
+		fclose(fp);
+#endif
 
         char partnerId[20];
         int retVal = 0 ;
