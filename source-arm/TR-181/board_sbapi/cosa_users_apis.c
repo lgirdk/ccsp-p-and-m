@@ -72,6 +72,7 @@
 #include "secure_wrapper.h"
 #include <openssl/hmac.h>
 #include <syscfg/syscfg.h>
+#include <platform_hal.h>
 
 /* Changing SNO as 256 bytes from 64 bytes due to HAL layer access more than 64 byets*/
 char SerialNumber[256] = {'\0'};
