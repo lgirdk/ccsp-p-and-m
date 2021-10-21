@@ -1593,6 +1593,8 @@ CosaDmlDcSetRebootDevice
     UNREFERENCED_PARAMETER(hContext);
     int router, wifi, voip, dect, moca, all, delay;
     int delay_time = 0;
+    char value[50];
+    char temp[50]; 
     errno_t rc = -1;
 
     router = wifi = voip = dect = moca = all = delay = 0;
@@ -1776,6 +1778,26 @@ CosaDmlDcSetRebootDevice
         // TODO: 
     }
     
+    syscfg_get(NULL, "X_RDKCENTRAL-COM_LastRebootReason", value, sizeof(value));
+
+    syscfg_get(NULL, "X_RDKCENTRAL-COM_LastRebootCounter", temp, sizeof(temp));
+
+    if(strcmp(temp,"1") && (strcmp("Reboot UI", value) || strcmp("tr069-reboot", value)))
+    {
+
+        CcspTraceWarning(("Reboot Device:%s Set LastRebootReason to  Reboot CLI...\n",__FUNCTION__));
+
+        if ((syscfg_set(NULL, "X_RDKCENTRAL-COM_LastRebootReason", "Reboot CLI") != 0))
+        {
+            AnscTraceWarning(("syscfg_set failed\n"));
+        }
+
+        if (syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_LastRebootCounter", "1") != 0)
+        {
+            AnscTraceWarning(("syscfg_set failed\n"));
+        }
+    }
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -2024,6 +2046,7 @@ CosaDmlDcSetFactoryReset
 	char* tok;
 	char* sv;
     char value[50];
+    char temp[50]; 
 	int factory_reset_mask = 0;
 	UtopiaContext utctx = {0};
 	static pthread_t wifiThread;
@@ -2250,15 +2273,28 @@ CosaDmlDcSetFactoryReset
 		//system("reboot");i
 		//Set LastRebootReason before device bootup
 		//Set LastRebootReason if not already set from UI
-		if(syscfg_get(NULL, "X_RDKCENTRAL-COM_LastRebootReason", value, sizeof(value)) || strcmp("Reboot Factory reset UI", value))
+		syscfg_get(NULL, "X_RDKCENTRAL-COM_LastRebootReason", value, sizeof(value));
+		syscfg_get(NULL, "X_RDKCENTRAL-COM_LastRebootCounter", temp, sizeof(temp));
+
+		if(strcmp(temp,"1") && (strcmp("Reboot Factory reset UI", value) || strcmp("Reboot Factory reset ACS", value)))
 		{
 			CcspTraceWarning(("FactoryReset:%s Set LastRebootReason to factory-reset ...\n",__FUNCTION__));
-			if ((syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_LastRebootReason", "factory-reset") != 0))
+			if ((syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_LastRebootReason", "Reboot Factory reset CLI") != 0))
 			{
 				AnscTraceWarning(("syscfg_set failed\n"));
 				return -1;
 			}
 		}
+
+		syscfg_get(NULL, "X_RDKCENTRAL-COM_LastRebootReason", value, sizeof(value));
+
+#if (_LG_MV2_PLUS_)
+
+		FILE *fp = fopen("/nvram/reboot_reason", "w+");
+		fprintf(fp, "%s", value);
+		fclose(fp);
+
+#endif
 
         char partnerId[20];
         int retVal = 0 ;
