@@ -3914,7 +3914,6 @@ BOOL CosaDmlNatChkPortMappingClient(ULONG client)
     inet_pton(AF_INET, lan.netmask, &netmask);
 
     if((client != ipaddr) &&
-	(checkIP >= startIP && checkIP <= endIP) && //check that client(checkIP) is in DHCP range or not
         !IPv4Addr_IsBroadcast(client, ipaddr, netmask) &&
         !IPv4Addr_IsNetworkAddr(client, ipaddr, netmask) &&
         (IPv4Addr_IsSameNetwork(client, ipaddr, netmask) || IPv4Addr_IsSameNetwork(client, 0xac100c00, 0xffffff00)))
