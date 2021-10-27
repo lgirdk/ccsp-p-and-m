@@ -42,6 +42,8 @@
 #define  SYSCFG_HOST_NAME_KEY             "ddns_host_name_%lu"
 #define  MAX_HOST_COUNT                   1
 
+#define RETRY_SOON_FILENAME "/etc/cron/cron.everyminute/ddns_retry.sh"
+
 typedef struct {
     char ServiceName[64];
     char Name[64];
@@ -313,10 +315,13 @@ CosaDmlDynamicDns_SetEnable
        {
           syscfg_set(NULL, "arddnsclient_1::enable", buf);
           syscfg_set(NULL, "ddns_host_enable_1", buf);
+          /* Remove retry file if it exist */
+          if (!access(RETRY_SOON_FILENAME, F_OK )) {
+             unlink(RETRY_SOON_FILENAME);
+          }
        }
        syscfg_commit();
-       //update_ddns_server();
-       system("service_ddns restart &");
+       
        return 0;
    }
    return -1;
@@ -456,7 +461,7 @@ CosaDmlDynamicDns_Client_AddEntry
     Utopia_GetNumberOfDynamicDnsClient(&ctx, &g_NrDynamicDnsClient);
     Utopia_Free(&ctx, !rc);
 
-#if 1
+#if 0
     if (CosaDmlDynamicDns_GetEnable() && pEntry->Enable == TRUE)
     {
         /* reset the DynamicDNS client and host status before restart*/
@@ -597,9 +602,12 @@ CosaDmlDynamicDns_Client_SetConf
     } else {
             printf(" NOT READY to verify and update ddns server\n");
     }
-
     if ((isUserconfChanged == TRUE) && (bReadyUpdate  == TRUE))
     {
+        /* Remove retry file if it exist */
+        if (!access(RETRY_SOON_FILENAME, F_OK )) {
+           unlink(RETRY_SOON_FILENAME);
+        }
         /* reset the DynamicDNS client and host status before restart*/
         resetDynamicDNSStatus();
         CcspTraceInfo(("%s Going to restart dynamic dns service",__FUNCTION__));
@@ -893,6 +901,10 @@ CosaDmlDynamicDns_Host_SetConf
     if (bReadyUpdate && CosaDmlDynamicDns_GetEnable() && (g_DDNSHost[index].Enable == TRUE)
             && (isHostchanged == TRUE) && (g_DDNSHost[index].Name[0] != '\0'))
     {
+        /* Remove retry file if it exist */
+        if (!access(RETRY_SOON_FILENAME, F_OK )) {
+            unlink(RETRY_SOON_FILENAME);
+        }
         /* reset the DynamicDNS client and host status before restart*/
         resetDynamicDNSStatus();
         g_DDNSHost[index].Status = 2; /* HOST_UPDATE_NEEDED=2 */
