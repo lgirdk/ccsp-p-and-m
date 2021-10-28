@@ -473,11 +473,6 @@ CosaDmlGiGetDefaultAdminPassword
         return ANSC_STATUS_SUCCESS;
     }
 
-    if (syscfg_get (NULL, "Default_Admin_Password", pValue, *pUlSize) == 0)
-    {
-        return ANSC_STATUS_SUCCESS;
-    }
-
     strcpy(pValue, "password");
 
     return ANSC_STATUS_SUCCESS;
