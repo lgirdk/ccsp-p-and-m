@@ -2943,6 +2943,9 @@ Route6_GetRouteTable(const char *ifname, RouteInfo6_t infos[], int *numInfo)
         else
             snprintf(info6->prefix, sizeof(info6->prefix), "%s", prefix);
 
+        if (strchr(info6->prefix, '/') == NULL)
+            strcat(info6->prefix, "/128");
+
         /* record the interface */
         safec_rc = sprintf_s(info6->interface, sizeof(info6->interface), "%s", ifname);
         if(safec_rc < EOK) ERR_CHK(safec_rc);
@@ -3024,6 +3027,9 @@ Route6_GetRouteTable(const char *ifname, RouteInfo6_t infos[], int *numInfo)
 	}
         else
             snprintf(info6->prefix, sizeof(info6->prefix), "%s", prefix);
+
+        if (strchr(info6->prefix, '/') == NULL)
+            strcat(info6->prefix, "/128");
 
         /* record the interface */
         safec_rc = sprintf_s(info6->interface, sizeof(info6->interface), "%s", ifname);
