@@ -470,7 +470,14 @@ CosaDmlGiGetDefaultAdminPassword
 {
     if (platform_hal_getUIDefaultPassword (pValue, *pUlSize) == RETURN_OK)
     {
-        return ANSC_STATUS_SUCCESS;
+        /*
+           If the HAL returns an empty string it's bug in the HAL (it
+           should return an error instead), but try to handle it anway.
+        */
+        if (strlen (pValue) > 0)
+        {
+            return ANSC_STATUS_SUCCESS;
+        }
     }
 
     strcpy(pValue, "password");
