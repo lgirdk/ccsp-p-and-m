@@ -2917,6 +2917,9 @@ Route6_GetRouteTable(const char *ifname, RouteInfo6_t infos[], int *numInfo)
         else
             snprintf(info6->prefix, sizeof(info6->prefix), "%s", prefix);
 
+        if (strchr(info6->prefix, '/') == NULL)
+            strcat(info6->prefix, "/128");
+
         /* record the interface */
         snprintf(info6->interface, sizeof(info6->interface), "%s", ifname);
 
@@ -2997,6 +3000,9 @@ Route6_GetRouteTable(const char *ifname, RouteInfo6_t infos[], int *numInfo)
 	}
         else
             snprintf(info6->prefix, sizeof(info6->prefix), "%s", prefix);
+
+        if (strchr(info6->prefix, '/') == NULL)
+            strcat(info6->prefix, "/128");
 
         /* record the interface */
         snprintf(info6->interface, sizeof(info6->interface), "%s", ifname);
