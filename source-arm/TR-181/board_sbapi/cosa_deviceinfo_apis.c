@@ -140,6 +140,8 @@ static int writeToJson(char *data, char *file);
 
 #ifdef _PUMA6_ARM_
 #define CONFIG_TI_GW_DESCRIPTION "DOCSIS 3.0 Cable Modem"
+#else
+#define CONFIG_TI_GW_DESCRIPTION "DOCSIS 3.1 Cable Modem Gateway Device"
 #endif
 
 /*
@@ -150,9 +152,6 @@ static int writeToJson(char *data, char *file);
 #endif
 #ifndef CONFIG_VENDOR_ID
 #define CONFIG_VENDOR_ID "123456"
-#endif
-#ifndef CONFIG_TI_GW_DESCRIPTION
-#define CONFIG_TI_GW_DESCRIPTION "Cable Modem"
 #endif
 
 #ifdef _COSA_SIM_
