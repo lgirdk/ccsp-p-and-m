@@ -567,7 +567,11 @@ user_validatepwd
 
    if(fromDB[0] == '\0')
    {
-         if (platform_hal_getUIDefaultPassword(guiPassword, sizeof(guiPassword)) == RETURN_OK )
+         /*
+            If the HAL returns an empty string it's bug in the HAL (it
+            should return an error instead), but try to handle it anway.
+         */
+         if ((platform_hal_getUIDefaultPassword(guiPassword, sizeof(guiPassword)) == RETURN_OK) && (strlen(guiPassword) > 0))
          {
              strcpy(pEntry->Password, guiPassword);
          }
