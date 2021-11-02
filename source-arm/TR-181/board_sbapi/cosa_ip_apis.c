@@ -84,6 +84,7 @@ extern void* g_pDslhDmlAgent;
 #include "cosa_dhcpv6_apis.h"
 #include "cosa_ip_internal.h"
 #include "cosa_drg_common.h"
+#include <string.h>
 
 #if defined(_COSA_BCM_MIPS_) || defined(_ENABLE_DSL_SUPPORT_)
 #define INTERFACE "erouter0"
@@ -2900,6 +2901,31 @@ CosaDmlIpIfDelV4Addr
         return  ANSC_STATUS_FAILURE;
     }
 }
+
+static inline unsigned int countSetBits(int byte)
+{
+    return 9 - ffs(~byte + 1);
+}
+
+unsigned int mask2cidr(char *subnetMask)
+{
+    int l_iFirstByte, l_iSecondByte, l_iThirdByte, l_iFourthByte;
+
+    sscanf(subnetMask, "%d.%d.%d.%d", &l_iFirstByte, &l_iSecondByte,
+            &l_iThirdByte, &l_iFourthByte);
+    if(l_iFirstByte == 255 && l_iSecondByte == 255 && l_iThirdByte == 255 && (l_iFourthByte == 252 || l_iFourthByte == 248 || l_iFourthByte == 240 ))
+    {
+        return 24 + countSetBits(l_iFourthByte);
+    }
+    else
+    {
+        fprintf(stderr, "Invalid CIDR subnetMask for Static IP :%s\n", subnetMask);
+        return 0;
+    }
+
+}
+
+
 /**********************************************************************
 
     caller:     self
@@ -2927,6 +2953,7 @@ CosaDmlIpIfDelV4Addr
         The status of the operation.
 
 **********************************************************************/
+
 ANSC_STATUS
 CosaDmlIpIfSetV4Addr
     (
@@ -2935,16 +2962,68 @@ CosaDmlIpIfSetV4Addr
         PCOSA_DML_IP_V4ADDR         pEntry
     )
 {
+        ANSC_STATUS                     returnStatus = ANSC_STATUS_SUCCESS;
+        UtopiaContext                   utctx;
+        char                            buf[256];
+
+    if ( !pEntry )
+    {
+        CcspTraceWarning(("%s Error Input\n", __FUNCTION__));
+        return ANSC_STATUS_FAILURE;
+    }
+
+    if ( !Utopia_Init(&utctx) )
+    {
+        CcspTraceWarning(("%s Error initializing context\n", __FUNCTION__));
+        return ANSC_STATUS_FAILURE;
+    }
+
     if ( ulIpIfInstanceNumber >= COSA_USG_IF_NUM )
     {
-        return  CosaDmlIpIfMlanSetV4Addr(hContext, ulIpIfInstanceNumber, pEntry);
+
+        char                            rip_status[12]  = {0};
+        int                             l_iCIDR = 0,total_hosts = 0;
+
+        Utopia_RawGet(&utctx, NULL,  "rip_enabled", rip_status, sizeof(rip_status));
+        returnStatus = CosaDmlIpIfMlanSetV4Addr(hContext, ulIpIfInstanceNumber, pEntry);
+        if ( ulIpIfInstanceNumber != COSA_USG_IF_NUM)
+            return returnStatus;
+        else if (returnStatus == ANSC_STATUS_SUCCESS && rip_status[0] == '1') // for brlan0 interface 4
+        {
+            _ansc_sprintf(buf, "%d.%d.%d.%d",
+                    pEntry->IPAddress.Dot[0],pEntry->IPAddress.Dot[1],pEntry->IPAddress.Dot[2],pEntry->IPAddress.Dot[3] );
+            UTOPIA_SET(&utctx, UtopiaValue_LAN_IPAddr, buf);
+            _ansc_sprintf(buf, "%d.%d.%d.%d",
+                    pEntry->IPAddress.Dot[0],pEntry->IPAddress.Dot[1],pEntry->IPAddress.Dot[2],pEntry->IPAddress.Dot[3]+1 );
+            UTOPIA_SET(&utctx, UtopiaValue_DHCP_Start, buf); // CIDR Usable Host Range Starts
+            _ansc_sprintf(buf, "%d.%d.%d.%d",
+                    pEntry->SubnetMask.Dot[0],pEntry->SubnetMask.Dot[1],pEntry->SubnetMask.Dot[2],pEntry->SubnetMask.Dot[3] );
+
+            l_iCIDR = mask2cidr(buf);
+
+	    if ( l_iCIDR == 0 )
+	    {
+                CcspTraceWarning(("%s Error CIDR netmask is not valid for static IP.. Assigning /30 case for default\n", __FUNCTION__));
+                l_iCIDR = 30;
+                //return ANSC_STATUS_FAILURE;
+            }
+            UTOPIA_SET(&utctx, UtopiaValue_LAN_Netmask, buf);
+
+            total_hosts = 1 << (32 - l_iCIDR);
+            _ansc_sprintf(buf, "%d.%d.%d.%d",
+                    pEntry->IPAddress.Dot[0],pEntry->IPAddress.Dot[1],pEntry->IPAddress.Dot[2],pEntry->IPAddress.Dot[3]+total_hosts-3 ); // CIDR Usable Host Range Ends
+            UTOPIA_SET(&utctx, UtopiaValue_DHCP_End, buf);
+
+            Utopia_Free(&utctx, 1);
+
+            commonSyseventSet("dhcp_server-restart", "");
+
+            return returnStatus;
+        }
     }
     else
-    {    
-        ANSC_STATUS                     returnStatus = ANSC_STATUS_SUCCESS;
+    {
         PCOSA_DML_IP_V4ADDR             p_be_buf = NULL; 
-        char                            buf[256];
-        UtopiaContext                   utctx;
         errno_t safec_rc = -1;
         
         //AnscTraceFlow(("%s...\n", __FUNCTION__));
@@ -2970,7 +3049,6 @@ CosaDmlIpIfSetV4Addr
             safec_rc = strcpy_s(p_be_buf->Alias,sizeof(p_be_buf->Alias), pEntry->Alias);
             ERR_CHK(safec_rc);
         }
-
         /*for IPaddr and netmask, it's middle layer's responsibility to check if the AddressingType is Static. Remember we only set these params in Static AddressingType*/
         if (pEntry->IPAddress.Value != p_be_buf->IPAddress.Value)
         {
@@ -3013,10 +3091,8 @@ CosaDmlIpIfSetV4Addr
             {
                 CosaUtilIoctlXXX((char *)g_ipif_names[ulIpIfInstanceNumber-1], "set_netmask", &pEntry->SubnetMask.Value);
             }
-
             p_be_buf->SubnetMask.Value = pEntry->SubnetMask.Value;
         }
-
         return returnStatus;
     }
 }
