@@ -72,6 +72,7 @@
 #include "cosa_routing_internal.h"
 #include "dml_tr181_custom_cfg.h"
 #include "secure_wrapper.h"
+#include <pthread.h>
 
 #if defined (_CBR_PRODUCT_REQ_) || defined (_BWG_PRODUCT_REQ_) || defined (_CBR2_PRODUCT_REQ_)
 #include "cosa_drg_common.h"
@@ -79,6 +80,7 @@
 
 #include "safec_lib_common.h"
 
+extern ANSC_HANDLE bus_handle;
 extern void* g_pDslhDmlAgent;
 
 #if ( defined(_COSA_SIM_))
@@ -1128,6 +1130,75 @@ CosaDmlRipGetCfg
     return returnStatus;
 }
 
+
+static void updateWIFIStatus(BOOL enable)
+{
+    char* faultParam = NULL;
+    int ret = 0;
+    CCSP_MESSAGE_BUS_INFO *bus_info = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
+    parameterValStruct_t param_val[] = {  { "Device.WiFi.X_RDK-CENTRAL_COM_ForceDisable", "false", ccsp_boolean},
+                                          { "Device.WiFi.Radio.1.X_CISCO_COM_ApplySetting", "true", ccsp_boolean},
+                                          { "Device.WiFi.Radio.2.X_CISCO_COM_ApplySetting", "true", ccsp_boolean} };
+    if (enable) {
+        param_val[0].parameterValue = "true";
+    }
+    ret = CcspBaseIf_setParameterValues(bus_handle,
+                                        "eRT.com.cisco.spvtg.ccsp.wifi",
+                                        "/com/cisco/spvtg/ccsp/wifi",
+                                        0,
+                                        0,
+                                        param_val,
+                                        sizeof(param_val)/sizeof(param_val[0]),
+                                        TRUE,
+                                        &faultParam
+                                        );
+    if(ret != CCSP_SUCCESS && faultParam)
+    {
+        CcspTraceError(("%s: Failed to SetValue for param '%s'\n",__FUNCTION__,faultParam));
+        bus_info->freefunc(faultParam);
+    }
+}
+
+static void updateDHCPv4Status(BOOL enable)
+{
+    char* faultParam = NULL;
+    int ret = 0;
+    CCSP_MESSAGE_BUS_INFO *bus_info = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
+    parameterValStruct_t param_val[] = {  { "Device.DHCPv4.Server.Pool.1.Enable", "false", ccsp_boolean}}; 
+
+    if (!enable) {
+        param_val[0].parameterValue = "true";
+    }
+    ret = CcspBaseIf_setParameterValues(bus_handle,
+                                        "eRT.com.cisco.spvtg.ccsp.pam",
+                                        "/com/cisco/spvtg/ccsp/pam",
+                                        0,
+                                        0,
+                                        param_val,
+                                        sizeof(param_val)/sizeof(param_val[0]),
+                                        TRUE,
+                                        &faultParam
+                                        );
+    if(ret != CCSP_SUCCESS && faultParam)
+    {
+        CcspTraceError(("%s: Failed to SetValue for param '%s'\n",__FUNCTION__,faultParam));
+        bus_info->freefunc(faultParam);
+    }
+}
+ANSC_STATUS updateWifiStatus(void *arg)
+{
+    int value = (int) arg;
+    pthread_detach(pthread_self());
+    updateWIFIStatus(value);
+}
+
+ANSC_STATUS updateDhcpv4Status(void *arg)
+{
+    int value = (int) arg;
+    pthread_detach(pthread_self());
+    updateDHCPv4Status(value);
+}
+
 /**********************************************************************
 
     caller:     self
@@ -1164,8 +1235,9 @@ CosaDmlRipSetCfg
 {
     ANSC_STATUS                     returnStatus = ANSC_STATUS_SUCCESS;
     UNREFERENCED_PARAMETER(hContext);
-    AnscTraceWarning(("CosaDmlRipSetCfg -- starts.\n"));
+    pthread_t tid;
 
+    AnscTraceWarning(("CosaDmlRipSetCfg -- starts.\n"));
     CosaDmlRIPCurrentConfig.Enable        = pCfg->Enable;
     CosaDmlRIPCurrentConfig.UpdateTime    = pCfg->X_CISCO_COM_UpdateInterval;
     CosaDmlRIPCurrentConfig.DefaultMetric = pCfg->X_CISCO_COM_DefaultMetric;
@@ -1193,6 +1265,18 @@ CosaDmlRipSetCfg
         CosaDmlGenerateRipdConfigFile(NULL);
         CosaRipdOperation("restart");
 #endif
+
+    pthread_create(&tid, NULL, updateDhcpv4Status, pCfg->Enable);
+/*    if ( pCfg->Enable )
+        returnStatus = CosaDmlDhcpsEnable((ANSC_HANDLE)NULL, false);
+    else
+        returnStatus = CosaDmlDhcpsEnable((ANSC_HANDLE)NULL, true);
+    if ( returnStatus != ANSC_STATUS_SUCCESS )
+    {
+        return ANSC_STATUS_FAILURE;
+    }*/
+
+    pthread_create(&tid, NULL, updateWifiStatus, pCfg->Enable);
 
     AnscTraceWarning(("CosaDmlRipSetCfg -- exits.\n"));
     return returnStatus;
