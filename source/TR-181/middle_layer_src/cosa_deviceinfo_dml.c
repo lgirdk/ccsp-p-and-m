@@ -12981,7 +12981,6 @@ off_channel_scan_SetParamBoolValue
 }
 #endif // (FEATURE_OFF_CHANNEL_SCAN_5G)
 
-#if defined (FEATURE_SUPPORT_RADIUSGREYLIST)
 /**********************************************************************
 
     caller:     owner of this object
@@ -13118,6 +13117,7 @@ WiFiPsmDb_SetParamBoolValue
 #endif
 }
 
+#if defined (FEATURE_SUPPORT_RADIUSGREYLIST)
 /**********************************************************************
     caller:     owner of this object
 
