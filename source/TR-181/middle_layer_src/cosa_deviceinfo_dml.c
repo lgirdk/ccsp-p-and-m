@@ -12614,7 +12614,6 @@ WiFiPasspoint_SetParamBoolValue
 }
 #endif
 
-#if defined (FEATURE_SUPPORT_RADIUSGREYLIST)
 /**********************************************************************
 
     caller:     owner of this object
@@ -12749,6 +12748,7 @@ WiFiPsmDb_SetParamBoolValue
 #endif
 }
 
+#if defined (FEATURE_SUPPORT_RADIUSGREYLIST)
 /**********************************************************************
     caller:     owner of this object
 
