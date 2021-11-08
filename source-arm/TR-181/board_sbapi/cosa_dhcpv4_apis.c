@@ -2535,6 +2535,7 @@ CosaDmlDhcpsSetPoolCfg
         rc = Utopia_SetDhcpV4ServerPoolCfg(&ctx, pCfg);
 
         commonSyseventSet("refresh-switch", "true"); 
+        commonSyseventSet("refresh-plume", "true");
 
         /* Free Utopia Context */
         Utopia_Free(&ctx,!rc);
