@@ -20176,6 +20176,36 @@
         </objects>
 
     </object>
+
+    <object>
+        <name>X_LGI-COM_Multicast</name>
+
+        <objectType>object</objectType>
+        <functions>
+            <func_GetParamBoolValue>LgiMulticast_GetParamBoolValue</func_GetParamBoolValue>
+        </functions>
+        <parameters>
+            <parameter>
+                <name>Enable</name>
+                <description>
+                  Enables or disables LAN Multicast support
+                </description>
+                <type>boolean</type>
+                <syntax>bool</syntax>
+                <writable>false</writable>
+            </parameter>
+            <parameter>
+                <name>SnoopingEnable</name>
+                <description>
+                  Enables or disables IGMP/MLD snooping on all its customer-facing interfaces (primary LAN, WiFi backhaul interfaces, Ethernet, Guest WiFi)
+                  When enabled it prevents unnecessary multicast traffic to the ports which did not subscribe to the multicast stream.
+                </description>
+                <type>boolean</type>
+                <syntax>bool</syntax>
+                <writable>false</writable>
+            </parameter>
+        </parameters>
+    </object>
 <!-- LGI ADD END -->
     <object>
 
