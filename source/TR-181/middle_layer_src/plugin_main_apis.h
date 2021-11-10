@@ -176,7 +176,8 @@ extern COSARegisterCallBackAfterInitDmlProc  g_RegisterCallBackAfterInitDml;
 #define COSA_DATAMODEL_LGI_PLUME_OID                           132
 #define COSA_DATAMODEL_LGI_WOL_OID                             134 /* LGI ADD */
 #define COSA_DATAMODEL_LGI_GENERAL_OID                         140
-#define COSA_DATAMODEL_LGI_APPLICATIONS_OID                    144 
+#define COSA_DATAMODEL_LGI_APPLICATIONS_OID                    144
+#define COSA_DATAMODEL_LGI_MULTICAST_OID                       146 
 
 /*
  * This is the cosa datamodel backend manager which is used to manager all backend object
@@ -236,6 +237,7 @@ extern COSARegisterCallBackAfterInitDmlProc  g_RegisterCallBackAfterInitDml;
     ANSC_HANDLE                  hLgiWoL;                        /* LGI ADD             */  \
     ANSC_HANDLE                  hTemperatureStatus;                                        \
     ANSC_HANDLE                  hLgiApplications;                                           \
+    ANSC_HANDLE                  hLgiMulticast;                                              \
     PCOSA_PLUGIN_INFO            hCosaPluginInfo;								   		
 
 typedef  struct
