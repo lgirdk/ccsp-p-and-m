@@ -842,6 +842,7 @@ void CosaDmlGenerateRipdConfigFile(ANSC_HANDLE  hContext )
     char *pstaticRoute        = NULL;
     BOOL bTrueStaticIP        = TRUE;
     errno_t safec_rc = -1;
+    char staticErouterEnable[8];
 
     AnscTraceWarning(("CosaDmlGenerateRipdConfigFile -- starts.\n"));
 
@@ -1024,13 +1025,17 @@ void CosaDmlGenerateRipdConfigFile(ANSC_HANDLE  hContext )
         }
 
         /*this part is for distribute static route beginning */
-        pstaticRoute = CosaTimeGetRipdConfStaticPart(hContext);
-        if ( pstaticRoute )
-        {   
-            fprintf(fp, "%s", pstaticRoute);
-            AnscFreeMemory(pstaticRoute);
+        if (syscfg_get(NULL, "erouter_static_ip_enable", staticErouterEnable, sizeof(staticErouterEnable)) == 0)
+        {
+            if(strcmp(staticErouterEnable, "true") == 0)
+            {
+                char staticErouterIP[20];
+                if (syscfg_get( NULL, "erouter_static_ip_address",staticErouterIP, sizeof(staticErouterIP)) == 0)
+                {
+                    fprintf(fp, " route %s/32\n", staticErouterIP);
+                }
+            }
         }
-
         /* If updatetime is zero then don't send periodic route update */
         if ( pConf->Enable && pConf->If1Enable && (!pConf->If1SendEnable || pConf->UpdateTime == 0) && (_ansc_strlen(pConf->If1Name) > 0) )
         {
@@ -6165,6 +6170,12 @@ CosaDmlRoutingGetRouteInfoIf
     fclose(fp);
 
     return pEntry;
+}
+
+void RestartRipd(void)
+{
+    CosaDmlGenerateRipdConfigFile(NULL);
+    CosaRipdOperation("restart");
 }
 
 #endif
