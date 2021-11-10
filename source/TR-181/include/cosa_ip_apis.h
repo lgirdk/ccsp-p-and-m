@@ -740,6 +740,23 @@ CosaDmlIpIfGetEntry2
         ANSC_HANDLE                 hContext,
         ULONG                       InstanceNumber
     );
-    
+
+/*
+ * Api to get the secondary static ip address
+ * and netmask of erouter
+ */
+ULONG CosaDmlGetStaticErouterIf(char* method);
+
+/*
+ * Api to set the secondary static ip address
+ * to erouter0 interface
+ */
+void ErouterStaticIfMode(char* method);
+
+/*
+ * Api to restart ripd daemon
+ */
+void RestartRipd(void);
+
 #endif
 
