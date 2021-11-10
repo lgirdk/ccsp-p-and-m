@@ -2593,6 +2593,18 @@ CosaDmlIpIfGetNumberOfV4Addrs
     }
     else
     {
+        char output[8];
+        if(ulIpIfInstanceNumber == 1)
+        {
+            /* If erouter static ip is enabled then erouter interface should have two ipv4 entries */
+            if(syscfg_get(NULL, "erouter_static_ip_enable", output, sizeof(output)) == 0)
+            {
+                if(strcmp(output, "true") == 0)
+                {
+                    return 2;
+                }
+            }
+        }
         return 1;
     }
 }
@@ -2686,61 +2698,76 @@ CosaDmlIpIfGetV4Addr
         ANSC_STATUS                     returnStatus = ANSC_STATUS_SUCCESS;
        
         //AnscTraceFlow(("%s...\n", __FUNCTION__));
-
-        pEntry->InstanceNumber   = ulIndex + 1;
-        /*Not supported now*/
-        pEntry->bEnabled         = TRUE;
-        pEntry->Status           = COSA_DML_IP_ADDR_STATUS_Enabled;
-        
-        pEntry->IPAddress.Value  = CosaUtilGetIfAddr((char *)g_ipif_names[ulIpIfInstanceNumber-1]);
-        pEntry->SubnetMask.Value = CosaUtilIoctlXXX((char *)g_ipif_names[ulIpIfInstanceNumber-1], "netmask", NULL);
-                
-        pEntry->AddressingType   = _get_addressing_type(ulIpIfInstanceNumber);
-
-        if (TRUE)
+        if(ulIpIfInstanceNumber == 1 && ulIndex != 0)
         {
-            char buf[256]= {0};
-            char out[COSA_DML_IF_NAME_LENGTH]= {0};
-            UtopiaContext utctx;
-            errno_t safec_rc = -1;
-            /*CID: 53826 Unchecked return value*/
-            if(!Utopia_Init(&utctx))
-               return ANSC_STATUS_FAILURE;
-
-
-            safec_rc = sprintf_s(buf, sizeof(buf), "tr_ip_interface_%s_v4addr_alias", g_ipif_names[ulIpIfInstanceNumber-1]);
-            if(safec_rc < EOK)
+            /* erouter0's second ipv4 entry must be the static one. */
+            char alias[50];
+            pEntry->InstanceNumber = 2;
+            pEntry->AddressingType = COSA_DML_IP_ADDR_TYPE_Static;
+            pEntry->IPAddress.Value = CosaDmlGetStaticErouterIf("ipaddr");
+            pEntry->SubnetMask.Value = CosaDmlGetStaticErouterIf("netmask");
+            if(syscfg_get(NULL, "erouter_static_ip_alias", alias, sizeof(alias)) == 0)
             {
-               ERR_CHK(safec_rc);
+                strcpy(pEntry->Alias, alias);
             }
-            Utopia_RawGet(&utctx,NULL,buf,out,sizeof(out));
-            Utopia_Free(&utctx,0);
+            ErouterStaticIfMode("restart");
+        }
+        else
+        {
+            pEntry->InstanceNumber   = ulIndex + 1;
+            /*Not supported now*/
+            pEntry->bEnabled         = TRUE;
+            pEntry->Status           = COSA_DML_IP_ADDR_STATUS_Enabled;
 
-            if (out[0]) 
+            pEntry->IPAddress.Value  = CosaUtilGetIfAddr((char *)g_ipif_names[ulIpIfInstanceNumber-1]);
+            pEntry->SubnetMask.Value = CosaUtilIoctlXXX((char *)g_ipif_names[ulIpIfInstanceNumber-1], "netmask", NULL);
+
+            pEntry->AddressingType   = _get_addressing_type(ulIpIfInstanceNumber);
+
+            if (TRUE)
             {
-                _ansc_strncpy(pEntry->Alias, out, COSA_DML_IF_NAME_LENGTH-1);  
-            }
-            else 
-            {
-                /*if the alias is not set before, we initialize it here rather than get a default value from middile layer*/
-                Utopia_Init(&utctx);
+                char buf[256]= {0};
+                char out[COSA_DML_IF_NAME_LENGTH]= {0};
+                UtopiaContext utctx;
+                errno_t safec_rc = -1;
+                /*CID: 53826 Unchecked return value*/
+                if(!Utopia_Init(&utctx))
+                   return ANSC_STATUS_FAILURE;
+
+
                 safec_rc = sprintf_s(buf, sizeof(buf), "tr_ip_interface_%s_v4addr_alias", g_ipif_names[ulIpIfInstanceNumber-1]);
                 if(safec_rc < EOK)
                 {
                    ERR_CHK(safec_rc);
                 }
-                safec_rc = sprintf_s(out, sizeof(out), "Interface_%lu", pEntry->InstanceNumber);
-                if(safec_rc < EOK)
-                {
-                   ERR_CHK(safec_rc);
-                }
-                Utopia_RawSet(&utctx,NULL,buf,out);
-                Utopia_Free(&utctx,1);
+                Utopia_RawGet(&utctx,NULL,buf,out,sizeof(out));
+                Utopia_Free(&utctx,0);
 
-                _ansc_strncpy(pEntry->Alias, out, COSA_DML_IF_NAME_LENGTH-1);  
+                if (out[0])
+                {
+                    _ansc_strncpy(pEntry->Alias, out, COSA_DML_IF_NAME_LENGTH-1);
+                }
+                else
+                {
+                    /*if the alias is not set before, we initialize it here rather than get a default value from middile layer*/
+                    Utopia_Init(&utctx);
+                    safec_rc = sprintf_s(buf, sizeof(buf), "tr_ip_interface_%s_v4addr_alias", g_ipif_names[ulIpIfInstanceNumber-1]);
+                    if(safec_rc < EOK)
+                    {
+                       ERR_CHK(safec_rc);
+                    }
+                    safec_rc = sprintf_s(out, sizeof(out), "Interface_%lu", pEntry->InstanceNumber);
+                    if(safec_rc < EOK)
+                    {
+                       ERR_CHK(safec_rc);
+                    }
+                    Utopia_RawSet(&utctx,NULL,buf,out);
+                    Utopia_Free(&utctx,1);
+
+                    _ansc_strncpy(pEntry->Alias, out, COSA_DML_IF_NAME_LENGTH-1);
+                }
             }
         }
-
         AnscCopyMemory(&g_ipif_be_bufs[ulIpIfInstanceNumber-1].V4AddrList, pEntry, sizeof(COSA_DML_IP_V4ADDR));
         
         return returnStatus;
@@ -3021,6 +3048,62 @@ CosaDmlIpIfSetV4Addr
             return returnStatus;
         }
     }
+    else if(ulIpIfInstanceNumber == 1 && pEntry->InstanceNumber == 2 )
+    {
+        /*
+            The first ipv4 entry of erouter0 is dhcp.
+            Control reaches here only for static ipv4
+            entries.
+        */
+        int valid_subnet = 0;
+        // static int ip_changed = 0;
+        struct in_addr ip;
+        struct in_addr mask;
+        char *erouter_static_ip = NULL;
+        char *erouter_static_mask = NULL;
+
+        mask.s_addr = pEntry->SubnetMask.Value;
+        erouter_static_mask = inet_ntoa(mask);
+        syscfg_set(NULL, "erouter_static_ip_mask", erouter_static_mask);
+        syscfg_set(NULL, "erouter_static_ip_alias", pEntry->Alias);
+
+        ip.s_addr = pEntry->IPAddress.Value;
+        erouter_static_ip = inet_ntoa(ip);
+        if(erouter_static_ip != NULL)
+        {
+            syscfg_set(NULL, "erouter_static_ip_address", erouter_static_ip);
+        }
+        /*
+            Fixme: uncomment the following logic once find a way to
+            assign static ip to erouter0 during bootup.
+            Currently, If we assign static ip during bootup
+            then ripd daemon always send the ripv2 response using static ip
+            even after interface down.
+        */
+        // /* If static IP doesn't change then don't need to do anything */
+        // ip.s_addr = CosaDmlGetStaticErouterIf("ipaddr");
+        // if( ip.s_addr != pEntry->IPAddress.Value)
+        // {
+        //     ip.s_addr = pEntry->IPAddress.Value;
+        //     erouter_static_ip = inet_ntoa(ip);
+        //     if(erouter_static_ip != NULL)
+        //     {
+        //         syscfg_set(NULL, "erouter_static_ip_address", erouter_static_ip);
+        //         ip_changed = 1;
+        //     }
+        // }
+
+        if(pEntry->SubnetMask.Value == 0xffffffff)
+        {
+            valid_subnet = 1;
+        }
+        // if(ip_changed && valid_subnet)
+        if(valid_subnet)
+        {
+            ErouterStaticIfMode("restart");
+            // ip_changed = 0;
+        }
+    }
     else
     {
         PCOSA_DML_IP_V4ADDR             p_be_buf = NULL; 
@@ -3146,8 +3229,23 @@ CosaDmlIpIfGetV4Addr2
     else
     {    
         ANSC_STATUS                     returnStatus = ANSC_STATUS_SUCCESS;
-        
-        AnscCopyMemory(pEntry, &g_ipif_be_bufs[ulIpIfInstanceNumber-1].V4AddrList[0], sizeof(COSA_DML_IP_V4ADDR));
+
+        if(ulIpIfInstanceNumber == 1 && pEntry->InstanceNumber == 2)
+        {
+            char alias[50];
+            /* erouter0's second ipv4 entry is static */
+            pEntry->IPAddress.Value = CosaDmlGetStaticErouterIf("ipaddr");
+            pEntry->SubnetMask.Value = CosaDmlGetStaticErouterIf("netmask");
+            pEntry->AddressingType = COSA_DML_IP_ADDR_TYPE_Static;
+            if(syscfg_get(NULL, "erouter_static_ip_alias", alias, sizeof(alias)) == 0)
+            {
+                strcpy(pEntry->Alias, alias);
+            }
+        }
+        else
+        {
+            AnscCopyMemory(pEntry, &g_ipif_be_bufs[ulIpIfInstanceNumber-1].V4AddrList[0], sizeof(COSA_DML_IP_V4ADDR));
+        }
         return returnStatus;
     }
 }
@@ -4728,6 +4826,60 @@ CosaDmlIpGetActivePorts
     return pActivePort;
 }
 
+ULONG CosaDmlGetStaticErouterIf(char* method)
+{
+    char buff[20];
+    struct in_addr ip;
+    ULONG return_value = 0;
+    if(strcmp(method, "ipaddr") == 0)
+    {
+        syscfg_get( NULL, "erouter_static_ip_address",buff, sizeof(buff));
+        if(inet_aton(buff, &ip) != 0)
+        {
+            return_value = ip.s_addr;
+        }
+    }
+    else if(strcmp(method, "netmask") == 0)
+    {
+        syscfg_get( NULL, "erouter_static_ip_mask",buff, sizeof(buff));
+        if(inet_aton(buff, &ip) != 0)
+        {
+            return_value = ip.s_addr;
+        }
+    }
+    return return_value;
+}
+
+void ErouterStaticIfMode(char* method)
+{
+    char rip_status[8];
+    char erouter_static_ip[20];
+    syscfg_get(NULL, "rip_enabled", rip_status, sizeof(rip_status));
+
+    if(strcmp(method, "restart") == 0)
+    {
+        if(rip_status[0] == '1')
+        {
+            if(syscfg_get(NULL, "erouter_static_ip_address", erouter_static_ip, sizeof(erouter_static_ip)) == 0)
+            {
+                syscfg_set(NULL, "erouter_static_ip_enable", "true");
+                v_secure_system("ifconfig erouter0:0 %s netmask 255.255.255.255 broadcast 255.255.255.255 up", erouter_static_ip);
+                RestartRipd();
+            }
+        }
+
+    }
+    else if(strcmp(method, "down") == 0)
+    {
+        syscfg_set(NULL, "erouter_static_ip_enable", "false");
+        v_secure_system("ifconfig erouter0:0 down");
+        if(rip_status[0] == '1')
+        {
+            RestartRipd();
+        }
+    }
+    syscfg_commit();
+}
 
 #endif
 
