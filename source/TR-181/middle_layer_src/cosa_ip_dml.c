@@ -2243,6 +2243,15 @@ IPv4Address_AddEntry
       return NULL;
     }
 
+    if( pIPInterface->Cfg.InstanceNumber == 1 )
+    {
+        /*
+            erouter0's new ipv4 entries must be static.
+            Set the InstanceNumber as 2 for identificaiton
+        */
+        pIPv4Addr->InstanceNumber = 2;
+        pIPv4Addr->AddressingType = COSA_DML_IP_ADDR_TYPE_Static;
+    }
     /* Update the middle layer data */
     if ( TRUE )
     {
@@ -2497,8 +2506,19 @@ IPv4Address_GetParamUlongValue
         else
 #endif /* !_COSA_BCM_MIPS_ */
         {
-            /* TBC -- this should be from a SBAPI call */
-            *puLong = (ULONG) CosaUtilGetIfAddr(pIPInterface->Cfg.LinkName);
+            if(pIPInterface->Cfg.InstanceNumber == 1 && pIPv4Addr->InstanceNumber == 2)
+            {
+                /*
+                    If it is a erouter0's static entry then
+                    get the IP address from syscfg.
+                */
+                *puLong = CosaDmlGetStaticErouterIf("ipaddr");
+            }
+            else
+            {
+                /* TBC -- this should be from a SBAPI call */
+                *puLong = (ULONG) CosaUtilGetIfAddr(pIPInterface->Cfg.LinkName);
+            }
         }
          
          return TRUE;
@@ -2521,10 +2541,21 @@ IPv4Address_GetParamUlongValue
         else
 #endif /* !_COSA_BCM_MIPS_ */
         {
-            /*
-             *  TBC --  Why on earth is platform specific code called in middle layer!
-             */
-            *puLong = CosaUtilIoctlXXX(pIPInterface->Info.Name, "netmask", NULL);
+            if(pIPInterface->Cfg.InstanceNumber == 1 && pIPv4Addr->InstanceNumber == 2)
+            {
+                /*
+                    If it is a erouter0's static entry then
+                    get the subnetmask from syscfg.
+                */
+                *puLong = CosaDmlGetStaticErouterIf("netmask");
+            }
+            else
+            {
+                /*
+                 *  TBC --  Why on earth is platform specific code called in middle layer!
+                 */
+                *puLong = CosaUtilIoctlXXX(pIPInterface->Info.Name, "netmask", NULL);
+            }
         }
         return TRUE;
 
