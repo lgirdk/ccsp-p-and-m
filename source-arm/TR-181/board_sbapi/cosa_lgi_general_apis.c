@@ -156,7 +156,7 @@ ANSC_STATUS CosaDmlGiGetSKU (ANSC_HANDLE hContext, char *pValue, ULONG ulSize)
         {
             sku = "Virgin Media Hub 6";
         }
-        else if (customerId == 1003)
+        else if (customerId == 51)
         {
             sku = "Connect Box 3";
         }
