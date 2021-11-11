@@ -352,7 +352,7 @@
                         <name>EndpointAddress</name>
                         <type>string(256)</type>
                         <syntax>string</syntax>
-                        <writable>false</writable>
+                        <writable>true</writable>
                     </parameter>
                     <parameter>
                         <name>Origin</name>
