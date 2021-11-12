@@ -324,6 +324,7 @@
                         <type>string(64)</type>
                         <syntax>string</syntax>
                         <writable>true</writable>
+                        <notify>off</notify>
                     </parameter>
                     <parameter>
                         <name>EndpointAssignmentPrecedence</name>
@@ -7610,6 +7611,8 @@
 
             <writable>true</writable>
 
+            <notify>off</notify>
+
           </parameter>
 
           <parameter>
@@ -7926,6 +7929,8 @@
 
               <writable>true</writable>
 
+              <notify>off</notify>
+
             </parameter>
 
             <parameter>
@@ -8060,6 +8065,8 @@
               <syntax>string</syntax>
 
               <writable>true</writable>
+
+              <notify>off</notify>
 
             </parameter>
 
@@ -8245,6 +8252,8 @@
               <syntax>string</syntax>
 
               <writable>true</writable>
+
+              <notify>off</notify>
 
             </parameter>
 
@@ -9982,6 +9991,8 @@
           <syntax>string</syntax>
 
           <writable>true</writable>
+        
+          <notify>off</notify>
 
         </parameter>
 
@@ -11803,6 +11814,8 @@
 
             <writable>true</writable>
 
+            <notify>off</notify>
+
           </parameter>
 
           <parameter>
@@ -12354,6 +12367,8 @@
               <syntax>string</syntax>
 
               <writable>true</writable>
+
+              <notify>off</notify>
 
             </parameter>
 
@@ -12931,6 +12946,7 @@
                 <type>string(64)</type>
                 <syntax>string</syntax>
                 <writable>true</writable>
+                <notify>off</notify>
               </parameter>
               <parameter>
                 <name>Tag</name>
