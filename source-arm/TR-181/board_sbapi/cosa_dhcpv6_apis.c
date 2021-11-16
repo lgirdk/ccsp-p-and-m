@@ -8442,6 +8442,8 @@ dhcpv6c_dbg_thrd(void * in)
     char msg[1024];
     char * p = NULL;
     char globalIP2[128] = {0};
+    char *pntr = NULL;
+    char *lastentry = NULL;
     //When PaM restart, this is to get previous addr.
     commonSyseventGet("lan_ipaddr_v6", globalIP2, sizeof(globalIP2));
     if ( globalIP2[0] )
@@ -8573,8 +8575,16 @@ dhcpv6c_dbg_thrd(void * in)
              add 2000::ba7a:1ed4:99ea:cd9f :: 0 t1
              action, address, prefix, pref_len 3600
             now action only supports "add", "del"*/
- 
-            p = msg+strlen("dibbler-client");
+
+            pntr = msg;
+            /*dibbler-client may have multiple ipv6 addresses. So parse the latest ipv6 address*/
+            while((pntr = strstr(pntr, "dibbler-client")) != NULL )
+            {
+               lastentry = pntr;
+               pntr++;
+            }
+            p = lastentry;
+            p = p+strlen("dibbler-client");
 
             while(isblank(*p)) p++;
 
