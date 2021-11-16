@@ -4309,18 +4309,16 @@ CosaDmlRoutingAddV4Entry
 #endif
     if (returnStatus == ANSC_STATUS_SUCCESS)
     {
-        pEntry->Enable           = TRUE;
-        pEntry->Status           = 2;
+        pEntry->Status           = 1; //COSA_DML_ROUTING_STATUS_Enabled
         pEntry->StaticRoute      = TRUE;
         pEntry->ForwardingPolicy = 0;
     }
     else
     {
-        pEntry->Enable           = FALSE;
-        pEntry->Status           = 1;
+        pEntry->Status           = 3;//COSA_DML_ROUTING_STATUS_Error
     }
 
-    Router_Alias[Config_Num].Enabled = (returnStatus == ANSC_STATUS_SUCCESS)?1:0;
+    Router_Alias[Config_Num].Enabled = pEntry->Enable;
     Config_Num++;
 
     snprintf(cmd, sizeof(cmd), "tr_routing_v4entry_%lu_alias", 
@@ -4584,7 +4582,7 @@ CosaDmlRoutingSetV4Entry
         {
             err = v_secure_system("ip route del %s/%d via %s table erouter metric %d ", sroute[uindex].dest_lan_ip, Count_NetmaskBitNum(inet_addr(sroute[uindex].netmask)), sroute[uindex].gateway, metric);
         }
-        break;
+        //break;
 #endif
         pEntry->Status           = 1;
 
@@ -4640,26 +4638,33 @@ CosaDmlRoutingSetV4Entry
         metric = (pEntry->ForwardingMetric)?pEntry->ForwardingMetric+1:pEntry->ForwardingMetric;
         if(AnscSizeOfString(pEntry->Interface))
         {
-            err = v_secure_system("ip route add %d.%d.%d.%d/%d via %s table erouter metric %d %s %s ", pEntry->DestIPAddress.Dot[0], pEntry->DestIPAddress.Dot[1], pEntry->DestIPAddress.Dot[2], pEntry->DestIPAddress.Dot[3], Count_NetmaskBitNum(pEntry->DestSubnetMask.Value), inet_ntoa(*(struct in_addr *)&(pEntry->GatewayIPAddress.Value)), metric, "dev", pEntry->Interface);
+           if((err = v_secure_system("ip route add %d.%d.%d.%d/%d via %s table erouter metric %d %s %s ", pEntry->DestIPAddress.Dot[0], pEntry->DestIPAddress.Dot[1], pEntry->DestIPAddress.Dot[2], pEntry->DestIPAddress.Dot[3], Count_NetmaskBitNum(pEntry->DestSubnetMask.Value), inet_ntoa(*(struct in_addr *)&(pEntry->GatewayIPAddress.Value)), metric, "dev", pEntry->Interface)) != 0) 
+           {
+              returnStatus = ANSC_STATUS_FAILURE;
+           }
         }
         else
         {
-            err = v_secure_system("ip route add %d.%d.%d.%d/%d via %s table erouter metric %d ", pEntry->DestIPAddress.Dot[0], pEntry->DestIPAddress.Dot[1], pEntry->DestIPAddress.Dot[2], pEntry->DestIPAddress.Dot[3], Count_NetmaskBitNum(pEntry->DestSubnetMask.Value), inet_ntoa(*(struct in_addr *)&(pEntry->GatewayIPAddress.Value)), metric);
+           
+           if((err = v_secure_system("ip route add %d.%d.%d.%d/%d via %s table erouter metric %d ", pEntry->DestIPAddress.Dot[0], pEntry->DestIPAddress.Dot[1], pEntry->DestIPAddress.Dot[2], pEntry->DestIPAddress.Dot[3], Count_NetmaskBitNum(pEntry->DestSubnetMask.Value), inet_ntoa(*(struct in_addr *)&(pEntry->GatewayIPAddress.Value)), metric)) != 0) 
+           {
+              returnStatus = ANSC_STATUS_FAILURE;
+           }
         }
-        break;
+        //break;
 #endif
         if (returnStatus == ANSC_STATUS_SUCCESS)
         {
-            pEntry->Status           = 2;
+            pEntry->Status           = 1; //COSA_DML_ROUTING_STATUS_Enabled
             pEntry->StaticRoute      = TRUE;
             pEntry->ForwardingPolicy = 0;
         }
         else
         {
-            pEntry->Enable           = FALSE;
-            pEntry->Status           = 1;
+                 
+            pEntry->Status           = 3; //COSA_DML_ROUTING_STATUS_Error
             pEntry->StaticRoute      = TRUE;
-            Router_Alias[index].Enabled = FALSE;
+
 
             if(!Utopia_Init(&ctx))
                 return ANSC_STATUS_FAILURE;
