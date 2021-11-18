@@ -164,6 +164,7 @@
 
 #include "cosa_lgi_multicast_apis.h"
 #include "cosa_lgi_multicast_internal.h"
+#include "cosa_lgi_eventlog_internal.h" 
 
 #if defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED)
 #include "cosa_rbus_handler_apis.h"
@@ -516,6 +517,9 @@ if(id != 0)
     pMyObject->hLgiMulticast = (ANSC_HANDLE)CosaLgiMulticastCreate();
     AnscTraceWarning((" CosaLgiMulticastCreate done !\n"));
 
+    pMyObject->hLgiEventlog = (ANSC_HANDLE)CosaLgiEventLogCreate();
+    AnscTraceWarning(("  CosaLgiEventLogCreate done !\n"));
+
     printf("PandM DM initialization done!\n");
     CcspTraceWarning(("RDKB_SYSTEM_BOOT_UP_LOG : PandM DM initialization done!\n"));
     //Unknown Reboot Reason 
@@ -818,6 +822,11 @@ CosaBackEndManagerRemove
     {
         COSADmlRemoveTemperatureInfo((ANSC_HANDLE)pMyObject->hTemperatureStatus);
     }
+    if (pMyObject->hLgiEventlog)
+    {
+        CosaLgiEventLogRemove((ANSC_HANDLE)pMyObject->hLgiEventlog);
+    }
+
 
     /* Remove self */
     AnscFreeMemory((ANSC_HANDLE)pMyObject);
