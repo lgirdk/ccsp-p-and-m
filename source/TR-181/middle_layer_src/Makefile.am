@@ -129,3 +129,4 @@ libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_plume_apis.c cosa_lgi_plume
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_userinterface_apis.c cosa_lgi_userinterface_dml.c
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_applications_dml.c cosa_lgi_applications_apis.c cosa_lgi_applications_internal.c
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_multicast_dml.c cosa_lgi_multicast_apis.c cosa_lgi_multicast_internal.c
+libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_eventlog_dml.c cosa_lgi_eventlog_internal.c
