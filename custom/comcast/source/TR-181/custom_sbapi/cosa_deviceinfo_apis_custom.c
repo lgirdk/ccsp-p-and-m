@@ -348,13 +348,13 @@ CosaDmlDiGetCMIPAddress
     UNREFERENCED_PARAMETER(hContext);
 #ifndef _ENABLE_EPON_SUPPORT_
     ANSC_STATUS retStatus;
-    ULONG  pulSizeCopy = 0;
-    pulSizeCopy = *pulSize;
-    retStatus = Local_CosaDmlGetParamValueByPathName("Device.X_CISCO_COM_CableModem.IPv6Address", pValue, pulSize);
+    ULONG pulSizeCopy = *pulSize;
+
+    retStatus = Local_CosaDmlGetParamValueByPathName("Device.X_CISCO_COM_CableModem.IPAddress", pValue, pulSize);
     if(!(*pulSize))
     {
         *pulSize = pulSizeCopy;
-        return Local_CosaDmlGetParamValueByPathName("Device.X_CISCO_COM_CableModem.IPAddress", pValue, pulSize);
+        retStatus = Local_CosaDmlGetParamValueByPathName("Device.X_CISCO_COM_CableModem.IPv6Address", pValue, pulSize);
     }
     return retStatus;
 #else
