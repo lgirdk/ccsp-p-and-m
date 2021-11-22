@@ -1926,7 +1926,8 @@ DeviceInfo_SetParamStringValue
                CcspTraceInfo(("RDKB_REBOOT : Reboot Device triggered through Factory reset from GUI\n"));
                OnboardLog("RDKB_REBOOT : Reboot Device triggered through Factory reset from GUI\n");
 			 
-               if (syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_LastRebootReason", "Reboot Factory reset UI") != 0)
+               if ((syscfg_set(NULL, "X_RDKCENTRAL-COM_LastRebootReason", "Reboot Factory reset UI") != 0) ||
+                   (syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_LastRebootCounter", "1") != 0))
                {
                    AnscTraceWarning(("syscfg_set failed\n"));
                }
