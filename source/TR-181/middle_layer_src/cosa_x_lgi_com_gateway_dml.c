@@ -185,12 +185,16 @@ LgiGateway_SetParamBoolValue
     )
 {
     PCOSA_DATAMODEL_LGI_GATEWAY  pMyObject = (PCOSA_DATAMODEL_LGI_GATEWAY)g_pCosaBEManager->hLgiGateway;
+    char customer_db_dns_enabled[6];
 
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "DNS_Override") == 0)
     {
-        pMyObject->dns_override = bValue;
-        return TRUE;
+        if (syscfg_get(NULL, "dns_override", customer_db_dns_enabled, sizeof(customer_db_dns_enabled)) == 0)
+        {
+            pMyObject->dns_override = bValue;
+            return TRUE;
+        }
     }
     return FALSE;
 }
