@@ -3170,6 +3170,7 @@ CosaDmlIpIfSetV4Addr
             Utopia_Free(&utctx, 1);
 
             commonSyseventSet("dhcp_server-restart", "");
+            RestartRipd();
 
             return returnStatus;
         }
