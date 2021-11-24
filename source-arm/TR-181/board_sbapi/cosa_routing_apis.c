@@ -843,6 +843,7 @@ void CosaDmlGenerateRipdConfigFile(ANSC_HANDLE  hContext )
     BOOL bTrueStaticIP        = TRUE;
     errno_t safec_rc = -1;
     char staticErouterEnable[8];
+    char staticBrlanEnable[8];
 
     AnscTraceWarning(("CosaDmlGenerateRipdConfigFile -- starts.\n"));
 
@@ -1033,6 +1034,24 @@ void CosaDmlGenerateRipdConfigFile(ANSC_HANDLE  hContext )
                 if (syscfg_get( NULL, "erouter_static_ip_address",staticErouterIP, sizeof(staticErouterIP)) == 0)
                 {
                     fprintf(fp, " route %s/32\n", staticErouterIP);
+                }
+            }
+        }
+        if (syscfg_get(NULL, "brlan_static_ip_enable", staticBrlanEnable, sizeof(staticBrlanEnable)) == 0)
+        {
+            if(strcmp(staticBrlanEnable, "true") == 0)
+            {
+                char staticBrlanIP[20];
+                char staticBrlanSubnet[20];
+                ULONG bits = 0;
+                if (syscfg_get( NULL, "lan_ipaddr",staticBrlanIP, sizeof(staticBrlanIP)) == 0)
+                {
+                    if (syscfg_get( NULL, "lan_netmask",staticBrlanSubnet, sizeof(staticBrlanSubnet)) == 0)
+                    {
+                        /* brlan0 static IP's cidr should be more than 24 */
+                        bits = 24 + CosaDmlGetBitsNumFromNetMask(staticBrlanSubnet);
+                        fprintf(fp, " route %s/%lu\n", staticBrlanIP, bits);
+                    }
                 }
             }
         }
