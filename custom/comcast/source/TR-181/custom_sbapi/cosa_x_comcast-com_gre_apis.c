@@ -115,6 +115,7 @@ printf a;            \
 #define GRETU_PARAM_DHCPCIRSSID	    GRE_OBJ_GRETU "%lu.EnableCircuitID"		
 #define GRETU_PARAM_DHCPRMID 	    GRE_OBJ_GRETU "%lu.EnableRemoteID"
 #define GRETU_PARAM_DHCPOPTION60    GRE_OBJ_GRETU "%lu.EnableVendorClassID"		
+#define GRETU_PARAM_GRETCPMSS		GRE_OBJ_GRETU "%lu.GreTcpMss"
 //#define GRETU_PARAM_GREIF        	GRE_OBJ_GRETU "%lu.GRENetworkInterface"		//GRENetworkInterface: Device.X_CISCO_COM_GRE.Interface.1.
 //TODO: remove the reference to Cisco GRE: Device.X_CISCO_COM_GRE.Interface.1.
 #define GRETU_PARAM_GRETU        	GRE_OBJ_GRETU "%lu.GRENetworkTunnel"
@@ -679,6 +680,9 @@ CosaDml_GreTunnelGetEntryByIndex(ULONG ins, COSA_DML_GRE_TUNNEL *greTu)
         return ANSC_STATUS_FAILURE;
     if (GrePsmGetBool(GRETU_PARAM_DHCPOPTION60, ins, &greTu->EnableVendorClassID) != 0)
         return ANSC_STATUS_FAILURE;
+    if (GrePsmGetUlong(GRETU_PARAM_GRETCPMSS, ins, &greTu->GreTcpMss) != 0)
+        greTu->GreTcpMss = GRE_TCPMSS_MAX;         //Temporary fix: Setting to GRE_TCPMSS_MAX incase of failure in retrieving value from PSM defaults.
+        //return ANSC_STATUS_FAILURE;
     if (GrePsmGetStr(GRETU_PARAM_GRETU, ins, greTu->GRENetworkTunnel, sizeof(greTu->GRENetworkTunnel)) != 0)
         return ANSC_STATUS_FAILURE;
     if (GrePsmGetStr(GRETU_PARAM_ENDPOINTS, ins, greTu->RemoteEndpoints, sizeof(greTu->RemoteEndpoints)) != 0)
@@ -2213,6 +2217,36 @@ CosaDml_GreTunnelSetDhcpRemoteId(ULONG tuIns, BOOL enable)
 }
 
 ANSC_STATUS
+CosaDml_GreTunnelGetGreTcpMss(ULONG tuIns, ULONG *val)
+{
+    if (!val)
+        return ANSC_STATUS_FAILURE;
+
+    if (GrePsmGetUlong(GRETU_PARAM_GRETCPMSS, tuIns, val) != 0)
+        return ANSC_STATUS_FAILURE;
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaDml_GreTunnelSetGreTcpMss(ULONG tuIns, ULONG val)
+{
+    char psmRec[MAX_GRE_PSM_REC + 1];
+    char psmVal[16];
+    if (tuIns != 1)
+        return ANSC_STATUS_FAILURE;
+
+    /* save to PSM */
+    snprintf(psmRec, sizeof(psmRec), GRETU_PARAM_GRETCPMSS, tuIns);
+    snprintf(psmVal, sizeof(psmVal), "%lu", val);
+    if (GrePsmSet(psmRec, psmVal) != 0)
+        return ANSC_STATUS_FAILURE;
+
+    sysevent_set(sysevent_fd, sysevent_token, "hotspot-update_tcpmss", "", 0);
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
 CosaDml_GreTunnelIfGetAssociatedBridges(ULONG tuIns, ULONG ins, char *brs, ULONG size)
 {
     if (!brs)
@@ -2364,6 +2398,7 @@ ANSC_STATUS CosaDml_GreTunnelHotspotReset(COSA_DML_GRE_TUNNEL *pGreTu)
 	pGreTu->ReconnectToPrimaryRemoteEndpoint = 43200;
 	pGreTu->EnableCircuitID = TRUE;
 	pGreTu->EnableRemoteID = TRUE;
+	pGreTu->GreTcpMss = GRE_TCPMSS_MAX;
 	
 	return ANSC_STATUS_SUCCESS;
 
