@@ -50,6 +50,7 @@
 #define MAX_GRE_TU              1
 #define MAX_GRE_TUIF              2
 #define WIFI_FILE "/tmp/wifi_initialized"
+#define GRE_TCPMSS_MAX 1378
 
 typedef enum
 _COSA_DML_GRE_STATUS 
@@ -118,6 +119,7 @@ _COSA_DML_GRE_TUNNEL_CHANGE_FLAG
     GRETU_CF_GREINTERFACE   = 0x01<<20,
     GRETU_CF_GRERMEP        = 0x01<<21,
     GRETU_CF_DHCPOPTION60   = 0x01<<22,
+    GRETU_CF_TCPMSS         = 0x01<<23,
 }
 COSA_DML_GRE_TUNNEL_CHANGE_FLAG;
 
@@ -200,6 +202,7 @@ _COSA_DML_GRE_TUNNEL
 	COSA_DML_GRE_TUNNEL_IF 		GreTunnelIf[MAX_GRE_TUIF];
 	BOOL                        HotSpotReset;
 	char                        RemoteEndpoints[257];
+	ULONG                       GreTcpMss;
 } 
 COSA_DML_GRE_TUNNEL;
 
@@ -403,6 +406,10 @@ CosaDml_GreTunnelGetStats(ULONG ins, COSA_DML_GRE_TUNNEL_STATS *stats); //
 ANSC_STATUS
 CosaDml_GreTunnelHotspotReset(COSA_DML_GRE_TUNNEL *pGreTu ); //
 
+ANSC_STATUS
+CosaDml_GreTunnelGetGreTcpMss(ULONG ins, ULONG *val);
+ANSC_STATUS
+CosaDml_GreTunnelSetGreTcpMss(ULONG ins, ULONG val);
 
 int GreTunnel_hotspot_update_circuit_ids(ULONG tuIns, int queuestart);//
 int GreTunnelIf_hotspot_update_circuit_id(ULONG tuIns, int ins, int queuestart); //
