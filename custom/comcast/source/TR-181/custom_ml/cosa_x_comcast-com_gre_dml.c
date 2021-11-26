@@ -47,6 +47,7 @@
 
 #ifdef CONFIG_CISCO_HOTSPOT
 #include "cosa_x_comcast-com_gre_dml.h"
+#include "cosa_x_comcast-com_gre_apis.h"
 #include "cosa_x_comcast-com_gre_internal.h"
 #include "safec_lib_common.h"
 
@@ -322,7 +323,11 @@ BOOL GreTunnel_GetParamUlongValue ( ANSC_HANDLE hInsContext, char* ParamName, UL
         *pUlong = pGreTu->ReconnectToPrimaryRemoteEndpoint;
         return TRUE;
     }
-
+    if (strcmp(ParamName, "GreTcpMss") == 0)
+    {
+        *pUlong = pGreTu->GreTcpMss;
+        return TRUE;
+    }
     return FALSE;
 }
 
@@ -582,6 +587,18 @@ BOOL GreTunnel_SetParamUlongValue ( ANSC_HANDLE  hInsContext, char* ParamName, U
         pGreTu->ReconnectToPrimaryRemoteEndpoint = uValue;
         pGreTu->ChangeFlag |= GRETU_CF_RECONNPRIM;
         return TRUE;
+    }
+    if (strcmp(ParamName, "GreTcpMss") == 0)
+    {
+        if (pGreTu->GreTcpMss == uValue)
+            return TRUE;
+
+        if ((uValue <= GRE_TCPMSS_MAX && uValue < pGreTu->GreTcpMss) || (pGreTu->GreTcpMss == 0))
+        {
+            pGreTu->GreTcpMss = uValue;
+            pGreTu->ChangeFlag |= GRETU_CF_TCPMSS;
+            return TRUE;
+        }
     }
 
     return FALSE;
@@ -875,6 +892,11 @@ ULONG GreTunnel_Commit ( ANSC_HANDLE hInsContext ) {
         if (CosaDml_GreTunnelSetKeepAliveFailInterval(ins, pGreTu->RemoteEndpointHealthCheckPingIntervalInFailure) != ANSC_STATUS_SUCCESS)
             goto rollback;
     }
+    if (pGreTu->ChangeFlag & GRETU_CF_TCPMSS)
+    {
+        if (CosaDml_GreTunnelSetGreTcpMss(ins, pGreTu->GreTcpMss) != ANSC_STATUS_SUCCESS)
+            goto rollback;
+    }
     if (pGreTu->ChangeFlag & GRETU_CF_RECONNPRIM)
     {
         if (CosaDml_GreTunnelSetReconnPrimary(ins, pGreTu->ReconnectToPrimaryRemoteEndpoint) != ANSC_STATUS_SUCCESS)
@@ -1004,6 +1026,9 @@ ULONG GreTunnel_Rollback( ANSC_HANDLE hInsContext) {
         return ANSC_STATUS_FAILURE;
     if (CosaDml_GreTunnelGetDhcpOption60(ins, &pGreTu->EnableVendorClassID) != ANSC_STATUS_SUCCESS)
         return ANSC_STATUS_FAILURE;
+    if (CosaDml_GreTunnelGetGreTcpMss(ins, &pGreTu->GreTcpMss) != ANSC_STATUS_SUCCESS)
+        pGreTu->GreTcpMss = GRE_TCPMSS_MAX;    //Temporary fix: Setting to GRE_TCPMSS_MAX incase of failure in retrieving value from PSM defaults.
+        //return ANSC_STATUS_FAILURE;
     if (CosaDml_GreTunnelGetGRETunnel(ins, pGreTu->GRENetworkTunnel, sizeof(pGreTu->GRENetworkTunnel)) != ANSC_STATUS_SUCCESS)
         return ANSC_STATUS_FAILURE;
     if (CosaDml_GreTunnelGetEndpoints(ins, pGreTu->RemoteEndpoints, sizeof(pGreTu->RemoteEndpoints)) != ANSC_STATUS_SUCCESS)
