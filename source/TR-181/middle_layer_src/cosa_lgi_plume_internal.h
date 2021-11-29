@@ -25,6 +25,8 @@
     COSA_BASE_CONTENT                                  \
 
 #define URL_LEN 128
+#define RADIO_2G_IDX 1
+#define RADIO_5G_IDX 2
 
 typedef  struct
 _COSA_DATAMODEL_LGI_PLUME_CLASS_CONTENT
@@ -32,7 +34,9 @@ _COSA_DATAMODEL_LGI_PLUME_CLASS_CONTENT
     COSA_DATAMODEL_LGI_PLUME_CLASS_CONTENT
     /* start of LGI CloudUi object class content */
     BOOL plumeAdminStatus;
+    BOOL plumeAdminStatusChanged;
     BOOL plumeOperationalStatus;
+    BOOL plumeOperationalStatusChanged;
     char plumeUrl[URL_LEN];
     BOOL plumeDFSEnable;
     BOOL plumeNativeAtmBsControl;
@@ -42,6 +46,15 @@ _COSA_DATAMODEL_LGI_PLUME_CLASS_CONTENT
     BOOL plumeLogpullEnable;
 }
 COSA_DATAMODEL_LGI_PLUME, *PCOSA_DATAMODEL_LGI_PLUME;
+
+typedef  struct
+_COSA_LGI_PLUME_DATAPATHS
+{
+    parameterValStruct_t *pParamVals;
+    UINT currIdx;
+    UINT applyToRadio;
+}
+COSA_LGI_PLUME_DATAPATHS, *PCOSA_LGI_PLUME_DATAPATHS;
 
 /*
     Standard function declaration
