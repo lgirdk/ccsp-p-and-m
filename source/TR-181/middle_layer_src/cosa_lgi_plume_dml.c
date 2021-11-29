@@ -83,6 +83,7 @@ LgiPlume_SetParamBoolValue
     {
         if (pMyObject->plumeAdminStatus != value) {
             pMyObject->plumeAdminStatus = value;
+            pMyObject->plumeAdminStatusChanged = TRUE;
             pMyObject->bNeedPlumeServiceRestart = 1;
         }
         return TRUE;
@@ -92,6 +93,7 @@ LgiPlume_SetParamBoolValue
     {
         if (pMyObject->plumeOperationalStatus != value) {
             pMyObject->plumeOperationalStatus = value;
+            pMyObject->plumeOperationalStatusChanged = TRUE;
             pMyObject->bNeedPlumeServiceRestart = 1;
         }
         return TRUE;
@@ -109,7 +111,7 @@ LgiPlume_SetParamBoolValue
     if (strcmp(ParamName, "NativeAtmBsControl") == 0)
     {
         pMyObject->plumeNativeAtmBsControl = value;
-        pMyObject->bPlumeNativeAtmBsControlChanged = 1;
+        pMyObject->bPlumeNativeAtmBsControlChanged = TRUE;
         return TRUE;
     }
     if (strcmp(ParamName, "SONLogpullEnable") == 0)
@@ -184,14 +186,29 @@ LgiPlume_Commit
     )
 {
     PCOSA_DATAMODEL_LGI_PLUME  pMyObject = (PCOSA_DATAMODEL_LGI_PLUME)g_pCosaBEManager->hLgiPlume;
+    PCOSA_LGI_PLUME_DATAPATHS pWiFiDataPaths;
+
+    pWiFiDataPaths = (PCOSA_LGI_PLUME_DATAPATHS)AnscAllocateMemory(sizeof(*pWiFiDataPaths));
+    if (pWiFiDataPaths == NULL) {
+        CcspTraceError(("Failed to allocate WiFi data paths\n"));
+        return ANSC_STATUS_FAILURE;
+    }
+
     CosaDmlSetPlumeUrl(NULL, pMyObject->plumeUrl);
     CosaDmlSetPlumeAdminStatus(NULL, pMyObject->plumeAdminStatus);
     CosaDmlSetPlumeOperationalStatus(NULL, pMyObject->plumeOperationalStatus);
     CosaDmlSetPlumeDFSEnable(NULL, pMyObject->plumeDFSEnable);
     CosaDmlSetPlumeLogpullEnable(NULL, pMyObject->plumeLogpullEnable);
     if (pMyObject->bPlumeNativeAtmBsControlChanged) {
-        CosaDmlSetPlumeNativeAtmBsControl(NULL, pMyObject->plumeNativeAtmBsControl);
+        CosaDmlSetPlumeNativeAtmBsControl((PANSC_HANDLE)pWiFiDataPaths, pMyObject->plumeNativeAtmBsControl);
     }
+    /* Only handle disable case as the enable case is handled by the OpenSync */
+    if ((pMyObject->plumeOperationalStatusChanged && pMyObject->plumeOperationalStatus == FALSE) ||
+        (pMyObject->plumeAdminStatusChanged && pMyObject->plumeAdminStatus == FALSE))
+    {
+        CosaDmlSetPlumeBackhaulSSIDsState((PANSC_HANDLE)pWiFiDataPaths, FALSE);
+    }
+
     if(pMyObject->bNeedPlumeServiceRestart)
     {
 #ifdef _PUMA6_ARM_
@@ -213,9 +230,14 @@ LgiPlume_Commit
 #endif
         system(cmd);
     }
-    pMyObject->bNeedPlumeServiceRestart = 0;
-    pMyObject->bPlumeUrlChanged = 0;
-    pMyObject->bPlumeNativeAtmBsControlChanged = 0;
+
+    CosaDmlApplyPlumeWiFiChanges((PANSC_HANDLE)pWiFiDataPaths, pWiFiDataPaths->applyToRadio > 0);
+
+    pMyObject->bNeedPlumeServiceRestart = FALSE;
+    pMyObject->plumeAdminStatusChanged = FALSE;
+    pMyObject->plumeOperationalStatusChanged = FALSE;
+    pMyObject->bPlumeUrlChanged = FALSE;
+    pMyObject->bPlumeNativeAtmBsControlChanged = FALSE;
     return 0;
 }
 
@@ -232,9 +254,11 @@ LgiPlume_Rollback
     CosaDmlGetPlumeOperationalStatus(NULL, &pMyObject->plumeOperationalStatus);
     CosaDmlGetPlumeDFSEnable(NULL, &pMyObject->plumeDFSEnable);
     CosaDmlGetPlumeNativeAtmBsControl(NULL, &pMyObject->plumeNativeAtmBsControl);
-    pMyObject->bNeedPlumeServiceRestart = 0;
-    pMyObject->bPlumeUrlChanged = 0;
-    pMyObject->bPlumeNativeAtmBsControlChanged = 0;
+    pMyObject->bNeedPlumeServiceRestart = FALSE;
+    pMyObject->plumeAdminStatusChanged = FALSE;
+    pMyObject->plumeOperationalStatusChanged = FALSE;
+    pMyObject->bPlumeUrlChanged = FALSE;
+    pMyObject->bPlumeNativeAtmBsControlChanged = FALSE;
     return 0;
 }
 
