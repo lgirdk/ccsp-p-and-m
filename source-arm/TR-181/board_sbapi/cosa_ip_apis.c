@@ -3017,12 +3017,13 @@ CosaDmlIpIfSetV4Addr
             return returnStatus;
         else if (returnStatus == ANSC_STATUS_SUCCESS && rip_status[0] == '1') // for brlan0 interface 4
         {
+            Utopia_RawSet(&utctx, NULL, "brlan_static_ip_enable", "true");
             _ansc_sprintf(buf, "%d.%d.%d.%d",
                     pEntry->IPAddress.Dot[0],pEntry->IPAddress.Dot[1],pEntry->IPAddress.Dot[2],pEntry->IPAddress.Dot[3] );
-            UTOPIA_SET(&utctx, UtopiaValue_LAN_IPAddr, buf);
+            Utopia_RawSet(&utctx, NULL, "lan_ipaddr", buf);
             _ansc_sprintf(buf, "%d.%d.%d.%d",
                     pEntry->IPAddress.Dot[0],pEntry->IPAddress.Dot[1],pEntry->IPAddress.Dot[2],pEntry->IPAddress.Dot[3]+1 );
-            UTOPIA_SET(&utctx, UtopiaValue_DHCP_Start, buf); // CIDR Usable Host Range Starts
+            Utopia_RawSet(&utctx, NULL, "dhcp_start", buf); // CIDR Usable Host Range Starts
             _ansc_sprintf(buf, "%d.%d.%d.%d",
                     pEntry->SubnetMask.Dot[0],pEntry->SubnetMask.Dot[1],pEntry->SubnetMask.Dot[2],pEntry->SubnetMask.Dot[3] );
 
@@ -3034,13 +3035,12 @@ CosaDmlIpIfSetV4Addr
                 l_iCIDR = 30;
                 //return ANSC_STATUS_FAILURE;
             }
-            UTOPIA_SET(&utctx, UtopiaValue_LAN_Netmask, buf);
+            Utopia_RawSet(&utctx, NULL, "lan_netmask", buf);
 
             total_hosts = 1 << (32 - l_iCIDR);
             _ansc_sprintf(buf, "%d.%d.%d.%d",
                     pEntry->IPAddress.Dot[0],pEntry->IPAddress.Dot[1],pEntry->IPAddress.Dot[2],pEntry->IPAddress.Dot[3]+total_hosts-3 ); // CIDR Usable Host Range Ends
-            UTOPIA_SET(&utctx, UtopiaValue_DHCP_End, buf);
-
+            Utopia_RawSet(&utctx, NULL, "dhcp_end", buf);
             Utopia_Free(&utctx, 1);
 
             commonSyseventSet("dhcp_server-restart", "");
