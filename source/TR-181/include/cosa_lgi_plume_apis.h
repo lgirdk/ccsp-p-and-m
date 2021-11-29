@@ -85,7 +85,7 @@ CosaDmlGetPlumeNativeAtmBsControl
 BOOL
 CosaDmlSetPlumeNativeAtmBsControl
 (
-    ANSC_HANDLE                 hContext,
+    PANSC_HANDLE                phContext,
     BOOL                        value
 );
 BOOL
@@ -98,6 +98,18 @@ BOOL
 CosaDmlSetPlumeLogpullEnable
 (
     ANSC_HANDLE                 hContext,
+    BOOL                        value
+);
+ULONG
+CosaDmlSetPlumeBackhaulSSIDsState
+(
+    PANSC_HANDLE                phContext,
+    BOOL                        value
+);
+ULONG
+CosaDmlApplyPlumeWiFiChanges
+(
+    PANSC_HANDLE                phContext,
     BOOL                        value
 );
 #endif
