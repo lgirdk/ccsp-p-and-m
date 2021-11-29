@@ -19,7 +19,130 @@
 #include "cosa_lgi_plume_internal.h"
 #include <pthread.h>
 
-//#define URL_LEN 128
+extern ANSC_HANDLE bus_handle;
+static componentStruct_t **        ppComponents = NULL;
+extern char        g_Subsystem[32];
+
+static int initWifiComp()
+{
+    int size =0 ,ret;
+    char   dst_pathname_cr[64]  =  {0};
+
+    snprintf(dst_pathname_cr, sizeof(dst_pathname_cr), "%s%s", g_Subsystem, CCSP_DBUS_INTERFACE_CR);
+
+    ret = CcspBaseIf_discComponentSupportingNamespace(bus_handle,
+                dst_pathname_cr,
+                "Device.WiFi.",
+                g_Subsystem,        /* prefix */
+                &ppComponents,
+                &size);
+
+    return ret == CCSP_SUCCESS ? 0 : ret;
+}
+
+static ULONG alloc_wiFiDataPaths(PCOSA_LGI_PLUME_DATAPATHS pWiFiDataPaths, UINT size)
+{
+    parameterValStruct_t *pNewParamVals;
+
+    pNewParamVals = realloc((pWiFiDataPaths->pParamVals), (pWiFiDataPaths->currIdx + size) * sizeof(parameterValStruct_t));
+    if (pNewParamVals == NULL)
+    {
+        CcspTraceError(("%s:%d Failed to resize WiFi data path array\n", __func__, __LINE__));
+        return ANSC_STATUS_FAILURE;
+    }
+    pWiFiDataPaths->pParamVals = pNewParamVals;
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+static void free_wiFiDataPaths(void *bus_handle, PCOSA_LGI_PLUME_DATAPATHS pWiFiDataPaths)
+{
+    int i;
+    int size;
+    CCSP_MESSAGE_BUS_INFO *bus_info = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
+
+    if (pWiFiDataPaths)
+    {
+        size = pWiFiDataPaths->currIdx;
+        for (i = 0; i < size; i++)
+        {
+            parameterValStruct_t *pParamVal = pWiFiDataPaths->pParamVals + i;
+            if (pParamVal)
+            {
+                if (pParamVal->parameterName)
+                    free(pParamVal->parameterName);
+                if (pParamVal->parameterValue)
+                    free(pParamVal->parameterValue);
+            }
+        }
+        if (pWiFiDataPaths->pParamVals)
+            free(pWiFiDataPaths->pParamVals);
+
+        free(pWiFiDataPaths);
+    }
+}
+
+static void add_wiFiDataPaths(PCOSA_LGI_PLUME_DATAPATHS pWiFiDataPaths, const char *name, const char *val, const enum dataType_e type)
+{
+    parameterValStruct_t *pParamVals = pWiFiDataPaths->pParamVals;
+
+    pParamVals[pWiFiDataPaths->currIdx].parameterName = strdup(name);
+    pParamVals[pWiFiDataPaths->currIdx].parameterValue = strdup(val);
+    pParamVals[pWiFiDataPaths->currIdx].type = type;
+    pWiFiDataPaths->currIdx++;
+}
+
+static void apply_wiFiDataPaths(void *arg)
+{
+    char *faultParam = NULL;
+    int ret = 0;
+    CCSP_MESSAGE_BUS_INFO *bus_info = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
+    PCOSA_LGI_PLUME_DATAPATHS pWiFiDataPaths = (PCOSA_LGI_PLUME_DATAPATHS)arg;
+
+    pthread_detach(pthread_self());
+
+    if (ppComponents == NULL && initWifiComp())
+    {
+        CcspTraceError(("initWifiComp error ...\n", __FUNCTION__));
+        goto end;
+    }
+
+    if ((pWiFiDataPaths->applyToRadio) & (1 << RADIO_2G_IDX))
+    {
+        if (alloc_wiFiDataPaths(pWiFiDataPaths, 1) != ANSC_STATUS_SUCCESS)
+        {
+            goto end;
+        }
+        add_wiFiDataPaths(pWiFiDataPaths, "Device.WiFi.Radio.1.X_CISCO_COM_ApplySetting", "true", ccsp_boolean);
+    }
+    if ((pWiFiDataPaths->applyToRadio) & (1 << RADIO_5G_IDX))
+    {
+
+        if (alloc_wiFiDataPaths(pWiFiDataPaths, 1) != ANSC_STATUS_SUCCESS)
+        {
+            goto end;
+        }
+        add_wiFiDataPaths(pWiFiDataPaths, "Device.WiFi.Radio.2.X_CISCO_COM_ApplySetting", "true", ccsp_boolean);
+    }
+
+    ret = CcspBaseIf_setParameterValues(bus_handle,
+                                        ppComponents[0]->componentName,
+                                        ppComponents[0]->dbusPath,
+                                        0,
+                                        0,
+                                        pWiFiDataPaths->pParamVals,
+                                        pWiFiDataPaths->currIdx,
+                                        TRUE,
+                                        &faultParam
+                                        );
+    if(ret != CCSP_SUCCESS && faultParam)
+    {
+        CcspTraceError(("%s: Disable Native BS - Failed to SetValue for param '%s'\n",__FUNCTION__,faultParam));
+        bus_info->freefunc(faultParam);
+    }
+end:
+    free_wiFiDataPaths(bus_handle, pWiFiDataPaths);
+}
 
 ANSC_STATUS
 CosaDmlGetPlumeUrl
@@ -196,83 +319,28 @@ CosaDmlGetPlumeNativeAtmBsControl
     return FALSE;
 }
 
-extern ANSC_HANDLE bus_handle;
-static componentStruct_t **        ppComponents = NULL;
-extern char        g_Subsystem[32];
-
-static int initWifiComp() {
-    int size =0 ,ret;
-    char   dst_pathname_cr[64]  =  {0};
-
-    snprintf(dst_pathname_cr, sizeof(dst_pathname_cr), "%s%s", g_Subsystem, CCSP_DBUS_INTERFACE_CR);
-
-    ret = CcspBaseIf_discComponentSupportingNamespace(bus_handle,
-                dst_pathname_cr,
-                "Device.WiFi.",
-                g_Subsystem,        /* prefix */
-                &ppComponents,
-                &size);
-
-    return ret == CCSP_SUCCESS ? 0 : ret;
-}
-
-static void updateNativeATMAndBS(BOOL enable)
-{
-    char* faultParam = NULL;
-    int ret = 0;
-
-    CCSP_MESSAGE_BUS_INFO *bus_info = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
-    parameterValStruct_t param_val[] = {  { "Device.WiFi.X_LGI-COM_ATM.Radio.1.Enable", "false", ccsp_boolean},
-                                          { "Device.WiFi.X_LGI-COM_ATM.Radio.2.Enable", "false", ccsp_boolean},
-                                          { "Device.WiFi.X_LGI-COM_BandSteering.SSID.1.Enable", "false", ccsp_boolean},
-                                          { "Device.WiFi.Radio.1.X_CISCO_COM_ApplySetting", "true", ccsp_boolean},
-                                          { "Device.WiFi.Radio.2.X_CISCO_COM_ApplySetting", "true", ccsp_boolean} };
-    if (enable) {
-        param_val[0].parameterValue = "true";
-        param_val[1].parameterValue = "true";
-        param_val[2].parameterValue = "true";
-    }
-
-    ret = CcspBaseIf_setParameterValues(bus_handle,
-                                        ppComponents[0]->componentName,
-                                        ppComponents[0]->dbusPath,
-                                        0,
-                                        0,
-                                        param_val,
-                                        sizeof(param_val)/sizeof(param_val[0]),
-                                        TRUE,
-                                        &faultParam
-                                        );
-
-    if(ret != CCSP_SUCCESS && faultParam)
-    {
-        CcspTraceError(("%s: Disable Native BS - Failed to SetValue for param '%s'\n",__FUNCTION__,faultParam));
-        bus_info->freefunc(faultParam);
-    }
-}
-
-ANSC_STATUS updateNativeAtmAndBs(void *arg)
-{
-    int value = (int) arg;
-    pthread_detach(pthread_self());
-    updateNativeATMAndBS(!value);
-}
-
 BOOL
 CosaDmlSetPlumeNativeAtmBsControl
 (
-    ANSC_HANDLE                 hContext,
+    PANSC_HANDLE                phContext,
     BOOL                        value
 )
 {
-    pthread_t tid;
     /* TODO: Check if Plume channel optimisation is enabled first */
-    if (ppComponents == NULL && initWifiComp())
-	{
-		CcspTraceError(("initWifiComp error ...\n",__FUNCTION__));
-		return TRUE;
-	}
-    pthread_create(&tid, NULL, updateNativeAtmAndBs, value);
+    BOOL enable = !value;
+    PCOSA_LGI_PLUME_DATAPATHS pWiFiDataPaths = (PCOSA_LGI_PLUME_DATAPATHS) phContext;
+
+    if (alloc_wiFiDataPaths(pWiFiDataPaths, 3) != ANSC_STATUS_SUCCESS)
+    {
+        CcspTraceError(("%s:%d Failed to resize WiFi data path array\n", __func__, __LINE__));
+        return FALSE;
+    }
+    add_wiFiDataPaths(pWiFiDataPaths, "Device.WiFi.X_LGI-COM_ATM.Radio.1.Enable", enable ? "true" : "false", ccsp_boolean);
+    add_wiFiDataPaths(pWiFiDataPaths, "Device.WiFi.X_LGI-COM_ATM.Radio.2.Enable", enable ? "true" : "false", ccsp_boolean);
+    add_wiFiDataPaths(pWiFiDataPaths, "Device.WiFi.X_LGI-COM_BandSteering.SSID.1.Enable", enable ? "true" : "false", ccsp_boolean);
+    pWiFiDataPaths->applyToRadio |= 1 << RADIO_2G_IDX;
+    pWiFiDataPaths->applyToRadio |= 1 << RADIO_5G_IDX;
+
     if(syscfg_init() == 0)
     {
         if( syscfg_set(NULL, "son_native_atm_bs_disable", value ? "1" : "0") == 0)
@@ -314,4 +382,38 @@ CosaDmlSetPlumeLogpullEnable
     }
 
     return FALSE;
+}
+ULONG
+CosaDmlSetPlumeBackhaulSSIDsState
+(
+    PANSC_HANDLE                phContext,
+    BOOL                        value
+)
+{
+    BOOL enable = value;
+    PCOSA_LGI_PLUME_DATAPATHS pWiFiDataPaths = (PCOSA_LGI_PLUME_DATAPATHS) phContext;
+
+    if (alloc_wiFiDataPaths(pWiFiDataPaths, 2) != ANSC_STATUS_SUCCESS)
+    {
+        CcspTraceError(("%s:%d Failed to resize WiFi data path array\n", __func__, __LINE__));
+        return FALSE;
+    }
+    add_wiFiDataPaths(pWiFiDataPaths, "Device.WiFi.SSID.11.Enable", enable ? "true" : "false", ccsp_boolean);
+    add_wiFiDataPaths(pWiFiDataPaths, "Device.WiFi.SSID.12.Enable", enable ? "true" : "false", ccsp_boolean);
+    pWiFiDataPaths->applyToRadio |= 1 << RADIO_2G_IDX;
+    pWiFiDataPaths->applyToRadio |= 1 << RADIO_5G_IDX;
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ULONG
+CosaDmlApplyPlumeWiFiChanges
+(
+    PANSC_HANDLE                phContext,
+    BOOL                        value
+)
+{
+    pthread_t tid;
+
+    pthread_create(&tid, NULL, apply_wiFiDataPaths, phContext);
 }
