@@ -5802,7 +5802,7 @@
                     <name>Protocol</name>
                     <type>string</type>
                     <syntax>string</syntax>
-                    <writable>false</writable>
+                    <writable>true</writable>
                 </parameter>
             </parameters>
         </object>
