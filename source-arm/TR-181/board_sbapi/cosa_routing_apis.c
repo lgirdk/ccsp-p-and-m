@@ -72,6 +72,7 @@
 #include "cosa_routing_internal.h"
 #include "dml_tr181_custom_cfg.h"
 #include "secure_wrapper.h"
+#include "cosa_ip_apis_multilan.h"
 #include <pthread.h>
 
 #if defined (_CBR_PRODUCT_REQ_) || defined (_BWG_PRODUCT_REQ_) || defined (_CBR2_PRODUCT_REQ_)
@@ -1026,32 +1027,28 @@ void CosaDmlGenerateRipdConfigFile(ANSC_HANDLE  hContext )
         }
 
         /*this part is for distribute static route beginning */
-        if (syscfg_get(NULL, "erouter_static_ip_enable", staticErouterEnable, sizeof(staticErouterEnable)) == 0)
+        syscfg_get(NULL, "erouter_static_ip_enable", staticErouterEnable, sizeof(staticErouterEnable));
+        syscfg_get(NULL, "brlan_static_ip_enable", staticBrlanEnable, sizeof(staticBrlanEnable));
+        if(strcmp(staticErouterEnable, "true") == 0)
         {
-            if(strcmp(staticErouterEnable, "true") == 0)
+            char staticErouterIP[20];
+            if (syscfg_get( NULL, "erouter_static_ip_address",staticErouterIP, sizeof(staticErouterIP)) == 0)
             {
-                char staticErouterIP[20];
-                if (syscfg_get( NULL, "erouter_static_ip_address",staticErouterIP, sizeof(staticErouterIP)) == 0)
-                {
-                    fprintf(fp, " route %s/32\n", staticErouterIP);
-                }
+                fprintf(fp, " route %s/32\n", staticErouterIP);
             }
         }
-        if (syscfg_get(NULL, "brlan_static_ip_enable", staticBrlanEnable, sizeof(staticBrlanEnable)) == 0)
+        else if(strcmp(staticBrlanEnable, "true") == 0)
         {
-            if(strcmp(staticBrlanEnable, "true") == 0)
+            char staticBrlanIP[20];
+            char staticBrlanSubnet[20];
+            ULONG bits = 0;
+            if (syscfg_get( NULL, "brlan_static_lan_ipaddr",staticBrlanIP, sizeof(staticBrlanIP)) == 0)
             {
-                char staticBrlanIP[20];
-                char staticBrlanSubnet[20];
-                ULONG bits = 0;
-                if (syscfg_get( NULL, "lan_ipaddr",staticBrlanIP, sizeof(staticBrlanIP)) == 0)
+                if (syscfg_get( NULL, "brlan_static_lan_netmask",staticBrlanSubnet, sizeof(staticBrlanSubnet)) == 0)
                 {
-                    if (syscfg_get( NULL, "lan_netmask",staticBrlanSubnet, sizeof(staticBrlanSubnet)) == 0)
-                    {
-                        /* brlan0 static IP's cidr should be more than 24 */
-                        bits = 24 + CosaDmlGetBitsNumFromNetMask(staticBrlanSubnet);
-                        fprintf(fp, " route %s/%lu\n", staticBrlanIP, bits);
-                    }
+                    /* brlan0 static IP's cidr should be more than 24 */
+                    bits = 24 + CosaDmlGetBitsNumFromNetMask(staticBrlanSubnet);
+                    fprintf(fp, " route %s/%lu\n", staticBrlanIP, bits);
                 }
             }
         }
@@ -1171,11 +1168,13 @@ CosaDmlRipGetCfg
 }
 
 
-static void updateWIFIStatus(BOOL enable)
+static void* updateWIFIStatus(void *arg)
 {
     char* faultParam = NULL;
     int ret = 0;
+    int enable = (int) arg;
     CCSP_MESSAGE_BUS_INFO *bus_info = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
+    pthread_detach(pthread_self());
     parameterValStruct_t param_val[] = {  { "Device.WiFi.X_RDK-CENTRAL_COM_ForceDisable", "false", ccsp_boolean},
                                           { "Device.WiFi.Radio.1.X_CISCO_COM_ApplySetting", "true", ccsp_boolean},
                                           { "Device.WiFi.Radio.2.X_CISCO_COM_ApplySetting", "true", ccsp_boolean} };
@@ -1197,13 +1196,17 @@ static void updateWIFIStatus(BOOL enable)
         CcspTraceError(("%s: Failed to SetValue for param '%s'\n",__FUNCTION__,faultParam));
         bus_info->freefunc(faultParam);
     }
+    return NULL;
 }
 
-static void updateDHCPv4Status(BOOL enable)
+static void* updateDHCPv4Status(void *arg)
 {
     char* faultParam = NULL;
     int ret = 0;
+    int enable = (int) arg;
     CCSP_MESSAGE_BUS_INFO *bus_info = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
+    pthread_detach(pthread_self());
+
     parameterValStruct_t param_val[] = {  { "Device.DHCPv4.Server.Pool.1.Enable", "false", ccsp_boolean}}; 
 
     if (!enable) {
@@ -1224,19 +1227,57 @@ static void updateDHCPv4Status(BOOL enable)
         CcspTraceError(("%s: Failed to SetValue for param '%s'\n",__FUNCTION__,faultParam));
         bus_info->freefunc(faultParam);
     }
-}
-ANSC_STATUS updateWifiStatus(void *arg)
-{
-    int value = (int) arg;
-    pthread_detach(pthread_self());
-    updateWIFIStatus(value);
+    return NULL;
 }
 
-ANSC_STATUS updateDhcpv4Status(void *arg)
+static void RestartRIPInterfaces(int ripEnable)
 {
-    int value = (int) arg;
-    pthread_detach(pthread_self());
-    updateDHCPv4Status(value);
+    char staticErouterEnable[8];
+    char staticBrlanEnable[8];
+    char erouter_static_ip[20];
+    char brlan_static_ip[20];
+    char brlan_static_mask[20];
+    syscfg_get(NULL, "erouter_static_ip_enable", staticErouterEnable, sizeof(staticErouterEnable));
+    syscfg_get(NULL, "brlan_static_ip_enable", staticBrlanEnable, sizeof(staticBrlanEnable));
+    if(strcmp(staticErouterEnable, "true") == 0)
+    {
+        if(syscfg_get(NULL, "erouter_static_ip_address", erouter_static_ip, sizeof(erouter_static_ip)) == 0)
+        {
+            v_secure_system("ifconfig erouter0:0 %s netmask 255.255.255.255 broadcast 255.255.255.255 up", erouter_static_ip);
+        }
+    }
+    else if(strcmp(staticBrlanEnable, "true") == 0)
+    {
+        pthread_t tid1;
+        pthread_t tid2;
+        char brlan_static_dhcp_start[20];
+        char brlan_static_dhcp_end[20];
+        COSA_DML_IP_V4ADDR Entry;
+
+        if(syscfg_get(NULL, "brlan_static_lan_ipaddr", brlan_static_ip, sizeof(brlan_static_ip)) == 0)
+        {
+            if(syscfg_get(NULL, "brlan_static_lan_netmask", brlan_static_mask, sizeof(brlan_static_mask)) == 0)
+            {
+                /* swap lan_ipaddr, dhcp_start and dhcp_end with brlan_static ip ranges */
+                syscfg_get(NULL, "brlan_static_dhcp_start", brlan_static_dhcp_start, sizeof(brlan_static_dhcp_start));
+                syscfg_get(NULL, "brlan_static_dhcp_end", brlan_static_dhcp_end, sizeof(brlan_static_dhcp_end));
+
+                syscfg_set(NULL, "lan_ipaddr", brlan_static_ip);
+                syscfg_set(NULL, "lan_netmask", brlan_static_mask);
+                syscfg_set(NULL, "dhcp_start", brlan_static_dhcp_start);
+                syscfg_set(NULL, "dhcp_end", brlan_static_dhcp_end);
+                /* sync brlan0 interface and firewall with new static ip */
+                Entry.InstanceNumber = 1;
+                Entry.AddressingType = COSA_DML_IP_ADDR_TYPE_Static;
+                sscanf( brlan_static_ip, "%d.%d.%d.%d", &(Entry.IPAddress.Dot[0]), &(Entry.IPAddress.Dot[1]), &(Entry.IPAddress.Dot[2]), &(Entry.IPAddress.Dot[3]));
+                sscanf( brlan_static_mask, "%d.%d.%d.%d", &(Entry.SubnetMask.Dot[0]), &(Entry.SubnetMask.Dot[1]), &(Entry.SubnetMask.Dot[2]), &(Entry.SubnetMask.Dot[3]));
+                CosaDmlIpIfMlanSetV4Addr(NULL, 4, &Entry);
+            }
+        }
+
+        pthread_create(&tid1, NULL, updateDHCPv4Status, (void *)ripEnable);
+        pthread_create(&tid2, NULL, updateWIFIStatus, (void *)ripEnable);
+    }
 }
 
 /**********************************************************************
@@ -1275,7 +1316,6 @@ CosaDmlRipSetCfg
 {
     ANSC_STATUS                     returnStatus = ANSC_STATUS_SUCCESS;
     UNREFERENCED_PARAMETER(hContext);
-    pthread_t tid;
 
     AnscTraceWarning(("CosaDmlRipSetCfg -- starts.\n"));
     CosaDmlRIPCurrentConfig.Enable        = pCfg->Enable;
@@ -1298,25 +1338,15 @@ CosaDmlRipSetCfg
     {
         CosaDmlSaveRipdConfiguration();
         CosaDmlGenerateRipdConfigFile(NULL);
+        RestartRIPInterfaces(pCfg->Enable);
         CosaRipdOperation("restart");
     }
 #else
         CosaDmlSaveRipdConfiguration();
         CosaDmlGenerateRipdConfigFile(NULL);
+        RestartRIPInterfaces(pCfg->Enable);
         CosaRipdOperation("restart");
 #endif
-
-    pthread_create(&tid, NULL, updateDhcpv4Status, pCfg->Enable);
-/*    if ( pCfg->Enable )
-        returnStatus = CosaDmlDhcpsEnable((ANSC_HANDLE)NULL, false);
-    else
-        returnStatus = CosaDmlDhcpsEnable((ANSC_HANDLE)NULL, true);
-    if ( returnStatus != ANSC_STATUS_SUCCESS )
-    {
-        return ANSC_STATUS_FAILURE;
-    }*/
-
-    pthread_create(&tid, NULL, updateWifiStatus, pCfg->Enable);
 
     AnscTraceWarning(("CosaDmlRipSetCfg -- exits.\n"));
     return returnStatus;
@@ -6194,6 +6224,7 @@ CosaDmlRoutingGetRouteInfoIf
 void RestartRipd(void)
 {
     CosaDmlGenerateRipdConfigFile(NULL);
+    RestartRIPInterfaces(TRUE);
     CosaRipdOperation("restart");
 }
 
