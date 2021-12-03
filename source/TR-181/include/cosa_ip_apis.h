@@ -756,5 +756,11 @@ void ErouterStaticIfMode(char* method);
  */
 void RestartRipd(void);
 
+/*
+ * Api to get the secondary static ip address
+ * and netmask of brlan0
+ */
+ULONG CosaDmlGetStaticBrlanIf(char* method);
+
 #endif
 
