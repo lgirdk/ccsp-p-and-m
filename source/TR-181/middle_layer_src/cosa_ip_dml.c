@@ -2500,8 +2500,15 @@ IPv4Address_GetParamUlongValue
 #if !defined(_COSA_BCM_MIPS_) && !defined(_ENABLE_DSL_SUPPORT_)
         if ((pIPv4Addr->AddressingType == COSA_DML_IP_ADDR_TYPE_Static) && (pIPInterface->Cfg.InstanceNumber >= (ULONG)CosaGetUsgIfNum()))
         {
-	    CosaDmlIpIfMlanGetIPv4Addr(pIPInterface->Cfg.InstanceNumber, pIPv4Addr);
-            *puLong = pIPv4Addr->IPAddress.Value;
+            if(pIPInterface->Cfg.InstanceNumber == 4 && pIPv4Addr->InstanceNumber >= 2)
+            {
+                *puLong = CosaDmlGetStaticBrlanIf("ipaddr");
+            }
+            else
+            {
+                CosaDmlIpIfMlanGetIPv4Addr(pIPInterface->Cfg.InstanceNumber, pIPv4Addr);
+                *puLong = pIPv4Addr->IPAddress.Value;
+            }
         }
         else
 #endif /* !_COSA_BCM_MIPS_ */
@@ -2535,8 +2542,15 @@ IPv4Address_GetParamUlongValue
 #if !defined(_COSA_BCM_MIPS_) && !defined(_ENABLE_DSL_SUPPORT_)
         if ((pIPv4Addr->AddressingType == COSA_DML_IP_ADDR_TYPE_Static) && (pIPInterface->Cfg.InstanceNumber >= (ULONG)CosaGetUsgIfNum()))
         {
-	    CosaDmlIpIfMlanGetSubnetMask(pIPInterface->Cfg.InstanceNumber, pIPv4Addr);
-            *puLong = pIPv4Addr->SubnetMask.Value;
+            if(pIPInterface->Cfg.InstanceNumber == 4 && pIPv4Addr->InstanceNumber >= 2)
+            {
+                *puLong = CosaDmlGetStaticBrlanIf("netmask");
+            }
+            else
+            {
+	            CosaDmlIpIfMlanGetSubnetMask(pIPInterface->Cfg.InstanceNumber, pIPv4Addr);
+                *puLong = pIPv4Addr->SubnetMask.Value;
+            }
         }
         else
 #endif /* !_COSA_BCM_MIPS_ */
