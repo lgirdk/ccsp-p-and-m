@@ -1946,7 +1946,15 @@ CosaDmlIpIfMlanAddV4Addr
    /* 
     * This function is called only when the first instance is created 
     */
-    pEntry->InstanceNumber = 1;
+    if( ulIpIfInstanceNumber == 4 )
+    {
+        /* brlan0's 2,3,4, etc ipv4 entries must be for rip */
+        pEntry->InstanceNumber = 2;
+    }
+    else
+    {
+        pEntry->InstanceNumber = 1;
+    }
     pEntry->AddressingType = COSA_DML_IP_ADDR_TYPE_Static;
     return  ANSC_STATUS_SUCCESS;
 #else
