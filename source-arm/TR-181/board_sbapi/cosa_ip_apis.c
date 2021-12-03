@@ -2617,26 +2617,35 @@ CosaDmlIpIfGetNumberOfV4Addrs
         ULONG                       ulIpIfInstanceNumber
     )
 {
-    if ( ulIpIfInstanceNumber >= COSA_USG_IF_NUM )
+    char output[8];
+    int ret = 1;
+    if(ulIpIfInstanceNumber == 1 )
     {
-        return  CosaDmlIpIfMlanGetNumberOfV4Addrs(hContext, ulIpIfInstanceNumber);
-    }
-    else
-    {
-        char output[8];
-        if(ulIpIfInstanceNumber == 1)
+        /* If erouter static ip is enabled then erouter interface should have two ipv4 entries */
+        if(syscfg_get(NULL, "erouter_static_ip_enable", output, sizeof(output)) == 0)
         {
-            /* If erouter static ip is enabled then erouter interface should have two ipv4 entries */
-            if(syscfg_get(NULL, "erouter_static_ip_enable", output, sizeof(output)) == 0)
+            if(strcmp(output, "true") == 0)
             {
-                if(strcmp(output, "true") == 0)
-                {
-                    return 2;
-                }
+                ret = 2;
             }
         }
-        return 1;
     }
+    else if( ulIpIfInstanceNumber == COSA_USG_IF_NUM )
+    {
+        /* If brlan static ip is enabled then brlan0 interface should have two ipv4 entries */
+        if(syscfg_get(NULL, "brlan_static_ip_enable", output, sizeof(output)) == 0)
+        {
+            if(strcmp(output, "true") == 0)
+            {
+                ret = 2;
+            }
+        }
+    }
+    else if ( ulIpIfInstanceNumber > COSA_USG_IF_NUM )
+    {
+        ret =  CosaDmlIpIfMlanGetNumberOfV4Addrs(hContext, ulIpIfInstanceNumber);
+    }
+    return ret;
 }
 
 /**********************************************************************
@@ -2719,9 +2728,23 @@ CosaDmlIpIfGetV4Addr
         PCOSA_DML_IP_V4ADDR         pEntry
     )
 {
+    char alias[50];
     if ( ulIpIfInstanceNumber >= COSA_USG_IF_NUM )
     {
-        return  CosaDmlIpIfMlanGetV4Addr(hContext, ulIpIfInstanceNumber, ulIndex, pEntry);
+        /* brlan0's second ipv4 entry must be the static one for rip. */
+        if (ulIpIfInstanceNumber == 4 && ulIndex != 0)
+        {
+            pEntry->InstanceNumber = 2;
+            pEntry->AddressingType  = COSA_DML_IP_ADDR_TYPE_Static;
+            if(syscfg_get(NULL, "brlan_static_ip_alias", alias, sizeof(alias)) == 0)
+            {
+                strcpy(pEntry->Alias, alias);
+            }
+        }
+        else
+        {
+            return  CosaDmlIpIfMlanGetV4Addr(hContext, ulIpIfInstanceNumber, ulIndex, pEntry);
+        }
     }
     else
     {
@@ -2731,7 +2754,6 @@ CosaDmlIpIfGetV4Addr
         if(ulIpIfInstanceNumber == 1 && ulIndex != 0)
         {
             /* erouter0's second ipv4 entry must be the static one. */
-            char alias[50];
             pEntry->InstanceNumber = 2;
             pEntry->AddressingType = COSA_DML_IP_ADDR_TYPE_Static;
             pEntry->IPAddress.Value = CosaDmlGetStaticErouterIf("ipaddr");
@@ -3037,49 +3059,52 @@ CosaDmlIpIfSetV4Addr
 
     if ( ulIpIfInstanceNumber >= COSA_USG_IF_NUM )
     {
-
-        char                            rip_status[12]  = {0};
-        int                             l_iCIDR = 0,total_hosts = 0;
-
-        Utopia_RawGet(&utctx, NULL,  "rip_enabled", rip_status, sizeof(rip_status));
-        returnStatus = CosaDmlIpIfMlanSetV4Addr(hContext, ulIpIfInstanceNumber, pEntry);
-        if ( ulIpIfInstanceNumber != COSA_USG_IF_NUM)
-            return returnStatus;
-        else if (returnStatus == ANSC_STATUS_SUCCESS && rip_status[0] == '1') // for brlan0 interface 4
+        /* Brlan0's 2,3,etc ipv4 entries points to static rip ip address */
+        if(ulIpIfInstanceNumber == 4 && pEntry->InstanceNumber >= 2)
         {
-            Utopia_RawSet(&utctx, NULL, "brlan_static_ip_enable", "true");
+            char                            rip_status[12]  = {0};
+            int                             l_iCIDR = 0,total_hosts = 0;
+
+            syscfg_get(NULL, "rip_enabled", rip_status, sizeof(rip_status));
+            syscfg_set(NULL, "brlan_static_ip_enable", "true");
+            syscfg_set(NULL, "brlan_static_ip_alias", pEntry->Alias);
             _ansc_sprintf(buf, "%d.%d.%d.%d",
                     pEntry->IPAddress.Dot[0],pEntry->IPAddress.Dot[1],pEntry->IPAddress.Dot[2],pEntry->IPAddress.Dot[3] );
-            Utopia_RawSet(&utctx, NULL, "lan_ipaddr", buf);
+            syscfg_set(NULL, "brlan_static_lan_ipaddr", buf);
             _ansc_sprintf(buf, "%d.%d.%d.%d",
                     pEntry->IPAddress.Dot[0],pEntry->IPAddress.Dot[1],pEntry->IPAddress.Dot[2],pEntry->IPAddress.Dot[3]+1 );
-            Utopia_RawSet(&utctx, NULL, "dhcp_start", buf); // CIDR Usable Host Range Starts
+            syscfg_set(NULL, "brlan_static_dhcp_start", buf); // CIDR Usable Host Range Starts
             _ansc_sprintf(buf, "%d.%d.%d.%d",
                     pEntry->SubnetMask.Dot[0],pEntry->SubnetMask.Dot[1],pEntry->SubnetMask.Dot[2],pEntry->SubnetMask.Dot[3] );
 
             l_iCIDR = mask2cidr(buf);
 
-	    if ( l_iCIDR == 0 )
-	    {
+            if ( l_iCIDR == 0 )
+            {
                 CcspTraceWarning(("%s Error CIDR netmask is not valid for static IP.. Assigning /30 case for default\n", __FUNCTION__));
                 l_iCIDR = 30;
-                //return ANSC_STATUS_FAILURE;
             }
-            Utopia_RawSet(&utctx, NULL, "lan_netmask", buf);
+            syscfg_set(NULL, "brlan_static_lan_netmask", buf);
 
             total_hosts = 1 << (32 - l_iCIDR);
             _ansc_sprintf(buf, "%d.%d.%d.%d",
                     pEntry->IPAddress.Dot[0],pEntry->IPAddress.Dot[1],pEntry->IPAddress.Dot[2],pEntry->IPAddress.Dot[3]+total_hosts-3 ); // CIDR Usable Host Range Ends
-            Utopia_RawSet(&utctx, NULL, "dhcp_end", buf);
-            Utopia_Free(&utctx, 1);
+            syscfg_set(NULL, "brlan_static_dhcp_end", buf);
 
-            commonSyseventSet("dhcp_server-restart", "");
-            RestartRipd();
-
-            return returnStatus;
+                // commonSyseventSet("dhcp_server-restart", "");
+            if (rip_status[0] == '1') // for brlan0 interface 4
+            {
+                RestartRipd();
+            }
         }
+        else
+        {
+            returnStatus =  CosaDmlIpIfMlanSetV4Addr(hContext, ulIpIfInstanceNumber, pEntry);
+        }
+        Utopia_Free(&utctx, 1);
+        return returnStatus;
     }
-    else if(ulIpIfInstanceNumber == 1 && pEntry->InstanceNumber == 2 )
+    else if(ulIpIfInstanceNumber == 1 && pEntry->InstanceNumber >= 2 )
     {
         /*
             The first ipv4 entry of erouter0 is dhcp.
@@ -3261,7 +3286,7 @@ CosaDmlIpIfGetV4Addr2
     {    
         ANSC_STATUS                     returnStatus = ANSC_STATUS_SUCCESS;
 
-        if(ulIpIfInstanceNumber == 1 && pEntry->InstanceNumber == 2)
+        if(ulIpIfInstanceNumber == 1 && pEntry->InstanceNumber >= 2)
         {
             char alias[50];
             /* erouter0's second ipv4 entry is static */
@@ -4884,19 +4909,14 @@ ULONG CosaDmlGetStaticErouterIf(char* method)
 void ErouterStaticIfMode(char* method)
 {
     char rip_status[8];
-    char erouter_static_ip[20];
     syscfg_get(NULL, "rip_enabled", rip_status, sizeof(rip_status));
 
     if(strcmp(method, "restart") == 0)
     {
+        syscfg_set(NULL, "erouter_static_ip_enable", "true");
         if(rip_status[0] == '1')
         {
-            if(syscfg_get(NULL, "erouter_static_ip_address", erouter_static_ip, sizeof(erouter_static_ip)) == 0)
-            {
-                syscfg_set(NULL, "erouter_static_ip_enable", "true");
-                v_secure_system("ifconfig erouter0:0 %s netmask 255.255.255.255 broadcast 255.255.255.255 up", erouter_static_ip);
-                RestartRipd();
-            }
+            RestartRipd();
         }
 
     }
@@ -4910,6 +4930,30 @@ void ErouterStaticIfMode(char* method)
         }
     }
     syscfg_commit();
+}
+
+ULONG CosaDmlGetStaticBrlanIf(char* method)
+{
+    char buff[20];
+    struct in_addr ip;
+    ULONG return_value = 0;
+    if(strcmp(method, "ipaddr") == 0)
+    {
+        syscfg_get( NULL, "brlan_static_lan_ipaddr",buff, sizeof(buff));
+        if(inet_aton(buff, &ip) != 0)
+        {
+            return_value = ip.s_addr;
+        }
+    }
+    else if(strcmp(method, "netmask") == 0)
+    {
+        syscfg_get( NULL, "brlan_static_lan_netmask",buff, sizeof(buff));
+        if(inet_aton(buff, &ip) != 0)
+        {
+            return_value = ip.s_addr;
+        }
+    }
+    return return_value;
 }
 
 #endif
