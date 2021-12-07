@@ -107,6 +107,12 @@ CosaDmlSetPlumeBackhaulSSIDsState
     BOOL                        value
 );
 ULONG
+CosaDmlSetRRMState
+(
+    PANSC_HANDLE                phContext,
+    BOOL                        value
+);
+ULONG
 CosaDmlApplyPlumeWiFiChanges
 (
     PANSC_HANDLE                phContext,
