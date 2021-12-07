@@ -383,6 +383,7 @@ CosaDmlSetPlumeLogpullEnable
 
     return FALSE;
 }
+
 ULONG
 CosaDmlSetPlumeBackhaulSSIDsState
 (
@@ -400,6 +401,35 @@ CosaDmlSetPlumeBackhaulSSIDsState
     }
     add_wiFiDataPaths(pWiFiDataPaths, "Device.WiFi.SSID.11.Enable", enable ? "true" : "false", ccsp_boolean);
     add_wiFiDataPaths(pWiFiDataPaths, "Device.WiFi.SSID.12.Enable", enable ? "true" : "false", ccsp_boolean);
+    pWiFiDataPaths->applyToRadio |= 1 << RADIO_2G_IDX;
+    pWiFiDataPaths->applyToRadio |= 1 << RADIO_5G_IDX;
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ULONG
+CosaDmlSetRRMState
+(
+    PANSC_HANDLE                phContext,
+    BOOL                        value
+)
+{
+    BOOL enable = value;
+    PCOSA_LGI_PLUME_DATAPATHS pWiFiDataPaths = (PCOSA_LGI_PLUME_DATAPATHS) phContext;
+
+    if (alloc_wiFiDataPaths(pWiFiDataPaths, 2) != ANSC_STATUS_SUCCESS)
+    {
+        CcspTraceError(("%s:%d Failed to resize WiFi data path array\n", __func__, __LINE__));
+        return FALSE;
+    }
+    add_wiFiDataPaths(pWiFiDataPaths,
+                      "Device.WiFi.AccessPoint.1.X_RDKCENTRAL-COM_NeighborReportActivated",
+                      enable ? "true" : "false",
+                      ccsp_boolean);
+    add_wiFiDataPaths(pWiFiDataPaths,
+                      "Device.WiFi.AccessPoint.2.X_RDKCENTRAL-COM_NeighborReportActivated",
+                      enable ? "true" : "false",
+                      ccsp_boolean);
     pWiFiDataPaths->applyToRadio |= 1 << RADIO_2G_IDX;
     pWiFiDataPaths->applyToRadio |= 1 << RADIO_5G_IDX;
 
