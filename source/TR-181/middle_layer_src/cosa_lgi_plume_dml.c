@@ -209,6 +209,7 @@ LgiPlume_Commit
         (pMyObject->plumeAdminStatusChanged && pMyObject->plumeAdminStatus == FALSE))
     {
         CosaDmlSetPlumeBackhaulSSIDsState((PANSC_HANDLE)pWiFiDataPaths, FALSE);
+        CosaDmlSetRRMState((PANSC_HANDLE)pWiFiDataPaths, FALSE);
     }
 
     if(pMyObject->bNeedPlumeServiceRestart)
