@@ -126,7 +126,7 @@
 #undef COSA_DML_DHCP_OPTIONS_FILE
 
 #define  COSA_DML_DHCP_LEASES_FILE                  "/nvram/dnsmasq.leases"
-#define  COSA_DML_DHCP_OPTIONS_FILE                 "/etc/dnsmasq.options"
+#define  COSA_DML_DHCP_OPTIONS_FILE                 "/nvram/dnsmasq.options"
 #define  LAN_L3_IFNAME      "brlan0"
 #define  WIFI_CLIENTS_MAC_FILE                      "/var/tmp/wifi_clients_mac"
 #define  LAN_NOT_RESTART_FLAG                        "/var/tmp/lan_not_restart"
