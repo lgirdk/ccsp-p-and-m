@@ -212,8 +212,6 @@ static int UtSetBool(const char *path, BOOLEAN val)
     *  CosaDmlDynamicDns_SetEnable
 ***********************************************************************/
 
-static int g_NrDynamicDnsClient =  0;
-
 BOOL
 CosaDmlDynamicDns_GetEnable()
 {
@@ -273,15 +271,12 @@ CosaDmlDynamicDns_SetEnable
            return -1;
        }
        syscfg_set(NULL, "dynamic_dns_enable", buf);
-       syscfg_set(NULL, "arddnsclient_1::enable", buf);
-       syscfg_set(NULL, "ddns_host_enable_1", buf);
-       syscfg_commit();
-
-       if (bValue == TRUE && g_NrDynamicDnsClient != 0) {
-           CcspTraceInfo(("%s Going to invoke script from CosaDmlDynamicDns_SetEnable() \n", __FUNCTION__));
-           v_secure_system("/etc/utopia/service.d/service_dynamic_dns.sh dynamic_dns-restart &");
+       if(bValue == FALSE)
+       {
+          syscfg_set(NULL, "arddnsclient_1::enable", buf);
+          syscfg_set(NULL, "ddns_host_enable_1", buf);
        }
-
+       syscfg_commit();
        return 0;
    }
    return -1;
@@ -300,6 +295,8 @@ CosaDmlDynamicDns_SetEnable
     *  CosaDmlDynamicDns_Client_GetConf
     *  CosaDmlDynamicDns_Client_SetConf
 ***********************************************************************/
+
+static int g_NrDynamicDnsClient =  0;
 
 static int
 DynamicDns_Client_InsGetIndex
