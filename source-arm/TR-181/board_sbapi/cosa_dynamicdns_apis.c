@@ -267,11 +267,6 @@ CosaDmlDynamicDns_SetEnable
        syscfg_set(NULL, "ddns_host_enable_1", (bValue == TRUE) ? "1" : "0");
        syscfg_commit();
 
-       if (bValue == TRUE && g_NrDynamicDnsClient != 0) {
-           CcspTraceInfo(("%s Going to invoke script from CosaDmlDynamicDns_SetEnable() \n", __FUNCTION__));
-           v_secure_system("/etc/utopia/service.d/service_dynamic_dns.sh dynamic_dns-restart &");
-       }
-
        return 0;
 }
 
