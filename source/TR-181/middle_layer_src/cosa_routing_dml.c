@@ -2931,12 +2931,23 @@ IPv4Forwarding_SetParamStringValue
     if (strcmp(ParamName, "Interface") == 0)
     {
         /* save update to backup */
+#if defined(USE_TR181_PATH)
         rc = STRCPY_S_NOCLOBBER(pRouterForward->Interface, sizeof(pRouterForward->Interface), pString);
         if ( rc != EOK)
         {
             ERR_CHK(rc);
             return FALSE;
         }
+#else
+        extern void* g_pDslhDmlAgent;
+        int len;
+        char key[128];
+        snprintf(key, sizeof(key), "%sName", pString);
+        len = sizeof(pRouterForward->Interface);
+        rc = g_GetParamValueString(g_pDslhDmlAgent, key, pRouterForward->Interface, &len);
+        if(rc != 0)
+            return FALSE;
+#endif
         return TRUE;
     }
 
