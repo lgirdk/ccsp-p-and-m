@@ -253,7 +253,7 @@ CosaDmlDiGetRouterIPAddress
 {
     UNREFERENCED_PARAMETER(hContext);
     char *interface = "erouter0";
-    uint32_t ip = (uint32_t) CosaUtilGetIfAddr (interface);
+    uint32_t ip = CosaUtilGetIfAddr (interface);
     unsigned char *a = (unsigned char *) &ip;
 
     /*
