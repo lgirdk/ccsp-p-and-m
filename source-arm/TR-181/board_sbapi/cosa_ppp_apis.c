@@ -372,8 +372,7 @@ static void get_wan_proto(wanProto_t * p_wan_proto)
     }
 }
 
-/*this API is used by bbhm to get pppoe IF address*/
-ULONG get_ppp_ip_addr(void)
+static uint32_t get_ppp_ip_addr (void)
 {
     wanProto_t proto = 0;
     char buf[128]    = {0};
