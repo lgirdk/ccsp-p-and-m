@@ -2414,6 +2414,7 @@ int safe_strcpy(char * dst, char * src, int dst_size);
 static int be_struct_2_middle_layer(iap_entry_t * p_in, PCOSA_DML_IA_POLICY p_out)
 {
     int i = 0;
+    uint32_t ifaddr;
     errno_t safec_rc = -1;
 
     if (!p_in || !p_out)
@@ -2451,15 +2452,16 @@ static int be_struct_2_middle_layer(iap_entry_t * p_in, PCOSA_DML_IA_POLICY p_ou
 
     }
 
+    ifaddr = CosaUtilGetIfAddr("brlan0");
+
     for (i=0; i<p_out->LanHost.IpCount && i<COSA_DML_IA_LH_MAX_IP; i++)
     {
         /*iplist is the last octect of ip address*/
-        char * p = p_in->lanhosts.iplist;
-        int  tmp = 0;
+        char *p = p_in->lanhosts.iplist;
+        int tmp = 0;
 
-        p_out->LanHost.IpList[i].Ip.Value = CosaUtilGetIfAddr("brlan0");
-        
-        _ansc_sscanf(p, "%d",&tmp);
+        sscanf(p, "%d", &tmp);
+        p_out->LanHost.IpList[i].Ip.Value = ifaddr;
         p_out->LanHost.IpList[i].Ip.Dot[3] = tmp;
 
         p += IPADDR_SZ;
@@ -2468,7 +2470,7 @@ static int be_struct_2_middle_layer(iap_entry_t * p_in, PCOSA_DML_IA_POLICY p_ou
     for (i=0; i<p_out->LanHost.IprCount && i<COSA_DML_IA_LH_MAX_IP_RANGE; i++)
     {
         /*start_ip/end_ip is the last octect of ip address*/
-        p_out->LanHost.IprList[i].StartIp.Value = p_out->LanHost.IprList[i].EndIp.Value = CosaUtilGetIfAddr("brlan0");
+        p_out->LanHost.IprList[i].StartIp.Value = p_out->LanHost.IprList[i].EndIp.Value = ifaddr;
         p_out->LanHost.IprList[i].StartIp.Dot[3] = p_in->lanhosts.iprangelist[i].start_ip;
         p_out->LanHost.IprList[i].EndIp.Dot[3] = p_in->lanhosts.iprangelist[i].end_ip;
     }
