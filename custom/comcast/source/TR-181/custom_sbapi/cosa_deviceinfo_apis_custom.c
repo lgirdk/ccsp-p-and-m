@@ -275,7 +275,7 @@ CosaDmlDiGetRouterIPAddress
 #else
     char *wan_interface = "erouter0";
 #endif
-    uint32_t ip = (uint32_t) CosaUtilGetIfAddr(wan_interface);
+    uint32_t ip = CosaUtilGetIfAddr(wan_interface);
     unsigned char *a = (unsigned char *) &ip;
 
     /*
