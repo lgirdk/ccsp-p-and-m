@@ -339,10 +339,6 @@ CosaDmlPppIfGetStats
         PCOSA_DML_IF_STATS          pStats
 );
 
-#ifndef _COSA_SIM_
-ULONG get_ppp_ip_addr(void);
-#endif
-
 ANSC_STATUS
 CosaPPPApiRemove(ANSC_HANDLE  hContext);
 
