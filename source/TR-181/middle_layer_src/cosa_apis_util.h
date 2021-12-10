@@ -135,7 +135,7 @@ LINKTYPE_MAP
 LINKTYPE_MAP_T;
 
 
-ULONG
+uint32_t
 CosaUtilGetIfAddr
     (
         char*       netdev
