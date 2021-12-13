@@ -6560,12 +6560,15 @@ int cosa_dhcpv6_client_info(char *pInterface)
     int  i, mac_index = 0;
     int  client_num = 0;
     int  s_len;
+    int  count, tag;
     long buffer_len = 0;
+    char optionVal[256];
     char duid[64], ip6_addr[40], time_stamp[32], preferred_lifetime[32], unicast[128], prefix[32], valid_lifetime[32], ifacename[32];
     FILE * fp = fopen(DHCPSV6_SERVER_FILE, "r");
     FILE * serverclient = NULL;
     char *interface = NULL;
     BOOL ret = 0;
+    BOOL isClientOnInterface;
 
     if (fp)
     {
@@ -6600,148 +6603,195 @@ int cosa_dhcpv6_client_info(char *pInterface)
         fprintf(serverclient, "ClientNum:0  \n");
         while(buffer)
         {
-            buffer = strstr(buffer, "<AddrIA");
+            isClientOnInterface = FALSE;
+            buffer = strstr(buffer, "<AddrClient");
             if (buffer != NULL)
             {
-                interface = (char *) malloc(16);
-                memset(interface, '\0', 16);
-                buffer += strlen("<AddrIA");
+                buffer += strlen("<AddrClient");
 
-                //read Interface
-                ptr = strstr(buffer, "ifacename=\"");
-                if(ptr !=NULL)
+                ptr = strstr(buffer, "<IACount>");
+                if (ptr == NULL)
                 {
-                   s_len = strlen("ifacename=\"");
-                   ptr += s_len;
-                   i = 0;
-                   while(*ptr != '"')
-                   {
-                       ifacename[i++] = *ptr++;
-                   }
-                   ifacename[i] = '\0';
-                   ret = get_interface_name(pInterface, interface);
-               }
-               if( AnscEqualString(interface, ifacename, TRUE))
-               {
-                   client_num++;
-                   // read DUID
-                   ptr = strstr(buffer, "duid length=\"");
-                   if(ptr !=NULL)
-                   {
-                       ptr += DUID_STR_LEN;
-                       i = 0;
-                       while(*ptr != '<')
-                       {
-                           duid[i++] = *ptr++;
-                       }
-                       duid[i] = '\0';
-                       fprintf(serverclient, "DUID:%s\n", duid);
-                   }
-
-                   // read Unicast
-                   ptr = strstr(buffer, "unicast=\"");
-                   if(ptr !=NULL)
-                   {
-                       s_len = strlen("unicast=\"");
-                       ptr += s_len;
-                       i = 0;
-                       while(*ptr != '"')
-                       {
-                           unicast[i++] = *ptr++;
-                       }
-                       unicast[i] = '\0';
-                       fprintf(serverclient, "Unicast:%s\n", unicast);
-                   }
-
-                   // read the prefix
-                   ip6_addr[0] = 0;
-                   ptr = strstr(buffer, "prefix=\"");
-                   if(ptr !=NULL)
-                   {
-                       s_len = strlen("prefix=\"");
-                       ptr += s_len;
-                       i = 0;
-                       while(*ptr != '"')
-                       {
-                           prefix[i++] = *ptr++;
-                       }
-                       prefix[i] = '\0';
-
-                       // read IPv6Addr
-                       s_len = strlen(">\"");
-                       ptr += s_len;
-                       i = 0;
-                       while(*ptr != '<')
-                       {
-                           ip6_addr[i++] = *ptr++;
-                       }
-                       ip6_addr[i] = '\0';
-                       fprintf(serverclient, "Addr:%s\n", ip6_addr);
-                   }
-
-                   // read the timestamp
-                   ptr = strstr(buffer, "timestamp=\"");
-                   if(ptr !=NULL)
-                   {
-                       s_len = strlen("timestamp=\"");
-                       ptr += s_len;
-                       i = 0;
-                       while(*ptr != '"')
-                       {
-                           time_stamp[i++] = *ptr++;
-                       }
-                       time_stamp[i] = '\0';
-                       fprintf(serverclient, "Timestamp:%s\n", time_stamp);
-                   }
-
-                   // read the PreferredLifetime
-                   ptr = strstr(buffer, "pref=\"");
-                   if(ptr !=NULL)
-                   {
-                       s_len = strlen("pref=\"");
-                       ptr += s_len;
-                       i = 0;
-                       while(*ptr != '"')
-                       {
-                           preferred_lifetime[i++] = *ptr++;
-                       }
-                       preferred_lifetime[i] = '\0';
-                       fprintf(serverclient, "Prefered:%s\n", preferred_lifetime);
-                   }
-
-                   //read ValidLifetime
-                   ptr = strstr(buffer, "valid=\"");
-                   if(ptr !=NULL)
-                   {
-                       s_len = strlen("valid=\"");
-                       ptr += s_len;
-                       i = 0;
-                       while(*ptr != '"')
-                       {
-                           valid_lifetime[i++] = *ptr++;
-                       }
-                       valid_lifetime[i] = '\0';
-                       fprintf(serverclient, "Valid:%s\n", valid_lifetime);
-                   }
-
-                   // get the mac address
-
-                   if (ip6_addr[0])
-                   {
-                       FILE *cfp;
-                       char mac_addr[18 + 4];   /* add extra bytes since it's not clear that _get_shell_output() handles exact sizes correctly... */
-
-                       cfp = v_secure_popen("r","ip neigh | grep %s | awk '{print $5}'", ip6_addr);
-                       _get_shell_output(cfp, mac_addr, sizeof(mac_addr));
-                       fprintf(serverclient, "MAC:%s\n", mac_addr);
-                   }
-
+                    continue;
                 }
-                buffer = strstr(buffer, "<AddrIA");
-                if (interface != NULL)
+                ptr += strlen("<IACount>");
+
+                count = 0;
+                while (*ptr != '<')
                 {
-                    free(interface);
-                    interface = NULL;
+                    count = count * 10 + (*ptr++ - '0');
+                }
+
+                for (int cnt=0; cnt<count; cnt++)
+                {
+                    buffer = strstr(buffer, "<AddrIA");
+                    if (buffer != NULL)
+                    {
+                        buffer += strlen("<AddrIA");
+                        interface = (char *) malloc(16);
+                        memset(interface, '\0', 16);
+
+                        //read Interface
+                        ptr = strstr(buffer, "ifacename=\"");
+                        if(ptr !=NULL)
+                        {
+                            s_len = strlen("ifacename=\"");
+                            ptr += s_len;
+                            i = 0;
+                            while(*ptr != '"')
+                            {
+                                ifacename[i++] = *ptr++;
+                            }
+                            ifacename[i] = '\0';
+                            ret = get_interface_name(pInterface, interface);
+                        }
+                        if( AnscEqualString(interface, ifacename, TRUE))
+                        {
+                            if (cnt == 0)
+                            {
+                                // Since a client can have multiple addresses, increment client count only for the first instance.
+                                // Also DUID and unicast address will be added once for each client in server-client.txt file.
+                                isClientOnInterface = TRUE;
+
+                                // read DUID
+                                ptr = strstr(buffer, "duid length=\"");
+                                if(ptr !=NULL)
+                                {
+                                    ptr += DUID_STR_LEN;
+                                    i = 0;
+                                    while(*ptr != '<')
+                                    {
+                                        duid[i++] = *ptr++;
+                                    }
+                                    duid[i] = '\0';
+                                    fprintf(serverclient, "DUID:%s\n", duid);
+                                }
+     
+                                // read Unicast
+                                ptr = strstr(buffer, "unicast=\"");
+                                if(ptr !=NULL)
+                                {
+                                    s_len = strlen("unicast=\"");
+                                    ptr += s_len;
+                                    i = 0;
+                                    while(*ptr != '"')
+                                    {
+                                        unicast[i++] = *ptr++;
+                                    }
+                                    unicast[i] = '\0';
+                                    fprintf(serverclient, "Unicast:%s\n", unicast);
+                                }
+                            }
+
+                            // read the prefix
+                            ip6_addr[0] = 0;
+                            ptr = strstr(buffer, "prefix=\"");
+                            if(ptr !=NULL)
+                            {
+                                s_len = strlen("prefix=\"");
+                                ptr += s_len;
+                                i = 0;
+                                while(*ptr != '"')
+                                {
+                                    prefix[i++] = *ptr++;
+                                }
+                                prefix[i] = '\0';
+          
+                                // read IPv6Addr
+                                s_len = strlen(">\"");
+                                ptr += s_len;
+                                i = 0;
+                                while(*ptr != '<')
+                                {
+                                    ip6_addr[i++] = *ptr++;
+                                }
+                                ip6_addr[i] = '\0';
+                                fprintf(serverclient, "Addr:%s\n", ip6_addr);
+                            }
+
+                            // read the timestamp
+                            ptr = strstr(buffer, "timestamp=\"");
+                            if(ptr !=NULL)
+                            {
+                                s_len = strlen("timestamp=\"");
+                                ptr += s_len;
+                                i = 0;
+                                while(*ptr != '"')
+                                {
+                                    time_stamp[i++] = *ptr++;
+                                }
+                                time_stamp[i] = '\0';
+                                fprintf(serverclient, "Timestamp:%s\n", time_stamp);
+                            }
+          
+                            // read the PreferredLifetime
+                            ptr = strstr(buffer, "pref=\"");
+                            if(ptr !=NULL)
+                            {
+                                s_len = strlen("pref=\"");
+                                ptr += s_len;
+                                i = 0;
+                                while(*ptr != '"')
+                                {
+                                    preferred_lifetime[i++] = *ptr++;
+                                }
+                                preferred_lifetime[i] = '\0';
+                                fprintf(serverclient, "Prefered:%s\n", preferred_lifetime);
+                            }
+          
+                            //read ValidLifetime
+                            ptr = strstr(buffer, "valid=\"");
+                            if(ptr !=NULL)
+                            {
+                                s_len = strlen("valid=\"");
+                                ptr += s_len;
+                                i = 0;
+                                while(*ptr != '"')
+                                {
+                                    valid_lifetime[i++] = *ptr++;
+                                }
+                                valid_lifetime[i] = '\0';
+                                fprintf(serverclient, "Valid:%s\n", valid_lifetime);
+                            }
+                        }
+                        if (interface != NULL)
+                        {
+                            free(interface);
+                            interface = NULL;
+                        }
+                    }
+                }
+                if (isClientOnInterface)
+                {
+                    ptr = strstr(buffer, "<optionCount>");
+                    ptr += strlen("<optionCount>");
+                    count = 0;
+                    while (*ptr != '<')
+                    {
+                        count = count * 10 + (*ptr++ - '0');
+                    }
+
+                    for (int cnt=0; cnt<count; cnt++)
+                    {
+                        buffer = strstr(buffer, "<option ");
+                        buffer += strlen("<option ");
+                        tag = 0;
+                        ptr = buffer;
+                        while (*ptr != '>')
+                        {
+                            tag = tag * 10 + (*ptr++ - '0');
+                        }
+
+                        ++ptr;
+                        i = 0;
+                        while (*ptr != '<')
+                        {
+                            optionVal[i++] = *ptr++;
+                        }
+                        optionVal[i] = '\0';
+                        fprintf(serverclient, "option:%d:%s\n", tag, optionVal);
+                    }
+                    ++client_num;
                 }
             }
         }
@@ -6930,7 +6980,7 @@ void _cosa_dhcpsv6_get_client()
             *pTmp1 = 0;
 
             // commenting out for warning "value computed is not used [-Werror=unused-value]".
-            //*pTmp1++;
+            pTmp1++;
 
             // pTmp3 is 1
             // pTmp1 is 00010001C793092300252E7D05B4
