@@ -1607,6 +1607,7 @@ Firewall1_SetParamBoolValue
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.PPTPPassthrough = bValue;
+        syscfg_set(NULL, "PPTPPassthrough", bValue == TRUE ? "1" : "0");
 
         return TRUE;
     }
