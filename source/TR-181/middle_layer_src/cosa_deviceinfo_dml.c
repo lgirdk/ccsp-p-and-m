@@ -21897,8 +21897,7 @@ NonRootSupport_SetParamStringValue
 }
 
 // Generic RFC get handlers
-char *
-Generic_GetParamJsonValue()
+static char *Generic_GetParamJsonValue (void)
 {
     PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
 
@@ -21933,7 +21932,7 @@ Generic_GetParamJsonValue()
     return NULL;
 }
 
-BOOL StartsWith(const char *a, const char *b)
+static int StartsWith (const char *a, const char *b)
 {
    if(strncmp(a, b, strlen(b)) == 0) return 1;
    return 0;
