@@ -1207,7 +1207,7 @@ static void* updateDHCPv4Status(void *arg)
     CCSP_MESSAGE_BUS_INFO *bus_info = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
     pthread_detach(pthread_self());
 
-    parameterValStruct_t param_val[] = {  { "Device.DHCPv4.Server.Pool.1.Enable", "false", ccsp_boolean}}; 
+    parameterValStruct_t param_val[] = {  { "Device.DHCPv4.Server.Pool.Enable", "false", ccsp_boolean}};
 
     if (!enable) {
         param_val[0].parameterValue = "true";
