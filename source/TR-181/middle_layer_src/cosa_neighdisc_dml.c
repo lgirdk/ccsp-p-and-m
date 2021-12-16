@@ -1107,6 +1107,12 @@ InterfaceSetting2_GetParamUlongValue
         return TRUE;
     }
 
+    if (strcmp(ParamName, "DADTransmits") == 0)
+    {
+        /* collect value */
+        *puLong = pNeighdiscInterface->Cfg.DADTransmits;
+        return TRUE;
+    }
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
@@ -1374,6 +1380,13 @@ InterfaceSetting2_SetParamUlongValue
         return TRUE;
     }
 
+    if (strcmp(ParamName, "DADTransmits") == 0)
+    {
+        /* save update to backup */
+        pNeighdiscInterface->Cfg.DADTransmits = uValue;
+        return TRUE;
+    }
+
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
@@ -1558,6 +1571,19 @@ InterfaceSetting2_Validate
             return FALSE;
         }
         *puLength = AnscSizeOfString("MaxRtrSolicitations")+1;
+
+        return FALSE;
+    }
+
+    if (!pNeighdiscInterface->Cfg.DADTransmits)
+    {
+        rc = strcpy_s(pReturnParamName, *puLength, "DADTransmits");
+        if(rc != EOK)
+        {
+            ERR_CHK(rc);
+            return FALSE;
+        }
+        *puLength = AnscSizeOfString("DADTransmits")+1;
 
         return FALSE;
     }
