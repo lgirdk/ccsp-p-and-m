@@ -573,6 +573,7 @@ static BOOLEAN g_neighdisc_enabled = TRUE ;
 #define RetransTimer_SYSCTL_FILE "/proc/sys/net/ipv6/neigh/"COSA_DML_NEIGHDISC_IFNAME"/retrans_time_ms"
 #define RtrSolicitationInterval_SYSCTL_FILE "/proc/sys/net/ipv6/conf/"COSA_DML_NEIGHDISC_IFNAME"/router_solicitation_interval"
 #define MaxRtrSolicitations_SYSCTL_FILE "/proc/sys/net/ipv6/conf/"COSA_DML_NEIGHDISC_IFNAME"/router_solicitations"
+#define DADTransmits_SYSCTL_FILE "/proc/sys/net/ipv6/conf/"COSA_DML_NEIGHDISC_IFNAME"/dad_transmits"
 
 /*
  *  Neighdisc Interface
@@ -718,6 +719,7 @@ static int _apply_kernel_params(COSA_DML_NEIGHDISC_IF_CFG * pCfg)
     _write_sysctl_file(RtrSolicitationInterval_SYSCTL_FILE, 
                        (pCfg->RtrSolicitationInterval/1000 ? pCfg->RtrSolicitationInterval/1000:1));
     _write_sysctl_file(MaxRtrSolicitations_SYSCTL_FILE, pCfg->MaxRtrSolicitations);
+    _write_sysctl_file(DADTransmits_SYSCTL_FILE, pCfg->DADTransmits);
 
     return 0;
 }
@@ -819,6 +821,12 @@ CosaDmlNeighdiscIfGetEntry
         g_neighdisc_interface.Cfg.MaxRtrSolicitations = 3;
     else
         g_neighdisc_interface.Cfg.MaxRtrSolicitations = atoi(out);
+
+    Utopia_RawGet(&utctx,NULL,SYSCFG_FORMAT_NEIGHDISC_IF"_DADTransmits",out,sizeof(out));
+    if (!out[0] || !(atoi(out)))
+        g_neighdisc_interface.Cfg.DADTransmits = 1;
+    else
+        g_neighdisc_interface.Cfg.DADTransmits = atoi(out);
 
     Utopia_Free(&utctx,need_write);                    
 
@@ -1053,6 +1061,19 @@ CosaDmlNeighdiscIfSetCfg
 
         /*this is so called backend implementation*/
         _write_sysctl_file(MaxRtrSolicitations_SYSCTL_FILE, pCfg->MaxRtrSolicitations);
+    }
+
+    if (pCfg->DADTransmits != g_neighdisc_interface.Cfg.DADTransmits)
+    {
+        safec_rc = sprintf_s(out, sizeof(out), "%lu", pCfg->DADTransmits);
+        if(safec_rc < EOK)
+        {
+           ERR_CHK(safec_rc);
+        }
+        Utopia_RawSet(&utctx,NULL,SYSCFG_FORMAT_NEIGHDISC_IF"_DADTransmits",out);
+
+        /*this is so called backend implementation*/
+        _write_sysctl_file(DADTransmits_SYSCTL_FILE, pCfg->DADTransmits);
     }
 
     Utopia_Free(&utctx,1);                    
