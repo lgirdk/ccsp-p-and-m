@@ -96,6 +96,7 @@ _COSA_DML_NEIGHDISC_IF_CFG
     ULONG                           RetransTimer;
     ULONG                           RtrSolicitationInterval;
     ULONG                           MaxRtrSolicitations;
+    ULONG                           DADTransmits;
     BOOLEAN                         bNUDEnable;
     BOOLEAN                         bRSEnable;
 }
