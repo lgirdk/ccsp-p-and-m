@@ -96,7 +96,7 @@ CosaDmlSetDsliteEnable
             //Disable the DNS override when switching between IP provisioning modes (DSLite and RG)
             CosaDmlLgiGwSetDnsOverride(FALSE);
         }
-        commonSyseventSet("wan-restart", "");
+        // commonSyseventSet("wan-restart", "");
         system("service_dslite restart &");
         return ANSC_STATUS_SUCCESS;
     }
