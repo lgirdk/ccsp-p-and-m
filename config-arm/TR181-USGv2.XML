@@ -17931,6 +17931,12 @@
             <writable>true</writable>
           </parameter>
           <parameter>
+            <name>DADTransmits</name>
+            <type>unsignedInt</type>
+            <syntax>uint32</syntax>
+            <writable>true</writable>
+          </parameter>
+          <parameter>
             <name>NUDEnable</name>
             <type>boolean</type>
             <syntax>bool</syntax>
