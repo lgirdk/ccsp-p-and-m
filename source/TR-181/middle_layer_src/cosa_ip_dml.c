@@ -1858,7 +1858,7 @@ Interface2_SetParamStringValue
     if (strcmp(ParamName, "Router") == 0)
     {
         /* save update to backup */
-//        AnscCopyString(pIPInterface->Cfg.Router, pString);
+        snprintf (pIPInterface->Cfg.RouterName, sizeof(pIPInterface->Cfg.RouterName), "%s", pString);
         return TRUE;
     }
 
