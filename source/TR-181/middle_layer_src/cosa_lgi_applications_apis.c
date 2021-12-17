@@ -47,11 +47,19 @@ ULONG CosaDmlApplicationsSamKnowsSetEnabled ( ANSC_HANDLE hContext, BOOL bValue 
         syscfg_commit();
     }
 
+#ifdef _PUMA6_ARM_
+    if (bValue == TRUE) {
+        system ("rpcclient2 'sh /etc/init.d/skclient.sh start >/dev/null &'");
+    } else {
+        system ("rpcclient2 'sh /etc/init.d/skclient.sh stop >/dev/null &'");
+    }
+#else
     if (bValue == TRUE) {
       system ("/etc/init.d/samknows_ispmon start &");
     } else {
       system ("/etc/init.d/samknows_ispmon stop &");
     }
+#endif
 
     return ANSC_STATUS_SUCCESS;
 }
