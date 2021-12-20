@@ -104,7 +104,7 @@ BOOL LgiApplications_SamKnows_SetParamBoolValue ( ANSC_HANDLE hInsContext, char*
 ULONG LgiApplications_SamKnows_GetParamStringValue ( ANSC_HANDLE hInsContext, char* ParamName, char* pValue, ULONG* pulSize )
 {
     /* check the parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "GetProperty", TRUE))
+    if( AnscEqualString(ParamName, "Property", TRUE))
     {
         return CosaDmlApplicationsSamKnowsGetProperty(NULL, pValue, pulSize);
     }
@@ -117,7 +117,7 @@ BOOL LgiApplications_SamKnows_SetParamStringValue ( ANSC_HANDLE hInsContext, cha
 {
     PCOSA_DATAMODEL_LGI_APPLICATIONS  pMyObject = (PCOSA_DATAMODEL_LGI_APPLICATIONS)g_pCosaBEManager->hLgiApplications;
 
-    if( AnscEqualString(ParamName, "GetProperty", TRUE))
+    if( AnscEqualString(ParamName, "Property", TRUE))
     {
         AnscCopyString(pMyObject->SamKnowsProperty, strValue);
         return TRUE;
@@ -132,7 +132,7 @@ BOOL LgiApplications_SamKnows_Validate ( ANSC_HANDLE hInsContext, char* pReturnP
     PCOSA_DATAMODEL_LGI_APPLICATIONS  pMyObject = (PCOSA_DATAMODEL_LGI_APPLICATIONS)g_pCosaBEManager->hLgiApplications;
     if(CosaDmlApplicationsSamKnowsValidateProperty(NULL, pMyObject->SamKnowsProperty)  == FALSE)
     {
-        _ansc_strcpy(pReturnParamName, "GetProperty");
+        _ansc_strcpy(pReturnParamName, "Property");
         return FALSE;
     }
     return TRUE;
