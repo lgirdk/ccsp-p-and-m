@@ -664,6 +664,7 @@ PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaB
         if (CosaDmlSetCaptivePortalEnable(bValue) != ANSC_STATUS_SUCCESS)
             return FALSE;
      	pMyObject->bCaptivePortalEnable = bValue;
+        system("/bin/sh /etc/start_lighttpd.sh restart &");
         return TRUE;
     }
 
