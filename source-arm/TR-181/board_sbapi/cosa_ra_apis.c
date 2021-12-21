@@ -177,8 +177,8 @@ static int ParseZebraRaConf(ZebraRaConf_t *conf)
     char line[256];
     RaPrefix_t *prefix;
     char sVal[2][64];
-    char *prev_interface = NULL;
-    int i = -1;
+    int i = 0;
+    bool valid_interface = false;
 
     memset(conf, 0, (INTERFACE_COUNT * sizeof(ZebraRaConf_t)));
 
@@ -221,17 +221,27 @@ static int ParseZebraRaConf(ZebraRaConf_t *conf)
             }
 
             //To avoid Interface duplicates
-            if ((prev_interface != NULL) && (strcmp(curr_interface, prev_interface) == 0))
+            if( strncmp(curr_interface, "brlan0", sizeof("brlan0")) == 0 )
             {
-                continue;
+                i = 0;
+                snprintf(conf[i].interface, sizeof(curr_interface), "%s", curr_interface);
+                valid_interface = true;
             }
-
-            i++;
-            snprintf(conf[i].interface, sizeof(conf[i].interface), "%s", curr_interface);
-            prev_interface = conf[i].interface;
+            else if( strncmp(curr_interface, "brlan7", sizeof("brlan7")) == 0 )
+            {
+                i = 1;
+                snprintf(conf[i].interface, sizeof(curr_interface), "%s", curr_interface);
+                valid_interface = true;
+            }
+            else
+            {
+                valid_interface = false;
+            }
             continue;
         }
 
+        if(!valid_interface)
+            continue;
         if (strstr(line, " prefix") != NULL) {
             if (conf[i].preCnt == MAX_PREF)
                 continue;
