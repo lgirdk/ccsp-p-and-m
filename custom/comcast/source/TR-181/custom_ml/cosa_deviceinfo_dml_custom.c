@@ -524,6 +524,7 @@ DeviceInfo_SetParamBoolValue_Custom
         if (CosaDmlSetCaptivePortalEnable(bValue) != ANSC_STATUS_SUCCESS)
             return FALSE;
      	pMyObject->bCaptivePortalEnable = bValue;
+        system("/bin/sh /etc/start_lighttpd.sh restart &");
         return TRUE;
     }
 
