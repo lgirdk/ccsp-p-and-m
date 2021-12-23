@@ -9452,7 +9452,7 @@
 
               <name>InterfaceSetting</name>
 
-              <objectType>staticTable</objectType>
+              <objectType>writableTable</objectType>
 
               <maxInstance>128</maxInstance>
 
