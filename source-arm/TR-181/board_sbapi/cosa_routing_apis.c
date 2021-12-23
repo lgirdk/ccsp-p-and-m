@@ -1651,29 +1651,26 @@ CosaDmlRipIfSetCfg
 
     AnscTraceWarning(("CosaDmlRipIfSetCfg -- starts.\n"));
 
-    if ( pEntry->InstanceNumber == 1 )
-    {
-        pConf->If1Enable           = pEntry->Enable;        
-        pConf->If1SendVersion      = pEntry->X_CISCO_COM_SendVersion;      
-        pConf->If1ReceiveVersion   = pEntry->X_CISCO_COM_ReceiveVersion;      
-        pConf->If1SendEnable       = pEntry->SendRA;      
-        pConf->If1ReceiveEnable    = pEntry->AcceptRA;      
-        pConf->If1Neighbor         = pEntry->X_CISCO_COM_Neighbor;
-        pConf->UpdateTime          = pEntry->X_LGI_COM_UpdateInterval;
+    pConf->If1Enable           = pEntry->Enable;
+    pConf->If1SendVersion      = pEntry->X_CISCO_COM_SendVersion;
+    pConf->If1ReceiveVersion   = pEntry->X_CISCO_COM_ReceiveVersion;
+    pConf->If1SendEnable       = pEntry->SendRA;
+    pConf->If1ReceiveEnable    = pEntry->AcceptRA;
+    pConf->If1Neighbor         = pEntry->X_CISCO_COM_Neighbor;
+    pConf->UpdateTime          = pEntry->X_LGI_COM_UpdateInterval;
 
 	// Status should reflect on runtime itself instead of after reboot(TCCBR-2764)
 	pEntry->Status =( (pEntry->Enable) && (pEntry->SendRA == TRUE || pEntry->AcceptRA == TRUE)) ? 2 : 1;
-        pConf->If1AuthenticateType = pEntry->X_CISCO_COM_AuthenticationType;                      
-        pConf->If1KeyID            = pEntry->X_CISCO_COM_Md5KeyID;                           
-        rc = strcpy_s(pConf->If1Md5KeyValue,sizeof(pConf->If1Md5KeyValue), pEntry->X_CISCO_COM_Md5KeyValue );
-        ERR_CHK(rc);
-        rc = strcpy_s(pConf->If1SimplePassword,sizeof(pConf->If1SimplePassword), pEntry->X_CISCO_COM_SimplePassword );
-        ERR_CHK(rc);
-    }
-    else
-    {
-        AnscTraceWarning(("This RIP interface is wrong:%lu.", pEntry->InstanceNumber));
-    }
+    pConf->If1AuthenticateType = pEntry->X_CISCO_COM_AuthenticationType;
+    pConf->If1KeyID            = pEntry->X_CISCO_COM_Md5KeyID;
+    rc = strcpy_s(pConf->If1Md5KeyValue,sizeof(pConf->If1Md5KeyValue), pEntry->X_CISCO_COM_Md5KeyValue );
+    ERR_CHK(rc);
+    rc = strcpy_s(pConf->If1SimplePassword,sizeof(pConf->If1SimplePassword), pEntry->X_CISCO_COM_SimplePassword );
+    ERR_CHK(rc);
+    rc = strcpy_s(pConf->If1Alias ,sizeof(Conf->If1Alias), pEntry->Alias);
+    ERR_CHK(rc);
+    rc = strcpy_s(pConf->If1Name,sizeof(pConf->If1Name), pEntry->Interface);
+    ERR_CHK(rc);
 
 #if 1
     AnscTraceWarning(("pConf->If1Enable :%s\n", pConf->If1Enable?"TRUE":"FALSE"));
