@@ -5118,8 +5118,34 @@ InterfaceSetting_AddEntry
 {
     UNREFERENCED_PARAMETER(hInsContext);
     UNREFERENCED_PARAMETER(pInsNumber);
+
+    PCOSA_DATAMODEL_ROUTING         pMyObject           = (PCOSA_DATAMODEL_ROUTING)g_pCosaBEManager->hRouting;
+    PCOSA_CONTEXT_LINK_OBJECT       pSubCosaContext     = (PCOSA_CONTEXT_LINK_OBJECT)NULL;
+    PCOSA_DML_RIP_IF_CFG            pRipIF              = (PCOSA_DML_RIP_IF_CFG)NULL;
+
+    pRipIF = (PCOSA_DML_RIP_IF_CFG)AnscAllocateMemory(sizeof(COSA_DML_RIP_IF_CFG));
+
+    if ( !pRipIF )
+    {
+        return NULL;
+    }
+    pRipIF->InstanceNumber = 1;
+    CosaDmlRipIfGetCfg(NULL, 0, pRipIF);
+
+    pSubCosaContext = (PCOSA_CONTEXT_LINK_OBJECT)AnscAllocateMemory(sizeof(COSA_CONTEXT_LINK_OBJECT));
     
-    return NULL;
+    if ( !pSubCosaContext )
+    {
+        AnscFreeMemory(pRipIF);
+        return NULL;
+    }
+
+    pSubCosaContext->hContext      = (ANSC_HANDLE)pRipIF;
+    pSubCosaContext->hParentTable  = NULL;
+    pSubCosaContext->bNew          = FALSE;
+    CosaSListPushEntryByInsNum(&pMyObject->RipIFList, pSubCosaContext);
+
+    return pSubCosaContext;
 }
 
 
@@ -5158,8 +5184,15 @@ InterfaceSetting_DelEntry
 {
     UNREFERENCED_PARAMETER(hInsContext);
     UNREFERENCED_PARAMETER(hInstance);
-
-    return -1;
+    PCOSA_DATAMODEL_ROUTING          pMyObject       = (PCOSA_DATAMODEL_ROUTING)g_pCosaBEManager->hRouting;
+    PCOSA_CONTEXT_LINK_OBJECT        pSubCosaContext = (PCOSA_CONTEXT_LINK_OBJECT)hInstance;
+    PCOSA_DML_RIP_IF_CFG             pRipIF          = (PCOSA_DML_RIP_IF_CFG)pSubCosaContext->hContext;
+    if( AnscSListPopEntryByLink((PSLIST_HEADER)&pMyObject->RipIFList, &pSubCosaContext->Linkage) )
+    {
+        AnscFreeMemory(pRipIF);
+        AnscFreeMemory(pSubCosaContext);
+    }
+    return ANSC_STATUS_SUCCESS;
 }
 
 
@@ -5932,7 +5965,11 @@ InterfaceSetting_Rollback
 
     CcspTraceWarning(("InterfaceSetting_Rollback()----begin to rollback......\n"));
 
-    CosaDmlRipIfGetCfg(NULL, pRipIF->InstanceNumber-1, pRipIF);
+    /*
+        RIPv2 is enabled only on erouter0 interface.
+        So only one InterfaceSetting entry's state is saved in syscfg.
+    */
+    CosaDmlRipIfGetCfg(NULL, 0, pRipIF);
 
     return 0; 
 }
