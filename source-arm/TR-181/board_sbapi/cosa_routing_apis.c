@@ -1245,6 +1245,7 @@ static void RestartRIPInterfaces(int ripEnable)
         {
             v_secure_system("ifconfig erouter0:0 %s netmask 255.255.255.255 broadcast 255.255.255.255 up", erouter_static_ip);
         }
+	syscfg_set(NULL, "brlan_static_ip_enable", "false");
     }
     else if(strcmp(staticBrlanEnable, "true") == 0)
     {
@@ -1307,6 +1308,8 @@ static void RestartRIPInterfaces(int ripEnable)
        CosaDmlIpIfMlanSetV4Addr(NULL, 4, &Entry);
        pthread_create(&tid1, NULL, updateDHCPv4Status, (void *)ripEnable);
        pthread_create(&tid2, NULL, updateWIFIStatus, (void *)ripEnable);
+
+       syscfg_set(NULL, "erouter_static_ip_enable", "false");
     } // End of else if(strcmp(staticBrlanEnable, "true") == 0)
 }
 
