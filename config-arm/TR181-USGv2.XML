@@ -13397,6 +13397,7 @@
             <name>DUID</name>
             <type>hexBinary(130)</type>
             <syntax>string</syntax>
+            <writable>false</writable>
           </parameter>
           <parameter>
             <name>RequestAddresses</name>
