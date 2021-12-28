@@ -1413,14 +1413,6 @@ RDKB_Control_SetParamBoolValue
         BOOL                        bValue
     );
 
-BOOL
-RDKB_UIBranding_GetParamBoolValue
-
-	(
-		ANSC_HANDLE 				hInsContext,
-		char*					ParamName,
-		BOOL*                       		pBool
-	);
 
 ULONG
 RDKB_UIBranding_GetParamStringValue
@@ -1442,115 +1434,8 @@ RDKB_UIBranding_SetParamStringValue
         char*                       		pString
     );
 
-ULONG
-Footer_GetParamStringValue
-	(
-		ANSC_HANDLE 				hInsContext,
-		char*						ParamName,
-		char*						pValue,
-		ULONG*						pulSize
-	);
-
-BOOL
-Footer_SetParamStringValue
-
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        char*                       pString
-    );
-
-ULONG
-Connection_GetParamStringValue
-
-	(
-		ANSC_HANDLE 				hInsContext,
-		char*						ParamName,
-		char*						pValue,
-		ULONG*						pulSize
-	);
-
-BOOL
-Connection_SetParamStringValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        char*                       pString
-    );
 
 
-ULONG
-NetworkDiagnosticTools_GetParamStringValue
-	(
-		ANSC_HANDLE 				hInsContext,
-		char*						ParamName,
-		char*						pValue,
-		ULONG*						pulSize
-	);
-
-BOOL
-NetworkDiagnosticTools_SetParamStringValue
-
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        char*                       pString
-    );
-
-BOOL
-WiFiPersonalization_GetParamBoolValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL*                       pBool
-    );
-
-ULONG
-WiFiPersonalization_GetParamStringValue
-
-	(
-		ANSC_HANDLE 				hInsContext,
-		char*						ParamName,
-		char*						pValue,
-		ULONG*						pulSize
-	);
-
-BOOL
-WiFiPersonalization_SetParamBoolValue
-
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL                        bValue
-    );
-BOOL
-WiFiPersonalization_SetParamStringValue
-
-
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        char*                       pString
-    );
-
-ULONG
-LocalUI_GetParamStringValue
-
-	(
-		ANSC_HANDLE 				hInsContext,
-		char*						ParamName,
-		char*						pValue,
-		ULONG*						pulSize
-	);
-BOOL
-LocalUI_SetParamStringValue
-
-
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        char*                       pString
-    );
 
 BOOL
 IPv6subPrefix_GetParamBoolValue
@@ -1648,67 +1533,6 @@ EvoStream_DirectConnect_SetParamBoolValue
         ANSC_HANDLE                 hInsContext,
         char*                       ParamName,
         BOOL                        bValue
-    );
-BOOL
-LocalUI_GetParamBoolValue
-
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL*                       pBool
-    );
-BOOL
-LocalUI_SetParamBoolValue
-
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL                        bValue
-    );
-ULONG
-HelpTip_GetParamStringValue
-
-	(
-		ANSC_HANDLE 				hInsContext,
-		char*						ParamName,
-		char*						pValue,
-		ULONG*						pulSize
-	);
-BOOL
-HelpTip_SetParamStringValue
-
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        char*                       pString
-    );
-
-/***********************************************************************
-
- APIs for Object:
-
-    DeviceInfo.X_RDKCENTRAL-COM_Syndication.RDKB_UIBranding.CloudUI.
-    *  CloudUI_GetParamStringValue
-    *  CloudUI_SetParamStringValue
-
-***********************************************************************/
-
-ULONG
-CloudUI_GetParamStringValue
-
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        char*                       pValue,
-        ULONG*                      pulSize
-    );
-BOOL
-CloudUI_SetParamStringValue
-
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        char*                       pString
     );
 
 /***********************************************************************
