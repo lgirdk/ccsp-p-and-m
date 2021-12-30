@@ -1268,7 +1268,7 @@ static void RestartRIPInterfaces(int ripEnable)
     {
         if(syscfg_get(NULL, "erouter_static_ip_address", erouter_static_ip, sizeof(erouter_static_ip)) == 0)
         {
-            v_secure_system("ifconfig erouter0:0 %s netmask 255.255.255.255 broadcast 255.255.255.255 up", erouter_static_ip);
+            v_secure_system("ip addr add %s/32 brd 255.255.255.255 dev erouter0 label erouter0:0", erouter_static_ip);
         }
 
         if(syscfg_get(NULL, "brlan_lan_ipaddr", brlan_ip, sizeof(brlan_ip)) == 0)
