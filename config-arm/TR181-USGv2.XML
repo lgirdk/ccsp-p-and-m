@@ -1579,19 +1579,6 @@
 			<type>boolean</type>
 			<syntax>bool</syntax>
 		</parameter>
-	<parameter>
-            <name>X_RDKCENTRAL-COM_OnBoarding_State</name>
-            <type>string(64)</type>
-            <syntax>string</syntax>
-            <writable>false</writable>
-        </parameter>
-
-        <parameter>
-            <name>X_RDKCENTRAL-COM_OnBoarding_DeleteLogs</name>
-            <type>boolean</type>
-            <syntax>bool</syntax>
-            <writable>true</writable>
-        </parameter>
 	<!-- placeholder for Xi5 parameter start -->
         <parameter>
             <name>X_RDKCENTRAL-COM_EnableMoCAforXi5</name>
@@ -1687,24 +1674,6 @@
                 <syntax>string</syntax>
                 <writable>true</writable>
             </parameter>
-            <parameter>
-                <name>LocalUIBrandingTable</name>
-                <type>string</type>
-                <syntax>string</syntax>
-                <writable>false</writable>
-            </parameter>
-            <parameter>
-                <name>WifiUIBrandingTable</name>
-                <type>string</type>
-                <syntax>string</syntax>
-                <writable>false</writable>
-            </parameter>
-          <parameter>
-                <name>PauseScreenFileLocation</name>
-                <type>string</type>
-                <syntax>string</syntax>
-                <writable>true</writable>
-            </parameter>
 <?ifdef _COSA_BCM_ARM_ & !_CBR_PRODUCT_REQ_?>
             <parameter>
                 <name>CMVoiceImageSelect</name>
@@ -1755,28 +1724,6 @@
                         </parameter>
                 </parameters>
         </object>
-	<object>
-		<name>RDKB_Control</name>
-		<objectType>object</objectType>
-		<functions>
-			<func_GetParamBoolValue>RDKB_Control_GetParamBoolValue</func_GetParamBoolValue> 
-			<func_SetParamBoolValue>RDKB_Control_SetParamBoolValue</func_SetParamBoolValue>
-		</functions>
-		<parameters>
-			<parameter>
-				<name>ActivatePartnerId</name>
-				<type>boolean</type>
-				<syntax>bool</syntax>
-				<writable>true</writable>
-			</parameter>
-			<parameter>
-				<name>ClearPartnerId</name>
-				<type>boolean</type>
-				<syntax>bool</syntax>
-				<writable>true</writable>
-			</parameter>
-		</parameters>
-	</object>
           <object>
 		<name>RDKB_UIBranding</name>
           	<objectType>object</objectType>
