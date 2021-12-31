@@ -2549,20 +2549,6 @@ ANSC_STATUS setCMVoiceImg(char* pValue)
 }
 #endif
 
-ANSC_STATUS activatePartnerId()
-{
-	pthread_t tid;
-
-	if ( access( PARTNERID_FILE , F_OK ) == 0 )	 
-	{
-		pthread_create(&tid, NULL, &CosaDmlDiPartnerIDChangeHandling, NULL);
-		return ANSC_STATUS_SUCCESS;
-	}
-	AnscTraceWarning(("%s: Partner ID set %s File not exist, so cannot activate partnerID  \n", __FUNCTION__,PARTNERID_FILE));
-	return ANSC_STATUS_FAILURE;	
-
-}
-
 ANSC_STATUS setTempPartnerId
 	(
 		char*                       pValue
@@ -2631,50 +2617,6 @@ void CosaDmlPresenceEnable(BOOL enable)
     }
 }
 
-void *CosaDmlDiPartnerIDChangeHandling( __attribute__((unused)) void* buff )
-{
-
-    CCSP_MESSAGE_BUS_INFO *bus_info 		  = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
-	parameterValStruct_t param_val[ 1 ] 	  = {{ "Device.X_CISCO_COM_DeviceControl.FactoryReset", "Router,Wifi,VoIP,Dect,MoCA", ccsp_string }};
-	char 				*pComponentName = "eRT.com.cisco.spvtg.ccsp.pam";
-	char 				*pComponentPath = "/com/cisco/spvtg/ccsp/pam";
-	char				*faultParam 		  = NULL;
-    int   				 ret             	  = 0;
-
-	pthread_detach(pthread_self());	
-
-	// Create /nvram/.apply_partner_defaults file to apply partners default
-	v_secure_system( "touch /nvram/.apply_partner_defaults" );
-	v_secure_system( "syscfg set PartnerID_FR 1; syscfg commit" );
-
-	/* Need to do factory reset the device here */
-    ret = CcspBaseIf_setParameterValues
-			(
-				bus_handle, 
-				pComponentName, 
-				pComponentPath,
-				0, 
-				0x0,   /* session id and write id */
-				(void*)&param_val, 
-                1, 
-				TRUE,   /* Commit  */
-				&faultParam
-			);	
-
-	if ( ( ret != CCSP_SUCCESS ) && \
-		 ( faultParam )
-		)
-	{
-	    AnscTraceWarning(("%s Failed to SetValue for param '%s'\n",__FUNCTION__,faultParam ) );
-	    bus_info->freefunc( faultParam );
-	} 
-	else
-	{
-		AnscTraceWarning(("%s: Device will reboot in some time\n", __FUNCTION__ ));
-	}
-       return NULL;
-}
-
 ANSC_STATUS
 CosaDeriveSyndicationPartnerID(char *Partner_ID)
 {
@@ -2713,34 +2655,6 @@ CosaDeriveSyndicationPartnerID(char *Partner_ID)
 	}
 	strncpy(Partner_ID,PartnerID, PARTNER_ID_LEN);
 	return ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
-CosaDmlDiGetSyndicationLocalUIBrandingTable
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue,
-        PULONG                      pulSize
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    UNREFERENCED_PARAMETER(pValue);
-    UNREFERENCED_PARAMETER(pulSize);
-    return ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
-CosaDmlDiGetSyndicationWifiUIBrandingTable
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue,
-        PULONG                      pulSize
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    UNREFERENCED_PARAMETER(pValue);
-    UNREFERENCED_PARAMETER(pulSize);
-    return ANSC_STATUS_SUCCESS;
 }
 
 ANSC_STATUS
@@ -3180,8 +3094,6 @@ void FillPartnerIDValues(cJSON *json , char *partnerID , PCOSA_DATAMODEL_RDKB_UI
 
                                 cJSON *paramObj = NULL;
                                 cJSON *paramObjVal = NULL;
-
-				FillParamString(partnerObj, "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.PauseScreenFileLocation", &PUiBrand->PauseScreenFileLocation);
 
                                 paramObj = cJSON_GetObjectItem( partnerObj, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.SyndicationFlowControl.Enable");
                                 if ( paramObj != NULL )

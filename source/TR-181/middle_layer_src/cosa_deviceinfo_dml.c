@@ -511,12 +511,6 @@ DeviceInfo_GetParamBoolValue
         return TRUE;
     }
 
-    if (strcmp(ParamName, "X_RDKCENTRAL-COM_OnBoarding_DeleteLogs") == 0)
-    {
-        *pBool = FALSE ;
-        return TRUE;
-    }
-
   bReturnValue =
         DeviceInfo_GetParamBoolValue_Custom
             (
@@ -1028,16 +1022,6 @@ DeviceInfo_GetParamStringValue
 
     /* Changes for RDKB-5878 end */
 
-    if (strcmp(ParamName, "X_RDKCENTRAL-COM_OnBoarding_State") == 0)
-    {
-        if (access("/nvram/.device_onboarded", F_OK) == 0)
-        {
-            return update_pValue(pValue, pulSize, "OnBoarded");
-        }
-
-        return update_pValue(pValue, pulSize, "NONE");
-    }
-
     ReturnValue =
         DeviceInfo_GetParamStringValue_Custom
             (
@@ -1128,15 +1112,6 @@ DeviceInfo_SetParamBoolValue
 #endif
         }
 
-        return TRUE;
-    }
-
-    if (strcmp(ParamName, "X_RDKCENTRAL-COM_OnBoarding_DeleteLogs") == 0)
-    {
-        if(bValue)
-        {
-            v_secure_system("/rdklogger/onboardLogUpload.sh delete &");
-        }
         return TRUE;
     }
 
@@ -15437,23 +15412,6 @@ Syndication_GetParamStringValue
         }
         return 0;
     }
-    if (strcmp(ParamName, "LocalUIBrandingTable") == 0)
-    {
-        /* collect value */
-        CosaDmlDiGetSyndicationLocalUIBrandingTable(NULL, pValue,pulSize);
-        return 0;
-    }
-    if (strcmp(ParamName, "WifiUIBrandingTable") == 0)
-    {
-        /* collect value */
-        CosaDmlDiGetSyndicationWifiUIBrandingTable(NULL, pValue,pulSize);
-        return 0;
-    }
-    if (strcmp(ParamName, "PauseScreenFileLocation") == 0)
-    {
-        /* collect value */
-        return  update_pValue(pValue,pulSize, pMyObject->UiBrand.PauseScreenFileLocation.ActiveValue);
-     }
 #if defined(_COSA_BCM_ARM_) && !defined(_CBR_PRODUCT_REQ_)
     if (strcmp(ParamName, "CMVoiceImageSelect") == 0)
     {
@@ -15633,160 +15591,6 @@ Syndication_SetParamStringValue
         return FALSE;
     }
 
-    if((CCSP_SUCCESS == getPartnerId(PartnerID) ) && ( PartnerID[ 0 ] != '\0'))
-    {
-   	/* check the parameter name and set the corresponding value */
-        if ( !(rc = strcmp_s("PauseScreenFileLocation", strlen("PauseScreenFileLocation"), ParamName, &ind)) )
-	{
-            if(!(ind))
-            {
-                IS_UPDATE_ALLOWED_IN_JSON(ParamName, requestorStr, pMyObject->UiBrand.PauseScreenFileLocation.UpdateSource);
-
-		if ( ANSC_STATUS_SUCCESS == UpdateJsonParam("Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.PauseScreenFileLocation",PartnerID, pString, requestorStr, currentTime))
-		{
-                        rc = STRCPY_S_NOCLOBBER(pMyObject->UiBrand.PauseScreenFileLocation.ActiveValue, sizeof(pMyObject->UiBrand.PauseScreenFileLocation.ActiveValue), pString);
-                        if(rc != EOK)
-                        {
-                             AnscTraceWarning(("RDK_LOG_WARN, safeclib strcpy_s- %s %s:%d rc =%d \n",__FILE__, __FUNCTION__,__LINE__,rc));
-                             return FALSE;
-                        }
-
-                        rc = STRCPY_S_NOCLOBBER(pMyObject->UiBrand.PauseScreenFileLocation.UpdateSource, sizeof(pMyObject->UiBrand.PauseScreenFileLocation.UpdateSource), requestorStr);
-                        if(rc != EOK)
-                        {
-                             AnscTraceWarning(("RDK_LOG_WARN, safeclib strcpy_s- %s %s:%d rc =%d \n",__FILE__, __FUNCTION__,__LINE__,rc));
-                             return FALSE;
-                        }
-			return TRUE;
-		}
-            }
-
-	}
-        else if(rc != EOK)
-        {
-            AnscTraceWarning(("RDK_LOG_WARN, safeclib strcmp_s- %s %s:%d rc =%d \n",__FILE__, __FUNCTION__,__LINE__,rc));
-            return FALSE;
-        }
-
-        if ( !(rc = strcmp_s("XconfURL", strlen("XconfURL"), ParamName, &ind)) )
-        {
-           if(!(ind))
-            {
-                IS_UPDATE_ALLOWED_IN_JSON(ParamName, requestorStr, pMyObject->XconfURL.UpdateSource);
-
-                if ( ANSC_STATUS_SUCCESS == UpdateJsonParam("Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.XconfURL",PartnerID, pString, requestorStr, currentTime))
-                {
-                        rc = STRCPY_S_NOCLOBBER(pMyObject->XconfURL.ActiveValue, sizeof(pMyObject->XconfURL.ActiveValue), pString);
-                        if(rc != EOK)
-                        {
-                             AnscTraceWarning(("RDK_LOG_WARN, safeclib strcpy_s- %s %s:%d rc =%d \n",__FILE__, __FUNCTION__,__LINE__,rc));
-                             return FALSE;
-                        }
-
-                        rc = STRCPY_S_NOCLOBBER(pMyObject->XconfURL.UpdateSource, sizeof(pMyObject->XconfURL.UpdateSource), requestorStr);
-                        if(rc != EOK)
-                        {
-                             AnscTraceWarning(("RDK_LOG_WARN, safeclib strcpy_s- %s %s:%d rc =%d \n",__FILE__, __FUNCTION__,__LINE__,rc));
-                             return FALSE;
-                        }
-                        return TRUE;
-                }
-            }
-        }
-        else if(rc != EOK)
-        {
-            AnscTraceWarning(("RDK_LOG_WARN, safeclib strcmp_s- %s %s:%d rc =%d \n",__FILE__, __FUNCTION__,__LINE__,rc));
-            return FALSE;
-        }
-        
-        if ( !(rc = strcmp_s("LogUploadURL", strlen("LogUploadURL"), ParamName, &ind)) )
-        {
-           if(!(ind))
-            {
-                IS_UPDATE_ALLOWED_IN_JSON(ParamName, requestorStr, pMyObject->LogUploadURL.UpdateSource);
-
-                if ( ANSC_STATUS_SUCCESS == UpdateJsonParam("Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.LogUploadURL",PartnerID, pString, requestorStr, currentTime))
-                {
-                        rc = STRCPY_S_NOCLOBBER(pMyObject->LogUploadURL.ActiveValue, sizeof(pMyObject->LogUploadURL.ActiveValue), pString);
-                        if(rc != EOK)
-                        {
-                             AnscTraceWarning(("RDK_LOG_WARN, safeclib strcpy_s- %s %s:%d rc =%d \n",__FILE__, __FUNCTION__,__LINE__,rc));
-                             return FALSE;
-                        }
-
-                        rc = STRCPY_S_NOCLOBBER(pMyObject->LogUploadURL.UpdateSource, sizeof(pMyObject->LogUploadURL.UpdateSource), requestorStr);
-                        if(rc != EOK)
-                        {
-                             AnscTraceWarning(("RDK_LOG_WARN, safeclib strcpy_s- %s %s:%d rc =%d \n",__FILE__, __FUNCTION__,__LINE__,rc));
-                             return FALSE;
-                        }
-                        return TRUE;
-                }
-            }
-        }
-        else if(rc != EOK)
-        {
-            AnscTraceWarning(("RDK_LOG_WARN, safeclib strcmp_s- %s %s:%d rc =%d \n",__FILE__, __FUNCTION__,__LINE__,rc));
-            return FALSE;
-        }
-        
-        if ( !(rc = strcmp_s("Telemetry", strlen("Telemetry"), ParamName, &ind)) )
-        {
-           if(!(ind))
-            {
-                IS_UPDATE_ALLOWED_IN_JSON(ParamName, requestorStr, pMyObject->TelemetryURL.UpdateSource);
-
-                if ( ANSC_STATUS_SUCCESS == UpdateJsonParam("Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.Telemetry",PartnerID, pString, requestorStr, currentTime))
-                {
-                        rc = STRCPY_S_NOCLOBBER(pMyObject->TelemetryURL.ActiveValue, sizeof(pMyObject->TelemetryURL.ActiveValue), pString);
-                        if(rc != EOK)
-                        {
-                             AnscTraceWarning(("RDK_LOG_WARN, safeclib strcpy_s- %s %s:%d rc =%d \n",__FILE__, __FUNCTION__,__LINE__,rc));
-                             return FALSE;
-                        }
-
-                        rc = STRCPY_S_NOCLOBBER(pMyObject->TelemetryURL.UpdateSource, sizeof(pMyObject->TelemetryURL.UpdateSource), requestorStr);
-                        if(rc != EOK)
-                        {
-                             AnscTraceWarning(("RDK_LOG_WARN, safeclib strcpy_s- %s %s:%d rc =%d \n",__FILE__, __FUNCTION__,__LINE__,rc));
-                             return FALSE;
-                        }
-                        return TRUE;
-                }
-            }
-        }
-        else if(rc != EOK)
-        {
-            AnscTraceWarning(("RDK_LOG_WARN, safeclib strcmp_s- %s %s:%d rc =%d \n",__FILE__, __FUNCTION__,__LINE__,rc));
-            return FALSE;
-        }
-        
-        if ( !(rc = strcmp_s("CrashPortal", strlen("CrashPortal"), ParamName, &ind)) )
-        {
-           if(!(ind))
-            {
-                IS_UPDATE_ALLOWED_IN_JSON(ParamName, requestorStr, pMyObject->CrashPortalURL.UpdateSource);
-
-                if ( ANSC_STATUS_SUCCESS == UpdateJsonParam("Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.CrashPortal",PartnerID, pString, requestorStr, currentTime))
-                {
-                        rc = STRCPY_S_NOCLOBBER(pMyObject->CrashPortalURL.ActiveValue, sizeof(pMyObject->CrashPortalURL.ActiveValue), pString);
-                        if(rc != EOK)
-                        {
-                             AnscTraceWarning(("RDK_LOG_WARN, safeclib strcpy_s- %s %s:%d rc =%d \n",__FILE__, __FUNCTION__,__LINE__,rc));
-                             return FALSE;
-                        }
-
-                        rc = STRCPY_S_NOCLOBBER(pMyObject->CrashPortalURL.UpdateSource, sizeof(pMyObject->CrashPortalURL.UpdateSource), requestorStr);
-                        if(rc != EOK)
-                        {
-                             AnscTraceWarning(("RDK_LOG_WARN, safeclib strcpy_s- %s %s:%d rc =%d \n",__FILE__, __FUNCTION__,__LINE__,rc));
-                             return FALSE;
-                        }
-                        return TRUE;
-                }
-            }
-        }
-     }
      return FALSE;
 }
 
@@ -16143,78 +15947,6 @@ WANsideSSH_SetParamBoolValue
    }
    return FALSE;
 }
-/***********************************************************************
-APIs for Object:
-	Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.RDKB_Control.
-	  *  RDKB_Control_GetParamBoolValue
-	  *  RDKB_Control_SetParamBoolValue
-
-***********************************************************************/
-
-BOOL
-RDKB_Control_GetParamBoolValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL*                       pBool
-    )
-{
-    UNREFERENCED_PARAMETER(hInsContext);
-    UNREFERENCED_PARAMETER(pBool);
-    /* check the parameter name and return the corresponding value */
-
-	if (strcmp(ParamName, "ActivatePartnerId") == 0)
-	{
-		return TRUE;
-	}
-
-	if (strcmp(ParamName, "ClearPartnerId") == 0)
-	{
-		return TRUE;
-	}
-
-    return FALSE;
-}
-
-BOOL
-RDKB_Control_SetParamBoolValue
-
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL                        bValue
-    )
-{
-    UNREFERENCED_PARAMETER(hInsContext);
-    pthread_t tid ; 
-    ANSC_STATUS 				   retValue  = ANSC_STATUS_FAILURE;
-
-   if (strcmp(ParamName, "ActivatePartnerId") == 0)
-    {
-	if ( bValue )
-	{
-		retValue = activatePartnerId();
-		if( ANSC_STATUS_SUCCESS == retValue )
-		{
-			return TRUE;
-		}
-	}
-    }
-
-    if (strcmp(ParamName, "ClearPartnerId") == 0)
-    {
-	if ( bValue )
-	{
-		CcspTraceWarning(("%s: Clearing PartnerId and device going Factory Reset  \n", __FUNCTION__));
-		v_secure_system( "rm -rf  /nvram/.partner_ID" );
-		pthread_create ( &tid, NULL, &CosaDmlDiPartnerIDChangeHandling, NULL );
-		return TRUE;
-	}
-    }
-
-    return FALSE;
-}
-
 /***********************************************************************
 APIs for Object:
 	DeviceInfo.X_RDKCENTRAL-COM_Syndication.RDKB_UIBranding.

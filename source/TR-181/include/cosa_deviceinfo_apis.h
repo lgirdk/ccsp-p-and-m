@@ -178,7 +178,6 @@ typedef  struct
 _COSA_DATAMODEL_RDKB_UIBRANDING_CLASS_CONTENT
 {
 	COSA_BOOTSTRAP_STR                        	DefaultLanguage;
-	COSA_BOOTSTRAP_STR				PauseScreenFileLocation;
 }
 COSA_DATAMODEL_RDKB_UIBRANDING, *PCOSA_DATAMODEL_RDKB_UIBRANDING;
 
@@ -566,23 +565,6 @@ CosaDmlDiSetSyndicationTR69CertLocation
         char*                       pValue
     );
 
-void *CosaDmlDiPartnerIDChangeHandling( void* buff );
-
-ANSC_STATUS
-CosaDmlDiGetSyndicationLocalUIBrandingTable
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue,
-        PULONG                      pulSize
-    );
-ANSC_STATUS
-CosaDmlDiGetSyndicationWifiUIBrandingTable
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue,
-        PULONG                      pulSize
-    );
-
 #ifndef FEATURE_FWUPGRADE_MANAGER
 ANSC_STATUS
 CosaDmlDiSetFirmwareDownloadAndFactoryReset(void);
@@ -749,9 +731,6 @@ CosaDmlDiRfcStoreInit
     (
         cJSON **pRfcStore
     );
-
-ANSC_STATUS 
-activatePartnerId();
 
 ANSC_STATUS
 ProcessRfcSet(cJSON **pRfcStore, BOOL clearDB, char *paramFullName, char *value, char *pSource, char *pCurrentTime);
