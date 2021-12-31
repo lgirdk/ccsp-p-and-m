@@ -317,8 +317,8 @@ static int LoadRaInterface(PCOSA_DML_RA_IF_FULL raif, ULONG ulIndex)
     raif->Cfg.InstanceNumber        = ulIndex + 1;
     raif->Cfg.bEnabled              = TRUE;
     raif->Cfg.ManualPrefixes[0]     = '\0';
-    raif->Cfg.MaxRtrAdvInterval     = raConf[ulIndex].interval * 2;
-    raif->Cfg.MinRtrAdvInterval     = raConf[ulIndex].interval;
+    raif->Cfg.MaxRtrAdvInterval     = raConf[ulIndex].interval;
+    raif->Cfg.MinRtrAdvInterval     = (raConf[ulIndex].interval * 3) / 4;
     raif->Cfg.AdvDefaultLifetime    = raConf[ulIndex].lifetime;
     raif->Cfg.bAdvManagedFlag       = raConf[ulIndex].managedFlag;
     raif->Cfg.bAdvOtherConfigFlag   = raConf[ulIndex].otherFlag;
@@ -559,7 +559,7 @@ CosaDmlRaIfSetCfg
 
 		if ( ( !(pCfg->bAdvManagedFlag)     == !managedFlag ) && 
 		     ( !(pCfg->bAdvOtherConfigFlag) == !otherFlag   ) &&
-		     (   pCfg->MinRtrAdvInterval    == ra_interval  ) &&
+		     (   pCfg->MaxRtrAdvInterval    == ra_interval  ) &&
 		     (   pCfg->AdvDefaultLifetime   == ra_lifetime  ) &&
 		     (   pCfg->AdvLinkMTU           == mtu          ) &&
 		     (   breset                     == false        ) )
@@ -584,7 +584,7 @@ CosaDmlRaIfSetCfg
 		    strcpy(syscfgName,"ra_interval");
 		else
         	    sprintf(syscfgName, "ra_interval_%d",pCfg->InstanceNumber);
-		snprintf(out, sizeof(out), "%u", pCfg->MinRtrAdvInterval);
+		snprintf(out, sizeof(out), "%u", pCfg->MaxRtrAdvInterval);
 		Utopia_RawSet(&utctx,NULL,syscfgName,out);
 
 		if(pCfg->InstanceNumber == 1)
