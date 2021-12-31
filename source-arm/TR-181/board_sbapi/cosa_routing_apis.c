@@ -1230,11 +1230,36 @@ static void* updateDHCPv4Status(void *arg)
     return NULL;
 }
 
+static void RestartBrlanInterface(char* brlan_ip, char* brlan_mask, char* brlan_dhcp_start, char* brlan_dhcp_end, int ripEnable)
+{
+    COSA_DML_IP_V4ADDR Entry;
+    pthread_t tid1;
+    pthread_t tid2;
+
+    syscfg_set(NULL, "lan_ipaddr", brlan_ip);
+    syscfg_set(NULL, "lan_netmask", brlan_mask);
+    syscfg_set(NULL, "dhcp_start", brlan_dhcp_start);
+    syscfg_set(NULL, "dhcp_end", brlan_dhcp_end);
+    /* sync brlan0 interface and firewall with new ip */
+    Entry.InstanceNumber = 1;
+    Entry.AddressingType = COSA_DML_IP_ADDR_TYPE_Static;
+    sscanf( brlan_ip, "%d.%d.%d.%d", &(Entry.IPAddress.Dot[0]), &(Entry.IPAddress.Dot[1]), &(Entry.IPAddress.Dot[2]), &(Entry.IPAddress.Dot[3]));
+    sscanf( brlan_mask, "%d.%d.%d.%d", &(Entry.SubnetMask.Dot[0]), &(Entry.SubnetMask.Dot[1]), &(Entry.SubnetMask.Dot[2]), &(Entry.SubnetMask.Dot[3]));
+    CosaDmlIpIfMlanSetV4Addr(NULL, 4, &Entry);
+    pthread_create(&tid1, NULL, updateDHCPv4Status, (void *)ripEnable);
+    pthread_create(&tid2, NULL, updateWIFIStatus, (void *)ripEnable);
+
+}
 static void RestartRIPInterfaces(int ripEnable)
 {
     char staticErouterEnable[8];
     char staticBrlanEnable[8];
     char erouter_static_ip[20];
+    char brlan_ip[20];
+    char brlan_mask[20];
+    char brlan_dhcp_start[20];
+    char brlan_dhcp_end[20];
+
 
     syscfg_get(NULL, "erouter_static_ip_enable", staticErouterEnable, sizeof(staticErouterEnable));
     syscfg_get(NULL, "brlan_static_ip_enable", staticBrlanEnable, sizeof(staticBrlanEnable));
@@ -1245,72 +1270,62 @@ static void RestartRIPInterfaces(int ripEnable)
         {
             v_secure_system("ifconfig erouter0:0 %s netmask 255.255.255.255 broadcast 255.255.255.255 up", erouter_static_ip);
         }
-	syscfg_set(NULL, "brlan_static_ip_enable", "false");
+
+        if(syscfg_get(NULL, "brlan_lan_ipaddr", brlan_ip, sizeof(brlan_ip)) == 0)
+        {
+            if(syscfg_get(NULL, "brlan_lan_netmask", brlan_mask, sizeof(brlan_mask)) == 0)
+            {
+                /* swap lan_ipaddr, dhcp_start and dhcp_end with brlan ip ranges */
+                syscfg_get(NULL, "brlan_dhcp_start", brlan_dhcp_start, sizeof(brlan_dhcp_start));
+                syscfg_get(NULL, "brlan_dhcp_end", brlan_dhcp_end, sizeof(brlan_dhcp_end));
+		RestartBrlanInterface(brlan_ip,brlan_mask,brlan_dhcp_start,brlan_dhcp_end,ripEnable);
+            }
+        }
     }
     else if(strcmp(staticBrlanEnable, "true") == 0)
     {
-        char brlan_ip[20];
-        char brlan_mask[20];
-        pthread_t tid1;
-        pthread_t tid2;
-        char brlan_dhcp_start[20];
-        char brlan_dhcp_end[20];
         char ip_buf[20];
-        COSA_DML_IP_V4ADDR Entry;
 
-       if(ripEnable)
-       {
-           if(syscfg_get(NULL, "brlan_static_lan_ipaddr", brlan_ip, sizeof(brlan_ip)) == 0)
-           {
-               if(syscfg_get(NULL, "brlan_static_lan_netmask", brlan_mask, sizeof(brlan_mask)) == 0)
-               {
-                   /* swap lan_ipaddr, dhcp_start and dhcp_end with brlan static ip ranges */
-                   syscfg_get(NULL, "brlan_static_dhcp_start", brlan_dhcp_start, sizeof(brlan_dhcp_start));
-                   syscfg_get(NULL, "brlan_static_dhcp_end", brlan_dhcp_end, sizeof(brlan_dhcp_end));
+        if(ripEnable)
+        {
+            if(syscfg_get(NULL, "brlan_static_lan_ipaddr", brlan_ip, sizeof(brlan_ip)) == 0)
+            {
+                if(syscfg_get(NULL, "brlan_static_lan_netmask", brlan_mask, sizeof(brlan_mask)) == 0)
+                {
+                    /* swap lan_ipaddr, dhcp_start and dhcp_end with brlan static ip ranges */
+                    syscfg_get(NULL, "brlan_static_dhcp_start", brlan_dhcp_start, sizeof(brlan_dhcp_start));
+                    syscfg_get(NULL, "brlan_static_dhcp_end", brlan_dhcp_end, sizeof(brlan_dhcp_end));
 
-                   syscfg_get(NULL, "lan_ipaddr", ip_buf, sizeof(ip_buf));
-                   syscfg_set(NULL, "brlan_lan_ipaddr", ip_buf);
+                    syscfg_get(NULL, "lan_ipaddr", ip_buf, sizeof(ip_buf));
+                    syscfg_set(NULL, "brlan_lan_ipaddr", ip_buf);
 
-                   syscfg_get(NULL, "lan_netmask", ip_buf, sizeof(ip_buf));
-                   syscfg_set(NULL, "brlan_lan_netmask", ip_buf);
+                    syscfg_get(NULL, "lan_netmask", ip_buf, sizeof(ip_buf));
+                    syscfg_set(NULL, "brlan_lan_netmask", ip_buf);
 
-		   syscfg_get(NULL, "dhcp_start", ip_buf, sizeof(ip_buf));
-                   syscfg_set(NULL, "brlan_dhcp_start", ip_buf);
+                    syscfg_get(NULL, "dhcp_start", ip_buf, sizeof(ip_buf));
+                    syscfg_set(NULL, "brlan_dhcp_start", ip_buf);
 
-		   syscfg_get(NULL, "dhcp_end", ip_buf, sizeof(ip_buf));
-                   syscfg_set(NULL, "brlan_dhcp_end", ip_buf);
-	       }
-	   }
-       }// End of if(ripEnable)
-       else
-       {
-           if(syscfg_get(NULL, "brlan_lan_ipaddr", brlan_ip, sizeof(brlan_ip)) == 0)
-           {
-               if(syscfg_get(NULL, "brlan_lan_netmask", brlan_mask, sizeof(brlan_mask)) == 0)
-               {
-                   /* swap lan_ipaddr, dhcp_start and dhcp_end with brlan ip ranges */
-                   syscfg_get(NULL, "brlan_dhcp_start", brlan_dhcp_start, sizeof(brlan_dhcp_start));
-                   syscfg_get(NULL, "brlan_dhcp_end", brlan_dhcp_end, sizeof(brlan_dhcp_end));
+                    syscfg_get(NULL, "dhcp_end", ip_buf, sizeof(ip_buf));
+                    syscfg_set(NULL, "brlan_dhcp_end", ip_buf);
+	        }
+	    }
+        }// End of if(ripEnable)
+        else
+        {
+            if(syscfg_get(NULL, "brlan_lan_ipaddr", brlan_ip, sizeof(brlan_ip)) == 0)
+            {
+                if(syscfg_get(NULL, "brlan_lan_netmask", brlan_mask, sizeof(brlan_mask)) == 0)
+                {
+                    /* swap lan_ipaddr, dhcp_start and dhcp_end with brlan ip ranges */
+                    syscfg_get(NULL, "brlan_dhcp_start", brlan_dhcp_start, sizeof(brlan_dhcp_start));
+                    syscfg_get(NULL, "brlan_dhcp_end", brlan_dhcp_end, sizeof(brlan_dhcp_end));
 
-               }
-           }
-       }
+                }
+            }
+        }
+        RestartBrlanInterface(brlan_ip,brlan_mask,brlan_dhcp_start,brlan_dhcp_end,ripEnable);
+    }//End of else if(strcmp(staticBrlanEnable, "true") == 0)
 
-       syscfg_set(NULL, "lan_ipaddr", brlan_ip);
-       syscfg_set(NULL, "lan_netmask", brlan_mask);
-       syscfg_set(NULL, "dhcp_start", brlan_dhcp_start);
-       syscfg_set(NULL, "dhcp_end", brlan_dhcp_end);
-       /* sync brlan0 interface and firewall with new static ip */
-       Entry.InstanceNumber = 1;
-       Entry.AddressingType = COSA_DML_IP_ADDR_TYPE_Static;
-       sscanf( brlan_ip, "%d.%d.%d.%d", &(Entry.IPAddress.Dot[0]), &(Entry.IPAddress.Dot[1]), &(Entry.IPAddress.Dot[2]), &(Entry.IPAddress.Dot[3]));
-       sscanf( brlan_mask, "%d.%d.%d.%d", &(Entry.SubnetMask.Dot[0]), &(Entry.SubnetMask.Dot[1]), &(Entry.SubnetMask.Dot[2]), &(Entry.SubnetMask.Dot[3]));
-       CosaDmlIpIfMlanSetV4Addr(NULL, 4, &Entry);
-       pthread_create(&tid1, NULL, updateDHCPv4Status, (void *)ripEnable);
-       pthread_create(&tid2, NULL, updateWIFIStatus, (void *)ripEnable);
-
-       syscfg_set(NULL, "erouter_static_ip_enable", "false");
-    } // End of else if(strcmp(staticBrlanEnable, "true") == 0)
 }
 
 /**********************************************************************
