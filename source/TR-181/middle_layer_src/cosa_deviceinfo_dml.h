@@ -1350,23 +1350,6 @@ WANsideSSH_SetParamBoolValue
         BOOL                        bValue
     );
 
-BOOL
-RDKB_Control_GetParamBoolValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL*                       pBool
-    );
-
-BOOL
-RDKB_Control_SetParamBoolValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL                        bValue
-    );
-
-
 ULONG
 RDKB_UIBranding_GetParamStringValue
 
