@@ -3070,12 +3070,8 @@ CosaDmlIpIfSetV4Addr
             _ansc_sprintf(buf, "%d.%d.%d.%d",
                     pEntry->IPAddress.Dot[0],pEntry->IPAddress.Dot[1],pEntry->IPAddress.Dot[2],pEntry->IPAddress.Dot[3]+total_hosts-3 ); // CIDR Usable Host Range Ends
             syscfg_set(NULL, "brlan_static_dhcp_end", buf);
-
+            ErouterStaticIfMode("down");
                 // commonSyseventSet("dhcp_server-restart", "");
-            if (rip_status[0] == '1') // for brlan0 interface 4
-            {
-                RestartRipd();
-            }
         }
         else
         {
@@ -4894,6 +4890,7 @@ void ErouterStaticIfMode(char* method)
     if(strcmp(method, "restart") == 0)
     {
         syscfg_set(NULL, "erouter_static_ip_enable", "true");
+        syscfg_set(NULL, "brlan_static_ip_enable", "false");
         if(rip_status[0] == '1')
         {
             RestartRipd();
