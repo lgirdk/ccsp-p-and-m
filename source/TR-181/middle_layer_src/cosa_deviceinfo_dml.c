@@ -8942,63 +8942,6 @@ SyndicationFlowControl_GetParamBoolValue
     prototype:
 
         BOOL
-        EncryptCloudUpload_GetParamBoolValue
-            (
-                ANSC_HANDLE                 hInsContext,
-                char*                       ParamName,
-                BOOL*                       pBool
-            );
-
-    description:
-
-        This function is called to retrieve Boolean parameter value;
-
-    argument:   ANSC_HANDLE                 hInsContext,
-                The instance handle;
-
-                char*                       ParamName,
-                The parameter name;
-
-                BOOL*                       pBool
-                The buffer of returned boolean value;
-
-    return:     TRUE if succeeded.
-
-**********************************************************************/
-BOOL
-EncryptCloudUpload_GetParamBoolValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL*                       pBool
-    )
-{
-    UNREFERENCED_PARAMETER(hInsContext);
-    if (strcmp(ParamName, "Enable") == 0)
-    {
-        char value[8];
-        /* CID: 69222 Array compared against 0*/
-        if(!syscfg_get(NULL,"encryptcloudupload",value, sizeof(value)))
-        {
-             if (strcmp(value, "true") == 0)
-                 *pBool = TRUE;
-             else
-                 *pBool = FALSE;
-             return TRUE;
-        } else {
-            return FALSE;
-        }     
-    }
-    return FALSE;
-}
-
-/**********************************************************************
-
-    caller:     owner of this object
-
-    prototype:
-
-        BOOL
         UploadLogsOnUnscheduledReboot_GetParamBoolValue
             (
                 ANSC_HANDLE                 hInsContext,
@@ -10716,54 +10659,6 @@ SyndicationFlowControl_SetParamStringValue
 
             return TRUE;
         }
-    }
-    return FALSE;
-}
-/**********************************************************************
-
-    caller:     owner of this object
-
-    prototype:
-
-        BOOL
-        EncryptCloudUpload_SetParamBoolValue
-            (
-                ANSC_HANDLE                 hInsContext,
-                char*                       ParamName,
-                BOOL                        bValue
-            );
-
-    description:
-
-        This function is called to set BOOL parameter value;
-
-    argument:   ANSC_HANDLE                 hInsContext,
-                The instance handle;
-
-                char*                       ParamName,
-                The parameter name;
-
-                BOOL                        bValue
-                The updated BOOL value;
-
-    return:     TRUE if succeeded.
-
-**********************************************************************/
-BOOL
-EncryptCloudUpload_SetParamBoolValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL                        bValue
-    )
-{
-    if (IsBoolSame(hInsContext, ParamName, bValue, EncryptCloudUpload_GetParamBoolValue))
-        return TRUE;
-
-    if (strcmp(ParamName, "Enable") == 0)
-    {
-        syscfg_set_commit(NULL, "encryptcloudupload", (bValue == TRUE) ? "true" : "false");
-        return TRUE;
     }
     return FALSE;
 }
