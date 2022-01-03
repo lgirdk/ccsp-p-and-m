@@ -1799,12 +1799,6 @@
 
 			<functions>
 
-				<func_GetParamBoolValue>Logging_GetParamBoolValue</func_GetParamBoolValue>
-
-				<func_SetParamBoolValue>Logging_SetParamBoolValue</func_SetParamBoolValue>
-
-				<func_GetParamStringValue>Logging_GetParamStringValue</func_GetParamStringValue>
-
 				<func_GetParamUlongValue>Logging_GetParamUlongValue</func_GetParamUlongValue>
 
 				<func_SetParamUlongValue>Logging_SetParamUlongValue</func_SetParamUlongValue>
@@ -1812,42 +1806,6 @@
 			</functions>
 
 			<parameters>
-<?ifndef BCI?>
-				<parameter>
-
-					<name>xOpsDMRetrieveConfigLogNow</name>
-
-					<type>boolean</type>
-
-					<syntax>bool</syntax>
-
-					<writable>true</writable>
-
-				</parameter>
-<?endif?>
-				<parameter>
-
-					<name>xOpsDMUploadLogsNow</name>
-
-					<type>boolean</type>
-
-					<syntax>bool</syntax>
-
-					<writable>true</writable>
-
-				</parameter>
-
-				<parameter>
-
-					<name>xOpsDMLogsUploadStatus</name>
-
-					<type>string</type>
-
-					<syntax>string</syntax>
-
-					<writable>false</writable>
-
-				</parameter>
 
 				<parameter>
 
