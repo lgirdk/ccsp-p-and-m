@@ -4666,13 +4666,6 @@ CosaDmlDiRfcStoreInit
 }
 
 static cJSON *rfcNewJson;
-ANSC_STATUS
-StartRfcProcessing()
-{
-   CcspTraceWarning((  "%s \n", __FUNCTION__ ));
-   rfcNewJson = cJSON_CreateObject();
-   return ANSC_STATUS_SUCCESS;
-}
 
 ANSC_STATUS
 ProcessRfcSet(cJSON **pRfcStore, BOOL clearDB, char *paramFullName, char *value, char *pSource, char *pCurrentTime)
@@ -4709,37 +4702,6 @@ ProcessRfcSet(cJSON **pRfcStore, BOOL clearDB, char *paramFullName, char *value,
       else
          cJSON_AddItemToObject(rfcNewJson, paramFullName, paramObj);
    }
-   return ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
-EndRfcProcessing(cJSON **pRfcStore)
-{
-   CcspTraceWarning((  "%s \n", __FUNCTION__ ));
-
-   cJSON *current_element = NULL;
-   cJSON_ArrayForEach(current_element, *pRfcStore)
-   {
-      cJSON *updateSourceObj = cJSON_GetObjectItem(current_element, "UpdateSource");
-      if ( updateSourceObj && strcmp(updateSourceObj->valuestring, "webpa") == 0)
-      {
-         char *current_key = current_element->string;
-         CcspTraceWarning((  "%s: Found a previously webpa set param: %s \n", __FUNCTION__, current_key ));
-         // If previously set webpa param is not present in the new RFC config, add it to new RFC config.
-         if ( NULL == cJSON_GetObjectItem(rfcNewJson, current_key))
-         {
-            CcspTraceWarning((  "%s: Add the previously set webpa param to current json \n", __FUNCTION__ ));
-            cJSON_AddItemToObject(rfcNewJson, current_key, cJSON_Duplicate(current_element, 1));
-         }
-      }
-   }
-
-   char *cJsonOut = cJSON_Print(rfcNewJson);
-   writeToJson(cJsonOut, RFC_STORE_FILE);
-   free(cJsonOut);
-   cJSON_Delete(*pRfcStore);
-   *pRfcStore = rfcNewJson;
-   rfcNewJson = NULL;
    return ANSC_STATUS_SUCCESS;
 }
 
