@@ -694,11 +694,6 @@ COSADmlUploadLogsNow
 
 void CosaDmlPresenceEnable(BOOL enable);
 
-ANSC_STATUS
-StartRfcProcessing();
-
-ANSC_STATUS
-EndRfcProcessing(cJSON **pRfcStore);
 
 ANSC_STATUS
 CosaDmlDiSet_SyndicationFlowControl_Enable
