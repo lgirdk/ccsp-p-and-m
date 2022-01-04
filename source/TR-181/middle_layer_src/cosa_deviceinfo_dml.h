@@ -377,57 +377,12 @@ BOOL IsIntSame(ANSC_HANDLE hInsContext,char* ParamName, int value, GETINT_FUNC_P
 
 
 
-/***********************************************************************
-
- APIs for Object:
-
-    DeviceInfo.X_RDKCENTRAL-COM_RFC.Control
-
-    *  Control_GetParamUlongValue
-    *  Control_SetParamUlongValue
-***********************************************************************/
-BOOL
-Control_GetParamUlongValue
-    (
-        ANSC_HANDLE 		hInsContext,
-        char*			ParamName,
-        ULONG*			pValue
-    );
-
 BOOL
 Control_SetParamIntValue
     (
         ANSC_HANDLE 		hInsContext,
         char*			ParamName,
         ULONG 			ulValue
-    );
-
-/***********************************************************************
-
- APIs for Object:
-
-    Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Control.XconfSelector
-    Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Control.XconfUrl
-    Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Control.XconfRecoveryUrl
-
-    *  Control_GetParamStringValue
-    *  Control_SetParamStringValue
-***********************************************************************/
-ULONG
-Control_GetParamStringValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        char*                       pValue,
-        ULONG*                      pUlSize
-    );	
-
-BOOL
-Control_SetParamStringValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        char*                       pString
     );
 
 /***********************************************************************
