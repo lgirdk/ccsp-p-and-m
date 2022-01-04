@@ -1912,49 +1912,13 @@
                     <name>Control</name>
                     <objectType>object</objectType>
                     <functions>
-                        <func_GetParamUlongValue>Control_GetParamUlongValue</func_GetParamUlongValue>
-                        <func_SetParamUlongValue>Control_SetParamUlongValue</func_SetParamUlongValue>
-                	<func_SetParamStringValue>Control_SetParamStringValue</func_SetParamStringValue>
-	                <func_GetParamStringValue>Control_GetParamStringValue</func_GetParamStringValue>
-                        <func_GetParamBoolValue>Control_GetParamBoolValue</func_GetParamBoolValue>
 <?ifdef FEATURE_HOSTAP_AUTHENTICATOR?>
                         <func_GetParamBoolValue>Control_GetParamBoolValue</func_GetParamBoolValue>
 <?endif?>
                         <func_SetParamBoolValue>Control_SetParamBoolValue</func_SetParamBoolValue>
-                        <func_GetParamBoolValue>Control_GetParamBoolValue</func_GetParamBoolValue>
                     </functions>
 
                     <parameters>
-                        <parameter>
-                            <name>RetrieveNow</name>
-                            <type>unsignedInt</type>
-                            <syntax>uint32</syntax>
-                            <writable>true</writable>
-                        </parameter>
-                        <parameter>
-	                    <name>XconfSelector</name>
-                            <type>string(255)</type>
-                            <syntax>string</syntax>
-                            <writable>true</writable>
-                         </parameter>
-                        <parameter>
-	                    <name>XconfUrl</name>
-                            <type>string(255)</type>
-                            <syntax>string</syntax>
-                            <writable>true</writable>
-                         </parameter>
-                         <parameter>
-                             <name>ClearDB</name>
-                             <type>boolean</type>
-                             <syntax>bool</syntax>
-                             <writable>true</writable>
-                         </parameter>
-                         <parameter>
-                             <name>ClearDBEnd</name>
-                             <type>boolean</type>
-                             <syntax>bool</syntax>
-                             <writable>true</writable>
-                         </parameter>
 <?ifdef FEATURE_HOSTAP_AUTHENTICATOR?>
                          <parameter>
                              <name>DisableNativeHostapd</name>
