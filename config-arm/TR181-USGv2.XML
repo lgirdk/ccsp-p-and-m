@@ -1881,24 +1881,6 @@
                                 <writable>true</writable>
                             </parameter>
 <?endif?>
-                            <parameter>
-                                <name>ContainerSupport</name>
-                                <type>boolean</type>
-                                <syntax>bool</syntax>
-                                <writable>true</writable>
-                            </parameter>
-                            <parameter>
-                                <name>XfinityHealthCheck</name>
-                                <type>boolean</type>
-                                <syntax>bool</syntax>
-                                <writable>true</writable>
-                            </parameter>
-                            <parameter>
-                                <name>CodebigSupport</name>
-                                <type>boolean</type>
-                                <syntax>bool</syntax>
-                                <writable>true</writable>
-                            </parameter>
 <?ifdef _XB6_PRODUCT_REQ_ & !BCI?>
                             <parameter>
                                 <name>BLERadio</name>
@@ -2044,22 +2026,6 @@
                         </object>
 <?endif?>
 <?ifndef BCI?>
-                       <object>
-                            <name>MocaAccountIsolation</name>
-                            <objectType>object</objectType>
-                            <functions>
-                                <func_GetParamBoolValue>MocaAccountIsolation_GetParamBoolValue</func_GetParamBoolValue>
-                                <func_SetParamBoolValue>MocaAccountIsolation_SetParamBoolValue</func_SetParamBoolValue>
-                            </functions>
-                            <parameters>
-                              <parameter>
-                                <name>Enable</name>
-                                <type>boolean</type>
-                                <syntax>bool</syntax>
-                                <writable>true</writable>
-                              </parameter>
-                            </parameters>
-                        </object>
 <?ifdef _XB6_PRODUCT_REQ_?>
                     <object>
                             <name>CaptivePortalForNoCableRF</name>
@@ -2175,38 +2141,6 @@
                             </parameters>
                         </object>
 <?endif?>
-                        <object>
-                            <name>DLCaStore</name>
-                            <objectType>object</objectType>
-                            <functions>
-                                <func_GetParamBoolValue>DLCaStore_RFC_GetParamBoolValue</func_GetParamBoolValue>
-                                <func_SetParamBoolValue>DLCaStore_RFC_SetParamBoolValue</func_SetParamBoolValue>
-                            </functions>
-                            <parameters>
-                                <parameter>
-                                    <name>Enable</name>
-                                    <type>boolean</type>
-                                    <syntax>bool</syntax>
-                                    <writable>true</writable>
-                                </parameter>
-                            </parameters>
-                    </object>
-                    <object>
-                            <name>SHORTS</name>
-                            <objectType>object</objectType>
-                            <functions>
-                                <func_GetParamBoolValue>SHORTS_GetParamBoolValue</func_GetParamBoolValue>
-                                <func_SetParamBoolValue>SHORTS_SetParamBoolValue</func_SetParamBoolValue>
-                            </functions>
-                            <parameters>
-                                <parameter>
-                                    <name>Enable</name>
-                                    <type>boolean</type>
-                                    <syntax>bool</syntax>
-                                    <writable>true</writable>
-                                </parameter>
-                            </parameters>
-                    </object>
                         <object>
                             <name>Telemetry</name>
                             <objectType>object</objectType>
