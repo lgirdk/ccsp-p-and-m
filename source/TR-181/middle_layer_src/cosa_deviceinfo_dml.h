@@ -1676,31 +1676,6 @@ EthernetWAN_MACsec_GetParamStringValue
     );
 
 
-/***********************************************************************
-
- APIs for Object:
-
-	Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.MocaAccountIsolation.Enable
-
-    *  MocaAccountIsolation_GetParamBoolValue
-    *  MocaAccountIsolation_SetParamBoolValue
-***********************************************************************/
-BOOL
-MocaAccountIsolation_GetParamBoolValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL*                       pBool
-    );
-
-BOOL
-MocaAccountIsolation_SetParamBoolValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL                        bValue
-    );
-
 
 /***********************************************************************
 
@@ -1803,47 +1778,6 @@ ErrorsReceived_RFC_GetParamBoolValue
 
 BOOL
 ErrorsReceived_RFC_SetParamBoolValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL                        bValue
-    );
-
-BOOL
-DLCaStore_RFC_GetParamBoolValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL*                       pBool
-    );
-
-BOOL
-DLCaStore_RFC_SetParamBoolValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL                        bValue
-    );
-/***********************************************************************
-
- APIs for Object:
-
-    DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.SHORTS.Enable
-
-    *  SHORTS_GetParamBoolValue
-    *  SHORTS_SetParamBoolValue
-
-***********************************************************************/
-BOOL
-SHORTS_GetParamBoolValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL*                       pBool
-    );
-
-BOOL
-SHORTS_SetParamBoolValue
     (
         ANSC_HANDLE                 hInsContext,
         char*                       ParamName,
