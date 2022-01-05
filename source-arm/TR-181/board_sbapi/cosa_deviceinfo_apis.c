@@ -87,6 +87,11 @@
         01/11/2011    initial revision.
 
 **************************************************************************/
+/*
+   Define USE_PARTNER_ID to use partner ID to access some parameters
+*/
+//#define USE_PARTNER_ID
+
 #define _GNU_SOURCE
 #include <string.h>
 #include <stdlib.h>
@@ -101,8 +106,10 @@
 #include "ansc_string_util.h"
 
 #define DEVICE_PROPERTIES    "/etc/device.properties"
+#ifdef USE_PARTNER_ID
 #define PARTNERS_INFO_FILE              "/nvram/partners_defaults.json"
 #define BOOTSTRAP_INFO_FILE		"/nvram/bootstrap.json"
+#endif
 #define RFC_STORE_FILE       "/opt/secure/RFC/tr181store.json"
 #define MAX_TIME_FORMAT     5
 
@@ -3011,22 +3018,9 @@ ANSC_STATUS getFactoryPartnerId
         PULONG                      pulSize
 	)
 {
-#if defined(_XB6_PRODUCT_REQ_) || defined(_HUB4_PRODUCT_REQ_) || defined(_WNXL11BWL_PRODUCT_REQ_)
-	if(ANSC_STATUS_SUCCESS == platform_hal_getFactoryPartnerId(pValue))
-	{
-		*pulSize = AnscSizeOfString(pValue);
-		CcspTraceInfo(("%s:%d- %s\n",__FUNCTION__,__LINE__,pValue));
-		return ANSC_STATUS_SUCCESS; 
-	}
-	else
-	{
-		//TCCBR-4426 - getFactoryPartnerId is only implemented for XB6/HUB4 Products as of now.
-		CcspTraceError(("%s - Failed Get factoryPartnerId \n", __FUNCTION__));
-	}
-#endif
-    UNREFERENCED_PARAMETER(pValue);
-    UNREFERENCED_PARAMETER(pulSize);
-	return ANSC_STATUS_FAILURE;
+    snprintf(pValue, *pulSize, "RDKM");
+
+    return ANSC_STATUS_SUCCESS;
 }
 
 ANSC_STATUS fillCurrentPartnerId
@@ -3489,6 +3483,8 @@ void UniqueTelemetryCronJob(BOOL enable, INT timeInterval, char* tagString) {
             v_secure_system("crontab -l | grep -v '/usr/ccsp/pam/unique_telemetry_id.sh'  | crontab -");
         }
 }
+
+#ifdef USE_PARTNER_ID
 
 ANSC_STATUS
 CosaDmlDiUiBrandingInit
@@ -4531,6 +4527,24 @@ ANSC_STATUS UpdateJsonParam
 	 return ANSC_STATUS_SUCCESS;
 }
 
+#else
+
+ANSC_STATUS CosaDmlDiUiBrandingInit ( ANSC_HANDLE hContext, PCOSA_DATAMODEL_RDKB_UIBRANDING PUiBrand, PCOSA_DATAMODEL_RDKB_CDLDM PCdlDM )
+{
+    CcspTraceWarning(("%s-%d : UI Branding is not supported... \n" , __FUNCTION__, __LINE__ ));
+
+    return ANSC_STATUS_FAILURE;
+}
+
+ANSC_STATUS UpdateJsonParam ( char *pKey, char *PartnerId, char *pValue, char *pSource, char *pCurrentTime )
+{
+    CcspTraceWarning(("%s-%d : Skip updating to Partner JSON file... \n" , __FUNCTION__, __LINE__));
+
+    return ANSC_STATUS_FAILURE;
+}
+
+#endif // #ifdef USE_PARTNER_ID
+
 static int writeToJson(char *data, char *file)
 {
     if (file == NULL || data == NULL)
@@ -5318,6 +5332,8 @@ EndRfcProcessing(cJSON **pRfcStore)
    return ANSC_STATUS_SUCCESS;
 }
 
+#ifdef USE_PARTNER_ID
+
 #define MAX_NTP_SERVER 5
 
 ANSC_STATUS
@@ -5447,6 +5463,9 @@ ApplyNTPPartnerDefaults()
       free(data);
     return ANSC_STATUS_FAILURE;
 }
+
+#endif // #ifdef USE_PARTNER_ID
+
 ANSC_STATUS
 CosaDmlSetnewNTPEnable(BOOL bValue)
 {
@@ -5458,8 +5477,10 @@ CosaDmlSetnewNTPEnable(BOOL bValue)
              AnscTraceWarning(("syscfg_set failed for new_ntp_enabled\n"));
              return ANSC_STATUS_FAILURE;
          } 
+#ifdef USE_PARTNER_ID
          if( ANSC_STATUS_SUCCESS != ApplyNTPPartnerDefaults() )
              return ANSC_STATUS_FAILURE;
+#endif
      }
      else
      {
