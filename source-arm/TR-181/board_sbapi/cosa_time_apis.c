@@ -69,21 +69,29 @@
         01/11/2011    initial revision.
 
 **************************************************************************/
+/*
+   Define USE_PARTNER_ID to use partner ID to access some parameters
+*/
+//#define USE_PARTNER_ID
 
 #include "cosa_time_apis.h"
 #include <cjson/cJSON.h>
 #include "secure_wrapper.h"
 #include "safec_lib_common.h"
 
+#ifdef USE_PARTNER_ID
 #define PARTNERS_INFO_FILE              "/nvram/partners_defaults.json"
 #define BOOTSTRAP_INFO_FILE             "/nvram/bootstrap.json"
+#endif
 #define MAX_COSATIMEOFFSET_SIZE   256
 
+#ifdef USE_PARTNER_ID
 ANSC_STATUS
 CosaNTPInitJournal
     (
         PCOSA_DML_TIME_CFG pTimeCfg
     );
+#endif
 
 #ifdef _COSA_SIM_
 
@@ -794,7 +802,9 @@ CosaDmlTimeGetCfg
        /* Free Utopia Context */
        Utopia_Free(&ctx,0);
 
+#ifdef USE_PARTNER_ID
        CosaNTPInitJournal(pTimeCfg);
+#endif
 
      
     utc_enabled = checkIfUTCEnabled(DEV_PROPERTIES_FILE);
@@ -1061,6 +1071,7 @@ CosaDmlTimeGetTimeOffset
     return ANSC_STATUS_SUCCESS;
 }
 
+#ifdef USE_PARTNER_ID
 
 #define PARTNER_ID_LEN 64
 void FillParamUpdateSourceNTP(cJSON *partnerObj, char *key, char *paramUpdateSource)
@@ -1221,5 +1232,7 @@ CosaNTPInitJournal
          }
          return ANSC_STATUS_SUCCESS;
 }
+
+#endif // #ifdef USE_PARTNER_ID
 
 #endif
