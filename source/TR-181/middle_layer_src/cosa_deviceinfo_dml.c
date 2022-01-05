@@ -13468,52 +13468,6 @@ RPC_SetParamBoolValue
 }
 #endif
 
-static int write_hashedID_to_file(const cJSON *cjson)
-{
-    int ret = FALSE;
-    char *hashed_id_buf = NULL;
-    int idx;
-    cJSON *item = cJSON_GetObjectItem(cjson, "hashed_ids");
-
-    CcspTraceInfo(("The whole hashed ID msg is:\n %s \n", cJSON_Print(item)));
-
-    if ( item != NULL )
-    {
-        ret = TRUE;
-        FILE *fp = fopen("/tmp/hashed_id", "w");
-
-        if(!fp)
-        {
-            CcspTraceError(("%s unable to create /tmp/hashed_id file \n",__FUNCTION__));
-            ret = FALSE;
-        }
-        else
-        {
-            for(idx=0; idx < cJSON_GetArraySize(item); idx++)
-            {
-                cJSON * subitem = cJSON_GetArrayItem(item, idx);
-                hashed_id_buf = subitem->valuestring;
-                if(hashed_id_buf == NULL)
-                {
-                    CcspTraceError(("Unable to get the hashed id. \n"));
-                    ret = FALSE;
-                    break;
-                }
-
-                fprintf(fp,"%s\n",hashed_id_buf);
-            }
-            fclose(fp);	   
-        }
-
-        if(ret != FALSE)
-        {
-            CcspTraceInfo(("Successfully write hashed ids to /tmp/hashed_id file. \n"));
-        }
-    }
-
-    return ret;
-}
-
 /**********************************************************************
 
     caller:     owner of this object
