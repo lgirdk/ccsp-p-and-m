@@ -67,6 +67,10 @@
         01/11/2011    initial revision.
 
 **************************************************************************/
+/*
+   Define USE_PARTNER_ID to use partner ID to access some parameters
+*/
+//#define USE_PARTNER_ID
 
 #include "cosa_deviceinfo_internal.h"
 #include "cosa_deviceinfo_apis_custom.h"
@@ -187,7 +191,12 @@ CosaDeviceInfoInitialize
 	CosaDmlDiGetSyndicationTR69CertLocation( (ANSC_HANDLE)pMyObject,
 											  pMyObject->TR69CertLocation.ActiveValue );
 	CosaDeriveSyndicationPartnerID(pMyObject->PartnerID);
+
+#ifdef USE_PARTNER_ID
+    // UI Branding is not supported
     CosaDmlDiUiBrandingInit((ANSC_HANDLE)pMyObject, &pMyObject->UiBrand);
+#endif
+
 	CosaDmlDiWiFiTelemetryInit(&pMyObject->WiFi_Telemetry);
 	CosaDmlDiUniqueTelemetryIdInit(&pMyObject->UniqueTelemetryId);
     CosaDmlDiSyndicationFlowControlInit(&pMyObject->SyndicatonFlowControl);
