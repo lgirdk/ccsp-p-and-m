@@ -67,6 +67,11 @@
  
 
 **************************************************************************/
+/*
+   Define USE_PARTNER_ID to use partner ID to access some parameters
+*/
+//#define USE_PARTNER_ID
+
 #define _XOPEN_SOURCE 700
 #include <string.h>
 #include <strings.h>
@@ -138,7 +143,9 @@
 #define PSM_ENABLE_STRING_TRUE  "TRUE"
 #define PSM_ENABLE_STRING_FALSE "FALSE"        
 
+#ifdef USE_PARTNER_ID
 #define BOOTSTRAP_INFO_FILE             "/nvram/bootstrap.json"
+#endif
 
 #ifndef FEATURE_RDKB_WAN_MANAGER
 COSA_DML_DHCPC_FULL     CH_g_dhcpv4_client[COSA_DML_DHCP_MAX_ENTRIES]; 
@@ -1241,8 +1248,10 @@ static void getDHCPv4ServerPoolParametersFromPSM(ULONG instancenum, PCOSA_DML_DH
         ((CCSP_MESSAGE_BUS_INFO *)bus_handle)->freefunc(param_value);   
     }
 
+#ifdef USE_PARTNER_ID
     // Get the UpdateSource info from /nvram/bootstrap.json
     CosaDhcpInitJournal(pPoolCfg);
+#endif
     
     return;
 }
@@ -4121,6 +4130,7 @@ CosaDmlDhcpsSetX_COM_CISCO_Saddr
 }
 
 
+#ifdef USE_PARTNER_ID
 
 #define PARTNER_ID_LEN 64
 void FillParamUpdateSource(cJSON *partnerObj, char *key, char *paramUpdateSource)
@@ -4286,6 +4296,8 @@ CosaDhcpInitJournal
          }
          return ANSC_STATUS_SUCCESS;
 }
+
+#endif // #ifdef USE_PARTNER_ID
 
 static int g_NrLanAllowedSubnet =  0;
 
