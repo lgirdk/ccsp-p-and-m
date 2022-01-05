@@ -542,31 +542,6 @@ isValidInput
         int                         sizeof_wrapped_inputparam
     );
 
-
-ANSC_STATUS
-CosaDmlDiGetFirmwareUpgradeStartTime
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue,
-        ULONG*                      pulSize
-    );
-
-ANSC_STATUS
-CosaDmlDiGetFirmwareUpgradeEndTime
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue,
-        ULONG*                      pulSize
-    );
-
-ANSC_STATUS
-CosaDmlDiSetFirmwareUpgradeStartTime (char* pString);
-
-ANSC_STATUS
-CosaDmlDiSetFirmwareUpgradeEndTime (char* pString);
-
-
-
 ANSC_STATUS
 CosaDmlDiGetAndProcessDhcpServDetectionFlag
    (
