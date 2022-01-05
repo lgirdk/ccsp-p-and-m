@@ -17409,32 +17409,6 @@ Broadcast_SetParamBoolValue(
     return FALSE;
 }
 
-BOOL
-xBlueTooth_GetParamBoolValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL*                       pBool
-    )
-{
-          UNREFERENCED_PARAMETER(hInsContext);
-          if (strcmp(ParamName, "LimitBeaconDetection") == 0)
-          {
-               char buf[8] = {0};
-               *pBool = FALSE;
-               syscfg_get( NULL, "limit_beacon_detection", buf, sizeof(buf));
-               if( buf[0] != '\0' )
-               {
-                  if (!strncasecmp(buf, "true", 4))
-                  {
-                      *pBool = TRUE;
-                  }
-               }
-               return TRUE;
-           }
-        return FALSE;
-}
-
 void *handleBleRestart(void *arg)
 {
 	UNREFERENCED_PARAMETER(arg);
@@ -17444,30 +17418,6 @@ void *handleBleRestart(void *arg)
     CcspTraceInfo(("handleBleRestart Completed \n"));
     return NULL;
 }
-
-BOOL
-xBlueTooth_SetParamBoolValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL                        bValue
-    )
-{
-    UNREFERENCED_PARAMETER(hInsContext);
-     CcspTraceInfo(("xBlueTooth_SetParamBoolValue \n"));
-     pthread_t tid;
-    if (strcmp(ParamName, "LimitBeaconDetection") == 0)
-    {
-        if(syscfg_set_commit(NULL, "limit_beacon_detection", bValue ? "true" : "false"))
-        {
-            CcspTraceError(("syscfg_set failed\n"));
-        }
-        pthread_create(&tid, NULL, handleBleRestart, NULL); 
-        return TRUE;
-    }
-    return FALSE;
-}
-
 
 /**********************************************************************
 
