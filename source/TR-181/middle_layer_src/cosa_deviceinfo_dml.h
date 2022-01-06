@@ -1545,51 +1545,6 @@ MTLS_SetParamBoolValue
     );
 
 /***********************************************************************
- *
- APIs for Object:
-
-    Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.FWUpdate.AutoExcluded
-
-    *  AutoExcluded_GetParamBoolValue
-    *  AutoExcluded_SetParamBoolValue
-    *  AutoExcluded_GetParamStringValue
-    *  AutoExcluded_SetParamStringValue
-***********************************************************************/
-BOOL
-AutoExcluded_GetParamBoolValue
-
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL*                       pBool
-    );
-
-BOOL
-AutoExcluded_SetParamBoolValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL                        bValue
-    );
-
-ULONG
-AutoExcluded_GetParamStringValue
-(
- ANSC_HANDLE                 hInsContext,
- char*                       ParamName,
- char*                       pValue,
- ULONG*                      pUlSize
-);
-
-BOOL
-AutoExcluded_SetParamStringValue
-(
- ANSC_HANDLE                 hInsContext,
- char*                       ParamName,
- char*                       pString
-);
-
-/***********************************************************************
 
  APIs for Object:
 
