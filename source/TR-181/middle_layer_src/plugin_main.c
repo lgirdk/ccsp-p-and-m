@@ -77,7 +77,6 @@
 #include "cosa_users_dml.h"
 #include "cosa_upnp_dml.h"
 #include "cosa_bridging_dml.h"
-#include "cosa_x_cisco_com_ddns_dml.h"
 #include "cosa_x_cisco_com_security_dml.h"
 /*#include "cosa_softwaremodules_config.h"*/
 #include "cosa_ppp_dml.h"
