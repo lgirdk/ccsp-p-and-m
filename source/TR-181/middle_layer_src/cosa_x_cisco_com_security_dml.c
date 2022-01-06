@@ -1891,12 +1891,6 @@ Firewall1_SetParamUlongValue
     /* check the parameter name and set the corresponding value */
     if (strcmp(ParamName, "FirewallLevel") == 0)
     {
-        /* save update to backup */
-        if(CosaGetParamValueBool("Device.X_RDKCENTRAL-COM_VideoService.Enabled") && uValue == 1)
-        {
-            CcspTraceWarning(("Firewall Level can not be set to HIGH when VideoService is ENABLED\n"));
-            return FALSE;
-        }
         pCosaDMSecurity->FirewallConfig.FirewallLevel = uValue;
 #if defined(_INTEL_BUG_FIXES_)
         commonSyseventSet("pp_flush", "1");

@@ -93,8 +93,6 @@ libCcspPandM_middle_layer_src_la_SOURCES = \
     cosa_users_dml.c \
     cosa_users_internal.c \
     cosa_webconfig_api.c \
-    cosa_x_cisco_com_ddns_dml.c \
-    cosa_x_cisco_com_ddns_internal.c \
     cosa_x_cisco_com_devicecontrol_dml.c \
     cosa_x_cisco_com_devicecontrol_internal.c \
     cosa_x_cisco_com_diagnostics_dml.c \
@@ -108,7 +106,6 @@ libCcspPandM_middle_layer_src_la_SOURCES = \
     cosa_x_cisco_com_security_internal.c \
     cosa_x_comcast_com_parentalcontrol_dml.c \
     cosa_x_comcast_com_parentalcontrol_internal.c \
-    cosa_x_rdkcentral_com_videoservice_dml.c \
     cosa_x_rdkcentral_com_xpc_dml.c \
     cosa_x_rdkcentral_com_xpc_internal.c \
     hotspotdoc.c \

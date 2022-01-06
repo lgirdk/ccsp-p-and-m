@@ -2165,12 +2165,7 @@ LanMngm_SetParamUlongValue
 		return FALSE;
             }
         }
-	#endif
-        if(CosaGetParamValueBool("Device.X_RDKCENTRAL-COM_VideoService.Enabled") && uValuepUlong != 3)
-        {
-            CcspTraceWarning(("LanMode setting to Bridge is not supported when VideoService is ENABLED\n"));
-            return FALSE;
-        }
+	#endif        
 	#endif
 	
         /*if((uValuepUlong == 2) && is_mesh_enabled())
