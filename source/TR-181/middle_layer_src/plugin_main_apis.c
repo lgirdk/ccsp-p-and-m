@@ -76,9 +76,6 @@
 #include "cosa_users_apis.h"
 #include "cosa_deviceinfo_apis.h"
 #include "cosa_firewall_internal.h"
-#if !defined(DDNS_BROADBANDFORUM)
-#include "cosa_x_cisco_com_ddns_internal.h"
-#endif
 #include "cosa_x_cisco_com_security_internal.h"
 #include "cosa_ip_apis.h"
 #include "cosa_hosts_apis.h"
