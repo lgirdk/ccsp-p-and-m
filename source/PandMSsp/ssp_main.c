@@ -72,6 +72,7 @@
 #include "secure_wrapper.h"
 #include "safec_lib_common.h"
 #include "telemetry_busmessage_sender.h"
+#include <sys/resource.h>
 
 #define DEBUG_INI_NAME  "/etc/debug.ini"
 // With WAN boot time optimization, in few cases P&M initialization is further delayed
@@ -304,6 +305,10 @@ static void daemonize(void) {
 		exit(0);
 		break;
 	default:
+#ifdef _PUMA6_ARM_
+                // Increase priority of child process
+                setpriority(PRIO_PROCESS, pid, -20);
+#endif
                 CcspTraceInfo(("PAM_DBG:--------------waiting for child process to initialize------------\n"));
 
                 get_uptime(&uptime1);
@@ -358,6 +363,12 @@ static void daemonize(void) {
                         CcspTraceInfo(("PAM_DBG:------------unlink returned %d - %s ------------\n", s, strerror(errno)));
                     }
                 }
+#ifdef _PUMA6_ARM_
+                else
+                {
+                    setpriority(PRIO_PROCESS, pid, 0);
+                }
+#endif
 		_exit(0);
 	}
 
