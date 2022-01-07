@@ -182,7 +182,7 @@ _COSA_DML_GRE_TUNNEL
     BOOL                        UseSequenceNumber;
     BOOL                        UseChecksum;
     
-	INT                         DSCPMarkPolicy;
+	ULONG                       DSCPMarkPolicy;
 	INT                         GreTransportInterface;
 	
     COSA_DML_KEEPALIVE_POLICY   KeepAlivePolicy;
@@ -316,10 +316,10 @@ ANSC_STATUS
 CosaDml_GreTunnelSetUseChecksum(ULONG ins, BOOL enable);	//
 
 ANSC_STATUS
-CosaDml_GreTunnelGetDSCPMarkPolicy(ULONG ins, INT *dscp); //
+CosaDml_GreTunnelGetDSCPMarkPolicy(ULONG ins, ULONG *dscp); //
 
 ANSC_STATUS
-CosaDml_GreTunnelSetDSCPMarkPolicy(ULONG ins, INT dscp); //
+CosaDml_GreTunnelSetDSCPMarkPolicy(ULONG ins, ULONG dscp); //
 
 ANSC_STATUS
 CosaDml_GreTunnelIfGetVlanId(ULONG tuIns, ULONG ins, INT *vlanId); //
