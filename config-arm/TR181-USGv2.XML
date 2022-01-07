@@ -19379,8 +19379,8 @@
                     </parameter>
 					<parameter>
                         <name>DSCPMarkPolicy</name>
-                        <type>int[-2:63]</type>
-                        <syntax>int</syntax>
+                        <type>unsignedInt[0:63]</type>
+                        <syntax>uint32</syntax>
                         <writable>true</writable>
                     </parameter>
 					<parameter>
