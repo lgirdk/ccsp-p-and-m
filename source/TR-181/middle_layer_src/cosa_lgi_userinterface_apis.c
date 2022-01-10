@@ -119,13 +119,13 @@ CosaDmlStdRaGetCfg
     pCfg->bEnabled = FALSE;
 
     /* Supported Protocols */
-    snprintf(pCfg->SupportedProtocols, sizeof(pCfg->SupportedProtocols), "HTTPS");
+    snprintf(pCfg->SupportedProtocols, sizeof(pCfg->SupportedProtocols), "HTTP");
 
     /* Port - default to HTTPS */
-    pCfg->Port = HTTPS_INTERNAL_PORT;
+    pCfg->Port = HTTP_INTERNAL_PORT;
 
     /* Protocol - default to HTTPS */
-    snprintf(pCfg->Protocol, sizeof(pCfg->Protocol), "HTTPS");
+    snprintf(pCfg->Protocol, sizeof(pCfg->Protocol), "HTTP");
 
     return ANSC_STATUS_SUCCESS;
 }
