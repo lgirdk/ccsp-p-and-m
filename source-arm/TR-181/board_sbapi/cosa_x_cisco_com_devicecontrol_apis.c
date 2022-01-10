@@ -565,7 +565,6 @@ CosaDmlDcInit
     }*/
 
     platform_hal_DocsisParamsDBInit();
-    syscfg_init();
     return ANSC_STATUS_SUCCESS;
 }
 

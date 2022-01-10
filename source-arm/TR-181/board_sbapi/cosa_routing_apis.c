@@ -4982,9 +4982,6 @@ CosaDmlRoutingDelV6Entry
     }
     alias6 = &info6->alias6;
 
-	if (syscfg_init() != 0)
-		return ANSC_STATUS_FAILURE;
-
     /* PSM params */
     snprintf(key, sizeof(key), "%s.%s.%s", TR_RT6_PREF, alias6->name, RT6_INS);
     syscfg_unset(NULL, key);
@@ -5307,8 +5304,6 @@ CosaDmlRipIfGetEntry
         return ANSC_STATUS_FAILURE;
     }
 
-    syscfg_init();
-
     /*  to get Device.Routing.RIP.InterfaceSetting.{i}.Version */
     pEntry->Cfg.Version = 2;
 
@@ -5605,8 +5600,6 @@ CosaDmlRipIfSetCfg
         CcspTraceWarning(("%s Error initializing context\n", __FUNCTION__));
         return ANSC_STATUS_FAILURE;
     }
-
-     syscfg_init();
 
      /* set cfg into backend to trigger the state machine */
     if ( 1 == pEntry->InstanceNumber )
