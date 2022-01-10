@@ -676,7 +676,6 @@ if(id != 0)
      exit(1);
    }
 
-    syscfg_init();
     CcspTraceInfo(("PAM_DBG:-------Read Log Info\n"));
     char buffer[5] = {0};
     if( 0 == syscfg_get( NULL, "X_RDKCENTRAL-COM_LoggerEnable" , buffer, sizeof( buffer ) ) &&  ( buffer[0] != '\0' ) )
