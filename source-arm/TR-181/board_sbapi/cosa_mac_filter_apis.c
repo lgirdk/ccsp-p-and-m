@@ -211,13 +211,9 @@ CosaDmlFW_MACFilter_SetConf(ULONG ins, COSA_DML_FW_MACFILTER *pEntry)
 ANSC_STATUS CosaDmlFW_MACDayOfWeek_GetBlockTimeBitMaskType(ULONG *pulBlockTimeBitMaskType) {
 
     char buf[16];
-
-    if (syscfg_init() == 0) {
-        syscfg_get(NULL, "mac_dayofweek_block_time_bitmask_type", buf, sizeof(buf));
-        *pulBlockTimeBitMaskType = atoi(buf);
-        return ANSC_STATUS_SUCCESS;
-    }
-    return ANSC_STATUS_FAILURE;
+    syscfg_get(NULL, "mac_dayofweek_block_time_bitmask_type", buf, sizeof(buf));
+    *pulBlockTimeBitMaskType = atoi(buf);
+    return ANSC_STATUS_SUCCESS;
 }
 
 ANSC_STATUS CosaDmlFW_MACDayOfWeek_SetBlockTimeBitMaskType(ULONG blockTimeBitMaskType) {
@@ -225,10 +221,6 @@ ANSC_STATUS CosaDmlFW_MACDayOfWeek_SetBlockTimeBitMaskType(ULONG blockTimeBitMas
     char buf[16];
 
     sprintf(buf, "%lu", blockTimeBitMaskType);
-
-    if (syscfg_init() != 0) {
-        return ANSC_STATUS_FAILURE;
-    }
 
     if(syscfg_set(NULL, "mac_dayofweek_block_time_bitmask_type", buf) != 0) {
         return ANSC_STATUS_FAILURE;

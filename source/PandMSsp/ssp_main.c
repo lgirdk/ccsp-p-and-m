@@ -764,7 +764,6 @@ if(id != 0)
 
     dump_maps();
 
-    syscfg_init();
     CcspTraceInfo(("PAM_DBG:-------Read Log Info\n"));
     char buffer[5] = {0};
     if( 0 == syscfg_get( NULL, "X_RDKCENTRAL-COM_LoggerEnable" , buffer, sizeof( buffer ) ) &&  ( buffer[0] != '\0' ) )
