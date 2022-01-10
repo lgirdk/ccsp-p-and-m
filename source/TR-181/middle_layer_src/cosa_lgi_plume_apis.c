@@ -167,8 +167,7 @@ CosaDmlGetPlumeUrl
     memset(buf, 0, sizeof(buf));
 
     if(pValue) {
-        if((0 == syscfg_init()) &&
-           (!syscfg_get(NULL, "son_url", buf, URL_LEN))) {
+        if(!syscfg_get(NULL, "son_url", buf, URL_LEN)) {
             if(AnscSizeOfString(buf) < *pUlSize) {
                 AnscCopyString(pValue, buf);
                 return ANSC_STATUS_SUCCESS;
@@ -187,13 +186,9 @@ CosaDmlSetPlumeUrl
     char                        *pValue
 )
 {
-    if(syscfg_init() == 0)
-    {
         syscfg_set(NULL, "son_url", pValue);
         syscfg_commit();
         return ANSC_STATUS_SUCCESS;
-    }
-    return ANSC_STATUS_FAILURE;
 }
 
 BOOL
@@ -207,11 +202,9 @@ CosaDmlGetPlumeAdminStatus
     memset(buf, 0, sizeof(buf));
 
     if(pValue) {
-        if(0 == syscfg_init()) {
             syscfg_get(NULL, "son_admin_status", buf, sizeof(buf));
             *pValue = (strcmp(buf, "1") == 0);
             return TRUE;
-        }
     }
     return FALSE;
 }
@@ -223,15 +216,12 @@ CosaDmlSetPlumeAdminStatus
     BOOL                        value
 )
 {
-    if(syscfg_init() == 0)
-    {
-        if( syscfg_set(NULL, "son_admin_status", value ? "1" : "0") == 0)
-        {
-            syscfg_commit();
-            return TRUE;
-        }
-    }
-    return FALSE;
+   if( syscfg_set(NULL, "son_admin_status", value ? "1" : "0") == 0)
+   {
+        syscfg_commit();
+        return TRUE;
+   }
+   return FALSE;
 }
 
 BOOL
@@ -245,11 +235,9 @@ CosaDmlGetPlumeOperationalStatus
     memset(buf, 0, sizeof(buf));
 
     if(pValue) {
-        if(0 == syscfg_init()) {
-            syscfg_get(NULL, "son_operational_status", buf, sizeof(buf));
-            *pValue = (strcmp(buf, "1") == 0);
-            return TRUE;
-        }
+           syscfg_get(NULL, "son_operational_status", buf, sizeof(buf));
+           *pValue = (strcmp(buf, "1") == 0);
+           return TRUE;
     }
     return FALSE;
 }
@@ -261,15 +249,12 @@ CosaDmlSetPlumeOperationalStatus
     BOOL                        value
 )
 {
-    if(syscfg_init() == 0)
-    {
         if( syscfg_set(NULL, "son_operational_status", value ? "1" : "0") == 0)
         {
             syscfg_commit();
             return TRUE;
         }
-    }
-    return FALSE;
+        return FALSE;
 }
 
 BOOL
@@ -283,11 +268,9 @@ CosaDmlGetPlumeDFSEnable
     memset(buf, 0, sizeof(buf));
 
     if(pValue) {
-        if(0 == syscfg_init()) {
             syscfg_get(NULL, "son_dfs_enable", buf, sizeof(buf));
             *pValue = (strcmp(buf, "1") == 0);
             return TRUE;
-        }
     }
     return FALSE;
 }
@@ -299,13 +282,10 @@ CosaDmlSetPlumeDFSEnable
     BOOL                        value
 )
 {
-    if(syscfg_init() == 0)
+    if( syscfg_set(NULL, "son_dfs_enable", value ? "1" : "0") == 0)
     {
-        if( syscfg_set(NULL, "son_dfs_enable", value ? "1" : "0") == 0)
-        {
-            syscfg_commit();
-            return TRUE;
-        }
+         syscfg_commit();
+         return TRUE;
     }
     return FALSE;
 }
@@ -321,11 +301,9 @@ CosaDmlGetPlumeNativeAtmBsControl
     memset(buf, 0, sizeof(buf));
 
     if(pValue) {
-        if(0 == syscfg_init()) {
             syscfg_get(NULL, "son_native_atm_bs_disable", buf, sizeof(buf));
             *pValue = (strcmp(buf, "1") == 0);
             return TRUE;
-        }
     }
     return FALSE;
 }
@@ -352,13 +330,10 @@ CosaDmlSetPlumeNativeAtmBsControl
     pWiFiDataPaths->applyToRadio |= 1 << RADIO_2G_IDX;
     pWiFiDataPaths->applyToRadio |= 1 << RADIO_5G_IDX;
 
-    if(syscfg_init() == 0)
+    if( syscfg_set(NULL, "son_native_atm_bs_disable", value ? "1" : "0") == 0)
     {
-        if( syscfg_set(NULL, "son_native_atm_bs_disable", value ? "1" : "0") == 0)
-        {
-            syscfg_commit();
-            return TRUE;
-        }
+          syscfg_commit();
+          return TRUE;
     }
     return FALSE;
 }
