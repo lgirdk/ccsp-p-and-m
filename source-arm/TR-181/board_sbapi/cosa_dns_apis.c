@@ -1305,11 +1305,6 @@ CosaDmlDnsClientGetServers
     char server_enable[sizeof(SYSCFG_DNS_SERVER_ENABLE_KEY) + 1] = {0};
     char buf[3] = {0};
 
-    if (syscfg_init() != 0)
-    {
-        return NULL;
-    }
-
     if (!Utopia_Init(&ctx))
     {
         return NULL;
@@ -1635,13 +1630,9 @@ CosaDmlDnsClientSetServer
     }
     if (pEntry->InstanceNumber <= DHCP_DNS_NUMBER * 2) //This checking is done to set the value for type DHCP separately
     {
-        if(!syscfg_init())
-        {
-            snprintf(server_enable, sizeof(server_enable), SYSCFG_DNS_SERVER_ENABLE_KEY, pEntry->InstanceNumber);
-            syscfg_set(NULL, server_enable, pEntry->bEnabled ? "1" : "0");
-            return ANSC_STATUS_SUCCESS;
-        }
-        return ANSC_STATUS_FAILURE;
+         snprintf(server_enable, sizeof(server_enable), SYSCFG_DNS_SERVER_ENABLE_KEY, pEntry->InstanceNumber);
+         syscfg_set(NULL, server_enable, pEntry->bEnabled ? "1" : "0");
+         return ANSC_STATUS_SUCCESS;        
     }
 
     Utopia_GetDnsServerIndexByInsNum(&ctx, pEntry->InstanceNumber, &index);

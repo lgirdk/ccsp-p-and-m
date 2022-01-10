@@ -1367,12 +1367,9 @@ CosaDmlFW_V6DayOfWeek_GetBlockTimeBitMaskType
 {
     char buf[16] = {0};
 
-    if (syscfg_init() == 0) {
-        syscfg_get(NULL, "v6_dayofweek_block_time_bitmask_type", buf, sizeof(buf));
-        *pulBlockTimeBitMaskType = atoi(buf);
-        return ANSC_STATUS_SUCCESS;
-    }
-    return ANSC_STATUS_FAILURE;
+    syscfg_get(NULL, "v6_dayofweek_block_time_bitmask_type", buf, sizeof(buf));
+    *pulBlockTimeBitMaskType = atoi(buf);
+    return ANSC_STATUS_SUCCESS;
 }
 
 /**********************************************************************
@@ -1405,11 +1402,6 @@ CosaDmlFW_V6DayOfWeek_SetBlockTimeBitMaskType
     char buf[16] = {0};
 
     sprintf(buf, "%lu", blockTimeBitMaskType);
-
-    if (syscfg_init() != 0) {
-        return ANSC_STATUS_FAILURE;
-    }
-
     if(syscfg_set(NULL, "v6_dayofweek_block_time_bitmask_type", buf) != 0) {
         return ANSC_STATUS_FAILURE;
     }
