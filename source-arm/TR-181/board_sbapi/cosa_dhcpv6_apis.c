@@ -4520,8 +4520,6 @@ OPTIONS:
                 char *str_ptr = NULL;
                 char linklocalstr[LinkLocal_STR_LEN] = {'\0'};
 
-                syscfg_init();
-
 
                 pp = popen("ifconfig brlan0 | grep Scope:Link | awk '{print $3}'", "r");
                 if(pp)
