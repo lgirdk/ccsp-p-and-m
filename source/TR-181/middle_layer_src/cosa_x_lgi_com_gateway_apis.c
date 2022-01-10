@@ -66,15 +66,7 @@ CosaDmlLgiGwGetDnsOverride
 {
     char buf[8];
     memset(buf, 0, sizeof(buf));
-
-    if(syscfg_init() == 0)
-    {
-        syscfg_get( NULL, "dns_override", buf, sizeof(buf));
-    }
-    else
-    {
-        CcspTraceError(("syscfg_init failed in %s\n",__FUNCTION__));
-    }
+     syscfg_get( NULL, "dns_override", buf, sizeof(buf));
     *pValue = (strcmp(buf, "true") == 0);
     return 0;
 }
@@ -119,31 +111,22 @@ CosaDmlLgiGwGetDnsIpv4Preferred
     char buf[64];
     memset(buf, 0, sizeof(buf));
 
-    if(syscfg_init() == 0)
+    syscfg_get( NULL, "dns_ipv4_preferred", buf, sizeof(buf));
+    if(AnscSizeOfString(buf) == 0)
     {
-        syscfg_get( NULL, "dns_ipv4_preferred", buf, sizeof(buf));
-        if(AnscSizeOfString(buf) == 0)
-        {
-            AnscCopyString(pValue, "0.0.0.0");
-            return 0;
-        }
-        else if(AnscSizeOfString(buf) < *pUlSize)
-        {
-            AnscCopyString(pValue, buf);
-            return 0;
-        }
-        else
-        {
-            *pUlSize = AnscSizeOfString(buf);
-            return 1;
-        }
+        AnscCopyString(pValue, "0.0.0.0");
+        return 0;
+    }
+    else if(AnscSizeOfString(buf) < *pUlSize)
+    {
+        AnscCopyString(pValue, buf);
+        return 0;
     }
     else
     {
-        CcspTraceError(("syscfg_init failed in %s\n",__FUNCTION__));
-    }
-
-    return -1;
+        *pUlSize = AnscSizeOfString(buf);
+        return 1;
+    }    
 }
 
 int
@@ -156,31 +139,23 @@ CosaDmlLgiGwGetDnsIpv4Alternate
     char buf[64];
     memset(buf, 0, sizeof(buf));
 
-    if(syscfg_init() == 0)
+    syscfg_get( NULL, "dns_ipv4_alternate", buf, sizeof(buf));
+    if(AnscSizeOfString(buf) == 0)
     {
-        syscfg_get( NULL, "dns_ipv4_alternate", buf, sizeof(buf));
-        if(AnscSizeOfString(buf) == 0)
-        {
-            AnscCopyString(pValue, "0.0.0.0");
-            return 0;
-        }
-        else if(AnscSizeOfString(buf) < *pUlSize)
-        {
-            AnscCopyString(pValue, buf);
-            return 0;
-        }
-        else
-        {
-            *pUlSize = AnscSizeOfString(buf);
-            return 1;
-        }
+        AnscCopyString(pValue, "0.0.0.0");
+        return 0;
+    }
+    else if(AnscSizeOfString(buf) < *pUlSize)
+    {
+        AnscCopyString(pValue, buf);
+        return 0;
     }
     else
     {
-        CcspTraceError(("syscfg_init failed in %s\n",__FUNCTION__));
-    }
-    return -1;
-}
+        *pUlSize = AnscSizeOfString(buf);
+        return 1;
+    }   
+ }
 
 int
 CosaDmlLgiGwGetDnsIpv6Preferred
@@ -192,30 +167,23 @@ CosaDmlLgiGwGetDnsIpv6Preferred
     char buf[64];
     memset(buf, 0, sizeof(buf));
 
-    if(syscfg_init() == 0)
+    syscfg_get( NULL, "dns_ipv6_preferred", buf, sizeof(buf));
+    
+    if(AnscSizeOfString(buf) == 0)
     {
-        syscfg_get( NULL, "dns_ipv6_preferred", buf, sizeof(buf));
-        if(AnscSizeOfString(buf) == 0)
-        {
-            AnscCopyString(pValue, "0:0:0:0:0:0:0:0");
-            return 0;
-        }
-        else if(AnscSizeOfString(buf) < *pUlSize)
-        {
-            AnscCopyString(pValue, buf);
-            return 0;
-        }
-        else
-        {
-            *pUlSize = AnscSizeOfString(buf);
-            return 1;
-        }
+        AnscCopyString(pValue, "0:0:0:0:0:0:0:0");
+        return 0;
+    }
+    else if(AnscSizeOfString(buf) < *pUlSize)
+    {
+        AnscCopyString(pValue, buf);
+        return 0;
     }
     else
     {
-        CcspTraceError(("syscfg_init failed in %s\n",__FUNCTION__));
+        *pUlSize = AnscSizeOfString(buf);
+        return 1;
     }
-    return -1;
 }
 
 int
@@ -228,30 +196,22 @@ CosaDmlLgiGwGetDnsIpv6Alternate
     char buf[64];
     memset(buf, 0, sizeof(buf));
 
-    if(syscfg_init() == 0)
+    syscfg_get( NULL, "dns_ipv6_alternate", buf, sizeof(buf));
+    if(AnscSizeOfString(buf) == 0)
     {
-        syscfg_get( NULL, "dns_ipv6_alternate", buf, sizeof(buf));
-        if(AnscSizeOfString(buf) == 0)
-        {
-            AnscCopyString(pValue, "0:0:0:0:0:0:0:0");
-            return 0;
-        }
-        else if(AnscSizeOfString(buf) < *pUlSize)
-        {
-            AnscCopyString(pValue, buf);
-            return 0;
-        }
-        else
-        {
-            *pUlSize = AnscSizeOfString(buf);
-            return 1;
-        }
+        AnscCopyString(pValue, "0:0:0:0:0:0:0:0");
+        return 0;
+    }
+    else if(AnscSizeOfString(buf) < *pUlSize)
+    {
+        AnscCopyString(pValue, buf);
+        return 0;
     }
     else
     {
-        CcspTraceError(("syscfg_init failed in %s\n",__FUNCTION__));
+        *pUlSize = AnscSizeOfString(buf);
+        return 1;
     }
-    return -1;
 }
 
 void CosaDmlDNSOverride()
