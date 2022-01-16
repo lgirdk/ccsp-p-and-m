@@ -17709,7 +17709,7 @@
             <name>ManualPrefixes</name>
             <type>string</type>
             <syntax>string</syntax>
-            <writable>false</writable>
+            <writable>true</writable>
           </parameter>
           <parameter>
             <name>Prefixes</name>
