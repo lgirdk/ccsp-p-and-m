@@ -1288,6 +1288,7 @@ InterfaceSetting1_GetParamStringValue
 
     UNREFERENCED_PARAMETER(pUlSize);
     ulIndex = pCosaContext->InstanceNumber - 1;
+    char syscfgName[36];
 
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "Alias") == 0)
@@ -1319,15 +1320,30 @@ InterfaceSetting1_GetParamStringValue
 
     if (strcmp(ParamName, "ManualPrefixes") == 0)
     {
-        CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg, ulIndex);
-        /* collect value */
-        rc = strcpy_s(pValue, *pUlSize, pRAInterface->Cfg.ManualPrefixes);
-        if ( rc != EOK)
+        char buf[128];
+
+        if(pRAInterface->Cfg.InstanceNumber == 1)
+          strcpy(syscfgName,"Manual_Prefixes");
+        else
+          sprintf(syscfgName, "Manual_Prefixes_%d",pRAInterface->Cfg.InstanceNumber);
+
+        if(!syscfg_get( NULL, syscfgName , buf, sizeof(buf)))
         {
-            ERR_CHK(rc);
-            return -1;
+    	   AnscCopyString(pValue,  buf);    
         }
-        return 0;
+        else
+        {
+           AnscTraceWarning(("Error in syscfg_get for RebootReason or no instance\n"));
+           CosaDmlRaIfGetCfg (pRAInterface, (PCOSA_DML_RA_IF_CFG)&pRAInterface->Cfg, ulIndex);
+           /* collect value */
+           rc = strcpy_s(pValue, *pUlSize, pRAInterface->Cfg.ManualPrefixes);
+           if ( rc != EOK)
+           {
+              ERR_CHK(rc);
+              return -1;
+           }
+        }
+      return 0;
     }
 
     if (strcmp(ParamName, "Prefixes") == 0)
@@ -1627,6 +1643,8 @@ InterfaceSetting1_SetParamStringValue
     PCOSA_CONTEXT_LINK_OBJECT       pCosaContext = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     PCOSA_DML_RA_IF_FULL2           pRAInterface = (PCOSA_DML_RA_IF_FULL2)pCosaContext->hContext;
     int                             len = 0;
+    ANSC_STATUS ret=ANSC_STATUS_FAILURE;
+    char syscfgName[36];
 
     /* check the parameter name and set the corresponding value */
     if (strcmp(ParamName, "Alias") == 0)
@@ -1654,6 +1672,22 @@ InterfaceSetting1_SetParamStringValue
 
     if (strcmp(ParamName, "ManualPrefixes") == 0)
     {
+        char wrapped_inputparam[128];
+       
+        ret=isValidInput(pString,wrapped_inputparam, AnscSizeOfString(pString), sizeof( wrapped_inputparam )); 
+	  
+        if(ANSC_STATUS_SUCCESS != ret)
+         return FALSE;
+
+        if(pRAInterface->Cfg.InstanceNumber == 1)
+         strcpy(syscfgName,"Manual_Prefixes");
+        else
+         sprintf(syscfgName, "Manual_Prefixes_%d",pRAInterface->Cfg.InstanceNumber);
+       
+        if (syscfg_set_commit(NULL,syscfgName,pString ) != 0)
+        {
+           AnscTraceWarning(("syscfg_set failed for manual prefix\n"));
+        }
         /* save update to backup */
         len = (_ansc_strlen(pString) > sizeof(pRAInterface->Cfg.ManualPrefixes)-1 ? sizeof(pRAInterface->Cfg.ManualPrefixes)-1 : _ansc_strlen(pString));
         
