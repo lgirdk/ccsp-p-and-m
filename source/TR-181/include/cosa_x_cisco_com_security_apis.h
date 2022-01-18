@@ -83,30 +83,6 @@
 
 
 struct
-_COSA_DML_SECURITY_CFG
-{
-    BOOLEAN                         ApplyFirewallSettings;
-    BOOLEAN                         CleanLog;
-    BOOLEAN                         TriggerEmailLog;
-    BOOLEAN                         EmailEnable;
-    CHAR                            FilterWebTraffic[64];
-    CHAR                            TrafficDetect[64];
-    CHAR                            FilterLanTraffic[64];
-    CHAR                            AllowPassthrough[64];
-    CHAR                            EmailSendTo[64];
-    CHAR                            EmailServer[64];
-    CHAR                            EmailUserName[64];
-    CHAR                            EmailPassword[64];
-    CHAR                            EmailFromAddress[64];
-    BOOLEAN                         EmailParentalControlBreach;
-    BOOLEAN                         EmailAlertsOrWarnings;
-    BOOLEAN                         EmailFirewallBreach;
-    BOOLEAN                         EmailSendLogs;
-}_struct_pack_;
-
-typedef struct _COSA_DML_SECURITY_CFG COSA_DML_SECURITY_CFG,  *PCOSA_DML_SECURITY_CFG;
-
-struct
 _COSA_DML_FIREWALL_CFG2
 {
     COSA_DML_FIREWALL_LEVEL         FirewallLevel;
@@ -324,20 +300,6 @@ CosaDmlIaInit
     (
         ANSC_HANDLE                 hDml,
         PANSC_HANDLE                phContext
-    );
-
-ANSC_STATUS
-CosaDmlSecurityGetConfig
-    (
-        ANSC_HANDLE                 hContext,
-        PCOSA_DML_SECURITY_CFG      pCfg
-    );
-
-ANSC_STATUS
-CosaDmlSecuritySetConfig
-    (
-        ANSC_HANDLE                 hContext,
-        PCOSA_DML_SECURITY_CFG      pCfg
     );
 
 ANSC_STATUS
