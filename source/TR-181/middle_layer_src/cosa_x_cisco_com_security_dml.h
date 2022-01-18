@@ -101,80 +101,11 @@ X_CISCO_COM_Security_GetParamBoolValue
     );
 
 BOOL
-X_CISCO_COM_Security_GetParamIntValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        int*                        pInt
-    );
-
-BOOL
-X_CISCO_COM_Security_GetParamUlongValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        ULONG*                      pUlong
-    );
-
-ULONG
-X_CISCO_COM_Security_GetParamStringValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        char*                       pValue,
-        ULONG*                      pUlSize
-    );
-
-BOOL
 X_CISCO_COM_Security_SetParamBoolValue
     (
         ANSC_HANDLE                 hInsContext,
         char*                       ParamName,
         BOOL                        bValue
-    );
-
-BOOL
-X_CISCO_COM_Security_SetParamIntValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        int                         value
-    );
-
-BOOL
-X_CISCO_COM_Security_SetParamUlongValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        ULONG                       uValuepUlong
-    );
-
-BOOL
-X_CISCO_COM_Security_SetParamStringValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        char*                       strValue
-    );
-
-BOOL
-X_CISCO_COM_Security_Validate
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       pReturnParamName,
-        ULONG*                      puLength
-    );
-
-ULONG
-X_CISCO_COM_Security_Commit
-    (
-        ANSC_HANDLE                 hInsContext
-    );
-
-ULONG
-X_CISCO_COM_Security_Rollback
-    (
-        ANSC_HANDLE                 hInsContext
     );
 
 /***********************************************************************
