@@ -13967,25 +13967,16 @@
 <?endif?>
     <object>
 
-
       <name>X_CISCO_COM_Security</name>
 
       <objectType>object</objectType>
       
       <functions>
-        
-        <func_GetParamBoolValue>X_CISCO_COM_Security_GetParamBoolValue</func_GetParamBoolValue>
-
-        <func_SetParamBoolValue>X_CISCO_COM_Security_SetParamBoolValue</func_SetParamBoolValue>
 
       </functions>
       
       <parameters>
-        
-        <parameter>
 
-        </parameter>
-        
       </parameters>
 
       <objects>
