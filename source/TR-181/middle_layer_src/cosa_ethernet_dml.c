@@ -1589,7 +1589,7 @@ Stats_GetParamUlongValue
     )
 {
     PCOSA_DML_ETH_PORT_FULL         pEthernetPortFull = (PCOSA_DML_ETH_PORT_FULL)hInsContext;
-    COSA_DML_ETH_STATS              stats;
+    static COSA_DML_ETH_STATS       stats;
     static ULONG last_tick = 0;
     static ULONG last_instance_number = 0;
 
