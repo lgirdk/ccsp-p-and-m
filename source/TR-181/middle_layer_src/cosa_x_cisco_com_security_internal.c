@@ -190,9 +190,6 @@ CosaSecurityInitialize
     pMyObject->pLog = NULL;
     pMyObject->ulLogEntryCount = 0;
 
-    /*Get SecuritConfig */
-    CosaDmlSecurityGetConfig(NULL, &pMyObject->SecurityConfig);
-
     pFirewallCfg = AnscAllocateMemory(sizeof(COSA_DML_FIREWALL_CFG2));
 
     if ( !pFirewallCfg )
