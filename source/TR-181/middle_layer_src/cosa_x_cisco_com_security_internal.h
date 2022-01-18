@@ -86,7 +86,6 @@
     /* duplication of the base object class content */                                      \
     COSA_BASE_CONTENT                                                                       \
     /* start of FIREWALL object class content */                                            \
-    COSA_DML_SECURITY_CFG            SecurityConfig;                                        \
     COSA_DML_FIREWALL_CFG2           FirewallConfig;                                        \
     SLIST_HEADER                     AccessPolicyList;                                      \
     SLIST_HEADER                     LogList;                                               \
