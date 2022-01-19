@@ -6141,11 +6141,10 @@ CosaDmlDhcpv6sSetType
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-    BOOL                            bApply = FALSE;
     UtopiaContext utctx = {0};
 
-    if ( type != g_dhcpv6_server_type )
-        bApply = TRUE;
+    if ( type == g_dhcpv6_server_type )
+        return ANSC_STATUS_SUCCESS;
     
     g_dhcpv6_server_type = type;
 
@@ -6159,13 +6158,7 @@ CosaDmlDhcpv6sSetType
 
     Utopia_Free(&utctx,1);
 
-    /* Stateful address is not effecting for clients whenever pool range is changed.
-     * Added gw_lan_refresh to effect the stateful address to the clients according
-     * to the configured poll range.
-     */
-    v_secure_system("gw_lan_refresh");
-
-    if ( g_dhcpv6_server && bApply )
+    if ( g_dhcpv6_server )
     {
         /* We need enable server */
         CcspTraceDebug(("%s,%d: Calling CosaDmlDHCPv6sTriggerRestart(FALSE)...\n", __FUNCTION__, __LINE__));
@@ -6173,6 +6166,11 @@ CosaDmlDhcpv6sSetType
 #ifdef _HUB4_PRODUCT_REQ_
         v_secure_system("sysevent set zebra-restart");
 #endif
+        /* Stateful address is not effecting for clients whenever pool range is changed.
+         * Added gw_lan_refresh to effect the stateful address to the clients according
+         * to the configured poll range.
+         */
+        v_secure_system("gw_lan_refresh &");
     }
 
     return ANSC_STATUS_SUCCESS;
