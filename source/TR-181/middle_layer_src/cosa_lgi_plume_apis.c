@@ -307,8 +307,8 @@ ULONG CosaDmlSetPlumeBackhaulSSIDsState ( PANSC_HANDLE phContext, BOOL value )
         CcspTraceError(("%s:%d Failed to resize WiFi data path array\n", __func__, __LINE__));
         return FALSE;
     }
-    add_wiFiDataPaths(pWiFiDataPaths, "Device.WiFi.SSID.11.Enable", enable ? "true" : "false", ccsp_boolean);
-    add_wiFiDataPaths(pWiFiDataPaths, "Device.WiFi.SSID.12.Enable", enable ? "true" : "false", ccsp_boolean);
+    add_wiFiDataPaths(pWiFiDataPaths, "Device.WiFi.SSID.13.Enable", enable ? "true" : "false", ccsp_boolean);
+    add_wiFiDataPaths(pWiFiDataPaths, "Device.WiFi.SSID.14.Enable", enable ? "true" : "false", ccsp_boolean);
     pWiFiDataPaths->applyToRadio |= 1 << RADIO_2G_IDX;
     pWiFiDataPaths->applyToRadio |= 1 << RADIO_5G_IDX;
 
