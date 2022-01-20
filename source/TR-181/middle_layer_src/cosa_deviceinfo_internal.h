@@ -96,7 +96,8 @@ _COSA_DATAMODEL_DEVICEINFO_CLASS_CONTENT
 	BOOL		bMultipleGW;					
 #ifndef FEATURE_FWUPGRADE_MANAGER
 	ULONG		DeferFWDownloadReboot;
-#endif	
+#endif
+	ULONG		ProvisioningCodeSource;
 	BOOL		AbortReboot;
 	BOOL		FirmwareDownloadCompletedNotification;
 	CHAR 		FirmwareDownloadStartedNotification[128];

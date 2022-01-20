@@ -719,6 +719,20 @@ CosaDmlDiGetAdditionalSoftwareVersion
     return CosaDmlDiGetSoftwareVersion(hContext,pValue, pulSize);
 }
 
+void ConvertToProvisionCodeFmt(char *mac_address, char *prov_code_fmt)
+{
+    unsigned char macByte[6] = {0};
+
+    if(sscanf(mac_address,"%02hhX:%02hhX:%02hhX:%02hhX:%02hhX:%02hhX", &macByte[0], &macByte[1], &macByte[2],
+           &macByte[3], &macByte[4], &macByte[5]) == 6) {
+       sprintf(prov_code_fmt, "%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX", macByte[0],macByte[1], macByte[2], macByte[3], macByte[4], macByte[5]);
+    }
+    else
+    {
+       sprintf(prov_code_fmt, "%s", "");
+    }
+}
+
 ANSC_STATUS
 CosaDmlDiGetProvisioningCode
     (
@@ -727,8 +741,13 @@ CosaDmlDiGetProvisioningCode
         ULONG*                      pulSize
     )
 {
+    CcspTraceDebug(("\n %s %d Entry\n",__func__,__LINE__));
     UNREFERENCED_PARAMETER(hContext);
     UtopiaContext ctx;
+    char mac_address[18] = {0};
+    ULONG mac_len = sizeof(mac_address);
+    ULONG prov_src_code = 0;
+
 
     /*
        Utopia_Get_Prov_Code() expects a buffer of NAME_SZ bytes, so verify that
@@ -746,6 +765,42 @@ CosaDmlDiGetProvisioningCode
     pValue[0] = 0;
     Utopia_Get_Prov_Code(&ctx, pValue);
     Utopia_Free(&ctx, 0);
+
+    CosaDmlDiGetProvisioningCodeSource(NULL, &prov_src_code);
+
+    CcspTraceDebug(("\n %s %d prov_src_code is %lu and pvalue is %s\n",__func__,__LINE__, prov_src_code, pValue));
+    if(pValue[0] == 0 && prov_src_code)
+    {
+        switch(prov_src_code)
+        {
+            case PROV_SRC_SERIAL:
+                if (platform_hal_GetSerialNumber(pValue) != RETURN_OK )
+                {
+                    AnscCopyString(pValue, "");
+                }
+                *pulSize = AnscSizeOfString(pValue);
+                return ANSC_STATUS_SUCCESS;
+            case PROV_SRC_CM_MAC:
+                CosaDmlDiGetCMMacAddress(NULL, mac_address, &mac_len);
+                ConvertToProvisionCodeFmt(mac_address, pValue);
+                *pulSize = AnscSizeOfString(pValue);
+                return ANSC_STATUS_SUCCESS;
+            case PROV_SRC_WAN_MAC:
+                CosaDmlDiGetRouterMacAddress(NULL, mac_address, &mac_len);
+                ConvertToProvisionCodeFmt(mac_address, pValue);
+                *pulSize = AnscSizeOfString(pValue);
+                return ANSC_STATUS_SUCCESS;
+            case PROV_SRC_MTA_MAC:
+                CosaDmlDiGetMTAMacAddress(NULL, mac_address, &mac_len);
+                ConvertToProvisionCodeFmt(mac_address, pValue);
+                *pulSize = AnscSizeOfString(pValue);
+                return ANSC_STATUS_SUCCESS;
+            case PROV_SRC_UNDEFINED:
+            case PROV_SRC_CODE_SET:
+            default:
+                break;
+        }
+    }
 
     /*
        If Utopia_Get_Prov_Code() returns a non-empty string then use it. If it
@@ -778,6 +833,7 @@ CosaDmlDiSetProvisioningCode
         char*                       pProvisioningCode
     )
 {
+    CcspTraceDebug(("\n %s %d Entry\n",__func__,__LINE__));
     UNREFERENCED_PARAMETER(hContext);
     UtopiaContext ctx;
     int rc = -1;
@@ -796,6 +852,55 @@ CosaDmlDiSetProvisioningCode
      */
      system("sysevent set dhcp_server-restart");
 
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaDmlDiGetProvisioningCodeSource
+    (
+        ANSC_HANDLE                 hContext,
+        ULONG*                      puValue
+    )
+{
+    char buf[8];
+    if(!syscfg_get(NULL, "prov_code_source", buf, sizeof(buf)))
+    {
+        *puValue = atoi(buf);
+    }
+    else
+    {
+        CcspTraceWarning(("syscfg_get failed\n"));
+    }
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaDmlDiSetProvisioningCodeSource
+    (
+        ANSC_HANDLE                 hContext,
+        ULONG                       uValue
+    )
+{
+    char strVal[8];
+    sprintf (strVal, "%lu", uValue);
+    CcspTraceDebug(("\n %s %d strval is %s\n",__func__,__LINE__, strVal));
+
+    //Unset ProvisioningCode when something is set into X_LGI-COM_ProvisioningCodeSource
+    if(syscfg_unset(NULL, "tr_prov_code") != 0)
+    {
+        CcspTraceWarning(("syscfg_unset failed\n"));
+    }
+    if(syscfg_set(NULL, "prov_code_source", strVal) != 0)
+    {
+        CcspTraceWarning(("syscfg_set failed\n"));
+    }
+    else
+    {
+        if ( syscfg_commit() != 0 )
+        {
+            CcspTraceWarning(("syscfg_commit failed\n"));
+        }
+    }
     return ANSC_STATUS_SUCCESS;
 }
 
