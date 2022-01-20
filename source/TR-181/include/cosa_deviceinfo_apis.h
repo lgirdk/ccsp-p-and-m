@@ -650,21 +650,6 @@ CosaDmlSetnewNTPEnable(BOOL bValue);
 
 BOOL CosaDmlGetInternetStatus();
 
-ANSC_STATUS
-COSADmlUploadLogsStatus
-    (
-        ANSC_HANDLE                 Context,
-        char*   pValue,
-        ULONG*  pUlSize
-    );
-
-ANSC_STATUS
-COSADmlUploadLogsNow
-        (
-                ANSC_HANDLE                 hContext,
-                BOOL                        bEnable
-        );
-
 void CosaDmlPresenceEnable(BOOL enable);
 
 
@@ -748,6 +733,5 @@ CosaDmlSetNativeHostapdState
 #endif //FEATURE_HOSTAP_AUTHENTICATOR
 
 BOOL CosaDmlSetDFS(BOOL bValue);
-BOOL CosaDmlSetDFSatBootUp(BOOL bValue);
 
 #endif
