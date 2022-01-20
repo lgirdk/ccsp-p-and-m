@@ -261,21 +261,6 @@ DFS_SetParamBoolValue
         char*                       ParamName,
         BOOL                        bValue
     );
-BOOL
-DFSatBootUp_GetParamBoolValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL*                       pBool
-    );
-
-BOOL
-DFSatBootUp_SetParamBoolValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL                        bValue
-    );
 
 /***********************************************************************
 
@@ -1385,22 +1370,7 @@ IPv6onPOD_SetParamBoolValue
         char*                       ParamName,
         BOOL                        bValue
     );
-BOOL
-IPv6onMoCA_GetParamBoolValue
 
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL*                       pBool
-    );
-BOOL
-IPv6onMoCA_SetParamBoolValue
-
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL                        bValue
-    );
 BOOL
 EvoStream_DirectConnect_GetParamBoolValue
 
