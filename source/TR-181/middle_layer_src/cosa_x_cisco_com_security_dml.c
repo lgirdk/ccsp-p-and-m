@@ -286,38 +286,6 @@ Firewall1_GetParamBoolValue
         return TRUE;
     }
 
-    if (strcmp(ParamName, "WebBlockCookies") == 0)
-    {
-        /* collect value */
-        *pBool = pFirewallCfg->WebBlockCookies;
-
-        return TRUE;
-    }
-
-    if (strcmp(ParamName, "WebBlockActiveX") == 0)
-    {
-        /* collect value */
-        *pBool = pFirewallCfg->WebBlockActiveX;
-
-        return TRUE;
-    }
-
-    if (strcmp(ParamName, "WebBlockJava") == 0)
-    {
-        /* collect value */
-        *pBool = pFirewallCfg->WebBlockJava;
-
-        return TRUE;
-    }
-
-    if (strcmp(ParamName, "WebBlockProxy") == 0)
-    {
-        /* collect value */
-        *pBool = pFirewallCfg->WebBlockProxy;
-
-        return TRUE;
-    }
-
     if (strcmp(ParamName, "FilterHTTP") == 0)
     {
         /* collect value */
@@ -709,38 +677,6 @@ Firewall1_SetParamBoolValue
     {
         /* save update to backup */
         pCosaDMSecurity->FirewallConfig.FilterAnonymousInternetRequestsV6 = bValue;
-
-        return TRUE;
-    }
-
-    if (strcmp(ParamName, "WebBlockCookies") == 0)
-    {
-        /* save update to backup */
-        pCosaDMSecurity->FirewallConfig.WebBlockCookies = bValue;
-
-        return TRUE;
-    }
-
-    if (strcmp(ParamName, "WebBlockActiveX") == 0)
-    {
-        /* save update to backup */
-        pCosaDMSecurity->FirewallConfig.WebBlockActiveX = bValue;
-
-        return TRUE;
-    }
-
-    if (strcmp(ParamName, "WebBlockJava") == 0)
-    {
-        /* save update to backup */
-        pCosaDMSecurity->FirewallConfig.WebBlockJava = bValue;
-
-        return TRUE;
-    }
-
-    if (strcmp(ParamName, "WebBlockProxy") == 0)
-    {
-        /* save update to backup */
-        pCosaDMSecurity->FirewallConfig.WebBlockProxy = bValue;
 
         return TRUE;
     }
