@@ -1441,6 +1441,13 @@
         </parameter>
 
         <parameter>
+          <name>X_LGI-COM_ProvisioningCodeSource</name>
+          <type>string:Device.DeviceInfo.X_LGI-COM_SerialNumber(1),Device.DeviceInfo.X_LGI-COM_CM_MAC(2),Device.DeviceInfo.X_LGI-COM_WAN_MAC(3),Device.DeviceInfo.X_LGI-COM_MTA_MAC(4)</type>
+          <syntax>uint32/mapped</syntax>
+          <writable>true</writable>
+        </parameter>
+
+        <parameter>
 
           <name>UpTime</name>
 
