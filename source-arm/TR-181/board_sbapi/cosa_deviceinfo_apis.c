@@ -873,6 +873,22 @@ CosaDmlDiGetAdditionalSoftwareVersion
     return CosaDmlDiGetSoftwareVersion(hContext,pValue, pulSize);
 }
 
+static void ConvertToProvisionCodeFmt (char *mac_address, char *prov_code_fmt)
+{
+    unsigned char mac[6];
+
+    /* Drop ':' chars and convert to upper case */
+
+    if (sscanf(mac_address, "%hhX:%hhX:%hhX:%hhX:%hhX:%hhX", &mac[0], &mac[1], &mac[2], &mac[3], &mac[4], &mac[5]) == 6)
+    {
+        sprintf(prov_code_fmt, "%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+    }
+    else
+    {
+        prov_code_fmt[0] = 0;
+    }
+}
+
 ANSC_STATUS
 CosaDmlDiGetProvisioningCode
     (
@@ -881,6 +897,7 @@ CosaDmlDiGetProvisioningCode
         ULONG*                      pulSize
     )
 {
+    CcspTraceDebug(("\n %s %d Entry\n",__func__,__LINE__));
     UNREFERENCED_PARAMETER(hContext);
     UtopiaContext ctx;
 
@@ -905,17 +922,54 @@ CosaDmlDiGetProvisioningCode
        If Utopia_Get_Prov_Code() returns a non-empty string then use it. If it
        returns an empty string (which will be the default if no provisioning
        code has been set via SPV to Device.DeviceInfo.ProvisioningCode) then
-       use the serial number as a fallback.
+       use the serial number or MAC address as a fallback (depending on the
+       prov_code_source syscfg value).
     */
-    if (pValue[0] != 0)
+    if (pValue[0] == 0)
     {
-        /* Use string returned by Utopia_Get_Prov_Code() */
+        char mac_address[18];
+        ULONG prov_code_source;
+        ULONG mac_len;
+
+        CosaDmlDiGetProvisioningCodeSource(NULL, &prov_code_source);
+
+        CcspTraceDebug(("%s[%d] prov_code_source is %lu\n", __func__, __LINE__, prov_code_source));
+
+        switch (prov_code_source)
+        {
+            case PROV_SRC_CM_MAC:
+                mac_address[0] = 0;
+                mac_len = sizeof(mac_address);
+                CosaDmlDiGetCMMacAddress(NULL, mac_address, &mac_len);
+                ConvertToProvisionCodeFmt(mac_address, pValue);
+                break;
+            case PROV_SRC_WAN_MAC:
+                mac_address[0] = 0;
+                mac_len = sizeof(mac_address);
+                CosaDmlDiGetRouterMacAddress(NULL, mac_address, &mac_len);
+                ConvertToProvisionCodeFmt(mac_address, pValue);
+                break;
+            case PROV_SRC_MTA_MAC:
+                mac_address[0] = 0;
+                mac_len = sizeof(mac_address);
+                CosaDmlDiGetMTAMacAddress(NULL, mac_address, &mac_len);
+                ConvertToProvisionCodeFmt(mac_address, pValue);
+                break;
+            default:
+                break;
+        }
+
+        /*
+           If MAC address is not being used (or MAC address could not be read)
+           then use serial number.
+        */
+        if (pValue[0] == 0)
+        {
+            platform_hal_GetSerialNumber(pValue);
+        }
     }
-    else if (platform_hal_GetSerialNumber(pValue) == RETURN_OK)
-    {
-        /* Use string returned by platform_hal_GetSerialNumber() */
-    }
-    else
+
+    if (pValue[0] == 0)
     {
         return ANSC_STATUS_FAILURE;
     }
@@ -930,6 +984,7 @@ CosaDmlDiSetProvisioningCode
         char*                       pProvisioningCode
     )
 {
+    CcspTraceDebug(("\n %s %d Entry\n",__func__,__LINE__));
     UNREFERENCED_PARAMETER(hContext);
     UtopiaContext ctx;
     int rc = -1;
@@ -947,6 +1002,41 @@ CosaDmlDiSetProvisioningCode
      * (ProvisioningCode, ACS URL, CWMPRetryMinimumWaitInterval, CWMPRetryIntervalMultiplier) are changed.
      */
      system("sysevent set dhcp_server-restart");
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS CosaDmlDiGetProvisioningCodeSource (ANSC_HANDLE hContext, ULONG *puValue)
+{
+    char buf[8];
+
+    if (syscfg_get(NULL, "prov_code_source", buf, sizeof(buf)) == 0)
+    {
+        *puValue = atoi(buf);
+    }
+    else
+    {
+        *puValue = 0;
+    }
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS CosaDmlDiSetProvisioningCodeSource (ANSC_HANDLE hContext, ULONG uValue)
+{
+    /*
+       If X_LGI-COM_ProvisioningCodeSource is being set then unset
+       the syscfg value which stores the value set via ProvisioningCode.
+    */
+    if (syscfg_unset(NULL, "tr_prov_code") != 0)
+    {
+        CcspTraceWarning(("syscfg_unset failed\n"));
+    }
+
+    if (syscfg_set_u_commit(NULL, "prov_code_source", uValue) != 0)
+    {
+        CcspTraceWarning(("syscfg_set failed\n"));
+    }
 
     return ANSC_STATUS_SUCCESS;
 }
