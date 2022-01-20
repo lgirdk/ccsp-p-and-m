@@ -104,6 +104,15 @@
                 STRUCTURE AND CONSTANT DEFINITIONS
 **********************************************************************/
 
+enum {
+    PROV_SRC_UNDEFINED,
+    PROV_SRC_SERIAL,
+    PROV_SRC_CM_MAC,
+    PROV_SRC_WAN_MAC,
+    PROV_SRC_MTA_MAC,
+    PROV_SRC_CODE_SET
+};
+
 enum
 {
     COSA_DML_PROC_STATUS_Running = 1,
@@ -507,6 +516,9 @@ CosaDmlDiSetProvisioningCode
         ANSC_HANDLE                 hContext,
         char*                       pProvisioningCode
     );
+
+ANSC_STATUS CosaDmlDiGetProvisioningCodeSource (ANSC_HANDLE hContext, ULONG *puValue);
+ANSC_STATUS CosaDmlDiSetProvisioningCodeSource (ANSC_HANDLE hContext, ULONG uValue);
 
 ULONG
 CosaDmlDiGetUpTime
