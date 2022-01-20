@@ -87,10 +87,6 @@ _COSA_DML_FIREWALL_CFG2
 {
     COSA_DML_FIREWALL_LEVEL         FirewallLevel;
     COSA_DML_FIREWALL_LEVEL         FirewallLevelV6;
-    BOOLEAN                         WebBlockProxy;
-    BOOLEAN                         WebBlockJava;
-    BOOLEAN                         WebBlockActiveX;
-    BOOLEAN                         WebBlockCookies;
     BOOLEAN                         FilterAnonymousInternetRequests;
     BOOLEAN                         FilterAnonymousInternetRequestsV6;
     BOOLEAN                         FilterMulticast;
