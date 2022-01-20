@@ -643,6 +643,7 @@ DeviceInfo_GetParamUlongValue
         ULONG*                      puLong
     )
 {
+    PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "UpTime") == 0)
@@ -694,7 +695,13 @@ DeviceInfo_GetParamUlongValue
         CosaDmlDiGetFactoryResetCount(NULL,puLong);
         return TRUE;
     }
-	
+
+    if(strcmp(ParamName, "X_LGI-COM_ProvisioningCodeSource") == 0)
+    {
+        *puLong = pMyObject->ProvisioningCodeSource;
+        return TRUE;
+    }
+
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
 }
@@ -1340,6 +1347,7 @@ DeviceInfo_SetParamUlongValue
         ULONG                       uValue
     )
 {
+    PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
     UNREFERENCED_PARAMETER(hInsContext);
     /* check the parameter name and set the corresponding value */
     if (strcmp(ParamName, "X_RDKCENTRAL-COM_ConfigureDocsicPollTime") == 0)
@@ -1359,6 +1367,14 @@ DeviceInfo_SetParamUlongValue
  	   fclose(fp);
 	   return TRUE;
     } 
+
+    if (strcmp(ParamName, "X_LGI-COM_ProvisioningCodeSource") == 0)
+    {
+        pMyObject->ProvisioningCodeSource = uValue;
+        CosaDmlDiSetProvisioningCodeSource(NULL, pMyObject->ProvisioningCodeSource);
+        return TRUE;
+    }
+
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
 }
@@ -1870,6 +1886,8 @@ DeviceInfo_SetParamStringValue
               ERR_CHK(rc);
                return FALSE;
           }
+
+        CosaDmlDiSetProvisioningCode(NULL, (char *)pMyObject->ProvisioningCode);
         return TRUE;
     }
 #ifdef CONFIG_INTERNET2P0
@@ -2195,10 +2213,6 @@ DeviceInfo_Commit
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
-
-    CosaDmlDiSetProvisioningCode(NULL, (char *)pMyObject->ProvisioningCode);
-
     return 0;
 }
 
@@ -2236,6 +2250,7 @@ DeviceInfo_Rollback
     ULONG pulSize = 0;
     /*CID:78739 Out-of-bounds access - updted the ProvisioningCode with 256 in the declaration*/
     CosaDmlDiGetProvisioningCode(NULL,(char *)pMyObject->ProvisioningCode, &pulSize);
+    CosaDmlDiGetProvisioningCodeSource(NULL, &pMyObject->ProvisioningCodeSource);
     
     return 0;
 }
