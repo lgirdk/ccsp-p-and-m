@@ -2488,22 +2488,6 @@
                          </parameters>
                 </object>
                 <object>
-                         <name>DFSatBootUp</name>
-                         <objectType>object</objectType>
-                         <functions>
-                             <func_GetParamBoolValue>DFSatBootUp_GetParamBoolValue</func_GetParamBoolValue>
-                             <func_SetParamBoolValue>DFSatBootUp_SetParamBoolValue</func_SetParamBoolValue>
-                         </functions>
-                         <parameters>
-                           <parameter>
-                             <name>Enable</name>
-                             <type>boolean</type>
-                             <syntax>bool</syntax>
-                             <writable>true</writable>
-                             </parameter>
-                         </parameters>
-                </object>
-                <object>
                         <name>RBUS</name>
                         <objectType>object</objectType>
                         <functions>
@@ -2878,35 +2862,6 @@
                                 <func_GetParamBoolValue>IPv6onPOD_GetParamBoolValue</func_GetParamBoolValue>
 
                                 <func_SetParamBoolValue>IPv6onPOD_SetParamBoolValue</func_SetParamBoolValue>
-
-                        </functions>
-
-                        <parameters>
-                                <parameter>
-
-                                        <name>Enable</name>
-
-                                        <type>boolean</type>
-
-                                        <syntax>bool</syntax>
-
-                                        <writable>true</writable>
-
-                                </parameter>
-
-                        </parameters>
-
-  		</object>
-	<object>
-                        <name>IPv6onMoCA</name>
-
-                        <objectType>object</objectType>
-
-                        <functions>
-
-                                <func_GetParamBoolValue>IPv6onMoCA_GetParamBoolValue</func_GetParamBoolValue>
-
-                                <func_SetParamBoolValue>IPv6onMoCA_SetParamBoolValue</func_SetParamBoolValue>
 
                         </functions>
 
@@ -3820,48 +3775,6 @@
 					<writable>false</writable>
 			</parameter>  
 			</parameters>
-
-          	<objects>			
-					
-            		<object>
-
-              		<name>Ops</name>
-
-             		<objectType>object</objectType>
-
-              		<functions>
-
-                 		<func_GetParamBoolValue>Ops_GetParamBoolValue</func_GetParamBoolValue>
-
-            			<func_GetParamIntValue>Ops_GetParamIntValue</func_GetParamIntValue>
-
-            			<func_GetParamUlongValue>Ops_GetParamUlongValue</func_GetParamUlongValue>
-
-            			<func_GetParamStringValue>Ops_GetParamStringValue</func_GetParamStringValue>
-				
-				<func_SetParamBoolValue>Ops_SetParamBoolValue</func_SetParamBoolValue>
-           			
-              		</functions>
-			<parameters>
-				<parameter>
-			            <name>UploadLogsNow</name>
-			            <type>boolean</type>
-			            <syntax>bool</syntax>
-			            <writable>true</writable>
-				</parameter>   
-
-			        <parameter>
-			            <name>LogsUploadStatus</name>
-			            <type>string</type>
-			            <syntax>string</syntax>
-				    <writable>false</writable>
-			        </parameter>
-			</parameters>
-
-            		</object> <!--Ops-->
-
-		</objects>
-		
 	</object> <!--RDK_CENTRAL-->
 	
         <object>
