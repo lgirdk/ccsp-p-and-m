@@ -201,6 +201,7 @@ CosaDeviceInfoInitialize
     CosaDmlDiSyndicationFlowControlInit(&pMyObject->SyndicatonFlowControl);
     CosaDmlDiRfcDefaultsInit(&pMyObject->pRfcDefaults);
     CosaDmlDiRfcStoreInit(&pMyObject->pRfcStore);
+    CosaDmlDiGetProvisioningCodeSource(NULL, &pMyObject->ProvisioningCodeSource);
     return returnStatus;
 }
 
