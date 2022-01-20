@@ -13892,54 +13892,6 @@
 
           <parameter>
 
-            <name>WebBlockCookies</name>
-
-            <type>boolean</type>
-
-            <syntax>bool</syntax>
-
-            <writable>true</writable>
-
-          </parameter>
-
-          <parameter>
-
-            <name>WebBlockActiveX</name>
-
-            <type>boolean</type>
-
-            <syntax>bool</syntax>
-
-            <writable>true</writable>
-
-          </parameter>
-
-          <parameter>
-
-            <name>WebBlockJava</name>
-
-            <type>boolean</type>
-
-            <syntax>bool</syntax>
-
-            <writable>true</writable>
-
-          </parameter>
-
-          <parameter>
-
-            <name>WebBlockProxy</name>
-
-            <type>boolean</type>
-
-            <syntax>bool</syntax>
-
-            <writable>true</writable>
-
-          </parameter>
-
-          <parameter>
-
             <name>FirewallLevel</name>
 
             <type>string: High(1),Medium(2),Low(3),Custom(4),None(5)</type>
