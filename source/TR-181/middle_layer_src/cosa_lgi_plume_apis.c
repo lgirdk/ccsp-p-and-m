@@ -219,6 +219,13 @@ CosaDmlSetPlumeAdminStatus
    if( syscfg_set(NULL, "son_admin_status", value ? "1" : "0") == 0)
    {
         syscfg_commit();
+#ifdef _PUMA6_ARM_
+        {
+            char rpc_cmd[64];
+            snprintf(rpc_cmd, sizeof(rpc_cmd), "rpcclient2 'echo %s > /tmp/.syscfg_son_admin_status'", value ? "1" : "0");
+            system(rpc_cmd);
+        }
+#endif
         return TRUE;
    }
    return FALSE;
@@ -252,6 +259,13 @@ CosaDmlSetPlumeOperationalStatus
         if( syscfg_set(NULL, "son_operational_status", value ? "1" : "0") == 0)
         {
             syscfg_commit();
+#ifdef _PUMA6_ARM_
+            {
+                char rpc_cmd[64];
+                snprintf(rpc_cmd, sizeof(rpc_cmd), "rpcclient2 'echo %s > /tmp/.syscfg_son_operational_status'", value ? "1" : "0");
+                system(rpc_cmd);
+            }
+#endif
             return TRUE;
         }
         return FALSE;
@@ -285,6 +299,13 @@ CosaDmlSetPlumeDFSEnable
     if( syscfg_set(NULL, "son_dfs_enable", value ? "1" : "0") == 0)
     {
          syscfg_commit();
+#ifdef _PUMA6_ARM_
+        {
+            char rpc_cmd[64];
+            snprintf(rpc_cmd, sizeof(rpc_cmd), "rpcclient2 'echo %s > /tmp/.syscfg_son_dfs_enable'", value ? "1" : "0");
+            system(rpc_cmd);
+        }
+#endif
          return TRUE;
     }
     return FALSE;
