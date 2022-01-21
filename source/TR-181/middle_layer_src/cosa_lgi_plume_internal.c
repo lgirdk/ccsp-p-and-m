@@ -118,6 +118,24 @@ CosaLgiPlumeInitialize
     pMyObject->bPlumeUrlChanged = FALSE;
     pMyObject->bPlumeNativeAtmBsControlChanged = FALSE;
 
+#ifdef _PUMA6_ARM_
+    {
+        char rpc_cmd[80];
+
+        /* Initialize the DFS enabled status on ATOM */
+        snprintf(rpc_cmd, sizeof(rpc_cmd), "rpcclient2 'echo %s > /tmp/.syscfg_son_dfs_enable'", pMyObject->plumeDFSEnable ? "1" : "0");
+        system(rpc_cmd);
+
+        /* Initialize the operational status on ATOM */
+        snprintf(rpc_cmd, sizeof(rpc_cmd), "rpcclient2 'echo %s > /tmp/.syscfg_son_operational_status'", pMyObject->plumeOperationalStatus ? "1" : "0");
+        system(rpc_cmd);
+
+        /* Initialize the admin status on ATOM */
+        snprintf(rpc_cmd, sizeof(rpc_cmd), "rpcclient2 'echo %s > /tmp/.syscfg_son_admin_status'", pMyObject->plumeAdminStatus ? "1" : "0");
+        system(rpc_cmd);
+    }
+#endif
+
     return returnStatus;
 }
 
