@@ -1415,47 +1415,9 @@ EvoStream_DirectConnect_SetParamBoolValue
         BOOL                        bValue
     );
 
-/***********************************************************************
-
- APIs for Object:
-
-    DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.SyndicationFlowControl
-    *  SyndicationFlowControl_GetParamBoolValue
-    *  SyndicationFlowControl_SetParamBoolValue
-    *  SyndicationFlowControl_GetParamStringValue
-    *  SyndicationFlowControl_SetParamStringValue
-
-***********************************************************************/
-BOOL
-SyndicationFlowControl_GetParamBoolValue
-
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL*                       pBool
-    );
-
-ULONG
-SyndicationFlowControl_GetParamStringValue
-
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        char*                       pValue,
-        ULONG*                      pUlSize
-    );
-
 BOOL
 Feature_SetParamBoolValue
 
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL                        bValue
-    );
-
-BOOL
-SyndicationFlowControl_SetParamBoolValue
     (
         ANSC_HANDLE                 hInsContext,
         char*                       ParamName,
