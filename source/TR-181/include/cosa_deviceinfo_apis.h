@@ -227,16 +227,6 @@ _COSA_DATAMODEL_RDKB_LATENCYMEASURE_TCP_IPV6_CLASS_CONTENT
 COSA_DATAMODEL_RDKB_LATENCYMEASURE_TCP_IPV6, *PCOSA_DATAMODEL_RDKB_LATENCYMEASURE_TCP_IPV6;
 
 typedef  struct
-_COSA_DATAMODEL_RDKB_SYNDICATIONFLOWCONTROL_CLASS_CONTENT
-{
-    COSA_BOOTSTRAP_BOOL    Enable;
-    COSA_BOOTSTRAP_STR    InitialForwardedMark;
-    COSA_BOOTSTRAP_STR    InitialOutputMark;
-}
-COSA_DATAMODEL_RDKB_SYNDICATIONFLOWCONTROL, *PCOSA_DATAMODEL_RDKB_SYNDICATIONFLOWCONTROL;
-
-
-typedef  struct
     _COSA_DATAMODEL_KICKSTARTTABLE
 {
     UINT    SecurityNumberLen;
@@ -675,24 +665,6 @@ COSADmlUploadLogsNow
 void CosaDmlPresenceEnable(BOOL enable);
 
 
-ANSC_STATUS
-CosaDmlDiSet_SyndicationFlowControl_Enable
-    (
-        char bValue
-    );
-
-ANSC_STATUS
-CosaDmlDiSet_SyndicationFlowControl_InitialForwardedMark
-    (
-        char *pString
-    );
-
-ANSC_STATUS
-CosaDmlDiSet_SyndicationFlowControl_InitialOutputMark
-    (
-        char *pString
-    );
-
 ANSC_STATUS 
 setTempPartnerId
     (
@@ -710,12 +682,6 @@ ANSC_STATUS
 CosaDeriveSyndicationPartnerID
     (
         char *Partner_ID
-    );
-
-ANSC_STATUS
-CosaDmlDiSyndicationFlowControlInit
-    (
-        PCOSA_DATAMODEL_RDKB_SYNDICATIONFLOWCONTROL pSyndicatonFlowControl
     );
 
 ANSC_STATUS
