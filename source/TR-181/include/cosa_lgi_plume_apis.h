@@ -95,6 +95,12 @@ CosaDmlGetPlumeLogpullEnable
     BOOL                        *pValue
 );
 BOOL
+CosaDmlGetPlumeMeshEnabled
+(
+    ANSC_HANDLE                 hContext,
+    BOOL                        *pValue
+);
+BOOL
 CosaDmlSetPlumeLogpullEnable
 (
     ANSC_HANDLE                 hContext,
