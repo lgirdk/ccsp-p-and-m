@@ -323,6 +323,45 @@ BOOL CosaDmlSetPlumeLogpullEnable ( ANSC_HANDLE hContext, BOOL value )
     return FALSE;
 }
 
+BOOL CosaDmlGetPlumeMeshEnabled ( ANSC_HANDLE hContext, BOOL *pValue )
+{
+    int ret = 0, val_size = 0;
+    char *parameterNames[2];
+    parameterValStruct_t **parameterval = NULL;
+
+    *pValue = FALSE;
+
+    if ((ppComponents == NULL) && initWifiComp())
+    {
+        CcspTraceError(("%s: initWifiComp error ...\n", __FUNCTION__));
+        return FALSE;
+    }
+
+    parameterNames[0] = "Device.WiFi.SSID." BACKHAUL_2G_IDX ".Enable";
+    parameterNames[1] = "Device.WiFi.SSID." BACKHAUL_5G_IDX ".Enable";
+
+    ret = CcspBaseIf_getParameterValues(bus_handle,
+                                        ppComponents[0]->componentName,
+                                        ppComponents[0]->dbusPath,
+                                        parameterNames,
+                                        2,
+                                        &val_size,
+                                        &parameterval
+                                        );
+
+    if ((ret == CCSP_SUCCESS) && (val_size == 2))
+    {
+        /* If both backhaul SSIDs are disabled, then mesh is disabled. Enabled in every other case */
+        *pValue = (!strcmp(parameterval[0]->parameterValue, "false") && !strcmp(parameterval[1]->parameterValue, "false") ? FALSE : TRUE);
+        free_parameterValStruct_t (bus_handle, val_size, parameterval);
+        return TRUE;
+    }
+
+    free_parameterValStruct_t (bus_handle, val_size, parameterval);
+
+    return FALSE;
+}
+
 ULONG CosaDmlSetPlumeBackhaulSSIDsState ( PANSC_HANDLE phContext, BOOL value )
 {
     BOOL enable = value;
