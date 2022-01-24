@@ -879,6 +879,13 @@
                 <writable>true</writable>
 	    </parameter>
             <parameter>
+                <name>SONMeshEnabled</name>
+                <description>PLUME Control SON Mesh Enable Data Model</description>
+                <type>boolean</type>
+                <syntax>bool</syntax>
+                <writable>false</writable>
+            </parameter>
+            <parameter>
                 <name>SONLogpullEnable</name>
                 <description>Enable/Disable PLUME Logpull functionality</description>
                 <type>boolean</type>
