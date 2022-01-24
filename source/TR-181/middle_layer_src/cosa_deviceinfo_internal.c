@@ -198,8 +198,7 @@ CosaDeviceInfoInitialize
 #endif
 
 	CosaDmlDiWiFiTelemetryInit(&pMyObject->WiFi_Telemetry);
-	CosaDmlDiUniqueTelemetryIdInit(&pMyObject->UniqueTelemetryId);
-    CosaDmlDiSyndicationFlowControlInit(&pMyObject->SyndicatonFlowControl);
+	CosaDmlDiUniqueTelemetryIdInit(&pMyObject->UniqueTelemetryId); 
     CosaDmlDiRfcDefaultsInit(&pMyObject->pRfcDefaults);
     CosaDmlDiRfcStoreInit(&pMyObject->pRfcStore);
     CosaDmlDiGetProvisioningCodeSource(NULL, &pMyObject->ProvisioningCodeSource);
