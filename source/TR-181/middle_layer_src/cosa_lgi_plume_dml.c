@@ -66,6 +66,10 @@ LgiPlume_GetParamBoolValue
     {
         return CosaDmlGetPlumeLogpullEnable(NULL, pValue);
     }
+    if (strcmp(ParamName, "SONMeshEnabled") == 0)
+    {
+        return CosaDmlGetPlumeMeshEnabled(NULL, pValue);
+    }
 
     return -1;
 }
