@@ -12078,6 +12078,8 @@
 
             <syntax>string</syntax>
 
+            <notify>off</notify>
+
             <writable>true</writable>
 
           </parameter>
@@ -19524,6 +19526,7 @@
 								<name>LastChange</name>
 								<type>unsignedInt</type>
 								<syntax>uint32</syntax>
+								<notify>off</notify>
 							</parameter>
 							<parameter>
 								<name>LocalInterfaces</name>
