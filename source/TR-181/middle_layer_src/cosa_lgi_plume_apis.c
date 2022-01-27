@@ -19,6 +19,17 @@
 #include <syscfg/syscfg.h>
 #include "cosa_lgi_plume_internal.h"
 
+#ifdef _PUMA6_ARM_
+#define BACKHAUL_2G_IDX "13"
+#define BACKHAUL_5G_IDX "14"
+#elif defined (_LG_MV2_PLUS_)
+#define BACKHAUL_2G_IDX "3"
+#define BACKHAUL_5G_IDX "4"
+#else
+#define BACKHAUL_2G_IDX "13"
+#define BACKHAUL_5G_IDX "14"
+#endif
+
 extern ANSC_HANDLE bus_handle;
 static componentStruct_t **ppComponents = NULL;
 extern char g_Subsystem[32];
@@ -307,8 +318,10 @@ ULONG CosaDmlSetPlumeBackhaulSSIDsState ( PANSC_HANDLE phContext, BOOL value )
         CcspTraceError(("%s:%d Failed to resize WiFi data path array\n", __func__, __LINE__));
         return FALSE;
     }
-    add_wiFiDataPaths(pWiFiDataPaths, "Device.WiFi.SSID.13.Enable", enable ? "true" : "false", ccsp_boolean);
-    add_wiFiDataPaths(pWiFiDataPaths, "Device.WiFi.SSID.14.Enable", enable ? "true" : "false", ccsp_boolean);
+
+    add_wiFiDataPaths(pWiFiDataPaths, "Device.WiFi.SSID." BACKHAUL_2G_IDX ".Enable", enable ? "true" : "false", ccsp_boolean);
+    add_wiFiDataPaths(pWiFiDataPaths, "Device.WiFi.SSID." BACKHAUL_5G_IDX ".Enable", enable ? "true" : "false", ccsp_boolean);
+
     pWiFiDataPaths->applyToRadio |= 1 << RADIO_2G_IDX;
     pWiFiDataPaths->applyToRadio |= 1 << RADIO_5G_IDX;
 
