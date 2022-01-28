@@ -197,20 +197,6 @@ X_CISCO_COM_DeviceControl_GetParamBoolValue
         return TRUE;
     }
 
-    if (strcmp(ParamName, "WanSecondIPRipAdvertised") == 0)
-    {
-        if (CosaDmlDcGetWanSecondIPRipAdvertised(NULL, pBool) != ANSC_STATUS_SUCCESS)
-            return FALSE;
-        return TRUE;
-    }
-
-    if (strcmp(ParamName, "ResetDefaultEnable") == 0)
-    {
-        if (CosaDmlDcGetResetDefaultEnable(NULL, pBool) != ANSC_STATUS_SUCCESS)
-            return FALSE;
-        return TRUE;
-    }
-
     if (strcmp(ParamName, "ReinitCmMac") == 0)
     {
 		/* Always return false for this parameter while a GET operation.*/
@@ -242,13 +228,6 @@ X_CISCO_COM_DeviceControl_GetParamBoolValue
     if (strcmp(ParamName, "SSHEnable") == 0)
     {
         if (CosaDmlDcGetSSHEnable(NULL, pBool) != ANSC_STATUS_SUCCESS)
-            return FALSE;
-        return TRUE;
-    }
-
-    if (strcmp(ParamName, "HNAPEnable") == 0)
-    {
-        if (CosaDmlDcGetHNAPEnable(NULL, pBool) != ANSC_STATUS_SUCCESS)
             return FALSE;
         return TRUE;
     }
@@ -291,13 +270,6 @@ X_CISCO_COM_DeviceControl_GetParamBoolValue
     if (strcmp(ParamName, "HTTPSEnable") == 0)
     {
         if (CosaDmlDcGetHTTPSEnable(NULL, pBool) != ANSC_STATUS_SUCCESS)
-            return FALSE;
-        return TRUE;
-    }
-
-    if (strcmp(ParamName, "IGMPSnoopingEnable") == 0)
-    {
-        if (CosaDmlDcGetIGMPSnoopingEnable(NULL, pBool) != ANSC_STATUS_SUCCESS)
             return FALSE;
         return TRUE;
     }
@@ -431,52 +403,8 @@ X_CISCO_COM_DeviceControl_GetParamUlongValue
     /* check the parameter name and return the corresponding value */
     /* CcspTraceWarning(("-----DeviceControl_GetParamUlongValue,Trying to get parameter '%s'\n", ParamName)); */
     PCOSA_DATAMODEL_DEVICECONTROL   pMyObject = (PCOSA_DATAMODEL_DEVICECONTROL)g_pCosaBEManager->hDeviceControl;
-
-    char                            buf[256] = {0};
-    ULONG                           uSize    = 0;
-    ANSC_STATUS                     retStatus= ANSC_STATUS_SUCCESS;
     COSA_DML_WanAddrMode            wanAddrMode;
     ULONG                           ipAddr;
-
-    if (strcmp(ParamName, "MultiHomedHSDFlag") == 0)
-    {
-        /* collect value */
-        retStatus = CosaDmlDcGetMultiHomedHSDFlag(NULL,buf,&uSize);
-        if (retStatus != ANSC_STATUS_SUCCESS) {
-            return FALSE;
-        }
-        //CcspTraceWarning(("-----DeviceControl_GetParamUlongValue, buf:%s\n", buf));
-        if (strcasecmp(buf, "primary") == 0) {
-            *puLong = PRIMARY_MODE;
-        }
-        else if (strcasecmp(buf, "byoi") == 0) {
-            *puLong = BYOI_MODE;
-        }
-        else {
-            *puLong = NONE_MODE;
-        }
-        //CcspTraceWarning(("-----DeviceControl_GetParamUlongValue, puLong:%lu\n", *puLong));
-        return TRUE;
-    }
-
-    if (strcmp(ParamName, "MultiHomedUIPageControl") == 0)
-    {
-        /* collect value */
-        retStatus = CosaDmlDcGetMultiHomedUIPageControl(NULL,buf,&uSize);
-        if (retStatus != ANSC_STATUS_SUCCESS) {
-            return FALSE;
-        }
-        if (strcasecmp(buf, "DOCSIS") == 0) {
-            *puLong = PRIMARY_MODE;
-        }
-        else if (strcasecmp(buf, "Non-DOCSIS") == 0) {
-            *puLong = BYOI_MODE;
-        }
-        else {
-            *puLong = NONE_MODE;
-        }
-        return TRUE;
-    }
 
     if (strcmp(ParamName, "WanAddressMode") == 0)
     {
@@ -506,22 +434,6 @@ X_CISCO_COM_DeviceControl_GetParamUlongValue
     if (strcmp(ParamName, "WanStaticGatewayIP") == 0)
     {
         if (CosaDmlDcGetWanStaticGatewayIP(NULL, &ipAddr) != ANSC_STATUS_SUCCESS)
-            return FALSE;
-
-        *puLong = ipAddr;
-        return TRUE;
-    }
-    if (strcmp(ParamName, "WanSecondIPAddress") == 0)
-    {
-        if (CosaDmlDcGetWanSecondIPAddr(NULL, &ipAddr) != ANSC_STATUS_SUCCESS)
-            return FALSE;
-
-        *puLong = ipAddr;
-        return TRUE;
-    }
-    if (strcmp(ParamName, "WanBackupDefaultGateway") == 0)
-    {
-        if (CosaDmlDcGetWanBackupDefaultGateway(NULL, &ipAddr) != ANSC_STATUS_SUCCESS)
             return FALSE;
 
         *puLong = ipAddr;
@@ -694,28 +606,10 @@ X_CISCO_COM_DeviceControl_GetParamStringValue
         return 0;
     }
 
-    if (strcmp(ParamName, "UserChangedFlags") == 0)
-    {
-        /* collect value */
-        if (CosaDmlDcGetUserChangedFlags(NULL, pValue) != ANSC_STATUS_SUCCESS)
-            return -1;
-
-        return 0;
-    }
-
     if (strcmp(ParamName, "DeviceConfigStatus") == 0)
     {
         /* collect value */
         if (CosaDmlDcGetDeviceConfigStatus(NULL, pValue) != ANSC_STATUS_SUCCESS)
-            return -1;
-
-        return 0;
-    }
-
-    if (strcmp(ParamName, "DeviceConfigIgnore") == 0)
-    {
-        /* collect value */
-        if (CosaDmlDcGetDeviceConfigIgnore(NULL, pValue) != ANSC_STATUS_SUCCESS)
             return -1;
 
         return 0;
@@ -858,28 +752,6 @@ X_CISCO_COM_DeviceControl_SetParamBoolValue
         return TRUE;
     }
 
-    if (strcmp(ParamName, "WanSecondIPRipAdvertised") == 0)
-    {
-        pMyObject->WanSecIPRIPAdv = bValue;
-
-        retStatus = CosaDmlDcSetWanSecondIPRipAdvertised(NULL, pMyObject->WanSecIPRIPAdv);
-        if (retStatus != ANSC_STATUS_SUCCESS)
-            return FALSE;
-
-        return TRUE;
-    }
-
-    if (strcmp(ParamName, "ResetDefaultEnable") == 0)
-    {
-        pMyObject->ResetDefaultEnable = bValue;
-
-        retStatus = CosaDmlDcSetResetDefaultEnable(NULL, pMyObject->ResetDefaultEnable);
-        if (retStatus != ANSC_STATUS_SUCCESS)
-            return FALSE;
-
-        return TRUE;
-    }
-
     /* check the parameter name and set the corresponding value */
     if (strcmp(ParamName, "ReinitCmMac") == 0)
     {
@@ -943,17 +815,6 @@ X_CISCO_COM_DeviceControl_SetParamBoolValue
         return TRUE;
     }
 
-    if (strcmp(ParamName, "HNAPEnable") == 0)
-    {
-        pMyObject->HNAPEnable = bValue;
-
-        retStatus = CosaDmlDcSetHNAPEnable(NULL, pMyObject->HNAPEnable);
-        if (retStatus != ANSC_STATUS_SUCCESS)
-            return FALSE;
-
-        return TRUE;
-    }
-
     if (strcmp(ParamName, "EnableStaticNameServer") == 0)
     {
         pMyObject->EnableStaticNameServer = bValue;
@@ -1005,17 +866,6 @@ X_CISCO_COM_DeviceControl_SetParamBoolValue
     {
         pMyObject->HTTPSEnable = bValue;
         pMyObject->WebServerChanged = TRUE;
-
-        return TRUE;
-    }
-
-    if (strcmp(ParamName, "IGMPSnoopingEnable") == 0)
-    {
-        pMyObject->IGMPSnoopingEnable = bValue;
-
-        retStatus = CosaDmlDcSetIGMPSnoopingEnable(NULL, pMyObject->IGMPSnoopingEnable);
-        if (retStatus != ANSC_STATUS_SUCCESS)
-            return FALSE;
 
         return TRUE;
     }
@@ -1165,28 +1015,6 @@ X_CISCO_COM_DeviceControl_SetParamUlongValue
     /* check the parameter name and set the corresponding value */
 
     //CcspTraceWarning(("--------X_CISCO_COM_DeviceControl_SetParamUlongValue...\n"));
-    if (strcmp(ParamName, "MultiHomedHSDFlag") == 0)
-    {
-        pMyObject->HsdFlag = uValue;
-        pMyObject->Mode = uValue;
-
-        retStatus = CosaDmlDcSetMultiHomedHSDFlag(NULL, pMyObject->HsdFlag);
-        if (retStatus != ANSC_STATUS_SUCCESS)
-            return FALSE;
-
-        return TRUE;
-    }
-
-    if (strcmp(ParamName, "MultiHomedUIPageControl") == 0)
-    {
-        pMyObject->UIPageControl = uValue;
-
-        retStatus = CosaDmlDcSetMultiHomedUIPageControl(NULL, pMyObject->UIPageControl);
-        if (retStatus != ANSC_STATUS_SUCCESS)
-            return FALSE;
-
-        return TRUE;
-    }
 
     if (strcmp(ParamName, "WanAddressMode") == 0)
     {
@@ -1233,28 +1061,6 @@ X_CISCO_COM_DeviceControl_SetParamUlongValue
             return FALSE;
 
         ifWanRestart = 1;
-
-        return TRUE;
-    }
-
-    if (strcmp(ParamName, "WanSecondIPAddress") == 0)
-    {
-        pMyObject->WanSecIPAddr.Value = uValue;
-
-        retStatus = CosaDmlDcSetWanSecondIPAddr(NULL, pMyObject->WanSecIPAddr.Value);
-        if (retStatus != ANSC_STATUS_SUCCESS)
-            return FALSE;
-
-        return TRUE;
-    }
-
-    if (strcmp(ParamName, "WanBackupDefaultGateway") == 0)
-    {
-        pMyObject->WanBackupGateway.Value = uValue;
-
-        retStatus = CosaDmlDcSetWanBackupDefaultGateway(NULL, pMyObject->WanBackupGateway.Value);
-        if (retStatus != ANSC_STATUS_SUCCESS)
-            return FALSE;
 
         return TRUE;
     }
@@ -1445,42 +1251,6 @@ X_CISCO_COM_DeviceControl_SetParamStringValue
         }
         pMyObject->bFactoryResetChanged = 1;
      
-        return TRUE;
-    }
-
-    rc = strcmp_s("UserChangedFlags", strlen("UserChangedFlags"), ParamName, &ind);
-    ERR_CHK(rc);
-    if((rc == EOK) && (!ind))
-    {
-        rc = STRCPY_S_NOCLOBBER((char *)pMyObject->UserChangedFlags, sizeof(pMyObject->UserChangedFlags), pString);
-        if(rc != EOK)
-        {
-            ERR_CHK(rc);
-            return FALSE;
-        }
-
-        retStatus = CosaDmlDcSetUserChangedFlags(NULL, (char*)pMyObject->UserChangedFlags);
-        if (retStatus != ANSC_STATUS_SUCCESS)
-            return FALSE;
-
-        return TRUE;
-    }
-
-    rc = strcmp_s("DeviceConfigIgnore", strlen("DeviceConfigIgnore"), ParamName, &ind);
-    ERR_CHK(rc);
-    if((rc == EOK) && (!ind))
-    {
-        rc = STRCPY_S_NOCLOBBER((char *)pMyObject->DeviceConfigIgnore, sizeof(pMyObject->DeviceConfigIgnore), pString);
-        if(rc != EOK)
-        {
-            ERR_CHK(rc);
-            return FALSE;
-        }
-
-        retStatus = CosaDmlDcSetDeviceConfigIgnore(NULL, (char*)pMyObject->DeviceConfigIgnore);
-        if (retStatus != ANSC_STATUS_SUCCESS)
-            return FALSE;
-
         return TRUE;
     }
 
