@@ -14714,30 +14714,11 @@
             <syntax>bool</syntax>
             <writable>true</writable>
         </parameter>
-		<parameter>
-            <name>HNAPEnable</name>
-            <type>boolean</type>
-            <syntax>bool</syntax>
-            <writable>true</writable>
-        </parameter>
-        <parameter>
-          <name>MultiHomedHSDFlag</name>
-          <type>string: Primary(1),BYOI(2),None(3)</type>
-          <syntax>uint32/mapped</syntax>
-          <writable>true</writable>
-        </parameter>
 
         <parameter>
           <name>PowerSavingModeStatus</name>
           <type>string: Enabled(1),Disabled(2)</type>
           <syntax>uint32/mapped</syntax>
-        </parameter>
-
-        <parameter>
-          <name>MultiHomedUIPageControl</name>
-          <type>string: DOCSIS(1),Non-DOCSIS(2),User(3)</type>
-          <syntax>uint32/mapped</syntax>
-          <writable>true</writable>
         </parameter>
         
         <parameter>
@@ -14745,13 +14726,6 @@
           <type>string: ipDisabled(1),ipv4Only(2),ipv6Only(3),ipv4AndIpv6(4)</type>
           <syntax>uint32/mapped</syntax>
           <writable>true</writable>
-        </parameter>
-        
-        <parameter>
-            <name>ResetDefaultEnable</name>
-            <type>boolean</type>
-            <syntax>bool</syntax>
-            <writable>true</writable>
         </parameter>
         
         <parameter>
@@ -14769,23 +14743,9 @@
         </parameter>
         
         <parameter>
-          <name>UserChangedFlags</name>
-          <type>string(63)</type>
-          <syntax>string</syntax>
-          <writable>true</writable>
-        </parameter>
-        
-        <parameter>
           <name>DeviceConfigStatus</name>
           <type>string</type>
           <syntax>string</syntax>
-        </parameter>
-        
-        <parameter>
-          <name>DeviceConfigIgnore</name>
-          <type>string(31)</type>
-          <syntax>string</syntax>
-          <writable>true</writable>
         </parameter>
         
         <parameter>
@@ -14872,24 +14832,6 @@
             <syntax>uint32/ip4_addr</syntax>
             <writable>true</writable>
         </parameter>
-        <parameter>
-            <name>WanSecondIPAddress</name>
-            <type>string</type>
-            <syntax>uint32/ip4_addr</syntax>
-            <writable>true</writable>
-        </parameter>
-        <parameter>
-            <name>WanSecondIPRipAdvertised</name>
-            <type>boolean</type>
-            <syntax>bool</syntax>
-            <writable>true</writable>
-        </parameter>
-        <parameter>
-            <name>WanBackupDefaultGateway</name>
-            <type>string</type>
-            <syntax>uint32/ip4_addr</syntax>
-            <writable>true</writable>
-        </parameter>
 <!-- disable static ip on XB3 -->
 <?ifdef BCI?>
         <parameter>
@@ -14937,12 +14879,6 @@
 <?endif?>
         <parameter>
             <name>EnableZeroConfig</name>
-            <type>boolean</type>
-            <syntax>bool</syntax>
-            <writable>true</writable>
-        </parameter>
-        <parameter>
-            <name>IGMPSnoopingEnable</name>
             <type>boolean</type>
             <syntax>bool</syntax>
             <writable>true</writable>
