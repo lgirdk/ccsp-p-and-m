@@ -842,14 +842,13 @@ CosaDmlGiGetCustomDataModelEnabled
     )
 {
     char buf[2];
-    memset(buf, 0, sizeof(buf));
+
     UNREFERENCED_PARAMETER(hContext);
 
-    if(syscfg_init() == 0)
-    {
-        syscfg_get( NULL, CUSTOM_DATA_MODEL_ENABLED, buf, sizeof(buf));
-    }
+    syscfg_get( NULL, CUSTOM_DATA_MODEL_ENABLED, buf, sizeof(buf));
+
     *pValue = (strcmp(buf, "1") == 0);
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -895,10 +894,8 @@ CosaDmlGiSetCustomDataModelEnabled
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-    if(syscfg_init() == 0)
-    {
-        syscfg_set(NULL, CUSTOM_DATA_MODEL_ENABLED, bValue ? "1" : "0");
-    }
+
+    syscfg_set(NULL, CUSTOM_DATA_MODEL_ENABLED, bValue ? "1" : "0");
 
     if (IsSystemdRunning())
     {
