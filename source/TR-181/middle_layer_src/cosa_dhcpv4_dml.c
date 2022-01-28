@@ -7610,7 +7610,6 @@ StaticAddress_GetParamStringValue
             }
 
             pValue[17] = '\0'; 
-            *pUlSize = AnscSizeOfString(pValue);
            
             return 0;
         }
