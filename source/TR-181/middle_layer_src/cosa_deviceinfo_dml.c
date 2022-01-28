@@ -953,7 +953,6 @@ DeviceInfo_GetParamStringValue
                 ERR_CHK(rc);
                 return -1;
               }
-              *pulSize = strlen(sbuf)+1;
         }
         return 0;
     }
@@ -1550,7 +1549,6 @@ ULONG
                 ERR_CHK(rc);
                 return -1;
             }
-            *pUlSize = AnscSizeOfString( pValue )+1;
             return 0;
         }
         return -1;
@@ -1686,7 +1684,6 @@ AccountInfo_GetParamStringValue
                     ERR_CHK(rc);
                     return -1;
                 }
-                *pulSize = AnscSizeOfString( pValue )+1;
                 return 0;
            }
            return -1;
@@ -2697,7 +2694,6 @@ WiFi_Telemetry_GetParamStringValue
             ERR_CHK(rc);
             return -1;
         }
-        *pulSize = AnscSizeOfString( pValue )+1;
         return 0;
     }
 
@@ -2710,7 +2706,6 @@ WiFi_Telemetry_GetParamStringValue
             ERR_CHK(rc);
             return -1;
         }
-        *pulSize = AnscSizeOfString( pValue )+1;
         return 0;
     }
 
@@ -2724,7 +2719,6 @@ WiFi_Telemetry_GetParamStringValue
             ERR_CHK(rc);
             return -1;
         }
-        *pulSize = AnscSizeOfString( pValue )+1;
         return 0;
     }
 
@@ -2737,7 +2731,6 @@ WiFi_Telemetry_GetParamStringValue
             ERR_CHK(rc);
             return -1;
         }
-        *pulSize = AnscSizeOfString( pValue )+1;
         return 0;
     }
 
@@ -8330,7 +8323,6 @@ Control_GetParamStringValue
                ERR_CHK(rc);
                return -1;
            }
-           *pulSize = AnscSizeOfString( pValue )+1;
            return 0;
           }
           return -1;
@@ -8351,7 +8343,6 @@ Control_GetParamStringValue
               ERR_CHK(rc);
               return -1;
           }
-          *pulSize = AnscSizeOfString( pValue )+1;
           return 0;
          }
          return -1;
@@ -11221,8 +11212,6 @@ AutoExcluded_GetParamStringValue
                 ERR_CHK(rc);
                 return -1;
             }
-            *pUlSize = AnscSizeOfString( pValue )+1;
-
             return 0;
         }
         return -1;
@@ -11596,7 +11585,6 @@ ULONG*                      pUlSize
                     goto EXIT;
                 }
                 CcspTraceError((" Succeeded to GET\n" ));
-                *pUlSize = AnscSizeOfString( pValue )+1;
             }
             else if(((file1)!=NULL) && ((file3)!=NULL))
             {
@@ -11608,7 +11596,6 @@ ULONG*                      pUlSize
                     goto EXIT;
                 }
                 CcspTraceError((" succeeded to GET\n" ));
-                *pUlSize = AnscSizeOfString( pValue )+1;
             }
             else if(((file1)==NULL) && ((file2)!=NULL))
             {
@@ -11620,7 +11607,6 @@ ULONG*                      pUlSize
                     goto EXIT;
                 }
                 CcspTraceError((" succeeded to GET\n" ));
-                *pUlSize = AnscSizeOfString( pValue )+1;
             }
             else if(((file1)==NULL) && ((file3)!=NULL))
             {
@@ -11632,7 +11618,6 @@ ULONG*                      pUlSize
                     goto EXIT;
                 }
                 CcspTraceError((" succeeded to GET\n" ));
-                *pUlSize = AnscSizeOfString( pValue )+1;
             }
             else if(((file1)==NULL) && ((file2)==NULL) && ((file3)==NULL))
             {
@@ -11644,7 +11629,6 @@ ULONG*                      pUlSize
                     goto EXIT;
                 }
                 CcspTraceError((" succeeded to GET\n" ));
-                *pUlSize = AnscSizeOfString( pValue )+1;
             }
             else if(((file1)!=NULL) && ((file2)==NULL) && ((file3)==NULL))
             {
@@ -11656,7 +11640,6 @@ ULONG*                      pUlSize
                     goto EXIT;
                 }
                 CcspTraceError((" succeeded to GET\n" ));
-                *pUlSize = AnscSizeOfString( pValue )+1;
             }
             ret = 0;
 
@@ -14449,7 +14432,6 @@ ReverseSSH_GetParamStringValue
                 ERR_CHK(rc);
                 return -1;
             }
-            *pulSize = AnscSizeOfString(pValue)+1;
         } else {
             rc = strcpy_s(pValue, *pulSize, inActiveStr);
             if(rc != EOK)
@@ -14457,7 +14439,6 @@ ReverseSSH_GetParamStringValue
                 ERR_CHK(rc);
                 return -1;
             }
-            *pulSize = AnscSizeOfString(pValue)+1;
         }
         return 0;
     }
@@ -14717,7 +14698,6 @@ EthernetWAN_MACsec_GetParamStringValue
               ERR_CHK(rc);
               return -1;
            }
-           *pUlSize = AnscSizeOfString( pValue )+1;
 
            return 0;
         }
@@ -15829,7 +15809,6 @@ CDLDM_GetParamStringValue
                    ERR_CHK(rc);
                    return -1;
                 }
-                *pulSize = AnscSizeOfString( pValue )+1;
                 return 0;
            }
            return -1;
@@ -15977,7 +15956,6 @@ Syndication_GetParamStringValue
            ERR_CHK(rc);
            return -1;
         }
-        *pulSize = AnscSizeOfString( pValue )+1;	
         return 0;
     }
 
@@ -15991,8 +15969,6 @@ Syndication_GetParamStringValue
            ERR_CHK(rc);
            return -1;
         }
-        *pulSize = AnscSizeOfString( pValue )+1;
-
         return 0;
     }
     if (strcmp(ParamName, "LocalUIBrandingTable") == 0)
@@ -18160,7 +18136,6 @@ RPC_GetParamStringValue
 		ERR_CHK(rc);
 		return -1;
 	}
-	*pulSize = AnscSizeOfString( pValue )+1;
 	return 0;
     }
 
@@ -18173,7 +18148,6 @@ RPC_GetParamStringValue
 		ERR_CHK(rc);
 		return -1;
 	}
-	*pulSize = AnscSizeOfString( pValue )+1;
 	return 0;
     }
 
@@ -18848,7 +18822,6 @@ Tile_GetParamStringValue
                ERR_CHK(rc);
                return -1;
             }
-            *pUlSize = AnscSizeOfString(pValue)+1; 
             return 0;
         }
     }
@@ -22092,7 +22065,6 @@ NonRootSupport_GetParamStringValue
          read = getdelim( &buf, &len, '\0', fp);
          if (read != -1) {
              AnscCopyString(pValue, buf);
-             *pUlSize = AnscSizeOfString(pValue);
              Replace_AllOccurrence( pValue, *pUlSize, '\n', ',');
              CcspTraceWarning(("Apparmor profile configuration:%s\n", pValue));
          }
@@ -22111,7 +22083,6 @@ NonRootSupport_GetParamStringValue
          read = getdelim( &buf, &len, '\0', fp);
          if (read != -1) {
              AnscCopyString(pValue, buf);
-             *pUlSize = AnscSizeOfString(pValue);
              Replace_AllOccurrence( pValue, *pUlSize, '\n', ',');
              CcspTraceWarning(("Blocklist processes:%s\n", pValue));
          }
@@ -22355,7 +22326,6 @@ Generic_GetParamStringValue
            ERR_CHK(rc);
            return -1;
         }
-        *pUlSize = AnscSizeOfString( pValue )+1;
         CcspTraceWarning(("param = %s, value = %s\n", ParamName, pValue));
         return 0;
     }
