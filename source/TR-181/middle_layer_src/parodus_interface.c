@@ -182,67 +182,16 @@ static void checkComponentHealthStatus(char * compName, char * dbusPath, char *s
 
 static int check_ethernet_wan_status()
 {
-    int ret = -1, size =0, val_size =0;
-    char compName[MAX_PARAMETERNAME_LEN/2] = { '\0' };
-    char dbusPath[MAX_PARAMETERNAME_LEN/2] = { '\0' };
-    parameterValStruct_t **parameterval = NULL;
-    char *getList[] = {ETH_WAN_STATUS_PARAM};
-    componentStruct_t **        ppComponents = NULL;
-    char dst_pathname_cr[256] = {0};
-    char isEthEnabled[64]={'\0'};
-    errno_t rc  = -1;
-    
-    if(0 == syscfg_init())
-    {
-        if( 0 == syscfg_get( NULL, "eth_wan_enabled", isEthEnabled, sizeof(isEthEnabled)) && (isEthEnabled[0] != '\0' && strncmp(isEthEnabled, "true", strlen("true")) == 0))
-        {
-            CcspTraceInfo(("Ethernet WAN is enabled\n"));
-            ret = CCSP_SUCCESS;
-        }
-    }
-    else
-    {
-        waitForEthAgentComponentReady();
-        rc = sprintf_s(dst_pathname_cr, sizeof(dst_pathname_cr),"eRT.%s", CCSP_DBUS_INTERFACE_CR);
-        if(rc < EOK)
-        {
-          ERR_CHK(rc);
-        }
-        ret = CcspBaseIf_discComponentSupportingNamespace(bus_handle, dst_pathname_cr, ETH_WAN_STATUS_PARAM, "", &ppComponents, &size);
-        if ( ret == CCSP_SUCCESS && size >= 1)
-        {
-            strncpy(compName, ppComponents[0]->componentName, sizeof(compName)-1);
-            strncpy(dbusPath, ppComponents[0]->dbusPath, sizeof(compName)-1);
-        }
-        else
-        {
-            CcspTraceError(("Failed to get component for %s ret: %d\n",ETH_WAN_STATUS_PARAM,ret));
-        }
-        free_componentStruct_t(bus_handle, size, ppComponents);
+    int ret = -1;
+    char isEthEnabled[8];
 
-        if(strlen(compName) != 0 && strlen(dbusPath) != 0)
-        {
-            ret = CcspBaseIf_getParameterValues(bus_handle, compName, dbusPath, getList, 1, &val_size, &parameterval);
-            if(ret == CCSP_SUCCESS && val_size > 0)
-            {
-                if(parameterval[0]->parameterValue != NULL && strncmp(parameterval[0]->parameterValue, "true", strlen("true")) == 0)
-                {
-                    CcspTraceInfo(("Ethernet WAN is enabled\n"));
-                    ret = CCSP_SUCCESS;
-                }
-                else
-                {
-                    CcspTraceInfo(("Ethernet WAN is disabled\n"));
-                    ret = CCSP_FAILURE;
-                }
-            }
-            else
-            {
-                CcspTraceError(("Failed to get values for %s ret: %d\n",getList[0],ret));
-            }
-            free_parameterValStruct_t(bus_handle, val_size, parameterval);
-        }
+    if ((syscfg_get(NULL, "eth_wan_enabled", isEthEnabled, sizeof(isEthEnabled)) == 0) &&
+        (strcmp(isEthEnabled, "true") == 0))
+    {
+        CcspTraceInfo(("Ethernet WAN is enabled\n"));
+        ret = CCSP_SUCCESS;
     }
+
     return ret;
 }
 
