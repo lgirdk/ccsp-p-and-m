@@ -2808,34 +2808,6 @@
                         </parameters>
 		</object>
 
-                <object>
-                        <name>AccountInfo</name>
-  
-                        <objectType>object</objectType>
-
-                        <functions>
-
-                                <func_GetParamStringValue>AccountInfo_GetParamStringValue</func_GetParamStringValue>
-
-                                <func_SetParamStringValue>AccountInfo_SetParamStringValue</func_SetParamStringValue>
-                       </functions>
-
-                       <parameters>
-                               <parameter>
-
-                                       <name>AccountID</name>
-
-                                       <type>string(255)</type>
-
-                                       <syntax>string</syntax>
-
-                                       <writable>true</writable>
-
-                              </parameter>
-
-                      </parameters>
-                </object>
-
 <?ifdef FEATURE_SUPPORT_INTERWORKING?>
 		<object>
 			<name>WiFi-Interworking</name>
@@ -3326,38 +3298,6 @@
 <?endif?>
          </object>
 
-<?ifndef BCI?>
-	<object>
-		<name>Iot</name>
-
-		<objectType>object</objectType>
-
-		<functions>
-
-			<func_GetParamBoolValue>Iot_GetParamBoolValue</func_GetParamBoolValue>
-
-			<func_SetParamBoolValue>Iot_SetParamBoolValue</func_SetParamBoolValue>
-
-		</functions>
-
-		<parameters>
-
-			<parameter>
-
-				<name>X_RDKCENTRAL-COM_ENABLEIOT</name>
-
-				<type>boolean</type>
-
-				<syntax>bool</syntax>
-
-				<writable>true</writable>
-
-			</parameter>
-
-		</parameters>
-
-	</object> <!--End of Iot-->
-<?endif?>
         <object>
 
           <name>VendorConfigFile</name>
