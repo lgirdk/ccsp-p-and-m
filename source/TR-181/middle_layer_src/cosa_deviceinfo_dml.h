@@ -1077,31 +1077,6 @@ NetworkProperties_GetParamStringValue
         ULONG*                      pUlSize
     );
 
-/***********************************************************************
-
- APIs for Object:
-
-    DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.AccountInfo.AccountID
-
-    *  AccountInfo_GetParamStringValue
-    *  AccountInfo_SetParamStringValue
-***********************************************************************/
-BOOL
-AccountInfo_SetParamStringValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        char*                       pString
-    );
-
-ULONG
-AccountInfo_GetParamStringValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        char*                       pValue,
-        ULONG*                      pUlSize
-    );
 
 /***********************************************************************
 
