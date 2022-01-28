@@ -276,7 +276,6 @@ CosaDmlDiGetDeviceCategory
     )
 {
     AnscCopyString(pValue, "DOCSIS_Gateway");
-    *pulSize = AnscSizeOfString(pValue);
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -539,7 +538,6 @@ CosaDmlDiGetActualCMMacAddress
 
     if (platform_hal_GetCmMacAddress(pValue, *pulSize) != RETURN_OK )
         return ANSC_STATUS_FAILURE;
-    *pulSize = AnscSizeOfString(pValue);
     return ANSC_STATUS_SUCCESS;
 
 }

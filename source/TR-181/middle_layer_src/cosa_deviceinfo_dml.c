@@ -813,7 +813,6 @@ DeviceInfo_GetParamStringValue
     {
         if(CosaDmlDiGetGW_IPv6(NULL, pValue, pulSize) == ANSC_STATUS_SUCCESS)
         {
-            *pulSize = AnscSizeOfString(pValue)+1;
             return 0;
         }
     }
@@ -5798,7 +5797,6 @@ TemperatureSensor_GetParamStringValue
             return 1;
         }
         AnscCopyString(pValue,  PTempSensorEntry->Alias);
-        *pUlSize = AnscSizeOfString(PTempSensorEntry->Alias);
         return 0;
     }
 
@@ -5811,7 +5809,6 @@ TemperatureSensor_GetParamStringValue
         }
         pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
         AnscCopyString(pValue,  PTempSensorEntry->ResetTime);
-        *pUlSize = AnscSizeOfString(PTempSensorEntry->ResetTime);
         pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
         return 0;
     }
@@ -5824,7 +5821,6 @@ TemperatureSensor_GetParamStringValue
             return 1;
         }
         AnscCopyString(pValue,  PTempSensorEntry->Name);
-        *pUlSize = AnscSizeOfString(PTempSensorEntry->Name);
         return 0;
     }
 
@@ -5837,7 +5833,6 @@ TemperatureSensor_GetParamStringValue
         }
         pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
         AnscCopyString(pValue,  PTempSensorEntry->LastUpdate);
-        *pUlSize = AnscSizeOfString(PTempSensorEntry->LastUpdate);
         pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
         return 0;
     }
@@ -5851,7 +5846,6 @@ TemperatureSensor_GetParamStringValue
         }
         pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
         AnscCopyString(pValue,  PTempSensorEntry->MinTime);
-        *pUlSize = AnscSizeOfString(PTempSensorEntry->MinTime);
         pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
         return 0;
     }
@@ -5865,7 +5859,6 @@ TemperatureSensor_GetParamStringValue
         }
         pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
         AnscCopyString(pValue,  PTempSensorEntry->MaxTime);
-        *pUlSize = AnscSizeOfString(PTempSensorEntry->MaxTime);
         pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
         return 0;
     }
@@ -5879,7 +5872,6 @@ TemperatureSensor_GetParamStringValue
         }
         pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
         AnscCopyString(pValue,  PTempSensorEntry->LowAlarmTime);
-        *pUlSize = AnscSizeOfString(PTempSensorEntry->LowAlarmTime);
         pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
         return 0;
     }
@@ -5893,7 +5885,6 @@ TemperatureSensor_GetParamStringValue
         }
         pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
         AnscCopyString(pValue,  PTempSensorEntry->HighAlarmTime);
-        *pUlSize = AnscSizeOfString(PTempSensorEntry->HighAlarmTime);
         pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
         return 0;
     }
