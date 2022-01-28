@@ -588,38 +588,6 @@ CosaDmlDcInit
 }
 
 ANSC_STATUS
-CosaDmlDcGetMultiHomedHSDFlag
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue,
-        ULONG*                      pulSize
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    errno_t rc = -1;
-    rc = strcpy_s(pValue,*pulSize, "Cisco");
-    ERR_CHK(rc);
-    *pulSize = AnscSizeOfString(pValue);
-    return ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
-CosaDmlDcGetMultiHomedUIPageControl
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue,
-        ULONG*                      pulSize
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    errno_t rc = -1;
-    rc = strcpy_s(pValue, *pulSize, "000000");
-    ERR_CHK(rc);
-    *pulSize = AnscSizeOfString(pValue);
-    return ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
 CosaDmlDcGetMultiHomedMode
     (
         ANSC_HANDLE                 hContext,
@@ -656,32 +624,6 @@ CosaDmlDcSetMultiHomedMode
     (
         ANSC_HANDLE                 hContext,
         ULONG                       ulValue
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    UNREFERENCED_PARAMETER(ulValue);
-    return ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
-CosaDmlDcSetMultiHomedHSDFlag
-    (
-        ANSC_HANDLE                 hContext,
-        ULONG                       ulValue
-
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    UNREFERENCED_PARAMETER(ulValue);
-    return ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
-CosaDmlDcSetMultiHomedUIPageControl
-    (
-        ANSC_HANDLE                 hContext,
-        ULONG                       ulValue
-
     )
 {
     UNREFERENCED_PARAMETER(hContext);
@@ -807,46 +749,6 @@ CosaDmlDcGetWanStaticGatewayIP
 
     Utopia_Free(&ctx, 0);
 
-    return ANSC_STATUS_SUCCESS;
-}
-
-
-ANSC_STATUS
-CosaDmlDcGetWanSecondIPAddr
-    (
-        ANSC_HANDLE                 hContext,
-        ULONG           *ipAddr
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    UNREFERENCED_PARAMETER(ipAddr);
-//    *ipAddr = g_DcWanDns.SecIPAddr;
-    return ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
-CosaDmlDcGetWanSecondIPRipAdvertised
-    (
-        ANSC_HANDLE                 hContext,
-        BOOLEAN                     *pFlag
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    UNREFERENCED_PARAMETER(pFlag);
-//    *pFlag = g_DcWanDns.SecIPRIPAdv;
-    return ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
-CosaDmlDcGetWanBackupDefaultGateway
-    (
-        ANSC_HANDLE                 hContext,
-        ULONG           *ipAddr
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    UNREFERENCED_PARAMETER(ipAddr);
-//    *ipAddr = g_DcWanDns.BackupGateway;
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -1144,45 +1046,6 @@ CosaDmlDcSetWanStaticGatewayIP
 }
 
 ANSC_STATUS
-CosaDmlDcSetWanSecondIPAddr
-    (
-        ANSC_HANDLE                 hContext,
-        uint32_t                    ipAddr
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    UNREFERENCED_PARAMETER(ipAddr);
-//    g_DcWanDns.SecIPAddr = ipAddr;
-    return ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
-CosaDmlDcSetWanSecondIPRipAdvertised
-    (
-        ANSC_HANDLE                 hContext,
-        BOOLEAN                     Flag
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    UNREFERENCED_PARAMETER(Flag);
-//    g_DcWanDns.SecIPRIPAdv = Flag;
-    return ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
-CosaDmlDcSetWanBackupDefaultGateway
-    (
-        ANSC_HANDLE                 hContext,
-        uint32_t                    ipAddr
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    UNREFERENCED_PARAMETER(ipAddr);
-//    g_DcWanDns.BackupGateway = ipAddr;
-    return ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
 CosaDmlDcSetWanNameServer
     (
         ANSC_HANDLE                 hContext,
@@ -1291,18 +1154,6 @@ CosaDmlDcSetDomainName
     return ANSC_STATUS_SUCCESS;
 }
 
-ANSC_STATUS
-CosaDmlDcGetResetDefaultEnable
-    (
-        ANSC_HANDLE                 hContext,
-        BOOLEAN                     *pFlag
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    *pFlag = FALSE;
-    return ANSC_STATUS_SUCCESS;
-}
-
 /* saRgDeviceConfigSnmpEnable */
 enum snmpenable_e {
     RG_WAN = 0,
@@ -1381,19 +1232,6 @@ CosaDmlDcGetFactoryReset
 }
 
 ANSC_STATUS
-CosaDmlDcGetUserChangedFlags
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    pValue[0] = '0';
-    pValue[1] = '\0';
-    return ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
 CosaDmlDcGetDeviceConfigStatus
     (
         ANSC_HANDLE                 hContext,
@@ -1405,33 +1243,6 @@ CosaDmlDcGetDeviceConfigStatus
         return ANSC_STATUS_FAILURE;
     else
         return ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
-CosaDmlDcGetDeviceConfigIgnore
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    errno_t rc = -1;
-	/* Below pValue size is 1024 bytes having from calling function */
-    rc = strcpy_s(pValue, Device_Config_Ignore_size, " notRequire");/*need to modfiy @ivan*/
-    ERR_CHK(rc);
-    return ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
-CosaDmlDcSetDeviceConfigIgnore
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    UNREFERENCED_PARAMETER(pValue);
-    return ANSC_STATUS_SUCCESS;
 }
 
 void*
@@ -2469,30 +2280,6 @@ CosaDmlDcSetFactoryReset
     return ANSC_STATUS_SUCCESS;
 }
 
-ANSC_STATUS
-CosaDmlDcSetUserChangedFlags
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    UNREFERENCED_PARAMETER(pValue);
-    return ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
-CosaDmlDcSetResetDefaultEnable
-    (
-        ANSC_HANDLE                 hContext,
-        BOOLEAN                     pFlag
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    UNREFERENCED_PARAMETER(pFlag);
-    return ANSC_STATUS_SUCCESS;
-}
-
 void _CosaDmlDcStartZeroConfig()
 {
     FILE    *fileHandle  = NULL;
@@ -2943,18 +2730,6 @@ CosaDmlDcGetSSHEnable
 }
 
 ANSC_STATUS
-CosaDmlDcGetHNAPEnable
-    (
-        ANSC_HANDLE                 hContext,
-        BOOLEAN                     *pFlag
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    *pFlag = TRUE;
-    return ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
 CosaDmlDcSetTelnetEnable
     (
         ANSC_HANDLE                 hContext,
@@ -3003,18 +2778,6 @@ CosaDmlDcSetSSHEnable
         if (platform_hal_SetSSHEnable(flag) == RETURN_ERR )
             return ANSC_STATUS_FAILURE;
     }   
-    return ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
-CosaDmlDcSetHNAPEnable
-    (
-        ANSC_HANDLE                 hContext,
-        BOOLEAN                     flag
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    UNREFERENCED_PARAMETER(flag);
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -4761,30 +4524,6 @@ CosaDmlLanMngm_SetConf(ULONG ins, PCOSA_DML_LAN_MANAGEMENT pLanMngm)
         ret = ANSC_STATUS_SUCCESS;
     }
     return ret;
-}
-
-ANSC_STATUS
-CosaDmlDcGetIGMPSnoopingEnable
-    (
-        ANSC_HANDLE                 hContext,
-        BOOLEAN                     *pValue
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    UNREFERENCED_PARAMETER(pValue);
-    return ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
-CosaDmlDcSetIGMPSnoopingEnable
-    (
-        ANSC_HANDLE                 hContext,
-        ULONG                     value
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    UNREFERENCED_PARAMETER(value);
-    return ANSC_STATUS_SUCCESS;
 }
 
 ANSC_STATUS
