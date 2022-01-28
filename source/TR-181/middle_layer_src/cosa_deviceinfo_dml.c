@@ -813,7 +813,6 @@ DeviceInfo_GetParamStringValue
     {
         if(CosaDmlDiGetGW_IPv6(NULL, pValue, pulSize) == ANSC_STATUS_SUCCESS)
         {
-            *pulSize = AnscSizeOfString(pValue)+1;
             return 0;
         }
     }
@@ -969,7 +968,6 @@ DeviceInfo_GetParamStringValue
                 ERR_CHK(rc);
                 return -1;
               }
-              *pulSize = strlen(sbuf)+1;
         }
         return 0;
     }
@@ -1536,7 +1534,6 @@ ULONG
                 ERR_CHK(rc);
                 return -1;
             }
-            *pUlSize = AnscSizeOfString( pValue )+1;
             return 0;
         }
         return -1;
@@ -1672,7 +1669,6 @@ AccountInfo_GetParamStringValue
                     ERR_CHK(rc);
                     return -1;
                 }
-                *pulSize = AnscSizeOfString( pValue )+1;
                 return 0;
            }
            return -1;
@@ -2675,7 +2671,6 @@ WiFi_Telemetry_GetParamStringValue
             ERR_CHK(rc);
             return -1;
         }
-        *pulSize = AnscSizeOfString( pValue )+1;
         return 0;
     }
 
@@ -2688,7 +2683,6 @@ WiFi_Telemetry_GetParamStringValue
             ERR_CHK(rc);
             return -1;
         }
-        *pulSize = AnscSizeOfString( pValue )+1;
         return 0;
     }
 
@@ -2702,7 +2696,6 @@ WiFi_Telemetry_GetParamStringValue
             ERR_CHK(rc);
             return -1;
         }
-        *pulSize = AnscSizeOfString( pValue )+1;
         return 0;
     }
 
@@ -2715,7 +2708,6 @@ WiFi_Telemetry_GetParamStringValue
             ERR_CHK(rc);
             return -1;
         }
-        *pulSize = AnscSizeOfString( pValue )+1;
         return 0;
     }
 
@@ -7160,7 +7152,6 @@ TemperatureSensor_GetParamStringValue
             return 1;
         }
         AnscCopyString(pValue,  PTempSensorEntry->Alias);
-        *pUlSize = AnscSizeOfString(PTempSensorEntry->Alias);
         return 0;
     }
 
@@ -7173,7 +7164,6 @@ TemperatureSensor_GetParamStringValue
         }
         pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
         AnscCopyString(pValue,  PTempSensorEntry->ResetTime);
-        *pUlSize = AnscSizeOfString(PTempSensorEntry->ResetTime);
         pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
         return 0;
     }
@@ -7186,7 +7176,6 @@ TemperatureSensor_GetParamStringValue
             return 1;
         }
         AnscCopyString(pValue,  PTempSensorEntry->Name);
-        *pUlSize = AnscSizeOfString(PTempSensorEntry->Name);
         return 0;
     }
 
@@ -7199,7 +7188,6 @@ TemperatureSensor_GetParamStringValue
         }
         pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
         AnscCopyString(pValue,  PTempSensorEntry->LastUpdate);
-        *pUlSize = AnscSizeOfString(PTempSensorEntry->LastUpdate);
         pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
         return 0;
     }
@@ -7213,7 +7201,6 @@ TemperatureSensor_GetParamStringValue
         }
         pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
         AnscCopyString(pValue,  PTempSensorEntry->MinTime);
-        *pUlSize = AnscSizeOfString(PTempSensorEntry->MinTime);
         pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
         return 0;
     }
@@ -7227,7 +7214,6 @@ TemperatureSensor_GetParamStringValue
         }
         pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
         AnscCopyString(pValue,  PTempSensorEntry->MaxTime);
-        *pUlSize = AnscSizeOfString(PTempSensorEntry->MaxTime);
         pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
         return 0;
     }
@@ -7241,7 +7227,6 @@ TemperatureSensor_GetParamStringValue
         }
         pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
         AnscCopyString(pValue,  PTempSensorEntry->LowAlarmTime);
-        *pUlSize = AnscSizeOfString(PTempSensorEntry->LowAlarmTime);
         pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
         return 0;
     }
@@ -7255,7 +7240,6 @@ TemperatureSensor_GetParamStringValue
         }
         pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
         AnscCopyString(pValue,  PTempSensorEntry->HighAlarmTime);
-        *pUlSize = AnscSizeOfString(PTempSensorEntry->HighAlarmTime);
         pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
         return 0;
     }
@@ -11100,7 +11084,6 @@ ULONG*                      pUlSize
                     goto EXIT;
                 }
                 CcspTraceError((" Succeeded to GET\n" ));
-                *pUlSize = AnscSizeOfString( pValue )+1;
             }
             else if(((file1)!=NULL) && ((file3)!=NULL))
             {
@@ -11112,7 +11095,6 @@ ULONG*                      pUlSize
                     goto EXIT;
                 }
                 CcspTraceError((" succeeded to GET\n" ));
-                *pUlSize = AnscSizeOfString( pValue )+1;
             }
             else if(((file1)==NULL) && ((file2)!=NULL))
             {
@@ -11124,7 +11106,6 @@ ULONG*                      pUlSize
                     goto EXIT;
                 }
                 CcspTraceError((" succeeded to GET\n" ));
-                *pUlSize = AnscSizeOfString( pValue )+1;
             }
             else if(((file1)==NULL) && ((file3)!=NULL))
             {
@@ -11136,7 +11117,6 @@ ULONG*                      pUlSize
                     goto EXIT;
                 }
                 CcspTraceError((" succeeded to GET\n" ));
-                *pUlSize = AnscSizeOfString( pValue )+1;
             }
             else if(((file1)==NULL) && ((file2)==NULL) && ((file3)==NULL))
             {
@@ -11148,7 +11128,6 @@ ULONG*                      pUlSize
                     goto EXIT;
                 }
                 CcspTraceError((" succeeded to GET\n" ));
-                *pUlSize = AnscSizeOfString( pValue )+1;
             }
             else if(((file1)!=NULL) && ((file2)==NULL) && ((file3)==NULL))
             {
@@ -11160,7 +11139,6 @@ ULONG*                      pUlSize
                     goto EXIT;
                 }
                 CcspTraceError((" succeeded to GET\n" ));
-                *pUlSize = AnscSizeOfString( pValue )+1;
             }
             ret = 0;
 
@@ -13406,7 +13384,6 @@ EthernetWAN_MACsec_GetParamStringValue
               ERR_CHK(rc);
               return -1;
            }
-           *pUlSize = AnscSizeOfString( pValue )+1;
 
            return 0;
         }
@@ -13797,7 +13774,6 @@ Syndication_GetParamStringValue
            ERR_CHK(rc);
            return -1;
         }
-        *pulSize = AnscSizeOfString( pValue )+1;	
         return 0;
     }
 
@@ -13811,7 +13787,6 @@ Syndication_GetParamStringValue
            ERR_CHK(rc);
            return -1;
         }
-        *pulSize = AnscSizeOfString( pValue )+1;
 
         return 0;
     }
@@ -14657,7 +14632,6 @@ RPC_GetParamStringValue
 		ERR_CHK(rc);
 		return -1;
 	}
-	*pulSize = AnscSizeOfString( pValue )+1;
 	return 0;
     }
 
@@ -14670,7 +14644,6 @@ RPC_GetParamStringValue
 		ERR_CHK(rc);
 		return -1;
 	}
-	*pulSize = AnscSizeOfString( pValue )+1;
 	return 0;
     }
 
@@ -17933,7 +17906,6 @@ Generic_GetParamStringValue
            ERR_CHK(rc);
            return -1;
         }
-        *pUlSize = AnscSizeOfString( pValue )+1;
         CcspTraceWarning(("param = %s, value = %s\n", ParamName, pValue));
         return 0;
     }
