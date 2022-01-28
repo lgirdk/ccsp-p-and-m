@@ -86,12 +86,6 @@
 /**********************************************************************
                 STRUCTURE AND CONSTANT DEFINITIONS
 **********************************************************************/
-enum
-{
-    PRIMARY_MODE=1,
-    BYOI_MODE,
-    NONE_MODE
-};
 
 typedef enum
 _COSA_DML_WanAddrMode
@@ -175,22 +169,6 @@ CosaDmlDcInit
     );
 
 ANSC_STATUS
-CosaDmlDcGetMultiHomedHSDFlag
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue,
-        ULONG*                      pulSize
-    );
-
-ANSC_STATUS
-CosaDmlDcGetMultiHomedUIPageControl
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue,
-        ULONG*                      pulSize
-    );
-
-ANSC_STATUS
 CosaDmlDcGetMultiHomedMode
     (
         ANSC_HANDLE                 hContext,
@@ -204,20 +182,6 @@ CosaDmlDcGetMultiHomedBridgingStatus
         ANSC_HANDLE                 hContext,
         char*                       pValue,
         ULONG*                      pulSize
-    );
-
-ANSC_STATUS
-CosaDmlDcSetMultiHomedHSDFlag
-    (
-        ANSC_HANDLE                 hContext,
-        ULONG                       ulValue
-    );
-
-ANSC_STATUS
-CosaDmlDcSetMultiHomedUIPageControl
-    (
-        ANSC_HANDLE                 hContext,
-        ULONG                       ulValue
     );
 
 ANSC_STATUS
@@ -251,27 +215,6 @@ CosaDmlDcGetWanStaticSubnetMask
 
 ANSC_STATUS
 CosaDmlDcGetWanStaticGatewayIP
-    (
-        ANSC_HANDLE                 hContext,
-        ULONG                       *ipAddr
-    );
-
-ANSC_STATUS
-CosaDmlDcGetWanSecondIPAddr
-    (
-        ANSC_HANDLE                 hContext,
-        ULONG                       *ipAddr
-    );
-
-ANSC_STATUS
-CosaDmlDcGetWanSecondIPRipAdvertised
-    (
-        ANSC_HANDLE                 hContext,
-        BOOLEAN                     *pFlag
-    );
-
-ANSC_STATUS
-CosaDmlDcGetWanBackupDefaultGateway
     (
         ANSC_HANDLE                 hContext,
         ULONG                       *ipAddr
@@ -335,27 +278,6 @@ CosaDmlDcSetWanStaticGatewayIP
     );
 
 ANSC_STATUS
-CosaDmlDcSetWanSecondIPAddr
-    (
-        ANSC_HANDLE                 hContext,
-        uint32_t                    ipAddr
-    );
-
-ANSC_STATUS
-CosaDmlDcSetWanSecondIPRipAdvertised
-    (
-        ANSC_HANDLE                 hContext,
-        BOOLEAN                     Flag
-    );
-
-ANSC_STATUS
-CosaDmlDcSetWanBackupDefaultGateway
-    (
-        ANSC_HANDLE                 hContext,
-        uint32_t                    ipAddr
-    );
-
-ANSC_STATUS
 CosaDmlDcSetWanNameServer
     (
         ANSC_HANDLE                 hContext,
@@ -406,13 +328,6 @@ CosaDmlDcSetRenewWan
     );
 
 ANSC_STATUS
-CosaDmlDcGetResetDefaultEnable
-    (
-        ANSC_HANDLE                 hContext,
-        BOOLEAN                     *pFlag
-    );
-
-ANSC_STATUS
 CosaDmlDcGetSNMPEnable
     (
         ANSC_HANDLE                 hContext,
@@ -454,32 +369,11 @@ CosaDmlDcGetFactoryReset
         char*                       pValue
     );
 
-ANSC_STATUS
-CosaDmlDcGetUserChangedFlags
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue
-    );
-
 ANSC_STATUS 
 CosaDmlDcSetReInitCmMac ();
 
 ANSC_STATUS
 CosaDmlDcGetDeviceConfigStatus
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue
-    );
-
-ANSC_STATUS
-CosaDmlDcGetDeviceConfigIgnore
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue
-    );
-
-ANSC_STATUS
-CosaDmlDcSetDeviceConfigIgnore
     (
         ANSC_HANDLE                 hContext,
         char*                       pValue
@@ -497,20 +391,6 @@ CosaDmlDcGetFactoryReset
     (
         ANSC_HANDLE                 hContext,
         char*                       pValue
-    );
-
-ANSC_STATUS
-CosaDmlDcSetUserChangedFlags
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue
-    );
-
-ANSC_STATUS
-CosaDmlDcSetResetDefaultEnable
-    (
-        ANSC_HANDLE                 hContext,
-        BOOLEAN                     pFlag
     );
 
 ANSC_STATUS
@@ -535,13 +415,6 @@ CosaDmlDcGetSSHEnable
     );
 
 ANSC_STATUS
-CosaDmlDcGetHNAPEnable
-    (
-        ANSC_HANDLE                 hContext,
-        BOOLEAN                     *pFlag
-    );
-
-ANSC_STATUS
 CosaDmlDcSetTelnetEnable
     (
         ANSC_HANDLE                 hContext,
@@ -554,14 +427,6 @@ CosaDmlDcSetSSHEnable
         ANSC_HANDLE                 hContext,
         BOOLEAN                     pFlag
     );
-
-ANSC_STATUS
-CosaDmlDcSetHNAPEnable
-    (
-        ANSC_HANDLE                 hContext,
-        BOOLEAN                     pFlag
-    );
-
 
 ANSC_STATUS
 CosaDmlDcGetMsoRemoteMgmtEnable
@@ -760,12 +625,6 @@ CosaDmlDcGetHTTPSEnable
         ANSC_HANDLE                 hContext,
         BOOLEAN                     *pValue
     );
-ANSC_STATUS
-CosaDmlDcGetIGMPSnoopingEnable
-    (
-        ANSC_HANDLE                 hContext,
-        BOOLEAN                     *pValue
-    );
 
 ANSC_STATUS
 CosaDmlDcGetWebUITimeout
@@ -834,13 +693,6 @@ CosaDmlDcSetEnableZeroConfig
     (
         ANSC_HANDLE                 hContext,
         BOOLEAN                     bFlag
-    );
-
-ANSC_STATUS
-CosaDmlDcSetIGMPSnoopingEnable
-    (
-        ANSC_HANDLE                 hContext,
-        ULONG                     value
     );
 
 ANSC_STATUS CosaDmlDcSetDeviceMode
