@@ -389,8 +389,8 @@ CosaDmlGatewayV4GetBlockFragIPPkts
     BOOL                        *pValue
 )
 {
-    char buf[64];
-    memset(buf, 0, sizeof(buf));
+    char buf[8];
+
     syscfg_get( NULL, V4_BLOCKFRAGIPPKT, buf, sizeof(buf));
     *pValue = (strcmp(buf, "1") == 0);
 
@@ -424,10 +424,11 @@ CosaDmlGatewayV4GetPortScanProtect
     BOOL                        *pValue
 )
 {
-    char buf[64];
-    memset(buf, 0, sizeof(buf));
+    char buf[8];
+
     syscfg_get( NULL, V4_PORTSCANPROTECT, buf, sizeof(buf));
     *pValue = (strcmp(buf, "1") == 0);
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -458,10 +459,11 @@ CosaDmlGatewayV4GetIPFloodDetect
    BOOL                        *pValue
 )
 {
-    char buf[64];
-    memset(buf, 0, sizeof(buf));
+    char buf[8];
+
     syscfg_get( NULL, V4_IPFLOODDETECT, buf, sizeof(buf));
     *pValue = (strcmp(buf, "1") == 0);
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -612,7 +614,7 @@ ANSC_STATUS CosaDmlGatewayV4SetICMPFloodDetectRate (ULONG ulValue)
 
 ANSC_STATUS CosaDmlFW_V4DayOfWeek_GetBlockTimeBitMaskType (ULONG *pulBlockTimeBitMaskType)
 {
-    char buf[16];
+    char buf[12];
 
     syscfg_get(NULL, "v4_dayofweek_block_time_bitmask_type", buf, sizeof(buf));
 
@@ -1111,10 +1113,11 @@ CosaDmlGatewayV6GetBlockFragIPPkts
     BOOL                        *pValue
 )
 {
-    char buf[64];
-    memset(buf, 0, sizeof(buf));
+    char buf[8];
+
     syscfg_get( NULL, V6_BLOCKFRAGIPPKT, buf, sizeof(buf));
     *pValue = (strcmp(buf, "1") == 0);
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -1145,10 +1148,11 @@ CosaDmlGatewayV6GetPortScanProtect
     BOOL                        *pValue
 )
 {
-    char buf[64];
-    memset(buf, 0, sizeof(buf));
+    char buf[8];
+
     syscfg_get( NULL, V6_PORTSCANPROTECT, buf, sizeof(buf));
     *pValue = (strcmp(buf, "1") == 0);
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -1179,20 +1183,21 @@ CosaDmlGatewayV6GetIPFloodDetect
     BOOL                        *pValue
 )
 {
-    char buf[64];
-    memset(buf, 0, sizeof(buf));
+    char buf[8];
+
     syscfg_get( NULL, V6_IPFLOODDETECT, buf, sizeof(buf));
     *pValue = (strcmp(buf, "1") == 0);
-    return ANSC_STATUS_SUCCESS;
 
+    return ANSC_STATUS_SUCCESS;
 }
 
 ULONG CosaDmlGatewayV6GetICMPFloodDetect (BOOL *pValue)
 {
-    char buf[12];
+    char buf[8];
 
     syscfg_get(NULL, "v6_ICMPFloodDetect", buf, sizeof(buf));
     *pValue = (strcmp(buf, "1") == 0);
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -1202,6 +1207,7 @@ ANSC_STATUS CosaDmlGatewayV6GetICMPFloodDetectRate (ULONG *puLong)
 
     syscfg_get(NULL, "v6_ICMPFloodDetectRate", buf, sizeof(buf));
     *puLong = atoi(buf);
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -1354,10 +1360,11 @@ CosaDmlFW_V6DayOfWeek_GetBlockTimeBitMaskType
         ULONG            *pulBlockTimeBitMaskType
     )
 {
-    char buf[16] = {0};
+    char buf[12];
 
     syscfg_get(NULL, "v6_dayofweek_block_time_bitmask_type", buf, sizeof(buf));
     *pulBlockTimeBitMaskType = atoi(buf);
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -1393,6 +1400,7 @@ CosaDmlFW_V6DayOfWeek_SetBlockTimeBitMaskType
         return ANSC_STATUS_FAILURE;
     }
     syscfg_commit();
+
     return ANSC_STATUS_SUCCESS;
 }
 
