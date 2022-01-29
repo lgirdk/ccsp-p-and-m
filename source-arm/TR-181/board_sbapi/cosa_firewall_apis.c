@@ -602,11 +602,7 @@ ULONG CosaDmlGatewayV4SetICMPFloodDetect (BOOL bValue)
 
 ANSC_STATUS CosaDmlGatewayV4SetICMPFloodDetectRate (ULONG ulValue)
 {
-    char buf[12];
-
-    sprintf(buf, "%d", ulValue);
-
-    if( syscfg_set(NULL, "v4_ICMPFloodDetectRate", buf) == 0)
+    if( syscfg_set_u(NULL, "v4_ICMPFloodDetectRate", ulValue) == 0)
     {
         syscfg_commit();
     }
@@ -627,11 +623,8 @@ ANSC_STATUS CosaDmlFW_V4DayOfWeek_GetBlockTimeBitMaskType (ULONG *pulBlockTimeBi
 
 ANSC_STATUS CosaDmlFW_V4DayOfWeek_SetBlockTimeBitMaskType (ULONG blockTimeBitMaskType)
 {
-    char buf[16];
-
-    sprintf(buf, "%lu", blockTimeBitMaskType);
-
-    if (syscfg_set(NULL, "v4_dayofweek_block_time_bitmask_type", buf) != 0) {
+    if (syscfg_set_u(NULL, "v4_dayofweek_block_time_bitmask_type", blockTimeBitMaskType) != 0)
+    {
         return ANSC_STATUS_FAILURE;
     }
 
@@ -1327,11 +1320,7 @@ ULONG CosaDmlGatewayV6SetICMPFloodDetect (BOOL bValue)
 
 ANSC_STATUS CosaDmlGatewayV6SetICMPFloodDetectRate (ULONG ulValue)
 {
-    char buf[12];
-
-    snprintf(buf, sizeof(buf), "%lu", ulValue);
-
-    syscfg_set(NULL, "v6_ICMPFloodDetectRate", buf);
+    syscfg_set_u(NULL, "v6_ICMPFloodDetectRate", ulValue);
     syscfg_commit();
 
     return ANSC_STATUS_SUCCESS;
@@ -1399,10 +1388,8 @@ CosaDmlFW_V6DayOfWeek_SetBlockTimeBitMaskType
         ULONG             blockTimeBitMaskType
     )
 {
-    char buf[16] = {0};
-
-    sprintf(buf, "%lu", blockTimeBitMaskType);
-    if(syscfg_set(NULL, "v6_dayofweek_block_time_bitmask_type", buf) != 0) {
+    if(syscfg_set_u(NULL, "v6_dayofweek_block_time_bitmask_type", blockTimeBitMaskType) != 0)
+    {
         return ANSC_STATUS_FAILURE;
     }
     syscfg_commit();
