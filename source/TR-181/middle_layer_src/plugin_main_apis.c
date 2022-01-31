@@ -207,8 +207,6 @@ ANSC_HANDLE CosaGreTunnelCreate ();
 ANSC_HANDLE CosaCGreCreate(VOID);
 ANSC_STATUS CosaCGreRemove(ANSC_HANDLE hThisObject);
 ANSC_STATUS CosaGreTunnelRemove( ANSC_HANDLE hThisObject );
-ANSC_HANDLE CosaGreCreate(VOID);
-ANSC_STATUS CosaGreRemove(ANSC_HANDLE hThisObject);
 void initparodusTask();
 static void SetAutoreboot( ANSC_HANDLE  hThisObject);
 
@@ -440,8 +438,6 @@ if(id != 0)
 #if !defined(HOTSPOT_DISABLE)
 //#ifdef CONFIG_CISCO_HOTSPOT
 	
-    pMyObject->hGRE           = (ANSC_HANDLE)CosaGreCreate();
-    AnscTraceWarning(("  CosaGreCreate done!\n"));
 	//zqiu>>
 	printf("-- %s %d CosaGreTunnelCreate\n", __func__, __LINE__);
     pMyObject->hTGRE       = (ANSC_HANDLE)CosaGreTunnelCreate();
@@ -737,11 +733,6 @@ CosaBackEndManagerRemove
     }
 
 #ifdef CONFIG_CISCO_HOTSPOT
-    if ( pMyObject->hGRE )
-    {
-        CosaGreRemove((ANSC_HANDLE)pMyObject->hGRE);
-    }
-
     if ( pMyObject->hCGRE )
     {
         CosaCGreRemove((ANSC_HANDLE)pMyObject->hCGRE);

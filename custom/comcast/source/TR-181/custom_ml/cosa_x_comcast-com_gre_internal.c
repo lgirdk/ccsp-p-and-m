@@ -58,7 +58,6 @@
 #define SIZE_OF_IP 16
 #define POLL_CIRCUIT_ID_SLEEP 3
 
-int hotspot_update_circuit_ids(int,int);
 extern void* g_pDslhDmlAgent;
 
 ANSC_HANDLE
@@ -167,19 +166,19 @@ void* update_circuitID_thread(void* arg)
     if(!running)
     {
         running=1;
-        CcspTraceInfo(("%s:hotspot_update_circuit_ids starting\n", __FUNCTION__));
-        ret = hotspot_update_circuit_ids(1, 1);
+        CcspTraceInfo(("%s:GreTunnel_hotspot_update_circuit_ids starting\n", __FUNCTION__));
+        ret = GreTunnel_hotspot_update_circuit_ids(1, 1);
         while (ret < 0)
         {
             sleep(POLL_CIRCUIT_ID_SLEEP);
-            CcspTraceWarning(("%s:Retrying hotspot_update_circuit_ids\n", __FUNCTION__));
-            ret = hotspot_update_circuit_ids(1, 1);
+            CcspTraceWarning(("%s:Retrying GreTunnel_hotspot_update_circuit_ids\n", __FUNCTION__));
+            ret = GreTunnel_hotspot_update_circuit_ids(1, 1);
         }
         running=0;
     }
     else
     {
-        CcspTraceWarning(("%s: already hotspot_update_circuit_ids is running\n", __FUNCTION__));
+        CcspTraceWarning(("%s: already GreTunnel_hotspot_update_circuit_ids is running\n", __FUNCTION__));
         return NULL;
     }
     return NULL;
