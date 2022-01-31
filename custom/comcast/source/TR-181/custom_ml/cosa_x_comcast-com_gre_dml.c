@@ -51,8 +51,6 @@
 #include "cosa_x_comcast-com_gre_internal.h"
 #include "safec_lib_common.h"
 
-int hotspot_update_circuit_ids(int greinst, int queuestart);
-
 ULONG GreTunnel_GetEntryCount (  ANSC_HANDLE hInsContext  ) {
     UNREFERENCED_PARAMETER(hInsContext);
     return CosaDml_GreTunnelGetNumberOfEntries();
@@ -94,12 +92,12 @@ void* hotspot_thread(void* arg)
     if(!running)
     {
       running=1;
-      CcspTraceWarning(("%s:hotspot_update_circuit_ids starting\n", __FUNCTION__));
-      hotspot_update_circuit_ids(1,1);
+      CcspTraceWarning(("%s:GreTunnel_hotspot_update_circuit_ids starting\n", __FUNCTION__));
+      GreTunnel_hotspot_update_circuit_ids(1,1);
     }
     else
     {
-        CcspTraceWarning(("%s: already hotspot_update_circuit_ids is running\n", __FUNCTION__));
+        CcspTraceWarning(("%s: already GreTunnel_hotspot_update_circuit_ids is running\n", __FUNCTION__));
         return NULL;
     }
     running=0;
@@ -222,7 +220,7 @@ BOOL GreTunnel_GetParamBoolValue ( ANSC_HANDLE hInsContext, char*  ParamName, BO
         *pBool = pGreTu->EnableCircuitID;
         if(pGreTu->EnableCircuitID) {
             // update  circuit ids
-            //TODO: hotspot_update_circuit_ids ?
+            //TODO: GreTunnel_hotspot_update_circuit_ids ?
             /* TCXB6-4418: CCSP Deadlock happening because of wifi getting started
                Late in Technicolor. So the PAM is getting restarted with this DeadLock.
                Now we want this as a separate thread and update circuit ids.
