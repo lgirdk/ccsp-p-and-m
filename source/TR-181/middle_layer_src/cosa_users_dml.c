@@ -1566,7 +1566,12 @@ User_Commit
     }
     else
     {
-        if( !AnscEqualString(pUser->Username, csr_user_name, TRUE))
+        COSA_DML_USER tmpUser;
+
+        tmpUser.InstanceNumber = pUser->InstanceNumber;
+        CosaDmlUserGetCfg(NULL, &tmpUser);
+
+        if ((!AnscEqualString(pUser->Username, csr_user_name, TRUE)) || (tmpUser.bEnabled != pUser->bEnabled))
         {
             returnStatus = CosaDmlUserSetCfg(NULL, pUser);
         }
