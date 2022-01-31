@@ -57,7 +57,6 @@
 #include "cosa_deviceinfo_internal.h"
 #define SIZE_OF_IP 16
 
-int hotspot_update_circuit_ids(int,int);
 extern void* g_pDslhDmlAgent;
 
 ANSC_HANDLE
@@ -186,9 +185,9 @@ void callbackWCConfirmVap(tunnelSet_t *tunnelSet){
        tunnelSet = NULL;
    }
   
-   ret = hotspot_update_circuit_ids(1,1);
+   ret = GreTunnel_hotspot_update_circuit_ids(1,1);
    if( ret < 0) {
-    CcspTraceWarning(("%s Failed hotspot_update_circuit_ids '%d'\n", __FUNCTION__, ret ));
+    CcspTraceWarning(("%s Failed GreTunnel_hotspot_update_circuit_ids '%d'\n", __FUNCTION__, ret ));
    }
 
 }
