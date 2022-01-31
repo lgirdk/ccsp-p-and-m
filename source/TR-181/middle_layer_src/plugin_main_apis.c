@@ -205,8 +205,6 @@ ANSC_HANDLE CosaGreTunnelCreate ();
 ANSC_HANDLE CosaCGreCreate(VOID);
 ANSC_STATUS CosaCGreRemove(ANSC_HANDLE hThisObject);
 ANSC_STATUS CosaGreTunnelRemove( ANSC_HANDLE hThisObject );
-ANSC_HANDLE CosaGreCreate(VOID);
-ANSC_STATUS CosaGreRemove(ANSC_HANDLE hThisObject);
 void initparodusTask();
 static void SetAutoreboot( ANSC_HANDLE  hThisObject);
 
@@ -387,10 +385,6 @@ CosaBackEndManagerInitialize
     pMyObject->hMld           = (ANSC_HANDLE)CosaMldCreate();
     AnscTraceWarning(("  CosaMldCreate done!\n"));
 
-#ifdef INTEL_GRE_HOTSPOT
-    pMyObject->hIGRE           = (ANSC_HANDLE)CosaGRECreate();
-    AnscTraceWarning(("  CosaIGRECreate done!\n"));
-#endif
     /*
 #ifdef CONFIG_TI_PACM
     pMyObject->hMTA           = (ANSC_HANDLE)CosaMTACreate();
@@ -444,8 +438,6 @@ if(id != 0)
 #if !defined(HOTSPOT_DISABLE)
 //#ifdef CONFIG_CISCO_HOTSPOT
 	
-    pMyObject->hGRE           = (ANSC_HANDLE)CosaGreCreate();
-    AnscTraceWarning(("  CosaGreCreate done!\n"));
 	//zqiu>>
 	printf("-- %s %d CosaGreTunnelCreate\n", __func__, __LINE__);
     pMyObject->hTGRE       = (ANSC_HANDLE)CosaGreTunnelCreate();
@@ -721,12 +713,6 @@ CosaBackEndManagerRemove
     {
         CosaMldRemove((ANSC_HANDLE)pMyObject->hMld);
     }
-#ifdef INTEL_GRE_HOTSPOT
-    if ( pMyObject->hIGRE )
-    {
-        CosaGRERemove((ANSC_HANDLE)pMyObject->hIGRE);
-    }
-#endif
     if (pMyObject->hLgiCloudUi)
     {
         CosaLgiCloudUiRemove((ANSC_HANDLE)pMyObject->hLgiCloudUi);
@@ -745,11 +731,6 @@ CosaBackEndManagerRemove
     }
 
 #ifdef CONFIG_CISCO_HOTSPOT
-    if ( pMyObject->hGRE )
-    {
-        CosaGreRemove((ANSC_HANDLE)pMyObject->hGRE);
-    }
-
     if ( pMyObject->hCGRE )
     {
         CosaCGreRemove((ANSC_HANDLE)pMyObject->hCGRE);
