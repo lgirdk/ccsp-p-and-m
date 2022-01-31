@@ -39,8 +39,6 @@ libCcspPandM_comcast_ml_la_SOURCES = \
     cosa_x_cisco_com_hotspot_internal.c \
     cosa_x_cisco_com_truestaticip_dml.c \
     cosa_x_cisco_com_truestaticip_internal.c \
-    cosa_x_comcast_com_gre_dml.c \
-    cosa_x_comcast_com_gre_internal.c \
     cosa_x_comcast-com_gre_dml.c \
     cosa_x_comcast-com_gre_internal.c
 
