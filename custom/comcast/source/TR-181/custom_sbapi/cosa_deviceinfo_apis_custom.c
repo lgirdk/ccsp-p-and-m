@@ -76,7 +76,7 @@
 #include "secure_wrapper.h"
 #include "safec_lib_common.h"
 
-#include "cosa_x_comcast_com_gre_apis.h"
+#include "cosa_x_comcast-com_gre_apis.h"
 #include <utctx/utctx.h>
 #include <utctx/utctx_api.h>
 #include <utapi.h>
@@ -563,7 +563,7 @@ void *XfinityWifiThread
 	//zqiu<<
     if (value) {
          //Update circuit ID here
-        hotspot_update_circuit_ids(1,1); 
+        GreTunnel_hotspot_update_circuit_ids(1,1); 
     }
     
     AnscFreeMemory(pvalue);
