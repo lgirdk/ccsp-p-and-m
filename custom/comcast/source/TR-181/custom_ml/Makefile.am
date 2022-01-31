@@ -33,5 +33,5 @@ libCcspPandM_comcast_ml_la_CPPFLAGS = -I$(top_srcdir)/source/TR-181/board_ml \
                                       -I$(top_srcdir)/source-arm/TR-181/board_include \
                                       -I$(top_srcdir)/source-arm/TR-181/board_ml
 
-libCcspPandM_comcast_ml_la_SOURCES = cosa_deviceinfo_dml_custom.c cosa_x_cisco_com_gre_internal.c cosa_x_cisco_com_hotspot_internal.c cosa_x_cisco_com_truestaticip_internal.c cosa_x_comcast_com_gre_internal.c cosa_x_comcast-com_gre_internal.c cosa_x_cisco_com_gre_dml.c cosa_x_cisco_com_hotspot_dml.c cosa_x_cisco_com_truestaticip_dml.c cosa_x_comcast_com_gre_dml.c  cosa_x_comcast-com_gre_dml.c
+libCcspPandM_comcast_ml_la_SOURCES = cosa_deviceinfo_dml_custom.c cosa_x_cisco_com_gre_internal.c cosa_x_cisco_com_hotspot_internal.c cosa_x_cisco_com_truestaticip_internal.c cosa_x_comcast-com_gre_internal.c cosa_x_cisco_com_gre_dml.c cosa_x_cisco_com_hotspot_dml.c cosa_x_cisco_com_truestaticip_dml.c cosa_x_comcast-com_gre_dml.c
 libCcspPandM_comcast_ml_la_LDFLAGS = -lccsp_common
