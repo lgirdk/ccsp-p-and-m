@@ -492,11 +492,10 @@ CosaDmlSetRRMState
 ULONG
 CosaDmlApplyPlumeWiFiChanges
 (
-    PANSC_HANDLE                phContext,
-    BOOL                        value
+    PANSC_HANDLE                phContext
 )
 {
     pthread_t tid;
 
-    pthread_create(&tid, NULL, apply_wiFiDataPaths, phContext);
+    pthread_create(&tid, NULL, (void *)apply_wiFiDataPaths, phContext);
 }
