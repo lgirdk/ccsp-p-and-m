@@ -3878,26 +3878,10 @@ TR069support_GetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    char buf[8];
-
-    /* check the parameter name and return the corresponding value */
 
     if (strcmp(ParamName, "Enable") == 0)
     {
-        /* collect value */
-        /* CID: 71587 Array compared against 0*/
-        if(!syscfg_get( NULL, "EnableTR69Binary", buf, sizeof(buf)))
-        {
-            if (strcmp(buf, "false") == 0)
-                *pBool = FALSE;
-            else
-                *pBool = TRUE;
-        }
-        else {
-           //Returning as TRUE which was the behaviour prior to the coverity fix CID: 71587
-           *pBool = TRUE;
-           return FALSE;
-        }
+        *pBool = TRUE;
         return TRUE;
     }
 
