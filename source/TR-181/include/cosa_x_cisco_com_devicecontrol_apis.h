@@ -730,25 +730,6 @@ CosaDmlDcSetFactoryReset
 ANSC_STATUS
 CosaDmlDcSetWebServer(BOOL httpEn, BOOL httpsEn, ULONG httpPort, ULONG httpsPort);
 
-
-ANSC_STATUS
-CosaDmlDcSetWebAccessLevel
-    (
-        ANSC_HANDLE                 hContext,
-        int                         userIndex,
-        int                         ifIndex,
-        ULONG                       value
-    );
-
-ANSC_STATUS
-CosaDmlDcGetWebAccessLevel
-    (
-        ANSC_HANDLE                 hContext,
-        int                         userIndex,
-        int                         ifIndex,
-        ULONG                       *pValue
-    );
-
 BOOL 
 IsPortInUse
 (
