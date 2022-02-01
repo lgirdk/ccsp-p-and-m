@@ -4637,41 +4637,6 @@ CosaDmlDcSetWebUITimeout
         return ANSC_STATUS_FAILURE;
 }
 
-ANSC_STATUS
-CosaDmlDcGetWebAccessLevel
-    (
-        ANSC_HANDLE                 hContext,
-        int                         userIndex,
-        int                         ifIndex,
-        ULONG                       *pValue
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    if (pValue == NULL)
-        return ANSC_STATUS_FAILURE;
-
-    if (platform_hal_GetWebAccessLevel(userIndex, ifIndex, pValue) != RETURN_OK )
-        return ANSC_STATUS_FAILURE;
-    else
-        return ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
-CosaDmlDcSetWebAccessLevel
-    (
-        ANSC_HANDLE                 hContext,
-        int                         userIndex,
-        int                         ifIndex,
-        ULONG                       value
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    if (platform_hal_SetWebAccessLevel(userIndex, ifIndex, value) != RETURN_OK )
-        return ANSC_STATUS_FAILURE;
-    else
-        return ANSC_STATUS_SUCCESS;
-}
-
 static void configBridgeMode(int bEnable) {
     char primaryl2inst[5];
         char primarybrp[5];
