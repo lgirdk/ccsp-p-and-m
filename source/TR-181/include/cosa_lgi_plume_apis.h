@@ -121,7 +121,6 @@ CosaDmlSetRRMState
 ULONG
 CosaDmlApplyPlumeWiFiChanges
 (
-    PANSC_HANDLE                phContext,
-    BOOL                        value
+    PANSC_HANDLE                phContext
 );
 #endif
