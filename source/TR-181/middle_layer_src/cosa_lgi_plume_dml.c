@@ -90,7 +90,7 @@ LgiPlume_SetParamBoolValue
         if (pMyObject->plumeAdminStatus != value) {
             pMyObject->plumeAdminStatus = value;
             pMyObject->plumeAdminStatusChanged = TRUE;
-            pMyObject->bNeedPlumeServiceRestart = 1;
+            pMyObject->bNeedPlumeServiceRestart = TRUE;
         }
         return TRUE;
     }
@@ -100,7 +100,7 @@ LgiPlume_SetParamBoolValue
         if (pMyObject->plumeOperationalStatus != value) {
             pMyObject->plumeOperationalStatus = value;
             pMyObject->plumeOperationalStatusChanged = TRUE;
-            pMyObject->bNeedPlumeServiceRestart = 1;
+            pMyObject->bNeedPlumeServiceRestart = TRUE;
         }
         return TRUE;
     }
@@ -109,7 +109,7 @@ LgiPlume_SetParamBoolValue
     {
         if (pMyObject->plumeDFSEnable != value) {
             pMyObject->plumeDFSEnable = value;
-            pMyObject->bNeedPlumeServiceRestart = 1;
+            pMyObject->bNeedPlumeServiceRestart = TRUE;
         }
         return TRUE;
     }
@@ -162,9 +162,9 @@ LgiPlume_SetParamStringValue
     {
         if(0 != strcmp(pMyObject->plumeUrl, pValue))
         {
-            pMyObject->bPlumeUrlChanged = 1;
+            pMyObject->bPlumeUrlChanged = TRUE;
             /* workaround to avoid plume getting stuck with a wrong URL */
-            pMyObject->bNeedPlumeServiceRestart = 1;
+            pMyObject->bNeedPlumeServiceRestart = TRUE;
         }
         _ansc_snprintf(pMyObject->plumeUrl, sizeof(pMyObject->plumeUrl), "%s", pValue);
         return TRUE;
@@ -214,12 +214,11 @@ LgiPlume_Commit
     {
         CosaDmlSetPlumeBackhaulSSIDsState((PANSC_HANDLE)pWiFiDataPaths, FALSE);
         CosaDmlSetRRMState((PANSC_HANDLE)pWiFiDataPaths, FALSE);
+        CosaDmlApplyPlumeWiFiChanges((PANSC_HANDLE)pWiFiDataPaths);
     }
-
     if(pMyObject->bNeedPlumeServiceRestart)
     {
-        /* Use WiFi lock when running the plume agent to avoid running it when WiFi is down*/
-        system("rpcclient2  '(flock 200; (exec 200>&-; /etc/plume_init.sh restart;) ) 200> /var/run/lock/resetlock-wlan'");
+        system("rpcclient2 '/etc/plume_init.sh restart'");
     }
     if(pMyObject->bPlumeUrlChanged)
     {
@@ -229,7 +228,6 @@ LgiPlume_Commit
         system(cmd);
     }
 
-    CosaDmlApplyPlumeWiFiChanges((PANSC_HANDLE)pWiFiDataPaths, pWiFiDataPaths->applyToRadio > 0);
 
     pMyObject->bNeedPlumeServiceRestart = FALSE;
     pMyObject->plumeAdminStatusChanged = FALSE;
