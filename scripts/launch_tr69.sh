@@ -20,7 +20,6 @@
 
 source /etc/device.properties
 
-ENABLE_TR069="EnableTR69Binary"
 BINPATH="/usr/bin"
 if [ -f /tmp/cp_subsys_ert ]; then
    Subsys="eRT."
@@ -32,9 +31,6 @@ fi
 
 stopTr069()
 {
-  syscfg set $ENABLE_TR069 false
-  syscfg commit
-
   if [ "$BOX_TYPE" = "XB3" ]; then
      TR69_PID=`pidof CcspTr069PaSsp`
      if [ "$TR69_PID" != "" ]; then
@@ -47,9 +43,6 @@ stopTr069()
 
 startTr069()
 {
-  syscfg set $ENABLE_TR069 true
-  syscfg commit
-
   if [ "$BOX_TYPE" = "XB3" ]; then
      TR69_PID=`pidof CcspTr069PaSsp`
      if [ "$TR69_PID" = "" ]; then
@@ -57,7 +50,6 @@ startTr069()
         $BINPATH/CcspTr069PaSsp -subsys $Subsys
      fi
   else
-     rm -f /tmp/disableTr069
      systemctl start CcspTr069PaSsp.service
   fi
 }
