@@ -1799,7 +1799,7 @@ AccountInfo_SetParamStringValue
     return bReturnValue;
 }
 
-BOOL valid_url(char *buff)
+static BOOL valid_url (char *buff)
 {
     int i=0;
     char *token=NULL;
@@ -1839,7 +1839,8 @@ BOOL valid_url(char *buff)
         return FALSE;
     }
     AnscFreeMemory(str);
-return TRUE;
+
+    return TRUE;
 }
 
 /**********************************************************************  
