@@ -2947,25 +2947,9 @@ ANSC_STATUS getFactoryPartnerId
         PULONG                      pulSize
 	)
 {
-#ifndef XB10_ONLY_SUPPORT
-#if defined(_XB6_PRODUCT_REQ_) || defined(_HUB4_PRODUCT_REQ_) || defined(_WNXL11BWL_PRODUCT_REQ_)
-	if(ANSC_STATUS_SUCCESS == platform_hal_getFactoryPartnerId(pValue))
-	{
-		*pulSize = AnscSizeOfString(pValue);
-		CcspTraceInfo(("%s:%d- %s\n",__FUNCTION__,__LINE__,pValue));
-		return ANSC_STATUS_SUCCESS; 
-	}
-	else
-	{
-		//TCCBR-4426 - getFactoryPartnerId is only implemented for XB6/HUB4 Products as of now.
-		CcspTraceError(("%s - Failed Get factoryPartnerId \n", __FUNCTION__));
-	}
-#endif
-#endif
+    snprintf(pValue, *pulSize, "RDKM");
 
-    UNREFERENCED_PARAMETER(pValue);
-    UNREFERENCED_PARAMETER(pulSize);
-	return ANSC_STATUS_FAILURE;
+    return ANSC_STATUS_SUCCESS;
 }
 
 ANSC_STATUS fillCurrentPartnerId
