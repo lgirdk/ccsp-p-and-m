@@ -3674,22 +3674,22 @@ CosaDmlGetIpaddrString
     {
         AnscCopyString((char *)pTmpString, _ansc_inet_ntoa( *((struct in_addr*)&(pIPAddr2[n]))) );
     
-        pTmpString[AnscSizeOfString((const char *)pTmpString)] = ',';
-    
         pTmpString = &pTmpString[AnscSizeOfString((const char *)pTmpString)];
-        
+        *pTmpString = ',';
+        pTmpString++;
+
         n++;
     }
     
     if ( pTmpString != pString )
     {
-        pTmpString[AnscSizeOfString((const char *)pTmpString) -1] = 0;
+        pTmpString--;
+        *pTmpString = 0;
     }
     
-    if ( (*pulStrLength - (pTmpString - pString)) <= 15 )
+    if ( n < MaxNumber && pIPAddr2[n] && (*pulStrLength - (pTmpString - pString)) <= 15 )
     {
         *pulStrLength = MaxNumber * 16 + 1;
-        
         return FALSE;
     }
     
