@@ -2100,8 +2100,7 @@ CosaDmlDcSetTelnetEnable
 
     if (flag != bTelnetEnable) {
         snprintf(buf,sizeof(buf),"%d",flag);
-        syscfg_set( NULL, "mgmt_wan_telnetaccess", buf);
-        syscfg_commit();
+        syscfg_set_commit( NULL, "mgmt_wan_telnetaccess", buf);
         system("sysevent set firewall-restart");
 
         if (platform_hal_SetTelnetEnable(flag) == RETURN_ERR )
@@ -2126,8 +2125,7 @@ CosaDmlDcSetSSHEnable
 
     if (flag != bSSHEnable) {
         snprintf(buf,sizeof(buf),"%d",flag);
-        syscfg_set( NULL, "mgmt_wan_sshaccess", buf);
-        syscfg_commit();
+        syscfg_set_commit( NULL, "mgmt_wan_sshaccess", buf);
         system("sysevent set firewall-restart");
         if (platform_hal_SetSSHEnable(flag) == RETURN_ERR )
             return ANSC_STATUS_FAILURE;
