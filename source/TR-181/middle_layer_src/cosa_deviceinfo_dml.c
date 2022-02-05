@@ -8380,19 +8380,13 @@ BOOL
 
     if (strcmp(ParamName, "S3SigningUrl") == 0)
     {
-        if (syscfg_set(NULL, "CrashUpload_S3SigningUrl", pString) != 0)
+        if (syscfg_set_commit(NULL, "CrashUpload_S3SigningUrl", pString) != 0)
         {
             CcspTraceError(("syscfg_set failed\n"));
 
         }
         else
         {
-            if (syscfg_commit() != 0)
-            {
-                CcspTraceError(("syscfg_commit failed\n"));
-
-            }
-
             return TRUE;
         }
     }
@@ -12500,16 +12494,11 @@ WebUIRemoteMgtOption_SetParamBoolValue
 
     if (strcmp(ParamName, "Enable") == 0)
     {
-        if(syscfg_set(NULL, "WebUIRemoteMgtOptionEnable", (bValue==TRUE)?"true":"false") != 0)
+        if (syscfg_set_commit(NULL, "WebUIRemoteMgtOptionEnable", (bValue == TRUE) ? "true" : "false") != 0)
         {
             CcspTraceError(("[%s] syscfg_set failed for RemoteMgtOptionEnable\n",__FUNCTION__));
             return FALSE;
         }
-	if (syscfg_commit() != 0)
-	{
-        	AnscTraceWarning(("syscfg_commit failed for RemoteMgtOptionEnable param update\n"));
-                return FALSE;
-	}
         return TRUE;
     }
     return FALSE;
@@ -21846,16 +21835,12 @@ LnFUseXPKI_SetParamBoolValue
     if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
-        if (syscfg_set(NULL, "LnFUseXPKI_Enable", (bValue==FALSE)?"false":"true") != 0) {
+        if (syscfg_set_commit(NULL, "LnFUseXPKI_Enable", (bValue == FALSE) ? "false" : "true") != 0) {
             AnscTraceWarning(("syscfg_set failed\n"));
             return FALSE;
         }
         else
         {
-            if (syscfg_commit() != 0) {
-                AnscTraceWarning(("syscfg_commit failed\n"));
-                return FALSE;
-            }
             return TRUE;
         }
     }
@@ -22133,16 +22118,12 @@ mTlsCrashdumpUpload_SetParamBoolValue
     if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
-        if (syscfg_set(NULL, "mTlsCrashdumpUpload_Enable", (bValue==FALSE)?"false":"true") != 0) {
+        if (syscfg_set_commit(NULL, "mTlsCrashdumpUpload_Enable", (bValue == FALSE) ? "false" : "true") != 0) {
             AnscTraceWarning(("syscfg_set failed\n"));
             return FALSE;
         }
         else
         {
-            if (syscfg_commit() != 0) {
-                AnscTraceWarning(("syscfg_commit failed\n"));
-                return FALSE;
-            }
             return TRUE;
         }
     }
