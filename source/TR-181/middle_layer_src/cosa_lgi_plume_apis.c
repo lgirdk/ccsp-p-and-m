@@ -186,8 +186,7 @@ CosaDmlSetPlumeUrl
     char                        *pValue
 )
 {
-        syscfg_set(NULL, "son_url", pValue);
-        syscfg_commit();
+        syscfg_set_commit(NULL, "son_url", pValue);
         return ANSC_STATUS_SUCCESS;
 }
 
@@ -216,9 +215,8 @@ CosaDmlSetPlumeAdminStatus
     BOOL                        value
 )
 {
-   if( syscfg_set(NULL, "son_admin_status", value ? "1" : "0") == 0)
+   if( syscfg_set_commit(NULL, "son_admin_status", value ? "1" : "0") == 0)
    {
-        syscfg_commit();
 #ifdef _PUMA6_ARM_
         {
             char rpc_cmd[64];
@@ -256,9 +254,8 @@ CosaDmlSetPlumeOperationalStatus
     BOOL                        value
 )
 {
-        if( syscfg_set(NULL, "son_operational_status", value ? "1" : "0") == 0)
+        if( syscfg_set_commit(NULL, "son_operational_status", value ? "1" : "0") == 0)
         {
-            syscfg_commit();
 #ifdef _PUMA6_ARM_
             {
                 char rpc_cmd[64];
@@ -296,9 +293,8 @@ CosaDmlSetPlumeDFSEnable
     BOOL                        value
 )
 {
-    if( syscfg_set(NULL, "son_dfs_enable", value ? "1" : "0") == 0)
+    if( syscfg_set_commit(NULL, "son_dfs_enable", value ? "1" : "0") == 0)
     {
-         syscfg_commit();
 #ifdef _PUMA6_ARM_
         {
             char rpc_cmd[64];
@@ -351,9 +347,8 @@ CosaDmlSetPlumeNativeAtmBsControl
     pWiFiDataPaths->applyToRadio |= 1 << RADIO_2G_IDX;
     pWiFiDataPaths->applyToRadio |= 1 << RADIO_5G_IDX;
 
-    if( syscfg_set(NULL, "son_native_atm_bs_disable", value ? "1" : "0") == 0)
+    if (syscfg_set_commit(NULL, "son_native_atm_bs_disable", value ? "1" : "0") == 0)
     {
-          syscfg_commit();
           return TRUE;
     }
     return FALSE;
@@ -382,9 +377,8 @@ CosaDmlSetPlumeLogpullEnable
     BOOL                        value
 )
 {
-    if (syscfg_set (NULL, "son_logpull_enable", value ? "1" : "0") == 0)
+    if (syscfg_set_commit (NULL, "son_logpull_enable", value ? "1" : "0") == 0)
     {
-        syscfg_commit();
         return TRUE;
     }
 

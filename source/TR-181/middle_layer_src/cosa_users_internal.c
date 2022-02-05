@@ -406,8 +406,7 @@ CosaUsersBackendGetUserInfo
            syscfg_get (NULL, "user_password_4", buff, sizeof(buff));
            if (buff[0] != '\0')
            {
-              syscfg_set(NULL, "user_password_4", "");
-              syscfg_commit();
+              syscfg_set_commit(NULL, "user_password_4", "");
            }
         }
 #if defined(_COSA_FOR_BCI_)
@@ -434,8 +433,7 @@ CosaUsersBackendGetUserInfo
 			returnStatus = ANSC_STATUS_FAILURE;
 			break;
 		}
-		syscfg_set(NULL, "PasswordLockoutAttempts", buff) ;
-		syscfg_commit() ;
+		syscfg_set_commit(NULL, "PasswordLockoutAttempts", buff);
            }
 
            memset(buff,0,sizeof(buff));

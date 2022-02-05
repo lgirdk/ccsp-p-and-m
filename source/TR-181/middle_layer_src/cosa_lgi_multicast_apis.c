@@ -57,10 +57,7 @@ CosaDmlMulticastSetEnable
     )
 {
 
-    if( syscfg_set(NULL, "multicast_enable", bValue ? "1" : "0") == 0)
-    {
-        syscfg_commit();
-    }
+    syscfg_set_commit(NULL, "multicast_enable", bValue ? "1" : "0");
 
     return ANSC_STATUS_SUCCESS;
 }
@@ -73,10 +70,7 @@ CosaDmlMulticastSetSnoopingEnable
     )
 {
 
-    if( syscfg_set(NULL, "multicast_snooping_enable", bValue ? "1" : "0") == 0)
-    {
-        syscfg_commit();
-    }
+    syscfg_set_commit(NULL, "multicast_snooping_enable", bValue ? "1" : "0");
 
     return ANSC_STATUS_SUCCESS;
 }

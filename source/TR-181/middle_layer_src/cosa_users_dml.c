@@ -107,17 +107,10 @@ void* ResetFailedAttepmts(void* arg)
 	if( AnscEqualString(pEntry->Username, "cusadmin", TRUE) )
 	{
 
-		if (syscfg_set(NULL, "NumOfFailedAttempts_2", "0") != 0)
+		if (syscfg_set_commit(NULL, "NumOfFailedAttempts_2", "0") != 0)
 		{
 			CcspTraceInfo(("syscfg_set failed\n"));
 		} 
-		else
-		{
-			if (syscfg_commit() != 0)
-			{
-				CcspTraceInfo(("syscfg_commit failed\n"));
-			}
-		}
 	}
 #endif /* _COSA_FOR_BCI_ */
 
@@ -157,15 +150,13 @@ static void CsrPasswordResetThread(PCOSA_DML_USER  pEntry)
         {
             strcpy (pEntry->HashedPassword, "");
             syscfg_set (NULL, "user_password_1", "");
-            syscfg_commit();
             pwd_set_time = 0;
             /* Destroy/Clear WEB sessions */
             system("rm -rf /var/tmp/gui/session_*"); //FIXME: Check and Remove the right  session
-            if (syscfg_set(NULL, "mgmt_wan_access", "0") != 0)
+            if (syscfg_set_commit(NULL, "mgmt_wan_access", "0") != 0)
             {
                 CcspTraceInfo(("Failed disable  WAN access syscfg param"));
             }
-            syscfg_commit();
             g_SetParamValueBool("Device.UserInterface.RemoteAccess.Enable",false);
             commonSyseventSet("firewall-restart", "");
             break;
@@ -1015,20 +1006,13 @@ User_SetParamIntValue
 				return FALSE;
 			}
 
-			if (syscfg_set(NULL, "PasswordLoginCounts_2", buf) != 0) 
+			if (syscfg_set_commit(NULL, "PasswordLoginCounts_2", buf) != 0) 
 			{
 			    CcspTraceInfo(("syscfg_set failed\n"));
 			} 
 			else
 			{
-			    if (syscfg_commit() != 0)
-			    {
-			        CcspTraceInfo(("syscfg_commit failed\n"));
-			    }
-			    else
-			    {
 			        pUser->LoginCounts= iValue;
-			    }
 			}
 
 			return TRUE;
@@ -1107,20 +1091,13 @@ User_SetParamUlongValue
 				return FALSE;
 			}
 			
-			if (syscfg_set(NULL, "NumOfFailedAttempts_2", buf) != 0) 
+			if (syscfg_set_commit(NULL, "NumOfFailedAttempts_2", buf) != 0) 
 			{
 				CcspTraceInfo(("syscfg_set failed\n"));
 			} 
 			else
 			{
-				if (syscfg_commit() != 0)
-				{
-					CcspTraceInfo(("syscfg_commit failed\n"));
-				}
-				else
-				{
 					pUser->NumOfFailedAttempts = uValue;
-				}
 			}
 		}
 	#else
@@ -1344,12 +1321,11 @@ User_SetParamStringValue
                 }
                 else
                 {
-                    if (syscfg_set(NULL, "mgmt_wan_access", "1") != 0)
+                    if (syscfg_set_commit(NULL, "mgmt_wan_access", "1") != 0)
                     {
                         CcspTraceInfo(("Failed to enable WAN access syscfg param"));
                         return FALSE;
                     }
-                    syscfg_commit();
                     system("rm -rf /var/tmp/gui/session_*");
                     commonSyseventSet("firewall-restart", "");
                     time(&pwd_set_time);
