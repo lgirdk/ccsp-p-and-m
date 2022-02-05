@@ -42,10 +42,7 @@ ULONG CosaDmlApplicationsSamKnowsSetEnabled ( ANSC_HANDLE hContext, BOOL bValue 
     if(skenabled == bValue)
 	    return ANSC_STATUS_SUCCESS;
 
-    if (syscfg_set (NULL, "skenable", bValue ? "1" : "0") == 0)
-    {
-        syscfg_commit();
-    }
+    syscfg_set_commit (NULL, "skenable", bValue ? "1" : "0");
 
 #ifdef _PUMA6_ARM_
     if (bValue == TRUE) {
@@ -85,11 +82,7 @@ ULONG CosaDmlApplicationsSamKnowsGetProperty ( ANSC_HANDLE hContext, char *pValu
 
 ULONG CosaDmlApplicationsSamKnowsSetProperty ( ANSC_HANDLE hContext, char *pValue )
 {
-    if (syscfg_set(NULL, "skproperty", pValue) == 0)
-    {
-        syscfg_commit();
-    }
-
+    syscfg_set_commit(NULL, "skproperty", pValue);
     return ANSC_STATUS_SUCCESS;
 }
 

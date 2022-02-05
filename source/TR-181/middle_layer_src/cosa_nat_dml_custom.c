@@ -206,9 +206,8 @@ NAT_SetParamBoolValue_Custom
  /* LG ADD Start CR14 */
     if (strcmp(ParamName, "X_LGI-COM_NATPassthroughFunctionEnable") == 0)
     {
-        if(syscfg_set(NULL, "natPassthrough_enable", bValue?"1":"0") == 0)
+        if(syscfg_set_commit(NULL, "natPassthrough_enable", bValue?"1":"0") == 0)
         {
-            syscfg_commit();
             system("/etc/utopia/nat_passthrough.sh restart");
             return TRUE;
         }

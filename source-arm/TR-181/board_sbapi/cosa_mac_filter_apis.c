@@ -222,10 +222,9 @@ ANSC_STATUS CosaDmlFW_MACDayOfWeek_SetBlockTimeBitMaskType(ULONG blockTimeBitMas
 
     sprintf(buf, "%lu", blockTimeBitMaskType);
 
-    if(syscfg_set(NULL, "mac_dayofweek_block_time_bitmask_type", buf) != 0) {
+    if(syscfg_set_commit(NULL, "mac_dayofweek_block_time_bitmask_type", buf) != 0) {
         return ANSC_STATUS_FAILURE;
     }
-    syscfg_commit();
     return ANSC_STATUS_SUCCESS;
 }
 

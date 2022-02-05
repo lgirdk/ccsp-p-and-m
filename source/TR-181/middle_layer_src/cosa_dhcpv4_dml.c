@@ -3782,15 +3782,9 @@ Server_SetParamBoolValue
            Note that the "dhcp_disable_ip_conflict_det" syscfg value is the
            inverse of the Device.DHCPv4.Server.X_LGI-COM_DAD data model object.
         */
-        if (syscfg_set (NULL, "dhcp_disable_ip_conflict_det", bValue ? "0" : "1") != 0)
+        if (syscfg_set_commit (NULL, "dhcp_disable_ip_conflict_det", bValue ? "0" : "1") != 0)
         {
             CcspTraceWarning(("syscfg_set failed\n"));
-            return -1;
-        }
-
-        if (syscfg_commit() != 0)
-        {
-            CcspTraceWarning(("syscfg_commit failed\n"));
             return -1;
         }
 

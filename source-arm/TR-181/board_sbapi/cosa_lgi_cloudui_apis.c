@@ -44,8 +44,7 @@ CosaDmlSetDhcpLanChangeHide
 {
     char buf[8] = {0};
     snprintf(buf, sizeof(buf), "%d", bValue);
-    syscfg_set(NULL, "dhcp_lan_change_hide", buf);
-    syscfg_commit();
+    syscfg_set_commit(NULL, "dhcp_lan_change_hide", buf);
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -77,7 +76,6 @@ CosaDmlSetSmartWifiSectionHide
 {
     char buf[8] = {0};
     snprintf(buf, sizeof(buf), "%d", bValue);
-    syscfg_set(NULL, "smart_wifi_hide", buf);
-    syscfg_commit();    
+    syscfg_set_commit(NULL, "smart_wifi_hide", buf);
     return ANSC_STATUS_SUCCESS;
 }

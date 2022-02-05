@@ -1684,16 +1684,9 @@ InterfaceSetting1_SetParamStringValue
         else
          sprintf(syscfgName, "Manual_Prefixes_%d",pRAInterface->Cfg.InstanceNumber);
        
-        if (syscfg_set(NULL,syscfgName,pString ) != 0)
+        if (syscfg_set_commit(NULL,syscfgName,pString ) != 0)
         {
            AnscTraceWarning(("syscfg_set failed for manual prefix\n"));
-        }
-        else
-        {
-            if (syscfg_commit() != 0)
-            {
-                AnscTraceWarning(("syscfg_commit failed for manual prefix\n"));
-            }
         }
         /* save update to backup */
         len = (_ansc_strlen(pString) > sizeof(pRAInterface->Cfg.ManualPrefixes)-1 ? sizeof(pRAInterface->Cfg.ManualPrefixes)-1 : _ansc_strlen(pString));

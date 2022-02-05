@@ -90,8 +90,7 @@ CosaDmlLgiGwSetDnsOverride
 
         if (strcmp(customer_db_dns_enabled, nv) != 0)
         {
-            syscfg_set(NULL, "dns_override", nv);
-            syscfg_commit();
+            syscfg_set_commit(NULL, "dns_override", nv);
         }
 
         pthread_create(&tid, NULL, &CosaDmlDNSOverride, NULL);
