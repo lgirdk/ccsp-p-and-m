@@ -2293,18 +2293,10 @@ CosaDmlDcSetFactoryReset
 		//system("reboot");i
 		//Set LastRebootReason before device bootup
 		CcspTraceWarning(("FactoryReset:%s Set LastRebootReason to factory-reset ...\n",__FUNCTION__));
-		if ((syscfg_set(NULL, "X_RDKCENTRAL-COM_LastRebootReason", "factory-reset") != 0))
+		if ((syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_LastRebootReason", "factory-reset") != 0))
 		{
                         AnscTraceWarning(("syscfg_set failed\n"));
 			return -1;
-		}
-		else
-		{
-                        if (syscfg_commit() != 0)
-			{
-				AnscTraceWarning(("syscfg_commit failed\n"));
-				return -1;
-			}
 		}
 
         char partnerId[20];
@@ -2383,18 +2375,10 @@ CosaDmlDcSetFactoryReset
                     }
                 }
 #endif
-                if ((syscfg_set(NULL, "X_RDKCENTRAL-COM_LastRebootCounter", "1") != 0))
+                if ((syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_LastRebootCounter", "1") != 0))
                 {
                         AnscTraceWarning(("syscfg_set failed\n"));
                         return -1;
-                }
-                else
-                {
-                        if (syscfg_commit() != 0)
-                        {
-                                AnscTraceWarning(("syscfg_commit failed\n"));
-                                return -1;
-                        }
                 }
 	}
 	if (factory_reset_mask & FR_WIFI) {
@@ -2927,8 +2911,7 @@ CosaDmlDcSetTelnetEnable
 
     if (flag != bTelnetEnable) {
         snprintf(buf,sizeof(buf),"%d",flag);
-        syscfg_set( NULL, "mgmt_wan_telnetaccess", buf);
-        syscfg_commit();
+        syscfg_set_commit( NULL, "mgmt_wan_telnetaccess", buf);
         v_secure_system("sysevent set firewall-restart");
 
         if (platform_hal_SetTelnetEnable(flag) == RETURN_ERR )
@@ -2953,8 +2936,7 @@ CosaDmlDcSetSSHEnable
 
     if (flag != bSSHEnable) {
         snprintf(buf,sizeof(buf),"%d",flag);
-        syscfg_set( NULL, "mgmt_wan_sshaccess", buf);
-        syscfg_commit();
+        syscfg_set_commit( NULL, "mgmt_wan_sshaccess", buf);
         v_secure_system("sysevent set firewall-restart");
         if (platform_hal_SetSSHEnable(flag) == RETURN_ERR )
             return ANSC_STATUS_FAILURE;
@@ -3056,18 +3038,13 @@ CosaDmlDcSetReinitMacThreshold
        ERR_CHK(safec_rc);
     }
 	
-    if((syscfg_set( NULL, "rdkbReinitMacThreshold", buf)) != 0 )
+    if((syscfg_set_commit( NULL, "rdkbReinitMacThreshold", buf)) != 0 )
     {
     	AnscTraceWarning(("setrdkbReinitMacThreshold : syscfg_set failed\n"));
         return ANSC_STATUS_FAILURE;
     }
     else
     {
-        if (syscfg_commit() != 0)
-        {
-            AnscTraceWarning(("setrdkbReinitMacThreshold : syscfg_commit failed\n"));
-            return ANSC_STATUS_FAILURE;
-        }
         return ANSC_STATUS_SUCCESS;
     }
 #endif
@@ -4174,20 +4151,11 @@ CosaDmlLanMngm_SetConf(ULONG ins, PCOSA_DML_LAN_MANAGEMENT pLanMngm)
 			else
 					MoCAstate=0;
 			snprintf(buf,sizeof(buf),"%d",MoCAstate);
-			if ((syscfg_set(NULL, "MoCA_current_status", buf) != 0)) 
+			if ((syscfg_set_commit(NULL, "MoCA_current_status", buf) != 0))
 		        {
                             Utopia_Free(&utctx, 0);
                             CcspTraceWarning(("syscfg_set failed\n"));
                             return -1;
-                        }
-                        else
-                        {
-                             if (syscfg_commit() != 0)
-                             {
-                                    Utopia_Free(&utctx, 0);
-                                    CcspTraceWarning(("syscfg_commit failed\n"));
-				    return -1;
-                             }
                         }
                    }
                    else
