@@ -1180,18 +1180,12 @@ DeviceInfo_SetParamBoolValue
         memset(buf, 0, sizeof(buf));
         snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
 
-        if (syscfg_set(NULL, "X_RDKCENTRAL-COM_AkerEnable", buf) != 0)
+        if (syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_AkerEnable", buf) != 0)
         {
             AnscTraceWarning(("syscfg_set failed for AkerEnable\n"));
         }
         else
         {
-            if (syscfg_commit() != 0)
-            {
-                AnscTraceWarning(("syscfg_commit failed for AkerEnable\n"));
-            }
-	    else
-	    {
 		/* Restart Firewall */
 		v_secure_system("sysevent set firewall-restart");
 #if defined(_PLATFORM_RASPBERRYPI_)
@@ -1201,7 +1195,6 @@ DeviceInfo_SetParamBoolValue
                        send(sock , lxcevt , strlen(lxcevt) , 0 );
                }
 #endif
-	    }	
         }
 
         return TRUE;
@@ -1303,16 +1296,9 @@ DeviceInfo_SetParamIntValue
         int ret = 0;
         char buf[10] = { 0 };
         snprintf(buf, sizeof(buf) - 1, "%d", iValue);
-        if ((ret = syscfg_set(NULL, "ping_peer_reboot_threshold", buf)) != 0)
+        if ((ret = syscfg_set_commit(NULL, "ping_peer_reboot_threshold", buf)) != 0)
         {
             CcspTraceError(("syscfg_set ping_peer_reboot_threshold failed. Ret %d\n", ret));
-        }
-        else
-        {
-            if ((ret = syscfg_commit()) != 0)
-            {
-                CcspTraceError(("syscfg_commit ping_peer_reboot_threshold failed. Ret %d\n", ret));
-            }
         }
         return TRUE;
     }
@@ -1612,19 +1598,13 @@ BOOL
     /* Required for xPC sync */
     if (strcmp(ParamName, "URL") == 0)
     {
-        if (syscfg_set(NULL, "TelemetryEndpointURL", pString) != 0)
+        if (syscfg_set_commit(NULL, "TelemetryEndpointURL", pString) != 0)
         {
             CcspTraceError(("syscfg_set failed\n"));
 
         }
         else
         {
-            if (syscfg_commit() != 0)
-            {
-                CcspTraceError(("syscfg_commit failed\n"));
-
-            }
-
             return TRUE;
         }
     }
@@ -1779,20 +1759,11 @@ AccountInfo_SetParamStringValue
                if(bReturnValue == TRUE)
                {
                     CcspTraceInfo(("[%s] Account ID is alphanumeric...!!", __FUNCTION__));
-                    if (syscfg_set(NULL, "AccountID", pString) != 0)
+                    if (syscfg_set_commit(NULL, "AccountID", pString) != 0)
                     {
                         CcspTraceError(("%s:syscfg_set failed for AccountID \n", __FUNCTION__));
                         bReturnValue = FALSE;
                     }
-                    else
-                    {
-                        if (syscfg_commit() != 0)
-                        {
-                             CcspTraceError(("%s:syscfg_commit failed for AccountID \n", __FUNCTION__));
-                             bReturnValue = FALSE;
-                        }
-                        bReturnValue = TRUE;
-                    }         
                 }
            }
     }
@@ -1922,13 +1893,9 @@ DeviceInfo_SetParamStringValue
          if(sizeof(wrapped_inputparam ) < sizeof(pMyObject->WebURL))
         {    
 	
-    	 if (syscfg_set(NULL, "redirection_url", wrapped_inputparam) != 0) {
+    	 if (syscfg_set_commit(NULL, "redirection_url", wrapped_inputparam) != 0) {
              AnscTraceWarning(("syscfg_set failed\n"));
           } else {
-	       if (syscfg_commit() != 0) {
-                    AnscTraceWarning(("syscfg_commit failed\n"));
-                    }
-
 		 v_secure_system("/etc/whitelist.sh %s", wrapped_inputparam);
 		 rc =STRCPY_S_NOCLOBBER(pMyObject->WebURL,sizeof(pMyObject->WebURL), wrapped_inputparam);
                 if(rc != EOK)
@@ -1967,16 +1934,12 @@ DeviceInfo_SetParamStringValue
         /* input string size check to avoid truncated data on database  */
         if((valid_url(pString)) && (strlen(pString) < (sizeof(pMyObject->CloudPersonalizationURL))))
         {	
-		   if (syscfg_set(NULL, "CloudPersonalizationURL", pString) != 0)
+		   if (syscfg_set_commit(NULL, "CloudPersonalizationURL", pString) != 0)
 		  {
 	        AnscTraceWarning(("syscfg_set failed\n"));
 	      } 
 		 else
 		 {
-		    if (syscfg_commit() != 0)
-			{
-	        	AnscTraceWarning(("syscfg_commit failed\n"));
-	    	}
 			rc = STRCPY_S_NOCLOBBER(pMyObject->CloudPersonalizationURL,sizeof(pMyObject->CloudPersonalizationURL), pString);
                         if(rc != EOK)
                         {
@@ -2036,36 +1999,14 @@ DeviceInfo_SetParamStringValue
                 ERR_CHK(rc);
                 if((rc == EOK) && (ind))
 		{
-			   char buf[8];
-			   rc = strcpy_s(buf,sizeof(buf),"1");
-			   if(rc !=  EOK)
-                           {
-                             ERR_CHK(rc);
-                             return FALSE;
-                           }
 			if (syscfg_set(NULL, "X_RDKCENTRAL-COM_LastRebootReason", "gui-reboot") != 0)
 			{
 				AnscTraceWarning(("RDKB_REBOOT : RebootDevice syscfg_set failed GUI\n"));
 			}
-			else
-			{
-				if (syscfg_commit() != 0)
-				{
-					AnscTraceWarning(("RDKB_REBOOT : RebootDevice syscfg_commit failed GUI\n"));
-				}
-			}
 	        
-	        
-			if (syscfg_set(NULL, "X_RDKCENTRAL-COM_LastRebootCounter", buf) != 0)
+			if (syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_LastRebootCounter", "1") != 0)
 			{
 				AnscTraceWarning(("syscfg_set failed\n"));
-			}
-			else
-			{
-				if (syscfg_commit() != 0)
-				{
-					AnscTraceWarning(("syscfg_commit failed\n"));
-				}
 			}
 	        }
 		else
@@ -2107,12 +2048,9 @@ DeviceInfo_SetParamStringValue
 	    return FALSE;
 	if(sizeof( wrapped_inputparam ) < sizeof(pMyObject->EMS_ServerURL) )
        {
-	    if (syscfg_set(NULL, "ems_server_url", wrapped_inputparam) != 0) {
+	    if (syscfg_set_commit(NULL, "ems_server_url", wrapped_inputparam) != 0) {
              AnscTraceWarning(("syscfg_set failed\n"));
           } else {
-	       if (syscfg_commit() != 0) {
-                    AnscTraceWarning(("syscfg_commit failed\n"));
-                    }
 		 char ems_url[150];	
 		 rc = sprintf_s(ems_url,sizeof(ems_url),"/etc/whitelist.sh %s",wrapped_inputparam);
                 if(rc < EOK)
@@ -2144,39 +2082,15 @@ DeviceInfo_SetParamStringValue
     ERR_CHK(rc);
     if((!ind) && (rc == EOK))
         {
-              char buf[8];
-              rc = strcpy_s(buf,sizeof(buf),"1");
-	      if(rc !=  EOK)
-               {
-                 ERR_CHK(rc);
-                 return FALSE;
-               }
-   
 		OnboardLog("Device reboot due to reason %s\n", pString);
-                if (syscfg_set(NULL, "X_RDKCENTRAL-COM_LastRebootReason", pString) != 0) 
+                if (syscfg_set(NULL, "X_RDKCENTRAL-COM_LastRebootReason", pString) != 0)
 	            {
 			        AnscTraceWarning(("syscfg_set failed for Reason and counter \n"));
 			    }
-		   	    else 
-		        {
-		             if (syscfg_commit() != 0) 
-		            {
-				        AnscTraceWarning(("syscfg_commit failed for Reason and counter \n"));
-				
-			        }
-		
-		        }
-		        if (syscfg_set(NULL, "X_RDKCENTRAL-COM_LastRebootCounter", buf) != 0) 
+		        if (syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_LastRebootCounter", "1") != 0)
 	            {
                       AnscTraceWarning(("syscfg_set failed\n"));
                 }
-                else 
-		        {
-		          if (syscfg_commit() != 0)
-	                  {
-                            AnscTraceWarning(("syscfg_commit failed\n"));
-                       }
-	             }
 	    return TRUE;
 				
         }
@@ -2200,16 +2114,12 @@ DeviceInfo_SetParamStringValue
     ERR_CHK(rc);
     if((!ind) && (rc == EOK))
     {
-      if (syscfg_set(NULL, "router_name", pString) != 0)
+      if (syscfg_set_commit(NULL, "router_name", pString) != 0)
       {
 	AnscTraceWarning(("syscfg_set failed for RouterName\n"));
       } 
       else
       {
-	if (syscfg_commit() != 0)
-	{
-	  AnscTraceWarning(("syscfg_commit failed for RouterName\n"));
-	}
 	CcspTraceWarning(("RouterName is changed, new RouterName: %s ...\n", pString));
       }
       return TRUE;
@@ -2985,20 +2895,13 @@ UniqueTelemetryId_SetParamBoolValue
            return FALSE;
         }
 
-        if (syscfg_set(NULL, "unique_telemetry_enable", buf) != 0) 
+        if (syscfg_set_commit(NULL, "unique_telemetry_enable", buf) != 0)
         {
             AnscTraceWarning(("syscfg_set failed\n"));
         } 
         else
         {
-            if (syscfg_commit() != 0) 
-            {
-                AnscTraceWarning(("syscfg_commit failed\n"));
-            }
-            else
-            {
-                pMyObject->UniqueTelemetryId.Enable = bValue;
-            }
+            pMyObject->UniqueTelemetryId.Enable = bValue;
         }
 
 	UniqueTelemetryCronJob(pMyObject->UniqueTelemetryId.Enable, pMyObject->UniqueTelemetryId.TimingInterval, pMyObject->UniqueTelemetryId.TagString);
@@ -3057,24 +2960,17 @@ UniqueTelemetryId_SetParamStringValue
     if (strcmp(ParamName, "TagString") == 0)
     {
 
-        if (syscfg_set(NULL, "unique_telemetry_tag", strValue) != 0)
+        if (syscfg_set_commit(NULL, "unique_telemetry_tag", strValue) != 0)
         {
             AnscTraceWarning(("syscfg_set failed\n"));
         }
         else
         {
-            if (syscfg_commit() != 0)
+            rc = STRCPY_S_NOCLOBBER(pMyObject->UniqueTelemetryId.TagString, sizeof(pMyObject->UniqueTelemetryId.TagString),strValue);
+            if(rc != EOK)
             {
-                AnscTraceWarning(("syscfg_commit failed\n"));
-            }
-            else
-            {
-                rc = STRCPY_S_NOCLOBBER(pMyObject->UniqueTelemetryId.TagString, sizeof(pMyObject->UniqueTelemetryId.TagString),strValue);
-                if(rc != EOK)
-                {
-                   ERR_CHK(rc);
-                   return FALSE;
-                }
+               ERR_CHK(rc);
+               return FALSE;
             }
         }
         return TRUE;
@@ -3138,20 +3034,13 @@ UniqueTelemetryId_SetParamIntValue
           return FALSE;
         }
 
-        if (syscfg_set(NULL, "unique_telemetry_interval", buf) != 0) 
+        if (syscfg_set_commit(NULL, "unique_telemetry_interval", buf) != 0)
         {
             AnscTraceWarning(("syscfg_set failed\n"));
         } 
         else
         {
-            if (syscfg_commit() != 0)
-            {
-                AnscTraceWarning(("syscfg_commit failed\n"));
-            }
-            else
-            {
-                pMyObject->UniqueTelemetryId.TimingInterval = value;
-            }
+            pMyObject->UniqueTelemetryId.TimingInterval = value;
         }
 
 	UniqueTelemetryCronJob(pMyObject->UniqueTelemetryId.Enable, pMyObject->UniqueTelemetryId.TimingInterval, pMyObject->UniqueTelemetryId.TagString);
@@ -3270,16 +3159,7 @@ ManageableNotification_SetParamBoolValue
 
     if (strcmp(ParamName, "Enable") == 0)
     {
-        /* collect value */
-        if( bValue == TRUE)
-        {
-            syscfg_set(NULL, "ManageableNotificationEnabled", "true");
-        }
-        else
-        {
-            syscfg_set(NULL, "ManageableNotificationEnabled", "false");
-        }
-        syscfg_commit();
+        syscfg_set_commit(NULL, "ManageableNotificationEnabled", (bValue == TRUE) ? "true" : "false");
         return TRUE;
     }
 
@@ -7306,14 +7186,9 @@ SHORTS_SetParamBoolValue
             return TRUE;
         if (strcmp(ParamName, "Enable") == 0)
         {
-                if(syscfg_set(NULL, "ShortsEnabled", (bValue==TRUE)?"true":"false") != 0)
+                if(syscfg_set_commit(NULL, "ShortsEnabled", (bValue == TRUE) ? "true" : "false") != 0)
                 {
                         CcspTraceError(("[%s] syscfg_set failed for SHORTS\n",__FUNCTION__));
-                        return FALSE;
-                }
-                if (syscfg_commit() != 0)
-                {
-                        AnscTraceWarning(("syscfg_commit failed for SHORTS param update\n"));
                         return FALSE;
                 }
                 return TRUE;
@@ -7428,16 +7303,7 @@ CodeBig_First_SetParamBoolValue
 
     if (strcmp(ParamName, "Enable") == 0)
     {
-        /* collect value */
-        if( bValue == TRUE)
-        {
-            syscfg_set(NULL, "CodeBigFirstEnabled", "true");
-        }
-        else
-        {
-            syscfg_set(NULL, "CodeBigFirstEnabled", "false");
-        }
-        syscfg_commit();
+        syscfg_set_commit(NULL, "CodeBigFirstEnabled", (bValue == TRUE) ? "true" : "false");
         return TRUE;
     }
 
@@ -7555,18 +7421,9 @@ PresenceDetect_SetParamBoolValue
 
     if (strcmp(ParamName, "Enable") == 0)
     {
-        /* collect value */
-        if( bValue == TRUE)
+        if (syscfg_set_commit(NULL, "PresenceDetectEnabled", (bValue == TRUE) ? "true" : "false") != 0)
         {
-            syscfg_set(NULL, "PresenceDetectEnabled", "true");
-        }
-        else
-        {
-            syscfg_set(NULL, "PresenceDetectEnabled", "false");
-        }
-        if (syscfg_commit() != 0)
-        {
-             AnscTraceWarning(("syscfg_commit failed for Presence feature param update\n"));
+             AnscTraceWarning(("syscfg_set failed for Presence feature param update\n"));
              return FALSE;
         }
         CosaDmlPresenceEnable(bValue);
@@ -7685,18 +7542,9 @@ LostandFoundInternet_SetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     if (strcmp(ParamName, "Enable") == 0)
     {
-        /* collect value */
-        if( bValue == TRUE)
+        if (syscfg_set_commit(NULL, "BlockLostandFoundInternet", (bValue == TRUE) ? "true" : "false") != 0)
         {
-            syscfg_set(NULL, "BlockLostandFoundInternet", "true");
-        }
-        else
-        {
-            syscfg_set(NULL, "BlockLostandFoundInternet", "false");
-        }
-        if (syscfg_commit() != 0)
-        {
-             AnscTraceWarning(("syscfg_commit failed for block lnf internet update\n"));
+             AnscTraceWarning(("syscfg_set failed for block lnf internet update\n"));
              return FALSE;
         }
 	    v_secure_system("sysevent set firewall-restart");
@@ -7855,21 +7703,14 @@ OAUTH_SetParamStringValue
     if( bParamNameGood == TRUE )
     {
         snprintf( buf, sizeof(buf), "OAUTH%s", ParamName );  // buf should contain "OAUTH" plus ParamName
-        if( syscfg_set( NULL, buf, pString ) != 0 )
+        if( syscfg_set_commit( NULL, buf, pString ) != 0 )
         {
             CcspTraceError(("[%s] syscfg_set failed for %s\n", __FUNCTION__, buf));
         }
         else
         {
-            if( syscfg_commit() != 0 )
-            {
-                CcspTraceError(("[%s] syscfg_commit failed for %s\n", __FUNCTION__, buf));
-            }
-            else
-            {
-                bRet = TRUE;
-                CcspTraceInfo(("[%s] %s value set as %s success..!!\n", __FUNCTION__, buf, pString));
-            }
+            bRet = TRUE;
+            CcspTraceInfo(("[%s] %s value set as %s success..!!\n", __FUNCTION__, buf, pString));
         }
     }
 
@@ -7977,25 +7818,16 @@ Iot_SetParamBoolValue
     /* check the parameter name and set the corresponding value */
     if (strcmp(ParamName, "X_RDKCENTRAL-COM_ENABLEIOT") == 0)
     {
-        char buf[8];
 #if defined(_PLATFORM_RASPBERRYPI_)
        id=getuid();
 #endif
-        memset(buf, 0, sizeof(buf));
-        snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
 
-        if (syscfg_set(NULL, "X_RDKCENTRAL-COM_ENABLEIOT", buf) != 0) 
+        if (syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_ENABLEIOT", bValue ? "true" : "false") != 0) 
         {
             AnscTraceWarning(("syscfg_set failed\n"));
         }
         else 
         {
-            if (syscfg_commit() != 0) 
-            {
-                AnscTraceWarning(("syscfg_commit failed\n"));
-            }
-            else
-            {
                 if(bValue){
                    AnscTraceWarning(("IOT_LOG : Raise IOT event up from DML\n"));
                    v_secure_system("sysevent set iot_status up");
@@ -8019,7 +7851,6 @@ Iot_SetParamBoolValue
 #endif
                 }
                 return TRUE;
-            }
         }
     }
 
@@ -8613,18 +8444,13 @@ Control_SetParamStringValue
                 /*RDKB-28133 : any string is getting set to XconfSelector TR 181 apart from prod, ci, automation, local*/
                 if( (strcasecmp(pString, "prod") == 0) || (strcasecmp(pString, "ci") == 0) || (strcasecmp(pString, "automation") == 0) || (strcasecmp(pString, "local") == 0) )
                 {
-                    if (syscfg_set(NULL, "XconfSelector", pString) != 0)
+                    if (syscfg_set_commit(NULL, "XconfSelector", pString) != 0)
                     {
                         CcspTraceError(("[%s] syscfg_set failed for XconfSelector \n",__FUNCTION__));
                         bReturnValue = FALSE;
                     }
                     else
                     {
-                        if (syscfg_commit() != 0)
-                        {
-                             CcspTraceError(("[%s] syscfg_commit failed for XconfSelector \n",__FUNCTION__));
-                             bReturnValue = FALSE;
-                        }
                         bReturnValue = TRUE;
                         CcspTraceInfo(("[%s] XconfSelector value set as %s success..!!\n",__FUNCTION__,pString));
                     }
@@ -8649,18 +8475,13 @@ Control_SetParamStringValue
            }
            else
            {
-               if (syscfg_set(NULL, "XconfUrl", pString) != 0)
+               if (syscfg_set_commit(NULL, "XconfUrl", pString) != 0)
                 {
                     CcspTraceError(("[%s] syscfg_set failed for XconfUrl \n",__FUNCTION__));
                     bReturnValue = FALSE;
                 }
                 else
                 {
-                    if (syscfg_commit() != 0)
-                    {
-                         CcspTraceError(("[%s] syscfg_commit failed for XconfUrl \n",__FUNCTION__));
-                         bReturnValue = FALSE;
-                    }
                     bReturnValue = TRUE;
                     CcspTraceInfo(("[%s] XconfUrl value set as %s success..!!\n",__FUNCTION__,pString));
                 }
@@ -9723,16 +9544,10 @@ DLCaStore_RFC_SetParamBoolValue
 
     if (strcmp(ParamName, "Enable") == 0)
     {
-        if (syscfg_set(NULL, "DLCaStoreEnabled", (bValue==TRUE)?"true":"false") != 0)
+        if (syscfg_set_commit(NULL, "DLCaStoreEnabled", (bValue == TRUE) ? "true" : "false") != 0)
         {
             CcspTraceError(("[%s] syscfg_set failed for DLCaStore\n",__FUNCTION__));
             return FALSE;
-        }
-
-        if (syscfg_commit() != 0)
-        {
-             AnscTraceWarning(("syscfg_commit failed for DLCaStore param update\n"));
-             return FALSE;
         }
         return TRUE;
     }
@@ -9788,16 +9603,9 @@ Feature_SetParamIntValue
         char buf[8]={0};
         snprintf(buf, sizeof(buf), "%d", bValue);
 
-        if (syscfg_set(NULL, "low_queue_reboot_threshold", buf) != 0)
+        if (syscfg_set_commit(NULL, "low_queue_reboot_threshold", buf) != 0)
         {
                CcspTraceInfo(("syscfg_set low_queue_reboot_threshold failed\n"));
-        }
-        else
-        {
-            if (syscfg_commit() != 0)
-            {
-                 CcspTraceInfo(("syscfg_commit low_queue_reboot_threshold failed\n"));
-            }
         }
 	return TRUE;
     }
@@ -10281,15 +10089,7 @@ Feature_SetParamBoolValue
 
     if (strcmp(ParamName, "CodebigSupport") == 0)
     {
-        if ( bValue == TRUE)
-        {
-            syscfg_set(NULL, "codebigsupport", "true");
-        }
-        else
-        {
-            syscfg_set(NULL, "codebigsupport", "false");
-        }
-        syscfg_commit();
+        syscfg_set_commit(NULL, "codebigsupport", (bValue == TRUE) ? "true" : "false");
         return TRUE;
     }
 
@@ -10336,15 +10136,7 @@ Feature_SetParamBoolValue
     {
        int retPsmGet = CCSP_SUCCESS;
 
-       if ( bValue == TRUE)
-       {
-          syscfg_set(NULL, "containersupport", "true");
-       }
-       else
-       {
-          syscfg_set(NULL, "containersupport", "false");
-       }
-       syscfg_commit();
+       syscfg_set_commit(NULL, "containersupport", (bValue == TRUE) ? "true" : "false");
 
        retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Container", ccsp_string, bValue ? "1" : "0");
        if (retPsmGet != CCSP_SUCCESS) 
@@ -10366,15 +10158,7 @@ Feature_SetParamBoolValue
             g_SetParamValueBool("Device.NAT.X_Comcast_com_EnableNATMapping", bValue);
         }
 
-        if ( bValue == TRUE)
-        {
-            syscfg_set(NULL, "one_to_one_nat", "true");
-        }
-        else
-        {
-            syscfg_set(NULL, "one_to_one_nat", "false");
-        }
-        syscfg_commit();
+        syscfg_set_commmit(NULL, "one_to_one_nat", (bValue == TRUE) ? "true" : "false");
         return TRUE;
     }
 
@@ -10387,18 +10171,10 @@ Feature_SetParamBoolValue
                 if(!setMultiProfileXdnsConfig(bValue))
                         return FALSE;
 
-                if (syscfg_set(NULL, "MultiProfileXDNS", bValue ? "1" : "0") != 0)
+                if (syscfg_set_commit(NULL, "MultiProfileXDNS", bValue ? "1" : "0") != 0)
                 {
                         AnscTraceWarning(("[XDNS] syscfg_set MultiProfileXDNS failed!\n"));
                 }
-                else
-                {
-                        if (syscfg_commit() != 0)
-                        {
-                                AnscTraceWarning(("[XDNS] syscfg_commit MultiProfileXDNS failed!\n"));
-                        }
-                }
-
         }
         else
         {
@@ -10426,16 +10202,9 @@ Feature_SetParamBoolValue
        }
        if( !ble_Enable(status))
        {
-          if (syscfg_set(NULL, "BLEEnabledOnBoot", status==BLE_ENABLE?"true":"false") != 0) 
+          if (syscfg_set_commit(NULL, "BLEEnabledOnBoot", (status == BLE_ENABLE) ? "true" : "false") != 0) 
           {
              AnscTraceWarning(("syscfg_set BLEEnabledOnBoot failed\n"));
-          }
-          else
-          {
-             if (syscfg_commit() != 0)
-             {
-                AnscTraceWarning(("syscfg_commit BLEEnabledOnBoot failed\n"));
-             }
           }
           return TRUE;
        }
@@ -10449,14 +10218,14 @@ Feature_SetParamBoolValue
     {
        if ( bValue == TRUE)
        {
-           if (syscfg_set(NULL, "start_upnp_service", "true") != 0)
+           if (syscfg_set_commit(NULL, "start_upnp_service", "true") != 0)
            {
                AnscTraceWarning(("syscfg_set start_upnp_service:true failed\n"));
            }
        }
        else
        {
-           if (syscfg_set(NULL, "start_upnp_service", "false") != 0)
+           if (syscfg_set_commit(NULL, "start_upnp_service", "false") != 0)
            {
                AnscTraceWarning(("syscfg_set start_upnp_service:false failed\n"));
            }
@@ -10476,41 +10245,17 @@ Feature_SetParamBoolValue
 		   }
            v_secure_system("ifconfig brlan0:0 down");
        }
-       if (syscfg_commit() != 0)
-       {
-           AnscTraceWarning(("syscfg_commit start_upnp_service failed\n"));
-       }
        return TRUE;
     }
 #ifdef _BRIDGE_UTILS_BIN_ 
     if (strcmp(ParamName, "BridgeUtilsEnable") == 0)
     {
-            if ( bValue == TRUE)
-            {
-               if (syscfg_set(NULL, "bridge_util_enable", "true") != 0)
-               {
-                   AnscTraceWarning(("syscfg_set bridge_util_enable:true failed\n"));
-                  return FALSE;
-
-               }
-
-            }
-            else
-            {
-                if (syscfg_set(NULL, "bridge_util_enable", "false") != 0)
-                {
-                    AnscTraceWarning(("syscfg_set bridge_util_enable:false failed\n"));
-                    return FALSE;
-
-                }
-            }
-            if (syscfg_commit() != 0)
-            {
-                    AnscTraceWarning(("syscfg_commit to save BridgeUtilsEnable failed\n"));
-                    return FALSE;
-
-            }        
-            return TRUE;
+        if (syscfg_set_commit(NULL, "bridge_util_enable", (bValue == TRUE) ? "true" : "false") != 0)
+        {
+            AnscTraceWarning(("syscfg_set bridge_util_enable failed\n"));
+            return FALSE;
+        }
+        return TRUE;
     }
 #endif
 #if (defined _COSA_INTEL_XB3_ARM_)
@@ -10520,18 +10265,10 @@ Feature_SetParamBoolValue
        
        if( CMRt_Isltn_Enable(bValue) == TRUE )
        {
-          if (syscfg_set(NULL, "CMRouteIsolation_Enable", bValue?"true":"false") != 0)
+          if (syscfg_set_commit(NULL, "CMRouteIsolation_Enable", bValue ? "true" : "false") != 0)
           {
              AnscTraceWarning(("syscfg_set CMRouteIsolationEnable failed\n"));
 	     return FALSE;
-          }
-          else
-          {  
-             if (syscfg_commit() != 0)
-             {  
-                AnscTraceWarning(("syscfg_commit CMRouteIsolationEnable failed\n"));
-		return FALSE;
-             }
           }
           return TRUE;
        }
@@ -10864,15 +10601,7 @@ EncryptCloudUpload_SetParamBoolValue
 
     if (strcmp(ParamName, "Enable") == 0)
     {
-        if ( bValue == TRUE)
-        {
-            syscfg_set(NULL, "encryptcloudupload", "true");
-        }
-        else
-        {
-            syscfg_set(NULL, "encryptcloudupload", "false");
-        }
-        syscfg_commit();
+        syscfg_set_commit(NULL, "encryptcloudupload", (bValue == TRUE) ? "true" : "false");
         return TRUE;
     }
     return FALSE;
@@ -10921,15 +10650,7 @@ UploadLogsOnUnscheduledReboot_SetParamBoolValue
 
     if (strcmp(ParamName, "Disable") == 0)
     {
-        if ( bValue == TRUE)
-        {
-            syscfg_set(NULL, "UploadLogsOnUnscheduledRebootDisable", "true");
-        }
-        else
-        {
-            syscfg_set(NULL, "UploadLogsOnUnscheduledRebootDisable", "false");
-        }
-        syscfg_commit();
+        syscfg_set_commit(NULL, "UploadLogsOnUnscheduledRebootDisable", (bValue == TRUE) ? "true" : "false");
         return TRUE;
     }
     return FALSE;
@@ -11035,15 +10756,7 @@ DNSSTRICTORDER_SetParamBoolValue
 
     if (strcmp(ParamName, "Enable") == 0)
     {
-        if ( bValue == TRUE)
-        {
-            syscfg_set(NULL, "DNSStrictOrder", "true");
-        }
-        else
-        {
-            syscfg_set(NULL, "DNSStrictOrder", "false");
-        }
-        syscfg_commit();
+        syscfg_set_commit(NULL, "DNSStrictOrder", (bValue == TRUE) ? "true" : "false");
         return TRUE;
     }
     return FALSE;
@@ -11149,20 +10862,13 @@ ShortsDL_SetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     if (strcmp(ParamName, "Enable") == 0)
     {
-        if (syscfg_set(NULL, "ShortsDL", bValue ? "true" : "false") != 0)
+        if (syscfg_set_commit(NULL, "ShortsDL", bValue ? "true" : "false") != 0)
         {
             CcspTraceError(("syscfg_set ShortsDLEnabled failed\n"));
         }
         else
         {
-            if (syscfg_commit() != 0)
-            {
-                CcspTraceError(("syscfg_commit ShortsDLEnabled failed\n"));
-            }
-            else
-            {
-                return TRUE;
-            }
+            return TRUE;
         }
     }
     return FALSE;
@@ -11285,32 +10991,12 @@ SSIDPSWDCTRL_SetParamBoolValue
 
     if (strcmp(ParamName, "SnmpEnable") == 0)
     {
-        /* collect value */
-        if( bValue == TRUE)
-        {
-            syscfg_set(NULL, "SNMPPSWDCTRLFLAG", "true");
-            syscfg_commit();
-        }
-        else
-        {
-            syscfg_set(NULL, "SNMPPSWDCTRLFLAG", "false");
-            syscfg_commit();
-        }
+        syscfg_set_commit(NULL, "SNMPPSWDCTRLFLAG", (bValue == TRUE) ? "true" : "false");
         return TRUE;
     }
     if (strcmp(ParamName, "Tr069Enable") == 0)
     {
-        /* collect value */
-        if( bValue == TRUE)
-        {
-            syscfg_set(NULL, "TR069PSWDCTRLFLAG", "true");
-            syscfg_commit();
-        }
-        else
-        {
-            syscfg_set(NULL, "TR069PSWDCTRLFLAG", "false");
-            syscfg_commit();
-        }
+        syscfg_set_commit(NULL, "TR069PSWDCTRLFLAG", (bValue == TRUE) ? "true" : "false");
         return TRUE;
     }
     return FALSE;
@@ -11357,21 +11043,15 @@ AutoExcluded_SetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     if (strcmp(ParamName, "Enable") == 0)
     {
-        if (syscfg_set(NULL, "AutoExcludedEnabled", bValue ? "true" : "false") != 0)
+        if (syscfg_set_commit(NULL, "AutoExcludedEnabled", bValue ? "true" : "false") != 0)
         {
             CcspTraceError(("syscfg_set AutoExcluded failed\n"));
+            return FALSE;
         }
         else
         {
-            if (syscfg_commit() != 0)
-            {
-                CcspTraceError(("syscfg_commit AutoExcluded failed\n"));
-            }
-            else
-            {
-                CcspTraceInfo(("syscfg_commit AutoExcluded.Enable success new value '%s'\n", bValue ? "true" : "false"));
-                return TRUE;
-            }
+            CcspTraceInfo(("syscfg_set AutoExcluded.Enable success new value '%s'\n", bValue ? "true" : "false"));
+            return TRUE;
         }
     }
     CcspTraceWarning(("Unsupported parameter AutoExcluded.'%s'\n", ParamName));
@@ -11526,17 +11206,13 @@ BOOL
     /* Required for xPC sync */
     if (strcmp(ParamName, "XconfUrl") == 0)
     {
-        if (syscfg_set(NULL, "AutoExcludedURL", pString) != 0)
+        if (syscfg_set_commit(NULL, "AutoExcludedURL", pString) != 0)
         {
             CcspTraceError(("syscfg_set failed\n"));
         }
         else
         {
-            if (syscfg_commit() != 0)
-            {
-                CcspTraceError(("syscfg_commit failed\n"));
-            }
-            CcspTraceInfo(("syscfg_commit AutoExcluded.XconfUrl success new value '%s'\n", pString));
+            CcspTraceInfo(("syscfg_set AutoExcluded.XconfUrl success new value '%s'\n", pString));
             return TRUE;
         }
     }
@@ -11653,8 +11329,7 @@ AllowOpenPorts_SetParamBoolValue
         if (strcmp(ParamName, "Enable") == 0)
         {
             /* collect value */
-            syscfg_set(NULL, "RFCAllowOpenPorts", (bValue == TRUE ? "true": "false"));
-            syscfg_commit();
+            syscfg_set_commit(NULL, "RFCAllowOpenPorts", (bValue == TRUE) ? "true" : "false");
 
             // Log that we are allowing open ports (or not)
             CcspTraceWarning(("RFC_AllowOpenPorts set to '%s'\n", (bValue == TRUE ? "true":"false")));
@@ -11859,41 +11534,17 @@ SNMP_SetParamBoolValue
 
     if (strcmp(ParamName, "V3Support") == 0)
     {
-        if ( bValue == TRUE)
-        {
-            syscfg_set(NULL, "V3Support", "true");
-        }
-        else
-        {
-            syscfg_set(NULL, "V3Support", "false");
-        }
-        syscfg_commit();
+        syscfg_set_commit(NULL, "V3Support", (bValue == TRUE) ? "true" : "false");
         return TRUE;
     }
     if (strcmp(ParamName, "V2Support") == 0)
     {
-        if ( bValue == TRUE)
-        {
-            syscfg_set(NULL, "V2Support", "true");
-        }
-        else
-        {
-            syscfg_set(NULL, "V2Support", "false");
-        }
-        syscfg_commit();
+        syscfg_set_commit(NULL, "V2Support", (bValue == TRUE) ? "true" : "false");
         return TRUE;
     }
     if (strcmp(ParamName, "RestartMaintenanceEnable") == 0)
     {
-        if ( bValue == TRUE)
-        {
-            syscfg_set(NULL, "SNMP_RestartMaintenanceEnable", "true");
-        }
-        else
-        {
-            syscfg_set(NULL, "SNMP_RestartMaintenanceEnable", "false");
-        }
-        syscfg_commit();
+        syscfg_set_commit(NULL, "SNMP_RestartMaintenanceEnable", (bValue == TRUE) ? "true" : "false");
         return TRUE;
     }
 
@@ -12001,30 +11652,16 @@ TDK_SetParamBoolValue
     {
         if ( bValue == TRUE)
         {
-            if(syscfg_set(NULL, "TDKEnable", "true") != 0)
+            if(syscfg_set_commit(NULL, "TDKEnable", "true") != 0)
 	    {
                 AnscTraceWarning(("TDKEnable : Enabling TDK using syscfg_set failed!!!\n"));
-            }
-            else
-            {
-                if(syscfg_commit() != 0)
-                {	
-                    AnscTraceWarning(("TDKEnable : syscfg_commit failed!!! \n"));
-       	        }
             }
         }
         else
         {
-            if(syscfg_set(NULL, "TDKEnable", "false") != 0)
+            if(syscfg_set_commit(NULL, "TDKEnable", "false") != 0)
             {
                 AnscTraceWarning(("TDKEnable : Disabling TDK using syscfg_set failed!!!\n"));
-            }
-            else
-            {
-                if(syscfg_commit() != 0)
-                {
-                        AnscTraceWarning(("TDKEnable : syscfg_commit failed!!! \n"));
-                }
             }
         }
         
@@ -12132,35 +11769,11 @@ Collectd_SetParamBoolValue
 
     if (strcmp(ParamName, "Enable") == 0)
     {
-        if ( bValue == TRUE)
+        if(syscfg_set_commit(NULL, "CollectdEnable", (bValue == TRUE) ? "true" : "false") != 0)
         {
-            if(syscfg_set(NULL, "CollectdEnable", "true") != 0)
-	    {
-                AnscTraceWarning(("CollectdEnable : Enabling Collectd using syscfg_set failed!!!\n"));
-            }
-            else
-            {
-                if(syscfg_commit() != 0)
-                {	
-                    AnscTraceWarning(("CollectdEnable : syscfg_commit failed!!! \n"));
-       	        }
-            }
+            AnscTraceWarning(("CollectdEnable : Enabling Collectd using syscfg_set failed!!!\n"));
         }
-        else
-        {
-            if(syscfg_set(NULL, "CollectdEnable", "false") != 0)
-            {
-                AnscTraceWarning(("CollectdEnable : Disabling Collectd using syscfg_set failed!!!\n"));
-            }
-            else
-            {
-                if(syscfg_commit() != 0)
-                {
-                        AnscTraceWarning(("CollectdEnable : syscfg_commit failed!!! \n"));
-                }
-            }
-        }
-        
+
         return TRUE;
     }
     return FALSE;
@@ -12270,20 +11883,13 @@ WANLinkHeal_SetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     if (strcmp(ParamName, "Enable") == 0)
     {
-	if (syscfg_set(NULL, "wanlinkheal", bValue ? "true" : "false") != 0)
+	if (syscfg_set_commit(NULL, "wanlinkheal", bValue ? "true" : "false") != 0)
 	{
 		CcspTraceError(("syscfg_set wanlinkhealEnabled failed\n"));
 	}
 	else
 	{
-		if (syscfg_commit() != 0)
-		{
-			CcspTraceError(("syscfg_commit wanlinkhealEnabled failed\n"));
-		}
-		else
-		{
-			return TRUE;
-		}
+		return TRUE;
 	}
      }
  return FALSE;
@@ -12395,9 +12001,7 @@ IPv6subPrefix_SetParamBoolValue
 
         if (strcmp(ParamName, "Enable") == 0)
         {
-            /* collect value */
-            syscfg_set(NULL, "IPv6subPrefix", (bValue == TRUE ? "true": "false"));
-            syscfg_commit();
+            syscfg_set_commit(NULL, "IPv6subPrefix", (bValue == TRUE) ? "true" : "false");
             return TRUE;
         }
     return FALSE;
@@ -12579,21 +12183,10 @@ WebUI_SetParamUlongValue
     /* check the parameter name and set the corresponding value */
     if (strcmp(ParamName, "Enable") == 0)
     {
-        /* collect value */
-	char buf[8]={0};
-	snprintf(buf,sizeof(buf),"%lu",uValue);
-	if (syscfg_set(NULL, "WebUIEnable", buf) != 0) 
+	if (syscfg_set_u_commit(NULL, "WebUIEnable", uValue) != 0)
 	{
 		CcspTraceWarning(("syscfg_set failed to set WebUIEnable \n"));
 		return FALSE;
-	}
-	else 
-	{
-		if (syscfg_commit() != 0) 
-		{
-			CcspTraceWarning(("syscfg_commit failed to set WebUIEnable \n"));
-			return FALSE;
-		}
 	}
 	if(uValue == 0 || uValue == 2)
 	{
@@ -12856,15 +12449,9 @@ CognitiveMotionDetection_SetParamBoolValue
             return TRUE;
         }
 
-        if (syscfg_set(NULL, COGNITIVE_WIFIMOTION_CFG, value) != 0)
+        if (syscfg_set_commit(NULL, COGNITIVE_WIFIMOTION_CFG, value) != 0)
         {
             CcspTraceWarning(("syscfg_set failed to set %s\n", COGNITIVE_WIFIMOTION_CFG));
-            return FALSE;
-        }
-
-        if (syscfg_commit() != 0)
-        {
-            CcspTraceWarning(("syscfg_commit failed to commit %s\n", COGNITIVE_WIFIMOTION_CFG));
             return FALSE;
         }
 
@@ -13619,8 +13206,7 @@ IPv6onLnF_SetParamBoolValue
 								ERR_CHK(rc);
 								return FALSE;
 							}
-							syscfg_set(NULL, "IPv6_Interface",OutBuff);
-            						syscfg_commit();
+							syscfg_set_commit(NULL, "IPv6_Interface",OutBuff);
 
 					}
 			}
@@ -13640,8 +13226,7 @@ IPv6onLnF_SetParamBoolValue
 
 						   }
 					
-						syscfg_set(NULL, "IPv6_Interface",OutBuff);
-            					syscfg_commit();
+						syscfg_set_commit(NULL, "IPv6_Interface",OutBuff);
 					}
 			}
 		    }
@@ -13651,8 +13236,7 @@ IPv6onLnF_SetParamBoolValue
 				{
 				strcat(OutBuff,Inf_name);
 				strcat(OutBuff,",");
-				syscfg_set(NULL, "IPv6_Interface",OutBuff);
-            			syscfg_commit();
+				syscfg_set_commit(NULL, "IPv6_Interface",OutBuff);
 				}
 			}
 		    return TRUE;
@@ -13823,8 +13407,7 @@ IPv6onXHS_SetParamBoolValue
 											ERR_CHK(rc);
 											return FALSE;
 										}
-										syscfg_set(NULL, "IPv6_Interface",OutBuff);
-												syscfg_commit();
+										syscfg_set_commit(NULL, "IPv6_Interface",OutBuff);
 
 								}
 							}
@@ -13844,8 +13427,7 @@ IPv6onXHS_SetParamBoolValue
 
 									   }
 								
-									syscfg_set(NULL, "IPv6_Interface",OutBuff);
-											syscfg_commit();
+									syscfg_set_commit(NULL, "IPv6_Interface",OutBuff);
 								}
 							}
 						}
@@ -13855,8 +13437,7 @@ IPv6onXHS_SetParamBoolValue
 							{
 							strcat(OutBuff,Inf_name);
 							strcat(OutBuff,",");
-							syscfg_set(NULL, "IPv6_Interface",OutBuff);
-									syscfg_commit();
+							syscfg_set_commit(NULL, "IPv6_Interface",OutBuff);
 							}
 						}
 					    ((CCSP_MESSAGE_BUS_INFO *)bus_handle)->freefunc(Inf_name);
@@ -14027,8 +13608,7 @@ IPv6onPOD_SetParamBoolValue
 										strncpy(OutBuff, buf, sizeof(buf));
 										strcat(OutBuff,Inf_name);
 										strcat(OutBuff,",");
-										syscfg_set(NULL, "IPv6_Interface",OutBuff);
-										syscfg_commit();
+										syscfg_set_commit(NULL, "IPv6_Interface",OutBuff);
 
 								}
 							}
@@ -14047,8 +13627,7 @@ IPv6onPOD_SetParamBoolValue
 										}
 									   }
 
-									syscfg_set(NULL, "IPv6_Interface",OutBuff);
-									syscfg_commit();
+									syscfg_set_commit(NULL, "IPv6_Interface",OutBuff);
 								}
 							}
 						}
@@ -14058,8 +13637,7 @@ IPv6onPOD_SetParamBoolValue
 							{
 							strcat(OutBuff,Inf_name);
 							strcat(OutBuff,",");
-							syscfg_set(NULL, "IPv6_Interface",OutBuff);
-							syscfg_commit();
+							syscfg_set_commit(NULL, "IPv6_Interface",OutBuff);
 							}
 						}
 					    ((CCSP_MESSAGE_BUS_INFO *)bus_handle)->freefunc(Inf_name);
@@ -14186,14 +13764,8 @@ IPv6onMoCA_SetParamBoolValue
         BOOL bFound = FALSE;
         int retPsmGet, retPsmGet1 = CCSP_SUCCESS;
 
-        if(bValue) {
-            syscfg_set( NULL, "ipv6_moca_bridge", "true");
-        }
-        else {
-            syscfg_set( NULL, "ipv6_moca_bridge", "false");
-        }
-        if (syscfg_commit( ) != 0) {
-            CcspTraceError(("syscfg_commit failed for ipv6_moca_bridge\n"));
+        if (syscfg_set( NULL, "ipv6_moca_bridge", bValue ? "true" : "false") != 0) {
+            CcspTraceError(("syscfg_set failed for ipv6_moca_bridge\n"));
             return -1;
         }
 
@@ -14237,8 +13809,7 @@ IPv6onMoCA_SetParamBoolValue
                             strcat(OutBuff,Inf_name);
                             strcat(OutBuff,",");
                             CcspTraceWarning((">>>>Debug 1 Value of  OutBuff : %s infname  : %s  HomeIsolationEnable: %d \n", OutBuff, Inf_name, HomeIsolationEnable ));
-                            syscfg_set(NULL, "IPv6_Interface",OutBuff);
-                            syscfg_commit();
+                            syscfg_set_commit(NULL, "IPv6_Interface",OutBuff);
                         }
                     }
                     else
@@ -14255,8 +13826,7 @@ IPv6onMoCA_SetParamBoolValue
                                 }
                             }
                             CcspTraceWarning((">>>>Debug 2 Value of  OutBuff : %s infname  : %s  HomeIsolationEnable: %d \n", OutBuff, Inf_name, HomeIsolationEnable ));
-                            syscfg_set(NULL, "IPv6_Interface",OutBuff);
-                            syscfg_commit();
+                            syscfg_set_commit(NULL, "IPv6_Interface",OutBuff);
                         }
                     }
                 }
@@ -14266,9 +13836,8 @@ IPv6onMoCA_SetParamBoolValue
                     {
                         strcat(OutBuff,Inf_name);
                         strcat(OutBuff,",");
-                        syscfg_set(NULL, "IPv6_Interface",OutBuff);
+                        syscfg_set_commit(NULL, "IPv6_Interface",OutBuff);
                         CcspTraceWarning((">>>>Debug 3 Value of  OutBuff : %s infname  : %s  HomeIsolationEnable: %d \n", OutBuff, Inf_name, HomeIsolationEnable ));
-                        syscfg_commit();
                     }
                 }
                 ((CCSP_MESSAGE_BUS_INFO *)bus_handle)->freefunc(Inf_name);
@@ -14387,21 +13956,14 @@ EvoStream_DirectConnect_SetParamBoolValue
         if (strcmp(ParamName, "Enable") == 0)
         {
             /* collect value */
-            if(syscfg_set(NULL, "EvoStreamDirectConnect", (bValue == TRUE ? "true": "false")) != 0)
+            if(syscfg_set_commit(NULL, "EvoStreamDirectConnect", (bValue == TRUE) ? "true" : "false") != 0)
 		{
 			CcspTraceError(("EvoStreamDirectConnect :%d Failed to SET\n", bValue ));
 		}
 		else
 		{
-            	if(syscfg_commit() != 0)
-			{
-				CcspTraceError(("EvoStreamDirectConnect :%d Failed to Commit\n", bValue ));
-			}
-			else
-			{
-	    			CcspTraceInfo(("EvoStreamDirectConnect :%d Success\n", bValue ));
-	    			v_secure_system("sysevent set firewall-restart");
-			}
+			CcspTraceInfo(("EvoStreamDirectConnect :%d Success\n", bValue ));
+			v_secure_system("sysevent set firewall-restart");
 		}
             return TRUE;
         }
@@ -14559,20 +14121,13 @@ RDKFirmwareUpgrader_SetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     if (strcmp(ParamName, "Enable") == 0)
     {
-        if (syscfg_set(NULL, "RDKFirmwareUpgraderEnabled", bValue ? "true" : "false") != 0)
+        if (syscfg_set_commit(NULL, "RDKFirmwareUpgraderEnabled", bValue ? "true" : "false") != 0)
         {
             CcspTraceError(("syscfg_set RDKFirmwareUpgraderEnabled failed\n"));
         }
         else
         {
-            if (syscfg_commit() != 0)
-            {
-                CcspTraceError(("syscfg_commit RDKFirmwareUpgraderEnabled failed\n"));
-            }
-            else
-            {
-                return TRUE;
-            }
+            return TRUE;
         }
     }
     return FALSE;
@@ -15268,18 +14823,10 @@ CredDwnld_SetParamBoolValue
     if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
-        if(syscfg_set(NULL, "CredDwnld_Enable", bValue ? "true" : "false") != 0 )
+        if(syscfg_set_commit(NULL, "CredDwnld_Enable", bValue ? "true" : "false") != 0 )
         {
             CcspTraceError(("syscfg_set failed\n"));
             return FALSE;
-        }
-        else
-        {
-            if(syscfg_commit() != 0)
-            {
-                CcspTraceWarning(("syscfg_commit failed\n"));
-                return FALSE;
-            }
         }
 
 #if defined(_COSA_INTEL_XB3_ARM_)
@@ -15474,19 +15021,13 @@ CredDwnld_SetParamStringValue
     /* check the parameter name and set the corresponding value */
     if (strcmp(ParamName, "Use") == 0)
     {
-        if (syscfg_set(NULL, "CredDwnld_Use", pString) != 0)
+        if (syscfg_set_commit(NULL, "CredDwnld_Use", pString) != 0)
         {
             CcspTraceError(("syscfg_set failed\n"));
             return FALSE;
         }
         else
         {
-            if (syscfg_commit() != 0)
-            {
-                CcspTraceError(("syscfg_commit failed\n"));
-                return FALSE;
-            }
-
 #if defined(_COSA_INTEL_XB3_ARM_)
             // To address muliple processor platforms
             v_secure_system("/usr/bin/rpcclient %s '" SYSTEMCTL_CMD "' &", atomIp );
@@ -15627,17 +15168,7 @@ ForwardSSH_SetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     if (strcmp(ParamName, "Enable") == 0)
     {
-        /* collect value */
-        if( bValue == TRUE)
-        {
-            syscfg_set(NULL, "ForwardSSH", "true");
-            syscfg_commit();
-        }
-        else
-        {
-            syscfg_set(NULL, "ForwardSSH", "false");
-            syscfg_commit();
-        }
+        syscfg_set_commit(NULL, "ForwardSSH", (bValue == TRUE)? "true" : "false");
         return TRUE;
     }
 
@@ -15890,24 +15421,11 @@ Logging_SetParamUlongValue
     /* check the parameter name and set the corresponding value */
     if (strcmp(ParamName, "DmesgLogSyncInterval") == 0)
     {
-        /* collect value */
-		char buf[12];
-
-		snprintf(buf,sizeof(buf),"%lu",uValue);
-			if (syscfg_set(NULL, "dmesglogsync_interval", buf) != 0) 
-			{
-				CcspTraceWarning(("syscfg_set failed to set DmesgLogSyncInterval \n"));
-			       return FALSE;
-			}
-			else 
-			{
-				if (syscfg_commit() != 0) 
-				{
-					CcspTraceWarning(("syscfg_commit failed to set DmesgLogSyncInterval \n"));
-				    return FALSE;
-				}
-			}
-
+		if (syscfg_set_u_commit(NULL, "dmesglogsync_interval", uValue) != 0) 
+		{
+			CcspTraceWarning(("syscfg_set failed to set DmesgLogSyncInterval \n"));
+		       return FALSE;
+		}
 		return TRUE;
     } 
 
@@ -17033,11 +16551,7 @@ WANsideSSH_SetParamBoolValue
 		return TRUE;
 	}
 
-	if(syscfg_set(NULL, "WANsideSSH_Enable", ((bValue == TRUE ) ? "true" : "false"))==0)
-	{
-		syscfg_commit();
-	}
-	else
+	if (syscfg_set_commit(NULL, "WANsideSSH_Enable", (bValue == TRUE) ? "true" : "false") != 0)
 	{
 		return FALSE;
 	}
@@ -19114,17 +18628,7 @@ BLE_SetParamBoolValue
 
     if (strcmp(ParamName, "Discovery") == 0)
     {
-        /* collect value */
-        if( bValue == TRUE)
-        {
-            syscfg_set(NULL, "BLEDiscovery", "true");
-            syscfg_commit();
-        }
-        else
-        {
-            syscfg_set(NULL, "BLEDiscovery", "false");
-            syscfg_commit();
-        }
+        syscfg_set_commit(NULL, "BLEDiscovery", (bValue == TRUE) ? "true" : "false");
         return TRUE;
     }
 
@@ -19183,18 +18687,8 @@ PeriodicBeacon_SetParamBoolValue
 
     if (strcmp(ParamName, "Enable") == 0)
     {
-        /* collect value */
-        if( bValue == TRUE)
-        {
-            syscfg_set(NULL, "BLEPeriodicBeacon", "true");
-            syscfg_commit();
-        }
-        else
-        {
-            syscfg_set(NULL, "BLEPeriodicBeacon", "false");
-            syscfg_commit();
-        }
-		
+        syscfg_set_commit(NULL, "BLEPeriodicBeacon", (bValue == TRUE) ? "true" : "false"
+
         pthread_create(&tid, NULL, handleBleRestart, NULL);
         return TRUE;
     }
@@ -19254,16 +18748,9 @@ PeriodicBeacon_SetParamUlongValue
 
  	if (strcmp(ParamName, "frequency") == 0)
 	{
-		char buf[8] = {'\0'};
-		snprintf(buf,sizeof(buf),"%lu",uValue);
-        	if (syscfg_set(NULL, "BLEPeriodicBeaconFrequency", buf) != 0)
+        	if (syscfg_set_u_commit(NULL, "BLEPeriodicBeaconFrequency", uValue) != 0)
         	{
             		AnscTraceWarning(("%s syscfg_set failed!\n", ParamName));
-            		return FALSE;
-        	}
-        	if (syscfg_commit() != 0)
-        	{
-            		AnscTraceWarning(("%s syscfg_commit failed!\n", ParamName));
             		return FALSE;
         	}
                 pthread_create(&tid, NULL, handleBleRestart, NULL);
@@ -19381,16 +18868,12 @@ Tile_SetParamStringValue
     UNREFERENCED_PARAMETER(hInsContext);
     if (strcmp(ParamName, "ReportingURL") == 0)
     {
-        if (syscfg_set(NULL, "TileReportingURL", pString) != 0)
+        if (syscfg_set_commit(NULL, "TileReportingURL", pString) != 0)
         {
             CcspTraceError(("syscfg_set failed\n"));
         }
         else
         {
-            if (syscfg_commit() != 0)
-            {
-                CcspTraceError(("syscfg_commit failed\n"));
-            }
             return TRUE;
         }
     }
@@ -19423,16 +18906,9 @@ Tile_SetParamIntValue
           return FALSE;
         }
 
-        if (syscfg_set(NULL, "TileReportingInterval", buf) != 0)
+        if (syscfg_set_commit(NULL, "TileReportingInterval", buf) != 0)
         {
-               CcspTraceInfo(("syscfg_set Reportin  failed\n"));
-        }
-        else
-        {
-            if (syscfg_commit() != 0)
-            {
-                 CcspTraceInfo(("syscfg_commit ReportingThrottling failed\n"));
-            }
+               CcspTraceInfo(("syscfg_set TileReportingInterval failed\n"));
         }
 
         return TRUE;
@@ -19521,16 +18997,9 @@ xBlueTooth_SetParamBoolValue
      pthread_t tid;
     if (strcmp(ParamName, "LimitBeaconDetection") == 0)
     {
-        if(syscfg_set(NULL, "limit_beacon_detection", bValue ? "true" : "false"))
+        if(syscfg_set_commit(NULL, "limit_beacon_detection", bValue ? "true" : "false"))
         {
             CcspTraceError(("syscfg_set failed\n"));
-        }
-        else
-        {
-            if (syscfg_commit() != 0)
-            {
-                CcspTraceError(("syscfg_commit failed\n"));
-            }
         }
         pthread_create(&tid, NULL, handleBleRestart, NULL); 
         return TRUE;
@@ -19572,8 +19041,7 @@ BOOL TileMac_GetParamStringValue
         if( (strcmp(res, "false") == 0) || (strcmp(res, "") == 0) )
         {
            char pStr[128]= {0}, cmd[64] = {0};
-           syscfg_set(NULL, "BLEDiscovery", "true");
-           syscfg_commit();
+           syscfg_set_commit(NULL, "BLEDiscovery", "true");
 
            CcspTraceInfo(("BLE: Discovery is Set to True..... \n"));
 
@@ -19583,8 +19051,7 @@ BOOL TileMac_GetParamStringValue
               ERR_CHK(rc);
               return FALSE;
            }
-           syscfg_set(NULL, "TileReportingURL", pStr);
-           syscfg_commit();
+           syscfg_set_commit(NULL, "TileReportingURL", pStr);
 
            CcspTraceInfo(("BLE: Tile Reporting URL is Set..... \n"));
 
@@ -19635,8 +19102,7 @@ BOOL TileMac_GetParamStringValue
     /* Restore the discovery state to false */
     if(disc == true)
     {
-       syscfg_set(NULL, "BLEDiscovery", "false");
-       syscfg_commit();
+       syscfg_set_commit(NULL, "BLEDiscovery", "false");
 
        CcspTraceInfo(("BLE: Discovery Set back to False..... \n"));
 
@@ -19777,80 +19243,41 @@ Cmd_SetParamStringValue
                         if ( cJSON_GetObjectItem( cjson, "tile_uuid") != NULL )
                         {
                               CcspTraceInfo(("The Ring Tile Id :%s\n", cJSON_GetObjectItem(cjson, "tile_uuid")->valuestring));
-                              if (syscfg_set(NULL, "cmdTileId", cJSON_GetObjectItem(cjson, "tile_uuid")->valuestring) != 0)
+                              if (syscfg_set_commit(NULL, "cmdTileId", cJSON_GetObjectItem(cjson, "tile_uuid")->valuestring) != 0)
                               {
                                      CcspTraceInfo(("syscfg_set failed for RingTileId \n"));
                               }
-                              else
-                              {
-                                 if (syscfg_commit() != 0)
-                                 {
-                                     CcspTraceInfo(("syscfg_commit failed for RingTileId\n"));
-                                 }
-                              }
-
                         }
                         if ( cJSON_GetObjectItem( cjson, "rand_a") != NULL )
                         {
                               CcspTraceInfo(("The Rand A :%s\n", cJSON_GetObjectItem(cjson, "rand_a")->valuestring));
-                             if (syscfg_set(NULL, "Rand_a", cJSON_GetObjectItem(cjson, "rand_a")->valuestring) != 0)
+                              if (syscfg_set_commit(NULL, "Rand_a", cJSON_GetObjectItem(cjson, "rand_a")->valuestring) != 0)
                               {
                                      CcspTraceInfo(("syscfg_set failed for Rand_a \n"));
                               }
-                              else
-                              {
-                                 if (syscfg_commit() != 0)
-                                 {
-                                     CcspTraceInfo(("syscfg_commit failed for Rand_a \n"));
-                                 }
-                              }
-
-
                         }
                         if ( cJSON_GetObjectItem( cjson, "session_token") != NULL )
                         {
                               CcspTraceInfo(("The Session Token :%s\n", cJSON_GetObjectItem(cjson, "session_token")->valuestring));
-                              if (syscfg_set(NULL, "TileSession_Token", cJSON_GetObjectItem(cjson, "session_token")->valuestring) != 0)
+                              if (syscfg_set_commit(NULL, "TileSession_Token", cJSON_GetObjectItem(cjson, "session_token")->valuestring) != 0)
                               {
                                      CcspTraceInfo(("syscfg_set failed for TileSession_Token \n"));
-                              }
-                              else
-                              {
-                                 if (syscfg_commit() != 0)
-                                 {
-                                     CcspTraceInfo(("syscfg_commit failed for TileSession_Token \n"));
-                                 }
                               }
                         }
                         if ( cJSON_GetObjectItem( cjson, "cmst_traceId") != NULL )
                         {
                               CcspTraceInfo(("The Trace Id :%s\n", cJSON_GetObjectItem(cjson, "cmst_traceId")->valuestring));
-                              if (syscfg_set(NULL, "cmst_traceid", cJSON_GetObjectItem(cjson, "cmst_traceId")->valuestring) != 0)
+                              if (syscfg_set_commit(NULL, "cmst_traceid", cJSON_GetObjectItem(cjson, "cmst_traceId")->valuestring) != 0)
                               {
                                      CcspTraceInfo(("syscfg_set failed for cmst_traceid \n"));
                               }
-                              else
-                              {
-                                 if (syscfg_commit() != 0)
-                                 {
-                                     CcspTraceInfo(("syscfg_commit failed for cmst_traceid \n"));
-                                 }
-                              }
-
                         }
                         CcspTraceInfo(("******************************** \n"));
                         CcspTraceInfo(("Open channel case\n"));
                         CcspTraceInfo(("setting cmdCode \n"));
-                        if (syscfg_set(NULL, "cmdOpenChannel", cmd) != 0)
+                        if (syscfg_set_commit(NULL, "cmdOpenChannel", cmd) != 0)
                         {
                             CcspTraceInfo(("syscfg_set failed for Ring command\n"));
-                        }
-                        else
-                        {
-                            if (syscfg_commit() != 0)
-                            {
-                                CcspTraceInfo(("syscfg_commit failed for Ring Command\n"));
-                            }
                         }
                         cJSON_Delete(cjson);
                         CcspTraceInfo(("*****Return*****\n"));
@@ -19866,31 +19293,17 @@ Cmd_SetParamStringValue
                         if(cJSON_IsTrue(disconnect))
                         {
                                CcspTraceInfo(("Disconnect on completion set to true\n"));
-                               if (syscfg_set(NULL, "TileDisconnectOnCompletion", "true") != 0)
+                               if (syscfg_set_commit(NULL, "TileDisconnectOnCompletion", "true") != 0)
                                {
                                      CcspTraceInfo(("syscfg_set failed for disconnect on completion \n"));
                                }
-                               else
-                               {
-                                   if (syscfg_commit() != 0)
-                                   {
-                                           CcspTraceInfo(("syscfg_commit failed for disconnect on completion\n"));
-                                   }
-                                }
                         }
                         else
                         {
                                CcspTraceInfo(("Disconnect on completion set to false \n"));
-                               if (syscfg_set(NULL, "TileDisconnectOnCompletion", "false") != 0)
+                               if (syscfg_set_commit(NULL, "TileDisconnectOnCompletion", "false") != 0)
                                {
                                      CcspTraceInfo(("syscfg_set failed for disconnect on completion \n"));
-                               }
-                               else
-                               {
-                                   if (syscfg_commit() != 0)
-                                   {
-                                           CcspTraceInfo(("syscfg_commit failed for disconnect on completion\n"));
-                                   }
                                }
                         }
 
@@ -19909,32 +19322,18 @@ Cmd_SetParamStringValue
                                      if(index == 0)
                                      {
                                        CcspTraceInfo(("The Ring Cmd Ready:%s\n", cJSON_GetObjectItem(subitem, "command")->valuestring));
-                                       if (syscfg_set(NULL, "cmdReady",cJSON_GetObjectItem(subitem, "command")->valuestring) != 0)
+                                       if (syscfg_set_commit(NULL, "cmdReady",cJSON_GetObjectItem(subitem, "command")->valuestring) != 0)
                                        {
                                            CcspTraceInfo(("syscfg_set failed for cmdReady \n"));
                                        }
-                                       else
-                                       {
-                                           if (syscfg_commit() != 0)
-                                           {
-                                               CcspTraceInfo(("syscfg_commit failed for cmdReady\n"));
-                                           }
-                                        }
                                      }
                                      else
                                      {
 
                                         CcspTraceInfo(("The Ring Cmd Play:%s\n", cJSON_GetObjectItem(subitem, "command")->valuestring));
-                                        if (syscfg_set(NULL, "cmdPlay",cJSON_GetObjectItem(subitem, "command")->valuestring) != 0)
+                                        if (syscfg_set_commit(NULL, "cmdPlay",cJSON_GetObjectItem(subitem, "command")->valuestring) != 0)
                                         {
                                            CcspTraceInfo(("syscfg_set failed for cmdPlay \n"));
-                                        }
-                                        else
-                                        {
-                                           if (syscfg_commit() != 0)
-                                           {
-                                               CcspTraceInfo(("syscfg_commit failed for cmdPlay\n"));
-                                           }
                                         }
                                      }
                                 }
@@ -19944,31 +19343,17 @@ Cmd_SetParamStringValue
                                       if(index == 0 )
                                       {
                                            CcspTraceInfo(("The Ring Cmd Ready mask:%s\n", cJSON_GetObjectItem(subitem, "response_mask")->valuestring));
-                                           if (syscfg_set(NULL, "cmdReady_mask",cJSON_GetObjectItem(subitem, "response_mask")->valuestring) != 0)
+                                           if (syscfg_set_commit(NULL, "cmdReady_mask",cJSON_GetObjectItem(subitem, "response_mask")->valuestring) != 0)
                                            {
                                                CcspTraceInfo(("syscfg_set failed for cmdReady_mask \n"));
-                                           }
-                                           else
-                                           {
-                                              if (syscfg_commit() != 0)
-                                              {
-                                                 CcspTraceInfo(("syscfg_commit failed for cmdReady mask\n"));
-                                              }
                                            }
                                       }
                                       else
                                       {
                                            CcspTraceInfo(("The Ring Cmd Play mask:%s\n", cJSON_GetObjectItem(subitem, "response_mask")->valuestring));
-                                           if (syscfg_set(NULL, "cmdPlay_mask",cJSON_GetObjectItem(subitem, "response_mask")->valuestring) != 0)
+                                           if (syscfg_set_commit(NULL, "cmdPlay_mask",cJSON_GetObjectItem(subitem, "response_mask")->valuestring) != 0)
                                            {
                                                CcspTraceInfo(("syscfg_set failed for cmdPlay_mask \n"));
-                                           }
-                                           else
-                                           {
-                                              if (syscfg_commit() != 0)
-                                              {
-                                                 CcspTraceInfo(("syscfg_commit failed for cmdPlay mask\n"));
-                                              }
                                            }
                                       }
                                 }
@@ -19976,16 +19361,9 @@ Cmd_SetParamStringValue
 
                         }//end for loop
                         CcspTraceInfo(("setting cmdCode \n"));
-                        if (syscfg_set(NULL, "cmdCode", cmd) != 0)
+                        if (syscfg_set_commit(NULL, "cmdCode", cmd) != 0)
                         {
                             CcspTraceInfo(("syscfg_set failed for Ring command\n"));
-                        }
-                        else
-                        {
-                            if (syscfg_commit() != 0)
-                            {
-                                CcspTraceInfo(("syscfg_commit failed for Ring Command\n"));
-                            }
                         }
                         CcspTraceInfo(("***************************\n"));
                         CcspTraceInfo(("ALL WELL\n"));
@@ -20116,22 +19494,13 @@ MessageBusSource_SetParamBoolValue
 
   if (strcmp(ParamName, "Enable") == 0)
     {
-        char buf[8] = {'\0'};
-        snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
-        if( syscfg_set(NULL, "MessageBusSource", buf) != 0 )
+        if( syscfg_set_commit(NULL, "MessageBusSource", bValue ? "true" : "false") != 0 )
         {
             CcspTraceError(("syscfg_set failed for MessageBusSource\n"));
         }
         else
         {
-            if( syscfg_commit() == 0 )
-            {
-                return TRUE;
-            }
-            else
-            {
-                 CcspTraceError(("syscfg_commit failed for MessageBusSource\n"));
-            }
+            return TRUE;
         }
 
     }
@@ -20244,22 +19613,13 @@ MTLS_SetParamBoolValue
 
   if (strcmp(ParamName, "Enable") == 0)
     {
-        char buf[8] = {'\0'};
-        snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
-        if( syscfg_set(NULL, "T2mTLSEnable", buf) != 0 )
+        if( syscfg_set_commit(NULL, "T2mTLSEnable", bValue ? "true" : "false") != 0 )
         {
             CcspTraceError(("syscfg_set failed for MTLS\n"));
         }
         else
         {
-            if( syscfg_commit() == 0 )
-            {
-                return TRUE;
-            }
-            else
-            {
-                 CcspTraceError(("syscfg_commit failed for MTLS\n"));
-            }
+            return TRUE;
         }
 
     }
@@ -20373,22 +19733,13 @@ TR104_SetParamBoolValue
 
   if (strcmp(ParamName, "Enable") == 0)
     {
-        char buf[8] = {'\0'};
-        snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
-        if( syscfg_set(NULL, "TR104enable", buf) != 0 )
+        if( syscfg_set_commit(NULL, "TR104enable", bValue ? "true" : "false") != 0 )
         {
             CcspTraceError(("syscfg_set failed for TR104enable \n"));
         }
         else
         {
-            if( syscfg_commit() == 0 )
-            {
-                return TRUE;
-            }
-            else
-            {
-                 CcspTraceError(("syscfg_commit failed for TR104enable \n"));
-            }
+            return TRUE;
         }
     }
   return FALSE;
@@ -20504,22 +19855,13 @@ UPnPRefactor_SetParamBoolValue
 
   if (strcmp(ParamName, "Enable") == 0)
     {
-        char buf[8] = {'\0'};
-        snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
-        if( syscfg_set(NULL, "Refactor", buf) != 0 )
+        if( syscfg_set_commit(NULL, "Refactor", bValue ? "true" : "false") != 0 )
         {
             CcspTraceError(("syscfg_set failed for UPnP Refactor \n"));
         }
         else
         {
-            if( syscfg_commit() == 0 )
-            {
-                return TRUE;
-            }
-            else
-            {
-                 CcspTraceError(("syscfg_commit failed for UPnP Refactor \n"));
-            }
+            return TRUE;
         }
     }
   return FALSE;
@@ -20642,22 +19984,13 @@ UPnPxPKI_SetParamBoolValue
 
   if (strcmp(ParamName, "Enable") == 0)
     {
-        char buf[8] = {'\0'};
-        snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
-        if( syscfg_set(NULL, "UPnPxPKI", buf) != 0 )
+        if( syscfg_set_commit(NULL, "UPnPxPKI", bValue ? "true" : "false") != 0 )
         {
             CcspTraceError(("syscfg_set failed for UPnP xPKI \n"));
         }
         else
         {
-            if( syscfg_commit() == 0 )
-            {
-                return TRUE;
-            }
-            else
-            {
-                 CcspTraceError(("syscfg_commit failed for UPnP xPKI \n"));
-            }
+            return TRUE;
         }
     }
   return FALSE;
@@ -20769,25 +20102,16 @@ MAPT_DeviceInfo_SetParamBoolValue
 
   if (strcmp(ParamName, "Enable") == 0)
     {
-        char buf[8] = {'\0'};
-        snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
-        if( syscfg_set(NULL, "MAPT_Enable", buf) != 0 )
+        if (syscfg_set_commit(NULL, "MAPT_Enable", bValue ? "true" : "false") != 0 )
         {
             CcspTraceError(("syscfg_set failed for MAPT_Enable \n"));
         }
         else
         {
-            if( syscfg_commit() == 0 )
-            {
 #ifdef FEATURE_MAPT
-                v_secure_system("sysevent set MAPT_Enable %s", buf);
+            v_secure_system("sysevent set MAPT_Enable %s", bValue ? "true" : "false");
 #endif
-                return TRUE;
-            }
-            else
-            {
-                 CcspTraceError(("syscfg_commit failed for MAPT_Enable \n"));
-            }
+            return TRUE;
         }
     }
   return FALSE;
@@ -20904,22 +20228,13 @@ HwHealthTestEnable_SetParamBoolValue
 
     if (strcmp(ParamName, "Enable") == 0)
     {
-        char buf[8] = {'\0'};
-        snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
-        if( syscfg_set(NULL, "hwHealthTest", buf) != 0 )
+        if( syscfg_set_commit(NULL, "hwHealthTest", bValue ? "true" : "false") != 0 )
         {
             CcspTraceError(("syscfg_set failed for hwHealthTest Enable \n"));
         }
         else
         {
-            if( syscfg_commit() == 0 )
-            {
-                return TRUE;
-            }
-            else
-            {
-                 CcspTraceError(("syscfg_commit failed for hwHealthTest Enable \n"));
-            }
+            return TRUE;
         }
     }
     return FALSE;
@@ -21518,27 +20833,13 @@ Telemetry_SetParamBoolValue (ANSC_HANDLE hInsContext, char* ParamName, BOOL bVal
         return TRUE;
 
     if (strcmp(ParamName, "Enable") == 0) {
-        char buf[8] = { '\0' };
-        char versionBuf[8] = { '\0' };
-        snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
-        snprintf(versionBuf, sizeof(buf), "%s", bValue ? "2.0.1" : "1");
-        if (syscfg_set(NULL, "T2Enable", buf) != 0) {
+        if (syscfg_set(NULL, "T2Enable", bValue ? "true" : "false") != 0) {
             CcspTraceError(("syscfg_set failed for Telemetry.Enable\n"));
         } else {
-            if (syscfg_commit( ) == 0) {
-
-                if (syscfg_set(NULL, "T2Version", versionBuf) != 0) {
-                    CcspTraceError(("syscfg_set failed\n"));
-
-                } else {
-                    if (syscfg_commit( ) != 0) {
-                        CcspTraceError(("syscfg_commit failed\n"));
-                    }
-                    return TRUE;
-                }
-                return TRUE;
+            if (syscfg_set_commit(NULL, "T2Version", bValue ? "2.0.1" : "1") != 0) {
+                CcspTraceError(("syscfg_set failed\n"));
             } else {
-                CcspTraceError(("syscfg_commit failed for Telemetry.Enable\n"));
+                return TRUE;
             }
         }
 
@@ -21662,13 +20963,10 @@ Telemetry_SetParamStringValue (ANSC_HANDLE hInsContext, char* ParamName, char* p
         return TRUE;
 
     if (strcmp(ParamName, "ConfigURL") == 0) {
-        if (syscfg_set(NULL, "T2ConfigURL", pString) != 0) {
+        if (syscfg_set_commit(NULL, "T2ConfigURL", pString) != 0) {
             CcspTraceError(("syscfg_set failed\n"));
 
         } else {
-            if (syscfg_commit( ) != 0) {
-                CcspTraceError(("syscfg_commit failed\n"));
-            }
             return TRUE;
         }
     }
@@ -21676,12 +20974,9 @@ Telemetry_SetParamStringValue (ANSC_HANDLE hInsContext, char* ParamName, char* p
     if (strcmp(ParamName, "Version") == 0) {
 
         if ((strncmp(pString, "2", MAX_T2_VER_LEN) == 0) || (strncmp(pString, "2.0.1", MAX_T2_VER_LEN) == 0)) {
-            if (syscfg_set(NULL, "T2Version", pString) != 0) {
+            if (syscfg_set_commit(NULL, "T2Version", pString) != 0) {
                 CcspTraceError(("syscfg_set failed\n"));
             } else {
-                if (syscfg_commit( ) != 0) {
-                    CcspTraceError(("syscfg_commit failed\n"));
-                }
                 return TRUE;
             }
         } else {
@@ -21801,25 +21096,14 @@ MocaAccountIsolation_SetParamBoolValue
 	DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.MocaAccountIsolation.Enable*/
 	if (strcmp(ParamName, "Enable") == 0)
 	{
-		if ( bValue == TRUE )
+		if (syscfg_set_commit(NULL, "enableMocaAccountIsolation", (bValue == TRUE) ? "true" : "false") != 0)
 		{
-			syscfg_set(NULL, "enableMocaAccountIsolation", "true");
-                        CcspTraceWarning(("DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.MocaAccountIsolation.Enable set to true\n"));
-		}
-		else
-		{
-			syscfg_set(NULL, "enableMocaAccountIsolation", "false");
-                        CcspTraceWarning(("DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.MocaAccountIsolation.Enable set to false\n"));
-		}
-
-		if ( syscfg_commit() != 0 )
-		{
-			AnscTraceWarning(("syscfg_commit enableMocaAccountIsolation failed\n"));
+			AnscTraceWarning(("syscfg_set enableMocaAccountIsolation failed\n"));
                         return FALSE;
 		}
-                else
+
                 v_secure_system("sysevent set firewall-restart");
-                
+
 		return TRUE;
 	}
   CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName));
@@ -21933,18 +21217,9 @@ CaptivePortalForNoCableRF_SetParamBoolValue
 
   if (strcmp(ParamName, "Enable") == 0)
     {
-	  if ( bValue == TRUE )
+	  if (syscfg_set_commit(NULL, "enableRFCaptivePortal", (bValue == TRUE) ? "true" : "false") != 0)
 	  {
-		  syscfg_set(NULL, "enableRFCaptivePortal", "true");
-	  }
-	  else
-	  {
-		  syscfg_set(NULL, "enableRFCaptivePortal", "false");
-	  }
-	  
-	  if ( syscfg_commit() != 0 )
-	  {
-		 AnscTraceWarning(("syscfg_commit enableRFCaptivePortal failed\n"));
+		 AnscTraceWarning(("syscfg_set enableRFCaptivePortal failed\n"));
 	  }
 	  
 	  return TRUE;
@@ -22062,26 +21337,9 @@ SecureWebUI_SetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     if (strcmp(ParamName, "Enable") == 0)
     {
-        /* collect value */
-        if( bValue == TRUE)
+        if (syscfg_set_commit(NULL, "SecureWebUI_Enable", (bValue == TRUE) ? "true" : "false") != 0)
         {
-            if (syscfg_set(NULL, "SecureWebUI_Enable", "true") != 0) {
-                AnscTraceWarning(("syscfg_set failed\n"));
-            } else {
-                if (syscfg_commit() != 0) {
-                    AnscTraceWarning(("syscfg_commit failed\n"));
-                }
-            }
-        }
-        else
-        {
-            if (syscfg_set(NULL, "SecureWebUI_Enable", "false") != 0) {
-                AnscTraceWarning(("syscfg_set failed\n"));
-            } else {
-                if (syscfg_commit() != 0) {
-                    AnscTraceWarning(("syscfg_commit failed\n"));  
-                }
-            }
+            AnscTraceWarning(("syscfg_set failed\n"));
         }
         return TRUE;
     }
@@ -22196,19 +21454,13 @@ BOOL
     UNREFERENCED_PARAMETER(hInsContext);
     if (strcmp(ParamName, "LocalFqdn") == 0)
     {
-        if (syscfg_set(NULL, "SecureWebUI_LocalFqdn", pString) != 0)
+        if (syscfg_set_commit(NULL, "SecureWebUI_LocalFqdn", pString) != 0)
         {
             CcspTraceError(("syscfg_set failed\n"));
 
         }
         else
         {
-            if (syscfg_commit() != 0)
-            {
-                CcspTraceError(("syscfg_commit failed\n"));
-
-            }
-
             return TRUE;
         }
     }
@@ -22399,16 +21651,12 @@ UseXPKI_SetParamBoolValue
     if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
-        if (syscfg_set(NULL, "UseXPKI_Enable", (bValue==FALSE)?"false":"true") != 0) {
+        if (syscfg_set_commit(NULL, "UseXPKI_Enable", (bValue==FALSE)?"false":"true") != 0) {
             AnscTraceWarning(("syscfg_set failed\n"));
             return FALSE;
         }
         else
         {
-            if (syscfg_commit() != 0) {
-                AnscTraceWarning(("syscfg_commit failed\n"));
-                return FALSE;
-            }
             return TRUE;
         }
     }
@@ -22497,16 +21745,12 @@ mTlsLogUpload_SetParamBoolValue
     if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
-        if (syscfg_set(NULL, "mTlsLogUpload_Enable", (bValue==FALSE)?"false":"true") != 0) {
+        if (syscfg_set_commit(NULL, "mTlsLogUpload_Enable", (bValue==FALSE)?"false":"true") != 0) {
             AnscTraceWarning(("syscfg_set failed\n"));
             return FALSE;
         }
         else
         {
-            if (syscfg_commit() != 0) {
-                AnscTraceWarning(("syscfg_commit failed\n"));
-                return FALSE;
-            }
             return TRUE;
         }
     }
@@ -22704,22 +21948,13 @@ XHFW_SetParamBoolValue (ANSC_HANDLE hInsContext, char* ParamName, BOOL bValue)
 
     if (strcmp(ParamName, "Enable") == 0)
     {
-        char buf[8] = { '\0' };
-        snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
-        if (syscfg_set(NULL, "XHFW_Enable", buf) != 0)
+        if (syscfg_set_commit(NULL, "XHFW_Enable", bValue ? "true" : "false") != 0)
         {
             CcspTraceError(("syscfg_set failed for XHFW.Enable\n"));
         }
         else
         {
-            if (syscfg_commit( ) == 0)
-            {
-                result = TRUE;
-            }
-            else
-            {
-                CcspTraceError(("syscfg_commit failed for XHFW.Enable\n"));
-            }
+            result = TRUE;
         }
 
         if (bValue)
@@ -23413,15 +22648,9 @@ AutoReboot_SetParamBoolValue
             CcspTraceInfo(("[%s:] AutoReboot Set current and previous values are same\n", __FUNCTION__ ));
             return TRUE;
         }
-        char buf[8] = { '\0' };
-        snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
-        if (syscfg_set(NULL, "AutoReboot", buf) != 0)
+        if (syscfg_set_commit(NULL, "AutoReboot", bValue ? "true" : "false") != 0)
         {
             CcspTraceError(("syscfg_set failed for AutoReboot.Enable\n"));
-        }
-        else
-        {
-            syscfg_commit();
         }
         CcspTraceInfo(("[%s:] AutoReboot Set param Enable value %d\n", __FUNCTION__, bValue));
         pMyObject->AutoReboot.Enable = bValue;
@@ -23677,51 +22906,25 @@ EnableOCSPStapling_SetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     if (strcmp(ParamName, "Enable") == 0)
     {
-
-        char buf[8];
-        memset (buf, 0, sizeof(buf));
-
-        snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
-
-        if (syscfg_set(NULL, "EnableOCSPStapling", buf) != 0)
+        if (syscfg_set_commit(NULL, "EnableOCSPStapling", bValue ? "true" : "false") != 0)
         {
             CcspTraceError(("syscfg_set EnableOCSPStapling failed\n"));
         }
         else
         {
-            if (syscfg_commit() != 0)
-            {
-                CcspTraceError(("syscfg_commit EnableOCSPStapling failed\n"));
-            }
-            else
-            {
-                return TRUE;
-            }
+            return TRUE;
         }
     }
 
     if (strcmp(ParamName, "DirectOCSP") == 0)
     {
-
-        char buf1[8];
-        memset (buf1, 0, sizeof(buf1));
-
-        snprintf(buf1, sizeof(buf1), "%s", bValue ? "true" : "false");
-
-        if (syscfg_set(NULL, "EnableOCSPCA", buf1) != 0)
+        if (syscfg_set_commit(NULL, "EnableOCSPCA", bValue ? "true" : "false") != 0)
         {
             CcspTraceError(("syscfg_set EnableOCSPCA failed\n"));
         }
         else
         {
-            if (syscfg_commit() != 0)
-            {
-                CcspTraceError(("syscfg_commit EnableOCSPCA failed\n"));
-            }
-            else
-            {
-                return TRUE;
-            }
+            return TRUE;
         }
     }
     return FALSE;
@@ -23865,15 +23068,9 @@ SelfHeal_SetParamUlongValue
 	    return FALSE;
 	}
 #endif
-        snprintf(buf,sizeof(buf),"%lu",uValue);
-        if (syscfg_set(NULL, ParamName, buf) != 0)
+        if (syscfg_set_u_commit(NULL, ParamName, uValue) != 0)
         {
             AnscTraceWarning(("%s syscfg_set failed!\n", ParamName));
-            return FALSE;
-        }
-        if (syscfg_commit() != 0)
-        {
-            AnscTraceWarning(("%s syscfg_commit failed!\n", ParamName));
             return FALSE;
         }
 
@@ -23998,17 +23195,16 @@ BOOL                        bValue
 
        if ( bValue == TRUE)
        {
-          syscfg_set(NULL, "nfc_enabled", "true");
+          syscfg_set_commit(NULL, "nfc_enabled", "true");
           //Start RdkNfcManager systemd service to start nfc services.
           v_secure_system("systemctl start RdkNfcManager.service");
        }
        else
        {
-          syscfg_set(NULL, "nfc_enabled", "false");
+          syscfg_set_commit(NULL, "nfc_enabled", "false");
           //Stop RdkNfcManager systemd service to stop nfc services.
           v_secure_system("systemctl stop RdkNfcManager.service");
        }
-       syscfg_commit();
 
        return TRUE;
     }
