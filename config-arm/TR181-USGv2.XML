@@ -8006,7 +8006,7 @@
 
             <name>SupportedModes</name>
 
-            <type>string: Send(1),Receive(2),both(3)</type>
+            <type>string: Send(1),Receive(2),Both(3)</type>
 
             <syntax>uint32/mapped</syntax>
 
@@ -17402,7 +17402,7 @@
                     </parameter>
                     <parameter>
                         <name>Status</name>
-                        <type>string: Up(1), Down(2), Error(3)</type>
+                        <type>string: Enabled(1), Disabled(2), Error(3)</type>
                         <syntax>uint32/mapped</syntax>
                     </parameter>
 					<parameter>
