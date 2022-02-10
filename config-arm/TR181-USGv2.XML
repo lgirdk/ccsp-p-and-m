@@ -6865,7 +6865,7 @@
 
               <name>ValidLifetime</name>
 
-              <type>dateTime</type>
+              <type>string</type>
 
               <syntax>string</syntax>
 
