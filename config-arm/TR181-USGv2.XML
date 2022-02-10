@@ -7069,7 +7069,7 @@
 
               <name>PreferredLifetime</name>
 
-              <type>string</type>
+              <type>dateTime</type>
 
               <syntax>string</syntax>
 
