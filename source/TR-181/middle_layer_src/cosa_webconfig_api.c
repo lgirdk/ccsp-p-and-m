@@ -574,6 +574,7 @@ void init_pf_cache(t_cache *tmp_pf_cache)
     	char alias_pre[8];
 
         char buf[8] = {0} ;
+        bool commit = false;
         snprintf(pf_param_name,sizeof(pf_param_name),"%s::%s",COSA_NAT_SYSCFG_NAMESPACE,PORT_FORWARD_ENABLED_KEY);
 
         if( 0 == syscfg_get( NULL, pf_param_name , buf, sizeof( buf ) ) &&  ( '\0' != buf[0] ) )
@@ -603,6 +604,15 @@ void init_pf_cache(t_cache *tmp_pf_cache)
 		int j = 0;
 		for(j = 1; j< spf_count+1; j++)
 		{
+			//To Avoid buffer overflow
+			if( i+9 > PORTMAP_CACHE_SIZE){
+				spf_count = j - 1;
+				memset(tmp_pf_cache[0].val,0,VAL_BLOCK_SIZE);
+				snprintf(tmp_pf_cache[0].val,VAL_BLOCK_SIZE,"%d",spf_count);
+				syscfg_set(NULL, "SinglePortForwardCount", tmp_pf_cache[0].val);
+				commit = true;
+				break;
+			}
 			memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
 			memset(tmp_pf_cache[i].val,0,VAL_BLOCK_SIZE);
 			snprintf(tmp_pf_cache[i].cmd,BLOCK_SIZE,ALIAS_SPF"%d",j);
@@ -636,6 +646,15 @@ void init_pf_cache(t_cache *tmp_pf_cache)
 
 		for(j = 1; j< pfr_count+1; j++)
 		{
+			//To avoid buffer over flow
+			if( i+11 > PORTMAP_CACHE_SIZE){
+				pfr_count = j - 1;
+				memset(tmp_pf_cache[1].val,0,VAL_BLOCK_SIZE);
+				snprintf(tmp_pf_cache[1].val,VAL_BLOCK_SIZE ,"%d",pfr_count);
+				syscfg_set(NULL, "PortRangeForwardCount", tmp_pf_cache[1].val);
+				commit = true;
+				break;
+			} 
 			memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
 			snprintf(tmp_pf_cache[i].cmd,BLOCK_SIZE,ALIAS_PFR"%d",j);
 			syscfg_get( NULL, tmp_pf_cache[i].cmd, tmp_pf_cache[i].val, VAL_BLOCK_SIZE);
@@ -675,6 +694,11 @@ void init_pf_cache(t_cache *tmp_pf_cache)
 
 	}
 	pf_cache_size = i;
+	if ( commit )
+	{
+		if (syscfg_commit() != 0)
+			CcspTraceError(("%s : syscfg commit failed \n",__FUNCTION__));
+	}
 }
 
 /* CallBack API to execute Portforwarding Blob request */
