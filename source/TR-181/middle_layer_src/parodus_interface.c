@@ -306,7 +306,7 @@ void* connect_parodus(void* arg)
     pthread_detach(pthread_self());
     
     max_retry_sleep = (int) pow(2, backoff_max_time) -1;
-    CcspTraceInfo(("max_retry_sleep is %d\n", max_retry_sleep ));
+    //CcspTraceInfo(("max_retry_sleep is %d\n", max_retry_sleep ));
     
     get_parodus_url(&parodus_url);
     CcspTraceDebug(("parodus_url is %s\n", parodus_url ));
@@ -318,7 +318,7 @@ void* connect_parodus(void* arg)
                         .client_url = NULL
                       };
                       
-    CcspTraceInfo(("Configurations => service_name : %s parodus_url : %s client_url : %s\n", cfg.service_name, cfg.parodus_url, (cfg.client_url == NULL) ? "NULL" : cfg.client_url ));
+    //CcspTraceInfo(("Configurations => service_name : %s parodus_url : %s client_url : %s\n", cfg.service_name, cfg.parodus_url, (cfg.client_url == NULL) ? "NULL" : cfg.client_url ));
 
     while(1)
     {
@@ -332,7 +332,7 @@ void* connect_parodus(void* arg)
 
         if(ret ==0)
         {
-            CcspTraceInfo(("Init for parodus Success..!!\n"));
+            //CcspTraceInfo(("Init for parodus Success..!!\n"));
 	    printf("Init for PARODUS success!!\n");
             break;
         }
@@ -548,7 +548,7 @@ void initparodusTask()
 	}
 	else
 	{
-		CcspTraceInfo(("connect_parodus thread created Successfully\n"));
+		//CcspTraceInfo(("connect_parodus thread created Successfully\n"));
 	}
 }
 
