@@ -383,7 +383,7 @@ CosaBackEndManagerInitialize
     pMyObject->hNeighdisc     = (ANSC_HANDLE)CosaNeighdiscCreate();
     AnscTraceWarning(("  CosaNeighdiscCreate done!\n"));
     pMyObject->hMld           = (ANSC_HANDLE)CosaMldCreate();
-    AnscTraceWarning(("  CosaMldCreate done!\n"));
+    //AnscTraceWarning(("  CosaMldCreate done!\n"));
 
     /*
 #ifdef CONFIG_TI_PACM
@@ -463,15 +463,15 @@ if(id != 0)
 // LGI ADD - END
 #if CONFIG_CISCO_TRUE_STATIC_IP
     pMyObject->hTSIP          = (ANSC_HANDLE)CosaTSIPCreate();
-    AnscTraceWarning(("  CosaTSIPCreate done!\n"));
+    //AnscTraceWarning(("  CosaTSIPCreate done!\n"));
 #endif
     
 #ifdef FEATURE_SUPPORT_ONBOARD_LOGGING
     pMyObject->hXpc         = (ANSC_HANDLE)CosaXpcCreate();
-    AnscTraceWarning(("  CosaXpcCreate done!\n"));
+    //AnscTraceWarning(("  CosaXpcCreate done!\n"));
 
     pMyObject->hOnboardLogging         = (ANSC_HANDLE)CosaOnboardLoggingCreate();
-    AnscTraceWarning(("  CosaOnboardLoggingCreate done!\n"));
+    //AnscTraceWarning(("  CosaOnboardLoggingCreate done!\n"));
 #endif
 
 #if CFG_USE_Event_Displatch
@@ -484,11 +484,11 @@ if(id != 0)
     EvtDispterHandleEventAsync();
 #endif
 
-    AnscTraceWarning(("  Initializing WebConfig Framework!\n"));
+    //AnscTraceWarning(("  Initializing WebConfig Framework!\n"));
  
     webConfigFrameworkInit();
     
-    AnscTraceWarning(("  Initializing WebConfig Framework done!\n"));
+    //AnscTraceWarning(("  Initializing WebConfig Framework done!\n"));
 
     // LGI ADD START
     pMyObject->hLgiWoL = (ANSC_HANDLE)CosaLgiWoLCreate();
@@ -514,7 +514,7 @@ if(id != 0)
     CheckAndSetRebootReason();
 
     printf("Calling PARODUS!\n");
-    CcspTraceWarning(("RDKB_SYSTEM_BOOT_UP_LOG : PARODUS call!\n")); 
+    //CcspTraceWarning(("RDKB_SYSTEM_BOOT_UP_LOG : PARODUS call!\n")); 
     initparodusTask();
     SetAutoreboot((ANSC_HANDLE)pMyObject->hDeviceInfo);
     return returnStatus;
