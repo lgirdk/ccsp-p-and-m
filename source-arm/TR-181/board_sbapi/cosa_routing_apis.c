@@ -1157,7 +1157,7 @@ CosaDmlRipGetCfg
     // pCfg->X_CISCO_COM_UpdateInterval = CosaDmlRIPCurrentConfig.UpdateTime;
     pCfg->X_CISCO_COM_DefaultMetric  = CosaDmlRIPCurrentConfig.DefaultMetric;
 
-#if 1
+#if 0
     AnscTraceWarning(("pCfg->Enable :%s\n", pCfg->Enable?"TRUE":"FALSE"));    
     AnscTraceWarning(("pCfg->Mode :%u\n", pCfg->Mode));
     // AnscTraceWarning(("pCfg->X_CISCO_COM_UpdateInterval :%lu\n", pCfg->X_CISCO_COM_UpdateInterval));
@@ -1506,7 +1506,7 @@ CosaDmlRipIfGetCfg
         AnscTraceWarning(("This RIP interface is wrong:%lu\n", pEntry->InstanceNumber));
     }
 
-#if 1
+#if 0
     AnscTraceWarning(("pEntry->InstanceNumber :%lu\n", pEntry->InstanceNumber));
     AnscTraceWarning(("pEntry->Enable :%s\n", pEntry->Enable?"TRUE":"FALSE"));
     
