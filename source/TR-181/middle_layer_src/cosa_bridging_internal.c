@@ -439,7 +439,7 @@ CosaBridgingInitialize
                 }
                 else
                 {
-                    AnscTraceFlow(("<HL>%s pSlapVariable == NULL\n", __FUNCTION__));
+                    //AnscTraceFlow(("<HL>%s pSlapVariable == NULL\n", __FUNCTION__));
                 }
 
                 pPoamIrepFoNextIns->Remove((ANSC_HANDLE)pPoamIrepFoNextIns);
@@ -577,7 +577,7 @@ CosaBridgingInitialize
                 }
                 else
                 {
-                    AnscTraceFlow(("<HL>%s pSlapVariable == NULL\n", __FUNCTION__));
+                    //AnscTraceFlow(("<HL>%s pSlapVariable == NULL\n", __FUNCTION__));
                 }
 
                 pPoamIrepFoNextIns->Remove((ANSC_HANDLE)pPoamIrepFoNextIns);
