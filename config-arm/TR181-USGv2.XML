@@ -6853,7 +6853,7 @@
 
               <name>PreferredLifetime</name>
 
-              <type>string</type>
+              <type>dateTime</type>
 
               <syntax>string</syntax>
 
@@ -6865,7 +6865,7 @@
 
               <name>ValidLifetime</name>
 
-              <type>string</type>
+              <type>dateTime</type>
 
               <syntax>string</syntax>
 
