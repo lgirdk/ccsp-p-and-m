@@ -18120,6 +18120,10 @@
         <objectType>object</objectType>
         <functions>
             <func_GetParamBoolValue>LgiMulticast_GetParamBoolValue</func_GetParamBoolValue>
+            <func_SetParamBoolValue>LgiMulticast_SetParamBoolValue</func_SetParamBoolValue>
+            <func_Validate>LgiMulticast_Validate</func_Validate>
+            <func_Commit>LgiMulticast_Commit</func_Commit>
+            <func_Rollback>LgiMulticast_Rollback</func_Rollback>
         </functions>
         <parameters>
             <parameter>
@@ -18140,6 +18144,15 @@
                 <type>boolean</type>
                 <syntax>bool</syntax>
                 <writable>false</writable>
+            </parameter>
+            <parameter>
+                <name>IGMPv3ProxyEnable</name>
+                <description>
+                  Enables or disables IGMPv3 proxy functionality
+                </description>
+                <type>boolean</type>
+                <syntax>bool</syntax>
+                <writable>true</writable>
             </parameter>
         </parameters>
     </object>
