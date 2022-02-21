@@ -19,6 +19,10 @@
 
 #include "cosa_lgi_multicast_apis.h"
 
-BOOL LgiMulticast_GetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName, BOOL* pBool );
+BOOL LgiMulticast_GetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName, BOOL* pValue );
+BOOL LgiMulticast_SetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName, BOOL bValue );
+BOOL LgiMulticast_Validate ( ANSC_HANDLE hInsContext, char* pReturnParamName, ULONG* puLength );
+ULONG LgiMulticast_Commit ( ANSC_HANDLE hInsContext );
+ULONG LgiMulticast_Rollback ( ANSC_HANDLE hInsContext );
 
 #endif
