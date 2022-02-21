@@ -25,14 +25,28 @@
     /* duplication of the base object class content */ \
     COSA_BASE_CONTENT                                  \
 
+typedef struct _COSA_DML_LGI_MULTICAST_CFG
+{
+    BOOL bEnable;
+    BOOL bSnoopingEnable;
+    BOOL bIGMPv3ProxyEnable;
+}
+COSA_DML_LGI_MULTICAST_CFG, *PCOSA_DML_LGI_MULTICAST_CFG;
+
 typedef struct _COSA_DATAMODEL_LGI_MULTICAST_CLASS_CONTENT
 {
     COSA_DATAMODEL_LGI_MULTICAST_CLASS_CONTENT
     /* start of LgiMulticast object class content */
-    BOOL Enable;
-    BOOL SnoopingEnable;
+    COSA_DML_LGI_MULTICAST_CFG Cfg;
+    COSA_DML_LGI_MULTICAST_CFG OldCfg;
 }
 COSA_DATAMODEL_LGI_MULTICAST, *PCOSA_DATAMODEL_LGI_MULTICAST;
+
+#define IS_PARAM_CHANGED(__obj, __parameter) __obj->Cfg.__parameter != __obj->OldCfg.__parameter ? TRUE : FALSE
+#define IS_IPV4PROXY_RESTART_NEEDED(__obj) __obj->Cfg.bIGMPv3ProxyEnable != __obj->OldCfg.bIGMPv3ProxyEnable ? TRUE : FALSE
+#define IS_CFG_CHANGED(__obj) memcmp(&(__obj->Cfg), &(__obj->OldCfg), sizeof(__obj->Cfg)) ? TRUE : FALSE
+
+#define CACHE_CFG(__obj) memcpy(&(__obj->OldCfg), &(__obj->Cfg), sizeof(__obj->OldCfg));
 
 ANSC_HANDLE CosaLgiMulticastCreate ( VOID );
 ANSC_STATUS CosaLgiMulticastInitialize ( ANSC_HANDLE hThisObject );
