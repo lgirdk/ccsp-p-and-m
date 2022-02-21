@@ -42,8 +42,11 @@ ANSC_STATUS CosaLgiMulticastInitialize ( ANSC_HANDLE hThisObject )
 {
     PCOSA_DATAMODEL_LGI_MULTICAST pMyObject = (PCOSA_DATAMODEL_LGI_MULTICAST) hThisObject;
 
-    CosaDmlMulticastGetEnable(NULL, &pMyObject->Enable);
-    CosaDmlMulticastGetSnoopingEnable(NULL, &pMyObject->SnoopingEnable);
+    CosaDmlMulticastGetEnable(NULL, &pMyObject->Cfg.bEnable);
+    CosaDmlMulticastGetSnoopingEnable(NULL, &pMyObject->Cfg.bSnoopingEnable);
+    CosaDmlMulticastGetIGMPv3ProxyEnable(NULL, &pMyObject->Cfg.bIGMPv3ProxyEnable);
+
+    CACHE_CFG(pMyObject);
 
     return ANSC_STATUS_SUCCESS;
 }
