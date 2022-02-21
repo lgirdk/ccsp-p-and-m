@@ -23,5 +23,7 @@ ULONG CosaDmlMulticastGetEnable ( ANSC_HANDLE hContext, BOOL *pValue );
 ULONG CosaDmlMulticastSetEnable ( ANSC_HANDLE hContext, BOOL bValue );
 ULONG CosaDmlMulticastGetSnoopingEnable ( ANSC_HANDLE hContext, BOOL *pValue );
 ULONG CosaDmlMulticastSetSnoopingEnable ( ANSC_HANDLE hContext, BOOL bValue );
+ULONG CosaDmlMulticastGetIGMPv3ProxyEnable ( ANSC_HANDLE hContext, BOOL *pValue );
+ULONG CosaDmlMulticastSetIGMPv3ProxyEnable ( ANSC_HANDLE hContext, BOOL bValue );
 
 #endif
