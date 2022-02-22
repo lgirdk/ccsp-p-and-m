@@ -162,10 +162,6 @@ ssp_create_pnm
     {
         return ANSC_STATUS_RESOURCES;
     }
-    else
-    {
-        AnscZeroMemory(pPnmFcContext, sizeof(CCSP_FC_CONTEXT));
-    }
 
     pDslhCpeController = DslhCreateCpeController(NULL, NULL, NULL);
 
