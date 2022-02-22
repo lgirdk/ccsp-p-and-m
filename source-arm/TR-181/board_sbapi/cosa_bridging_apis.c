@@ -680,7 +680,6 @@ CosaDmlBrgInit
                 continue;
             }
             lanbr = (PBRIDGE)AnscAllocateMemory(sizeof (BRIDGE));
-            _ansc_memset(lanbr, 0, sizeof(BRIDGE));
             _ansc_memset(param_name, 0, sizeof(param_name));
             rc = sprintf_s(param_name, sizeof(param_name), DMSB_L2_BPORT_PREFIX, brList[i]);
             if(rc < EOK)
@@ -721,7 +720,6 @@ CosaDmlBrgInit
                 for( j=0; j < vlanCnt; j++) 
                 {
                     curVlan = (PBRIDGE_VLAN)AnscAllocateMemory(sizeof (BRIDGE_VLAN));
-                    _ansc_memset(curVlan, 0, sizeof(BRIDGE_VLAN));
                     if(_Psm_GetBVlan(brList[i],vlanList[j],curVlan)==ANSC_STATUS_SUCCESS)
                     {
                         if (j == 0) 
@@ -762,7 +760,6 @@ CosaDmlBrgInit
                 for( j=0; j < portCnt; j++) 
                 {
                     curPort = (PBRIDGE_PORT)AnscAllocateMemory(sizeof (BRIDGE_PORT));
-                    _ansc_memset(curPort, 0, sizeof(BRIDGE_PORT));
                     if(_Psm_GetBPort(brList[i],portList[j],curPort)==ANSC_STATUS_SUCCESS)
                     {
                         if (j == 0) 
@@ -1033,7 +1030,6 @@ CosaDmlBrgAddEntry
         AnscTraceFlow(("<HL> %s cannot allocate bridge resource\n",__FUNCTION__));
         return ANSC_STATUS_FAILURE;        
     }
-    _ansc_memset(pBridge, 0, sizeof(BRIDGE));
     if (_COSA_GetNextVlanId(pBridge)==ANSC_STATUS_FAILURE)
     {
         AnscTraceFlow(("<HL> %s cannot allocate vlanId\n",__FUNCTION__));
@@ -3844,7 +3840,6 @@ ANSC_STATUS SWBrAddPort(PBRIDGE pBridge, PCOSA_DML_BRG_PORT_CFG pEntry) {
     char param_value[256]={0}, param_name[256]={0};
     AnscTraceFlow(("<HL> %s\n",__FUNCTION__));
     pBPort = (PBRIDGE_PORT)AnscAllocateMemory(sizeof (BRIDGE_PORT));
-    _ansc_memset(pBPort, 0, sizeof(BRIDGE_PORT));
     AnscCopyString(pBPort->alias, pEntry->Alias);
     AnscCopyString(pBPort->linkName, pEntry->LinkName);
     pBPort->instanceNumber = pEntry->InstanceNumber;
@@ -3932,7 +3927,6 @@ ANSC_STATUS SWBrAddVlan(struct bridge *pBridge, PCOSA_DML_BRG_VLAN_CFG pEntry)
     PBRIDGE_VLAN pBVlan;
     AnscTraceFlow(("<HL> %s\n",__FUNCTION__));
     pBVlan = (PBRIDGE_VLAN)AnscAllocateMemory(sizeof (BRIDGE_VLAN));
-    _ansc_memset(pBVlan, 0, sizeof(BRIDGE_VLAN));
     AnscCopyString(pBVlan->alias, pEntry->Alias);
     pBVlan->instanceNumber = pEntry->InstanceNumber;
     _COSA_UpdateBrVLANID(pBridge,pEntry->VLANID);

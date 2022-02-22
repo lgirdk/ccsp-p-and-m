@@ -2794,7 +2794,6 @@ CosaDmlDhcpsSetOptionValues
             /* CID: 57154 Missing return statement*/
             return ANSC_STATUS_FAILURE;
         }
-        AnscZeroMemory(pNewEntry, sizeof(COSA_DML_DHCPSV4_OPTION));
         AnscCopyMemory(pNewEntry, pPoolOption, sizeof(COSA_DML_DHCPSV4_OPTION));
         AnscCopyString(pNewEntry->Alias, pAlias);
 

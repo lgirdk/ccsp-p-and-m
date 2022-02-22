@@ -321,8 +321,6 @@ IPv6rdIF_AddEntry(
         return NULL;
     }
 
-	/* Set default values here */
-	memset(pEntry, 0, sizeof(COSA_DML_IPV6RD_IF));
     rc = sprintf_s(pEntry->Alias, sizeof(pEntry->Alias),"tun6rd%lu", pMyObject->ulIfNextInstance);
     if(rc < EOK)
     {

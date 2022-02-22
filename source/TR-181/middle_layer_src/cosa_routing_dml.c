@@ -3476,15 +3476,12 @@ IPv6Forwarding_Synchronize
         goto EXIT3;
     }
 
-    AnscZeroMemory( pulTmp, entryCount * sizeof(ULONG) );
-
     pEntry2 = AnscAllocateMemory( entryCount * sizeof(COSA_DML_ROUTING_V6_ENTRY) );
     if ( !pEntry2 )
     {
         goto EXIT2;
     }
 
-    AnscZeroMemory( pEntry2, entryCount * sizeof(COSA_DML_ROUTING_V6_ENTRY) );
 
     for ( i = 0; i < entryCount; i++)
         if ( CosaDmlRoutingGetV6Entry(NULL, i, &pEntry2[i]) != ANSC_STATUS_SUCCESS ){
