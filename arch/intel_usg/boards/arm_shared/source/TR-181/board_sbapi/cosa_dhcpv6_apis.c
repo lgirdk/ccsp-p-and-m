@@ -2364,7 +2364,6 @@ CosaDmlDhcpv6cGetServerCfg
 
         /*we only support one entry of ServerCfg*/
         *ppCfg = (PCOSA_DML_DHCPCV6_SVR)AnscAllocateMemory( sizeof(COSA_DML_DHCPCV6_SVR) );
-        memset(*ppCfg, 0, sizeof(COSA_DML_DHCPCV6_SVR));
         
         /*InformationRefreshTime not supported*/
         safe_strcpy((*ppCfg)->InformationRefreshTime, "0001-01-01T00:00:00Z", sizeof((*ppCfg)->InformationRefreshTime));
@@ -2863,7 +2862,6 @@ CosaDmlDhcpv6cGetReceivedOptionCfg
             char * p = NULL;
             
             p_rcv = (COSA_DML_DHCPCV6_RECV * )AnscAllocateMemory(sizeof(*p_rcv));
-            memset(p_rcv, 0, sizeof(*p_rcv));
             if (!p_rcv)
                 break;
 

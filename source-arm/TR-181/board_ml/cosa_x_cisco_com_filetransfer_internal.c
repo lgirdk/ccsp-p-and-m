@@ -112,9 +112,6 @@ CosaFileTransferCreate
         return  (ANSC_HANDLE)NULL;
     }
 
-    /* Initiation all data */
-    _ansc_memset(pMyObject, 0, sizeof(COSA_DATAMODEL_FILETRANSFER));
-
     /*
      * Initialize the common variables and functions for a container object.
      */
