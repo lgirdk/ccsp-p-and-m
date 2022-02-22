@@ -565,8 +565,6 @@ Bridge_AddEntry
             
             return NULL;
         }
-        _ansc_memset(pCosaContext, 0, sizeof(COSA_CONTEXT_LINK_OBJECT));
-
         pCosaContext->InstanceNumber = pDmlBridge->Cfg.InstanceNumber = pCosaDMBridging->ulNextBridgeInstance;
 
         pCosaDMBridging->ulNextBridgeInstance++;
@@ -605,8 +603,6 @@ Bridge_AddEntry
         return NULL;
     }
 
-    _ansc_memset(pVLAN, 0, sizeof(COSA_DML_BRG_VLAN_FULL));
-
     rc = sprintf_s(pVLAN->Cfg.Alias, sizeof(pVLAN->Cfg.Alias),"cpe-VLAN%lu", pDmlBridge->ulNextVLANInsNum);
     if(rc < EOK)
     {
@@ -626,8 +622,6 @@ Bridge_AddEntry
             return NULL;
         }
 
-        _ansc_memset(pCosaContext1, 0, sizeof(COSA_CONTEXT_LINK_OBJECT));
-     
         pCosaContext1->InstanceNumber = pVLAN->Cfg.InstanceNumber = pDmlBridge->ulNextVLANInsNum;
 
         pDmlBridge->ulNextVLANInsNum++;
