@@ -186,7 +186,6 @@ load_ipv6rd_conf(void)
     if ((conf = AnscAllocateMemory(sizeof(struct ipv6rd_conf))) == NULL)
         return NULL;
 
-    bzero(conf, sizeof(struct ipv6rd_conf));
     if (syscfg_get_bool(TR_6RD_ENABLE, &conf->enable) != 0) {
         syslog(LOG_ERR, "%s: no 6RD info in config file", __FUNCTION__);
         // give a chance to set the config
@@ -1144,7 +1143,6 @@ CosaDml_IPv6rdInit(
         return ANSC_STATUS_FAILURE;
     }
 
-    memset(g_ipv6rd_sim_conf, 0, sizeof(struct ipv6rd_sim_conf));
     g_ipv6rd_sim_conf->enable = TRUE;
     g_ipv6rd_sim_conf->ifnum = 1;
 
