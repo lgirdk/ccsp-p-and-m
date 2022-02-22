@@ -2474,7 +2474,6 @@ CosaDmlNatGetPortMappings
         Utopia_Free(&Ctx, 0);
         return NULL;
     }
-    _ansc_memset(pNatPMapping, 0, sizeof(COSA_DML_NAT_PMAPPING)*(allCount));
     ulIndex = 0;
     if ( PortFwdSingleCount != 0 )
     {
@@ -4034,8 +4033,7 @@ CosaDmlNatGetPortTriggers
         return NULL;
     }
 
-    AnscZeroMemory(pNatPTrigger, sizeof(COSA_DML_NAT_PTRIGGER) * (*pulCount));
-    
+   
     for ( ulIndex = 0; ulIndex < *pulCount; ulIndex++ )
     {
         pNatPTrigger[ulIndex].bEnabled          = porttrigger[ulIndex].enabled;
