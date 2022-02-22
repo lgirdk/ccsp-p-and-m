@@ -136,7 +136,7 @@ CosaDmlGetEventLog
         unlink(LGI_EVENT_LOG_FILE_TEMP);
         return ANSC_STATUS_FAILURE;
     }
-    AnscZeroMemory(pEVENTLog, log_max_num * sizeof(COSA_DATAMODEL_LGI_EVENTLOG));
+
     fp = fopen(LGI_EVENT_LOG_FILE_TEMP, "r");
     if(!fp)
     {

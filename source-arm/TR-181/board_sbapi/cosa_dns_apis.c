@@ -1326,8 +1326,6 @@ CosaDmlDnsClientGetServers
         Utopia_Free(&ctx, 0);
         return NULL;
     }
-
-    memset(pServer, 0, dnsCount * sizeof(COSA_DML_DNS_CLIENT_SERVER));
     *pulCount = dnsCount;
     int af = DNS_FAMILY_NONE;
     for (i = 0; i < dhcpDnsCount; i++)
@@ -1922,7 +1920,6 @@ CosaDmlDnsRelayGetServers
         return NULL;
     }
 
-    memset(pForward, 0, forwardCount * sizeof(COSA_DML_DNS_RELAY_ENTRY));
     *pulCount = forwardCount;
 
     int i = 0;

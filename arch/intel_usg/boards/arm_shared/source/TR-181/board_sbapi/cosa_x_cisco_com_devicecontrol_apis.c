@@ -3195,7 +3195,6 @@ static void configBridgeMode(int bEnable) {
         char brmode[5];
         PCOSA_NOTIFY_WIFI pnotifypara = (PCOSA_NOTIFY_WIFI)AnscAllocateMemory(sizeof(pnotifypara));
         
-        memset(pnotifypara, 0, sizeof(*pnotifypara));
         commonSyseventGet("primary_lan_l2net", primaryl2inst, sizeof(primaryl2inst));
         commonSyseventGet("primary_lan_brport", primarybrp, sizeof(primaryl2inst));
         commonSyseventGet("bridge_mode", brmode, sizeof(brmode));

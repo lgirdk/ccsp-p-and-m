@@ -2787,8 +2787,6 @@ Forwarding_Synchronize
         goto EXIT3;
     }
 
-    AnscZeroMemory(pFound, ulEntryCount * sizeof(ULONG));
-
     pLink = AnscSListGetFirstEntry(pForwardHead);
 
     while ( pLink )

@@ -168,7 +168,6 @@ CosaGREInitialize
         if (TRUE) 
         {
             pCosaContext = (PCOSA_CONTEXT_LINK_OBJECT)AnscAllocateMemory(sizeof(COSA_CONTEXT_LINK_OBJECT));
-            _ansc_memset(pCosaContext, 0, sizeof(COSA_CONTEXT_LINK_OBJECT));
             if ( !pCosaContext )
             {
                 AnscFreeMemory(pDmlGRETunnel);
@@ -221,7 +220,6 @@ CosaGREInitialize
                 returnStatus = ANSC_STATUS_RESOURCES;
                 goto EXIT;
             }
-            _ansc_memset(pTunnelIf, 0, sizeof(COSA_DML_GRE_TUNNEL_IF_FULL));
 
             returnStatus=CosaDmlGRETunnelIfGetEntry(pMyObject->hSbContext, ulIndex, ulSubIndex, pTunnelIf);
             if(returnStatus == ANSC_STATUS_SUCCESS)
@@ -241,7 +239,6 @@ CosaGREInitialize
                     returnStatus = ANSC_STATUS_RESOURCES;
                     goto EXIT;
                 }
-                _ansc_memset(pCosaContext2, 0, sizeof(COSA_CONTEXT_LINK_OBJECT));
                 if ( pTunnelIf->Cfg.IfInstanceNumber != 0 )
                 {
                     pCosaContext2->InstanceNumber = pTunnelIf->Cfg.IfInstanceNumber;

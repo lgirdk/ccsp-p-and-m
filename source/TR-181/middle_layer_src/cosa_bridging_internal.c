@@ -310,7 +310,6 @@ CosaBridgingInitialize
     for ( ulIndex = 0; ulIndex < ulBridgeCount; ulIndex++ )
     {
         pDmlBridge = (PCOSA_DML_BRG_FULL_ALL)AnscAllocateMemory(sizeof(COSA_DML_BRG_FULL_ALL));
-        _ansc_memset(pDmlBridge, 0, sizeof(COSA_DML_BRG_FULL_ALL));
         if ( !pDmlBridge )
         {
             returnStatus = ANSC_STATUS_RESOURCES;
@@ -336,7 +335,6 @@ CosaBridgingInitialize
         //if ( TRUE )
         {
             pCosaContext = (PCOSA_CONTEXT_LINK_OBJECT)AnscAllocateMemory(sizeof(COSA_CONTEXT_LINK_OBJECT));
-            _ansc_memset(pCosaContext, 0, sizeof(COSA_CONTEXT_LINK_OBJECT));
             if ( !pCosaContext )
             {
                 AnscFreeMemory(pDmlBridge);
@@ -466,8 +464,6 @@ CosaBridgingInitialize
                 goto EXIT;
             }
 
-            _ansc_memset(pPort, 0, sizeof(COSA_DML_BRG_PORT_FULL));
-
             if(CosaDmlBrgPortGetEntry(NULL, pDmlBridge->Cfg.InstanceNumber, ulSubIndex, pPort)
                 != ANSC_STATUS_SUCCESS)
             {
@@ -487,8 +483,6 @@ CosaBridgingInitialize
                     AnscFreeMemory(pPort);
                     goto EXIT;
                 }
-
-                _ansc_memset(pCosaContext2, 0, sizeof(COSA_CONTEXT_LINK_OBJECT));
 
                 if ( pPort->Cfg.InstanceNumber != 0 )
                 {
@@ -608,8 +602,6 @@ CosaBridgingInitialize
                 goto EXIT;
             }
 
-            _ansc_memset(pVLAN, 0, sizeof(COSA_DML_BRG_VLAN_FULL));
-
             if(CosaDmlBrgVlanGetEntry(NULL, pDmlBridge->Cfg.InstanceNumber, ulSubIndex, pVLAN)
                 != ANSC_STATUS_SUCCESS)
             {
@@ -628,8 +620,6 @@ CosaBridgingInitialize
                     AnscFreeMemory(pVLAN);
                     goto EXIT;
                 }
-
-                _ansc_memset(pCosaContext3, 0, sizeof(COSA_CONTEXT_LINK_OBJECT));
 
                 if ( pVLAN->Cfg.InstanceNumber != 0 )
                 {

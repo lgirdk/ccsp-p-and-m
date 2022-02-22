@@ -1299,8 +1299,6 @@ CosaNatSyncPortTrigger
     }
 
     pbFoundPt     = (BOOL*)AnscAllocateMemory(sizeof(BOOL) * entryCount);
-    AnscZeroMemory(pbFoundPt, (sizeof(BOOL) * entryCount));
-
     if ( !pbFoundPt )
     {
         AnscFreeMemory(pPortTrigger); /*RDKB-6742, CID-32996, free unused resources before exit*/

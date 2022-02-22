@@ -726,9 +726,6 @@ ANSC_HANDLE CosaProcStatusCreate()
     PCOSA_DATAMODEL_PROCSTATUS p_info = NULL;
 
     p_info = AnscAllocateMemory(sizeof(COSA_DATAMODEL_PROCSTATUS));
-    AnscZeroMemory(p_info, sizeof(COSA_DATAMODEL_PROCSTATUS));
-    p_info->pProcTable = NULL;
-
     return p_info;
 }
 
@@ -850,13 +847,12 @@ void COSADmlGetProcessInfo(PCOSA_DATAMODEL_PROCSTATUS p_info)
     }
     /*CcspTraceWarning(("ProcessNumber = %d!\n", ProcessNumber));*/
         
-    p_info->pProcTable = AnscAllocateMemory(sizeof(COSA_PROCESS_ENTRY) * ProcessNumber);  
+    p_info->pProcTable = AnscAllocateMemory(sizeof(COSA_PROCESS_ENTRY) * ProcessNumber);
                 
     if( !p_info->pProcTable )
     {
         return ;
     }
-    AnscZeroMemory(p_info->pProcTable, sizeof(COSA_PROCESS_ENTRY) * ProcessNumber);        
     p_info->ProcessNumberOfEntries = ProcessNumber;
         
     dir = opendir("/proc");
