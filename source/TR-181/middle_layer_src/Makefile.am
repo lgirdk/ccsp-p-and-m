@@ -120,7 +120,7 @@ libCcspPandM_middle_layer_src_la_SOURCES += cosa_managedwifi_dml.c \
     managedwifidoc.c \
     managedwifi_helpers.c
 endif
-libCcspPandM_middle_layer_src_la_LDFLAGS = -lccsp_common -lmsgpackc -lwebconfig_framework -lhal_platform
+libCcspPandM_middle_layer_src_la_LDFLAGS = -lccsp_common -lmsgpackc -lwebconfig_framework -lhal_platform -lcrypto
 
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_mac_filter_dml.c cosa_mac_filter_internal.c
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_wol_dml.c cosa_lgi_wol_apis.c cosa_lgi_wol_internal.c
@@ -132,3 +132,4 @@ libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_userinterface_apis.c cosa_l
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_applications_dml.c cosa_lgi_applications_apis.c cosa_lgi_applications_internal.c
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_multicast_dml.c cosa_lgi_multicast_apis.c cosa_lgi_multicast_internal.c
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_eventlog_dml.c cosa_lgi_eventlog_internal.c
+libCcspPandM_middle_layer_src_la_SOURCES += cosa_ssam_dml.c cosa_ssam_apis.c
