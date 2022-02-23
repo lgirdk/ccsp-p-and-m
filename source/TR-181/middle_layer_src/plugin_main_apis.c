@@ -492,6 +492,10 @@ if(id != 0)
     
     //AnscTraceWarning(("  Initializing WebConfig Framework done!\n"));
 
+    AnscTraceWarning(("  Initializing ssam !\n"));
+
+    ssam_start();
+
     // LGI ADD START
     pMyObject->hLgiWoL = (ANSC_HANDLE)CosaLgiWoLCreate();
     AnscTraceWarning(("  CosaLgiWoLCreate done !\n"));
