@@ -76,7 +76,6 @@
 #include "safec_lib_common.h"
 #include "cosa_drg_common.h"
 
-#ifdef _ANSC_LINUX
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -85,7 +84,6 @@
 #include <sys/socket.h>
 #include <net/if.h>
 #include <sys/types.h>
-#endif
 #include "ansc_platform.h"
 
 //$HL 4/30/2013
@@ -1295,7 +1293,6 @@ CosaUtilGetFullPathNameByKeyword
     return pMatchedLowerLayer;
 }
 
-#if  defined(_ANSC_LINUX)
 
 ULONG
 CosaUtilChannelValidate
@@ -1467,20 +1464,6 @@ _EXIT:
     return ret;
 }
 
-#else
-
-ULONG
-CosaUtilIoctlXXX
-    (
-        char*                       if_name,
-        char*                       method,
-        void*                       input
-    )
-{
-    return  IFF_UP;
-}
-
-#endif
 
 
 #define NET_STATS_FILE "/proc/net/dev"

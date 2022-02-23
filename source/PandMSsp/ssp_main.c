@@ -56,10 +56,8 @@
 #include "breakpad_wrapper.h"
 #endif
 
-#ifdef _ANSC_LINUX
 #include <semaphore.h>
 #include <fcntl.h>
-#endif
 
 #if defined(_PLATFORM_RASPBERRYPI_)
 #include <stdio.h>
@@ -109,9 +107,7 @@ void get_uptime(long *uptime)
     *uptime= info.uptime;
 }
 
-#ifdef _ANSC_LINUX
     sem_t *sem;
-#endif
 
 
 int  cmd_dispatch(int  command)
@@ -126,7 +122,6 @@ int  cmd_dispatch(int  command)
     {
             case	'e' :
 
-#ifdef _ANSC_LINUX
                 CcspTraceInfo(("Connect to bus daemon...\n"));
 
             {
@@ -147,7 +142,6 @@ int  cmd_dispatch(int  command)
                     );
             }
 
-#endif
 
                 ssp_create_pnm(gpPnmStartCfg);
                 ssp_engage_pnm(gpPnmStartCfg);
@@ -273,7 +267,6 @@ static void _print_stack_backtrace(void)
 }
 #endif
 
-#if defined(_ANSC_LINUX)
 static void daemonize(void) {
 	int s,i;
         pid_t   pid;
@@ -484,7 +477,6 @@ static int is_core_dump_opened(void)
     return 0;
 }
 #endif
-#endif
 
 #if defined(_PLATFORM_RASPBERRYPI_)
 int sock = 0;
@@ -609,31 +601,6 @@ if(id != 0)
         fclose(fp);
     }
 
-#if  defined(_ANSC_WINDOWSNT)
-
-    AnscStartupSocketWrapper(NULL);
-
-    display_info();
-
-    ret = cmd_dispatch('e');
-    if(ret != 0)
-    {
-      CcspTraceError(("exit ERROR %s:%d\n", __FUNCTION__, __LINE__));
-      exit(1);
-    }
-
-    while ( cmdChar != 'q' )
-    {
-        cmdChar = getchar();
-
-        ret = cmd_dispatch(cmdChar);
-        if(ret != 0)
-        {
-          CcspTraceError(("exit ERROR %s:%d\n", __FUNCTION__, __LINE__));
-          exit(1);
-        }
-    }
-#elif defined(_ANSC_LINUX)
     if ( bRunAsDaemon )
     {
         CcspTraceInfo(("PAM_DBG:------- daemonize call hit -----------\n"));
@@ -831,7 +798,6 @@ if(id != 0)
             }
         }
     }
-#endif
 
     err = Cdm_Term();
     if (err != CCSP_SUCCESS)
