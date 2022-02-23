@@ -18597,6 +18597,81 @@
 
     </object>
 
+    <object>
+      <name>X_LGI-COM_DigitalSecurity</name>
+      <objectType>object</objectType>
+      <functions>
+        <func_GetParamUlongValue>X_LGI_COM_DigitalSecurity_GetParamUlongValue</func_GetParamUlongValue>
+        <func_SetParamUlongValue>X_LGI_COM_DigitalSecurity_SetParamUlongValue</func_SetParamUlongValue>
+        <func_GetParamStringValue>X_LGI_COM_DigitalSecurity_GetParamStringValue</func_GetParamStringValue>
+        <func_SetParamStringValue>X_LGI_COM_DigitalSecurity_SetParamStringValue</func_SetParamStringValue>
+        <func_GetParamBoolValue>X_LGI_COM_DigitalSecurity_GetParamBoolValue</func_GetParamBoolValue>
+        <func_SetParamBoolValue>X_LGI_COM_DigitalSecurity_SetParamBoolValue</func_SetParamBoolValue>
+      </functions>
+      <parameters>
+        <parameter>
+          <name>Enable</name>
+          <type>boolean</type>
+          <syntax>bool</syntax>
+          <writable>true</writable>
+        </parameter>
+        <parameter>
+          <name>UpdaterEnable</name>
+          <type>boolean</type>
+          <syntax>bool</syntax>
+          <writable>false</writable>
+        </parameter>
+        <parameter>
+          <name>ProvisionedEnvironment</name>
+          <type>string(256)</type>
+          <syntax>string</syntax>
+          <writable>true</writable>
+        </parameter>
+        <parameter>
+          <name>SigningKeyId</name>
+          <type>unsignedInt</type>
+          <syntax>uint32</syntax>
+          <writable>true</writable>
+        </parameter>
+        <parameter>
+          <name>Status</name>
+          <type>string</type>
+          <syntax>string</syntax>
+          <writable>false</writable>
+        </parameter>
+        <parameter>
+          <name>AgentVersion</name>
+          <type>string</type>
+          <syntax>string</syntax>
+          <writable>false</writable>
+        </parameter>
+        <parameter>
+          <name>AgentPassword</name>
+          <type>string(64)</type>
+          <syntax>string</syntax>
+          <writable>true</writable>
+        </parameter>
+        <parameter>
+          <name>MaxStartDelay</name>
+          <type>unsignedInt</type>
+          <syntax>uint32</syntax>
+          <writable>true</writable>
+        </parameter>
+        <parameter>
+          <name>ProvisioningModel</name>
+          <type>unsignedInt</type>
+          <syntax>uint32</syntax>
+          <writable>true</writable>
+        </parameter>
+        <parameter>
+          <name>SecretKey</name>
+          <type>string(64)</type>
+          <syntax>string</syntax>
+          <writable>false</writable>
+        </parameter>
+      </parameters>
+    </object>
+
 	  </objects>
 
 </dataModelInfo>
