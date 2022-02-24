@@ -116,7 +116,7 @@ libCcspPandM_middle_layer_src_la_SOURCES = \
     portmappingdoc.c \
     webcfgparam.c
 
-libCcspPandM_middle_layer_src_la_LDFLAGS = -lccsp_common -lmsgpackc -lwebconfig_framework -lhal_platform
+libCcspPandM_middle_layer_src_la_LDFLAGS = -lccsp_common -lmsgpackc -lwebconfig_framework -lhal_platform -lcrypto
 
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_mac_filter_dml.c cosa_mac_filter_internal.c
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_wol_dml.c cosa_lgi_wol_apis.c cosa_lgi_wol_internal.c
