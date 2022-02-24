@@ -20,4 +20,7 @@
 void ssam_start (void);
 void ssam_stop (void);
 
+int CosaSetAgentpassword(const char *password);
+void CosaGetAgentpassword(char **output, unsigned int *output_size);
+
 #endif
