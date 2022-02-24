@@ -139,7 +139,17 @@ ULONG X_LGI_COM_DigitalSecurity_GetParamStringValue(ANSC_HANDLE hInsContext, cha
     }
 
     if (strcmp(ParamName, "SecretKey") == 0) {
-        syscfg_get(NULL, "ssam_agentpasswd", pValue, *pUlSize);
+        char *out;
+        unsigned int size;
+
+        CosaGetAgentpassword(&out, &size);
+        if (out == NULL) {
+            printf("decrypt failed\n");
+            return -1;
+        }
+
+        snprintf(pValue, *pUlSize, "%s", out);
+        free(out);
         return 0;
     }
 
@@ -163,8 +173,8 @@ BOOL X_LGI_COM_DigitalSecurity_SetParamStringValue(ANSC_HANDLE hInsContext, char
     }
 
     if (strcmp(ParamName, "AgentPassword") == 0) {
-        if (syscfg_set_commit(NULL, "ssam_agentpasswd", pString) != 0) {
-            AnscTraceWarning(("Error in syscfg_set for ssam_agentpasswd\n"));
+        if (CosaSetAgentpassword(pString) != 0) {
+            return FALSE;
         }
         return TRUE;
     }
