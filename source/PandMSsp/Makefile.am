@@ -41,4 +41,4 @@ endif
 
 CcspPandMSsp_CFLAGS = $(SYSTEMD_CFLAGS)
 CcspPandMSsp_SOURCES = ssp_messagebus_interface.c ssp_main.c ssp_action.c dm_pack_datamodel.c
-CcspPandMSsp_LDFLAGS = -lccsp_common -ldl -rdynamic -lwebconfig_framework -lsecure_wrapper $(SYSTEMD_LDFLAGS) -lsyscfg -lpthread
+CcspPandMSsp_LDFLAGS = -lccsp_common -ldl -rdynamic -lwebconfig_framework -ltelemetry_msgsender -lsecure_wrapper $(SYSTEMD_LDFLAGS) -lsyscfg -lpthread
