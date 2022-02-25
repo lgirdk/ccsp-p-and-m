@@ -18398,6 +18398,15 @@
                 <syntax>bool</syntax>
                 <writable>true</writable>
             </parameter>
+            <parameter>
+                <name>MLDv2ProxyEnable</name>
+                <description>
+                  Enables or disables MLDv2 proxy functionality
+                </description>
+                <type>boolean</type>
+                <syntax>bool</syntax>
+                <writable>true</writable>
+            </parameter>
         </parameters>
     </object>
 <!-- LGI ADD END -->
