@@ -45,6 +45,7 @@ ANSC_STATUS CosaLgiMulticastInitialize ( ANSC_HANDLE hThisObject )
     CosaDmlMulticastGetEnable(NULL, &pMyObject->Cfg.bEnable);
     CosaDmlMulticastGetSnoopingEnable(NULL, &pMyObject->Cfg.bSnoopingEnable);
     CosaDmlMulticastGetIGMPv3ProxyEnable(NULL, &pMyObject->Cfg.bIGMPv3ProxyEnable);
+    CosaDmlMulticastGetMLDv2ProxyEnable(NULL, &pMyObject->Cfg.bMLDv2ProxyEnable);
 
     CACHE_CFG(pMyObject);
 
