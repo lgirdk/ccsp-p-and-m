@@ -48,6 +48,13 @@ BOOL LgiMulticast_GetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName, 
         return TRUE;
     }
 
+    if (strcmp(ParamName, "MLDv2ProxyEnable") == 0)
+    {
+        CosaDmlMulticastGetMLDv2ProxyEnable(NULL, &pMyObject->Cfg.bMLDv2ProxyEnable);
+        *pValue = pMyObject->Cfg.bMLDv2ProxyEnable;
+        return TRUE;
+    }
+
     return FALSE;
 }
 
@@ -58,6 +65,12 @@ BOOL LgiMulticast_SetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName, 
     if (strcmp(ParamName, "IGMPv3ProxyEnable") == 0)
     {
         pMyObject->Cfg.bIGMPv3ProxyEnable = bValue;
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "MLDv2ProxyEnable") == 0)
+    {
+        pMyObject->Cfg.bMLDv2ProxyEnable = bValue;
         return TRUE;
     }
 
@@ -73,6 +86,7 @@ ULONG LgiMulticast_Commit ( ANSC_HANDLE hInsContext )
 {
     PCOSA_DATAMODEL_LGI_MULTICAST pMyObject = (PCOSA_DATAMODEL_LGI_MULTICAST) g_pCosaBEManager->hLgiMulticast;
 
+    /* IPv4 */
     if (IS_PARAM_CHANGED(pMyObject, bIGMPv3ProxyEnable))
     {
         CosaDmlMulticastSetIGMPv3ProxyEnable(NULL, pMyObject->Cfg.bIGMPv3ProxyEnable);
@@ -81,6 +95,17 @@ ULONG LgiMulticast_Commit ( ANSC_HANDLE hInsContext )
     {
         system("/etc/utopia/service.d/service_mcastproxy.sh mcastproxy-restart &");
     }
+
+    /* IPv6 */
+    if (IS_PARAM_CHANGED(pMyObject, bMLDv2ProxyEnable))
+    {
+        CosaDmlMulticastSetMLDv2ProxyEnable(NULL, pMyObject->Cfg.bMLDv2ProxyEnable);
+    }
+    if (IS_IPV6PROXY_RESTART_NEEDED(pMyObject))
+    {
+        system("/etc/utopia/service.d/service_mldproxy.sh mldproxy-restart &");
+    }
+
     /* commit the changes and cache the new config */
     if (IS_CFG_CHANGED(pMyObject))
     {
@@ -98,6 +123,7 @@ ULONG LgiMulticast_Rollback ( ANSC_HANDLE hInsContext )
     CosaDmlMulticastGetEnable(NULL, &pMyObject->Cfg.bEnable);
     CosaDmlMulticastGetSnoopingEnable(NULL, &pMyObject->Cfg.bSnoopingEnable);
     CosaDmlMulticastGetIGMPv3ProxyEnable(NULL, &pMyObject->Cfg.bIGMPv3ProxyEnable);
+    CosaDmlMulticastGetMLDv2ProxyEnable(NULL, &pMyObject->Cfg.bMLDv2ProxyEnable);
 
     return 0;
 }
