@@ -19,12 +19,11 @@
 
 SUBDIRS = source-arm custom source
 
-lib_LTLIBRARIES=libtr181.la
-libtr181_la_SOURCES=
-libtr181_la_LDFLAGS= -lsecure_wrapper -lwebconfig_framework
-libtr181_la_LDFLAGS += -lhal_moca -lapi_dhcpv4c -lhal_msomgmt -lhal_platform -lhal_ethsw -llmapi -lccsp_common -lcm_mgnt -lcurl
+lib_LTLIBRARIES = libtr181.la
 
-libtr181_la_DEPENDENCIES= \
+libtr181_la_SOURCES =
+
+libtr181_la_DEPENDENCIES = \
 	source-arm/TR-181/board_ml/libCcspPandM_board_ml.la \
 	source-arm/TR-181/board_sbapi/libCcspPandM_board_sbapi.la \
 	custom/comcast/source/TR-181/custom_sbapi/libCcspPandM_comcast_sbapi.la \
@@ -32,5 +31,8 @@ libtr181_la_DEPENDENCIES= \
 	source/TR-181/integration_src.shared/libCcspPandM_integration_src_shared.la \
 	source/TR-181/middle_layer_src/libCcspPandM_middle_layer_src.la
 
-libtr181_la_LIBADD=$(libtr181_la_DEPENDENCIES)
-#libtr181_la_LDFLAGS+=-Wl,--no-undefined -Wl,--no-allow-shlib-undefined
+libtr181_la_LIBADD = $(libtr181_la_DEPENDENCIES)
+
+libtr181_la_LDFLAGS = -lsecure_wrapper -lwebconfig_framework -lhal_moca -lapi_dhcpv4c -lhal_msomgmt -lhal_platform -lhal_ethsw -llmapi -lccsp_common -lcm_mgnt -lutapi -lutctx -llibparodus -lcurl
+
+#libtr181_la_LDFLAGS += -Wl,--no-undefined -Wl,--no-allow-shlib-undefined
