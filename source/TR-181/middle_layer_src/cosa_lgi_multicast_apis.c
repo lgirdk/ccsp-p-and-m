@@ -70,3 +70,21 @@ ULONG CosaDmlMulticastSetIGMPv3ProxyEnable ( ANSC_HANDLE hContext, BOOL bValue )
 
     return ANSC_STATUS_SUCCESS;
 }
+
+ULONG CosaDmlMulticastGetMLDv2ProxyEnable ( ANSC_HANDLE hContext, BOOL *pValue )
+{
+    char buf[8];
+
+    syscfg_get (NULL, "mldproxy_enabled", buf, sizeof(buf));
+    *pValue = (strcmp(buf, "1") == 0);
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ULONG CosaDmlMulticastSetMLDv2ProxyEnable ( ANSC_HANDLE hContext, BOOL bValue )
+{
+    if (syscfg_set (NULL, "mldproxy_enabled", bValue ? "1" : "0") != 0)
+        return ANSC_STATUS_FAILURE;
+
+    return ANSC_STATUS_SUCCESS;
+}
