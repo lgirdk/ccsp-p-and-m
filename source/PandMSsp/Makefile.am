@@ -16,17 +16,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ##########################################################################
-AM_CFLAGS = -D_ANSC_LINUX
-AM_CFLAGS += -D_ANSC_USER
-AM_CFLAGS += -D_ANSC_LITTLE_ENDIAN_
+AM_CFLAGS =
+AM_CFLAGS += $(SYSTEMD_CFLAGS)
 
 ACLOCAL_AMFLAGS = -I m4
 
 bin_PROGRAMS = CcspPandMSsp
 
-CcspPandMSsp_CPPFLAGS = -I$(top_srcdir)/source/TR-181/board_sbapi -I$(top_srcdir)/source/TR-181/middle_layer_src -I$(top_srcdir)/custom/comcast/source/TR-181/custom_include -I$(top_srcdir)/custom/comcast/source/TR-181/custom_ml -I$(top_srcdir)/custom/comcast -I$(top_srcdir)/source/TR-181/include -I$(top_srcdir)/source/Custom $(CPPFLAGS)
-CcspPandMSsp_CPPFLAGS += -I$(top_srcdir)/source-arm/TR-181/board_include -I$(top_srcdir)/source-arm/TR-181/board_sbapi
+CcspPandMSsp_CPPFLAGS = -I$(top_srcdir)/source/TR-181/board_sbapi \
+                        -I$(top_srcdir)/source/TR-181/middle_layer_src \
+                        -I$(top_srcdir)/custom/comcast/source/TR-181/custom_include \
+                        -I$(top_srcdir)/custom/comcast/source/TR-181/custom_ml \
+                        -I$(top_srcdir)/custom/comcast \
+                        -I$(top_srcdir)/source/TR-181/include \
+                        -I$(top_srcdir)/source/Custom \
+                        -I$(top_srcdir)/source-arm/TR-181/board_include \
+                        -I$(top_srcdir)/source-arm/TR-181/board_sbapi 
 
-CcspPandMSsp_CFLAGS = $(SYSTEMD_CFLAGS)
 CcspPandMSsp_SOURCES = ssp_messagebus_interface.c ssp_main.c ssp_action.c dm_pack_datamodel.c
-CcspPandMSsp_LDFLAGS = -lccsp_common -ldl -rdynamic -lwebconfig_framework -lsecure_wrapper $(SYSTEMD_LDFLAGS) -lsyscfg -lpthread
+CcspPandMSsp_LDFLAGS = -lccsp_common -ldl -rdynamic -lwebconfig_framework -ltelemetry_msgsender -lsecure_wrapper $(SYSTEMD_LDFLAGS) -lsyscfg -lpthread
