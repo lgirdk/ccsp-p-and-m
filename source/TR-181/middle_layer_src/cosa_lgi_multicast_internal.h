@@ -30,6 +30,7 @@ typedef struct _COSA_DML_LGI_MULTICAST_CFG
     BOOL bEnable;
     BOOL bSnoopingEnable;
     BOOL bIGMPv3ProxyEnable;
+    BOOL bMLDv2ProxyEnable;
 }
 COSA_DML_LGI_MULTICAST_CFG, *PCOSA_DML_LGI_MULTICAST_CFG;
 
@@ -44,6 +45,7 @@ COSA_DATAMODEL_LGI_MULTICAST, *PCOSA_DATAMODEL_LGI_MULTICAST;
 
 #define IS_PARAM_CHANGED(__obj, __parameter) __obj->Cfg.__parameter != __obj->OldCfg.__parameter ? TRUE : FALSE
 #define IS_IPV4PROXY_RESTART_NEEDED(__obj) __obj->Cfg.bIGMPv3ProxyEnable != __obj->OldCfg.bIGMPv3ProxyEnable ? TRUE : FALSE
+#define IS_IPV6PROXY_RESTART_NEEDED(__obj) __obj->Cfg.bMLDv2ProxyEnable != __obj->OldCfg.bMLDv2ProxyEnable ? TRUE : FALSE
 #define IS_CFG_CHANGED(__obj) memcmp(&(__obj->Cfg), &(__obj->OldCfg), sizeof(__obj->Cfg)) ? TRUE : FALSE
 
 #define CACHE_CFG(__obj) memcpy(&(__obj->OldCfg), &(__obj->Cfg), sizeof(__obj->OldCfg));
