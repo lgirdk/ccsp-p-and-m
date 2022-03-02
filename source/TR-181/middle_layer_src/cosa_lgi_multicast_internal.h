@@ -31,6 +31,7 @@ typedef struct _COSA_DML_LGI_MULTICAST_CFG
     BOOL bSnoopingEnable;
     BOOL bIGMPv3ProxyEnable;
     BOOL bMLDv2ProxyEnable;
+    BOOL bSSMForwardingEnable;
 }
 COSA_DML_LGI_MULTICAST_CFG, *PCOSA_DML_LGI_MULTICAST_CFG;
 
