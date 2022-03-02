@@ -18407,6 +18407,15 @@
                 <syntax>bool</syntax>
                 <writable>true</writable>
             </parameter>
+            <parameter>
+                <name>SSMForwardingEnable</name>
+                <description>
+                  Enables or disables routing of subscribed SSM traffic from WAN to LAN interfaces
+                </description>
+                <type>boolean</type>
+                <syntax>bool</syntax>
+                <writable>true</writable>
+            </parameter>
         </parameters>
     </object>
 <!-- LGI ADD END -->
