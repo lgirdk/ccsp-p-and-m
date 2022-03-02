@@ -88,3 +88,21 @@ ULONG CosaDmlMulticastSetMLDv2ProxyEnable ( ANSC_HANDLE hContext, BOOL bValue )
 
     return ANSC_STATUS_SUCCESS;
 }
+
+ULONG CosaDmlMulticastGetSSMForwardingEnable ( ANSC_HANDLE hContext, BOOL *pValue )
+{
+    char buf[8];
+
+    syscfg_get (NULL, "multicast_ssm_fwd_enable", buf, sizeof(buf));
+    *pValue = (strcmp(buf, "1") == 0);
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ULONG CosaDmlMulticastSetSSMForwardingEnable ( ANSC_HANDLE hContext, BOOL bValue )
+{
+    if (syscfg_set (NULL, "multicast_ssm_fwd_enable", bValue ? "1" : "0") != 0)
+        return ANSC_STATUS_FAILURE;
+
+    return ANSC_STATUS_SUCCESS;
+}
