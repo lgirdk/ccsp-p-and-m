@@ -55,6 +55,13 @@ BOOL LgiMulticast_GetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName, 
         return TRUE;
     }
 
+    if (strcmp(ParamName, "SSMForwardingEnable") == 0)
+    {
+        CosaDmlMulticastGetSSMForwardingEnable(NULL, &pMyObject->Cfg.bSSMForwardingEnable);
+        *pValue = pMyObject->Cfg.bSSMForwardingEnable;
+        return TRUE;
+    }
+
     return FALSE;
 }
 
@@ -71,6 +78,12 @@ BOOL LgiMulticast_SetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName, 
     if (strcmp(ParamName, "MLDv2ProxyEnable") == 0)
     {
         pMyObject->Cfg.bMLDv2ProxyEnable = bValue;
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "SSMForwardingEnable") == 0)
+    {
+        pMyObject->Cfg.bSSMForwardingEnable = bValue;
         return TRUE;
     }
 
@@ -106,6 +119,13 @@ ULONG LgiMulticast_Commit ( ANSC_HANDLE hInsContext )
         system("/etc/utopia/service.d/service_mldproxy.sh mldproxy-restart &");
     }
 
+    /* Firewall */
+    if (IS_PARAM_CHANGED(pMyObject, bSSMForwardingEnable))
+    {
+        CosaDmlMulticastSetSSMForwardingEnable(NULL, pMyObject->Cfg.bSSMForwardingEnable);
+         system("sysevent set firewall-restart &");
+    }
+
     /* commit the changes and cache the new config */
     if (IS_CFG_CHANGED(pMyObject))
     {
@@ -124,6 +144,7 @@ ULONG LgiMulticast_Rollback ( ANSC_HANDLE hInsContext )
     CosaDmlMulticastGetSnoopingEnable(NULL, &pMyObject->Cfg.bSnoopingEnable);
     CosaDmlMulticastGetIGMPv3ProxyEnable(NULL, &pMyObject->Cfg.bIGMPv3ProxyEnable);
     CosaDmlMulticastGetMLDv2ProxyEnable(NULL, &pMyObject->Cfg.bMLDv2ProxyEnable);
+    CosaDmlMulticastGetSSMForwardingEnable(NULL, &pMyObject->Cfg.bSSMForwardingEnable);
 
     return 0;
 }
