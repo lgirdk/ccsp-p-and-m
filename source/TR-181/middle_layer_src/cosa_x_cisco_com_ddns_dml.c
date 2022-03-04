@@ -1306,6 +1306,7 @@ Service_GetParamStringValue
     if (strcmp(ParamName, "AssociatedConnection") == 0)
     {
         /* collect value */
+        strcpy(pValue, "");
         pLowerLayer = CosaUtilGetLowerLayers((PUCHAR)"Device.IP.Interface.", (PUCHAR)CFG_TR181_Ddns_IfName);
         if ( pLowerLayer != NULL )
         {
