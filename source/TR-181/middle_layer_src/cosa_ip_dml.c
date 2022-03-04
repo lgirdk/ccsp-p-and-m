@@ -3848,6 +3848,7 @@ IPv6Address_GetParamStringValue
 
     if (strcmp(ParamName, "Prefix") == 0)
     {
+        strcpy(pValue, "");
         /* collect value */
 #ifndef _COSA_SIM_
 
