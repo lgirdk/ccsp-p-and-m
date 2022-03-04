@@ -2667,6 +2667,7 @@ IPv4Forwarding_GetParamStringValue
         }
         else
         {
+            strcpy(pValue, "");
             return 0;
         }
     }
@@ -3904,6 +3905,7 @@ IPv6Forwarding_GetParamStringValue
         }
         else
         {
+            strcpy(pValue, "");
             return 0;
         }
 #endif
