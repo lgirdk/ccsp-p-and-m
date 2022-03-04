@@ -745,6 +745,7 @@ X_CISCO_COM_DMZ_GetParamStringValue
     if (strcmp(ParamName, "Data") == 0)
     {
         CcspTraceWarning(("Data Get Not supported\n"));
+        strcpy(pValue, "");
         return 0;
     }
 
@@ -2150,6 +2151,7 @@ PortMapping_GetParamStringValue
         }
         else
         {
+            strcpy(pValue, "");
             return 0;
         }
 
@@ -2891,6 +2893,7 @@ X_RDK_PortMapping_GetParamStringValue
 	if (strcmp(ParamName, "Data") == 0)
 	{
 		CcspTraceWarning(("Data Get Not supported\n"));
+        strcpy(pValue, "");
 		return 0;
 	}
 	
