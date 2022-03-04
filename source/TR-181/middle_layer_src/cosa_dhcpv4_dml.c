@@ -1029,8 +1029,6 @@ Client_GetParamStringValue
         }
 
         return  update_pValue(pValue,pUlSize, tmpBuff);
-
-        return 0;
     }
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
@@ -3698,6 +3696,7 @@ Server_GetParamStringValue
     if ((strcmp(ParamName, "StaticClientsData") == 0) || (strcmp(ParamName, "Lan") == 0))
     {
         CcspTraceWarning(("Data Get Not supported\n"));
+        strcpy(pValue, "");
         return 0;
     }
 
@@ -4692,8 +4691,6 @@ X_CISCO_COM_StaticAddress_GetParamStringValue
               return -1;
             }
             pValue[17] = '\0'; 
-            *pUlSize = AnscSizeOfString(pValue);
-           
             return 0;
         }
         else

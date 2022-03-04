@@ -5874,6 +5874,8 @@ Filter_GetParamStringValue
     UNREFERENCED_PARAMETER(hInsContext);
     UNREFERENCED_PARAMETER(pValue);
     UNREFERENCED_PARAMETER(pUlSize);
+
+    strcpy(pValue, "");
     if (strcmp(ParamName, "Alias") == 0)
     {
         /* collect value */
