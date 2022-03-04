@@ -167,6 +167,7 @@ Gre_GetParamStringValue
 	if (strcmp(ParamName, "X_RDK_PublicHotspotData") == 0)
 	{
 		//CcspTraceWarning(("X_RDK_PublicHotspotData Get Not supported\n"));
+                strcpy(pValue, "");
 		return 0;
 	}
 
