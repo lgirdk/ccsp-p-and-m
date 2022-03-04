@@ -704,6 +704,7 @@ DeviceInfo_GetParamStringValue
     ULONG                           ReturnValue;
     errno_t                         rc        = -1;
     
+     strcpy(pValue, "");
     /* check the parameter name and return the corresponding value */
 
     if (strcmp(ParamName, "DeviceCategory") == 0)
@@ -3618,6 +3619,8 @@ VendorConfigFile_GetParamStringValue
     UNREFERENCED_PARAMETER(hInsContext);
     UNREFERENCED_PARAMETER(pValue);
     UNREFERENCED_PARAMETER(pUlSize);
+    
+    strcpy(pValue, "");
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "Alias") == 0)
     {
@@ -4238,6 +4241,8 @@ SupportedDataModel_GetParamStringValue
     UNREFERENCED_PARAMETER(hInsContext);
     UNREFERENCED_PARAMETER(pValue);
     UNREFERENCED_PARAMETER(pUlSize);
+    
+    strcpy(pValue, "");
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "URL") == 0)
     {
