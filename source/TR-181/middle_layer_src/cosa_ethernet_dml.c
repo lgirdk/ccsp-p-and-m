@@ -718,7 +718,7 @@ Interface_GetParamStringValue
     if (strcmp(ParamName, "LowerLayers") == 0)
     {
         /* collect value */
-        
+        strcpy(pValue, "");
         return 0;
     }
 
