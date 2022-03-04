@@ -2831,6 +2831,7 @@ X_RDK_PortMapping_GetParamStringValue
 	if (strcmp(ParamName, "Data") == 0)
 	{
 		CcspTraceWarning(("Data Get Not supported\n"));
+                strcpy(pValue, "");
 		return 0;
 	}
 	

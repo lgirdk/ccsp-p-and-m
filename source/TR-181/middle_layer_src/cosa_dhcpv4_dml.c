@@ -3718,6 +3718,7 @@ Server_GetParamStringValue
     if ((strcmp(ParamName, "StaticClientsData") == 0) || (strcmp(ParamName, "Lan") == 0))
     {
         CcspTraceWarning(("Data Get Not supported\n"));
+        strcpy(pValue, "");
         return 0;
     }
 
