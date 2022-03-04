@@ -896,10 +896,9 @@ Client3_GetParamStringValue
         }
         else
         {
+            strcpy(pValue, "");
             return 0;
         }
-
-        return 0;
     }
 
     if (strcmp(ParamName, "DUID") == 0)
@@ -4697,6 +4696,7 @@ Pool1_GetParamStringValue
         }
         else
         {
+            strcpy(pValue, "");
             return 0;
         }
     }
