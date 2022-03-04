@@ -1026,7 +1026,10 @@ Interface3_GetParamStringValue
             }
 
         }
-        
+        else
+        {
+            strcpy(pValue, "");
+	}
         return 0;
     }
 
