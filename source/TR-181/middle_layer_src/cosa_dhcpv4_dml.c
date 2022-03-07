@@ -1034,8 +1034,6 @@ Client_GetParamStringValue
         }
 
         return  update_pValue(pValue,pUlSize, tmpBuff);
-
-        return 0;
     }
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
@@ -4726,8 +4724,6 @@ X_CISCO_COM_StaticAddress_GetParamStringValue
               return -1;
             }
             pValue[17] = '\0'; 
-            *pUlSize = AnscSizeOfString(pValue);
-           
             return 0;
         }
         else
