@@ -14,6 +14,7 @@
 * limitations under the License.
 *********************************************************************************/
 
+#include "cosa_apis.h"
 #include "cosa_lgi_multicast_internal.h"
 #include "cosa_lgi_multicast_apis.h"
 #include <syscfg/syscfg.h>
@@ -103,6 +104,28 @@ ULONG CosaDmlMulticastSetSSMForwardingEnable ( ANSC_HANDLE hContext, BOOL bValue
 {
     if (syscfg_set (NULL, "multicast_ssm_fwd_enable", bValue ? "1" : "0") != 0)
         return ANSC_STATUS_FAILURE;
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ULONG CosaDmlMulticastGetMaxSSMSessions ( ANSC_HANDLE hContext, ULONG* puLong )
+{
+    char buf[8];
+
+    syscfg_get (NULL, "multicast_max_ssm_sessions", buf, sizeof(buf));
+    *puLong = atoi(buf);
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ULONG CosaDmlMulticastSetMaxSSMSessions ( ANSC_HANDLE hContext, ULONG uValue )
+{
+    if (syscfg_set_u (NULL, "multicast_max_ssm_sessions", uValue) != 0)
+        return ANSC_STATUS_FAILURE;
+
+    _write_sysctl_file("/proc/sys/net/ipv4/igmp_max_msf", uValue);
+    _write_sysctl_file("/proc/sys/net/ipv6/mld_max_msf", uValue);
+    _write_sysctl_file("/proc/sys/net/ipv4/igmp_max_memberships", uValue + 10);
 
     return ANSC_STATUS_SUCCESS;
 }
