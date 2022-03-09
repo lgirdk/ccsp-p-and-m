@@ -18484,6 +18484,8 @@
         <functions>
             <func_GetParamBoolValue>LgiMulticast_GetParamBoolValue</func_GetParamBoolValue>
             <func_SetParamBoolValue>LgiMulticast_SetParamBoolValue</func_SetParamBoolValue>
+            <func_GetParamUlongValue>LgiMulticast_GetParamUlongValue</func_GetParamUlongValue>
+            <func_SetParamUlongValue>LgiMulticast_SetParamUlongValue</func_SetParamUlongValue>
             <func_Validate>LgiMulticast_Validate</func_Validate>
             <func_Commit>LgiMulticast_Commit</func_Commit>
             <func_Rollback>LgiMulticast_Rollback</func_Rollback>
@@ -18533,6 +18535,15 @@
                 </description>
                 <type>boolean</type>
                 <syntax>bool</syntax>
+                <writable>true</writable>
+            </parameter>
+            <parameter>
+                <name>MaxSSMSessions</name>
+                <description>
+                  This parameter is used to configure maximum number of SSM sessions that could be subscribed to by client devices on the LAN
+                </description>
+                <type>unsignedInt</type>
+                <syntax>uint32</syntax>
                 <writable>true</writable>
             </parameter>
         </parameters>
