@@ -90,6 +90,33 @@ BOOL LgiMulticast_SetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName, 
     return FALSE;
 }
 
+BOOL LgiMulticast_GetParamUlongValue ( ANSC_HANDLE hInsContext, char* ParamName, ULONG* puLong )
+{
+    PCOSA_DATAMODEL_LGI_MULTICAST pMyObject = (PCOSA_DATAMODEL_LGI_MULTICAST) g_pCosaBEManager->hLgiMulticast;
+
+    if (strcmp(ParamName, "MaxSSMSessions") == 0)
+    {
+        CosaDmlMulticastGetMaxSSMSessions(NULL, &pMyObject->Cfg.uMaxSSMSessions);
+        *puLong = pMyObject->Cfg.uMaxSSMSessions;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+BOOL LgiMulticast_SetParamUlongValue ( ANSC_HANDLE hInsContext, char* ParamName, ULONG uValue )
+{
+    PCOSA_DATAMODEL_LGI_MULTICAST pMyObject = (PCOSA_DATAMODEL_LGI_MULTICAST) g_pCosaBEManager->hLgiMulticast;
+
+    if (strcmp(ParamName, "MaxSSMSessions") == 0)
+    {
+        pMyObject->Cfg.uMaxSSMSessions = uValue;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
 BOOL LgiMulticast_Validate ( ANSC_HANDLE hInsContext, char* pReturnParamName, ULONG* puLength )
 {
     return TRUE;
@@ -99,7 +126,7 @@ ULONG LgiMulticast_Commit ( ANSC_HANDLE hInsContext )
 {
     PCOSA_DATAMODEL_LGI_MULTICAST pMyObject = (PCOSA_DATAMODEL_LGI_MULTICAST) g_pCosaBEManager->hLgiMulticast;
 
-    /* IPv4 */
+    /* IPv4 Proxy */
     if (IS_PARAM_CHANGED(pMyObject, bIGMPv3ProxyEnable))
     {
         CosaDmlMulticastSetIGMPv3ProxyEnable(NULL, pMyObject->Cfg.bIGMPv3ProxyEnable);
@@ -109,7 +136,7 @@ ULONG LgiMulticast_Commit ( ANSC_HANDLE hInsContext )
         system("/etc/utopia/service.d/service_mcastproxy.sh mcastproxy-restart &");
     }
 
-    /* IPv6 */
+    /* IPv6 Proxy */
     if (IS_PARAM_CHANGED(pMyObject, bMLDv2ProxyEnable))
     {
         CosaDmlMulticastSetMLDv2ProxyEnable(NULL, pMyObject->Cfg.bMLDv2ProxyEnable);
@@ -117,6 +144,12 @@ ULONG LgiMulticast_Commit ( ANSC_HANDLE hInsContext )
     if (IS_IPV6PROXY_RESTART_NEEDED(pMyObject))
     {
         system("/etc/utopia/service.d/service_mldproxy.sh mldproxy-restart &");
+    }
+
+    /* Maximum supported SSM Sessions */
+    if (IS_PARAM_CHANGED(pMyObject, uMaxSSMSessions))
+    {
+        CosaDmlMulticastSetMaxSSMSessions(NULL, pMyObject->Cfg.uMaxSSMSessions);
     }
 
     /* Firewall */
@@ -145,6 +178,7 @@ ULONG LgiMulticast_Rollback ( ANSC_HANDLE hInsContext )
     CosaDmlMulticastGetIGMPv3ProxyEnable(NULL, &pMyObject->Cfg.bIGMPv3ProxyEnable);
     CosaDmlMulticastGetMLDv2ProxyEnable(NULL, &pMyObject->Cfg.bMLDv2ProxyEnable);
     CosaDmlMulticastGetSSMForwardingEnable(NULL, &pMyObject->Cfg.bSSMForwardingEnable);
+    CosaDmlMulticastGetMaxSSMSessions(NULL, &pMyObject->Cfg.uMaxSSMSessions);
 
     return 0;
 }
