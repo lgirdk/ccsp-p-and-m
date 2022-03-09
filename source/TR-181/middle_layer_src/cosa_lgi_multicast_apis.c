@@ -106,3 +106,31 @@ ULONG CosaDmlMulticastSetSSMForwardingEnable ( ANSC_HANDLE hContext, BOOL bValue
 
     return ANSC_STATUS_SUCCESS;
 }
+
+ULONG CosaDmlMulticastGetMaxSSMSessions ( ANSC_HANDLE hContext, ULONG* puLong )
+{
+    char buf[8];
+
+    syscfg_get (NULL, "multicast_max_ssm_sessions", buf, sizeof(buf));
+    *puLong = atoi(buf);
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ULONG CosaDmlMulticastSetMaxSSMSessions ( ANSC_HANDLE hContext, ULONG uValue )
+{
+    char cmd[256];
+
+    if (syscfg_set_u (NULL, "multicast_max_ssm_sessions", uValue) != 0)
+        return ANSC_STATUS_FAILURE;
+
+    snprintf(cmd, sizeof(cmd), "echo %lu > /proc/sys/net/ipv4/igmp_max_msf ; "
+                               "echo %lu > /proc/sys/net/ipv6/mld_max_msf ; "
+                               "echo %lu > /proc/sys/net/ipv4/igmp_max_memberships",
+                               uValue,
+                               uValue,
+                               uValue + 10);
+    system(cmd);
+
+    return ANSC_STATUS_SUCCESS;
+}
