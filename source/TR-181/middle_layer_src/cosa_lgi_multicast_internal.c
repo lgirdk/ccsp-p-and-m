@@ -47,6 +47,9 @@ ANSC_STATUS CosaLgiMulticastInitialize ( ANSC_HANDLE hThisObject )
     CosaDmlMulticastGetIGMPv3ProxyEnable(NULL, &pMyObject->Cfg.bIGMPv3ProxyEnable);
     CosaDmlMulticastGetMLDv2ProxyEnable(NULL, &pMyObject->Cfg.bMLDv2ProxyEnable);
     CosaDmlMulticastGetSSMForwardingEnable(NULL, &pMyObject->Cfg.bSSMForwardingEnable);
+    CosaDmlMulticastGetMaxSSMSessions(NULL, &pMyObject->Cfg.uMaxSSMSessions);
+
+    CosaDmlMulticastSetMaxSSMSessions(NULL, pMyObject->Cfg.uMaxSSMSessions);
 
     CACHE_CFG(pMyObject);
 
