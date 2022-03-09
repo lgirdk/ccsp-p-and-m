@@ -29,5 +29,7 @@ ULONG CosaDmlMulticastGetMLDv2ProxyEnable ( ANSC_HANDLE hContext, BOOL *pValue )
 ULONG CosaDmlMulticastSetMLDv2ProxyEnable ( ANSC_HANDLE hContext, BOOL bValue );
 ULONG CosaDmlMulticastGetSSMForwardingEnable ( ANSC_HANDLE hContext, BOOL *pValue );
 ULONG CosaDmlMulticastSetSSMForwardingEnable ( ANSC_HANDLE hContext, BOOL bValue );
+ULONG CosaDmlMulticastGetMaxSSMSessions ( ANSC_HANDLE hContext, ULONG* puLong );
+ULONG CosaDmlMulticastSetMaxSSMSessions ( ANSC_HANDLE hContext, ULONG uValue );
 
 #endif
