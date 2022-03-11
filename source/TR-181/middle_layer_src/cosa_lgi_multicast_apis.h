@@ -31,5 +31,7 @@ ULONG CosaDmlMulticastGetSSMForwardingEnable ( ANSC_HANDLE hContext, BOOL *pValu
 ULONG CosaDmlMulticastSetSSMForwardingEnable ( ANSC_HANDLE hContext, BOOL bValue );
 ULONG CosaDmlMulticastGetMaxSSMSessions ( ANSC_HANDLE hContext, ULONG* puLong );
 ULONG CosaDmlMulticastSetMaxSSMSessions ( ANSC_HANDLE hContext, ULONG uValue );
+ULONG CosaDmlMulticastGetM2UMaxSessions ( ANSC_HANDLE hContext, ULONG* puLong );
+ULONG CosaDmlMulticastSetM2UMaxSessions ( ANSC_HANDLE hContext, ULONG uValue );
 
 #endif
