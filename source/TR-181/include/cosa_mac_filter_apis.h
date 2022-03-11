@@ -29,6 +29,7 @@ _COSA_DML_FW_MACFILTER
    char           Alias[256];
    char           Hostname[65];
    char           MACAddress[64];
+   char           Description[64];
    BOOL           Enable;
 }
 COSA_DML_FW_MACFILTER;
