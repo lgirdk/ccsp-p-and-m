@@ -200,6 +200,11 @@ MACFilter_GetParamStringValue
         AnscCopyString(pValue, pFwMACFilter->MACAddress);
         return 0;
     }
+    if (strcmp(ParamName, "Description") == 0)
+    {
+        AnscCopyString(pValue, pFwMACFilter->Description);
+        return 0;
+    }
     return -1;
 }
 
@@ -245,6 +250,11 @@ MACFilter_SetParamStringValue
     if (strcmp(ParamName, "MACAddress") == 0)
     {
         _ansc_snprintf(pFwMACFilter->MACAddress, sizeof(pFwMACFilter->MACAddress), "%s", strValue);
+        return TRUE;
+    }
+    if (strcmp(ParamName, "Description") == 0)
+    {
+        _ansc_snprintf(pFwMACFilter->Description, sizeof(pFwMACFilter->Description), "%s", strValue);
         return TRUE;
     }
     return FALSE;
