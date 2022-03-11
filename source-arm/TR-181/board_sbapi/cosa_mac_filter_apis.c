@@ -81,6 +81,7 @@ CosaDmlFW_MACFilter_GetEntryByIndex(ULONG index, COSA_DML_FW_MACFILTER *pEntry)
     _ansc_strncpy(pEntry->Alias, MACFilter.Alias, sizeof(pEntry->Alias));
     _ansc_strncpy(pEntry->Hostname, MACFilter.Hostname, sizeof(pEntry->Hostname));
     _ansc_strncpy(pEntry->MACAddress, MACFilter.MACAddress, sizeof(pEntry->MACAddress));
+    _ansc_strncpy(pEntry->Description, MACFilter.Description, sizeof(pEntry->Description));
 
     Utopia_Free(&ctx, 0);
     return ANSC_STATUS_SUCCESS;
@@ -121,6 +122,7 @@ CosaDmlFW_MACFilter_AddEntry(COSA_DML_FW_MACFILTER *pEntry)
     _ansc_strncpy(MACFilter.Alias, pEntry->Alias, sizeof(MACFilter.Alias));
     _ansc_strncpy(MACFilter.Hostname, pEntry->Hostname, sizeof(MACFilter.Hostname));
     _ansc_strncpy(MACFilter.MACAddress, pEntry->MACAddress, sizeof(MACFilter.MACAddress));
+    _ansc_strncpy(MACFilter.Description, pEntry->Description, sizeof(MACFilter.Description));
 
     rc = Utopia_AddMACFilter(&ctx, &MACFilter);
 
@@ -192,6 +194,7 @@ CosaDmlFW_MACFilter_SetConf(ULONG ins, COSA_DML_FW_MACFILTER *pEntry)
     _ansc_strncpy(MACFilter.Alias, pEntry->Alias, sizeof(MACFilter.Alias));
     _ansc_strncpy(MACFilter.Hostname, pEntry->Hostname, sizeof(MACFilter.Hostname));
     _ansc_strncpy(MACFilter.MACAddress, pEntry->MACAddress, sizeof(MACFilter.MACAddress));
+    _ansc_strncpy(MACFilter.Description, pEntry->Description, sizeof(MACFilter.Description));
 
     rc = Utopia_SetMACFilterByIndex(&ctx, index, &MACFilter);
 
