@@ -134,3 +134,32 @@ ULONG CosaDmlMulticastSetMaxSSMSessions ( ANSC_HANDLE hContext, ULONG uValue )
 
     return ANSC_STATUS_SUCCESS;
 }
+
+ULONG CosaDmlMulticastGetM2UMaxSessions ( ANSC_HANDLE hContext, ULONG* puLong )
+{
+    char buf[8];
+
+    syscfg_get (NULL, "multicast_m2u_max_sessions", buf, sizeof(buf));
+    *puLong = atoi(buf);
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ULONG CosaDmlMulticastSetM2UMaxSessions ( ANSC_HANDLE hContext, ULONG uValue )
+{
+    if (syscfg_set_u (NULL, "multicast_m2u_max_sessions", uValue) != 0)
+        return ANSC_STATUS_FAILURE;
+
+#ifdef _PUMA6_ARM_
+    {
+        char cmd[256];
+
+        snprintf(cmd, sizeof(cmd), "rpcclient2 'echo %lu > /tmp/.syscfg_multicast_m2u_max_sessions' ; "
+                                   "rpcclient2 'echo %lu > /sys/class/net/br0/bridge/multicast_max_m2u' ; ",
+                                    uValue,
+                                    uValue);
+        system(cmd);
+    }
+#endif
+    return ANSC_STATUS_SUCCESS;
+}
