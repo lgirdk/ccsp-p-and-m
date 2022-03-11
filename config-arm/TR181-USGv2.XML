@@ -9015,6 +9015,12 @@
                       <syntax>string</syntax>
                       <writable>true</writable>
                     </parameter>
+                    <parameter>
+                      <name>Description</name>
+                      <type>string(64)</type>
+                      <syntax>string</syntax>
+                      <writable>true</writable>
+                    </parameter>
                   </parameters>
                 </object>
               </objects>
