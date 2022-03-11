@@ -11041,7 +11041,7 @@
 
               <syntax>string</syntax>
 
-              <writable>true</writable>
+              <writable>false</writable>
 
             </parameter>
 
