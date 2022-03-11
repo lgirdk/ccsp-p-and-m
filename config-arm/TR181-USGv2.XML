@@ -18183,6 +18183,16 @@
                 <syntax>uint32</syntax>
                 <writable>true</writable>
             </parameter>
+            <parameter>
+                <name>M2UMaxSessions</name>
+                <description>
+                  The parameter is used to configure the maximum number of simultaneous WiFi M2U forwarding sessions.
+                  The parameter value when set to 0 means M2U forwarding is disabled.
+                </description>
+                <type>unsignedInt</type>
+                <syntax>uint32</syntax>
+                <writable>true</writable>
+            </parameter>
         </parameters>
     </object>
 <!-- LGI ADD END -->
