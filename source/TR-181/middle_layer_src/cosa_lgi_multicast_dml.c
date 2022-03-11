@@ -101,6 +101,13 @@ BOOL LgiMulticast_GetParamUlongValue ( ANSC_HANDLE hInsContext, char* ParamName,
         return TRUE;
     }
 
+    if (strcmp(ParamName, "M2UMaxSessions") == 0)
+    {
+        CosaDmlMulticastGetM2UMaxSessions(NULL, &pMyObject->Cfg.uM2UMaxSessions);
+        *puLong = pMyObject->Cfg.uM2UMaxSessions;
+        return TRUE;
+    }
+
     return FALSE;
 }
 
@@ -111,6 +118,12 @@ BOOL LgiMulticast_SetParamUlongValue ( ANSC_HANDLE hInsContext, char* ParamName,
     if (strcmp(ParamName, "MaxSSMSessions") == 0)
     {
         pMyObject->Cfg.uMaxSSMSessions = uValue;
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "M2UMaxSessions") == 0)
+    {
+        pMyObject->Cfg.uM2UMaxSessions = uValue;
         return TRUE;
     }
 
@@ -152,6 +165,12 @@ ULONG LgiMulticast_Commit ( ANSC_HANDLE hInsContext )
         CosaDmlMulticastSetMaxSSMSessions(NULL, pMyObject->Cfg.uMaxSSMSessions);
     }
 
+    /* Maximum supported M2U sessions */
+    if (IS_PARAM_CHANGED(pMyObject, uM2UMaxSessions))
+    {
+        CosaDmlMulticastSetM2UMaxSessions(NULL, pMyObject->Cfg.uM2UMaxSessions);
+    }
+
     /* Firewall */
     if (IS_PARAM_CHANGED(pMyObject, bSSMForwardingEnable))
     {
@@ -179,6 +198,7 @@ ULONG LgiMulticast_Rollback ( ANSC_HANDLE hInsContext )
     CosaDmlMulticastGetMLDv2ProxyEnable(NULL, &pMyObject->Cfg.bMLDv2ProxyEnable);
     CosaDmlMulticastGetSSMForwardingEnable(NULL, &pMyObject->Cfg.bSSMForwardingEnable);
     CosaDmlMulticastGetMaxSSMSessions(NULL, &pMyObject->Cfg.uMaxSSMSessions);
+    CosaDmlMulticastGetM2UMaxSessions(NULL, &pMyObject->Cfg.uM2UMaxSessions);
 
     return 0;
 }
