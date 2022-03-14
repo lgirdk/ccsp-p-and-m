@@ -199,6 +199,89 @@ LgiGateway_SetParamBoolValue
     return FALSE;
 }
 
+static BOOL isValidIPv4DNS (char *dnsAddr)
+{
+    ANSC_IPV4_ADDRESS dnsIPBuf;
+    char IPAddr[16] = {0};
+    ULONG ulSize = sizeof(IPAddr);
+
+    if(!inet_pton(AF_INET, dnsAddr, &dnsIPBuf))
+        return FALSE;
+
+    if ((dnsIPBuf.Dot[0] == 127) ||    /* loopback */
+        (dnsIPBuf.Dot[0] >= 224) ||    /* multicast */
+        (dnsIPBuf.Dot[0] == 169 && dnsIPBuf.Dot[1] == 254) ||    /* link local */
+        (dnsIPBuf.Dot[0] == 10) ||    /* private */
+        (dnsIPBuf.Dot[0] == 172 && (dnsIPBuf.Dot[1] >> 4) == 1) ||    /* private */
+        (dnsIPBuf.Dot[0] == 192 && dnsIPBuf.Dot[1] == 168) ||    /* private */
+        (dnsIPBuf.Dot[0] == 0 && dnsIPBuf.Dot[1] == 0 && dnsIPBuf.Dot[2] == 0 && dnsIPBuf.Dot[3] == 0))
+        return FALSE;
+
+    if (CosaDmlDiGetMTAIPAddress(NULL, IPAddr, &ulSize) && strncmp(dnsAddr, IPAddr, ulSize) == 0)
+        return FALSE;
+
+    IPAddr[0] = 0;
+    ulSize = sizeof(IPAddr);
+    if (CosaDmlDiGetCMIPv4Address(NULL, IPAddr, &ulSize) && strncmp(dnsAddr, IPAddr, ulSize) == 0)
+        return FALSE;
+
+    IPAddr[0] = 0;
+    ulSize = sizeof(IPAddr);
+    if (CosaDmlDiGetRouterIPAddress(NULL, IPAddr, &ulSize) && strncmp(dnsAddr, IPAddr, ulSize) == 0)
+        return FALSE;
+
+    IPAddr[0] = 0;
+    ulSize = sizeof(IPAddr);
+    if (LanBlockedSubnetTable_GetGuestNetworkIP(IPAddr) && strncmp(dnsAddr, IPAddr, ulSize) == 0)
+        return FALSE;
+
+    return TRUE;
+}
+
+static BOOL isValidIPv6DNS (char *dnsAddr)
+{
+    unsigned char buf[sizeof(struct in6_addr)];
+    unsigned char v6_prefix[sizeof(struct in6_addr)];
+    unsigned char v6_addr[sizeof(struct in6_addr)];
+    char erouter_mode[16];
+    char wan_prefix[64];
+    char wan_ipaddr[64];
+    int mode;
+
+    if(!inet_pton(AF_INET6, dnsAddr, buf))
+        return FALSE;
+
+    syscfg_get(NULL, "last_erouter_mode", erouter_mode, sizeof(erouter_mode));
+    commonSyseventGet("wan6_prefix", wan_prefix, sizeof(wan_prefix));
+    commonSyseventGet("wan6_ipaddr", wan_ipaddr, sizeof(wan_ipaddr));
+    mode = atoi(erouter_mode);
+
+    if (mode == 2 || mode == 3)    //erouter is in IPv6 or dual mode
+    {
+        inet_pton(AF_INET6, wan_prefix, v6_prefix);
+        inet_pton(AF_INET6, wan_ipaddr, v6_addr);
+
+        /* check for wan IPv6 address and prefix */
+        if (!memcmp(dnsAddr, v6_addr, sizeof(struct in6_addr)) ||
+            !memcmp(dnsAddr, v6_prefix, sizeof(struct in6_addr)/2))
+            return FALSE;
+    }
+
+    /* check for Multicast and Link-local unicast address */
+    if ((buf[0] == 0xFF && buf[1] == 0x00) ||
+        (buf[0] == 0xFE && buf[1] == 0x80))
+        return FALSE;
+
+    /* check for loopback address */
+    if (buf[0] == 0x00 && buf[1] == 0x00 && buf[2] == 0x00 && buf[3] == 0x00 && buf[4] == 0x00 &&
+        buf[5] == 0x00 && buf[6] == 0x00 && buf[7] == 0x00 && buf[8] == 0x00 && buf[9] == 0x00 &&
+        buf[10] == 0x00 && buf[11] == 0x00 && buf[12] == 0x00 && buf[13] == 0x00 && buf[14] == 0x00 &&
+        (buf[15] == 0x00 || buf[15] == 0x01))
+        return FALSE;
+
+    return TRUE;
+}
+
 BOOL
 LgiGateway_Validate
     (
@@ -208,32 +291,35 @@ LgiGateway_Validate
   )
 {
     PCOSA_DATAMODEL_LGI_GATEWAY  pMyObject = (PCOSA_DATAMODEL_LGI_GATEWAY)g_pCosaBEManager->hLgiGateway;
-    char buf[64];
-    /* Validate DNS IPv4 address */
-    if(inet_pton(AF_INET, pMyObject->dns_ipv4_preferred, buf) < 1)
-    {
-        CcspTraceWarning(("DNS_IPv4Preferred validation failed"));
-        AnscCopyString(pReturnParamName,"DNS_IPv4Preferred");
-        return FALSE;
-    }
-    if(inet_pton(AF_INET, pMyObject->dns_ipv4_alternate, buf) < 1)
-    {
-        CcspTraceWarning(("DNS_IPv4Preferred validation failed"));
-        AnscCopyString(pReturnParamName,"DNS_IPv4Alternate");
-        return FALSE;
-    }
-    /* Validate DNS IPv6 address */
-    if(inet_pton(AF_INET6, pMyObject->dns_ipv6_preferred, buf) < 1)
-    {
-        CcspTraceWarning(("DNS_IPv6Preferred validation failed"));
-        AnscCopyString(pReturnParamName,"DNS_IPv6Preferred");
-        return FALSE;
-    }
-    if(inet_pton(AF_INET6, pMyObject->dns_ipv6_alternate, buf) < 1)
-    {
-        CcspTraceWarning(("DNS_IPv6Preferred validation failed"));
-        AnscCopyString(pReturnParamName,"DNS_IPv6Alternate");
-        return FALSE;
+
+    if (pMyObject->dns_override) {
+        /* Validate DNS IPv4 address */
+        if (!isValidIPv4DNS(pMyObject->dns_ipv4_preferred))
+        {
+            CcspTraceWarning(("DNS_IPv4Preferred validation failed"));
+            AnscCopyString(pReturnParamName,"DNS_IPv4Preferred");
+            return FALSE;
+        }
+        if (!isValidIPv4DNS(pMyObject->dns_ipv4_alternate))
+        {
+            CcspTraceWarning(("DNS_IPv4Alternate validation failed"));
+            AnscCopyString(pReturnParamName,"DNS_IPv4Alternate");
+            return FALSE;
+        }
+
+        /* Validate DNS IPv6 address */
+        if (!isValidIPv6DNS(pMyObject->dns_ipv6_preferred))
+        {
+            CcspTraceWarning(("DNS_IPv6Preferred validation failed"));
+            AnscCopyString(pReturnParamName,"DNS_IPv6Preferred");
+            return FALSE;
+        }
+        if (!isValidIPv6DNS(pMyObject->dns_ipv6_alternate))
+        {
+            CcspTraceWarning(("DNS_IPv6Alternate validation failed"));
+            AnscCopyString(pReturnParamName,"DNS_IPv6Alternate");
+            return FALSE;
+        }
     }
     if (pMyObject->ErouterInitMode && ((pMyObject->ErouterInitMode < 1) || (pMyObject->ErouterInitMode > 5)))
     {
