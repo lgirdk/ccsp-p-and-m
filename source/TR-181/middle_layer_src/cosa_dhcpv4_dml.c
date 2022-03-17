@@ -6152,7 +6152,8 @@ Pool_GetParamStringValue
 
     if (strcmp(ParamName, "DNSServers") == 0)
     {
-        /* collect value */
+        /* Note: code structure here should be kept aligned with IPv6 Option4_GetParamStringValue() */
+
         pValue[0]=0;
         if ( CosaDmlGetIpaddrString((PUCHAR)pValue, pUlSize, &pPool->Cfg.DNSServers[0].Value, COSA_DML_DHCP_MAX_ENTRIES ) )
         {
@@ -6163,13 +6164,45 @@ Pool_GetParamStringValue
             if (Vlen > 0)
                 addcoma=1;
 
+            char tmpbuf[64];
+            int len;
+
+            syscfg_get(NULL, "dns_override", tmpbuf, sizeof(tmpbuf));
+
+            /* if dns_override is false or undefined then append DNS server(s) from wan_dhcp_dns */
+
+            if (strcmp(tmpbuf, "true") != 0)
+            {
+                char wanDhcpDns[255];
+
+                wanDhcpDns[0] = 0;
+                commonSyseventGet("wan_dhcp_dns", wanDhcpDns, sizeof(wanDhcpDns));
+                if (wanDhcpDns[0] != 0)
+                {
+                    len = AnscSizeOfString(wanDhcpDns);
+                    if ((len > 0) && (rbufsz > (len + 1)))
+                    {
+                        char *token = strtok(wanDhcpDns, " ");
+                        while (token != NULL)
+                        {
+                            if (addcoma)
+                            {
+                                strcat(pValue, ",");
+                            }
+                            strcat(pValue, token);
+                            addcoma = 1;
+                            token = strtok(NULL, " ");
+                        }
+                    }
+                }
+
+                return 0;
+            }
+
             /*
              * Collect from syscfg db, syscfg updated through 
              * Device.X_LGI-COM_Gateway.DNS_IPv4Alternate" & "Device.X_LGI-COM_Gateway.DNS_IPv4Preferred"
             */
-            char tmpbuf[64];
-            int len;
-
             syscfg_get(NULL,"dns_ipv4_preferred",tmpbuf,sizeof(tmpbuf));
             len=AnscSizeOfString(tmpbuf);
             if ((len > 0) && (rbufsz > (len+1))){
