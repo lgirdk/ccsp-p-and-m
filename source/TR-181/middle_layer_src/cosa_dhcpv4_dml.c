@@ -6108,6 +6108,8 @@ Pool_GetParamStringValue
 
     if (strcmp(ParamName, "DNSServers") == 0)
     {
+        /* Note: code structure here should be kept aligned with IPv6 Option4_GetParamStringValue() */
+
         if ( CosaDmlGetIpaddrString(pValue, pUlSize, &pPool->Cfg.DNSServers[0].Value, COSA_DML_DHCP_MAX_ENTRIES ) )
         {
             //update the size approriately so we can collect from syscfg db
@@ -6119,6 +6121,38 @@ Pool_GetParamStringValue
 
             char tmpbuf[64];
             int len;
+
+            syscfg_get(NULL, "dns_override", tmpbuf, sizeof(tmpbuf));
+
+            /* if dns_override is false or undefined then append DNS server(s) from wan_dhcp_dns */
+
+            if (strcmp(tmpbuf, "true") != 0)
+            {
+                char wanDhcpDns[255];
+
+                wanDhcpDns[0] = 0;
+                commonSyseventGet("wan_dhcp_dns", wanDhcpDns, sizeof(wanDhcpDns));
+                if (wanDhcpDns[0] != 0)
+                {
+                    len = AnscSizeOfString(wanDhcpDns);
+                    if ((len > 0) && (rbufsz > (len + 1)))
+                    {
+                        char *token = strtok(wanDhcpDns, " ");
+                        while (token != NULL)
+                        {
+                            if (addcoma)
+                            {
+                                strcat(pValue, ",");
+                            }
+                            strcat(pValue, token);
+                            addcoma = 1;
+                            token = strtok(NULL, " ");
+                        }
+                    }
+                }
+
+                return 0;
+            }
 
             /*
              * Collect from syscfg db, syscfg updated through 
