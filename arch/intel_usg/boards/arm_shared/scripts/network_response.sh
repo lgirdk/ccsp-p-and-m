@@ -402,8 +402,7 @@ then
 		         v4Count=`expr $v4Count + 1`
 		      else
 		         last_erouter_mode=`syscfg get last_erouter_mode`
-		         IPV6_STATUS_CHECK_GIPV6=$(sysevent get ipv6-status)
-		         if [ "$last_erouter_mode" = "1" ] && [ "x$IPV6_STATUS_CHECK_GIPV6" = "x" ];then	
+		         if [ "$last_erouter_mode" = "1" ];then	
 		          echo_t "Network Response: CDV device, not having ipv6  exiting !!"
 		          exit 0
 		         fi
