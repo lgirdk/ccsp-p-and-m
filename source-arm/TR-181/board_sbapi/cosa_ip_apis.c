@@ -1821,9 +1821,15 @@ IPIF_getEntry_for_Ipv6Pre
 #else
         if (!commonSyseventGet(COSA_DML_DHCPV6C_PREF_PRETM_SYSEVENT_NAME, out, sizeof(out)) )
 #endif
+        {
              p_dml_v6pre->iapd_pretm = atoi(out);
+             _get_datetime_offset(p_dml_v6pre->iapd_pretm, p_dml_v6pre->PreferredLifetime, sizeof(p_dml_v6pre->PreferredLifetime));
+        }
         else
+        {
              p_dml_v6pre->iapd_pretm = 0;
+             strcpy(p_dml_v6pre->PreferredLifetime, "0001-01-01T00:00:00Z");
+        }
     
 #if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
         memset( sysEventName, 0, sizeof(sysEventName));
@@ -1832,9 +1838,15 @@ IPIF_getEntry_for_Ipv6Pre
 #else
         if (!commonSyseventGet(COSA_DML_DHCPV6C_PREF_VLDTM_SYSEVENT_NAME, out, sizeof(out)) )
 #endif
+        {
              p_dml_v6pre->iapd_vldtm = atoi(out);
+             _get_datetime_offset(p_dml_v6pre->iapd_vldtm, p_dml_v6pre->ValidLifetime, sizeof(p_dml_v6pre->ValidLifetime));
+        }
         else
+        {
              p_dml_v6pre->iapd_vldtm = 0;
+             strcpy(p_dml_v6pre->ValidLifetime, "0001-01-01T00:00:00Z");
+        }
 
         p_dml_v6pre->Status = COSA_DML_PREFIXENTRY_STATUS_Enabled;
 
