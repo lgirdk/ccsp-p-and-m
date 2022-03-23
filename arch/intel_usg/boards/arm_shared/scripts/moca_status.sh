@@ -30,11 +30,11 @@ source /etc/utopia/service.d/log_capture_path.sh
 #do
 #       sleep 10
 	echo_t "Obtaining the MoCA status.."
-	moca_status=`dmcli eRT getv Device.MoCA.Interface.1.Status | grep string | awk '{print $5}'`
+	moca_status=`dmcli eRT retv Device.MoCA.Interface.1.Status`
 	echo_t "MoCA is $moca_status"
 #done
         echo_t "Checking for MoCA Enable.."
-	moca_enable=`dmcli eRT getv Device.MoCA.Interface.1.Enable | grep bool | awk '{print $5}'`
+	moca_enable=`dmcli eRT retv Device.MoCA.Interface.1.Enable`
 	if [ "$moca_enable" == "true" ];then 
         echo_t "MoCA is Enabled"
         else 
@@ -42,21 +42,21 @@ source /etc/utopia/service.d/log_capture_path.sh
         fi
         
 	echo_t "Obtaining the MoCA CurrentOperFreq.."
-	moca_freq=`dmcli eRT getv Device.MoCA.Interface.1.CurrentOperFreq | grep uint | awk '{print $5}'`
+	moca_freq=`dmcli eRT retv Device.MoCA.Interface.1.CurrentOperFreq`
 	echo_t "MoCA_FREQ:$moca_freq"
 	
 	echo_t "Obtaining the MoCA PreferredNC.."
-	moca_pnc=`dmcli eRT getv Device.MoCA.Interface.1.PreferredNC | grep bool | awk '{print $5}'`
+	moca_pnc=`dmcli eRT retv Device.MoCA.Interface.1.PreferredNC`
 	echo_t "MoCA_PNC:$moca_pnc"
 	
 	echo_t "Obtaining the MoCA ChannelScanning.."
-	moca_scan=`dmcli eRT getv Device.MoCA.Interface.1.X_CISCO_COM_ChannelScanning | grep bool | awk '{print $5}'`
+	moca_scan=`dmcli eRT retv Device.MoCA.Interface.1.X_CISCO_COM_ChannelScanning`
 	echo_t "MoCA_SCAN:$moca_scan"
 
 	echo_t "Obtaining the MoCA FreqCurrentMaskSetting.."
-	moca_freq_mask=`dmcli eRT getv Device.MoCA.Interface.1.FreqCurrentMaskSetting | grep string | awk '{print $5}'`
+	moca_freq_mask=`dmcli eRT retv Device.MoCA.Interface.1.FreqCurrentMaskSetting`
 	echo_t "MOCA_FREQ_MASK:$moca_freq_mask"
 
 	echo_t "Obtaining the MoCA PrivacyEnabled.."
-	moca_privacy=`dmcli eRT getv Device.MoCA.Interface.1.PrivacyEnabled | grep bool | awk '{print $5}'`
+	moca_privacy=`dmcli eRT retv Device.MoCA.Interface.1.PrivacyEnabled`
 	echo_t "MOCA_PRIVACY:$moca_privacy"
