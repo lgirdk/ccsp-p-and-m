@@ -133,7 +133,7 @@ then
 			if [ "$wfoStatus" = "0" ]
      		then
 			 	echo_t "Network Response: RF CP wan_fail_over is disabled"
-				RF_SIGNAL_STATUS=`dmcli eRT getv Device.DeviceInfo.X_RDKCENTRAL-COM_CableRfSignalStatus | grep value | cut -f3 -d : | cut -f2 -d" "`
+				RF_SIGNAL_STATUS=`dmcli eRT retv Device.DeviceInfo.X_RDKCENTRAL-COM_CableRfSignalStatus`
 				if [ "$RF_SIGNAL_STATUS" = "false" ]
 				then
 					noRfCp=1
@@ -182,7 +182,7 @@ then
 		if [ "$wfoStatus" = "0" ]
 		then
 			echo_t "Network Response: RF CP recheck wan_fail_over is disabled"
-			RF_SIGNAL_STATUS=`dmcli eRT getv Device.DeviceInfo.X_RDKCENTRAL-COM_CableRfSignalStatus | grep value | cut -f3 -d : | cut -f2 -d" "`
+			RF_SIGNAL_STATUS=`dmcli eRT retv Device.DeviceInfo.X_RDKCENTRAL-COM_CableRfSignalStatus`
 		else
 			#LTE wan interface is available no need to bring no RF captive portal
 			# Forcefully set RF signal status flag as true
