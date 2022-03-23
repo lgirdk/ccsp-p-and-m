@@ -105,7 +105,7 @@ then
       then
           noRfCp=0
       else
-        RF_SIGNAL_STATUS=`dmcli eRT getv Device.DeviceInfo.X_RDKCENTRAL-COM_CableRfSignalStatus | grep value | cut -f3 -d : | cut -f2 -d" "`
+        RF_SIGNAL_STATUS=`dmcli eRT retv Device.DeviceInfo.X_RDKCENTRAL-COM_CableRfSignalStatus`
         if [ "$RF_SIGNAL_STATUS" = "false" ]
         then
            noRfCp=1
@@ -140,7 +140,7 @@ then
       echo_t "Network Response: RF CP recheck eth_wan_enabled is true"
       RF_SIGNAL_STATUS="true"
   else
-     RF_SIGNAL_STATUS=`dmcli eRT getv Device.DeviceInfo.X_RDKCENTRAL-COM_CableRfSignalStatus | grep value | cut -f3 -d : | cut -f2 -d" "`
+     RF_SIGNAL_STATUS=`dmcli eRT retv Device.DeviceInfo.X_RDKCENTRAL-COM_CableRfSignalStatus`
   fi
   echo_t "Network Response: RF CP recheck RF_SIGNAL_STATUS: $RF_SIGNAL_STATUS"
   if [ "$RF_SIGNAL_STATUS" = "false" ]
