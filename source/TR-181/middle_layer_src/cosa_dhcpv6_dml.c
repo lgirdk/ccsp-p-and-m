@@ -7859,7 +7859,66 @@ Option4_GetParamStringValue
     if (strcmp(ParamName, "Value") == 0)
     {
         /* collect value */
-        return  update_pValue(pValue,pUlSize, (char*)pDhcpOption->Value);
+        update_pValue(pValue,pUlSize, (char*)pDhcpOption->Value);
+        int Vlen=AnscSizeOfString(pValue);
+        int rbufsz=*pUlSize - Vlen;
+        int addcoma=0;
+        pValue[Vlen]=0;
+        if (Vlen > 0)
+            addcoma=1;
+
+        int len;
+        char custDns[8];
+        syscfg_get(NULL, "dns_override", custDns, sizeof(custDns));
+        if (strcmp(custDns, "true") == 0)
+        {
+            char tmpbuf[64];
+            syscfg_get(NULL,"dns_ipv6_preferred",tmpbuf,sizeof(tmpbuf));
+            len=AnscSizeOfString(tmpbuf);
+            if ((len > 0) && (rbufsz > (len+1))){
+                if (addcoma) {
+                    strcat(pValue,",");
+                    len+=1;
+                }
+                strcat(pValue,tmpbuf);
+                rbufsz-=len;
+                addcoma=1;
+            }
+            syscfg_get(NULL,"dns_ipv6_alternate",tmpbuf,sizeof(tmpbuf));
+            len=AnscSizeOfString(tmpbuf);
+            if ((len > 0) && (rbufsz > (len+1))){
+                if (addcoma) {
+                    strcat(pValue,",");
+                }
+                strcat(pValue,tmpbuf);
+            }
+        }
+        else
+        {
+            char ipv6_nameserver[255];
+            char *token=NULL;
+            ipv6_nameserver[0]= 0;
+            commonSyseventGet("ipv6_nameserver", ipv6_nameserver, sizeof(ipv6_nameserver));
+            if (0 != ipv6_nameserver[0])
+            {
+                len=AnscSizeOfString(ipv6_nameserver);
+                if ((len > 0) && (rbufsz > (len+1)))
+                {
+                    token = strtok(ipv6_nameserver, " ");
+                    while (token != NULL)
+                    {
+                        if (addcoma)
+                        {
+                            strcat(pValue, ",");
+                        }
+                        strcat(pValue, token);
+                        addcoma=1;
+                        token = strtok(NULL, " ");
+                    }
+                }
+            }
+        }
+        return 0;
     }
 
     if (strcmp(ParamName, "PassthroughClient") == 0)
