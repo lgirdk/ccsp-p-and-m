@@ -66,7 +66,7 @@ calcRebootExecTime()
 {        # Extract maintenance window start and end time
         ExtractMaintenanceTime
         #Get local time off set
-        time_offset=`dmcli eRT getv Device.Time.TimeOffset | grep "value:" | cut -d ":" -f 3 | tr -d ' '`
+        time_offset=`dmcli eRT retv Device.Time.TimeOffset`
         if [ "x$time_offset" == "x" ];then
             echo_t "[ScheduleAutoReboot.sh] time offset is obtained as null"
             time_offset=-18000
