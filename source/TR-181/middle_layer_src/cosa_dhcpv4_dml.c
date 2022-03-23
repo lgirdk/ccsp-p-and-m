@@ -11091,6 +11091,16 @@ LanAllowedSubnetTable_Validate
         {
             /* 10.x.x.x/8 - 10.x.x.x/24 */
 
+            if ((pLanAllowedSubnet->SubnetMask[0] != 0) && 
+                (lanSubnetMaskBuf.Dot[0] < 255) &&
+                (lanSubnetMaskBuf.Dot[1] == 0) &&
+                (lanSubnetMaskBuf.Dot[2] == 0) &&
+                (lanSubnetMaskBuf.Dot[3] == 0))
+                
+            {
+                return FALSE;
+            }
+
             if ((pLanAllowedSubnet->SubnetMask[0] == 0) ||
                 (lanSubnetMaskBuf.Dot[0] != 255) ||
                 (lanSubnetMaskBuf.Dot[3] != 0))
@@ -11102,6 +11112,14 @@ LanAllowedSubnetTable_Validate
         else if (lanSubnetIPBuf.Dot[0] == 172)
         {
             /* 172.16.x.x/16 - 172.31.x.x/24 */
+            if ((pLanAllowedSubnet->SubnetMask[0] != 0) && 
+                (lanSubnetMaskBuf.Dot[0] <= 255) &&
+                (lanSubnetMaskBuf.Dot[1] < 240) &&
+                (lanSubnetMaskBuf.Dot[2] == 0) &&
+                (lanSubnetMaskBuf.Dot[3] == 0))
+            {
+                return FALSE;
+            }
 
             if ((pLanAllowedSubnet->SubnetMask[0] == 0) ||
                 (lanSubnetMaskBuf.Dot[0] != 255) ||
