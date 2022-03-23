@@ -216,6 +216,10 @@ LgiPlume_Commit
         CosaDmlSetRRMState((PANSC_HANDLE)pWiFiDataPaths, FALSE);
         CosaDmlApplyPlumeWiFiChanges((PANSC_HANDLE)pWiFiDataPaths);
     }
+    else if(pMyObject->bPlumeNativeAtmBsControlChanged)
+    {
+        CosaDmlApplyPlumeWiFiChanges((PANSC_HANDLE)pWiFiDataPaths);
+    }
     if(pMyObject->bNeedPlumeServiceRestart)
     {
         system("rpcclient2 '/etc/plume_init.sh restart'");
