@@ -245,7 +245,7 @@ do
 	#hotspotfd -n erouter0 -e 1
 	#hotspot_arpd -q 0
 	#dhcp_snooperd -q 1 -n 2 -e 1
-	HOTSPOT_ENABLE=`dmcli eRT getv Device.DeviceInfo.X_COMCAST_COM_xfinitywifiEnable | grep value | cut -f3 -d : | cut -f2 -d" "`
+	HOTSPOT_ENABLE=`dmcli eRT retv Device.DeviceInfo.X_COMCAST_COM_xfinitywifiEnable`
 	if [ "$HOTSPOT_ENABLE" = "true" ]
 	then
    		BASEQUEUE=1
