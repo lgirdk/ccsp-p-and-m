@@ -214,6 +214,10 @@ LgiPlume_Commit
         CosaDmlSetRRMState((PANSC_HANDLE)pWiFiDataPaths, FALSE);
         CosaDmlApplyPlumeWiFiChanges((PANSC_HANDLE)pWiFiDataPaths);
     }
+    else if(pMyObject->bPlumeNativeAtmBsControlChanged)
+    {
+        CosaDmlApplyPlumeWiFiChanges((PANSC_HANDLE)pWiFiDataPaths);
+    }
     if(pMyObject->bNeedPlumeServiceRestart)
     {
 #ifdef _PUMA6_ARM_
