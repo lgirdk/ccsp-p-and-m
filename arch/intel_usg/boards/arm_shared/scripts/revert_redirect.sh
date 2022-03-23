@@ -76,33 +76,33 @@ if [ "$1" != "rfcp" ]
     #Changes for EMS starts here
     echo_t "Obtaining the SSID and Password for 2.4 and 5 GHz"
     #echo "Getting Device.WiFi.SSID.1.SSID.."
-    SSID_1=`dmcli eRT getv Device.WiFi.SSID.1.SSID | grep string | cut -d":" -f3- | cut -d" " -f2-`
+    SSID_1=`dmcli eRT retv Device.WiFi.SSID.1.SSID`
     #echo $SSID_1
     #echo "Getting Device.WiFi.AccessPoint.1.Security.KeyPassphrase.."
-    Password_1=`dmcli eRT getv Device.WiFi.AccessPoint.1.Security.X_COMCAST-COM_KeyPassphrase | grep string | cut -d":" -f3- | cut -d" " -f2-`
+    Password_1=`dmcli eRT retv Device.WiFi.AccessPoint.1.Security.X_COMCAST-COM_KeyPassphrase`
     #echo $Password_1
     #echo "Getting Device.WiFi.SSID.2.SSID.."
-    SSID_2=`dmcli eRT getv Device.WiFi.SSID.2.SSID | grep string | cut -d":" -f3- | cut -d" " -f2-`
+    SSID_2=`dmcli eRT retv Device.WiFi.SSID.2.SSID`
     #echo $SSID_2
     #echo "Getting Device.WiFi.AccessPoint.2.Security.KeyPassphrase.."
-    Password_2=`dmcli eRT getv Device.WiFi.AccessPoint.2.Security.X_COMCAST-COM_KeyPassphrase | grep string | cut -d":" -f3- | cut -d" " -f2-`
+    Password_2=`dmcli eRT retv Device.WiFi.AccessPoint.2.Security.X_COMCAST-COM_KeyPassphrase`
     #echo $Password_2
     #echo "Getting Device.X_CISCO_COM_CableModem.MACAddress.."
-    CM_MAC=`dmcli eRT getv Device.X_CISCO_COM_CableModem.MACAddress | grep string | awk '{print $5}'`
+    CM_MAC=`dmcli eRT retv Device.X_CISCO_COM_CableModem.MACAddress`
     #echo $CM_MAC
     #echo "Getting Device.X_CISCO_COM_CableModem.IPAddress.."
-    CM_IP=`dmcli eRT getv Device.X_CISCO_COM_CableModem.IPAddress | grep string | awk '{print $5}'`
+    CM_IP=`dmcli eRT retv Device.X_CISCO_COM_CableModem.IPAddress`
 
     if [ "$CM_IP" = "0.0.0.0" ]
     then
-        CM_IP=`dmcli eRT getv Device.X_CISCO_COM_CableModem.IPv6Address | grep string | awk '{print $5}'`
+        CM_IP=`dmcli eRT retv Device.X_CISCO_COM_CableModem.IPv6Address`
     fi
     #echo $CM_IP
     #echo "Getting Mobile Number.."
-    Mobile_Number=`dmcli eRT getv Device.DeviceInfo.X_COMCAST-COM_EMS_MobileNumber | grep string | awk '{print $5}'`
+    Mobile_Number=`dmcli eRT retv Device.DeviceInfo.X_COMCAST-COM_EMS_MobileNumber`
     #echo $Mobile_Number
     #echo "Getting Server IP address.."
-    Server_URL=`dmcli eRT getv Device.DeviceInfo.X_COMCAST-COM_EMS_ServerURL | grep string | awk '{print $5}'`
+    Server_URL=`dmcli eRT retv Device.DeviceInfo.X_COMCAST-COM_EMS_ServerURL`
     #echo $Server_URL
 
     echo_t "Exporting path for curl.."

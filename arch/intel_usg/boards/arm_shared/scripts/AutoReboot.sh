@@ -86,8 +86,8 @@ checkMaintenanceWindow()
 
 reboot_device_success=0
 AutoReboot=false
-AutoReboot=`dmcli eRT getv Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.AutoReboot.Enable | grep value | cut -f3 -d : | cut -f2 -d" "`
-ConfiguredDays=`dmcli eRT getv Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.AutoReboot.UpTime | grep value | cut -f3 -d : | cut -f2 -d" "`
+AutoReboot=`dmcli eRT retv Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.AutoReboot.Enable`
+ConfiguredDays=`dmcli eRT retv Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.AutoReboot.UpTime`
 
 
 while [ $reboot_device_success -eq 0 ]; do 
@@ -147,7 +147,7 @@ while [ $reboot_device_success -eq 0 ]; do
         if [ $http_reboot_ready_stat -eq 0 ];then
             if [ $abortReboot_count -lt 5 ];then
                 #Wait for Notification to propogate
-                deferfw=`dmcli eRT getv Device.DeviceInfo.X_RDKCENTRAL-COM_xOpsDeviceMgmt.RPC.DeferFWDownloadReboot | grep value | cut -d ":" -f 3 | tr -d ' ' `
+                deferfw=`dmcli eRT retv Device.DeviceInfo.X_RDKCENTRAL-COM_xOpsDeviceMgmt.RPC.DeferFWDownloadReboot`
                 echo_t "AutoReboot : Sleeping for $deferfw seconds before reboot"
                 touch $deferReboot 
                 dmcli eRT setv Device.DeviceInfo.X_RDKCENTRAL-COM_xOpsDeviceMgmt.RPC.RebootPendingNotification uint $deferfw
