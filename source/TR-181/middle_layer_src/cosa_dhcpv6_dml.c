@@ -7858,8 +7858,81 @@ Option4_GetParamStringValue
 
     if (strcmp(ParamName, "Value") == 0)
     {
-        /* collect value */
-        return  update_pValue(pValue,pUlSize, (char*)pDhcpOption->Value);
+        /* Note: code structure here should be kept aligned with IPv4 Pool_GetParamStringValue() */
+
+        int Vlen;
+        int rbufsz;
+        int addcoma;
+        char tmpbuf[64];
+        int len;
+
+        Vlen = strlen(pDhcpOption->Value);
+        if (Vlen >= *pUlSize) {
+            *pUlSize = Vlen + 100;
+            return 1;
+        }
+
+        memcpy(pValue, pDhcpOption->Value, Vlen + 1);
+        rbufsz = *pUlSize - Vlen;
+        addcoma = (Vlen > 0) ? 1 : 0;
+
+        syscfg_get(NULL, "dns_override", tmpbuf, sizeof(tmpbuf));
+
+        /* if dns_override is false or undefined then append DNS server(s) from ipv6_nameserver */
+
+        if (strcmp(tmpbuf, "true") != 0)
+        {
+            char ipv6_nameserver[255];
+
+            ipv6_nameserver[0] = 0;
+            commonSyseventGet("ipv6_nameserver", ipv6_nameserver, sizeof(ipv6_nameserver));
+            if (ipv6_nameserver[0] != 0)
+            {
+                len = AnscSizeOfString(ipv6_nameserver);
+                if ((len > 0) && (rbufsz > (len + 1)))
+                {
+                    char *token = strtok(ipv6_nameserver, " ");
+                    while (token != NULL)
+                    {
+                        if (addcoma)
+                        {
+                            strcat(pValue, ",");
+                        }
+                        strcat(pValue, token);
+                        addcoma = 1;
+                        token = strtok(NULL, " ");
+                    }
+                }
+            }
+
+            return 0;
+        }
+
+        /*
+         * Collect from syscfg db
+         */
+        syscfg_get(NULL,"dns_ipv6_preferred",tmpbuf,sizeof(tmpbuf));
+        len=AnscSizeOfString(tmpbuf);
+        if ((len > 0) && (rbufsz > (len+1))){
+            if (addcoma) {
+                strcat(pValue,",");
+                len+=1;
+            }
+            strcat(pValue,tmpbuf);
+            rbufsz-=len;
+            addcoma=1;
+        }
+
+        syscfg_get(NULL,"dns_ipv6_alternate",tmpbuf,sizeof(tmpbuf));
+        len=AnscSizeOfString(tmpbuf);
+        if ((len > 0) && (rbufsz > (len+1))){
+            if (addcoma) {
+                strcat(pValue,",");
+            }
+            strcat(pValue,tmpbuf);
+        }
+
+        return 0;
     }
 
     if (strcmp(ParamName, "PassthroughClient") == 0)
