@@ -437,11 +437,7 @@ CosaDmlDiGetManufacturer
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-    errno_t rc = strcpy_s(pValue, *pulSize, CONFIG_VENDOR_NAME);
-    if ( rc != EOK) {
-        ERR_CHK(rc);
-        return ANSC_STATUS_FAILURE;
-    }
+    snprintf(pValue, *pulSize, "%s", CONFIG_VENDOR_NAME);
     return ANSC_STATUS_SUCCESS;
 }
 
