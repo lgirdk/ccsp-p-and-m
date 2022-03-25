@@ -315,6 +315,27 @@ BOOL CosaDmlGetPlumeLogpullEnable ( ANSC_HANDLE hContext, BOOL *pValue )
 
 BOOL CosaDmlSetPlumeLogpullEnable ( ANSC_HANDLE hContext, BOOL value )
 {
+#ifdef _PUMA6_ARM_
+    if (value)
+    {
+        // Start icu if not already running
+        system("pidof -x /usr/sbin/icu > /dev/null || /usr/sbin/icu -R -B -p 192.168.254.253:2222");
+    }
+    else
+    {
+        char value[8];
+
+        // icu should only be stopped if both Plume logpull and telemetry are disabled
+        if (syscfg_get(NULL, "T2Enable", value, sizeof(value)) == 0)
+        {
+            if (strcmp(value, "true") != 0)
+            {
+                system("killall -9 icu");
+            }
+        }
+    }
+#endif
+
     if (syscfg_set_commit (NULL, "son_logpull_enable", value ? "1" : "0") == 0)
     {
         return TRUE;
