@@ -133,6 +133,12 @@ CosaLgiPlumeInitialize
         /* Initialize the admin status on ATOM */
         snprintf(rpc_cmd, sizeof(rpc_cmd), "rpcclient2 'echo %s > /tmp/.syscfg_son_admin_status'", pMyObject->plumeAdminStatus ? "1" : "0");
         system(rpc_cmd);
+
+        if (pMyObject->plumeLogpullEnable)
+        {
+            // Start icu if not already running
+            system("pidof -x /usr/sbin/icu > /dev/null || /usr/sbin/icu -R -B -p 192.168.254.253:2222");
+        }
     }
 #endif
 
