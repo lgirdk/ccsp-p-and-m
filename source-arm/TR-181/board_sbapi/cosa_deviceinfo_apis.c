@@ -5079,12 +5079,10 @@ CosaDmlSetRadiusGreyListEnable
     char*                faultParam     = NULL;
     int                  ret            = 0;
     CCSP_MESSAGE_BUS_INFO *bus_info               = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
-    char str[2] = {0};
 
-    snprintf(str, sizeof(str), "%d", bValue);
     if (PSM_Set_Record_Value2(g_MessageBusHandle, g_GetSubsystemPrefix(g_pDslhDmlAgent),
                               "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.RadiusGreyList.Enable",
-                              ccsp_string, str) == CCSP_SUCCESS)
+                              ccsp_string, bValue ? "1" : "0") == CCSP_SUCCESS)
     {
        CcspTraceError(("%s - %d - PSM value is updated successfully\n", __FUNCTION__, __LINE__));
        pVal[0].parameterName  = paramName;
@@ -5109,10 +5107,10 @@ CosaDmlSetRadiusGreyListEnable
            bus_info->freefunc(faultParam);
 
            //Restore the value in PSM
-           snprintf(str, sizeof(str), "%s", bValue ? "0" : "1");
+           char *previous = bValue ? "0" : "1";
            PSM_Set_Record_Value2(g_MessageBusHandle, g_GetSubsystemPrefix(g_pDslhDmlAgent),
                               "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.RadiusGreyList.Enable",
-                              ccsp_string, str);
+                              ccsp_string, previous);
            return FALSE;
        }
 
@@ -5132,7 +5130,6 @@ CosaDmlSetNativeHostapdState
         BOOL        bValue
     )
 {
-    char str[2] = {0};
     parameterValStruct_t pVal[1];
     char                 paramName[256] = "Device.WiFi.X_RDKCENTRAL-COM_EnableHostapdAuthenticator";
     char                 compName[256]  = "eRT.com.cisco.spvtg.ccsp.wifi";
@@ -5141,10 +5138,9 @@ CosaDmlSetNativeHostapdState
     int                  ret            = 0;
     CCSP_MESSAGE_BUS_INFO *bus_info               = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
 
-    snprintf(str, sizeof(str), "%d", bValue);
     if (PSM_Set_Record_Value2(g_MessageBusHandle, g_GetSubsystemPrefix(g_pDslhDmlAgent),
                               "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Control.DisableNativeHostapd",
-                              ccsp_string, str) == CCSP_SUCCESS)
+                              ccsp_string, bValue ? "1" : "0") == CCSP_SUCCESS)
     {
         CcspTraceInfo(("%s - %d - PSM value is updated successfully\n", __FUNCTION__, __LINE__));
         pVal[0].parameterName  = paramName;
@@ -5169,10 +5165,10 @@ CosaDmlSetNativeHostapdState
             bus_info->freefunc(faultParam);
 
             //Restore the value in PSM
-            snprintf(str, sizeof(str), "%s", bValue ? "0" : "1");
+            char *previous = bValue ? "0" : "1";
             PSM_Set_Record_Value2(g_MessageBusHandle, g_GetSubsystemPrefix(g_pDslhDmlAgent),
                                "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Control.DisableNativeHostapd",
-                               ccsp_string, str);
+                               ccsp_string, previous);
             return FALSE;
         }
 
@@ -5187,7 +5183,6 @@ CosaDmlSetNativeHostapdState
 
 BOOL CosaDmlSetDFS(BOOL bValue)
 {
-    char str[2] = {0};
     parameterValStruct_t pVal[1];
     char                 paramName[256] = "Device.WiFi.DFS";
     char                 compName[256]  = "eRT.com.cisco.spvtg.ccsp.wifi";
@@ -5196,10 +5191,9 @@ BOOL CosaDmlSetDFS(BOOL bValue)
     int                  ret            = 0;
     CCSP_MESSAGE_BUS_INFO *bus_info               = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
 
-    snprintf(str, sizeof(str), "%d", bValue);
     if (PSM_Set_Record_Value2(g_MessageBusHandle, g_GetSubsystemPrefix(g_pDslhDmlAgent),
                               "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.DFS.Enable",
-                              ccsp_string, str) == CCSP_SUCCESS)
+                              ccsp_string, bValue ? "1" : "0") == CCSP_SUCCESS)
     {
         CcspTraceInfo(("%s - %d - PSM value is updated successfully\n", __FUNCTION__, __LINE__));
         pVal[0].parameterName  = paramName;
@@ -5224,10 +5218,10 @@ BOOL CosaDmlSetDFS(BOOL bValue)
             bus_info->freefunc(faultParam);
 
             //Restore the value in PSM
-            snprintf(str, sizeof(str), "%s", bValue ? "0" : "1");
+            char *previous = bValue ? "0" : "1";
             PSM_Set_Record_Value2(g_MessageBusHandle, g_GetSubsystemPrefix(g_pDslhDmlAgent),
                                "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.DFS.Enable",
-                               ccsp_string, str);
+                               ccsp_string, previous);
             return FALSE;
         }
 
