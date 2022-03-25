@@ -9558,17 +9558,9 @@ ErrorsReceived_RFC_SetParamBoolValue
     
     if (strcmp(ParamName, "Enable") == 0)
     {
-       char str[2];
        int retPsmGet = CCSP_SUCCESS;
-       errno_t rc  = -1;
 
-       rc = sprintf_s(str, sizeof(str),"%d",bValue);
-       if(rc < EOK)
-       {
-         ERR_CHK(rc);
-         return FALSE;
-       }
-       retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.ErrorsReceived.Enable", ccsp_string, str);
+       retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.ErrorsReceived.Enable", ccsp_string, bValue ? "1" : "0");
        if (retPsmGet != CCSP_SUCCESS) {
            CcspTraceError(("Set failed for ErrorsReceived RFC enable \n"));
            return FALSE;
@@ -13258,23 +13250,18 @@ off_channel_scan_SetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     if (strcmp(ParamName, "Enable") == 0)
     {
-        char str[8];
         int retPsmGet = CCSP_SUCCESS;
 
-        sprintf(str,"%d",bValue);
-        retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDK_RFC.Feature.OffChannelScan.Enable", ccsp_string, str);
+        retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDK_RFC.Feature.OffChannelScan.Enable", ccsp_string, bValue ? "1" : "0");
         if (retPsmGet != CCSP_SUCCESS)
         {
             CcspTraceError(("Set failed for 5G off channel scan RFC  \n"));
             return FALSE;
         }
         CcspTraceInfo(("Successfully set 5g off channel scan RFC \n"));
-        if (strcmp(str,"1") == 0) {
-            v_secure_system("sysevent set wifi_OffChannelScanEnable true");
-        }
-        else if (strcmp(str,"0") == 0){
-            v_secure_system("sysevent set wifi_OffChannelScanEnable false");
-        }
+
+        v_secure_system("sysevent set wifi_OffChannelScanEnable %s", bValue ? "true" : "false");
+
         return TRUE;
     }
     return FALSE;
@@ -13390,7 +13377,6 @@ WiFiPsmDb_SetParamBoolValue
     int   ret   = 0;
     if (strcmp(ParamName, "Enable") == 0)
     {
-	char str[2];
 	int retPsmGet = CCSP_SUCCESS;
 
 	retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.WiFi-PSM-DB.Enable", ccsp_string, bValue ? "1" : "0");
@@ -13399,7 +13385,7 @@ WiFiPsmDb_SetParamBoolValue
 	    return FALSE;
 	}
 	CcspTraceInfo(("Successfully set WiFi-PSM-DB \n"));
-        ret = CcspBaseIf_SendSignal_WithData(bus_handle, "WifiDbStatus" , str);
+        ret = CcspBaseIf_SendSignal_WithData(bus_handle, "WifiDbStatus", bValue ? "1" : "0");
         if ( ret != CCSP_SUCCESS ) {
             CcspTraceError(("%s : WifiDbStatus send data failed,  ret value is %d\n",__FUNCTION__ ,ret));
         }
