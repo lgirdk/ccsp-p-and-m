@@ -196,13 +196,6 @@ ANSC_STATUS
 #endif
 
 ANSC_STATUS
-CosaDmlGetCloudUIReachableStatus
-    (
-		CHAR *pCloudPersonalizationURL,
-        BOOL *pValue
-    );
-
-ANSC_STATUS
 CosaDmlGetCaptivePortalEnable
     (
         BOOL *pValue
