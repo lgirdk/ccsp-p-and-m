@@ -702,61 +702,6 @@ ANSC_STATUS
 	return ANSC_STATUS_SUCCESS;
 }
 
-ANSC_STATUS
-CosaDmlGetCloudUIReachableStatus
-    (
-		CHAR *pCloudPersonalizationURL,
-        BOOL *pValue
-    )
-{
-	ANSC_STATUS returnStatus   = ANSC_STATUS_SUCCESS;
-	BOOL 		bProcessFuther = TRUE;
-	/* Received Param Validation */
-	if( NULL == pCloudPersonalizationURL )
-	{
-		*pValue        = FALSE;
-		returnStatus   = ANSC_STATUS_FAILURE;
-		bProcessFuther = FALSE;		
-	}
-
-	if( bProcessFuther )
-	{
-		FILE  *fp;
-                char   retBuff[256]   = { 0 };
-		int    curlResponse   = 0;
-                
-                fp = v_secure_popen( "r", "curl --connect-timeout 10 --interface erouter0 --write-out %%{http_code} --silent --output /dev/null '%s'", pCloudPersonalizationURL );
-
-		if( NULL != fp )
-		{
-			fgets( retBuff, sizeof(retBuff), fp );
-                        v_secure_pclose(fp);
-			curlResponse = atoi(retBuff);
-
-			CcspTraceInfo(("URL[ %s ] curlResponse[ %d ]\n",
-									pCloudPersonalizationURL,
-									curlResponse));
-		
-			if( ( curlResponse >= 200 ) && \
-				( curlResponse < 400 ) 
-			  )
-			{
-				*pValue = TRUE;
-			}
-			else
-			{
-				*pValue = FALSE;
-			}
-		}
-		else
-		{
-			*pValue = FALSE;
-		}
-	}
-	
-    return returnStatus;
-}
-
 #if defined(INTEL_PUMA7) || defined(_XB6_PRODUCT_REQ_) || defined(_CBR2_PRODUCT_REQ_)
 ANSC_STATUS
 CosaDmlSetLED
