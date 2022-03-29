@@ -9785,9 +9785,9 @@
 
             <name>InternalClient</name>
 
-            <type>string</type>
+            <type>string(256)</type>
 
-            <syntax>uint32/ip4_addr</syntax>
+            <syntax>string</syntax>
 
             <writable>true</writable>
 
