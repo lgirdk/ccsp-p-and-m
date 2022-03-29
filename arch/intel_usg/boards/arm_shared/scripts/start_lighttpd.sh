@@ -50,12 +50,6 @@ lighttpd_start()
 			echo '}'
 			} >> $CONF_FILE
 		fi
-
-		if [ ! -f /var/gateway.conf ]
-		then
-			# gateway.conf needs to be found in the same dir as lighttpd.conf
-			ln -sf /etc/lighttpd/gateway.conf /var/gateway.conf
-		fi
 	fi
 
 	if [ "${LOCAL_UI_ENABLE}" = "true" ]
