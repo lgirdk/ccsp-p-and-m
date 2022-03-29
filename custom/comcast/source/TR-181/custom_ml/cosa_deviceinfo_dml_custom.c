@@ -200,21 +200,6 @@ DeviceInfo_GetParamBoolValue_Custom
 	    return TRUE;
     }
 
-    if (strcmp(ParamName, "X_RDKCENTRAL-COM_IsCloudReachable") == 0)
-    {
-	CcspTraceWarning(("IsCloudReachable: %s \n",pMyObject->CloudPersonalizationURL));
-
-	*pBool = FALSE;
-	/* Get the CloudURL reachable status */
-	if ( ANSC_STATUS_SUCCESS != CosaDmlGetCloudUIReachableStatus( pMyObject->CloudPersonalizationURL,
-			  pBool ) )
-	{
-            *pBool = FALSE;
-            return FALSE;
-	}
-
-	return TRUE;
-    }
     if (strcmp(ParamName, "X_RDKCENTRAL-COM_EnableMoCAforXi5") == 0)
     {
        *pBool = pMyObject->bEnableMoCAforXi5;
