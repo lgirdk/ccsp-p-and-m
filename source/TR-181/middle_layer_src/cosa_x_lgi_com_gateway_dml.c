@@ -205,6 +205,12 @@ static BOOL isValidIPv4DNS (char *dnsAddr)
     char IPAddr[16] = {0};
     ULONG ulSize = sizeof(IPAddr);
 
+    // Allow default empty string
+    if (strlen(dnsAddr) == 0)
+    {
+        return TRUE;
+    }
+
     if(!inet_pton(AF_INET, dnsAddr, &dnsIPBuf))
         return FALSE;
 
@@ -247,6 +253,12 @@ static BOOL isValidIPv6DNS (char *dnsAddr)
     char wan_prefix[64];
     char wan_ipaddr[64];
     int mode;
+
+    // Allow default empty string
+    if (strlen(dnsAddr) == 0)
+    {
+        return TRUE;
+    }
 
     if(!inet_pton(AF_INET6, dnsAddr, buf))
         return FALSE;
