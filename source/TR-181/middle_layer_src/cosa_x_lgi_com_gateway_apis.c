@@ -94,98 +94,46 @@ int CosaDmlLgiGwSetDnsOverride ( BOOL bValue )
 
 int CosaDmlLgiGwGetDnsIpv4Preferred ( char *pValue, ULONG *pUlSize )
 {
-    char buf[64];
+    /*
+       Returning an empty string (ie the default behaviour
+       since no default syscfg value is defined) ie OK.
+    */
+    syscfg_get(NULL, "dns_ipv4_preferred", pValue, *pUlSize);
 
-    syscfg_get(NULL, "dns_ipv4_preferred", buf, sizeof(buf));
-
-    if (AnscSizeOfString(buf) == 0)
-    {
-        AnscCopyString(pValue, "0.0.0.0");
-        return 0;
-    }
-
-    if (AnscSizeOfString(buf) < *pUlSize)
-    {
-        AnscCopyString(pValue, buf);
-        return 0;
-    }
-    else
-    {
-        *pUlSize = AnscSizeOfString(buf);
-        return 1;
-    }
+    return 0;
 }
 
 int CosaDmlLgiGwGetDnsIpv4Alternate ( char *pValue, ULONG *pUlSize )
 {
-    char buf[64];
+    /*
+       Returning an empty string (ie the default behaviour
+       since no default syscfg value is defined) ie OK.
+    */
+    syscfg_get(NULL, "dns_ipv4_alternate", pValue, *pUlSize);
 
-    syscfg_get(NULL, "dns_ipv4_alternate", buf, sizeof(buf));
-
-    if (AnscSizeOfString(buf) == 0)
-    {
-        AnscCopyString(pValue, "0.0.0.0");
-        return 0;
-    }
-
-    if (AnscSizeOfString(buf) < *pUlSize)
-    {
-        AnscCopyString(pValue, buf);
-        return 0;
-    }
-    else
-    {
-        *pUlSize = AnscSizeOfString(buf);
-        return 1;
-    }
+    return 0;
 }
 
 int CosaDmlLgiGwGetDnsIpv6Preferred ( char *pValue, ULONG *pUlSize )
 {
-    char buf[64];
+    /*
+       Returning an empty string (ie the default behaviour
+       since no default syscfg value is defined) ie OK.
+    */
+    syscfg_get(NULL, "dns_ipv6_preferred", pValue, *pUlSize);
 
-    syscfg_get(NULL, "dns_ipv6_preferred", buf, sizeof(buf));
-
-    if (AnscSizeOfString(buf) == 0)
-    {
-        AnscCopyString(pValue, "0:0:0:0:0:0:0:0");
-        return 0;
-    }
-
-    if (AnscSizeOfString(buf) < *pUlSize)
-    {
-        AnscCopyString(pValue, buf);
-        return 0;
-    }
-    else
-    {
-        *pUlSize = AnscSizeOfString(buf);
-        return 1;
-    }
+    return 0;
 }
 
 int CosaDmlLgiGwGetDnsIpv6Alternate ( char *pValue, ULONG *pUlSize )
 {
-    char buf[64];
+    /*
+       Returning an empty string (ie the default behaviour
+       since no default syscfg value is defined) ie OK.
+    */
+    syscfg_get( NULL, "dns_ipv6_alternate", pValue, *pUlSize);
 
-    syscfg_get( NULL, "dns_ipv6_alternate", buf, sizeof(buf));
-
-    if (AnscSizeOfString(buf) == 0)
-    {
-        AnscCopyString(pValue, "0:0:0:0:0:0:0:0");
-        return 0;
-    }
-
-    if (AnscSizeOfString(buf) < *pUlSize)
-    {
-        AnscCopyString(pValue, buf);
-        return 0;
-    }
-    else
-    {
-        *pUlSize = AnscSizeOfString(buf);
-        return 1;
-    }
+    return 0;
 }
 
 ANSC_STATUS CosaDml_Gateway_GetErouterInitMode(ULONG *pInitMode)
