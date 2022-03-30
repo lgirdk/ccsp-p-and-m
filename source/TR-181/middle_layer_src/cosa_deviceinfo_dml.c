@@ -19597,25 +19597,16 @@ MAPT_DeviceInfo_SetParamBoolValue
 
   if (strcmp(ParamName, "Enable") == 0)
     {
-        char buf[8] = {'\0'};
-        snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
-        if( syscfg_set(NULL, "MAPT_Enable", buf) != 0 )
+        if (syscfg_set_commit(NULL, "MAPT_Enable", bValue ? "true" : "false") != 0 )
         {
             CcspTraceError(("syscfg_set failed for MAPT_Enable \n"));
         }
         else
         {
-            if( syscfg_commit() == 0 )
-            {
 #ifdef FEATURE_MAPT
-                v_secure_system("sysevent set MAPT_Enable %s", buf);
+            v_secure_system("sysevent set MAPT_Enable %s", bValue ? "true" : "false");
 #endif
-                return TRUE;
-            }
-            else
-            {
-                 CcspTraceError(("syscfg_commit failed for MAPT_Enable \n"));
-            }
+            return TRUE;
         }
     }
   return FALSE;
@@ -22051,15 +22042,9 @@ AutoReboot_SetParamBoolValue
             CcspTraceInfo(("[%s:] AutoReboot Set current and previous values are same\n", __FUNCTION__ ));
             return TRUE;
         }
-        char buf[8] = { '\0' };
-        snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
-        if (syscfg_set(NULL, "AutoReboot", buf) != 0)
+        if (syscfg_set_commit(NULL, "AutoReboot", bValue ? "true" : "false") != 0)
         {
             CcspTraceError(("syscfg_set failed for AutoReboot.Enable\n"));
-        }
-        else
-        {
-            syscfg_commit();
         }
         CcspTraceInfo(("[%s:] AutoReboot Set param Enable value %d\n", __FUNCTION__, bValue));
         pMyObject->AutoReboot.Enable = bValue;
@@ -22604,17 +22589,16 @@ BOOL                        bValue
 
        if ( bValue == TRUE)
        {
-          syscfg_set(NULL, "nfc_enabled", "true");
+          syscfg_set_commit(NULL, "nfc_enabled", "true");
           //Start RdkNfcManager systemd service to start nfc services.
           v_secure_system("systemctl start RdkNfcManager.service");
        }
        else
        {
-          syscfg_set(NULL, "nfc_enabled", "false");
+          syscfg_set_commit(NULL, "nfc_enabled", "false");
           //Stop RdkNfcManager systemd service to stop nfc services.
           v_secure_system("systemctl stop RdkNfcManager.service");
        }
-       syscfg_commit();
 
        return TRUE;
     }
