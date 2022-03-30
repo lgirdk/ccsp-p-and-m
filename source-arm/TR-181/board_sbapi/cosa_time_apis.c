@@ -595,7 +595,7 @@ CosaDmlTimeSetCfg
     )
 {
     UtopiaContext ctx;
-    char buf[32] = {0};
+    char buf[128] = {0};
     int rc = 0;
     errno_t  safec_rc = -1;
     UNREFERENCED_PARAMETER(hContext);
@@ -611,6 +611,12 @@ CosaDmlTimeSetCfg
           return ERR_UTCTX_INIT;
        /* Set Local TZ to SysCfg */
        rc = Utopia_Set_DeviceTime_LocalTZ(&ctx, (char*)&(pTimeCfg->LocalTimeZone));
+
+#ifdef _PUMA6_ARM_
+       /* Add the new timezone to a file on atom side */
+       snprintf(buf, sizeof(buf), "rpcclient2 \"echo TZ='%s' > /nvram/TZ\"", pTimeCfg->LocalTimeZone);
+       system(buf);
+#endif
 
        /*set city index */
        safec_rc = sprintf_s(buf, sizeof(buf), "%lu",pTimeCfg->cityIndex);
