@@ -14614,6 +14614,8 @@
         <func_SetParamBoolValue>X_CISCO_COM_DeviceControl_SetParamBoolValue</func_SetParamBoolValue>
         <func_GetParamStringValue>X_CISCO_COM_DeviceControl_GetParamStringValue</func_GetParamStringValue>
         <func_SetParamStringValue>X_CISCO_COM_DeviceControl_SetParamStringValue</func_SetParamStringValue>
+        <func_GetParamUlongValue>X_CISCO_COM_DeviceControl_GetParamUlongValue</func_GetParamUlongValue>
+        <func_SetParamUlongValue>X_CISCO_COM_DeviceControl_SetParamUlongValue</func_SetParamUlongValue>
         <func_Validate>X_CISCO_COM_DeviceControl_Validate</func_Validate>
         <func_Commit>X_CISCO_COM_DeviceControl_Commit</func_Commit>
         <func_Rollback>X_CISCO_COM_DeviceControl_Rollback</func_Rollback>
@@ -14637,6 +14639,12 @@
             <syntax>string</syntax>            
             <writable>true</writable>            
           </parameter>          
+          <parameter>
+            <name>SessionTimeout</name>
+            <type>unsignedInt</type>
+            <syntax>uint32</syntax>
+            <writable>true</writable>
+         </parameter>
       </parameters>      
     </object>    
     </objects>
