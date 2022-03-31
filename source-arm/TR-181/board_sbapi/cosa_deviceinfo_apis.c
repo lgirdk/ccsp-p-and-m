@@ -3519,20 +3519,18 @@ void* RebootDevice_thread(void* buff)
 		
     if (all) {
 
-		char buf[7] = {0};
+		char buf[12];
 		int rebootcount = 0;
-    	syscfg_get( NULL, "reboot_count", buf, sizeof(buf));
+		syscfg_get( NULL, "reboot_count", buf, sizeof(buf));
 		rebootcount = atoi(buf);
 		rebootcount++;
-		memset(buf,0,sizeof(buf));
-		snprintf(buf,sizeof(buf),"%d",rebootcount);
-		syscfg_set(NULL, "reboot_count", buf);
+		syscfg_set_u(NULL, "reboot_count", (unsigned long) rebootcount);
 
 		FILE *fp = NULL;
-		char buffer[50] = {0};
+		char buffer[50];
 		memset(buffer,0,sizeof(buffer));
-        fp = v_secure_popen("r", "date");
-		if( fp != NULL) {         
+		fp = v_secure_popen("r", "date");
+		if( fp != NULL) {
 		    while(fgets(buffer, sizeof(buffer), fp)!=NULL){
 			    buffer[strlen(buffer) - 1] = '\0';
 				syscfg_set(NULL, "latest_reboot_time", buffer);
@@ -3540,10 +3538,9 @@ void* RebootDevice_thread(void* buff)
 			v_secure_pclose(fp);
 		}
 
-		char tmp[7] = {0};
-		syscfg_get(NULL, "restore_reboot", tmp, sizeof(tmp));
+		syscfg_get(NULL, "restore_reboot", buf, sizeof(buf));
 
-		if(strcmp(tmp,"true") != 0)
+		if(strcmp(buf,"true") != 0)
 		{
 			if (syscfg_commit() != 0)
 			{
