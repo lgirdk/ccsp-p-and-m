@@ -2735,8 +2735,18 @@ CosaDmlDcSetSSHEnable
             return ANSC_STATUS_FAILURE;
 
     if (flag != bSSHEnable) {
+        syscfg_set(NULL, "mgmt_lan_sshaccess", "0");
         syscfg_set_commit(NULL, "mgmt_wan_sshaccess", flag ? "1" : "0");
-        v_secure_system("sysevent set firewall-restart");
+
+        if (flag) {
+            v_secure_system("sysevent set firewall-restart ; "
+                            "sysevent set sshd-start");
+        }
+        else {
+            v_secure_system("sysevent set firewall-restart ; "
+                            "sysevent set sshd-stop ; "
+                            "killall dropbear");
+        }
 
         if (platform_hal_SetSSHEnable(flag) == RETURN_ERR )
             return ANSC_STATUS_FAILURE;
@@ -4510,6 +4520,18 @@ CosaDmlDcGetWebUITimeout
         return ANSC_STATUS_SUCCESS;
 }
 
+ANSC_STATUS CosaDmlDcGetSSHSessionTimeout ( ANSC_HANDLE hContext, ULONG *pValue )
+{
+    UNREFERENCED_PARAMETER(hContext);
+
+    char buf[12];
+
+    syscfg_get(NULL, "session_ssh_timer", buf, sizeof(buf));
+    *pValue = (ULONG) atoi(buf);
+
+    return ANSC_STATUS_SUCCESS;
+}
+
 ANSC_STATUS
 CosaDmlDcGetPowerSavingModeStatus
     (
@@ -4548,6 +4570,20 @@ CosaDmlDcSetWebUITimeout
             return ANSC_STATUS_SUCCESS;    
     }else
         return ANSC_STATUS_FAILURE;
+}
+
+ANSC_STATUS CosaDmlDcSetSSHSessionTimeout ( ANSC_HANDLE hContext, ULONG uValue )
+{
+    UNREFERENCED_PARAMETER(hContext);
+
+    if (syscfg_set_u_commit(NULL, "session_ssh_timer", uValue) != 0)
+    {
+        AnscTraceWarning(("syscfg_set failed\n"));
+    }
+
+    v_secure_system("sysevent set firewall-restart");
+
+    return ANSC_STATUS_SUCCESS;
 }
 
 static void configBridgeMode(int bEnable) {
