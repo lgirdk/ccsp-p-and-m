@@ -306,6 +306,8 @@ X_CISCO_COM_DeviceControl_GetParamBoolValue
      */
     if (strcmp(ParamName, "Enable") == 0)
     {      
+        if (CosaDmlDcGetSSHEnable(NULL, pBool) != ANSC_STATUS_SUCCESS)
+            return FALSE;
         return TRUE;
     }
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
@@ -531,6 +533,14 @@ X_CISCO_COM_DeviceControl_GetParamUlongValue
         /* collect value */
         *puLong = CosaDmlGetMocaHardwareStatus(NULL);
         return TRUE;
+    }
+
+    if (strcmp(ParamName, "SessionTimeout") == 0)
+    {
+        if (CosaDmlDcGetSSHSessionTimeout(NULL,puLong) != ANSC_STATUS_SUCCESS)
+            return FALSE;
+
+       return TRUE;
     }
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
@@ -913,8 +923,13 @@ X_CISCO_COM_DeviceControl_SetParamBoolValue
      */    
     if (strcmp(ParamName, "Enable") == 0)
     {
-      fprintf(stderr,"\n %s %d  *** TODO ***",__func__,__LINE__);
-      return TRUE;
+       pMyObject->Enable = bValue;
+
+       retStatus = CosaDmlDcSetSSHEnable(NULL, pMyObject->Enable);
+       if (retStatus != ANSC_STATUS_SUCCESS)
+           return FALSE;
+
+       return TRUE;
     }
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
@@ -1170,6 +1185,17 @@ X_CISCO_COM_DeviceControl_SetParamUlongValue
         return TRUE;
     }
  
+    if (strcmp(ParamName, "SessionTimeout") == 0)
+    {
+        pMyObject->SessionTimeout = uValue;
+
+        retStatus = CosaDmlDcSetSSHSessionTimeout(NULL, pMyObject->SessionTimeout);
+        if (retStatus != ANSC_STATUS_SUCCESS)
+            return FALSE;
+
+        return TRUE;
+    }
+
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
 }
