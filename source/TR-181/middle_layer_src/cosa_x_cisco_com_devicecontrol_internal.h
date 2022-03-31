@@ -162,6 +162,8 @@ COSA_DML_MultiHomedMode, *PCOSA_DML_MultiHomedMode;
     BOOL                                    WebServerChanged;               \
     ULONG                                   IGMPSnoopingEnable;                     \
     ULONG                                   WebUITimeout;                     \
+    ULONG                                   Enable;                         \
+    ULONG                                   SessionTimeout;                 \
     BOOL                                    EnableMonitorUserChangedParams; \
     ULONG                                   UserOpComponents;               \
     BOOL                                   bFactoryResetChanged;               \
