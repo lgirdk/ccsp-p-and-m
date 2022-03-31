@@ -632,6 +632,13 @@ CosaDmlDcGetWebUITimeout
     );
 
 ANSC_STATUS
+CosaDmlDcGetSSHSessionTimeout
+    (
+        ANSC_HANDLE                 hContext,
+        ULONG                       *pValue
+    );
+
+ANSC_STATUS
 CosaDmlDcGetPowerSavingModeStatus
     (
         ANSC_HANDLE                 hContext,
@@ -745,6 +752,13 @@ CosaDmlDcSetReinitMacThreshold
 
 ANSC_STATUS
 CosaDmlDcSetWebUITimeout
+    (
+        ANSC_HANDLE                 hContext,
+        ULONG                       value
+    );
+
+ANSC_STATUS
+CosaDmlDcSetSSHSessionTimeout
     (
         ANSC_HANDLE                 hContext,
         ULONG                       value
