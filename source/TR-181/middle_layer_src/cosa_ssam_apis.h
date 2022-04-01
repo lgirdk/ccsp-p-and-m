@@ -19,7 +19,7 @@
 
 #define SSAM_PARTITION      "/var/sam"
 #define SSAM_LOADER         "/var/sam_loader"
-#define SSAM_PID_FILE       "/var/tmp/.sam.pid"
+#define SSAM_PID_FILE       "/var/sam/.sam.pid"
 #define SSAM_LOCK           "/var/tmp/ssam_lock"
 #define SSAM_ENV            "/var/tmp/environment"
 
