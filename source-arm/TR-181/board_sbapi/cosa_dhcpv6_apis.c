@@ -6304,7 +6304,7 @@ CosaDmlDhcpv6sSetPoolCfg
         if ( ( 0 != strcmp( (const char*)pCfg->PrefixRangeBegin, (const char*)sDhcpv6ServerPool[Index].Cfg.PrefixRangeBegin ) ) || \
              ( 0 != strcmp( (const char*)pCfg->PrefixRangeEnd, (const char*)sDhcpv6ServerPool[Index].Cfg.PrefixRangeEnd ) ) )
         {
-            v_secure_system("gw_lan_refresh");
+            v_secure_system("gw_lan_refresh &");
         }
 //#endif
 
@@ -6329,7 +6329,7 @@ CosaDmlDhcpv6sSetPoolCfg
         if ( ( 0 != strcmp((const char*)pCfg->PrefixRangeBegin, (const char*)sDhcpv6ServerPool[DHCPV6S_POOL_NUM -1].Cfg.PrefixRangeBegin)) ||
              ( 0 != strcmp((const char*)pCfg->PrefixRangeEnd, (const char*)sDhcpv6ServerPool[DHCPV6S_POOL_NUM -1].Cfg.PrefixRangeEnd ) ) )
         {
-            v_secure_system("gw_lan_refresh");
+            v_secure_system("gw_lan_refresh &");
         }
 //#endif
 
