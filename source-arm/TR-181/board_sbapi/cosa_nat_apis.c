@@ -2571,7 +2571,24 @@ CosaDmlNatGetPortMappings
 
             if ( TRUE )
             {
-                AnscCopyString(pNatPMapping[ulIndex].InternalClient, dynInfo.internal_host);
+                char* pCh    = NULL;
+                char* pStart = dynInfo.internal_host;
+                ULONG j;
+
+                for ( j = 0; j < IPV4_ADDRESS_SIZE; j++ )
+                {
+                    pCh = _ansc_strchr(pStart, '.');
+                    if ( pCh )
+                    {
+                        *pCh = 0;
+                        pNatPMapping[ulIndex].InternalClient.Dot[j] = _ansc_atoi(pStart);
+                        pStart = pCh + 1;
+                    }
+                    else
+                    {
+                        pNatPMapping[ulIndex].InternalClient.Dot[j] = _ansc_atoi(pStart);
+                    }
+                }
             }
 
             AnscCopyString(pNatPMapping[ulIndex].Description, dynInfo.name);
