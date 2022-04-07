@@ -1480,16 +1480,12 @@ CosaDmlDcRebootWifi(ANSC_HANDLE   hContext)
 		    CcspTraceError(("RebootDevice:%s Failed to SetValue for param '%s'\n",__FUNCTION__,faultParam));
 		    bus_info->freefunc(faultParam);
 		} else {
-
-			char buf[7] = {0};
+			char buf[12];
 			int wifiresetcount = 0;
 			syscfg_get( NULL, "wifi_reset_count", buf, sizeof(buf));
 			wifiresetcount = atoi(buf);
 			wifiresetcount++;
-			memset(buf,0,sizeof(buf));
-			rc = sprintf_s(buf,sizeof(buf),"%d",wifiresetcount);
-			if( rc < EOK ) ERR_CHK(rc);
-			syscfg_set(NULL, "wifi_reset_count", buf);
+			syscfg_set_u(NULL, "wifi_reset_count", wifiresetcount);
 
 			FILE *fp = NULL;
 			safec_rc = strcpy_s(buf, sizeof(buf), "date");
@@ -1660,16 +1656,12 @@ CosaDmlDcSetRebootDevice
     }
 
     if (all) {
-
-		char buf[7] = {0};
+		char buf[12];
 		int rebootcount = 0;
-    	syscfg_get( NULL, "reboot_count", buf, sizeof(buf));
+		syscfg_get( NULL, "reboot_count", buf, sizeof(buf));
 		rebootcount = atoi(buf);
 		rebootcount++;
-		memset(buf,0,sizeof(buf));
-		rc = sprintf_s(buf,sizeof(buf),"%d",rebootcount);
-		if( rc < EOK ) ERR_CHK(rc);
-	syscfg_set(NULL, "reboot_count", buf);
+		syscfg_set_u(NULL, "reboot_count", rebootcount);
 
 		FILE *fp = NULL;
 		char buffer[50] = {0};
@@ -2899,19 +2891,19 @@ CosaDmlDcSetTelnetEnable
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-    #if defined(_CBR_PRODUCT_REQ_) || defined (_BWG_PRODUCT_REQ_)
-        return ANSC_STATUS_FAILURE;
-    #endif
-    char buf[5];
     BOOLEAN bTelnetEnable;
+
+#if defined(_CBR_PRODUCT_REQ_) || defined (_BWG_PRODUCT_REQ_)
+    return ANSC_STATUS_FAILURE;
+#endif
+
     printf("%s \n", __FUNCTION__);
     //printf("%s got flag = %d\n", __FUNCTION__, flag);
     if (CosaDmlDcGetTelnetEnable(NULL, &bTelnetEnable) == ANSC_STATUS_FAILURE)
         return ANSC_STATUS_FAILURE;
 
     if (flag != bTelnetEnable) {
-        snprintf(buf,sizeof(buf),"%d",flag);
-        syscfg_set_commit( NULL, "mgmt_wan_telnetaccess", buf);
+        syscfg_set_commit(NULL, "mgmt_wan_telnetaccess", flag ? "1" : "0");
         v_secure_system("sysevent set firewall-restart");
 
         if (platform_hal_SetTelnetEnable(flag) == RETURN_ERR )
@@ -2928,16 +2920,15 @@ CosaDmlDcSetSSHEnable
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-    char buf[5];
     BOOLEAN bSSHEnable;
 
     if (CosaDmlDcGetSSHEnable(NULL, &bSSHEnable) == ANSC_STATUS_FAILURE)
             return ANSC_STATUS_FAILURE;
 
     if (flag != bSSHEnable) {
-        snprintf(buf,sizeof(buf),"%d",flag);
-        syscfg_set_commit( NULL, "mgmt_wan_sshaccess", buf);
+        syscfg_set_commit(NULL, "mgmt_wan_sshaccess", flag ? "1" : "0");
         v_secure_system("sysevent set firewall-restart");
+
         if (platform_hal_SetSSHEnable(flag) == RETURN_ERR )
             return ANSC_STATUS_FAILURE;
     }   
@@ -4090,8 +4081,6 @@ CosaDmlLanMngm_SetConf(ULONG ins, PCOSA_DML_LAN_MANAGEMENT pLanMngm)
 	char pComponentPath[64]="/com/cisco/spvtg/ccsp/moca";
 	char *paramNames[]={"Device.MoCA.Interface.1.Enable"};
 	int nval;
-	char buf[16];
-	int MoCAstate;
 #endif
     
     COSA_DML_LAN_MANAGEMENT orgLanMngm;
@@ -4149,13 +4138,13 @@ CosaDmlLanMngm_SetConf(ULONG ins, PCOSA_DML_LAN_MANAGEMENT pLanMngm)
 		    &nval,
 		    &valMoCAstatus);
                  if( CCSP_SUCCESS == ret ){
+			char *MoCAstate;
 			CcspTraceWarning(("valMoCAstatus[0]->parameterValue = %s\n",valMoCAstatus[0]->parameterValue));
 			if(strcmp("true", valMoCAstatus[0]->parameterValue)==0)
-					MoCAstate=1;
+				MoCAstate = "1";
 			else
-					MoCAstate=0;
-			snprintf(buf,sizeof(buf),"%d",MoCAstate);
-			if ((syscfg_set_commit(NULL, "MoCA_current_status", buf) != 0))
+				MoCAstate = "0";
+			if ((syscfg_set_commit(NULL, "MoCA_current_status", MoCAstate) != 0))
 		        {
                             Utopia_Free(&utctx, 0);
                             CcspTraceWarning(("syscfg_set failed\n"));
