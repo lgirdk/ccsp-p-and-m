@@ -14,6 +14,7 @@
  * limitations under the License.
  ****************************************************************************/
 
+#include <unistd.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <ansc_platform.h>
@@ -258,6 +259,11 @@ void ssam_start (void)
 
         /* Temp workaround for older versions of ssam-bin */
         if (system("ln -s /etc/certs/amazon.pem /var/sam/.amazon.pem") != 0) {
+            return;
+        }
+
+        /* Make SSAM specific libnl3.so available in /var/sam */
+        if (symlink("/opt/ssam/lib/libnl3.so", "/var/sam/libnl3.so") != 0) {
             return;
         }
     }
