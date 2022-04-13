@@ -163,3 +163,57 @@ ULONG CosaDmlMulticastSetM2UMaxSessions ( ANSC_HANDLE hContext, ULONG uValue )
 #endif
     return ANSC_STATUS_SUCCESS;
 }
+
+ULONG CosaDmlMulticastGetMaxThrottlingRate ( ANSC_HANDLE hContext, ULONG* puLong )
+{
+    char buf[8];
+
+    syscfg_get (NULL, "igmp_mld_throttle_rate", buf, sizeof(buf));
+    *puLong = atoi(buf);
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ULONG CosaDmlMulticastSetMaxThrottlingRate ( ANSC_HANDLE hContext, ULONG uValue )
+{
+    if( syscfg_set_u(NULL, "igmp_mld_throttle_rate", uValue) != 0)
+        return ANSC_STATUS_FAILURE;
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ULONG CosaDmlMulticastGetMaxThrottlingHoldTime ( ANSC_HANDLE hContext, ULONG* puLong )
+{
+    char buf[8];
+
+    syscfg_get (NULL, "igmp_mld_throttle_holdtime", buf, sizeof(buf));
+    *puLong = atoi(buf);
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ULONG CosaDmlMulticastSetMaxThrottlingHoldTime ( ANSC_HANDLE hContext, ULONG uValue )
+{
+    if( syscfg_set_u(NULL, "igmp_mld_throttle_holdtime", uValue) != 0)
+         return ANSC_STATUS_FAILURE;
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ULONG CosaDmlMulticastGetFastLeaveEnable ( ANSC_HANDLE hContext, BOOL *pValue )
+{
+    char buf[8];
+
+    syscfg_get (NULL, "igmp_mld_proxy_fastleave", buf, sizeof(buf));
+    *pValue = (strcmp(buf, "1") == 0);
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ULONG CosaDmlMulticastSetFastLeaveEnable ( ANSC_HANDLE hContext, BOOL bValue )
+{
+    if (syscfg_set (NULL, "igmp_mld_proxy_fastleave", bValue ? "1" : "0") != 0)
+        return ANSC_STATUS_FAILURE;
+
+    return ANSC_STATUS_SUCCESS;
+}
