@@ -33,5 +33,11 @@ ULONG CosaDmlMulticastGetMaxSSMSessions ( ANSC_HANDLE hContext, ULONG* puLong );
 ULONG CosaDmlMulticastSetMaxSSMSessions ( ANSC_HANDLE hContext, ULONG uValue );
 ULONG CosaDmlMulticastGetM2UMaxSessions ( ANSC_HANDLE hContext, ULONG* puLong );
 ULONG CosaDmlMulticastSetM2UMaxSessions ( ANSC_HANDLE hContext, ULONG uValue );
+ULONG CosaDmlMulticastGetMaxThrottlingRate ( ANSC_HANDLE hContext, ULONG* puLong );
+ULONG CosaDmlMulticastSetMaxThrottlingRate ( ANSC_HANDLE hContext, ULONG uValue );
+ULONG CosaDmlMulticastGetMaxThrottlingHoldTime ( ANSC_HANDLE hContext, ULONG* puLong );
+ULONG CosaDmlMulticastSetMaxThrottlingHoldTime ( ANSC_HANDLE hContext, ULONG uValue );
+ULONG CosaDmlMulticastGetFastLeaveEnable ( ANSC_HANDLE hContext, BOOL *pValue );
+ULONG CosaDmlMulticastSetFastLeaveEnable ( ANSC_HANDLE hContext, BOOL bValue );
 
 #endif
