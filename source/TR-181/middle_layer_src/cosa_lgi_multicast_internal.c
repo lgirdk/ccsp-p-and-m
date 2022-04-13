@@ -49,6 +49,9 @@ ANSC_STATUS CosaLgiMulticastInitialize ( ANSC_HANDLE hThisObject )
     CosaDmlMulticastGetSSMForwardingEnable(NULL, &pMyObject->Cfg.bSSMForwardingEnable);
     CosaDmlMulticastGetMaxSSMSessions(NULL, &pMyObject->Cfg.uMaxSSMSessions);
     CosaDmlMulticastGetM2UMaxSessions(NULL, &pMyObject->Cfg.uM2UMaxSessions);
+    CosaDmlMulticastGetMaxThrottlingRate(NULL, &pMyObject->Cfg.uMaxThrottlingRate);
+    CosaDmlMulticastGetMaxThrottlingHoldTime(NULL, &pMyObject->Cfg.uMaxThrottlingHoldTime);
+    CosaDmlMulticastGetFastLeaveEnable(NULL, &pMyObject->Cfg.bFastLeaveEnable);
 
     CosaDmlMulticastSetMaxSSMSessions(NULL, pMyObject->Cfg.uMaxSSMSessions);
     CosaDmlMulticastSetM2UMaxSessions(NULL, pMyObject->Cfg.uM2UMaxSessions);
