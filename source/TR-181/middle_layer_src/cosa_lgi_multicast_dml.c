@@ -62,6 +62,13 @@ BOOL LgiMulticast_GetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName, 
         return TRUE;
     }
 
+    if (strcmp(ParamName, "FastLeaveEnable") == 0)
+    {
+        CosaDmlMulticastGetFastLeaveEnable(NULL, &pMyObject->Cfg.bFastLeaveEnable);
+        *pValue = pMyObject->Cfg.bFastLeaveEnable;
+        return TRUE;
+    }
+
     return FALSE;
 }
 
@@ -87,6 +94,12 @@ BOOL LgiMulticast_SetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName, 
         return TRUE;
     }
 
+    if (strcmp(ParamName, "FastLeaveEnable") == 0)
+    {
+        pMyObject->Cfg.bFastLeaveEnable = bValue;
+        return TRUE;
+    }
+
     return FALSE;
 }
 
@@ -105,6 +118,20 @@ BOOL LgiMulticast_GetParamUlongValue ( ANSC_HANDLE hInsContext, char* ParamName,
     {
         CosaDmlMulticastGetM2UMaxSessions(NULL, &pMyObject->Cfg.uM2UMaxSessions);
         *puLong = pMyObject->Cfg.uM2UMaxSessions;
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "MaxThrottlingRate") == 0)
+    {
+        CosaDmlMulticastGetMaxThrottlingRate(NULL, &pMyObject->Cfg.uMaxThrottlingRate);
+        *puLong = pMyObject->Cfg.uMaxThrottlingRate;
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "MaxThrottlingHoldTime") == 0)
+    {
+        CosaDmlMulticastGetMaxThrottlingHoldTime(NULL, &pMyObject->Cfg.uMaxThrottlingHoldTime);
+        *puLong = pMyObject->Cfg.uMaxThrottlingHoldTime;
         return TRUE;
     }
 
@@ -127,6 +154,18 @@ BOOL LgiMulticast_SetParamUlongValue ( ANSC_HANDLE hInsContext, char* ParamName,
         return TRUE;
     }
 
+    if (strcmp(ParamName, "MaxThrottlingRate") == 0)
+    {
+        pMyObject->Cfg.uMaxThrottlingRate = uValue;
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "MaxThrottlingHoldTime") == 0)
+    {
+        pMyObject->Cfg.uMaxThrottlingHoldTime = uValue;
+        return TRUE;
+    }
+
     return FALSE;
 }
 
@@ -144,6 +183,22 @@ ULONG LgiMulticast_Commit ( ANSC_HANDLE hInsContext )
     {
         CosaDmlMulticastSetIGMPv3ProxyEnable(NULL, pMyObject->Cfg.bIGMPv3ProxyEnable);
     }
+
+    if (IS_PARAM_CHANGED(pMyObject, uMaxThrottlingRate))
+    {
+        CosaDmlMulticastSetMaxThrottlingRate(NULL, pMyObject->Cfg.uMaxThrottlingRate);
+    }
+
+    if (IS_PARAM_CHANGED(pMyObject, uMaxThrottlingHoldTime))
+    {
+        CosaDmlMulticastSetMaxThrottlingHoldTime(NULL, pMyObject->Cfg.uMaxThrottlingHoldTime);
+    }
+
+    if (IS_PARAM_CHANGED(pMyObject, bFastLeaveEnable))
+    {
+        CosaDmlMulticastSetFastLeaveEnable(NULL, pMyObject->Cfg.bFastLeaveEnable);
+    }
+
     if (IS_IPV4PROXY_RESTART_NEEDED(pMyObject))
     {
         system("/etc/utopia/service.d/service_mcastproxy.sh mcastproxy-restart &");
@@ -199,6 +254,9 @@ ULONG LgiMulticast_Rollback ( ANSC_HANDLE hInsContext )
     CosaDmlMulticastGetSSMForwardingEnable(NULL, &pMyObject->Cfg.bSSMForwardingEnable);
     CosaDmlMulticastGetMaxSSMSessions(NULL, &pMyObject->Cfg.uMaxSSMSessions);
     CosaDmlMulticastGetM2UMaxSessions(NULL, &pMyObject->Cfg.uM2UMaxSessions);
+    CosaDmlMulticastGetMaxThrottlingRate(NULL, &pMyObject->Cfg.uMaxThrottlingRate);
+    CosaDmlMulticastGetMaxThrottlingHoldTime(NULL, &pMyObject->Cfg.uMaxThrottlingHoldTime);
+    CosaDmlMulticastGetFastLeaveEnable(NULL, &pMyObject->Cfg.bFastLeaveEnable);
 
     return 0;
 }
