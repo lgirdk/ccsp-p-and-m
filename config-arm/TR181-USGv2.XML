@@ -18451,6 +18451,33 @@
                 <syntax>uint32</syntax>
                 <writable>true</writable>
             </parameter>
+            <parameter>
+                <name>MaxThrottlingRate</name>
+                <description>
+                  After receiving a given number of IGMP/MLD messages per second per interface, the CPE should stop processing and discard IGMP/MLD messages for a certain duration to protect and avoid against IGMP/MLD waterfalls towards LAN and/or WAN networks. 0 means throttling is disabled. default is 32.
+                </description>
+                <type>unsignedInt</type>
+                <syntax>uint32</syntax>
+                <writable>true</writable>
+            </parameter>
+            <parameter>
+                <name>MaxThrottlingHoldTime</name>
+                <description>
+                  After receiving a given number of IGMP/MLD messages per second per interface, the CPE should stop processing and discard IGMP/MLD messages for a certain duration to protect and avoid against IGMP/MLD waterfalls towards LAN and/or WAN networks. 0 means hold time is disabled. default is 10.
+                </description>
+                <type>unsignedInt</type>
+                <syntax>uint32</syntax>
+                <writable>true</writable>
+            </parameter>
+            <parameter>
+                <name>FastLeaveEnable</name>
+                <description>
+                  When Fast Leave is enabled, the internal logical or physical layer-2 interface immediately stops forwarding multicast traffic for a multicast group when the last listener client for a multicast group or channel on the interface sends a leave message for that group or channel.
+                </description>
+                <type>boolean</type>
+                <syntax>bool</syntax>
+                <writable>true</writable>
+            </parameter>
         </parameters>
     </object>
 <!-- LGI ADD END -->
