@@ -244,20 +244,20 @@ void ssam_start (void)
         return;
     }
 
-    if (access(SSAM_PID_FILE, F_OK) == 0) {
+    if (access("/var/sam/.sam.pid", F_OK) == 0) {
         return;
     }
 
-    if (access(SSAM_PARTITION, F_OK) != 0) {
-        if (mkdir(SSAM_PARTITION, 0777) != 0) {
+    if (access("/var/sam", F_OK) != 0) {
+        if (mkdir("/var/sam", 0777) != 0) {
             return;
         }
-        if (system("mount -t tmpfs -o size=32M tmpfs " SSAM_PARTITION) != 0) {
+        if (system("mount -t tmpfs -o size=32M tmpfs /var/sam") != 0) {
             return;
         }
 
         /* Temp workaround for older versions of ssam-bin */
-        if (system("ln -s /etc/certs/amazon.pem " SSAM_PARTITION "/.amazon.pem") != 0) {
+        if (system("ln -s /etc/certs/amazon.pem /var/sam/.amazon.pem") != 0) {
             return;
         }
     }
