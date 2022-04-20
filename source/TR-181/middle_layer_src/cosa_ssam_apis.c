@@ -74,11 +74,6 @@ void ssam_start (void)
             return;
         }
 
-        /* Temp workaround for older versions of ssam-bin */
-        if (system("ln -s /etc/certs/amazon.pem /var/sam/.amazon.pem") != 0) {
-            return;
-        }
-
         /* Make SSAM specific libnl3.so available in /var/sam */
         if (symlink("/opt/ssam/lib/libnl3.so", "/var/sam/libnl3.so") != 0) {
             return;
@@ -113,7 +108,6 @@ void ssam_start (void)
 
         p += sprintf(p, "ln -sf /etc/certs/sam_key_1.pem /var/sam_loader/sign_key_3.pem && "
                         "ln -sf /etc/certs/sam_key_2.pem /var/sam_loader/sign_key_4.pem && "
-                        "ln -sf /etc/certs/amazon.pem /var/sam_loader/amazon.pem && "
                         "mount -o remount,ro /var/sam_loader");
 
         if (system(cmd) != 0) {
