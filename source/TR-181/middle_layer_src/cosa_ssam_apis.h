@@ -17,12 +17,6 @@
 #ifndef _COSA_SSAM_APIS_H
 #define _COSA_SSAM_APIS_H
 
-#define SSAM_PARTITION      "/var/sam"
-#define SSAM_LOADER         "/var/sam_loader"
-#define SSAM_PID_FILE       "/var/sam/.sam.pid"
-#define SSAM_LOCK           "/var/tmp/ssam_lock"
-#define SSAM_ENV            "/var/tmp/environment"
-
 void ssam_start (void);
 void ssam_stop (void);
 
