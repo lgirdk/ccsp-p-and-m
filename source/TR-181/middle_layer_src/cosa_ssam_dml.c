@@ -104,7 +104,7 @@ ULONG X_LGI_COM_DigitalSecurity_GetParamStringValue(ANSC_HANDLE hInsContext, cha
         char buf[12];
 
         syscfg_get(NULL, "ssam_enable", buf, sizeof(buf));
-        if ((strcmp(buf, "1") != 0) || (access(SSAM_PID_FILE, F_OK) != 0)) {
+        if ((strcmp(buf, "1") != 0) || (access("/var/sam/.sam.pid", F_OK) != 0)) {
            strcpy(pValue, "");
         }
         else {
@@ -112,7 +112,7 @@ ULONG X_LGI_COM_DigitalSecurity_GetParamStringValue(ANSC_HANDLE hInsContext, cha
            char buffer[32] = { 0 };
            char version[32] = { 0 };
 
-           fp = fopen(SSAM_PARTITION "/agent_version", "r");
+           fp = fopen("/var/sam/agent_version", "r");
            if (fp != NULL) {
                if ((fgets(buffer, sizeof(buffer), fp) != NULL) && (strlen(buffer) != 0)) {
                    snprintf(version, sizeof(version), "%s", buffer);
@@ -133,7 +133,7 @@ ULONG X_LGI_COM_DigitalSecurity_GetParamStringValue(ANSC_HANDLE hInsContext, cha
         char buffer[32] = { 0 };
         char status[32] = { 0 };
 
-        fp = fopen(SSAM_PARTITION "/status", "r");
+        fp = fopen("/var/sam/status", "r");
         if (fp != NULL) {
             if ((fgets(buffer, sizeof(buffer), fp) != NULL) && (strlen(buffer) != 0)) {
                 snprintf(status, sizeof(status), "%s", buffer);
@@ -170,7 +170,7 @@ BOOL X_LGI_COM_DigitalSecurity_SetParamStringValue(ANSC_HANDLE hInsContext, char
 {
     if (strcmp("ProvisionedEnvironment", ParamName) == 0) {
         if (syscfg_set_commit(NULL, "ssam_provisionedenv", pString) == 0) {
-            FILE *fp = fopen(SSAM_ENV, "w");
+            FILE *fp = fopen("/var/tmp/environment", "w");
             if (fp != NULL) {
                 fputs(pString, fp);
                 fclose(fp);
