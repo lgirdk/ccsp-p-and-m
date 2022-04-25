@@ -364,8 +364,17 @@ Std_RemoteAccess_SetParamBoolValue
 
     if (strcmp(ParamName, "Enable") == 0)
     {
-        pMyObject->StdRaCfg.bEnabled = bValue;
-        return TRUE;
+        char buffer[5];
+
+        if ((syscfg_get(NULL, "wan_password_set", buffer, sizeof(buffer)) == 0) && (strcmp(buffer, "1") == 0))
+        {
+            pMyObject->StdRaCfg.bEnabled = bValue;
+            return TRUE;
+        }
+
+        fprintf(stderr, "%s: Remote UI password not set\n", __FUNCTION__);
+
+        return FALSE;
     }
 
     return FALSE;
