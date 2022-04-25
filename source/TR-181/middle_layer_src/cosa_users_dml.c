@@ -153,9 +153,13 @@ static void CsrPasswordResetThread(PCOSA_DML_USER  pEntry)
             pwd_set_time = 0;
             /* Destroy/Clear WEB sessions */
             system("rm -rf /var/tmp/gui/session_*"); //FIXME: Check and Remove the right  session
-            if (syscfg_set_commit (NULL, "mgmt_wan_access", "0") != 0)
+            if (syscfg_set (NULL, "mgmt_wan_access", "0") != 0)
             {
-                CcspTraceInfo(("Failed disable  WAN access syscfg param"));
+                CcspTraceInfo(("Failed disable WAN access syscfg param"));
+            }
+            if (syscfg_set_commit (NULL, "wan_password_set", "0") != 0)
+            {
+                CcspTraceInfo(("Failed disable WAN password syscfg param"));
             }
             g_SetParamValueBool("Device.UserInterface.RemoteAccess.Enable",false);
             commonSyseventSet("firewall-restart", "");
@@ -1321,6 +1325,11 @@ User_SetParamStringValue
                 }
                 else
                 {
+                    if (syscfg_set (NULL, "wan_password_set", "1") != 0)
+                    {
+                        CcspTraceInfo(("Failed to set WAN password syscfg param"));
+                        return FALSE;
+                    }
                     if (syscfg_set_commit (NULL, "mgmt_wan_access", "1") != 0)
                     {
                         CcspTraceInfo(("Failed to enable WAN access syscfg param"));
