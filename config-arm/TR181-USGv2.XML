@@ -8365,9 +8365,9 @@
             
                 <name>X_CISCO_COM_AuthenticationType</name>
 <?ifndef BCI?>
-                <type>string: NoAuth(1),SimplePassword(2),MD5(3)</type>
+                <type>string: NoAuth(1),SimplePassword(2),KEYED-MD5(3)</type>
 <?else?>
-                <type>string: NoAuth(1),SimplePassword(2),MD5(3),md5(4)</type>
+                <type>string: NoAuth(1),SimplePassword(2),KEYED-MD5(3),md5(4)</type>
 <?endif?>
                 <syntax>uint32/mapped</syntax>
                 
