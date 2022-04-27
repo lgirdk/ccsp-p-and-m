@@ -1025,8 +1025,7 @@ ULONG GreTunnel_Rollback( ANSC_HANDLE hInsContext) {
     if (CosaDml_GreTunnelGetDhcpOption60(ins, &pGreTu->EnableVendorClassID) != ANSC_STATUS_SUCCESS)
         return ANSC_STATUS_FAILURE;
     if (CosaDml_GreTunnelGetGreTcpMss(ins, &pGreTu->GreTcpMss) != ANSC_STATUS_SUCCESS)
-        pGreTu->GreTcpMss = GRE_TCPMSS_MAX;    //Temporary fix: Setting to GRE_TCPMSS_MAX incase of failure in retrieving value from PSM defaults.
-        //return ANSC_STATUS_FAILURE;
+        return ANSC_STATUS_FAILURE;
     if (CosaDml_GreTunnelGetGRETunnel(ins, pGreTu->GRENetworkTunnel, sizeof(pGreTu->GRENetworkTunnel)) != ANSC_STATUS_SUCCESS)
         return ANSC_STATUS_FAILURE;
     if (CosaDml_GreTunnelGetEndpoints(ins, pGreTu->RemoteEndpoints, sizeof(pGreTu->RemoteEndpoints)) != ANSC_STATUS_SUCCESS)
