@@ -681,8 +681,7 @@ CosaDml_GreTunnelGetEntryByIndex(ULONG ins, COSA_DML_GRE_TUNNEL *greTu)
     if (GrePsmGetBool(GRETU_PARAM_DHCPOPTION60, ins, &greTu->EnableVendorClassID) != 0)
         return ANSC_STATUS_FAILURE;
     if (GrePsmGetUlong(GRETU_PARAM_GRETCPMSS, ins, &greTu->GreTcpMss) != 0)
-        greTu->GreTcpMss = GRE_TCPMSS_MAX;         //Temporary fix: Setting to GRE_TCPMSS_MAX incase of failure in retrieving value from PSM defaults.
-        //return ANSC_STATUS_FAILURE;
+        return ANSC_STATUS_FAILURE;
     if (GrePsmGetStr(GRETU_PARAM_GRETU, ins, greTu->GRENetworkTunnel, sizeof(greTu->GRENetworkTunnel)) != 0)
         return ANSC_STATUS_FAILURE;
     if (GrePsmGetStr(GRETU_PARAM_ENDPOINTS, ins, greTu->RemoteEndpoints, sizeof(greTu->RemoteEndpoints)) != 0)
