@@ -99,7 +99,10 @@ DSLite_SetParamBoolValue
     if (strcmp(ParamName, "Enable") == 0)
     {
         /* save update to backup */
-        CosaDmlSetDsliteEnable(NULL, (BOOLEAN)bValue);
+        if (CosaDmlSetDsliteEnable(NULL, (BOOLEAN)bValue) == ANSC_STATUS_FAILURE)
+        {
+              return FALSE;
+        }
         rc = vsystem(UPDATE_RESOLV_CMD);
 	return (rc == 0) ? TRUE : FALSE;
     }
