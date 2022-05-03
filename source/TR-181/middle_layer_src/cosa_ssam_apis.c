@@ -298,6 +298,15 @@ void ssam_start (void)
         }
     }
 
+    syscfg_get(NULL, "ssam_provisionedenv", buf, sizeof(buf));
+    if (buf[0]) {
+        FILE *fp = fopen("/var/tmp/environment", "w");
+        if (fp != NULL) {
+            fputs(buf, fp);
+            fclose(fp);
+        }
+    }
+
     p = cmd;
     p += sprintf(p, "/usr/bin/sam");
 
