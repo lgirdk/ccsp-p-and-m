@@ -298,6 +298,17 @@ void ssam_start (void)
         }
     }
 
+    /* Max size of Device.X_LGI-COM_DigitalSecurity.ProvisionedEnvironment is 256 (+1?) */
+
+    syscfg_get(NULL, "ssam_provisionedenv", cmd, sizeof(cmd));
+    if (cmd[0]) {
+        FILE *fp = fopen("/var/tmp/environment", "w");
+        if (fp != NULL) {
+            fputs(cmd, fp);
+            fclose(fp);
+        }
+    }
+
     p = cmd;
     p += sprintf(p, "/usr/bin/sam");
 
