@@ -305,7 +305,7 @@ CosaDsliteBackendGetInfo
 
         ULONG   deviceMode;
         if (CosaDmlDcGetDeviceMode(NULL, &deviceMode) == ANSC_STATUS_SUCCESS) {
-         if((deviceMode == COSA_DML_DEVICE_MODE_Ipv4 ) || (deviceMode == COSA_DML_DEVICE_MODE_Dualstack )) {
+         if((deviceMode == COSA_DML_DEVICE_MODE_Ipv4 ) || (deviceMode == COSA_DML_DEVICE_MODE_Dualstack ) || (deviceMode == COSA_DML_DEVICE_MODE_Bridge )) {
           CosaDmlSetDsliteEnable(NULL, FALSE);
           pCosaDslite->active = FALSE;
           CosaDmlDsliteSetCfg(NULL, pCosaDslite);
