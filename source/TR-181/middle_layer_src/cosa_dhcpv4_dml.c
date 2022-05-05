@@ -6150,13 +6150,14 @@ Pool_GetParamStringValue
                 addcoma=1;
 
             char tmpbuf[64];
+            BOOL bDnsOverride;
             int len;
 
-            syscfg_get(NULL, "dns_override", tmpbuf, sizeof(tmpbuf));
+            CosaDmlLgiGwGetDnsOverride(&bDnsOverride);
 
             /* if dns_override is false or undefined then append DNS server(s) from wan_dhcp_dns */
 
-            if (strcmp(tmpbuf, "true") != 0)
+            if (!bDnsOverride)
             {
                 char wanDhcpDns[255];
 
