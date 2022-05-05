@@ -55,10 +55,22 @@ static void CosaDmlDNSOverride (void)
 int CosaDmlLgiGwGetDnsOverride ( BOOL *pValue )
 {
     char buf[8];
+    char override_mode[6];
+    char erouter_mode[6];
 
     syscfg_get(NULL, "dns_override", buf, sizeof(buf));
 
-    *pValue = (strcmp(buf, "true") == 0);
+    syscfg_get(NULL, "last_erouter_mode", erouter_mode, sizeof(erouter_mode));
+
+    if (syscfg_get(NULL, "dns_override_mode", override_mode, sizeof(override_mode)) != 0)
+    {
+        /* if dns_override_mode flag is not set in syscfg, then copy the value of last_erouter_mode.
+	 * In this scenario, return value will be based only on dns_override flag.
+	 */
+        strcpy(override_mode, erouter_mode);
+    }
+
+    *pValue = (strcmp(buf, "true") == 0 && strcmp(override_mode, erouter_mode) == 0);
 
     return 0;
 }
@@ -66,6 +78,7 @@ int CosaDmlLgiGwGetDnsOverride ( BOOL *pValue )
 int CosaDmlLgiGwSetDnsOverride ( BOOL bValue )
 {
     char customer_db_dns_enabled[6];
+    char erouter_mode[6];
     int retVal = ANSC_STATUS_FAILURE;
 
     // Public DNS allows to configure a set of preferred DNS servers different than the ones offered by your internet service provider.
@@ -78,7 +91,17 @@ int CosaDmlLgiGwSetDnsOverride ( BOOL bValue )
 
         if (strcmp(customer_db_dns_enabled, nv) != 0)
         {
-            syscfg_set_commit(NULL, "dns_override", nv);
+            syscfg_set(NULL, "dns_override", nv);
+        }
+
+        if (bValue)
+        {
+            syscfg_get(NULL, "last_erouter_mode", erouter_mode, sizeof(erouter_mode));
+            syscfg_set_commit(NULL, "dns_override_mode", erouter_mode);
+        }
+        else
+        {
+            syscfg_set_commit(NULL, "dns_override_mode", "-1");
         }
 
         pthread_create(&tid, NULL, &CosaDmlDNSOverride, NULL);
