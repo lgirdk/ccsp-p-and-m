@@ -115,6 +115,7 @@ CosaLgiGatewayInitialize
     size = sizeof(pMyObject->dns_ipv6_alternate);
     CosaDmlLgiGwGetDnsIpv6Alternate(pMyObject->dns_ipv6_alternate, &size);
     CosaDmlLgiGwGetDnsOverride(&(pMyObject->dns_override));
+    pMyObject->isDnsUpdated = FALSE;
 
     return returnStatus;
 }
