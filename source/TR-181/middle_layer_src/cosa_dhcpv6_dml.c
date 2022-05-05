@@ -7865,6 +7865,7 @@ Option4_GetParamStringValue
         int addcoma;
         char tmpbuf[64];
         int len;
+        BOOL bDnsOverride;
 
         Vlen = strlen(pDhcpOption->Value);
         if (Vlen >= *pUlSize) {
@@ -7876,11 +7877,11 @@ Option4_GetParamStringValue
         rbufsz = *pUlSize - Vlen;
         addcoma = (Vlen > 0) ? 1 : 0;
 
-        syscfg_get(NULL, "dns_override", tmpbuf, sizeof(tmpbuf));
+        CosaDmlLgiGwGetDnsOverride(&bDnsOverride);
 
         /* if dns_override is false or undefined then append DNS server(s) from ipv6_nameserver */
 
-        if (strcmp(tmpbuf, "true") != 0)
+        if (!bDnsOverride)
         {
             char ipv6_nameserver[255];
 
