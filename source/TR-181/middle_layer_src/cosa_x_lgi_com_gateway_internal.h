@@ -33,6 +33,7 @@ _COSA_DATAMODEL_LGI_GATEWAY_CLASS_CONTENT
     ULONG                           ipv6LanMode;
     ULONG                           ErouterInitMode;
     BOOL                            dns_override;
+    BOOL                            isDnsUpdated;
     char                            dns_ipv4_preferred[16];
     char                            dns_ipv4_alternate[16];
     char                            dns_ipv6_preferred[64];
