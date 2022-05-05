@@ -198,6 +198,7 @@ LgiGateway_SetParamBoolValue
         if (syscfg_get(NULL, "dns_override", customer_db_dns_enabled, sizeof(customer_db_dns_enabled)) == 0)
         {
             pMyObject->dns_override = bValue;
+            pMyObject->isDnsUpdated = TRUE;
             return TRUE;
         }
     }
@@ -363,7 +364,12 @@ LgiGateway_Commit
     syscfg_set(NULL, "dns_ipv6_preferred", pMyObject->dns_ipv6_preferred);
     syscfg_set(NULL, "dns_ipv6_alternate", pMyObject->dns_ipv6_alternate);
 
-    ret = (ULONG) CosaDmlLgiGwSetDnsOverride(pMyObject->dns_override);
+    if (pMyObject->isDnsUpdated)
+    {
+        ret = (ULONG) CosaDmlLgiGwSetDnsOverride(pMyObject->dns_override);
+        pMyObject->isDnsUpdated = FALSE;
+    }
+
     ret |= (ULONG) CosaDml_Gateway_SetErouterInitMode(pMyObject->ErouterInitMode);
 
     return ret;
