@@ -75,6 +75,7 @@
 #include <utapi.h>
 #include <utapi_util.h>
 #include "utctx/utctx_api.h"
+#include "cosa_dhcpv6_apis.h"
 
 #define MAX_PREF        8       /* according to TR-181 */
 #define INTERFACE_COUNT 2       /*supported for brlan0 & brlan7*/

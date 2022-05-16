@@ -14,9 +14,13 @@
  * limitations under the License.
  **********************************************************************/
 
+#include <ctype.h>
 #include "cosa_x_lgi_com_gateway_apis.h"
 #include <syscfg/syscfg.h>
 #include "cosa_dhcpv6_apis.h"
+#include "cosa_deviceinfo_apis_custom.h"
+#include "cosa_drg_common.h"
+#include "cm_hal.h"
 
 extern ULONG CosaDmlDhcpv6sGetType(ANSC_HANDLE hContext);
 extern ANSC_STATUS CosaDmlDhcpv6sSetType(ANSC_HANDLE hContext, ULONG type);
