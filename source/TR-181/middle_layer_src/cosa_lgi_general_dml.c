@@ -20,6 +20,7 @@
 #include "cosa_lgi_general_apis.h"
 #include "cosa_lgi_general_dml.h"
 #include "cosa_lgi_general_internal.h"
+#include "cosa_dslite_apis.h"
 #include "ccsp/platform_hal.h"
 #include <syscfg/syscfg.h>
 
