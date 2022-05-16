@@ -123,6 +123,7 @@
 #include "ccsp_psm_helper.h"
 #include "sysevent/sysevent.h"
 #include "dmsb_tr181_psm_definitions.h"
+#include "cosa_drg_common.h"
 
 #include "lm_api.h"
 #include <cjson/cJSON.h>
