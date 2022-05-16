@@ -75,6 +75,7 @@
 #include "safec_lib_common.h"
 #include "cosa_time_apis.h"
 #include "cosa_deviceinfo_apis.h"
+#include "cosa_x_cisco_com_devicecontrol_apis.h"
 
 extern ULONG g_currentBsUpdate;
 extern char * getRequestorString();
