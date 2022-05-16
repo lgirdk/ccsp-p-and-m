@@ -80,6 +80,7 @@
 #endif
 #endif
 #include "safec_lib_common.h"
+#include <ccsp_psm_helper.h>
 
 ANSC_STATUS COSAGetParamValueByPathName(void* bus_handle, parameterValStruct_t *val, ULONG *parameterValueLength);
 
