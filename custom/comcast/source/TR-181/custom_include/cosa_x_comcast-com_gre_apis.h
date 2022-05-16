@@ -435,5 +435,11 @@ CosaDml_GreTunnelGetNumberofEP(ULONG tuIns, ULONG* numEp);
 ANSC_STATUS
 GreTunnelIfAndLowerlayerStatus(ULONG tuIns, BOOL* status);
 
+ANSC_STATUS
+CosaDml_GreTunnelGetGreTransportInterface(ULONG tuIns, INT *ifId);
+
+ANSC_STATUS
+CosaDml_GreTunnelSetGreTransportInterface(ULONG tuIns, INT ifId);
+
 #endif
 #endif
