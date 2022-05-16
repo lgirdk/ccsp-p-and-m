@@ -162,6 +162,8 @@
 #include "cosa_lgi_multicast_apis.h"
 #include "cosa_lgi_multicast_internal.h"
 #include "cosa_lgi_eventlog_internal.h" 
+#include "cosa_lgi_plume_internal.h"
+#include "cosa_ssam_apis.h"
 
 #if defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED)
 #include "cosa_rbus_handler_apis.h"
