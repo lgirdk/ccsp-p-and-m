@@ -19,6 +19,7 @@
 
 #if defined(DDNS_BROADBANDFORUM)
 #include "cosa_dynamicdns_apis.h"
+#include "cosa_dynamicdns_dml.h"
 #include <utctx/utctx.h>
 #include <utapi/utapi.h>
 #include <utapi/utapi_util.h>
