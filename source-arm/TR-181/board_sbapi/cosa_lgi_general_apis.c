@@ -16,6 +16,8 @@
 
 #include <syscfg/syscfg.h>
 
+#include "cosa_x_cisco_com_devicecontrol_apis.h"
+#include "cosa_deviceinfo_apis.h"
 #include "cosa_lgi_general_apis.h"
 #include "plugin_main_apis.h"
 
