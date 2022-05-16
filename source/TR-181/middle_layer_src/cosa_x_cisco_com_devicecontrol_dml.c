@@ -67,6 +67,7 @@
 **************************************************************************/
 
 #include "cosa_x_cisco_com_devicecontrol_dml.h"
+#include "cosa_x_cisco_com_devicecontrol_apis.h"
 #include "cosa_drg_common.h"
 #include "cosa_dhcpv4_webconfig_apis.h"
 #include "safec_lib_common.h"

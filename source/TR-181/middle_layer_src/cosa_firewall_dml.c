@@ -70,6 +70,7 @@
 #include "ansc_platform.h"
 #include "cosa_firewall_dml.h"
 #include "cosa_firewall_internal.h"
+#include "cosa_firewall_apis.h"
 #include "safec_lib_common.h"
 
 /***********************************************************************
