@@ -71,6 +71,7 @@
 #include "cosa_apis.h"
 #include "cosa_ra_internal.h"
 #include "cosa_ra_apis.h"
+#include "cosa_dhcpv6_apis.h"
 #include <ctype.h>
 #include <utapi.h>
 #include <utapi_util.h>
