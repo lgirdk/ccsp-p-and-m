@@ -72,6 +72,7 @@
 #include "cosa_ra_dml.h"
 #include "cosa_ra_internal.h"
 #include "safec_lib_common.h"
+#include "cosa_deviceinfo_apis.h"
 
 static int ulIndex = 0;
 
