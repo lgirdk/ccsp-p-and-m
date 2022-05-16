@@ -553,4 +553,15 @@ CosaDmlFW_V6DayOfWeek_GetBlockTimeBitMask
         ULONG *pSize
     );
 // LGI ADD END
+ULONG
+CosaDmlGatewayV6SetICMPFloodDetect
+    (
+        BOOL bValue
+    );
+ANSC_STATUS
+CosaDmlGatewayV6SetICMPFloodDetectRate
+    (
+        ULONG ulValue
+    );
+
 #endif
