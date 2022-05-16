@@ -949,6 +949,8 @@ CosaDmlDnsRelayGetServer
 #include <arpa/inet.h>
 #include "cosa_x_cisco_com_devicecontrol_apis.h"
 #include <utapi/utapi_dns.h>
+#include <utapi/utapi_dslite.h>
+#include "cosa_dns_internal.h"
 
 static const char *DEFAULT_WAN_INTERFACE = "Device.IP.Interface.1";
 static const char *DEFAULT_LAN_INTERFACE = "Device.IP.Interface.3";
