@@ -80,6 +80,7 @@
 #endif
 #endif
 #include "safec_lib_common.h"
+#include <ccsp_psm_helper.h>
 
 #define REFRESH_INTERVAL 10
 #define TIME_NO_NEGATIVE(x) ((long)(x) < 0 ? 0 : (x))

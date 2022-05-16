@@ -69,7 +69,7 @@
 #include "cosa_userinterface_dml.h"
 #include "ansc_string_util.h"
 #include "safec_lib_common.h"
-
+#include "ccsp_psm_helper.h"
 
 extern ANSC_HANDLE bus_handle;
 extern char g_Subsystem[32];
