@@ -178,6 +178,7 @@ extern  ANSC_HANDLE             bus_handle;
 #include "platform_hal.h"
 #include "autoconf.h"     
 #include "secure_wrapper.h"
+#include "ansc_string_util.h"
 
 #define _ERROR_ "NOT SUPPORTED"
 #define _START_TIME_12AM_ "0"
