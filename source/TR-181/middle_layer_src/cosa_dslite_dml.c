@@ -22,6 +22,7 @@
 #include "safec_lib_common.h"
 #include "cosa_x_cisco_com_devicecontrol_internal.h"
 #include <syscfg/syscfg.h>
+#include "cosa_drg_common.h"
 
 //#endif
 /***********************************************************************

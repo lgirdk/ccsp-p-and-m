@@ -80,6 +80,11 @@
 #include "lan_webconfig_param.h"
 #include "cosa_dhcpv4_webconfig_apis.h"
 #include "safec_lib_common.h"
+#include "syscfg/syscfg.h"
+#include "cosa_drg_common.h"
+#include "ccsp_psm_helper.h"
+#include "cosa_deviceinfo_apis_custom.h"
+#include "cosa_x_lgi_com_gateway_apis.h"
 
 extern void* g_pDslhDmlAgent;
 extern ANSC_HANDLE bus_handle;
@@ -93,6 +98,13 @@ ANSC_STATUS
 CosaDmlDhcpsARPing
     (
         PCOSA_DML_DHCPSV4_CLIENT_IPADDRESS    pDhcpsClient
+    );
+ANSC_STATUS
+COSAGetParamValueByPathName
+    (
+        void* bus_handle,
+        parameterValStruct_t *val,
+        ULONG *parameterValueLength
     );
 
 #define BS_SOURCE_WEBPA_STR "webpa"
