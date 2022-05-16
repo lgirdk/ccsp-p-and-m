@@ -19,6 +19,7 @@
 #include "cosa_dslite_apis.h"
 #include <utapi/utapi_dslite.h>
 #include "cosa_x_cisco_com_devicecontrol_internal.h"
+#include "cosa_x_lgi_com_gateway_apis.h"
 
 ANSC_STATUS
 CosaDmlDsliteInit

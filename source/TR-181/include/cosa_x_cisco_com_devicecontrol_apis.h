@@ -763,5 +763,11 @@ CosaDmlDcSetSSHSessionTimeout
         ANSC_HANDLE                 hContext,
         ULONG                       value
     );
-       
+
+BOOL
+validateIPRangeWithSubnetTable
+    (
+        const PCOSA_DML_LAN_MANAGEMENT pLanMngm
+    );
+
 #endif
