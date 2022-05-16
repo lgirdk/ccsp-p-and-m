@@ -401,6 +401,7 @@ Control_SetParamIntValue
 
     Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Control.XconfSelector
     Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Control.XconfUrl
+    Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Control.XconfRecoveryUrl
 
     *  Control_GetParamStringValue
     *  Control_SetParamStringValue

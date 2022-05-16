@@ -8357,6 +8357,30 @@ Control_GetParamStringValue
          return -1;
     }
 
+    /* check the "XconfRecoveryUrl" parameter name and return the corresponding value */
+    if( AnscEqualString(ParamName, "XconfRecoveryUrl", TRUE))
+    {
+        /* collect value */
+        char buff[XCONF_URL_SIZE];
+        buff[XCONF_URL_SIZE-1]='\0';
+        if(!syscfg_get( NULL, "XconfRecoveryUrl", buff, sizeof(buff)-1))
+        {
+        if(pulSize == NULL)
+        {
+             return -1;
+        }
+         /*CID: 108145 Array compared against 0*/
+        rc = strcpy_s(pValue, *pulSize, buff);
+        if(rc != EOK)
+        {
+             ERR_CHK(rc);
+             return -1;
+        }
+        return 0;
+        }
+        return -1;
+    }
+
     return -1;
 }
 /**
@@ -8645,6 +8669,36 @@ Control_SetParamStringValue
                 {
                     bReturnValue = TRUE;
                     CcspTraceInfo(("[%s] XconfUrl value set as %s success..!!\n",__FUNCTION__,pString));
+                }
+           }
+    }
+    /* check the "XconfRecoveryUrl" parameter name and set the corresponding value */
+    else if( AnscEqualString(ParamName, "XconfRecoveryUrl", TRUE))
+    {
+        /* collect value */
+           int idlen = strlen(pString)-1;
+
+           if ( idlen > XCONF_URL_SIZE )
+           {
+                CcspTraceError(("[%s] Invalid XconfRecoveryUrl length ..!! \n",__FUNCTION__));
+                bReturnValue = FALSE;
+           }
+           else
+           {
+               if (syscfg_set(NULL, "XconfRecoveryUrl", pString) != 0)
+                {
+                    CcspTraceError(("[%s] syscfg_set failed for XconfRecoveryUrl \n",__FUNCTION__));
+                    bReturnValue = FALSE;
+                }
+                else
+                {
+                    if (syscfg_commit() != 0)
+                    {
+                         CcspTraceError(("[%s] syscfg_commit failed for XconfRecoveryUrl \n",__FUNCTION__));
+                         bReturnValue = FALSE;
+                    }
+                    bReturnValue = TRUE;
+                    CcspTraceInfo(("[%s] XconfRecoveryUrl value set as %s success..!!\n",__FUNCTION__,pString));
                 }
            }
     }
