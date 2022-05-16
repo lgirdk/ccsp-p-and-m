@@ -155,13 +155,14 @@ static void CsrPasswordResetThread(PCOSA_DML_USER  pEntry)
             system("rm -rf /var/tmp/gui/session_*"); //FIXME: Check and Remove the right  session
             if (syscfg_set (NULL, "mgmt_wan_access", "0") != 0)
             {
-                CcspTraceInfo(("Failed disable WAN access syscfg param"));
+                CcspTraceInfo(("Failed to disable mgmt_wan_access syscfg param"));
             }
+            // Remote access should be disabled before clearing wan_password_set
+            g_SetParamValueBool("Device.UserInterface.RemoteAccess.Enable",false);
             if (syscfg_set_commit (NULL, "wan_password_set", "0") != 0)
             {
-                CcspTraceInfo(("Failed disable WAN password syscfg param"));
+                CcspTraceInfo(("Failed to disable wan_password_set syscfg param"));
             }
-            g_SetParamValueBool("Device.UserInterface.RemoteAccess.Enable",false);
             commonSyseventSet("firewall-restart", "");
             break;
         }
@@ -1327,15 +1328,17 @@ User_SetParamStringValue
                 {
                     if (syscfg_set (NULL, "wan_password_set", "1") != 0)
                     {
-                        CcspTraceInfo(("Failed to set WAN password syscfg param"));
+                        CcspTraceInfo(("Failed to enable wan_password_set syscfg param"));
                         return FALSE;
                     }
                     if (syscfg_set_commit (NULL, "mgmt_wan_access", "1") != 0)
                     {
-                        CcspTraceInfo(("Failed to enable WAN access syscfg param"));
+                        CcspTraceInfo(("Failed to enable mgmt_wan_access syscfg param"));
                         return FALSE;
                     }
                     system("rm -rf /var/tmp/gui/session_*");
+                    // Remote access should be enabled after setting wan_password_set
+                    g_SetParamValueBool("Device.UserInterface.RemoteAccess.Enable",true);
                     commonSyseventSet("firewall-restart", "");
                     time(&pwd_set_time);
                     if( !CsrPwResetThreadRunning )
