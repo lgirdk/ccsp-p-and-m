@@ -73,6 +73,7 @@
 #include "ansc_string_util.h"
 #include "safec_lib_common.h"
 #include "cosa_drg_common.h"
+#include "cosa_x_lgi_com_gateway_apis.h"
 
 #define MIN 60
 #define HOURS 3600
