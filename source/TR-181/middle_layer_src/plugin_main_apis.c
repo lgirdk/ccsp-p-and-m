@@ -156,6 +156,8 @@
 #include "cosa_lgi_multicast_apis.h"
 #include "cosa_lgi_multicast_internal.h"
 #include "cosa_lgi_eventlog_internal.h" 
+#include "cosa_lgi_plume_internal.h"
+#include "cosa_ssam_apis.h"
 // LGI ADD END
 
 #if  defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED) ||  defined(RBUS_BUILD_FLAG_ENABLE) || defined (_HUB4_PRODUCT_REQ_)
