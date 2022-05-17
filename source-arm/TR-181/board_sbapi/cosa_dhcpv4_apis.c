@@ -4665,6 +4665,92 @@ CosaDmlLAN_Validate_ModifyLanIP(COSA_DML_LAN_Allowed_Subnet *pLanAllowedSubnet, 
     return ANSC_STATUS_SUCCESS;
 }
 
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+            LanBlockedSubnetTable_GetGuestNetworkIP
+            (
+                char                 *pValueIP
+            );
+
+    description:
+
+        This function is called to retrieve the guest network ip
+
+    argument:   char                 *pValueIP,
+                buffer to get the ip address;
+
+    return:     TRUE (on success) or FALSE (on failure)
+
+**********************************************************************/
+BOOL
+LanBlockedSubnetTable_GetGuestNetworkIP
+    (
+        char                 *pValueIP
+    )
+{
+    char    *strValue = NULL;
+    int     retPsmGet = CCSP_SUCCESS;
+
+    retPsmGet = PSM_Get_Record_Value2(bus_handle,g_Subsystem, "dmsb.l3net.6.V4Addr", NULL, &strValue);
+    if (retPsmGet == CCSP_SUCCESS) {
+        strncpy(pValueIP, strValue, strlen(strValue));
+
+        ((CCSP_MESSAGE_BUS_INFO *)bus_handle)->freefunc(strValue);
+    } else {
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+            LanBlockedSubnetTable_GetGuestNetworkMask
+            (
+                char                 *pValueMask
+            );
+
+    description:
+
+        This function is called to retrieve the guest network subnet mask
+
+    argument:   char                 *pValueMask,
+                buffer to get the ip subnet mask;
+
+    return:     TRUE (on success) or FALSE (on failure)
+
+**********************************************************************/
+BOOL
+LanBlockedSubnetTable_GetGuestNetworkMask
+    (
+        char                 *pValueMask
+    )
+{
+    char    *strValue = NULL;
+    int     retPsmGet = CCSP_SUCCESS;
+
+    retPsmGet = PSM_Get_Record_Value2(bus_handle,g_Subsystem, "dmsb.l3net.6.V4SubnetMask", NULL, &strValue);
+    if (retPsmGet == CCSP_SUCCESS) {
+        strncpy(pValueMask, strValue, strlen(strValue));
+
+        ((CCSP_MESSAGE_BUS_INFO *)bus_handle)->freefunc(strValue);
+    } else {
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
 #endif
 
 
