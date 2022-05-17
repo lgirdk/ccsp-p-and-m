@@ -377,8 +377,8 @@ then
 		         curl -6 -w '%{http_code}\n' --interface $WAN_INTERFACE $URL_1 --connect-timeout 30 -m 30 > $RESPONSE_1
 		         v6Count=`expr $v6Count + 1`
 		      else
-		         v4Count=0
-		         v6Count=0
+		         echo_t "Network Response: failed 3 times for IPv4 / IPv6"
+		         exit 0
 		      fi
 		   fi
 
