@@ -18,6 +18,7 @@
 #include "cosa_x_lgi_com_gateway_dml.h"
 #include "cosa_x_lgi_com_gateway_internal.h"
 #include "cosa_deviceinfo_apis_custom.h"
+#include "cosa_dhcpv4_apis.h"
 #include "cosa_drg_common.h"
 #include <syscfg/syscfg.h>
 
