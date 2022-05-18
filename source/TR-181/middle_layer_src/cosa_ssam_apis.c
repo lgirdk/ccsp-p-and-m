@@ -298,11 +298,13 @@ void ssam_start (void)
         }
     }
 
-    syscfg_get(NULL, "ssam_provisionedenv", buf, sizeof(buf));
-    if (buf[0]) {
+    /* Max size of Device.X_LGI-COM_DigitalSecurity.ProvisionedEnvironment is 256 (+1?) */
+
+    syscfg_get(NULL, "ssam_provisionedenv", cmd, sizeof(cmd));
+    if (cmd[0]) {
         FILE *fp = fopen("/var/tmp/environment", "w");
         if (fp != NULL) {
-            fputs(buf, fp);
+            fputs(cmd, fp);
             fclose(fp);
         }
     }
