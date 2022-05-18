@@ -350,4 +350,5 @@ void ssam_start (void)
 void ssam_stop (void)
 {
     system("killall -s SIGINT sam");
+    unlink("/var/sam/.sam.pid");
 }
