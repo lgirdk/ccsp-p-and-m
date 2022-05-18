@@ -603,8 +603,8 @@ InterfaceSetting4_SetParamBoolValue
     ULONG   deviceMode;
 
     if (CosaDmlDcGetDeviceMode(NULL, &deviceMode) == ANSC_STATUS_SUCCESS) {
-        if((deviceMode == COSA_DML_DEVICE_MODE_Ipv4 ) || (deviceMode == COSA_DML_DEVICE_MODE_Dualstack )) {
-            CcspTraceWarning(("Cannot set DSLite.InterfaceSetting, the device mode is ipv4 or dualstack \n" ));
+        if(deviceMode != COSA_DML_DEVICE_MODE_Ipv6) {
+            CcspTraceWarning(("Cannot set DSLite.InterfaceSetting, the device mode is ipv4,dualstack or bridgemode \n" ));
             return FALSE;
        }
     }
