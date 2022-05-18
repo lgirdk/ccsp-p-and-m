@@ -1021,6 +1021,8 @@ Time_Commit
     {
         // Reboot the device after timezone.
         CcspTraceWarning(("Rebooting after changing timezone...\n"));
+        syscfg_set(NULL, "X_RDKCENTRAL-COM_LastRebootReason", "Reboot Timezone Change");
+        syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_LastRebootCounter", "1");
         CosaDmlDcSetRebootDevice(NULL, "Device");
     }
     
