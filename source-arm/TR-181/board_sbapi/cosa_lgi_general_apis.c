@@ -301,33 +301,6 @@ CosaDmlGiGetCurrentLanguage
     return ANSC_STATUS_SUCCESS;
 }
 
-#define MAX_HOSTNAME_SIZE 128
-ULONG
-CosaDmlGiGetLanHostname
-    (
-        ANSC_HANDLE                 hContext,
-        char                        *pValue,
-        ULONG                       *pUlSize
-    )
-{
-    char hostname[MAX_HOSTNAME_SIZE];
-    size_t len;
-
-    syscfg_get (NULL, "hostname", hostname, sizeof(hostname));
-
-    len = strlen (hostname);
-
-    if (len < *pUlSize)
-    {
-        memcpy (pValue, hostname, len + 1);
-        return 0;
-    }
-
-    *pUlSize = len + 1;
-
-    return 1;
-}
-
 ULONG
 CosaDmlGiGetAvailableLanguages
     (

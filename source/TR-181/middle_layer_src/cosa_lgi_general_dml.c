@@ -14,6 +14,8 @@
  * limitations under the License.
  **********************************************************************/
 
+#include <unistd.h>
+
 #include "ansc_platform.h"
 #include "cosa_lgi_general_apis.h"
 #include "cosa_lgi_general_dml.h"
@@ -21,6 +23,9 @@
 #include "cosa_dslite_apis.h"
 #include "ccsp/platform_hal.h"
 #include <syscfg/syscfg.h>
+
+#define MAX_HOSTNAME_SIZE 64
+
 /***********************************************************************
  IMPORTANT NOTE:
 
@@ -269,7 +274,16 @@ LgiGeneral_GetParamStringValue
 
     if (strcmp(ParamName, "LanHostname") == 0)
     {
-        return CosaDmlGiGetLanHostname(NULL, pValue, pulSize);
+        if (*pulSize <= MAX_HOSTNAME_SIZE) {
+            *pulSize = MAX_HOSTNAME_SIZE + 1;
+            return 1;
+        }
+#if 1
+        gethostname(pValue, *pulSize);
+#else
+        syscfg_get (NULL, "hostname", pValue, *pulSize);
+#endif
+        return 0;
     }
 
     if (strcmp(ParamName, "CAppName") == 0)

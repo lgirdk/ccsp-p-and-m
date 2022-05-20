@@ -140,14 +140,6 @@ CosaDmlLGiSetUiHashPassword
 );
 
 ULONG
-CosaDmlGiGetLanHostname
-(
-    ANSC_HANDLE                 hContext,
-    char                        *pValue,
-    ULONG                       *pUlSize
-);
-
-ULONG
 CosaDmlGiGetAvailableLanguages
 (
     ANSC_HANDLE                 hContext,
