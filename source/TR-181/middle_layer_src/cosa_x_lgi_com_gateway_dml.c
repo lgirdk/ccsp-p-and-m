@@ -171,9 +171,16 @@ LgiGateway_GetParamBoolValue
         BOOL*                       pBool
     )
 {
+    char buf[6];
     if (strcmp(ParamName, "DNS_Override") == 0)
     {
         CosaDmlLgiGwGetDnsOverride(pBool);
+        return TRUE;
+    }
+    if (strcmp(ParamName, "DNS_ForceStatic") == 0)
+    {
+        syscfg_get(NULL, "dns_forcestatic", buf, sizeof(buf));
+        *pBool = (strcmp (buf, "true") == 0) ? TRUE : FALSE;
         return TRUE;
     }
     return FALSE;
@@ -199,6 +206,13 @@ LgiGateway_SetParamBoolValue
             pMyObject->isDnsUpdated = TRUE;
             return TRUE;
         }
+    }
+    if (strcmp(ParamName, "DNS_ForceStatic") == 0)
+    {
+        pMyObject->dns_forcestatic = bValue;
+        syscfg_set_commit(NULL, "dns_forcestatic", (bValue == true) ? "true" : "false");
+        commonSyseventSet("firewall-restart", "");
+        return TRUE;
     }
     return FALSE;
 }
