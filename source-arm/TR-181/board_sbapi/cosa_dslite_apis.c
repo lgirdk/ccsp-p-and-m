@@ -70,7 +70,6 @@ CosaDmlSetDsliteEnable
     int rc = -1;
     UtopiaContext ctx;
     boolean_t read_dslite_enable;
-    BOOL dns_override = FALSE;
 
     if (bEnabled == TRUE)
     {
@@ -89,14 +88,46 @@ CosaDmlSetDsliteEnable
     Utopia_GetDsliteEnable(&ctx, &read_dslite_enable);
     if(read_dslite_enable != bEnabled)
     {
+        char erouter_mode[6];
+
         rc = Utopia_SetDsliteEnable(&ctx, bEnabled);
         Utopia_Free(&ctx,!rc);
-        CosaDmlLgiGwGetDnsOverride(&dns_override);
-        if(dns_override)
+
+        // Check if ds-lite was already enabled in IPV6 mode before
+        syscfg_get(NULL, "last_erouter_mode", erouter_mode, sizeof(erouter_mode));
+
+        if (strcmp(erouter_mode, "2") == 0) // 2 -> IPV6 mode
         {
-            //Disable the DNS override when switching between IP provisioning modes (DSLite and RG)
-            CosaDmlLgiGwSetDnsOverride(FALSE);
+            char curr[6];
+            char prev[6];
+
+            syscfg_get(NULL, "dslite_enable", curr, sizeof(curr));
+            syscfg_get(NULL, "dslite_enable_prev", prev, sizeof(prev));
+
+            CcspTraceError(("dslite enable: '%s' (prev '%s')\n", curr, prev));
+
+            if (strcmp(prev, curr) != 0)
+            {
+                BOOL dns_override;
+
+                syscfg_set(NULL, "dslite_enable_prev", curr);
+                CosaDmlLgiGwGetDnsOverride(&dns_override);
+                if (dns_override)
+                {
+                    //Disable the DNS override when switching between IP provisioning modes (DSLite and RG)
+                    CosaDmlLgiGwSetDnsOverride(FALSE);
+                }
+                else
+                {
+                    syscfg_commit();
+                }
+            }
+            else
+            {
+                CcspTraceError(("No change in dslite mode. Hence not updating dns_override\n"));
+            }
         }
+
         // commonSyseventSet("wan-restart", "");
         system("service_dslite restart &");
         return ANSC_STATUS_SUCCESS;
