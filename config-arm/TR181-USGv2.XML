@@ -439,6 +439,19 @@
                 <writable>true</writable>
             </parameter>
             <parameter>
+                <name>DNS_ForceStatic</name>
+                <description>
+                    This object is used to enable or disable forcing the use of the configured static DNS servers.
+                    If DNS ForceStatic is true (1), the gateway MUST only forward DNS requests and replies
+                    that have a source or destination address that is equal one of the configured custom DNS server addresses.
+                    If DNS ForceStatic is false (0), the gateway will not block DNS traffic, unless configured to do so through
+                    other configuration.
+                </description>
+                <type>boolean</type>
+                <syntax>bool</syntax>
+                <writable>true</writable>
+            </parameter>
+            <parameter>
                 <name>DNS_IPv4Preferred</name>
                 <description>
                     Preferred IPv4 DNS server
