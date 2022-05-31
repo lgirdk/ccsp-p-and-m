@@ -114,7 +114,6 @@ void* ResetFailedAttepmts(void* arg)
 	}
 #endif /* _COSA_FOR_BCI_ */
 
-      pEntry->NumOfFailedAttempts = 0;
        pEntry->LockOutRemainingTime=0;
     return NULL;
 }
@@ -1083,7 +1082,7 @@ User_SetParamUlongValue
     {
         /* collect value */
     	char buf[10];
- 	int MaxFailureAttempts = 0;
+	int lockTime = 0;
 	pUser->NumOfFailedAttempts = uValue;
 	#if defined(_COSA_FOR_BCI_)
 		if (strcmp(pUser->Username, "cusadmin") == 0)
@@ -1105,37 +1104,40 @@ User_SetParamUlongValue
 					pUser->NumOfFailedAttempts = uValue;
 			}
 		}
-	#else
-		pUser->NumOfFailedAttempts = uValue;
 	#endif
 
-    	memset(buf,0,sizeof(buf));
-       /* CID: 64235 Array compared against 0*/
-       if(!syscfg_get( NULL, "PasswordLockoutAttempts", buf, sizeof(buf)))
-       {
-		MaxFailureAttempts=atoi(buf);
-		
-       }
-         
-	if ( MaxFailureAttempts == pUser->NumOfFailedAttempts )
+	if (pUser->NumOfFailedAttempts == 0)
+    {
+	    pUser->LockOutRemainingTime = 0;
+		return TRUE;
+    }
+	else if (pUser->NumOfFailedAttempts >= 1 && pUser->NumOfFailedAttempts <= 5)
 	{
-		//action required
-			pthread_t rstattempt;
-			pthread_create(&rstattempt, NULL, &ResetFailedAttepmts, (void *)pUser);
-		CcspTraceWarning(("WebUI Login:  Num of invalid attempt is %d, WebUI is locked out for %s User\n", pUser->NumOfFailedAttempts, pUser->Username));
-	} 
-	else if ( MaxFailureAttempts <= pUser->NumOfFailedAttempts)
-	{
-		CcspTraceWarning(("WebUI Login: Num of invalid attempt is %d, WebUI is locked out for %s User \n", pUser->NumOfFailedAttempts, pUser->Username));
+		if (syscfg_set_commit(NULL, "PasswordLockoutTime", "15000") != 0)
+		{
+			CcspTraceError(("syscfg_set PasswordLockoutTime failed\n"));
+			return FALSE;
+		}
 	}
 	else
 	{
+		lockTime = (pUser->NumOfFailedAttempts >= 10) ? 480000 : (15000 * pow (2, pUser->NumOfFailedAttempts - 5));
+		_ansc_itoa(lockTime,buf,10);
+		if (syscfg_set_commit(NULL, "PasswordLockoutTime", buf) != 0)
+		{
+			CcspTraceError(("syscfg_set PasswordLockoutTime failed\n"));
+			return FALSE;
+		}
+	}
 	
-        	CcspTraceWarning(("WebUI Login: Num of invalid attempt is %d, WebUI is not locked out for %s User\n", pUser->NumOfFailedAttempts,pUser->Username));
-	}	
 
-        return TRUE;
+	pthread_t rstattempt;
+	pthread_create(&rstattempt, NULL, &ResetFailedAttepmts, (void *)pUser);
+	CcspTraceWarning(("WebUI Login:  Num of invalid attempt is %d, WebUI is locked out for %s User\n", pUser->NumOfFailedAttempts, pUser->Username));
+
+	return TRUE;
     }
+
     #if defined(_COSA_FOR_BCI_)
     if (strcmp(ParamName, "NumOfRestoreFailedAttempt") == 0)
     {
