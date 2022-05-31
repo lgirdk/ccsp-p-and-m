@@ -9709,6 +9709,11 @@ dhcpv6c_dbg_thrd(void * in)
                        }
 #endif
                    }
+
+#ifdef DSLITE_FEATURE_SUPPORT
+                   /* Fixme: needs review. Temp fix for Mv3 and perhaps not appropriate for other targets? */
+                   v_secure_system("service_dslite restart &");
+#endif
                 }
                 else if (!strncmp(action, "del", 3))
                 {
