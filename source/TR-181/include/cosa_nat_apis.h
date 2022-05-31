@@ -145,7 +145,6 @@ _COSA_DML_NAT_PMAPPING
     ANSC_IPV4_ADDRESS               InternalClient;
     char                            Description[256];
     char                            X_CISCO_COM_InternalClientV6[64];
-    char                            X_RDKCENTRAL_RuleSource[32];
     COSA_DML_NAT_PMAPPING_Origin    X_CISCO_COM_Origin;
 }
 COSA_DML_NAT_PMAPPING,  *PCOSA_DML_NAT_PMAPPING;
