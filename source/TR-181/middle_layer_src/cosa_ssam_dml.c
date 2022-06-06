@@ -26,7 +26,7 @@ BOOL X_LGI_COM_DigitalSecurity_GetParamUlongValue(ANSC_HANDLE hInsContext, char 
 {
     char buf[12];
 
-    if (strcmp("MaxStartDelay", ParamName) == 0) {
+    if (strcmp(ParamName, "MaxStartDelay") == 0) {
         syscfg_get(NULL, "ssam_maxstartdelay", buf, sizeof(buf));
         if (buf[0] != 0) {
             *puLong = (ULONG) atoi(buf);
@@ -37,7 +37,7 @@ BOOL X_LGI_COM_DigitalSecurity_GetParamUlongValue(ANSC_HANDLE hInsContext, char 
         return TRUE;
     }
 
-    if (strcmp("SigningKeyId", ParamName) == 0) {
+    if (strcmp(ParamName, "SigningKeyId") == 0) {
         syscfg_get(NULL, "ssam_signingkeyid", buf, sizeof(buf));
         if (buf[0] != 0) {
             *puLong = (ULONG) atoi(buf);
@@ -48,7 +48,7 @@ BOOL X_LGI_COM_DigitalSecurity_GetParamUlongValue(ANSC_HANDLE hInsContext, char 
         return TRUE;
     }
 
-    if (strcmp("ProvisioningModel", ParamName) == 0) {
+    if (strcmp(ParamName, "ProvisioningModel") == 0) {
         syscfg_get(NULL, "ssam_provisioningmodel", buf, sizeof(buf));
         if (buf[0] != 0) {
             *puLong = (ULONG) atoi(buf);
@@ -64,21 +64,21 @@ BOOL X_LGI_COM_DigitalSecurity_GetParamUlongValue(ANSC_HANDLE hInsContext, char 
 
 BOOL X_LGI_COM_DigitalSecurity_SetParamUlongValue(ANSC_HANDLE hInsContext, char *ParamName, ULONG uValue)
 {
-    if (strcmp("MaxStartDelay", ParamName) == 0) {
+    if (strcmp(ParamName, "MaxStartDelay") == 0) {
         if (syscfg_set_u_commit(NULL, "ssam_maxstartdelay", uValue) != 0) {
             AnscTraceWarning(("Error in syscfg_set for ssam_maxstartdelay\n"));
         }
         return TRUE;
     }
 
-    if (strcmp("SigningKeyId", ParamName) == 0) {
+    if (strcmp(ParamName, "SigningKeyId") == 0) {
         if (syscfg_set_u_commit(NULL, "ssam_signingkeyid", uValue) != 0) {
             AnscTraceWarning(("Error in syscfg_set for ssam_signingkeyid\n"));
         }
         return TRUE;
     }
 
-    if (strcmp("ProvisioningModel", ParamName) == 0) {
+    if (strcmp(ParamName, "ProvisioningModel") == 0) {
         if (syscfg_set_u_commit(NULL, "ssam_provisioningmodel", uValue) != 0) {
             AnscTraceWarning(("Error in syscfg_set for ssam_provisioningmodel\n"));
         }
@@ -90,17 +90,17 @@ BOOL X_LGI_COM_DigitalSecurity_SetParamUlongValue(ANSC_HANDLE hInsContext, char 
 
 ULONG X_LGI_COM_DigitalSecurity_GetParamStringValue(ANSC_HANDLE hInsContext, char *ParamName, char *pValue, ULONG *pUlSize)
 {
-    if (strcmp("ProvisionedEnvironment", ParamName) == 0) {
+    if (strcmp(ParamName, "ProvisionedEnvironment") == 0) {
         syscfg_get(NULL, "ssam_provisionedenv", pValue, *pUlSize);
         return 0;
     }
 
-    if (strcmp("AgentPassword", ParamName) == 0) {
+    if (strcmp(ParamName, "AgentPassword") == 0) {
         strcpy(pValue, "");
         return 0;
     }
 
-    if (strcmp("AgentVersion", ParamName) == 0) {
+    if (strcmp(ParamName, "AgentVersion") == 0) {
         char buf[12];
 
         syscfg_get(NULL, "ssam_enable", buf, sizeof(buf));
@@ -128,7 +128,7 @@ ULONG X_LGI_COM_DigitalSecurity_GetParamStringValue(ANSC_HANDLE hInsContext, cha
         return 0;
     }
 
-    if (strcmp("Status", ParamName) == 0) {
+    if (strcmp(ParamName, "Status") == 0) {
         FILE *fp = NULL;
         char buffer[32] = { 0 };
         char status[32] = { 0 };
@@ -148,7 +148,7 @@ ULONG X_LGI_COM_DigitalSecurity_GetParamStringValue(ANSC_HANDLE hInsContext, cha
         return 0;
     }
 
-    if (strcmp("SecretKey", ParamName) == 0) {
+    if (strcmp(ParamName, "SecretKey") == 0) {
         syscfg_get(NULL, "ssam_agentpasswd", pValue, *pUlSize);
         return 0;
     }
@@ -158,7 +158,7 @@ ULONG X_LGI_COM_DigitalSecurity_GetParamStringValue(ANSC_HANDLE hInsContext, cha
 
 BOOL X_LGI_COM_DigitalSecurity_SetParamStringValue(ANSC_HANDLE hInsContext, char *ParamName, char *pString)
 {
-    if (strcmp("ProvisionedEnvironment", ParamName) == 0) {
+    if (strcmp(ParamName, "ProvisionedEnvironment") == 0) {
         if (syscfg_set_commit(NULL, "ssam_provisionedenv", pString) == 0) {
             FILE *fp = fopen("/var/tmp/environment", "w");
             if (fp != NULL) {
@@ -172,7 +172,7 @@ BOOL X_LGI_COM_DigitalSecurity_SetParamStringValue(ANSC_HANDLE hInsContext, char
         return TRUE;
     }
 
-    if (strcmp("AgentPassword", ParamName) == 0) {
+    if (strcmp(ParamName, "AgentPassword") == 0) {
         if (syscfg_set_commit(NULL, "ssam_agentpasswd", pString) != 0) {
             AnscTraceWarning(("Error in syscfg_set for ssam_agentpasswd\n"));
         }
@@ -184,27 +184,17 @@ BOOL X_LGI_COM_DigitalSecurity_SetParamStringValue(ANSC_HANDLE hInsContext, char
 
 BOOL X_LGI_COM_DigitalSecurity_GetParamBoolValue(ANSC_HANDLE hInsContext, char *ParamName, BOOL *pBool)
 {
-    char buf[12];
+    char buf[8];
 
-    if (strcmp("Enable", ParamName) == 0) {
+    if (strcmp(ParamName, "Enable") == 0) {
         syscfg_get(NULL, "ssam_enable", buf, sizeof(buf));
-        if (buf[0] != 0) {
-            *pBool = (BOOL) atoi(buf);
-        } else {
-            *pBool = 0;
-            AnscTraceWarning(("Error in syscfg_get for ssam_enable\n"));
-        }
+        *pBool = (strcmp(buf, "1") == 0) ? TRUE : FALSE;
         return TRUE;
     }
 
-    if (strcmp("UpdaterEnable", ParamName) == 0) {
+    if (strcmp(ParamName, "UpdaterEnable") == 0) {
         syscfg_get(NULL, "ssam_updaterenable", buf, sizeof(buf));
-        if (buf[0] != 0) {
-            *pBool = (BOOL) atoi(buf);
-        } else {
-            *pBool = 0;
-            AnscTraceWarning(("Error in syscfg_get for ssam_updaterenable\n"));
-        }
+        *pBool = (strcmp(buf, "1") == 0) ? TRUE : FALSE;
         return TRUE;
     }
 
@@ -213,7 +203,7 @@ BOOL X_LGI_COM_DigitalSecurity_GetParamBoolValue(ANSC_HANDLE hInsContext, char *
 
 BOOL X_LGI_COM_DigitalSecurity_SetParamBoolValue(ANSC_HANDLE hInsContext, char *ParamName, BOOL bValue)
 {
-    if (strcmp("Enable", ParamName) == 0) {
+    if (strcmp(ParamName, "Enable") == 0) {
         if (syscfg_set_commit(NULL, "ssam_enable", bValue ? "1" : "0") != 0) {
             AnscTraceWarning(("Error in syscfg_set for ssam_enable\n"));
         }
@@ -225,7 +215,7 @@ BOOL X_LGI_COM_DigitalSecurity_SetParamBoolValue(ANSC_HANDLE hInsContext, char *
         return TRUE;
     }
 
-    if (strcmp("UpdaterEnable", ParamName) == 0) {
+    if (strcmp(ParamName, "UpdaterEnable") == 0) {
         if (syscfg_set_commit(NULL, "ssam_updaterenable", bValue ? "1" : "0") != 0) {
             AnscTraceWarning(("Error in syscfg_set for ssam_updaterenable\n"));
         }
