@@ -170,4 +170,6 @@ void ssam_stop (void)
 {
     system("killall -s SIGINT sam");
     unlink("/var/sam/.sam.pid");
+    unlink("/var/sam/agent_version");
+    unlink("/var/sam/status");
 }

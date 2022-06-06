@@ -22,6 +22,28 @@
 #include "cosa_ssam_apis.h"
 #include "cosa_ssam_dml.h"
 
+static int read_param_string_from_file (char *filename, char *pValue, ULONG *pUlSize)
+{
+    FILE *fp;
+
+    if ((fp = fopen(filename, "r")) != NULL) {
+        if (fgets(pValue, *pUlSize, fp) == NULL) {
+            *pValue = 0;
+        }
+        else {
+            size_t len = strlen(pValue);
+            if ((len > 0) && (pValue[len - 1] == '\n'))
+                pValue[len - 1] = 0;
+        }
+        fclose(fp);
+    }
+    else {
+        *pValue = 0;
+    }
+
+    return 0;
+}
+
 BOOL X_LGI_COM_DigitalSecurity_GetParamUlongValue(ANSC_HANDLE hInsContext, char *ParamName, ULONG *puLong)
 {
     char buf[12];
@@ -101,51 +123,19 @@ ULONG X_LGI_COM_DigitalSecurity_GetParamStringValue(ANSC_HANDLE hInsContext, cha
     }
 
     if (strcmp(ParamName, "AgentVersion") == 0) {
-        char buf[12];
-
-        syscfg_get(NULL, "ssam_enable", buf, sizeof(buf));
-        if ((strcmp(buf, "1") != 0) || (access("/var/sam/.sam.pid", F_OK) != 0)) {
-           strcpy(pValue, "");
+        if (*pUlSize <= 32) {
+            *pUlSize = 32 + 1;
+            return 1;
         }
-        else {
-           FILE *fp = NULL;
-           char buffer[32] = { 0 };
-           char version[32] = { 0 };
-
-           fp = fopen("/var/sam/agent_version", "r");
-           if (fp != NULL) {
-               if ((fgets(buffer, sizeof(buffer), fp) != NULL) && (strlen(buffer) != 0)) {
-                   snprintf(version, sizeof(version), "%s", buffer);
-               }
-               fclose(fp);
-           }
-           if (strlen(version) == 0) {
-               strcpy(pValue, "");
-           } else {
-               strcpy(pValue, version);
-           }
-        }
-        return 0;
+        return read_param_string_from_file("/var/sam/agent_version", pValue, pUlSize);
     }
 
     if (strcmp(ParamName, "Status") == 0) {
-        FILE *fp = NULL;
-        char buffer[32] = { 0 };
-        char status[32] = { 0 };
-
-        fp = fopen("/var/sam/status", "r");
-        if (fp != NULL) {
-            if ((fgets(buffer, sizeof(buffer), fp) != NULL) && (strlen(buffer) != 0)) {
-                snprintf(status, sizeof(status), "%s", buffer);
-            }
-            fclose(fp);
+        if (*pUlSize <= 32) {
+            *pUlSize = 32 + 1;
+            return 1;
         }
-        if (strlen(status) == 0) {
-            strcpy(pValue, "");
-        } else {
-            strcpy(pValue, status);
-        }
-        return 0;
+        return read_param_string_from_file("/var/sam/status", pValue, pUlSize);
     }
 
     if (strcmp(ParamName, "SecretKey") == 0) {
