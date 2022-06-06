@@ -6898,6 +6898,8 @@ void _cosa_dhcpsv6_get_client()
     PCOSA_DML_DHCPSV6_CLIENT_OPTION          pOption1 = NULL;
     PCOSA_DML_DHCPSV6_CLIENT_IPV6ADDRESS     pIPv6Address1 = NULL;
     PCOSA_DML_DHCPSV6_CLIENT_IPV6PREFIX      pIPv6Prefix1  = NULL;
+    struct timespec monotonic_time;
+    time_t monotonic_offset;
 
     /* When read error, we keep current configuration */
     if ( fp == NULL )
@@ -6926,6 +6928,9 @@ void _cosa_dhcpsv6_get_client()
         
         g_dhcps6v_client_num = 0;
     }
+
+    clock_gettime(CLOCK_MONOTONIC, &monotonic_time);
+    monotonic_offset = time(NULL) - monotonic_time.tv_sec;
 
     /* Get all from file again */
     while ( fgets(oneLine, sizeof(oneLine), fp ) != NULL )
@@ -7116,6 +7121,7 @@ void _cosa_dhcpsv6_get_client()
                 }
                 else
                 {
+                    t1 += monotonic_offset;
                     localtime_r(&t1, &t2);
                     snprintf(buf, sizeof(buf), "%d-%d-%dT%02d:%02d:%02dZ%c", 
                          1900+t2.tm_year, t2.tm_mon+1, t2.tm_mday,
@@ -7140,6 +7146,7 @@ void _cosa_dhcpsv6_get_client()
                 }
                 else
                 {
+                    t1 += monotonic_offset;
                     localtime_r(&t1, &t2);
                     snprintf(buf, sizeof(buf), "%d-%d-%dT%02d:%02d:%02dZ%c", 
                          1900+t2.tm_year, t2.tm_mon+1, t2.tm_mday,
@@ -7195,6 +7202,7 @@ void _cosa_dhcpsv6_get_client()
                 }
                 else
                 {
+                    t1 += monotonic_offset;
                     localtime_r(&t1, &t2);
                     snprintf(buf, sizeof(buf), "%d-%d-%dT%02d:%02d:%02dZ%c", 
                          1900+t2.tm_year, t2.tm_mon+1, t2.tm_mday,
@@ -7219,6 +7227,7 @@ void _cosa_dhcpsv6_get_client()
                 }
                 else
                 {
+                    t1 += monotonic_offset;
                     localtime_r(&t1, &t2);
                     snprintf(buf, sizeof(buf), "%d-%d-%dT%02d:%02d:%02dZ%c", 
                          1900+t2.tm_year, t2.tm_mon+1, t2.tm_mday,
