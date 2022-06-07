@@ -64,17 +64,26 @@ int CosaDmlLgiGwGetDnsOverride ( BOOL *pValue )
 
     syscfg_get(NULL, "dns_override", buf, sizeof(buf));
 
-    syscfg_get(NULL, "last_erouter_mode", erouter_mode, sizeof(erouter_mode));
-
-    if (syscfg_get(NULL, "dns_override_mode", override_mode, sizeof(override_mode)) != 0)
+    if (strcmp(buf, "true") == 0)
     {
-        /* if dns_override_mode flag is not set in syscfg, then copy the value of last_erouter_mode.
-	 * In this scenario, return value will be based only on dns_override flag.
-	 */
-        strcpy(override_mode, erouter_mode);
-    }
+        *pValue = TRUE;
 
-    *pValue = (strcmp(buf, "true") == 0 && strcmp(override_mode, erouter_mode) == 0);
+        /* return FALSE if dns_override_mode is set and it doesn't match last_erouter_mode */
+
+        if (syscfg_get(NULL, "dns_override_mode", override_mode, sizeof(override_mode)) == 0)
+        {
+            syscfg_get(NULL, "last_erouter_mode", erouter_mode, sizeof(erouter_mode));
+
+            if (strcmp(override_mode, erouter_mode) != 0)
+            {
+                *pValue = FALSE;
+            }
+        }
+    }
+    else
+    {
+        *pValue = FALSE;
+    }
 
     return 0;
 }
