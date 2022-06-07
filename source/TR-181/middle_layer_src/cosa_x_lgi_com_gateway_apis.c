@@ -37,10 +37,8 @@ enum {
 
 ANSC_STATUS CosaDmlLgiGwGetIpv6LanMode ( ANSC_HANDLE hContext, ULONG *pValue )
 {
-    if ( pValue != NULL )
-    {
-        *pValue = CosaDmlDhcpv6sGetType(NULL);
-    }
+    *pValue = CosaDmlDhcpv6sGetType(NULL);
+
     return ANSC_STATUS_SUCCESS;
 }
 
