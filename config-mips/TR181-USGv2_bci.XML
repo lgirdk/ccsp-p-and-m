@@ -756,14 +756,8 @@
                 <syntax>string</syntax>
                 <writable>false</writable>
             </parameter>
-            <parameter>
+        <parameter>
                 <name>PauseScreenFileLocation</name>
-                <type>string</type>
-                <syntax>string</syntax>
-                <writable>true</writable>
-            </parameter>
-            <parameter>
-                <name>MeshRedirectorURL</name>
                 <type>string</type>
                 <syntax>string</syntax>
                 <writable>true</writable>
