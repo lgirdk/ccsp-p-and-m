@@ -104,7 +104,7 @@ int CosaDmlLgiGwSetDnsOverride ( BOOL bValue )
 
         if (strcmp(customer_db_dns_enabled, nv) != 0)
         {
-            syscfg_set_commit(NULL, "dns_override", nv);
+            syscfg_set(NULL, "dns_override", nv);
         }
 
         if (bValue)
