@@ -827,9 +827,17 @@ DeviceInfo_GetParamStringValue
         return 0;
     }
 
-    if (strcmp(ParamName, "SoftwareVersion") == 0)
+    if ((strcmp(ParamName, "SoftwareVersion") == 0) ||
+        (strcmp(ParamName, "X_CISCO_COM_FirmwareName") == 0))
     {
-        CosaDmlDiGetFirmwareName(NULL, pValue, pulSize);
+        if (*pulSize <= 64) {
+            *pulSize = 64 + 1;
+            return 1;
+        }
+
+        if (platform_hal_GetFirmwareName(pValue, *pulSize) != RETURN_OK)
+            return -1;
+
         return 0;
     }
 
@@ -860,12 +868,6 @@ DeviceInfo_GetParamStringValue
     if (strcmp(ParamName, "X_CISCO_COM_BootloaderVersion") == 0)
     {
         CosaDmlDiGetBootloaderVersion(NULL, pValue, pulSize);
-        return 0;
-    }
-
-    if (strcmp(ParamName, "X_CISCO_COM_FirmwareName") == 0)
-    {
-        CosaDmlDiGetFirmwareName(NULL, pValue, pulSize);
         return 0;
     }
 
