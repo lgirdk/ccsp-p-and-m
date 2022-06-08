@@ -854,7 +854,14 @@ DeviceInfo_GetParamStringValue
 
     if (strcmp(ParamName, "AdditionalSoftwareVersion") == 0)
     {
-        CosaDmlDiGetAdditionalSoftwareVersion(NULL, pValue, pulSize);
+        if (*pulSize <= 64) {
+            *pulSize = 64 + 1;
+            return 1;
+        }
+
+        if (platform_hal_GetSoftwareVersion(pValue, *pulSize) != RETURN_OK)
+            return -1;
+
         return 0;
     }
 
