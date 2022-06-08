@@ -52,9 +52,7 @@
         *  CosaDmlDiGetProductClass
         *  CosaDmlDiGetSerialNumber
         *  CosaDmlDiGetHardwareVersion
-        *  CosaDmlDiGetSoftwareVersion
         *  CosaDmlDiGetAdditionalHardwareVersion
-        *  CosaDmlDiGetAdditionalSoftwareVersion
         *  CosaDmlDiGetProvisioningCode
         *  CosaDmlDiSetProvisioningCode
         *  CosaDmlDiGetFirstUseDate
@@ -747,22 +745,6 @@ CosaDmlDiGetHardwareVersion
 }
 
 ANSC_STATUS
-CosaDmlDiGetSoftwareVersion
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue,
-        ULONG*                      pulSize
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    if (platform_hal_GetSoftwareVersion(pValue, *pulSize) != RETURN_OK )
-        return ANSC_STATUS_FAILURE;
-    else {
-        return ANSC_STATUS_SUCCESS;
-    }     
-}
-
-ANSC_STATUS
 CosaDmlDiGetAdditionalHardwareVersion
     (
         ANSC_HANDLE                 hContext,
@@ -771,17 +753,6 @@ CosaDmlDiGetAdditionalHardwareVersion
     )
 {
     return CosaDmlDiGetHardwareVersion(hContext, pValue, pulSize);
-}
-
-ANSC_STATUS
-CosaDmlDiGetAdditionalSoftwareVersion
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue,
-        ULONG*                      pulSize
-    )
-{
-    return CosaDmlDiGetSoftwareVersion(hContext,pValue, pulSize);
 }
 
 ANSC_STATUS
