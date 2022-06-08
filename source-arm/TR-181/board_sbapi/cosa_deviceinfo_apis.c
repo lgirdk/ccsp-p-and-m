@@ -978,27 +978,6 @@ CosaDmlDiGetBootloaderVersion
 }
 
 ANSC_STATUS
-CosaDmlDiGetFirmwareName
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue,
-        PULONG                      pulSize
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    if (!pValue || !pulSize || *pulSize <= 64)
-        return ANSC_STATUS_FAILURE;
-
-    memset(pValue, 0, *pulSize);
-
-    if (platform_hal_GetFirmwareName(pValue, *pulSize) != RETURN_OK )
-        return ANSC_STATUS_FAILURE;
-    else {
-        return ANSC_STATUS_SUCCESS;
-    }
-}
-
-ANSC_STATUS
 CosaDmlDiGetFirmwareBuildTime
     (
         ANSC_HANDLE                 hContext,
