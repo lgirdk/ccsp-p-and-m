@@ -382,23 +382,7 @@ CosaDmlDiGetHardwareVersion
     );
 
 ANSC_STATUS
-CosaDmlDiGetSoftwareVersion
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue,
-        ULONG*                      pulSize
-    );
-
-ANSC_STATUS
 CosaDmlDiGetAdditionalHardwareVersion
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue,
-        ULONG*                      pulSize
-    );
-
-ANSC_STATUS
-CosaDmlDiGetAdditionalSoftwareVersion
     (
         ANSC_HANDLE                 hContext,
         char*                       pValue,
