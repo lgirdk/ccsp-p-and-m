@@ -1835,7 +1835,7 @@ void* resetWiFi(void* arg)
 		CcspTraceError(("FactoryReset:%s SettingX_CISCO_COM_FactoryReset returned error for param '%s'  ...\n",__FUNCTION__,faultParam));  
 		bus_info->freefunc(faultParam);
 	}
-#if (defined (_XB6_PRODUCT_REQ_) || defined(_COSA_BCM_MIPS_) || (defined(_HUB4_PRODUCT_REQ_) && !defined(_SR300_PRODUCT_REQ_))) && !defined(CONFIG_MNG)
+#if (defined (_XB6_PRODUCT_REQ_) || defined(_COSA_BCM_MIPS_) || (defined(_HUB4_PRODUCT_REQ_) && !defined(_SR300_PRODUCT_REQ_))) && !defined(_LG_OFW_)
 	faultParam = NULL;
 #if defined (_TRI_BAND_WIFI_)
 	parameterValStruct_t val1 = { "Device.WiFi.X_CISCO_COM_FactoryResetRadioAndAp", "1,2,3;1,2,17", ccsp_string};
@@ -2244,7 +2244,7 @@ CosaDmlDcSetFactoryReset
            if (!pthread_create(&wifiThread, NULL, &resetWiFi, NULL))
 		   wifiThreadStarted=1;
 
-#if defined(CONFIG_MNG) && !defined(_PUMA6_ARM_)
+#if defined(_LG_OFW_) && !defined(_PUMA6_ARM_)
            pthread_t reboot_device;
            /*Reboot the device in case of WiFi alone factory reset*/
            if(factory_reset_mask == FR_WIFI)
@@ -3648,7 +3648,7 @@ void* bridge_mode_wifi_notifier_thread(void* arg) {
     CCSP_MESSAGE_BUS_INFO *bus_info = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
     ANSC_STATUS ret = ANSC_STATUS_FAILURE;
     char acBridgeMode[ 4 ];
-#if defined(CONFIG_MNG)
+#if defined(_LG_OFW_)
     char acForceDisableRadioString[ 8 ];
 #else
     char acSetRadioString[ 8 ], acSetSSIDString[ 8 ];
@@ -3656,7 +3656,7 @@ void* bridge_mode_wifi_notifier_thread(void* arg) {
 	errno_t safec_rc = -1;
     int  sizevalCommit1 = 0;
     int  sizeval = 0;
-#if !defined(CONFIG_MNG)
+#if !defined(_LG_OFW_)
     int  sizeval2 = 0;
 #endif
     int ulNumOfEntries=0;
@@ -3683,7 +3683,7 @@ void* bridge_mode_wifi_notifier_thread(void* arg) {
 	memset( acBridgeMode, 0 ,sizeof( acBridgeMode ) );
 	sysevent_get(commonSyseventFd, commonSyseventToken, "bridge_mode", acBridgeMode, sizeof(acBridgeMode));
 
-#if defined(CONFIG_MNG)
+#if defined(_LG_OFW_)
 	switch( atoi( acBridgeMode ) )
 	{
 		case BRIDGE_MODE_STATIC:
@@ -3791,7 +3791,7 @@ void* bridge_mode_wifi_notifier_thread(void* arg) {
         free_parameterValStruct_t (bus_handle, nval, valWifistatus);
     }
     
-#if defined(CONFIG_MNG)
+#if defined(_LG_OFW_)
     //Full bridge
  parameterValStruct_t           val[] = {
  {"Device.WiFi.X_RDK-CENTRAL_COM_ForceDisable", acForceDisableRadioString, ccsp_boolean},
@@ -3823,7 +3823,7 @@ parameterValStruct_t valCommit1[] = {
  {"Device.WiFi.Radio.3.X_CISCO_COM_ApplySetting", "true", ccsp_boolean} };
 
     if (ulNumOfEntries < 3) {
-#if !defined(CONFIG_MNG)
+#if !defined(_LG_OFW_)
         sizeval         = (sizeof(val)/sizeof(*val)) - 1;
         sizeval2        = (sizeof(val2)/sizeof(*val2)) - 1;
 #else
@@ -3832,7 +3832,7 @@ parameterValStruct_t valCommit1[] = {
         sizevalCommit1  = (sizeof(valCommit1)/sizeof(*valCommit1)) - 1;
     } else {
         sizeval         = sizeof(val)/sizeof(*val);
-#if !defined(CONFIG_MNG)
+#if !defined(_LG_OFW_)
         sizeval2        = sizeof(val2)/sizeof(*val2);
 #endif
         sizevalCommit1  = sizeof(valCommit1)/sizeof(*valCommit1);
@@ -3861,7 +3861,7 @@ parameterValStruct_t valCommit1[] = {
         faultParam = NULL;
     }
 
-#if !defined(CONFIG_MNG)
+#if !defined(_LG_OFW_)
 	// All the cases Radio should get update since transition will happen during full - psedo - router
                 ret = CcspBaseIf_setParameterValues
                                 (
