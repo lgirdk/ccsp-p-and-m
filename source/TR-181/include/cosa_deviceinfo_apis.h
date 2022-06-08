@@ -461,14 +461,6 @@ CosaDmlDiGetBootloaderVersion
     );
 
 ANSC_STATUS
-CosaDmlDiGetFirmwareName
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue,
-        PULONG                      pulSize
-    );
-
-ANSC_STATUS
 CosaDmlDiGetFirmwareBuildTime
     (
         ANSC_HANDLE                 hContext,
