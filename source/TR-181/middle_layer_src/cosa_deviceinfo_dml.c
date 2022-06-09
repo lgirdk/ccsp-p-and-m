@@ -832,16 +832,14 @@ DeviceInfo_GetParamStringValue
         return 0;
     }
 
-    if ((strcmp(ParamName, "SoftwareVersion") == 0) ||
-        (strcmp(ParamName, "X_CISCO_COM_FirmwareName") == 0) ||
-        (strcmp(ParamName, "X_RDK_FirmwareName") == 0))
+    if (strcmp(ParamName, "SoftwareVersion") == 0)
     {
         if (*pulSize <= 64) {
             *pulSize = 64 + 1;
             return 1;
         }
 
-        if (platform_hal_GetFirmwareName(pValue, *pulSize) != RETURN_OK)
+        if (platform_hal_GetSoftwareVersion(pValue, *pulSize) != RETURN_OK)
             return -1;
 
         return 0;
@@ -853,14 +851,16 @@ DeviceInfo_GetParamStringValue
         return 0;
     }
 
-    if (strcmp(ParamName, "AdditionalSoftwareVersion") == 0)
+    if ((strcmp(ParamName, "AdditionalSoftwareVersion") == 0) ||
+        (strcmp(ParamName, "X_CISCO_COM_FirmwareName") == 0) ||
+        (strcmp(ParamName, "X_RDK_FirmwareName") == 0))
     {
         if (*pulSize <= 64) {
             *pulSize = 64 + 1;
             return 1;
         }
 
-        if (platform_hal_GetSoftwareVersion(pValue, *pulSize) != RETURN_OK)
+        if (platform_hal_GetFirmwareName(pValue, *pulSize) != RETURN_OK)
             return -1;
 
         return 0;
