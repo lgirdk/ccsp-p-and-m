@@ -219,6 +219,30 @@ static const DEVICEINFO_SET_VALUE deviceinfo_set_table[] = {
     {  "captiveportal_failure" , CAPTIVEPORTALFAILURE }
 };
 
+#if defined (_COSA_BCM_ARM_)
+static int read_param_string_from_file (char *filename, char *pValue, ULONG *pUlSize)
+{
+    FILE *fp;
+
+    if ((fp = fopen(filename, "r")) != NULL) {
+        if (fgets(pValue, *pUlSize, fp) == NULL) {
+            *pValue = 0;
+        }
+        else {
+            size_t len = strlen(pValue);
+            if ((len > 0) && (pValue[len - 1] == '\n'))
+                pValue[len - 1] = 0;
+        }
+        fclose(fp);
+    }
+    else {
+        *pValue = 0;
+    }
+
+    return 0;
+}
+#endif
+
 static int update_pValue (char *pValue, PULONG pulSize, char *str)
 {
     if (!str)
@@ -877,6 +901,20 @@ DeviceInfo_GetParamStringValue
     {
         CosaDmlDiGetBootloaderVersion(NULL, pValue, pulSize);
         return 0;
+    }
+
+    if (strcmp(ParamName, "X_LGI-COM_BootloaderBuildTime") == 0)
+    {
+        if (*pulSize <= 64) {
+            *pulSize = 64 + 1;
+            return 1;
+        }
+
+#if defined(_COSA_BCM_ARM_)
+        return read_param_string_from_file ("/proc/device-tree/bolt/date", pValue, pulSize);
+#else
+        return update_pValue (pValue, pulSize, "UNKNOWN");
+#endif
     }
 
     if (strcmp(ParamName, "X_CISCO_COM_FirmwareBuildTime") == 0)
