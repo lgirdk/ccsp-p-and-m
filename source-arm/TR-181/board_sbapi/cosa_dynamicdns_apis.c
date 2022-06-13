@@ -463,6 +463,8 @@ CosaDmlDynamicDns_Client_AddEntry
 
     Utopia_GetNumberOfDynamicDnsClient(&ctx, &g_NrDynamicDnsClient);
     Utopia_Free(&ctx, !rc);
+
+#if 0
     if (CosaDmlDynamicDns_GetEnable() && pEntry->Enable == TRUE)
     {
         /* reset the DynamicDNS client and host status before restart*/
@@ -476,6 +478,7 @@ CosaDmlDynamicDns_Client_AddEntry
          v_secure_system("/etc/utopia/service.d/service_dynamic_dns.sh dynamic_dns-restart &");
 #endif
     }
+#endif
 
     return (rc != 0) ? ANSC_STATUS_FAILURE : ANSC_STATUS_SUCCESS;
 }
