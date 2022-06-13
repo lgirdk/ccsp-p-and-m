@@ -556,9 +556,21 @@ CosaDmlDynamicDns_Client_SetConf
         pHostEntry = (COSA_DML_DDNS_HOST *)pHostLinkObj->hContext;
     }
 
-    if ((pEntry->Enable) && (pEntry->Server[0] != '\0') && (pEntry->Username[0] != '\0') && pHostEntry && (pHostEntry->Enable) && (pHostEntry->Name[0]!='\0') && (pEntry->Password[0] != '\0'))
+    if ((pEntry->Enable) && (pEntry->Server[0] != '\0') && (pEntry->Username[0] != '\0') && pHostEntry && (pHostEntry->Enable) && (pHostEntry->Name[0]!='\0'))
     {
-        bReadyUpdate = TRUE;
+        if (strstr(pHostEntry->Name, "duckdns") == NULL)
+        {
+            /* Check whether password is null or not for services other than duckdns */
+            if (pEntry->Password[0] != '\0')
+            {
+                bReadyUpdate = TRUE;
+            }
+        }
+        else
+        {
+            /* for duckdns no need to check password */
+            bReadyUpdate = TRUE;
+        }
     }
 
     if ((isUserconfChanged == TRUE) && (bReadyUpdate == TRUE))
@@ -829,9 +841,21 @@ CosaDmlDynamicDns_Host_SetConf
         pClientEntry = (COSA_DML_DDNS_CLIENT *)pClientLinkObj->hContext;
     }
 
-    if ((pClientInsContext) && (pClientEntry->Enable) && (pClientEntry->Server[0] != '\0') && (pClientEntry->Username[0] != '\0') && (pEntry->Enable) && (pEntry->Name[0]!='\0') && (pClientEntry->Password[0] != '\0'))
+    if ((pClientInsContext) && (pClientEntry->Enable) && (pClientEntry->Server[0] != '\0') && (pClientEntry->Username[0] != '\0') && (pEntry->Enable) && (pEntry->Name[0]!='\0'))
     {
-        bReadyUpdate = TRUE;
+        if (strstr(pEntry->Name, "duckdns") == NULL)
+        {
+            /* Check whether password is null or not for services other than duckdns */
+            if (pClientEntry->Password[0] != '\0')
+            {
+                bReadyUpdate = TRUE;
+            }
+        }
+        else
+        {
+            /* for duckdns no need to check password */
+            bReadyUpdate = TRUE;
+        }
     }
 
     if (bReadyUpdate && CosaDmlDynamicDns_GetEnable() && (g_DDNSHost[index].Enable == TRUE) && (isHostchanged == TRUE) && (g_DDNSHost[index].Name[0] != '\0'))
