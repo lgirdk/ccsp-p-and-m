@@ -66,6 +66,7 @@
 
 #include "cosa_apis.h"
 #include "plugin_main_apis.h"
+#include "utapi/utapi.h"
 
 #include <sys/sysinfo.h>
 
@@ -770,4 +771,5 @@ validateIPRangeWithSubnetTable
         const PCOSA_DML_LAN_MANAGEMENT pLanMngm
     );
 
+void clear_rules_out_of_range(lanSetting_t lan_info);
 #endif
