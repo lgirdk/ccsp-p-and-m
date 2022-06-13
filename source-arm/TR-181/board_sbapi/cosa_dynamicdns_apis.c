@@ -23,6 +23,7 @@
 #include <utapi/utapi.h>
 #include <utapi/utapi_util.h>
 #include <syscfg/syscfg.h>
+#include <sysevent/sysevent.h>
 #include "safec_lib_common.h"
 
       /* MACROS */
@@ -93,6 +94,18 @@ DDNS_SERVICE gDdnsServices[] =
         "HTTPS"
     }
 };
+
+#ifdef DDNS_SERVICE_BIN
+static void RemoveCheckIntervalEntryFromCron(void)
+{
+    system("sed -i '/#DDNS_CHECK_INTERVAL/d' /var/spool/cron/crontabs/root");
+}
+
+static void RemoveRetryIntervalEntryFromCron(void)
+{
+    system("sed -i '/#DDNS_RETRY_INTERVAL/d' /var/spool/cron/crontabs/root");
+}
+#endif
 
 /***********************************************************************
  APIs for SYSCFG GET and SET
@@ -278,9 +291,21 @@ CosaDmlDynamicDns_SetEnable
        syscfg_commit();
 
        if (bValue == TRUE && g_NrDynamicDnsClient != 0) {
+#ifdef DDNS_SERVICE_BIN
+           CcspTraceInfo(("%s Going to invoke ddns service from CosaDmlDynamicDns_SetEnable() \n", __FUNCTION__));
+           v_secure_system("service_ddns restart &");
+#else
            CcspTraceInfo(("%s Going to invoke script from CosaDmlDynamicDns_SetEnable() \n", __FUNCTION__));
            v_secure_system("/etc/utopia/service.d/service_dynamic_dns.sh dynamic_dns-restart &");
+#endif
        }
+
+#ifdef DDNS_SERVICE_BIN
+       if (bValue == FALSE) {
+           RemoveCheckIntervalEntryFromCron();
+           RemoveRetryIntervalEntryFromCron();
+       }
+#endif
 
        return 0;
 }
@@ -421,7 +446,13 @@ CosaDmlDynamicDns_Client_AddEntry
         /* reset the DynamicDNS client and host status before restart*/
         resetDynamicDNSStatus();
         CcspTraceInfo(("%s Going to restart dynamic dns service",__FUNCTION__));
+#ifdef DDNS_SERVICE_BIN
+        if (access("/var/run/updating_ddns_server.txt", F_OK) != 0) {
+            v_secure_system("service_ddns restart &");
+        }
+#else
         v_secure_system("/etc/utopia/service.d/service_dynamic_dns.sh dynamic_dns-restart &");
+#endif
     }
 
     return (rc != 0) ? ANSC_STATUS_FAILURE : ANSC_STATUS_SUCCESS;
@@ -579,7 +610,13 @@ CosaDmlDynamicDns_Client_SetConf
         resetDynamicDNSStatus();
         CcspTraceInfo(("%s Going to restart dynamic dns service",__FUNCTION__));
         reset_ddns_return_status();
+#ifdef DDNS_SERVICE_BIN
+        if (access("/var/run/updating_ddns_server.txt", F_OK) != 0) {
+            v_secure_system("service_ddns restart &");
+        }
+#else
         v_secure_system("/etc/utopia/service.d/service_dynamic_dns.sh dynamic_dns-restart &");
+#endif
     }
 
     return (rc != 0) ? ANSC_STATUS_FAILURE : ANSC_STATUS_SUCCESS;
@@ -865,7 +902,13 @@ CosaDmlDynamicDns_Host_SetConf
         g_DDNSHost[index].Status = 2; /* HOST_UPDATE_NEEDED=2 */
         CcspTraceInfo(("%s Going to restart dynamic dns service",__FUNCTION__));
         reset_ddns_return_status();
+#ifdef DDNS_SERVICE_BIN
+        if (access("/var/run/updating_ddns_server.txt", F_OK) != 0) {
+            v_secure_system("service_ddns restart &");
+        }
+#else
         v_secure_system("/etc/utopia/service.d/service_dynamic_dns.sh dynamic_dns-restart &");
+#endif
     }
     return ANSC_STATUS_SUCCESS;
 }
@@ -1124,10 +1167,12 @@ CosaDmlDynamicDns_Server_SetConf
         return ANSC_STATUS_FAILURE;
     }
 
+#ifndef DDNS_SERVICE_BIN
     if (vsystem("killall -9 ez-ipupdate") != 0)
     {
        fprintf(stderr, "%s: fail to killall ez-ipupdate\n", __FUNCTION__);
     }
+#endif
 
     snprintf(enable_path, sizeof(enable_path), SYSCFG_SERVER_ENABLE_KEY, index + 1);
     snprintf(protocol_path, sizeof(protocol_path), SYSCFG_SERVER_PROTOCOL_KEY, index + 1);
@@ -1157,6 +1202,40 @@ CosaDmlDynamicDns_Server_SetConf
     UtSetUlong(retryinterval_path, g_DDNSServer[index].RetryInterval);
     UtSetUlong(maxretries_path, g_DDNSServer[index].MaxRetries);
     UtSetUlong(serverport_path, g_DDNSServer[index].ServerPort);
+
+#ifdef DDNS_SERVICE_BIN
+    if (g_DDNSServer[index].CheckInterval != 0)
+    {
+        BOOLEAN client_enable = 0;
+        UtGetBool("arddnsclient_1::enable", &client_enable);
+        if (client_enable)
+        {
+            char buf[30];
+            int server_index = -1;
+            UtGetString("arddnsclient_1::Server", buf, sizeof(buf));
+            if ((sscanf(buf, "Device.DynamicDNS.Server.%d", &server_index) == 1) &&
+                (server_index == (index + 1)))
+            {
+                int se_fd = -1;
+                token_t se_token;
+                RemoveCheckIntervalEntryFromCron();
+                FILE *cron_fp = fopen("/var/spool/cron/crontabs/root", "a+");
+                if (!cron_fp)
+                    return ANSC_STATUS_FAILURE;
+                fprintf(cron_fp, "* * * * * /usr/bin/service_ddns ddns-check &  #DDNS_CHECK_INTERVAL\n");
+                fclose(cron_fp);
+                se_fd = sysevent_open("127.0.0.1", SE_SERVER_WELL_KNOWN_PORT, SE_VERSION, "service_ddns", &se_token);
+                sysevent_set(se_fd, se_token, "crond-restart", "1", 0);
+                sysevent_close(se_fd, se_token);
+            }
+        }
+    }
+    else
+    {
+        /* Delete the DDNS_CHECK_INTERVAL entry from crontab */
+        RemoveCheckIntervalEntryFromCron();
+    }
+#endif
 
     return ANSC_STATUS_SUCCESS;
 }
