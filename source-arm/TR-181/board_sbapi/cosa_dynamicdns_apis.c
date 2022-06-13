@@ -40,6 +40,8 @@
 #define  SYSCFG_HOST_ENABLE_KEY           "ddns_host_enable_%lu"
 #define  SYSCFG_HOST_STATUS_KEY           "ddns_host_status_%lu"
 #define  SYSCFG_HOST_NAME_KEY             "ddns_host_name_%lu"
+#define  HOST_REGISTERED                  1
+#define  CLIENT_UPDATED                   3
 #define  HOST_DISABLED                    5
 #define  MAX_HOST_COUNT                   1
 
@@ -491,10 +493,17 @@ CosaDmlDynamicDns_Client_SetConf
     )
 {
     int index, rc = -1;
+    char client_status[12];
     char enable_path[sizeof(SYSCFG_HOST_ENABLE_KEY) + 1] = {0};
     BOOLEAN enable = FALSE, isUserconfChanged = FALSE;
     UtopiaContext ctx;
     DynamicDnsClient_t  DDNSclient = {0};
+
+    ULONG InsNumber;
+    ANSC_HANDLE pHostnameInsContext = NULL;
+    PCOSA_CONTEXT_LINK_OBJECT pHostLinkObj = NULL;
+    COSA_DML_DDNS_HOST *pHostEntry = NULL;
+    bool bReadyUpdate = FALSE;
 
     if ((index = DynamicDns_Client_InsGetIndex(ins)) == -1 || !Utopia_Init(&ctx))
     {
@@ -506,11 +515,14 @@ CosaDmlDynamicDns_Client_SetConf
         return ANSC_STATUS_FAILURE;
     }
 
+    syscfg_get(NULL, "ddns_client_Status", client_status, sizeof(client_status));
+
     Utopia_GetDynamicDnsClientByIndex(&ctx, index, &DDNSclient);
     if (CosaDmlDynamicDns_GetEnable() && pEntry->Enable == TRUE &&
        ((strcmp(DDNSclient.Username, pEntry->Username) != 0) ||
        (strcmp(DDNSclient.Password, pEntry->Password) != 0) ||
-       (strcmp(DDNSclient.Server, pEntry->Server) != 0)))
+       (strcmp(DDNSclient.Server, pEntry->Server) != 0)) ||
+       (atoi(client_status) != CLIENT_UPDATED))
     {
         CcspTraceInfo(("%s UserConf changed \n",__FUNCTION__));
         isUserconfChanged = TRUE;
@@ -537,7 +549,19 @@ CosaDmlDynamicDns_Client_SetConf
         }
     }
 
-    if (isUserconfChanged == TRUE)
+    pHostnameInsContext = DDNSHostname_GetEntry(NULL, 0, &InsNumber);
+    if (pHostnameInsContext != NULL)
+    {
+        pHostLinkObj = (PCOSA_CONTEXT_LINK_OBJECT)pHostnameInsContext;
+        pHostEntry = (COSA_DML_DDNS_HOST *)pHostLinkObj->hContext;
+    }
+
+    if ((pEntry->Enable) && (pEntry->Server[0] != '\0') && (pEntry->Username[0] != '\0') && pHostEntry && (pHostEntry->Enable) && (pHostEntry->Name[0]!='\0') && (pEntry->Password[0] != '\0'))
+    {
+        bReadyUpdate = TRUE;
+    }
+
+    if ((isUserconfChanged == TRUE) && (bReadyUpdate == TRUE))
     {
         /* reset the DynamicDNS client and host status before restart*/
         resetDynamicDNSStatus();
@@ -762,6 +786,13 @@ CosaDmlDynamicDns_Host_SetConf
 
     char enable_path[sizeof(SYSCFG_HOST_ENABLE_KEY) + 1] = {0};
     char name_path[sizeof(SYSCFG_HOST_NAME_KEY) + 1] = {0};
+    char host_status[2];
+
+    ULONG InsNumber;
+    ANSC_HANDLE pClientInsContext = NULL;
+    PCOSA_CONTEXT_LINK_OBJECT pClientLinkObj = NULL;
+    COSA_DML_DDNS_CLIENT *pClientEntry = NULL;
+    BOOL bReadyUpdate = FALSE;
 
     if ((index = DynamicDns_Host_InsGetIndex(ins)) == -1 || (!g_DDNSHost))
     {
@@ -785,7 +816,25 @@ CosaDmlDynamicDns_Host_SetConf
         UtSetString(name_path, g_DDNSHost[index].Name);
     }
 
-    if (CosaDmlDynamicDns_GetEnable() && (g_DDNSHost[index].Enable == TRUE) && (isHostchanged == TRUE) && (g_DDNSHost[index].Name[0] != '\0'))
+    syscfg_get(NULL, "ddns_host_status_1", host_status, sizeof(host_status));
+    if (atoi(host_status) != HOST_REGISTERED)
+    {
+        isHostchanged = TRUE;
+    }
+
+    pClientInsContext = DDNSClient_GetEntry(NULL, 0, &InsNumber);
+    if (pClientInsContext)
+    {
+        pClientLinkObj = (PCOSA_CONTEXT_LINK_OBJECT)pClientInsContext;
+        pClientEntry = (COSA_DML_DDNS_CLIENT *)pClientLinkObj->hContext;
+    }
+
+    if ((pClientInsContext) && (pClientEntry->Enable) && (pClientEntry->Server[0] != '\0') && (pClientEntry->Username[0] != '\0') && (pEntry->Enable) && (pEntry->Name[0]!='\0') && (pClientEntry->Password[0] != '\0'))
+    {
+        bReadyUpdate = TRUE;
+    }
+
+    if (bReadyUpdate && CosaDmlDynamicDns_GetEnable() && (g_DDNSHost[index].Enable == TRUE) && (isHostchanged == TRUE) && (g_DDNSHost[index].Name[0] != '\0'))
     {
         /* reset the DynamicDNS client and host status before restart*/
         resetDynamicDNSStatus();
