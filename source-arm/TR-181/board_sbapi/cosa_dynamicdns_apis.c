@@ -580,11 +580,20 @@ CosaDmlDynamicDns_Client_SetConf
 	}
 
 
-    if((pEntry->Enable) && (pEntry->Server[0] != '\0') && (pEntry->Username[0] != '\0') && pHostEntry && (pHostEntry->Enable) && (pHostEntry->Name[0]!='\0') && (pEntry->Password[0] != '\0')) {
-        bReadyUpdate  = TRUE;
-        printf(" READY to verify and update ddns server\n");
+    if((pEntry->Enable) && (pEntry->Server[0] != '\0') && (pEntry->Username[0] != '\0') && pHostEntry && (pHostEntry->Enable) && (pHostEntry->Name[0]!='\0')) {
+        if(strstr(pHostEntry->Name,"duckdns") == NULL) { //Check whether password is null or not for services other than duckdns
+            if(pEntry->Password[0] != '\0') {
+                 printf(" READY to verify and update ddns server\n");
+                 bReadyUpdate  = TRUE;
+            } else {
+                    printf("NOT READY to verify and update ddns server\n");
+            }
+        } else {// for duckdns no need to check password
+            printf(" READY to verify and update ddns server\n");
+            bReadyUpdate  = TRUE;
+        }
     } else {
-        printf(" NOT READY to verify and update ddns server\n");
+            printf(" NOT READY to verify and update ddns server\n");
     }
     if ((isUserconfChanged == TRUE) && (bReadyUpdate  == TRUE))
     {
@@ -857,12 +866,21 @@ CosaDmlDynamicDns_Host_SetConf
 	}
 
 
-	if((pClientInsContext) && (pClientEntry->Enable) && (pClientEntry->Server[0] != '\0') && (pClientEntry->Username[0] != '\0') && (pEntry->Enable) && (pEntry->Name[0]!='\0') && (pClientEntry->Password[0] != '\0')) {
-            printf(" READY to verify and update ddns server\n");
-            bReadyUpdate  = TRUE;
+	if((pClientInsContext) && (pClientEntry->Enable) && (pClientEntry->Server[0] != '\0') && (pClientEntry->Username[0] != '\0') && (pEntry->Enable) && (pEntry->Name[0]!='\0')) {
+            if(strstr(pEntry->Name,"duckdns") == NULL) { //Check whether password is null or not for services other than duckdns
+                if(pClientEntry->Password[0] != '\0') {
+                    printf(" READY to verify and update ddns server\n");
+                    bReadyUpdate  = TRUE;
+                } else {
+                    printf("NOT READY to verify and update ddns server\n");
+                }
+            } else {// for duckdns no need to check password
+                    printf(" READY to verify and update ddns server\n");
+                    bReadyUpdate  = TRUE;
+            }
         } else {
             printf(" NOT READY to verify and update ddns server\n");
-    }
+	}
 
     if (bReadyUpdate && CosaDmlDynamicDns_GetEnable() && (g_DDNSHost[index].Enable == TRUE)
             && (isHostchanged == TRUE) && (g_DDNSHost[index].Name[0] != '\0'))
