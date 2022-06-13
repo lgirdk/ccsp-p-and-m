@@ -4648,9 +4648,8 @@ CosaDmlLAN_Validate_ModifyLanIP(COSA_DML_LAN_Allowed_Subnet *pLanAllowedSubnet, 
 
         memset(&lanInfo, 0 ,sizeof(lanInfo));
 
-        syscfg_get(NULL, "default_LanAllowedSubnet", buff, sizeof(buff));
-        sscanf(buff, "%d.%d.%d.%d", &temp[0], &temp[1], &temp[2], &temp[3]);
-        memcpy(&(lanInfo.ipaddr), buff, sizeof(buff));
+        syscfg_get(NULL, "default_LanAllowedSubnet", lanInfo.ipaddr, sizeof(lanInfo.ipaddr));
+        sscanf(lanInfo.ipaddr, "%d.%d.%d.%d", &temp[0], &temp[1], &temp[2], &temp[3]);
 
         sprintf(tmpbuff, "%d.%d.%d.%d", temp[0], temp[1], temp[2], 1);
         PSM_Set_Record_Value2(bus_handle, g_Subsystem, "dmsb.l3net.4.V4Addr", ccsp_string, tmpbuff);
@@ -4661,10 +4660,9 @@ CosaDmlLAN_Validate_ModifyLanIP(COSA_DML_LAN_Allowed_Subnet *pLanAllowedSubnet, 
         sprintf(tmpbuff, "%d.%d.%d.%d", temp[0], temp[1], temp[2], 254);
         syscfg_set(NULL, "dhcp_end", tmpbuff);
 
-        syscfg_get("arLanAllowedSubnet_1", "SubnetMask", buff, sizeof(buff));
-        memcpy(&(lanInfo.netmask), buff, sizeof(buff));
-        PSM_Set_Record_Value2(bus_handle, g_Subsystem, "dmsb.l3net.4.V4SubnetMask", ccsp_string, buff);
-        syscfg_set(NULL, "lan_netmask", buff);
+        syscfg_get("arLanAllowedSubnet_1", "SubnetMask", lanInfo.netmask, sizeof(lanInfo.netmask));
+        PSM_Set_Record_Value2(bus_handle, g_Subsystem, "dmsb.l3net.4.V4SubnetMask", ccsp_string, lanInfo.netmask);
+        syscfg_set(NULL, "lan_netmask", lanInfo.netmask);
 
         syscfg_commit();
         commonSyseventSet("refresh-switch", "true");
