@@ -4164,7 +4164,10 @@ void* update_iptable_thread(void* arg)
     return NULL;
 }
 
-
+void clear_rules_out_of_range(lanSetting_t lan_info)
+{
+    AnscCreateTask(update_iptable_thread, USER_DEFAULT_TASK_STACK_SIZE, USER_DEFAULT_TASK_PRIORITY, (void *)&lan_info, "UpdateIPTableThread");
+}
 
 ANSC_STATUS
 CosaDmlLanMngm_SetConf(ULONG ins, PCOSA_DML_LAN_MANAGEMENT pLanMngm)
