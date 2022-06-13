@@ -521,6 +521,7 @@ DDNSClient_Commit
             CosaDmlDynamicDns_Client_GetConf(pClientEntry->InstanceNumber, pClientEntry);
             return -1;
         }
+
     }
 
     return 0;
@@ -828,7 +829,10 @@ DDNSHostname_Validate
 {
     PCOSA_CONTEXT_LINK_OBJECT    pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     COSA_DML_DDNS_HOST           *pHostEntry   = (COSA_DML_DDNS_HOST *)pLinkObj->hContext;
+    PCOSA_DATAMODEL_TR181_DDNS     pDynamicDns   = (PCOSA_DATAMODEL_TR181_DDNS)g_pCosaBEManager->hDynamicDns;
     errno_t                      rc            = -1;
+
+    printf("ofw-1121: DDNSHostname_Validate pHostEntry %08x\n",pHostEntry);
 
     if(pHostEntry->Enable && !CosaDmlDynamicDns_GetEnable())
     {
@@ -869,8 +873,8 @@ DDNSHostname_Commit
             CosaDmlDynamicDns_Host_GetConf(pHostEntry->InstanceNumber, pHostEntry);
             return -1;
         }
-    }
 
+    }
     return 0;
 }
 
