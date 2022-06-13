@@ -85,6 +85,7 @@
 #include "utapi/utapi.h"
 #include "utapi/utapi_util.h"
 #include "safec_lib_common.h"
+#include "cosa_x_cisco_com_devicecontrol_apis.h"
 
 #if ( defined _COSA_SIM_ )
 
@@ -4641,9 +4642,12 @@ CosaDmlLAN_Validate_ModifyLanIP(COSA_DML_LAN_Allowed_Subnet *pLanAllowedSubnet, 
     if (iMatchFound)
     {
         char tmpbuff[17];
+        lanSetting_t lanInfo;
 
-        syscfg_get(NULL, "default_LanAllowedSubnet", buff, sizeof(buff));
-        sscanf(buff, "%d.%d.%d.%d", &temp[0], &temp[1], &temp[2], &temp[3]);
+        memset(&lanInfo, 0 ,sizeof(lanInfo));
+
+        syscfg_get(NULL, "default_LanAllowedSubnet", lanInfo.ipaddr, sizeof(lanInfo.ipaddr));
+        sscanf(lanInfo.ipaddr, "%d.%d.%d.%d", &temp[0], &temp[1], &temp[2], &temp[3]);
 
         sprintf(tmpbuff, "%d.%d.%d.%d", temp[0], temp[1], temp[2], 1);
         PSM_Set_Record_Value2(bus_handle, g_Subsystem, "dmsb.l3net.4.V4Addr", ccsp_string, tmpbuff);
@@ -4654,13 +4658,16 @@ CosaDmlLAN_Validate_ModifyLanIP(COSA_DML_LAN_Allowed_Subnet *pLanAllowedSubnet, 
         sprintf(tmpbuff, "%d.%d.%d.%d", temp[0], temp[1], temp[2], 254);
         syscfg_set(NULL, "dhcp_end", tmpbuff);
 
-        syscfg_get("arLanAllowedSubnet_1", "SubnetMask", buff, sizeof(buff));
-        PSM_Set_Record_Value2(bus_handle, g_Subsystem, "dmsb.l3net.4.V4SubnetMask", ccsp_string, buff);
-        syscfg_set(NULL, "lan_netmask", buff);
+        syscfg_get("arLanAllowedSubnet_1", "SubnetMask", lanInfo.netmask, sizeof(lanInfo.netmask));
+        PSM_Set_Record_Value2(bus_handle, g_Subsystem, "dmsb.l3net.4.V4SubnetMask", ccsp_string, lanInfo.netmask);
+        syscfg_set(NULL, "lan_netmask", lanInfo.netmask);
 
         syscfg_commit();
         commonSyseventSet("refresh-switch", "true");
         system("sysevent set ipv4-resync 4");
+
+        // delete port filtering, port forwarding, dmz, ip reservation rules not within the current active subnet ( when the active subnet table is deleted from ACS )
+        clear_rules_out_of_range(lanInfo);
     }
     return ANSC_STATUS_SUCCESS;
 }
