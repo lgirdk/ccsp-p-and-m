@@ -97,13 +97,6 @@ DDNS_SERVICE gDdnsServices[] =
         "www.freedns.afraid.org"
     },
     {
-        "easydns",
-        "EasyDNS.com",
-        "HTTPS",
-        "HTTPS",
-        "www.easydns.com"
-    },
-    {
         "changeip",
         "ChangeIP.com",
         "HTTP",
