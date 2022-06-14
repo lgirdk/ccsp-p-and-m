@@ -61,6 +61,7 @@ DDNS_SERVICE gDdnsServices[] =
         "Name parameter" //(to be used by UI display)
         "SupportedProtocols"
         "Protocol" //(default)
+        "Server Address"
     },
 */
     {
