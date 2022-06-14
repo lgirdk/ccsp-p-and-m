@@ -1650,8 +1650,8 @@ Service_SetParamStringValue
     PCOSA_DML_DDNS_SERVICE          pDdnsService = (PCOSA_DML_DDNS_SERVICE   )pCosaContext->hContext;
     errno_t                         rc           = -1;
 
-    /* check if pString doesn't hold null or whitespaces */
-    if(AnscValidStringCheck(pString) != TRUE)
+    /* check if pString is NULL, an empty string or contains <space> or any of <>&|'" */
+    if (AnscValidStringCheck(pString) != TRUE)
         return FALSE;
 
     /* check the parameter name and set the corresponding value */
