@@ -71,6 +71,7 @@
 #include <dirent.h>
 #include <syscfg/syscfg.h>
 #include "ansc_platform.h"
+#include "ansc_string_util.h"
 #include "cosa_deviceinfo_dml.h"
 #include "dml_tr181_custom_cfg.h"
 #include "safec_lib_common.h"
@@ -262,26 +263,6 @@ static int update_pValue (char *pValue, PULONG pulSize, char *str)
 
     *pulSize = len + 1;
     return 1;
-}
-
-static BOOL AnscValidateInputString (char *pString) {
-
-    char disallowed_chars[] = "<>%`|'";       /*To avoid command injection */
-    int i = 0;
-
-   /* check if pstring doesn't hold NULL or whitespaces */
-    if((pString == NULL) || (*pString =='\0')) {
-        return FALSE;
-    }
-
-    while(pString[i] != '\0')
-    {
-        if (!strchr(disallowed_chars,pString[i]))
-            i++;
-        else
-            return FALSE;
-    }
-    return TRUE;
 }
 
 static int get_deviceinfo_from_name(char *name, enum pString_val *type_ptr)
@@ -12556,7 +12537,8 @@ RDKB_UIBranding_SetParamStringValue
             return FALSE;
 
         IS_UPDATE_ALLOWED_IN_DM(ParamName, requestorStr);
-        if(AnscValidateInputString(pString) != TRUE)
+
+        if (AnscValidStringCheck2(pString, "<>%`|'") != TRUE)
             return FALSE;
 
    if((CCSP_SUCCESS == getPartnerId(PartnerID) ) && (PartnerID[ 0 ] != '\0') )
