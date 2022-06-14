@@ -5771,8 +5771,8 @@ InterfaceSetting_SetParamStringValue
 
     BRIDGE_AND_IPv6_MODE_JUDGEMENT_IFTRUE_RETURNFALSE
 
-    /* check if pString doesn't hold null or whitespaces */
-    if(AnscValidStringCheck((PUCHAR)pString) != TRUE)
+    /* check if pString is NULL, an empty string or contains <space> or any of <>&|'" */
+    if (AnscValidStringCheck(pString) != TRUE)
         return FALSE;
 
     if(ParamName == NULL)
