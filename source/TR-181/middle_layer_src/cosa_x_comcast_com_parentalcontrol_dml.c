@@ -769,8 +769,8 @@ PcBlkURL_SetParamStringValue
     int len=0;
     char *arr[7];
     
-    /* check if strValue doesn't hold null or whitespaces */
-    if(AnscValidStringCheck(strValue) != TRUE)
+    /* check if strValue is NULL, an empty string or contains <space> or any of <>&|'" */
+    if (AnscValidStringCheck(strValue) != TRUE)
         return FALSE;
         
     //AnscTraceWarning(("%s -- param name = %s...\n", __FUNCTION__, ParamName));
@@ -1150,8 +1150,8 @@ PcTrustedUser_SetParamStringValue
     COSA_DML_TRUSTEDUSER             *pTrustedUser    = (COSA_DML_TRUSTEDUSER*)pLinkObj->hContext;
     BOOL                            pBridgeMode     = FALSE;
 
-    /* check if strValue doesn't hold null or  whitespaces */
-    if(AnscValidStringCheck(strValue) != TRUE)
+    /* check if strValue is NULL, an empty string or contains <space> or any of <>&|'" */
+    if (AnscValidStringCheck(strValue) != TRUE)
         return FALSE;
         
     if((ANSC_STATUS_SUCCESS == is_usg_in_bridge_mode(&pBridgeMode)) && (pBridgeMode == TRUE))
@@ -1573,8 +1573,8 @@ MSServ_SetParamStringValue
         return TRUE;
     }
 
-    /* check if strValue doesn't hold null or whitespaces */
-    if(AnscValidStringCheck(strValue) != TRUE)
+    /* check if strValue is NULL, an empty string or contains <space> or any of <>&|'" */
+    if (AnscValidStringCheck(strValue) != TRUE)
         return FALSE;
 
     if (strcmp(ParamName, "StartTime") == 0)
@@ -1975,8 +1975,8 @@ MSTrustedUser_SetParamStringValue
     if((ANSC_STATUS_SUCCESS == is_usg_in_bridge_mode(&pBridgeMode)) && (pBridgeMode == TRUE))
         return FALSE;
     
-    /* check if strValue doesn't hold null or whitespaces */
-    if(AnscValidStringCheck(strValue) != TRUE)
+    /* check if strValue is NULL, an empty string or contains <space> or any of <>&|'" */
+    if (AnscValidStringCheck(strValue) != TRUE)
         return FALSE;
 
     if (strcmp(ParamName, "HostDescription") == 0)
@@ -2380,8 +2380,8 @@ MDDev_SetParamStringValue
         return TRUE;
     }
 
-     /* check if strValue doesn't hold null or whitespaces */
-    if(AnscValidStringCheck(strValue) != TRUE)
+    /* check if strValue is NULL, an empty string or contains <space> or any of <>&|'" */
+    if (AnscValidStringCheck(strValue) != TRUE)
         return FALSE;
 
     if (strcmp(ParamName, "MACAddress") == 0)
