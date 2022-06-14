@@ -7985,8 +7985,8 @@ StaticAddress_SetParamStringValue
 
     if (strcmp(ParamName, "Chaddr") == 0)
     {
-        /* check if pString doesn't hold null or whitespaces */
-        if(AnscValidStringCheck(pString) != TRUE)
+        /* check if pString is NULL, an empty string or contains <space> or any of <>&|'" */
+        if (AnscValidStringCheck(pString) != TRUE)
             return FALSE;
 
         /* save update to a temp array - This is required as sscanf puts a NULL character at the end which we dont have space for */
