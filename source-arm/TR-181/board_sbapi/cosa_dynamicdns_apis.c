@@ -1208,6 +1208,13 @@ CosaDmlDynamicDns_Server_SetConf
         return ANSC_STATUS_FAILURE;
     }
 
+#ifndef DDNS_SERVICE_BIN
+    if (vsystem("killall -9 ez-ipupdate") != 0)
+    {
+       fprintf(stderr, "%s: fail to killall ez-ipupdate\n", __FUNCTION__);
+    }
+#endif
+
     snprintf(enable_path, sizeof(enable_path), SYSCFG_SERVER_ENABLE_KEY, index + 1);
     snprintf(protocol_path, sizeof(protocol_path), SYSCFG_SERVER_PROTOCOL_KEY, index + 1);
     snprintf(checkinterval_path, sizeof(checkinterval_path), SYSCFG_SERVER_CHECKINTERVAL_KEY, index + 1);
