@@ -1282,75 +1282,47 @@ CosaDmlGetTCPImplementation
     return ANSC_STATUS_SUCCESS;
 }
 
-ANSC_STATUS
-isValidInput
-    (
-        char                       *inputparam,
-        char                       *wrapped_inputparam,
-    	int							lengthof_inputparam,
-    	int							sizeof_wrapped_inputparam    	
-    )
+/*
+   Like AnscValidStringCheck2() but doesn't reject empty strings.
+*/
+static BOOL ValidStringCheck2 (char *pString, char *invalid_chars)
 {
-    ANSC_STATUS returnStatus = ANSC_STATUS_SUCCESS;
-    errno_t rc = -1;
-    int i=0,count=0;
-         /*
-	  * Validate input/params 
-	  * sizeof_wrapped_inputparam it should always greater that ( lengthof_inputparam  + 2 ) because
-	  * we are adding 2 extra charecters here. so we need to have extra bytes 
-	  * in copied(wrapped_inputparam) string
-	  */      
-    if( sizeof_wrapped_inputparam <= ( lengthof_inputparam  + 2 ) )
+    int i;
+    int len = strlen(invalid_chars);
+
+    while (*pString != '\0')
+    {
+        for (i = 0; i < len; i++)
+        {
+            if (*pString == invalid_chars[i])
+            {
+                return FALSE;
+            }
+        }
+
+        pString++;
+    }
+
+    return TRUE;
+}
+
+ANSC_STATUS isValidInput (char *inputparam, char *wrapped_inputparam, int lengthof_inputparam, int sizeof_wrapped_inputparam)
+{
+    if (sizeof_wrapped_inputparam <= (lengthof_inputparam + 2))
     {
         return ANSC_STATUS_FAILURE;
     }
-    while(inputparam[i]!='\0')
-    {
-        if(inputparam[i]==':')
-            count++;
-        i++;
-    }
-    if((strchr(inputparam,'.')) && (count < 2))
-    {
-        if(is_ValidIpAddressv4_port((PUCHAR)inputparam))
-        {
-            returnStatus = ANSC_STATUS_SUCCESS;
-        }
-        else if(is_ValidHost((PUCHAR)inputparam))
-        {
-            returnStatus = ANSC_STATUS_SUCCESS;
-        }
-        else
-            returnStatus = ANSC_STATUS_FAILURE;
-    }
-    else if(strchr(inputparam,'['))
-    {
-        if(is_ValidIpAddressv6_port((PUCHAR)inputparam))
-	    returnStatus = ANSC_STATUS_SUCCESS;
-        else
-	    returnStatus = ANSC_STATUS_FAILURE;
-    }
-    else if(strchr(inputparam,':'))
-    {
-        if(is_Ipv6_address((PUCHAR)inputparam))      
-            returnStatus = ANSC_STATUS_SUCCESS;
-        else
-            returnStatus = ANSC_STATUS_FAILURE;
-    }
-    else
-        returnStatus = ANSC_STATUS_FAILURE;   
 
-    if(ANSC_STATUS_SUCCESS == returnStatus)
+    if (ValidStringCheck2(inputparam, ";&|\'") == FALSE)
     {
-         rc = sprintf_s(wrapped_inputparam, sizeof_wrapped_inputparam, "'%s'",inputparam);
-         if(rc < EOK)
-         {
-             ERR_CHK(rc);
-             return ANSC_STATUS_FAILURE;
-         }
-    }   
-  return returnStatus;
+        return ANSC_STATUS_FAILURE;
+    }
+
+    snprintf(wrapped_inputparam, sizeof_wrapped_inputparam, "'%s'", inputparam);
+
+    return ANSC_STATUS_SUCCESS;
 }
+
 /* Maitenance window can be customized for bci routers */
 #if defined(_COSA_BCM_MIPS_) || defined(_PLATFORM_RASPBERRYPI_)
 ANSC_STATUS
