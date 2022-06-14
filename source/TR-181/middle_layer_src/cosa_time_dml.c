@@ -68,7 +68,9 @@
 
 #include "cosa_time_dml.h"
 
+#include <string.h>
 #include "ccsp_base_api.h"
+#include "ansc_string_util.h"
 #include "messagebus_interface_helper.h"
 #include "safec_lib_common.h"
 #include "cosa_time_apis.h"
@@ -99,6 +101,80 @@ extern char * getTime();
       return FALSE;                                                                                                                                \
    }                                                                                                                                               \
 })
+
+static ANSC_STATUS valid_host (char *inputparam, char *wrapped_inputparam, int sizeof_wrapped_inputparam)
+{
+    ANSC_STATUS returnStatus;
+    errno_t rc = -1;
+    int i = 0, count = 0;
+    int lengthof_inputparam = strlen(inputparam);
+
+    if (sizeof_wrapped_inputparam <= (lengthof_inputparam + 2))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    while (inputparam[i] != '\0')
+    {
+        if (inputparam[i] == ':')
+            count++;
+        i++;
+    }
+
+    if ((strchr(inputparam,'.')) && (count < 2))
+    {
+        if (is_ValidIpAddressv4_port((PUCHAR)inputparam))
+        {
+            returnStatus = ANSC_STATUS_SUCCESS;
+        }
+        else if (is_ValidHost((PUCHAR)inputparam))
+        {
+            returnStatus = ANSC_STATUS_SUCCESS;
+        }
+        else
+        {
+            returnStatus = ANSC_STATUS_FAILURE;
+        }
+    }
+    else if (strchr(inputparam,'['))
+    {
+        if (is_ValidIpAddressv6_port((PUCHAR)inputparam))
+        {
+            returnStatus = ANSC_STATUS_SUCCESS;
+        }
+        else
+        {
+            returnStatus = ANSC_STATUS_FAILURE;
+        }
+    }
+    else if (strchr(inputparam,':'))
+    {
+        if (is_Ipv6_address((PUCHAR)inputparam))
+        {
+            returnStatus = ANSC_STATUS_SUCCESS;
+        }
+        else
+        {
+            returnStatus = ANSC_STATUS_FAILURE;
+        }
+    }
+    else
+    {
+        returnStatus = ANSC_STATUS_FAILURE;
+    }
+
+    if (returnStatus == ANSC_STATUS_SUCCESS)
+    {
+         rc = sprintf_s(wrapped_inputparam, sizeof_wrapped_inputparam, "'%s'", inputparam);
+         if (rc < EOK)
+         {
+             ERR_CHK(rc);
+             return ANSC_STATUS_FAILURE;
+         }
+    }
+
+    return returnStatus;
+}
 
 /***********************************************************************
  IMPORTANT NOTE:
@@ -713,13 +789,13 @@ Time_SetParamStringValue
     if (strcmp(ParamName, "NTPServer1") == 0)
     {
         IS_UPDATE_ALLOWED_IN_JSON(ParamName, requestorStr, pMyObject->TimeCfg.NTPServer1.UpdateSource);
-	char wrapped_inputparam[64]={0};
-	ret=isValidInput(pString,wrapped_inputparam, AnscSizeOfString(pString), sizeof( wrapped_inputparam ));
-	if(ANSC_STATUS_SUCCESS != ret)
-	    return FALSE;
+        char wrapped_inputparam[64]={0};
+        ret = valid_host(pString, wrapped_inputparam, sizeof(wrapped_inputparam));
+        if(ANSC_STATUS_SUCCESS != ret)
+            return FALSE;
 
         /* save update to backup */
-        rc = strcpy_s(pMyObject->TimeCfg.NTPServer1.ActiveValue,sizeof(pMyObject->TimeCfg.NTPServer1.ActiveValue), wrapped_inputparam);
+        rc = strcpy_s(pMyObject->TimeCfg.NTPServer1.ActiveValue,sizeof(pMyObject->TimeCfg.NTPServer1.ActiveValue), pString);
         if(rc != EOK)
         {
             ERR_CHK(rc);
@@ -734,20 +810,20 @@ Time_SetParamStringValue
             return FALSE;
         }
         if( (PartnerID[ 0 ] != '\0') )
-             UpdateJsonParam("Device.Time.NTPServer1",PartnerID, wrapped_inputparam, requestorStr, currentTime);
+             UpdateJsonParam("Device.Time.NTPServer1",PartnerID, pString, requestorStr, currentTime);
         return TRUE;
     }
 
     if (strcmp(ParamName, "NTPServer2") == 0)
     {
         IS_UPDATE_ALLOWED_IN_JSON(ParamName, requestorStr, pMyObject->TimeCfg.NTPServer2.UpdateSource);
-	char wrapped_inputparam[64]={0};
-	ret=isValidInput(pString,wrapped_inputparam, AnscSizeOfString(pString), sizeof( wrapped_inputparam ));
-	if(ANSC_STATUS_SUCCESS != ret)
-	    return FALSE;
+        char wrapped_inputparam[64]={0};
+        ret = valid_host(pString, wrapped_inputparam, sizeof(wrapped_inputparam));
+        if(ANSC_STATUS_SUCCESS != ret)
+            return FALSE;
 
         /* save update to backup */
-        rc = strcpy_s(pMyObject->TimeCfg.NTPServer2.ActiveValue,sizeof(pMyObject->TimeCfg.NTPServer2.ActiveValue), wrapped_inputparam);
+        rc = strcpy_s(pMyObject->TimeCfg.NTPServer2.ActiveValue,sizeof(pMyObject->TimeCfg.NTPServer2.ActiveValue), pString);
         if(rc != EOK)
         {
             ERR_CHK(rc);
@@ -760,20 +836,20 @@ Time_SetParamStringValue
             return FALSE;
         }
         if( (PartnerID[ 0 ] != '\0') )
-             UpdateJsonParam("Device.Time.NTPServer2",PartnerID, wrapped_inputparam, requestorStr, currentTime);
+             UpdateJsonParam("Device.Time.NTPServer2",PartnerID, pString, requestorStr, currentTime);
         return TRUE;
     }
 
     if (strcmp(ParamName, "NTPServer3") == 0)
     {
         IS_UPDATE_ALLOWED_IN_JSON(ParamName, requestorStr, pMyObject->TimeCfg.NTPServer3.UpdateSource);
-	char wrapped_inputparam[64]={0};
-	ret=isValidInput(pString,wrapped_inputparam, AnscSizeOfString(pString), sizeof( wrapped_inputparam ));
-	if(ANSC_STATUS_SUCCESS != ret)
-	    return FALSE;
+        char wrapped_inputparam[64]={0};
+        ret = valid_host(pString, wrapped_inputparam, sizeof(wrapped_inputparam));
+        if(ANSC_STATUS_SUCCESS != ret)
+            return FALSE;
 
         /* save update to backup */
-        rc = strcpy_s(pMyObject->TimeCfg.NTPServer3.ActiveValue,sizeof(pMyObject->TimeCfg.NTPServer3.ActiveValue), wrapped_inputparam);
+        rc = strcpy_s(pMyObject->TimeCfg.NTPServer3.ActiveValue,sizeof(pMyObject->TimeCfg.NTPServer3.ActiveValue), pString);
         if(rc != EOK)
         {
             ERR_CHK(rc);
@@ -786,20 +862,20 @@ Time_SetParamStringValue
             return FALSE;
         }
         if( (PartnerID[ 0 ] != '\0') )
-             UpdateJsonParam("Device.Time.NTPServer3",PartnerID, wrapped_inputparam, requestorStr, currentTime);
+             UpdateJsonParam("Device.Time.NTPServer3",PartnerID, pString, requestorStr, currentTime);
         return TRUE;
     }
 
     if (strcmp(ParamName, "NTPServer4") == 0)
     {
         IS_UPDATE_ALLOWED_IN_JSON(ParamName, requestorStr, pMyObject->TimeCfg.NTPServer4.UpdateSource);
-	char wrapped_inputparam[64]={0};
-	ret=isValidInput(pString,wrapped_inputparam, AnscSizeOfString(pString), sizeof( wrapped_inputparam ));
-	if(ANSC_STATUS_SUCCESS != ret)
-	    return FALSE;
+        char wrapped_inputparam[64]={0};
+        ret = valid_host(pString, wrapped_inputparam, sizeof(wrapped_inputparam));
+        if(ANSC_STATUS_SUCCESS != ret)
+            return FALSE;
 
         /* save update to backup */
-        rc = strcpy_s(pMyObject->TimeCfg.NTPServer4.ActiveValue,sizeof(pMyObject->TimeCfg.NTPServer4.ActiveValue), wrapped_inputparam);
+        rc = strcpy_s(pMyObject->TimeCfg.NTPServer4.ActiveValue,sizeof(pMyObject->TimeCfg.NTPServer4.ActiveValue), pString);
         if(rc != EOK)
         {
             ERR_CHK(rc);
@@ -812,20 +888,20 @@ Time_SetParamStringValue
             return FALSE;
         }
         if( (PartnerID[ 0 ] != '\0') )
-             UpdateJsonParam("Device.Time.NTPServer4",PartnerID, wrapped_inputparam, requestorStr, currentTime);
+             UpdateJsonParam("Device.Time.NTPServer4",PartnerID, pString, requestorStr, currentTime);
         return TRUE;
     }
 
     if (strcmp(ParamName, "NTPServer5") == 0)
     {
         IS_UPDATE_ALLOWED_IN_JSON(ParamName, requestorStr, pMyObject->TimeCfg.NTPServer5.UpdateSource);
-	char wrapped_inputparam[64]={0};
-	ret=isValidInput(pString,wrapped_inputparam, AnscSizeOfString(pString), sizeof( wrapped_inputparam ));
-	if(ANSC_STATUS_SUCCESS != ret)
-	    return FALSE;
+        char wrapped_inputparam[64]={0};
+        ret = valid_host(pString, wrapped_inputparam, sizeof(wrapped_inputparam));
+        if(ANSC_STATUS_SUCCESS != ret)
+            return FALSE;
 
         /* save update to backup */
-        rc = strcpy_s(pMyObject->TimeCfg.NTPServer5.ActiveValue,sizeof(pMyObject->TimeCfg.NTPServer5.ActiveValue), wrapped_inputparam);
+        rc = strcpy_s(pMyObject->TimeCfg.NTPServer5.ActiveValue,sizeof(pMyObject->TimeCfg.NTPServer5.ActiveValue), pString);
         if(rc != EOK)
         {
             ERR_CHK(rc);
@@ -838,7 +914,7 @@ Time_SetParamStringValue
             return FALSE;
         }
         if( (PartnerID[ 0 ] != '\0') )
-             UpdateJsonParam("Device.Time.NTPServer5",PartnerID, wrapped_inputparam, requestorStr, currentTime);
+             UpdateJsonParam("Device.Time.NTPServer5",PartnerID, pString, requestorStr, currentTime);
         return TRUE;
     }
 
