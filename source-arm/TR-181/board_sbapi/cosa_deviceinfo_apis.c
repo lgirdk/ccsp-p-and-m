@@ -2206,7 +2206,25 @@ static int getCurrentTemperature (int index)
         }
     }
 #else
-    cpu_temp = 30;
+    {
+        FILE *fp;
+
+        fp = fopen("/sys/class/thermal/thermal_zone0/temp", "r");
+
+        if (fp != NULL)
+        {
+            if (fscanf(fp, "%d", &cpu_temp) == 1)
+            {
+                cpu_temp /= 1000;
+            }
+
+            fclose(fp);
+        }
+        else
+        {
+            cpu_temp = 30;
+        }
+    }
 #endif
 
     if (cpu_temp == ABSOLUTE_ZERO_TEMPERATURE)
