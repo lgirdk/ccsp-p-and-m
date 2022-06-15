@@ -356,6 +356,7 @@ CosaDmlDiGetSerialNumber
         char*                       pValue,
         ULONG*                      pulSize
     );
+
 ANSC_STATUS
 CosaDmlDiGetActualCMMacAddress
     (

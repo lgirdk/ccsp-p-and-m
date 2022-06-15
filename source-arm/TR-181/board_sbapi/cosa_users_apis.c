@@ -497,9 +497,9 @@ ANSC_STATUS
 	)
 {
         CcspTraceWarning(("%s, Entered to hash password\n",__FUNCTION__));
-	ULONG SerialNumberLength = 0;
 	if (SerialNumber[0] =='\0' )
 	{
+          ULONG SerialNumberLength = sizeof(SerialNumber);
           /* CID: 79484 Out-of-bounds access - updated global decl*/
           CosaDmlDiGetSerialNumber(NULL,SerialNumber,&SerialNumberLength);
 	}

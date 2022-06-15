@@ -818,8 +818,7 @@ DeviceInfo_GetParamStringValue
     /* This parameter always returns the actual serial number */
     if (strcmp(ParamName, "X_LGI-COM_SerialNumber") == 0)
     {
-        CosaDmlDiGetSerialNumber(NULL, pValue, pulSize);
-        return 0;
+        return CosaDmlDiGetSerialNumber(NULL, pValue, pulSize);
     }
 
     if (strcmp(ParamName, "HardwareVersion") == 0)
