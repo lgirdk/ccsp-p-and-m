@@ -451,16 +451,25 @@ CosaDmlDynamicDns_Client_GetConf
     return CosaDmlDynamicDns_Client_GetEntryByIndex(index, pEntry);
 }
 
-/* Reset sysevent variable ddns_return_status{DnIdx} to NULL */
-void reset_ddns_return_status()
+/* Clear the ddns_return_status{DnIdx} sysevent variable */
+static void reset_ddns_return_status (void)
 {
-    char server[128]={0};
-    if (!syscfg_get( NULL, "arddnsclient_1::Server", server, sizeof(server)))
+    char server[40];
+
+    if (syscfg_get("arddnsclient_1", "Server", server, sizeof(server)) == 0)
     {
-        char buf[32]={0};
-        int pos=strlen(server)-1;
-        snprintf(buf,sizeof(buf),"ddns_return_status%s",server+pos);
-        commonSyseventSet(buf,"");
+        /*
+           Assume server is in the form "Device.DynamicDNS.Server.1"
+           and index is a single character.
+        */
+        size_t len = strlen(server);
+        if ((len >= 2) && (server[len - 2] == '.'))
+        {
+            char buf[32];
+            char *index = server + len - 1;
+            snprintf(buf, sizeof(buf), "ddns_return_status%s", index);
+            commonSyseventSet(buf, "");
+        }
     }
 }
 
