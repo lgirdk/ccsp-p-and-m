@@ -123,4 +123,4 @@ libCcspPandM_middle_layer_src_la_SOURCES += cosa_managedwifi_dml.c \
     managedwifidoc.c \
     managedwifi_helpers.c
 endif
-libCcspPandM_middle_layer_src_la_LDFLAGS = -lccsp_common -lmsgpackc -lwebconfig_framework
+libCcspPandM_middle_layer_src_la_LDFLAGS = -lccsp_common -lmsgpackc -lwebconfig_framework -lhal_platform
