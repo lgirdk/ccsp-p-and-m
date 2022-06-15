@@ -120,4 +120,4 @@ libCcspPandM_middle_layer_src_la_SOURCES = \
     portmappingdoc.c \
     webcfgparam.c
 
-libCcspPandM_middle_layer_src_la_LDFLAGS = -lccsp_common -lmsgpackc -lwebconfig_framework
+libCcspPandM_middle_layer_src_la_LDFLAGS = -lccsp_common -lmsgpackc -lwebconfig_framework -lhal_platform
