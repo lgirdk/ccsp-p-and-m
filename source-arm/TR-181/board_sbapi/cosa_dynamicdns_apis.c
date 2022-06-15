@@ -480,7 +480,7 @@ CosaDmlDynamicDns_Client_AddEntry
         resetDynamicDNSStatus();
         CcspTraceInfo(("%s Going to restart dynamic dns service",__FUNCTION__));
 #ifdef DDNS_SERVICE_BIN 
-        if (access("/var/tmp/updating_ddns_server.txt", F_OK ) != 0 ) {
+        if (access("/var/run/updating_ddns_server.txt", F_OK ) != 0 ) {
             v_secure_system("service_ddns restart &");
         }
 #else
@@ -645,7 +645,7 @@ CosaDmlDynamicDns_Client_SetConf
         CcspTraceInfo(("%s Going to restart dynamic dns service",__FUNCTION__));
         reset_ddns_return_status();
 #ifdef DDNS_SERVICE_BIN 
-        if (access("/var/tmp/updating_ddns_server.txt", F_OK ) != 0 ) {
+        if (access("/var/run/updating_ddns_server.txt", F_OK ) != 0 ) {
             v_secure_system("service_ddns restart &");
         }
 #else
@@ -940,7 +940,7 @@ CosaDmlDynamicDns_Host_SetConf
         CcspTraceInfo(("%s Going to restart dynamic dns service",__FUNCTION__));
         reset_ddns_return_status();
 #ifdef DDNS_SERVICE_BIN 
-        if (access("/var/tmp/updating_ddns_server.txt", F_OK ) != 0 ) {
+        if (access("/var/run/updating_ddns_server.txt", F_OK ) != 0 ) {
            v_secure_system("service_ddns restart &");
         }
 #else
