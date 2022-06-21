@@ -1720,30 +1720,27 @@ CosaDmlDcSetRebootDevice
             if(delay_time)
             {
             	fprintf(stderr, "Device is going to reboot in %d seconds\n", delay_time);
-		CcspTraceWarning(("RebootDevice:Device is going to reboot after taking log backups \n"));
+		CcspTraceWarning(("RebootDevice:Device is going to reboot\n"));
             	//system("(sleep 5 && reboot) &");
             	CosaDmlDcSaveWiFiHealthStatusintoNVRAM( );
             	sleep (delay_time);
-            	v_secure_system("/rdklogger/backupLogs.sh &");
             	v_secure_system("(sleep 5 && reboot) &");  /* Workaround to try to ensure we really reboot - to be reviewed */
         	}
         	else
             {
                 fprintf(stderr, "Device is going to reboot in 5 seconds\n");
-		CcspTraceWarning(("RebootDevice:Device is going to reboot after taking log backups \n"));
+		CcspTraceWarning(("RebootDevice:Device is going to reboot\n"));
                 //system("(sleep 5 && reboot) &");
 				CosaDmlDcSaveWiFiHealthStatusintoNVRAM( );
 				sleep(5);
-				v_secure_system("/rdklogger/backupLogs.sh &");
 				v_secure_system("(sleep 5 && reboot) &");  /* Workaround to try to ensure we really reboot - to be reviewed */
             }
 		}
 		else {
 	        fprintf(stderr, "Device is going to reboot now\n");
-			CcspTraceWarning(("RebootDevice:Device is going to reboot after taking log backups \n"));
+			CcspTraceWarning(("RebootDevice:Device is going to reboot\n"));
 	         //system("reboot");
  			 CosaDmlDcSaveWiFiHealthStatusintoNVRAM( );
-	         v_secure_system("/rdklogger/backupLogs.sh &");
 	         v_secure_system("(sleep 5 && reboot) &");  /* Workaround to try to ensure we really reboot - to be reviewed */
 	    }
     }
@@ -1942,7 +1939,7 @@ void* backuplogs(void *thread)
 	}
 	pthread_detach(pthread_self());
 
-	v_secure_system("/rdklogger/backupLogs.sh &");
+    system("reboot");
     return NULL;
 }
 
