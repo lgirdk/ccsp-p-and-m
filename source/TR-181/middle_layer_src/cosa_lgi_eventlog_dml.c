@@ -126,7 +126,8 @@ CosaDmlGetEventLog
         return ANSC_STATUS_FAILURE;
     }
 
-    sprintf(cmd, "cat %s > %s", LGI_EVENT_LOG_FILE, LGI_EVENT_LOG_FILE_TEMP);
+    /* Read the last 100 lines from /tmp/channel_event_1.log */
+    sprintf(cmd, "tail -100 %s > %s", LGI_EVENT_LOG_FILE, LGI_EVENT_LOG_FILE_TEMP);
  
     system(cmd);
     log_max_num =( log0_lines < EVENT_LOG_SIZE) ? (log0_lines) : (EVENT_LOG_SIZE);
