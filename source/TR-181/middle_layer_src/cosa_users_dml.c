@@ -845,14 +845,16 @@ User_GetParamStringValue
 #endif
             char csr_user_name[16];
 
-            syscfg_get(NULL, "user_name_4", csr_user_name, sizeof(csr_user_name));
+            syscfg_get(NULL, "user_name_1", csr_user_name, sizeof(csr_user_name));
 
-            if( AnscEqualString(pUser->Username, csr_user_name, TRUE)
-                || AnscEqualString(pUser->Username, "mso", TRUE) )
+            if (AnscEqualString(pUser->Username, csr_user_name, TRUE))
             {
-               AnscCopyString(pUser->HashedPassword, "");
+                AnscCopyString(pValue, "");
             }
-            AnscCopyString(pValue, pUser->HashedPassword);
+            else
+            {
+                AnscCopyString(pValue, pUser->HashedPassword);
+            }
             return 0;
         }
         else
