@@ -2519,6 +2519,9 @@ CosaDmlDhcpsSetPoolCfg
     )
 {
 
+    char staticRipBrlanEnable[8];
+    char rip_status[12];
+
     UNREFERENCED_PARAMETER(hContext);
     //AnscTraceFlow(("%s: pCfg->InstanceNumber =%lu\n", __FUNCTION__, pCfg->InstanceNumber));
 
@@ -2532,9 +2535,14 @@ CosaDmlDhcpsSetPoolCfg
             syslog(LOG_ERR, "SBAPI->CosaDmlDhcpsSetPoolCfg:Instance number of DHCP Pool is not 1");
             return ANSC_STATUS_FAILURE;
         }
-        if(is_a_public_addr(ntohl(pCfg->MinAddress.Value)) || 
-	    is_a_public_addr(ntohl(pCfg->MaxAddress.Value)))
-            return ANSC_STATUS_FAILURE;
+        syscfg_get(NULL, "brlan_static_ip_enable", staticRipBrlanEnable, sizeof(staticRipBrlanEnable));
+        syscfg_get(NULL, "rip_enabled", rip_status, sizeof(rip_status));
+
+        if(!(rip_status && staticRipBrlanEnable)){
+            if(is_a_public_addr(ntohl(pCfg->MinAddress.Value)) ||
+                is_a_public_addr(ntohl(pCfg->MaxAddress.Value)))
+                    return ANSC_STATUS_FAILURE;
+        }
 
         if(!Utopia_Init(&ctx))
             return ANSC_STATUS_FAILURE;
