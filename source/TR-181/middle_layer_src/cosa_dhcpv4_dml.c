@@ -6991,13 +6991,19 @@ Pool_Commit
     PCOSA_DML_DHCPS_POOL_FULL       pPool             = (PCOSA_DML_DHCPS_POOL_FULL)pCxtLink->hContext;
     PCOSA_DATAMODEL_DHCPV4          pDhcpv4           = (PCOSA_DATAMODEL_DHCPV4)g_pCosaBEManager->hDhcpv4;
     errno_t   rc = -1;
+    char                            rip_status[12];
+    char                            staticRipBrlanEnable[8];
 
+    syscfg_get(NULL, "brlan_static_ip_enable", staticRipBrlanEnable, sizeof(staticRipBrlanEnable));
+    syscfg_get(NULL, "rip_enabled", rip_status, sizeof(rip_status));
     // only validate it for first pool, should changed to better validation for second pool
-    if( pPool->Cfg.InstanceNumber == 1 && 
-        is_pool_invalid(hInsContext))
+    if (!(staticRipBrlanEnable && rip_status))
     {
-        AnscTraceFlow(("%s: not valid pool\n", __FUNCTION__));
-        return(ANSC_STATUS_FAILURE);
+        if(pPool->Cfg.InstanceNumber == 1 && is_pool_invalid(hInsContext))
+        {
+            AnscTraceFlow(("%s: not valid pool\n", __FUNCTION__));
+            return(ANSC_STATUS_FAILURE);
+        }
     }
     else
     {
