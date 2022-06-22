@@ -79,6 +79,8 @@
 #include "cosa_drg_common.h"
 #endif
 
+#define RIPD_PID_FILE "/var/tmp/ripd.pid"
+
 #include "safec_lib_common.h"
 
 extern ANSC_HANDLE bus_handle;
@@ -613,7 +615,45 @@ COSA_DML_RIPD_CONF CosaDmlRIPCurrentConfig = {0};
 static componentStruct_t **ppComponents = NULL;
 extern char g_Subsystem[32];
 
-#define RIPD_PID_FILE "/var/tmp/ripd.pid"
+static void CosaKillRipd(void)
+{
+    FILE *ripd_pid_fd;
+    FILE *ripd_cmdline_fd;
+    char pid_str[10];
+    char cmdline_buf[84];
+    int pid = -1;
+
+    ripd_pid_fd = fopen(RIPD_PID_FILE, "rb");
+    if (ripd_pid_fd)
+    {
+        if (fgets(pid_str, sizeof(pid_str), ripd_pid_fd) != NULL && atoi(pid_str) > 0)
+        {
+            pid = atoi(pid_str);
+        }
+        fclose(ripd_pid_fd);
+    }
+
+    if (pid > 0)
+    {
+        sprintf(cmdline_buf, "/proc/%d/cmdline", pid);
+        ripd_cmdline_fd = fopen(cmdline_buf, "rb");
+        if (ripd_cmdline_fd)
+        {
+            if (fgets(cmdline_buf, sizeof(cmdline_buf), ripd_cmdline_fd) != NULL)
+            {
+                if(strstr(cmdline_buf, "ripd"))
+                {
+                    if(kill(pid, SIGKILL) < 0)
+                    {
+                        CcspTraceInfo(("kill returns error\n"));
+                    }
+                }
+            }
+            fclose(ripd_cmdline_fd);
+        }
+    }
+}
+
 static int CosaRipdOperation(char * arg)
 {
     char *base = basename(COSA_RIPD_BIN);
@@ -624,7 +664,7 @@ static int CosaRipdOperation(char * arg)
     if (!strncmp(arg, "stop", 4))
     {
         /* Zebra's configuration is controlled by Utopia. So we need not restart this one */
-        v_secure_system("killall %s", base);
+        CosaKillRipd();
     }
     else if (!strncmp(arg, "start", 5))
     {
