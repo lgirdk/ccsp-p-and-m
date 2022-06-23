@@ -280,8 +280,48 @@ BOOL CosaDmlGetPlumeNativeAtmBsControl ( ANSC_HANDLE hContext, BOOL *pValue )
 BOOL CosaDmlSetPlumeNativeAtmBsControl ( PANSC_HANDLE phContext, BOOL value )
 {
     /* TODO: Check if Plume channel optimisation is enabled first */
+    int i,size=0;
     BOOL enable = !value;
+    int ret = 0, val_size = 0;
+    char *parameterNames[3];
+    parameterValStruct_t **parameterval = NULL;
+
     PCOSA_LGI_PLUME_DATAPATHS pWiFiDataPaths = (PCOSA_LGI_PLUME_DATAPATHS) phContext;
+
+    if ((ppComponents == NULL) && initWifiComp())
+    {
+        CcspTraceError(("%s: initWifiComp error ...\n", __FUNCTION__));
+        return FALSE;
+    }
+
+    parameterNames[0] = "Device.WiFi.X_LGI-COM_ATM.Radio.1.Enable";
+    parameterNames[1] = "Device.WiFi.X_LGI-COM_ATM.Radio.1.Enable";
+    parameterNames[2] = "Device.WiFi.X_LGI-COM_BandSteering.SSID.1.Enable";
+
+    ret = CcspBaseIf_getParameterValues(bus_handle,
+                                        ppComponents[0]->componentName,
+                                        ppComponents[0]->dbusPath,
+                                        parameterNames,
+                                        3,
+                                        &val_size,
+                                        &parameterval
+                                        );
+
+    if ((ret == CCSP_SUCCESS) && (val_size == 3))
+    {
+        if(!strcmp(parameterval[0]->parameterValue, "false") &&
+            !strcmp(parameterval[1]->parameterValue, "false") &&
+            !strcmp(parameterval[2]->parameterValue, "false") &&  value)
+            {
+                free_parameterValStruct_t (bus_handle, val_size, parameterval);
+                goto end;
+            }
+    }
+
+    if (parameterval != NULL)
+    {
+        free_parameterValStruct_t (bus_handle, val_size, parameterval);
+    }
 
     if (alloc_wiFiDataPaths(pWiFiDataPaths, 3) != ANSC_STATUS_SUCCESS)
     {
@@ -294,6 +334,7 @@ BOOL CosaDmlSetPlumeNativeAtmBsControl ( PANSC_HANDLE phContext, BOOL value )
     pWiFiDataPaths->applyToRadio |= 1 << RADIO_2G_IDX;
     pWiFiDataPaths->applyToRadio |= 1 << RADIO_5G_IDX;
 
+end:
     if (syscfg_set_commit(NULL, "son_native_atm_bs_disable", value ? "1" : "0") == 0)
     {
         return TRUE;
