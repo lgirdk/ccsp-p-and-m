@@ -2170,10 +2170,7 @@ static int getCurrentTemperature (int index)
 {
     int cpu_temp = ABSOLUTE_ZERO_TEMPERATURE;
 
-    /*
-       Sanity check - there's only one temperature sensor and its index is 1
-    */
-    if (index != 1)
+    if ((index <= 0) || (index > MAX_TEMPSENSOR_INSTANCE))
     {
         return 25;
     }
@@ -2182,7 +2179,10 @@ static int getCurrentTemperature (int index)
        Read temperature using platform specific code.
        Fixme: there should be a HAL API for this!
     */
+
 #ifdef _PUMA6_ARM_
+
+    if (index == 1)
     {
         FILE *fp;
         char *cmd;
@@ -2205,7 +2205,10 @@ static int getCurrentTemperature (int index)
             pclose (fp);
         }
     }
+
 #else
+
+    if (index == 1)
     {
         FILE *fp;
 
@@ -2225,6 +2228,41 @@ static int getCurrentTemperature (int index)
             cpu_temp = 30;
         }
     }
+
+#endif
+
+#if defined(_COSA_BCM_ARM_) && (MAX_TEMPSENSOR_INSTANCE >= 2)
+
+    if (index == 2)
+    {
+        FILE *fp;
+        char *cmd = "wl -i wl0 phy_tempsense";
+
+        fp = popen(cmd, "r");
+        if (fp != NULL)
+        {
+            fscanf(fp, "%d", &cpu_temp);
+            fclose(fp);
+        }
+    }
+
+#endif
+
+#if defined(_COSA_BCM_ARM_) && (MAX_TEMPSENSOR_INSTANCE >= 3)
+
+    if (index == 3)
+    {
+        FILE *fp;
+        char *cmd = "wl -i wl1 phy_tempsense";
+
+        fp = popen(cmd, "r");
+        if (fp != NULL)
+        {
+            fscanf(fp, "%d", &cpu_temp);
+            fclose(fp);
+        }
+    }
+
 #endif
 
     if (cpu_temp == ABSOLUTE_ZERO_TEMPERATURE)
@@ -2464,11 +2502,20 @@ ANSC_HANDLE CosaTemperatureStatusCreate (void)
 
         sprintf (pTempSensor->Alias, "cpe-TemperatureSensor_%d", index);
 
+#ifdef _LG_MV2_PLUS_
+        if (index == 1)
+            strcpy(pTempSensor->Name, "BCM3390");
+        else if (index == 2)
+            strcpy(pTempSensor->Name, "BCM6710");
+        else if (index == 3)
+            strcpy(pTempSensor->Name, "BCM6715");
+#else
         if (index == 1)
 #ifdef _PUMA6_ARM_
             strcpy(pTempSensor->Name, "ATOM_CPU");
 #else
             strcpy(pTempSensor->Name, "CPU");
+#endif
 #endif
         else
             sprintf (pTempSensor->Name, "TEMPERATURE_SENSOR_%d", index);            
