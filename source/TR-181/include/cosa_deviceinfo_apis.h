@@ -326,7 +326,11 @@ typedef struct
 }
 COSA_HHT_PTR;
 
+#ifdef _LG_MV2_PLUS_
+#define MAX_TEMPSENSOR_INSTANCE 3
+#else
 #define MAX_TEMPSENSOR_INSTANCE 1
+#endif
 
 typedef  enum
 _COSA_DML_TEMPERATURE_SENSOR_STATUS
