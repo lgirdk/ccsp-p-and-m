@@ -222,13 +222,21 @@ LgiPlume_Commit
     }
     if(pMyObject->bNeedPlumeServiceRestart)
     {
+#ifdef _PUMA6_ARM_
         system("rpcclient2 '/etc/plume_init.sh restart'");
+#else
+        system("/etc/plume_init.sh restart");
+#endif
     }
     if(pMyObject->bPlumeUrlChanged)
     {
         // Send URL change event to RDK Mesh
-        char cmd[256] = {0};
+        char cmd[256];
+#ifdef _PUMA6_ARM_
         snprintf(cmd, sizeof(cmd), "rpcclient2 '/usr/bin/sysevent set mesh_url \"RDK|%s\"'", pMyObject->plumeUrl);
+#else
+        snprintf(cmd, sizeof(cmd), "/usr/bin/sysevent set mesh_url \"RDK|%s\"", pMyObject->plumeUrl);
+#endif
         system(cmd);
     }
 
