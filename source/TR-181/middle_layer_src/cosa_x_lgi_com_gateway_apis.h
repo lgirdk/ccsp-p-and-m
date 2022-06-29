@@ -42,4 +42,17 @@ ANSC_STATUS CosaDml_Gateway_GetErouterInitMode(ULONG *pInitMode);
 ANSC_STATUS CosaDml_Gateway_SetErouterInitMode(ULONG initMode);
 ANSC_STATUS CosaDml_Gateway_GetIPv6LeaseTimeRemaining(ULONG *pValue);
 
+#ifdef _LG_MV3_
+typedef enum
+{
+    EROUTER_INIT_MODE_CONTROL_UNKNOWN = 0,
+    EROUTER_INIT_MODE_CONTROL_DISABLED = 1,
+    EROUTER_INIT_MODE_CONTROL_IPV4 = 2,
+    EROUTER_INIT_MODE_CONTROL_IPV6 = 3,
+    EROUTER_INIT_MODE_CONTROL_IPV4_IPV6 = 4,
+    EROUTER_INIT_MODE_CONTROL_HONOR = 5,
+} eRouterInitMode_t;
+
+#endif
+
 #endif

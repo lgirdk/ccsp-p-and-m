@@ -171,10 +171,61 @@ int CosaDmlLgiGwGetDnsIpv6Alternate ( char *pValue, ULONG *pUlSize )
 
     return 0;
 }
+#ifdef _LG_MV3_
+int CosaApisGetErouterModeControl(ULONG *initMode)
+{
+    *initMode = EROUTER_INIT_MODE_CONTROL_HONOR;
+    char buf[2];
+    if(!syscfg_get( NULL, "ErouterModeControl", buf, sizeof(buf)))
+    {
+        *initMode = atoi(buf);
+    }
+    CcspTraceInfo(("Info: initMode = %d\n", initMode));
+    return 0;
+}
+
+int CosaApisSetErouterModeControl(ULONG initMode)
+{
+    ULONG initMode_current = -1;
+
+    CosaApisGetErouterModeControl(&initMode_current);
+
+    if (initMode == initMode_current)
+    {
+        return 0;
+    }
+
+    switch (initMode)
+    {
+        case EROUTER_INIT_MODE_CONTROL_DISABLED:
+        case EROUTER_INIT_MODE_CONTROL_IPV4:
+        case EROUTER_INIT_MODE_CONTROL_IPV6:
+        case EROUTER_INIT_MODE_CONTROL_IPV4_IPV6:
+        case EROUTER_INIT_MODE_CONTROL_HONOR:
+            if (syscfg_set_u_commit(NULL, "ErouterModeControl", initMode) != 0)
+            {
+                     CcspTraceInfo(("Error: %s %d: syscfg_set ErouterModeControl failed\n", __FUNCTION__, __LINE__));
+                     return 1;
+            }
+            commonSyseventSet("erouter_init_mode_change", "");
+            break;
+
+        default:
+            return 1;
+    }
+
+    return 0;
+
+}
+#endif
 
 ANSC_STATUS CosaDml_Gateway_GetErouterInitMode(ULONG *pInitMode)
 {
+#ifdef _LG_MV3_
+    if (!pInitMode || CosaApisGetErouterModeControl(pInitMode))
+#else
     if (!pInitMode || cm_hal_Get_ErouterModeControl(pInitMode))
+#endif
     {
         return ANSC_STATUS_FAILURE;
     }
@@ -186,7 +237,11 @@ ANSC_STATUS CosaDml_Gateway_SetErouterInitMode(ULONG initMode)
 {
     ANSC_STATUS retVal = ANSC_STATUS_FAILURE;
 
+#ifdef _LG_MV3_
+    retVal = CosaApisSetErouterModeControl(initMode);
+#else
     retVal = cm_hal_Set_ErouterModeControl(initMode);
+#endif
         
     return retVal;
 }

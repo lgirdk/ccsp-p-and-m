@@ -357,6 +357,15 @@ LgiGateway_Validate
         AnscCopyString(pReturnParamName,"ErouterModeControl");
         return FALSE;
     }
+#ifdef _LG_MV3_
+    //No support for Bridge mode R1.3, this needs to be removed once the bridge mode requirement for Bridge mode defined
+    if(pMyObject->ErouterInitMode && (EROUTER_INIT_MODE_CONTROL_DISABLED == pMyObject->ErouterInitMode))
+    {
+        CcspTraceWarning(("ErouterModeControl validation failed, bridge mode cannot be set"));
+        AnscCopyString(pReturnParamName,"ErouterModeControl");
+        return FALSE;
+    }
+#endif
 
     return TRUE;
 }
