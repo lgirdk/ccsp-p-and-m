@@ -247,6 +247,16 @@ CosaDmlGiSetCustomerId
         {
             fprintf(fpt, "%d\n", (int)ulValue);
             fclose(fpt);
+
+#if defined(_LG_MV2_PLUS_)
+            fpt = fopen("/nvram/sagemCmCustomerId", "w");
+            if (fpt)
+            {
+                fprintf(fpt, "%d\n", (int)ulValue);
+                fclose(fpt);
+            }
+#endif
+
             CcspTraceInfo(("Customer id Changed from %d to %d\n", id, (int)ulValue));
 
 #ifdef _PUMA6_ARM_
