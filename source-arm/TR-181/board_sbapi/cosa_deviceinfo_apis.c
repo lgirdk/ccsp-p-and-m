@@ -204,6 +204,10 @@ extern void* g_pDslhDmlAgent;
 #define ABSOLUTE_ZERO_TEMPERATURE   -274
 #define UNKNOWN_TIME                "0001-01-01T00:00:00Z"
 
+#if defined (_LG_MV2_PLUS_)
+#define TEMP_SENSOR_HIGH_ALARM_LIMIT 99
+#endif
+
 static pthread_t gPoll_threadId[MAX_TEMPSENSOR_INSTANCE];
 
 static const int OK = 1 ;
@@ -2476,6 +2480,11 @@ void CosaTemperatureSensorSetHighAlarm (int highAlarmValue, PCOSA_TEMPERATURE_SE
 {
     PCOSA_DATAMODEL_TEMPERATURE_STATUS pTempStatus = (PCOSA_DATAMODEL_TEMPERATURE_STATUS)g_pCosaBEManager->hTemperatureStatus;
     int index = pTempSensor->InstanceNumber;
+
+#if defined (TEMP_SENSOR_HIGH_ALARM_LIMIT)
+    if (highAlarmValue > TEMP_SENSOR_HIGH_ALARM_LIMIT)
+        highAlarmValue = TEMP_SENSOR_HIGH_ALARM_LIMIT;
+#endif
 
     pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
     pTempSensor->HighAlarmValue = highAlarmValue;
