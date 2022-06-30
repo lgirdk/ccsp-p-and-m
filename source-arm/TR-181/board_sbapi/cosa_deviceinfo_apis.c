@@ -48,7 +48,6 @@
         *  CosaDmlDiInit
         *  CosaDmlDiGetManufacturer
         *  CosaDmlDiGetManufacturerOUI
-        *  CosaDmlDiGetModelName
         *  CosaDmlDiGetDescription
         *  CosaDmlDiGetProductClass
         *  CosaDmlDiGetSerialNumber
@@ -465,27 +464,6 @@ CosaDmlDiGetCMTSMac
 }
 /*Changes for 6560-end*/
 #endif
-
-ANSC_STATUS
-CosaDmlDiGetModelName
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue,
-        ULONG*                      pulSize
-    )
-{
-    UNREFERENCED_PARAMETER(hContext); 
-    UNREFERENCED_PARAMETER(pulSize);
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
-
-    if ( platform_hal_GetModelName(pValue) != RETURN_OK)
-        return ANSC_STATUS_FAILURE;
-    else {
-        return ANSC_STATUS_SUCCESS;
-    }
-
-#endif
-}
 
 ANSC_STATUS
 CosaDmlDiGetDescription

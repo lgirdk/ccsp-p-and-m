@@ -772,16 +772,17 @@ DeviceInfo_GetParamStringValue
         return 0;
     }
 
-    if (strcmp(ParamName, "ModelName") == 0)
+    if ((strcmp(ParamName, "ModelName") == 0) ||
+        (strcmp(ParamName, "ModelNumber") == 0))
     {
-        CosaDmlDiGetModelName(NULL, pValue, pulSize);
-        return 0;
-    }
+        if (*pulSize <= 64) {
+            *pulSize = 64 + 1;
+            return 1;
+        }
 
-    if (strcmp(ParamName, "ModelNumber") == 0)
-    {
-        /* collect value */
-        CosaDmlDiGetModelName(NULL,pValue,pulSize);
+        if (platform_hal_GetModelName(pValue) != RETURN_OK)
+            return -1;
+
         return 0;
     }
 
