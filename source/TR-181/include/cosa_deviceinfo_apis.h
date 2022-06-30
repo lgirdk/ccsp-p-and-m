@@ -405,22 +405,6 @@ CosaDmlDiGetGW_IPv6
     );
 
 ANSC_STATUS
-CosaDmlDiGetHardwareVersion
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue,
-        ULONG*                      pulSize
-    );
-
-ANSC_STATUS
-CosaDmlDiGetAdditionalHardwareVersion
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue,
-        ULONG*                      pulSize
-    );
-
-ANSC_STATUS
 CosaDmlDiGetProvisioningCode
     (
         ANSC_HANDLE                 hContext,
