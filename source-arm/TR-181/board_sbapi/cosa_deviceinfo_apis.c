@@ -51,8 +51,6 @@
         *  CosaDmlDiGetDescription
         *  CosaDmlDiGetProductClass
         *  CosaDmlDiGetSerialNumber
-        *  CosaDmlDiGetHardwareVersion
-        *  CosaDmlDiGetAdditionalHardwareVersion
         *  CosaDmlDiGetProvisioningCode
         *  CosaDmlDiSetProvisioningCode
         *  CosaDmlDiGetFirstUseDate
@@ -603,38 +601,6 @@ CosaDmlDiGetGW_IPv6
     }
 
     return ANSC_STATUS_SUCCESS;
-}
-
-ANSC_STATUS
-CosaDmlDiGetHardwareVersion
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue,
-        ULONG*                      pulSize
-    )
-{
-    UNREFERENCED_PARAMETER(hContext);
-    UNREFERENCED_PARAMETER(pulSize);
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_    
-
-    if (platform_hal_GetHardwareVersion(pValue) != RETURN_OK )
-        return ANSC_STATUS_FAILURE;
-    else {
-        return ANSC_STATUS_SUCCESS;
-    }
-
-#endif  
-}
-
-ANSC_STATUS
-CosaDmlDiGetAdditionalHardwareVersion
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue,
-        ULONG*                      pulSize
-    )
-{
-    return CosaDmlDiGetHardwareVersion(hContext, pValue, pulSize);
 }
 
 static void ConvertToProvisionCodeFmt (char *mac_address, char *prov_code_fmt)
