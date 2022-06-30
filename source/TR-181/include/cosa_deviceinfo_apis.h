@@ -330,14 +330,6 @@ CosaDmlDiGetManufacturerOUI
     );
 
 ANSC_STATUS
-CosaDmlDiGetModelName
-    (
-        ANSC_HANDLE                 hContext,
-        char*                       pValue,
-        ULONG*                      pulSize
-    );
-
-ANSC_STATUS
 CosaDmlDiGetDescription
     (
         ANSC_HANDLE                 hContext,
