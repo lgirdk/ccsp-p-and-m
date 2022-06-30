@@ -2686,10 +2686,8 @@ CosaDmlDcGetSSHEnable
         else
             *pFlag = 0;
     }
-    if (platform_hal_GetSSHEnable(pFlag) != RETURN_OK )
-        return ANSC_STATUS_FAILURE;
-    else
-        return ANSC_STATUS_SUCCESS;
+
+    return ANSC_STATUS_SUCCESS;
 }
 
 ANSC_STATUS
@@ -2747,9 +2745,6 @@ CosaDmlDcSetSSHEnable
                             "sysevent set sshd-stop ; "
                             "killall dropbear");
         }
-
-        if (platform_hal_SetSSHEnable(flag) == RETURN_ERR )
-            return ANSC_STATUS_FAILURE;
     }   
     return ANSC_STATUS_SUCCESS;
 }
