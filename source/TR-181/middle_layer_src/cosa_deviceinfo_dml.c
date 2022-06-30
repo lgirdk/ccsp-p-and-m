@@ -830,9 +830,20 @@ DeviceInfo_GetParamStringValue
 
     if (strcmp(ParamName, "HardwareVersion") == 0)
     {
-        /* collect value */
-       CosaDmlDiGetHardwareVersion(NULL,pValue,pulSize);
+        if (*pulSize <= 64) {
+            *pulSize = 64 + 1;
+            return 1;
+        }
+
+        if (platform_hal_GetHardwareVersion(pValue) != RETURN_OK)
+            return -1;
+
         return 0;
+    }
+
+    if (strcmp(ParamName, "AdditionalHardwareVersion") == 0)
+    {
+        return update_pValue (pValue, pulSize, "");
     }
 
     if (strcmp(ParamName, "SoftwareVersion") == 0)
@@ -845,13 +856,6 @@ DeviceInfo_GetParamStringValue
         if (platform_hal_GetSoftwareVersion(pValue, *pulSize) != RETURN_OK)
             return -1;
 
-        return 0;
-    }
-
-    if (strcmp(ParamName, "AdditionalHardwareVersion") == 0)
-    {
-        /* collect value */
-         CosaDmlDiGetAdditionalHardwareVersion(NULL,pValue,pulSize);
         return 0;
     }
 
