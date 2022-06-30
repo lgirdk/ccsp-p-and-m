@@ -862,7 +862,14 @@ DeviceInfo_GetParamStringValue
 
     if (strcmp(ParamName, "ModelName") == 0)
     {
-        CosaDmlDiGetModelName(NULL, pValue, pulSize);
+        if (*pulSize <= 64) {
+            *pulSize = 64 + 1;
+            return 1;
+        }
+
+        if (platform_hal_GetModelName(pValue) != RETURN_OK)
+            return -1;
+
         return 0;
     }
 
