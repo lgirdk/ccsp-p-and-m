@@ -181,7 +181,8 @@ ANSC_STATUS
 hash_userPassword
         (
                 PCHAR              pString,
-                char*              hashedpassword      /* Identified by InstanceNumber */
+                char*              hashedpassword,     /* Identified by InstanceNumber */
+                int                hashedpassword_size
         );
 
 ANSC_STATUS
