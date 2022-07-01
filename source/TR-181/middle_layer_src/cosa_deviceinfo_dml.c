@@ -244,6 +244,77 @@ static int read_param_string_from_file (char *filename, char *pValue, ULONG *pUl
 }
 #endif
 
+static int GetFirmwareName (char *pValue, unsigned long maxSize)
+{
+    static char name[64];
+
+    if (name[0] == 0)
+    {
+        FILE *fp;
+        char buf[128];  /* big enough to avoid reading incomplete lines */
+        char *s = NULL;
+        size_t len = 0;
+
+        if ((fp = fopen ("/version.txt", "r")) != NULL)
+        {
+            while (fgets (buf, sizeof(buf), fp) != NULL)
+            {
+                /*
+                   The imagename field may use either a ':' or '=' separator
+                   and the value may or not be quoted. Handle all 4 cases.
+                */
+                if ((memcmp (buf, "imagename", 9) == 0) && ((buf[9] == ':') || (buf[9] == '=')))
+                {
+                    s = (buf[10] == '"') ? &buf[11] : &buf[10];
+
+                    while (1)
+                    {
+                        int inch = s[len];
+
+                        if ((inch == '"') || (inch == '\n') || (inch == 0))
+                        {
+                            break;
+                        }
+
+                        len++;
+                    }
+
+                    break;
+                }
+            }
+
+            fclose (fp);
+        }
+
+        if (len >= sizeof(name))
+        {
+            len = sizeof(name) - 1;
+        }
+
+        memcpy (name, s, len);
+        name[len] = 0;
+    }
+
+    if (name[0] != 0)
+    {
+        size_t len = strlen(name);
+
+        if (len >= maxSize)
+        {
+            len = maxSize - 1;
+        }
+
+        memcpy (pValue, name, len);
+        pValue[len] = 0;
+
+        return 0;
+    }
+
+    pValue[0] = 0;
+
+    return -1;
+}
+
 static int update_pValue (char *pValue, PULONG pulSize, char *str)
 {
     if (!str)
@@ -866,7 +937,7 @@ DeviceInfo_GetParamStringValue
             return 1;
         }
 
-        if (platform_hal_GetFirmwareName(pValue, *pulSize) != RETURN_OK)
+        if (GetFirmwareName(pValue, *pulSize) != 0)
             return -1;
 
         return 0;
