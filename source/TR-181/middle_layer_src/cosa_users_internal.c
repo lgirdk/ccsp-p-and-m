@@ -282,9 +282,9 @@ CosaUsersInitialize
            return ANSC_STATUS_SUCCESS;
        }
     #if defined(_COSA_FOR_BCI_)
-        hash_userPassword("highspeed",getHash);
+        hash_userPassword("highspeed", getHash, sizeof(getHash));
     #else
-        hash_userPassword("password",getHash);
+        hash_userPassword("password", getHash, sizeof(getHash));
     #endif
     res = strcmp(getHash, fromDB);
     if (!res) {
