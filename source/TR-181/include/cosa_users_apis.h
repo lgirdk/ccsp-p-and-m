@@ -178,13 +178,6 @@ user_validatepwd
         );
 
 ANSC_STATUS
-hash_userPassword
-        (
-                PCHAR              pString,
-                char*              hashedpassword      /* Identified by InstanceNumber */
-        );
-
-ANSC_STATUS
 user_hashandsavepwd
         (
             ANSC_HANDLE                 hContext,

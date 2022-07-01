@@ -76,7 +76,7 @@
 
 #define SIZE_OF_HASHPASSWORD  32
 /* Changing SNO as 256 bytes from 64 bytes due to HAL layer access more than 64 byets*/
-char SerialNumber[256] = {'\0'};
+static char SerialNumber[256] = {'\0'};
 #if ( defined _COSA_SIM_ )
 
 COSA_DML_USER  g_users_user[] = 
@@ -488,51 +488,48 @@ CosaDmlUserGetCfg
 }
 #endif
 
-ANSC_STATUS
+static ANSC_STATUS
         hash_userPassword
 	(
 	        PCHAR              pString,
-        	char*              hashedpassword      /* Identified by InstanceNumber */
+        	char*              hashedpassword,     /* Identified by InstanceNumber */
+        	int                hashedpassword_size
 	)
 {
-        CcspTraceWarning(("%s, Entered to hash password\n",__FUNCTION__));
-	ULONG SerialNumberLength = 0;
-	if (SerialNumber[0] =='\0' )
-	{
-          /* CID: 79484 Out-of-bounds access - updated global decl*/
-          CosaDmlDiGetSerialNumber(NULL,SerialNumber,&SerialNumberLength);
-	}
         char *convertTo = NULL;
-        char saltText[128] = {'\0'}, hashedmd[128] = {'\0'};
-        int  iIndex = 0, Key_len = 0, salt_len = 0, hashedmd_len = 0;
+        char hashedmd[128] = {'\0'};
+        int iIndex = 0, Key_len = 0, salt_len = 0, hashedmd_len = 0;
         errno_t safec_rc = -1;
-        int hashedpassword_size = 128;
-			
-#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
-        HMAC_CTX ctx;
-#else
-        HMAC_CTX *pctx = HMAC_CTX_new();
-#endif
-        safec_rc = strcpy_s(saltText, sizeof(saltText), SerialNumber);
-        if(safec_rc != EOK)
+
+        CcspTraceWarning(("%s, Entered to hash password\n",__FUNCTION__));
+
+        if (SerialNumber[0] == '\0')
         {
-           ERR_CHK(safec_rc);
+            ULONG SerialNumberLength = sizeof(SerialNumber);
+            /* CID: 79484 Out-of-bounds access - updated global decl*/
+            CosaDmlDiGetSerialNumber(NULL, SerialNumber, &SerialNumberLength);
         }
 
         Key_len = strlen(pString);
-	
-        salt_len = strlen(saltText);
+        salt_len = strlen(SerialNumber);
+
 #if (OPENSSL_VERSION_NUMBER < 0x10100000L)
-        HMAC_CTX_init( &ctx);
-        HMAC_Init(	 &ctx, pString,  Key_len, EVP_sha256());
-        HMAC_Update( &ctx, (unsigned char *)saltText, salt_len);
-        HMAC_Final(  &ctx, (unsigned char *)hashedmd, (unsigned int *)&hashedmd_len );
+        HMAC_CTX ctx;
+        HMAC_CTX *pctx = &ctx;
+        HMAC_CTX_init(pctx);
+        HMAC_Init(pctx, pString, Key_len, EVP_sha256());
+        HMAC_Update(pctx, (unsigned char *) SerialNumber, salt_len);
+        HMAC_Final(pctx, (unsigned char *) hashedmd, (unsigned int *) &hashedmd_len);
+        HMAC_CTX_cleanup(pctx);
 #else
+        HMAC_CTX *pctx = HMAC_CTX_new();
         HMAC_CTX_reset (pctx);
-        HMAC_Init (pctx, pString, Key_len, EVP_sha256());
-        HMAC_Update (pctx, (unsigned char *) saltText, salt_len);
-        HMAC_Final (pctx, (unsigned char *) hashedmd, (unsigned int *) &hashedmd_len);
+        HMAC_Init(pctx, pString, Key_len, EVP_sha256());
+        HMAC_Update(pctx, (unsigned char *) SerialNumber, salt_len);
+        HMAC_Final(pctx, (unsigned char *) hashedmd, (unsigned int *) &hashedmd_len);
+        HMAC_CTX_free(pctx);
 #endif
+
         convertTo = hashedpassword;
         for (iIndex = 0; iIndex < hashedmd_len; iIndex++) 
         {
@@ -545,14 +542,9 @@ ANSC_STATUS
           convertTo += 2;
           hashedpassword_size -= 2;
         }
-#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
-        HMAC_CTX_cleanup( &ctx );
-#else
-        HMAC_CTX_free (pctx);
-#endif
+
         CcspTraceWarning(("%s, Returning success\n",__FUNCTION__));	
         return ANSC_STATUS_SUCCESS ;
-
 } 
 
 ANSC_STATUS
@@ -602,7 +594,7 @@ user_validatepwd
      isDefault=1;
    }
 #endif
-   hash_userPassword(pString,getHash); 
+   hash_userPassword(pString, getHash, sizeof(getHash));
    CcspTraceWarning(("%s, Compare passwords\n",__FUNCTION__));
    
     v = strcmp(getHash, pEntry->HashedPassword) ? "Invalid_PWD" : (isDefault == 1 ? "Default_PWD" : "Good_PWD");
@@ -637,7 +629,7 @@ user_validatepwd
    {
      isDefault=1;
    }
-   hash_userPassword(pString,getHash);
+   hash_userPassword(pString, getHash, sizeof(getHash));
    CcspTraceWarning(("%s, Compare passwords\n",__FUNCTION__));
 
     v = strcmp(getHash, pEntry->HashedPassword) ? "Invalid_PWD" : (isDefault == 1 ? "Default_PWD" : "Good_PWD");
@@ -667,7 +659,7 @@ user_hashandsavepwd
   errno_t rc = -1;
   CcspTraceWarning(("%s, Hash Password using the passed string\n",__FUNCTION__));
 
-  hash_userPassword(pString,setHash);
+  hash_userPassword(pString, setHash, sizeof(setHash));
   if(!strcmp(pEntry->Username,"admin"))
   {
   if(setHash[0] != '\0')
