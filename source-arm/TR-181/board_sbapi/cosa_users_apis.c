@@ -580,16 +580,8 @@ user_validatepwd
    if(fromDB[0] == '\0')
    {
      #if defined(_HUB4_PRODUCT_REQ_) || defined(_PLATFORM_RASPBERRYPI_) || defined(_PLATFORM_TURRIS_) || 1
-         char guiPassword[40];
-         /*
-            If the HAL returns an empty string it's bug in the HAL (it
-            should return an error instead), but try to handle it anway.
-         */
-         if ((platform_hal_getUIDefaultPassword(guiPassword, sizeof(guiPassword)) == RETURN_OK) && (strlen(guiPassword) > 0))
-         {
-             strcpy(pEntry->Password, guiPassword);
-         }
-         else
+         pEntry->Password[0] = 0;
+         if ((platform_hal_getUIDefaultPassword(pEntry->Password, sizeof(pEntry->Password)) != RETURN_OK) || (pEntry->Password[0] == 0))
          {
              strcpy(pEntry->Password, "password");
          }
