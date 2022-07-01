@@ -654,57 +654,54 @@ user_hashandsavepwd
 
         )
 {
-  UNREFERENCED_PARAMETER(hContext);
-  char setHash[128]= {'\0'};
-  errno_t rc = -1;
-  CcspTraceWarning(("%s, Hash Password using the passed string\n",__FUNCTION__));
+   UNREFERENCED_PARAMETER(hContext);
+   char setHash[128]= {'\0'};
+   errno_t rc = -1;
+   CcspTraceWarning(("%s, Hash Password using the passed string\n",__FUNCTION__));
 
-  hash_userPassword(pString, setHash, sizeof(setHash));
-  if(!strcmp(pEntry->Username,"admin"))
-  {
-  if(setHash[0] != '\0')
-  {
-     CcspTraceWarning(("%s, Set hash value to syscfg\n",__FUNCTION__));
-     if(syscfg_set_commit(NULL,"hash_password_3",setHash) != 0)
-     {
-        AnscTraceWarning(("syscfg_set failed\n"));
-     } 
-     else
-     {
-          rc = strcpy_s(pEntry->HashedPassword,sizeof(pEntry->HashedPassword),setHash);
-          ERR_CHK(rc);
-          CcspTraceWarning(("%s, Hash value is saved to syscfg\n",__FUNCTION__));
+   hash_userPassword(pString, setHash, sizeof(setHash));
+   if (setHash[0] == '\0')
+   {
+      CcspTraceWarning(("%s, Returning failure\n",__FUNCTION__));
+      return ANSC_STATUS_FAILURE;
+   }
+
+   if (strcmp(pEntry->Username, "admin") == 0)
+   {
+      if (syscfg_set(NULL, "hash_password_3", setHash) != 0)
+      {
+          AnscTraceWarning(("syscfg_set failed\n"));
+          return ANSC_STATUS_FAILURE;
+      } 
+
+      rc = strcpy_s(pEntry->HashedPassword,sizeof(pEntry->HashedPassword),setHash);
+      ERR_CHK(rc);
+      CcspTraceWarning(("%s, Hash value is saved to syscfg\n",__FUNCTION__));
 	  syscfg_unset(NULL, "user_password_3");
 	  syscfg_commit();
-          return ANSC_STATUS_SUCCESS;
-     }
-  }
-  }
-#if defined(_COSA_FOR_BCI_)
-  if(!strcmp(pEntry->Username,"cusadmin"))
-  {
-  if(setHash[0] != '\0')
-  {
-     CcspTraceWarning(("%s, Set hash value to syscfg\n",__FUNCTION__));
-     if(syscfg_set_commit(NULL,"hash_password_2",setHash) != 0)
-     {
-        AnscTraceWarning(("syscfg_set failed\n"));
-     }
-     else
-     {
-          rc = strcpy_s(pEntry->HashedPassword,sizeof(pEntry->HashedPassword),setHash);
-          ERR_CHK(rc);
-          CcspTraceWarning(("%s, Hash value is saved to syscfg\n",__FUNCTION__));
-          syscfg_unset(NULL, "user_password_2");
-          syscfg_commit();
-          return ANSC_STATUS_SUCCESS;
-     }
-  }
-  }
-#endif
-  CcspTraceWarning(("%s, Returning failure\n",__FUNCTION__));
-  return ANSC_STATUS_FAILURE;
+      return ANSC_STATUS_SUCCESS;
+   }
 
+#if defined(_COSA_FOR_BCI_)
+   if (strcmp(pEntry->Username, "cusadmin") == 0)
+   {
+      if (syscfg_set(NULL, "hash_password_2", setHash) != 0)
+      {
+         AnscTraceWarning(("syscfg_set failed\n"));
+         return ANSC_STATUS_FAILURE;
+      }
+
+      rc = strcpy_s(pEntry->HashedPassword,sizeof(pEntry->HashedPassword),setHash);
+      ERR_CHK(rc);
+      CcspTraceWarning(("%s, Hash value is saved to syscfg\n",__FUNCTION__));
+      syscfg_unset(NULL, "user_password_2");
+      syscfg_commit();
+      return ANSC_STATUS_SUCCESS;
+   }
+#endif
+
+   CcspTraceWarning(("%s, Returning failure\n",__FUNCTION__));
+   return ANSC_STATUS_FAILURE;
 }
 
 ANSC_STATUS
