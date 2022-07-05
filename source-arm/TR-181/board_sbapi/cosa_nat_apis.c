@@ -3614,6 +3614,82 @@ CosaDmlNatSetPortMapping
 #endif
     /*CID: 62430 Structurally dead code*/
 }
+
+BOOL Validate_PortMappingPorts(char* ParamName, ULONG uValue)
+{
+    char PortTriggerCount[4], PortFilterCount[4], trigger_range[8], forward_range[8], SrcStart[8], SrcEnd[8], DstStart[8], DstEnd[8], buf1[50], buf2[50], str[50];
+    ULONG start = 0, end = 0;
+    int i, ptrigger_count = 0, pfilter_count = 0;
+
+    syscfg_get(NULL, "PortRangeTriggerCount", PortTriggerCount, sizeof(PortTriggerCount));
+    syscfg_get(NULL, "lgFwV4IpFilterCount", PortFilterCount, sizeof(PortFilterCount));
+
+    ptrigger_count = atoi(PortTriggerCount);
+    pfilter_count = atoi(PortFilterCount);
+
+    for(i=0 ; i < ptrigger_count ; i++)
+    {
+        if( !strcmp(ParamName, "InternalPort") || !strcmp(ParamName, "InternalPortEndRange") )
+        {
+            snprintf(buf1, sizeof(buf1), "prt_%d::trigger_range", i+1);
+            syscfg_get(NULL, buf1, trigger_range, sizeof(trigger_range));
+            AnscCopyString(str, trigger_range);
+        }
+        else if( !strcmp(ParamName, "ExternalPort") || !strcmp(ParamName, "ExternalPortEndRange") )
+        {
+            snprintf(buf1, sizeof(buf1), "prt_%d::forward_range", i+1);
+            syscfg_get(NULL, buf1, forward_range, sizeof(forward_range));
+            AnscCopyString(str, forward_range);
+        }
+
+        char *ptr = strtok(str, " ");
+        if( ptr != NULL )
+        {
+            start = atoi(ptr);
+            ptr = strtok(NULL, " ");
+            if ( ptr != NULL )
+                end = atoi(ptr);
+        }
+
+        if( uValue >= start && uValue <= end )
+        {
+            return FALSE;
+        }
+    }
+
+    memset(buf1, 0, sizeof(buf1));
+
+    for(i = 0; i < pfilter_count; i++)
+    {
+        if( !strcmp(ParamName, "InternalPort") || !strcmp(ParamName, "InternalPortEndRange") )
+        {
+            snprintf(buf1, sizeof(buf1), "lgfwv4if_%d::srcStartPort", i+1);
+            syscfg_get(NULL, buf1, SrcStart, sizeof(SrcStart));
+            start = atoi(SrcStart);
+
+            snprintf(buf2, sizeof(buf2), "lgfwv4if_%d::srcEndPort", i+1);
+            syscfg_get(NULL, buf2, SrcEnd, sizeof(SrcEnd));
+            end = atoi(SrcEnd);
+        }
+        else if( !strcmp(ParamName, "ExternalPort") || !strcmp(ParamName, "ExternalPortEndRange") )
+        {
+            snprintf(buf1, sizeof(buf1), "lgfwv4if_%d::dstStartPort", i+1);
+            syscfg_get(NULL, buf1, DstStart, sizeof(DstStart));
+            start = atoi(DstStart);
+
+            snprintf(buf2, sizeof(buf2), "lgfwv4if_%d::dstEndPort", i+1);
+            syscfg_get(NULL, buf2, DstEnd, sizeof(DstEnd));
+            end = atoi(DstEnd);
+        }
+
+        if ( uValue >= start && uValue <= end )
+        {
+            return FALSE;
+        }
+    }
+    return TRUE;
+}
+
 #ifdef CONFIG_CISCO_HOME_SECURITY 
 #define HNAP_DHCP_POOL_DM "Device.DHCPv4.Server.Pool.2."
 
@@ -4411,6 +4487,86 @@ CosaDmlNatSetPortTriggerEnable(BOOL vBool)
     g_NatPTTriggerEnable = vBool;
     Utopia_Free(&Ctx, 1);
     return ANSC_STATUS_SUCCESS;
+}
+
+BOOL Validate_PortTriggerPorts(char* ParamName, ULONG uValue)
+{
+    char PortFwdCount[4], PortFilterCount[4], internal_port[8], internal_port_rsize[8], external_port[8], SrcStart[8], SrcEnd[8], DstStart[8], DstEnd[8], buf1[50], buf2[50], str[50];
+    ULONG start = 0, end = 0;
+    int i, pfwd_count = 0, pfilter_count = 0;
+
+    syscfg_get(NULL, "PortRangeForwardCount", PortFwdCount, sizeof(PortFwdCount));
+    syscfg_get(NULL, "lgFwV4IpFilterCount", PortFilterCount, sizeof(PortFilterCount));
+
+    pfwd_count    = atoi(PortFwdCount);
+    pfilter_count = atoi(PortFilterCount);
+
+    for (i=0 ; i < pfwd_count ; i++)
+    {
+        if ( !strcmp(ParamName, "TriggerPortStart") || !strcmp(ParamName, "TriggerPortEnd") )
+        {
+            snprintf(buf1, sizeof(buf1), "pfr_%d::internal_port", i+1);
+            syscfg_get(NULL, buf1, internal_port, sizeof(internal_port));
+            snprintf(buf2, sizeof(buf2), "pfr_%d::internal_port_range_size", i+1);
+            syscfg_get(NULL, buf2, internal_port_rsize, sizeof(internal_port_rsize));
+
+            start = atoi(internal_port);
+            end   = atoi(internal_port) + atoi(internal_port_rsize);
+        }
+        else if( !strcmp(ParamName, "ForwardPortStart") || !strcmp(ParamName, "ForwardPortEnd") )
+        {
+            snprintf(buf1, sizeof(buf1), "pfr_%d::external_port_range", i+1);
+            syscfg_get(NULL, buf1, external_port, sizeof(external_port));
+
+            char *ptr = strtok(external_port, " ");
+            if ( ptr != NULL )
+            {
+                start = atoi(ptr);
+                ptr = strtok(NULL, " ");
+
+                if ( ptr != NULL )
+                    end = atoi(ptr);
+            }
+        }
+
+        if (uValue >= start && uValue <= end )
+        {
+            return FALSE;
+        }
+    }
+
+    memset(buf1, 0, sizeof(buf1));
+    memset(buf2, 0, sizeof(buf2));
+
+    for (i=0 ; i < pfilter_count ; i++)
+    {
+        if ( !strcmp(ParamName, "TriggerPortStart") || !strcmp(ParamName, "TriggerPortEnd") )
+        {
+            snprintf(buf1, sizeof(buf1), "lgfwv4if_%d::srcStartPort", i+1);
+            syscfg_get(NULL, buf1, SrcStart, sizeof(SrcStart));
+            start = atoi(SrcStart);
+
+            snprintf(buf2, sizeof(buf2), "lgfwv4if_%d::srcEndPort", i+1);
+            syscfg_get(NULL, buf2, SrcEnd, sizeof(SrcEnd));
+            end = atoi(SrcEnd);
+        }
+        else if( !strcmp(ParamName, "ForwardPortStart") || !strcmp(ParamName, "ForwardPortEnd") )
+        {
+            snprintf(buf1, sizeof(buf1), "lgfwv4if_%d::dstStartPort", i+1);
+            syscfg_get(NULL, buf1, DstStart, sizeof(DstStart));
+            start = atoi(DstStart);
+
+            snprintf(buf2, sizeof(buf2), "lgfwv4if_%d::dstEndPort", i+1);
+            syscfg_get(NULL, buf2, DstEnd, sizeof(DstEnd));
+            end = atoi(DstEnd);
+        }
+
+        if (uValue >= start && uValue <= end)
+        {
+            return FALSE;
+        }
+    }
+    return TRUE;
 }
 
 int CosaDmlNatChkPortRange(ULONG InstanceNumber, BOOLEAN enabled, int start, int end, int protocol, int is_trigger)
