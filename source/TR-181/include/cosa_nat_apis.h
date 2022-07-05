@@ -339,6 +339,7 @@ CosaDmlNatSetPortMapping
         PCOSA_DML_NAT_PMAPPING      pEntry          /* Identified by InstanceNumber */
     );
 
+BOOL Validate_PortMappingPorts(char* ParamName, ULONG uValue);
 
 /* APIs for PortTrigger */
 
@@ -390,6 +391,8 @@ CosaDmlNatChkPortMappingIPV6Address(char* address);
 
 BOOL 
 CosaDmlNatChkPortMappingClient(ULONG client);
+
+BOOL Validate_PortTriggerPorts(char* ParamName, ULONG uValue);
 
 int
 CosaDmlNatChkPortRange(ULONG InstanceNumber, BOOLEAN enabled, int start, int end, int protocol, int is_trigger);
