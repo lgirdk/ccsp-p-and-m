@@ -2392,6 +2392,9 @@ PortMapping_SetParamUlongValue
 
     if (strcmp(ParamName, "ExternalPort") == 0)
     {
+        BOOL ret = Validate_PortMappingPorts(ParamName, uValue);
+        if (ret != TRUE)
+            return FALSE;
         /* save update to backup */
         pNatPMapping->ExternalPort = (USHORT)uValue;
 
@@ -2400,6 +2403,9 @@ PortMapping_SetParamUlongValue
 
     if (strcmp(ParamName, "ExternalPortEndRange") == 0)
     {
+        BOOL ret = Validate_PortMappingPorts(ParamName, uValue);
+        if (ret != TRUE)
+            return FALSE;
         /* save update to backup */
 
         pNatPMapping->ExternalPortEndRange = (USHORT)uValue;
@@ -2409,6 +2415,9 @@ PortMapping_SetParamUlongValue
 
     if (strcmp(ParamName, "InternalPort") == 0)
     {
+        BOOL ret = Validate_PortMappingPorts(ParamName, uValue);
+        if (ret != TRUE)
+            return FALSE;
         /* save update to backup */
         if ( uValue != 0 )
         {
@@ -2420,6 +2429,9 @@ PortMapping_SetParamUlongValue
 
     if (strcmp(ParamName, "InternalPortEndRange") == 0)
     {
+        BOOL ret = Validate_PortMappingPorts(ParamName, uValue);
+        if (ret != TRUE)
+            return FALSE;
        /* save update to backup */
        if ( uValue != 0 )
        {
@@ -3749,6 +3761,10 @@ PortTrigger_SetParamUlongValue
 #endif
     if (strcmp(ParamName, "TriggerPortStart") == 0)
     {
+        BOOL ret = Validate_PortTriggerPorts(ParamName, uValue);
+        if (ret != TRUE)
+            return FALSE;
+
         pNatPTrigger->TriggerPortStart = (USHORT)uValue;
 
         return TRUE;
@@ -3756,6 +3772,10 @@ PortTrigger_SetParamUlongValue
 
     if (strcmp(ParamName, "TriggerPortEnd") == 0)
     {
+        BOOL ret = Validate_PortTriggerPorts(ParamName, uValue);
+        if (ret != TRUE)
+            return FALSE;
+
         pNatPTrigger->TriggerPortEnd = (USHORT)uValue;
 
         return TRUE;
@@ -3763,6 +3783,10 @@ PortTrigger_SetParamUlongValue
 
     if (strcmp(ParamName, "ForwardPortStart") == 0)
     {
+        BOOL ret = Validate_PortTriggerPorts(ParamName, uValue);
+        if (ret != TRUE)
+            return FALSE;
+
         pNatPTrigger->ForwardPortStart = (USHORT)uValue;
 
         return TRUE;
@@ -3770,6 +3794,10 @@ PortTrigger_SetParamUlongValue
 
     if (strcmp(ParamName, "ForwardPortEnd") == 0)
     {
+        BOOL ret = Validate_PortTriggerPorts(ParamName, uValue);
+        if (ret != TRUE)
+            return FALSE;
+
         pNatPTrigger->ForwardPortEnd = (USHORT)uValue;
 
         return TRUE;
