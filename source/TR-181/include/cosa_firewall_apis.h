@@ -377,6 +377,8 @@ CosaDmlFW_V4DayOfWeek_GetBlockTimeBitMask
         ULONG  *pSize
     );
 
+BOOL Validate_IPFilterPorts(char* ParamName, ULONG uValue);
+
 ANSC_STATUS
 CosaDmlGatewayV6GetFwEnable
     (
