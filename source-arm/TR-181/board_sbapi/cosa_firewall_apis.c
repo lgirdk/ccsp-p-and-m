@@ -606,6 +606,86 @@ ANSC_STATUS CosaDmlFW_V4DayOfWeek_GetBlockTimeBitMaskType (ULONG *pulBlockTimeBi
     return ANSC_STATUS_SUCCESS;
 }
 
+BOOL Validate_IPFilterPorts(char* ParamName, ULONG ulValue)
+{
+    char PortFwdCount[4], PortTriggerCount[4], internal_port[8], internal_port_rsize[8], external_port[8], trigger_range[8], forward_range[8], buf1[50], buf2[50], str[50];
+    ULONG start = 0, end = 0;
+    int i, pfwd_count = 0, ptrigger_count = 0;
+
+    syscfg_get(NULL, "PortRangeForwardCount", PortFwdCount, sizeof(PortFwdCount));
+    syscfg_get(NULL, "PortRangeTriggerCount", PortTriggerCount, sizeof(PortTriggerCount));
+
+    pfwd_count = atoi(PortFwdCount);
+    ptrigger_count = atoi(PortTriggerCount);
+
+    for (i = 0; i < pfwd_count; i++)
+    {
+        if ( !strcmp(ParamName, "SrcPortStart") || !strcmp(ParamName, "SrcPortEnd") )
+        {
+            snprintf(buf1, sizeof(buf1), "pfr_%d::internal_port", i+1);
+            syscfg_get(NULL, buf1, internal_port, sizeof(internal_port));
+            snprintf(buf2, sizeof(buf2), "pfr_%d::internal_port_range_size", i+1);
+            syscfg_get(NULL, buf2, internal_port_rsize, sizeof(internal_port_rsize));
+
+            start = atoi(internal_port);
+            end = atoi(internal_port) + atoi(internal_port_rsize);
+        }
+        else if( !strcmp(ParamName, "DstPortStart") || !strcmp(ParamName, "DstPortEnd") )
+        {
+            snprintf(buf1, sizeof(buf1), "pfr_%d::external_port_range", i+1);
+            syscfg_get(NULL, buf1, external_port, sizeof(external_port));
+
+            char *ptr = strtok(external_port, " ");
+            if (ptr != NULL)
+            {
+                start = atoi(ptr);
+                ptr = strtok(NULL, " ");
+                if ( ptr != NULL )
+                    end = atoi(ptr);
+            }
+        }
+
+        if ( ulValue >= start && ulValue <= end )
+        {
+            return FALSE;
+        }
+    }
+
+    memset(buf1, 0, sizeof(buf1));
+    memset(buf2, 0, sizeof(buf2));
+
+    for (i = 0; i < ptrigger_count; i++)
+    {
+        if ( !strcmp(ParamName, "SrcPortStart") || !strcmp(ParamName, "SrcPortEnd") )
+        {
+            snprintf(buf1, sizeof(buf1), "prt_%d::trigger_range", i+1);
+            syscfg_get(NULL, buf1, trigger_range, sizeof(trigger_range));
+            AnscCopyString(str, trigger_range);
+        }
+        else if( !strcmp(ParamName, "DstPortStart") || !strcmp(ParamName, "DstPortEnd") )
+        {
+            snprintf(buf1, sizeof(buf1), "prt_%d::forward_range", i+1);
+            syscfg_get(NULL, buf1, forward_range, sizeof(forward_range));
+            AnscCopyString(str, forward_range);
+        }
+
+        char *ptr = strtok(str, " ");
+        if ( ptr != NULL )
+        {
+            start = atoi(ptr);
+            ptr = strtok(NULL, " ");
+            if ( ptr != NULL )
+                end = atoi(ptr);
+        }
+
+        if ( ulValue >= start && ulValue <= end )
+        {
+            return FALSE;
+        }
+    }
+    return TRUE;
+}
+
 ANSC_STATUS CosaDmlFW_V4DayOfWeek_SetBlockTimeBitMaskType (ULONG blockTimeBitMaskType)
 {
     if (syscfg_set_u_commit(NULL, "v4_dayofweek_block_time_bitmask_type", blockTimeBitMaskType) != 0)
