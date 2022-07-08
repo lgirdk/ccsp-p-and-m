@@ -1634,6 +1634,7 @@ LanMngm_GetEntry
     PCOSA_DATAMODEL_DEVICECONTROL   pDevCtrl    = (PCOSA_DATAMODEL_DEVICECONTROL)g_pCosaBEManager->hDeviceControl;
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = NULL;
     PSINGLE_LINK_ENTRY              pSLinkEntry = NULL;
+    PCOSA_DML_LAN_MANAGEMENT        pLanMngm    = NULL;
 
     pSLinkEntry = AnscQueueGetEntryByIndex((ANSC_HANDLE)&pDevCtrl->LanMngmList, nIndex);
     
@@ -1641,6 +1642,8 @@ LanMngm_GetEntry
     {
         pLinkObj = ACCESS_COSA_CONTEXT_LINK_OBJECT(pSLinkEntry);
         *pInsNumber = pLinkObj->InstanceNumber;
+        pLanMngm    = (PCOSA_DML_LAN_MANAGEMENT)pLinkObj->hContext;
+        CosaDmlLanMngm_GetConf(pLanMngm->InstanceNumber, pLanMngm);
     }
     
     return pLinkObj;
@@ -1799,7 +1802,6 @@ LanMngm_GetParamUlongValue
 {
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     PCOSA_DML_LAN_MANAGEMENT        pLanMngm    = (PCOSA_DML_LAN_MANAGEMENT)pLinkObj->hContext;
-    CosaDmlLanMngm_GetConf(pLanMngm->InstanceNumber, pLanMngm);
 
     if (strcmp(ParamName, "LanMode") == 0)
     {
