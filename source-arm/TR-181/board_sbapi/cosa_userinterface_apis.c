@@ -398,16 +398,6 @@ CosaDmlUserInterfaceGetCfg
                pCfg->bHTTPSecurityHeaderEnable = FALSE;
        }
 
-        if (syscfg_get (NULL, "LoginFailureWindow", buf, sizeof(buf)) == 0)
-        {
-            pCfg->LoginFailureWindow = atoi(buf);
-        }
-
-        if (syscfg_get (NULL, "MaxPasswordLockoutTimes", buf, sizeof(buf)) == 0)
-        {
-            pCfg->MaxPasswordLockoutTimes = atoi(buf);
-        }
-
         if (syscfg_get (NULL, "dns_config_page_show", buf, sizeof(buf)) == 0)
         {
             pCfg->bShowDNSConfigPage = (strcmp(buf, "true") == 0) ? TRUE : FALSE;
@@ -443,14 +433,6 @@ CosaDmlUserInterfaceSetCfg
 
     if (syscfg_set_u(NULL, "PasswordLockoutTime", pCfg->PasswordLockoutTime) != 0) {
         AnscTraceWarning(("%s : PasswordLockoutTime syscfg_set failed\n",__FUNCTION__));
-    }
-
-    if (syscfg_set_u(NULL, "MaxPasswordLockoutTimes", pCfg->MaxPasswordLockoutTimes) != 0) {
-        AnscTraceWarning(("%s : MaxPasswordLockoutTimes syscfg_set failed\n",__FUNCTION__));
-    }
-
-    if (syscfg_set_u(NULL, "LoginFailureWindow", pCfg->LoginFailureWindow) != 0) {
-        AnscTraceWarning(("%s : LoginFailureWindow syscfg_set failed\n",__FUNCTION__));
     }
 
     if (syscfg_get(NULL, "HTTPSecurityHeaderEnable", buf, sizeof(buf)) == 0)

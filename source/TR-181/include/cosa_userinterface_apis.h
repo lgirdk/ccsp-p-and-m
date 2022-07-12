@@ -119,8 +119,6 @@ _COSA_DML_USERINTERFACE_CFG
     BOOLEAN                         bHTTPSecurityHeaderEnable;
     ULONG                           PasswordLockoutAttempts;
     ULONG                           PasswordLockoutTime;
-    ULONG                           MaxPasswordLockoutTimes;
-    ULONG                           LoginFailureWindow;
     BOOLEAN                         bShowDNSConfigPage;
     BOOLEAN                         bLocalUiEnable;
 }
