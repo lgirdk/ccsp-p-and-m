@@ -41,9 +41,6 @@ _COSA_DATAMODEL_LGI_GENERAL_CLASS_CONTENT
     char                            DataModelSpecification[32];
     BOOL                            FirstInstallWizardEnable;
     char                            WebUISkin[16];
-    ULONG                           max_failed_login_attempts;
-    ULONG                           lockout_period;
-    ULONG                           max_lockout_periods;
     BOOL                            UserBridgeModeAllowed;
     int                             LedDSErrorTimer;
     int                             LedUSErrorTimer;

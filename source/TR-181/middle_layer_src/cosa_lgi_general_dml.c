@@ -187,21 +187,7 @@ LgiGeneral_GetParamUlongValue
         CosaDmlGiGetCustomerId(NULL, puLong);
         return TRUE;
     }
-    else if (strcmp(ParamName, "MaxLoginAttempts") == 0)
-    {
-        CosaDmlGiGetLoginSecurity(NULL, puLong, "max_failed_login_attempts");
-        return TRUE;
-    }
-    else if (strcmp(ParamName, "LockoutPeriod") == 0)
-    {
-        CosaDmlGiGetLoginSecurity(NULL, puLong, "lockout_period");
-        return TRUE;
-    }
-    else if (strcmp(ParamName, "MaxLockoutPeriods") == 0)
-    {
-        CosaDmlGiGetLoginSecurity(NULL, puLong, "max_lockout_periods");
-        return TRUE;
-    }
+    
     return FALSE;
 }
 /**********************************************************************
@@ -496,21 +482,6 @@ LgiGeneral_SetParamUlongValue
             return TRUE;
         }
     }
-    else if (strcmp(ParamName, "MaxLoginAttempts") == 0)
-    {
-        pMyObject->max_failed_login_attempts = uValuepUlong;
-        return TRUE;
-    }
-    else if (strcmp(ParamName, "LockoutPeriod") == 0)
-    {
-        pMyObject->lockout_period = uValuepUlong;
-        return TRUE;
-    }
-    else if (strcmp(ParamName, "MaxLockoutPeriods") == 0)
-    {
-        pMyObject->max_lockout_periods = uValuepUlong;
-        return TRUE;
-    }
     return FALSE;
 }
 BOOL
@@ -604,9 +575,6 @@ LgiGeneral_Commit
     CosaDmlGiSetTroubleshootWizardEnable(NULL, pMyObject->TroubleshootWizardEnable);
     CosaDmlGiSetWebUISkin(NULL, pMyObject->WebUISkin);
     CosaDmlGiSetCustomerId(NULL, pMyObject->CustomerId);
-    CosaDmlGiSetLoginSecurity(NULL, pMyObject->max_failed_login_attempts, "max_failed_login_attempts");
-    CosaDmlGiSetLoginSecurity(NULL, pMyObject->lockout_period, "lockout_period");
-    CosaDmlGiSetLoginSecurity(NULL, pMyObject->max_lockout_periods, "max_lockout_periods");
     CosaDmlGiSetUserBridgeModeAllowed(NULL, pMyObject->UserBridgeModeAllowed);
     CosaDmlGiSetLedDSErrorTimer(NULL, pMyObject->LedDSErrorTimer);
     CosaDmlGiSetLedUSErrorTimer(NULL, pMyObject->LedUSErrorTimer);
