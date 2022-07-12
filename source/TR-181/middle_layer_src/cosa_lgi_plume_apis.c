@@ -288,6 +288,11 @@ BOOL CosaDmlSetPlumeNativeAtmBsControl ( PANSC_HANDLE phContext, BOOL value )
 
     PCOSA_LGI_PLUME_DATAPATHS pWiFiDataPaths = (PCOSA_LGI_PLUME_DATAPATHS) phContext;
 
+    if (enable)
+    {
+        goto end;
+    }
+
     if ((ppComponents == NULL) && initWifiComp())
     {
         CcspTraceError(("%s: initWifiComp error ...\n", __FUNCTION__));
@@ -295,7 +300,7 @@ BOOL CosaDmlSetPlumeNativeAtmBsControl ( PANSC_HANDLE phContext, BOOL value )
     }
 
     parameterNames[0] = "Device.WiFi.X_LGI-COM_ATM.Radio.1.Enable";
-    parameterNames[1] = "Device.WiFi.X_LGI-COM_ATM.Radio.1.Enable";
+    parameterNames[1] = "Device.WiFi.X_LGI-COM_ATM.Radio.2.Enable";
     parameterNames[2] = "Device.WiFi.X_LGI-COM_BandSteering.SSID.1.Enable";
 
     ret = CcspBaseIf_getParameterValues(bus_handle,
@@ -311,7 +316,7 @@ BOOL CosaDmlSetPlumeNativeAtmBsControl ( PANSC_HANDLE phContext, BOOL value )
     {
         if(!strcmp(parameterval[0]->parameterValue, "false") &&
             !strcmp(parameterval[1]->parameterValue, "false") &&
-            !strcmp(parameterval[2]->parameterValue, "false") &&  value)
+            !strcmp(parameterval[2]->parameterValue, "false"))
             {
                 free_parameterValStruct_t (bus_handle, val_size, parameterval);
                 goto end;
