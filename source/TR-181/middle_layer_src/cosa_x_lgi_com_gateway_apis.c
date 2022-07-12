@@ -27,11 +27,6 @@ extern ULONG CosaDmlDhcpv6sGetType(ANSC_HANDLE hContext);
 extern ANSC_STATUS CosaDmlDhcpv6sSetType(ANSC_HANDLE hContext, ULONG type);
 extern int CosaDmlDHCPv6sTriggerRestart(BOOL OnlyTrigger);
 
-enum {
-    DHCPV6_SERVER_TYPE_STATEFUL = 1,
-    DHCPV6_SERVER_TYPE_STATELESS
-};
-
 ANSC_STATUS CosaDmlLgiGwGetIpv6LanMode ( ANSC_HANDLE hContext, ULONG *pValue )
 {
     *pValue = CosaDmlDhcpv6sGetType(NULL);
@@ -293,49 +288,45 @@ static ANSC_STATUS getIPv6PreferredLifetime(char * fn, int * p_prefer, ipv6_addr
 
 ANSC_STATUS CosaDml_Gateway_GetIPv6LeaseTimeRemaining(ULONG *pValue)
 {
+    char out[256];
     long prefered_lft = 0;
     ANSC_STATUS retVal = ANSC_STATUS_SUCCESS;
 
-    int ipv6_mode = CosaDmlDhcpv6sGetType(NULL);
+    /* This function returns the lease time for erouter0,
+     * so the DHCPV6_SERVER_TYPE_STATEFUL is not relevant here.
+     */
 
-    /* The value of preferred life time MUST be 0 if the AddressSource is not DHCP.*/
-
-    if (ipv6_mode == DHCPV6_SERVER_TYPE_STATEFUL)
+    if (commonSyseventGet("ipv6_" COSA_DML_DHCPV6_CLIENT_IFNAME "_pref_lifetime", &out, sizeof(out)) == 0)
     {
-        char out[256];
+        long leaseTime = atol(out);
 
-        if (commonSyseventGet("ipv6_" COSA_DML_DHCPV6_CLIENT_IFNAME "_pref_lifetime", &out, sizeof(out)) == 0)
+        if (leaseTime)
         {
-            long leaseTime = atol(out);
-
-            if (leaseTime)
+            if (commonSyseventGet("ipv6_" COSA_DML_DHCPV6_CLIENT_IFNAME "_start_time", &out, sizeof(out)) == 0)
             {
-                if (commonSyseventGet("ipv6_" COSA_DML_DHCPV6_CLIENT_IFNAME "_start_time", &out, sizeof(out)) == 0)
-                {
-                    struct sysinfo si;
-                    long start_time = atol(out);
+                struct sysinfo si;
+                long start_time = atol(out);
 
-                    sysinfo(&si);
+                sysinfo(&si);
 
-                    prefered_lft = leaseTime - (si.uptime - start_time);
-                }
-                else
-                {
-                    CcspTraceError(("commonSyseventGet failed in %s to get %s\n", __FUNCTION__, "ipv6_" COSA_DML_DHCPV6_CLIENT_IFNAME "_start_time"));
-                    retVal = ANSC_STATUS_FAILURE;
-                }
+                prefered_lft = leaseTime - (si.uptime - start_time);
             }
             else
             {
-                /* set preferred life time to forever */
-                prefered_lft = -1;
+                CcspTraceError(("commonSyseventGet failed in %s to get %s\n", __FUNCTION__, "ipv6_" COSA_DML_DHCPV6_CLIENT_IFNAME "_start_time"));
+                retVal = ANSC_STATUS_FAILURE;
             }
         }
         else
         {
-            CcspTraceError(("commonSyseventGet failed in %s to get %s\n", __FUNCTION__, "ipv6_" COSA_DML_DHCPV6_CLIENT_IFNAME "_pref_lifetime"));
-            retVal = ANSC_STATUS_FAILURE;
+            /* set preferred life time to forever */
+            prefered_lft = -1;
         }
+    }
+    else
+    {
+        CcspTraceError(("commonSyseventGet failed in %s to get %s\n", __FUNCTION__, "ipv6_" COSA_DML_DHCPV6_CLIENT_IFNAME "_pref_lifetime"));
+        retVal = ANSC_STATUS_FAILURE;
     }
 
     if (retVal == ANSC_STATUS_SUCCESS)
