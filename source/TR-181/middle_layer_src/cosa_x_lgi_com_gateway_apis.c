@@ -302,11 +302,10 @@ ANSC_STATUS CosaDml_Gateway_GetIPv6LeaseTimeRemaining(ULONG *pValue)
 
     if (pValue != NULL)
     {
-        int ipv6_mode = CosaDmlDhcpv6sGetType(NULL);
+        /* This function returns the lease time for erouter0,
+         * so the DHCPV6_SERVER_TYPE_STATEFUL is not relevant here.
+         */
 
-        /* The value of preferred life time MUST be 0 if the AddressSource is not DHCP.*/
-        if (ipv6_mode == DHCPV6_SERVER_TYPE_STATEFUL)
-        {
             if (!commonSyseventGet(IPV6_LEASE_TIME, &out, sizeof(out)))
             {
                 long leaseTime = atol(out);
@@ -346,7 +345,7 @@ ANSC_STATUS CosaDml_Gateway_GetIPv6LeaseTimeRemaining(ULONG *pValue)
                 CcspTraceError(("commonSyseventGet failed in %s to get %s\n",__FUNCTION__,IPV6_LEASE_TIME));
                 retVal = ANSC_STATUS_FAILURE;
             }
-        }
+
         if (retVal == ANSC_STATUS_SUCCESS)
             *pValue = prefered_lft;
     }
