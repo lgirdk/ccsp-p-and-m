@@ -50,14 +50,22 @@ ANSC_STATUS CosaLgiApplicationsInitialize ( ANSC_HANDLE hThisObject )
 
     ANSC_STATUS                   returnStatus = ANSC_STATUS_SUCCESS;
     PCOSA_DATAMODEL_LGI_APPLICATIONS pMyObject = (PCOSA_DATAMODEL_LGI_APPLICATIONS)hThisObject;
+    char *unitid;
 
     CosaDmlApplicationsSamKnowsGetEnabled(NULL, &pMyObject->SamKnowsEnable);
 
     ULONG propertyStrLen = SAMKNOWS_PROPERTY_STRING_LEN;
     CosaDmlApplicationsSamKnowsGetProperty(NULL, pMyObject->SamKnowsProperty, &propertyStrLen);
 
-    if (pMyObject->SamKnowsEnable == TRUE && (access( "/tmp/samknows/unitid", F_OK ) != 0)) {
-      system("/etc/init.d/samknows_ispmon start &");
+#if defined (_LG_MV3_)
+    unitid = "/var/run/opt/samknows/router_agent/unitid";
+#else
+    unitid = "/tmp/samknows/unitid";
+#endif
+
+    if ((pMyObject->SamKnowsEnable == TRUE) && (access(unitid, F_OK) != 0))
+    {
+        system("/etc/init.d/samknows_ispmon start &");
     }
 
     return returnStatus;
