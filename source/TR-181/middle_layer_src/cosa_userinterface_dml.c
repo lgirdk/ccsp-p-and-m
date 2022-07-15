@@ -70,6 +70,7 @@
 #include "ansc_string_util.h"
 #include "safec_lib_common.h"
 #include "ccsp_psm_helper.h"
+#include <platform_hal.h>
 
 extern ANSC_HANDLE bus_handle;
 extern char g_Subsystem[32];
@@ -213,8 +214,53 @@ UserInterface_GetParamBoolValue
 static void *ResetPassword (void *arg)
 {
     UNREFERENCED_PARAMETER(arg);
+    char password[128];
+    char cmd[256 + 80];
+    char *p, *c;
+    char inch;
+
     pthread_detach(pthread_self());
-    system("dmcli eRT setv Device.Users.User.3.X_CISCO_COM_Password string password");
+
+    password[0] = 0;
+    if ((platform_hal_getUIDefaultPassword(password, sizeof(password)) != RETURN_OK) || (password[0] == 0))
+    {
+        strcpy(password, "password");
+    }
+
+    strcpy(cmd, "dmcli eRT setv Device.Users.User.3.X_CISCO_COM_Password string ");
+
+    c = cmd + strlen(cmd);
+    p = password;
+
+    /*
+       Reading from Device.Users.User.3.X_CISCO_COM_Password will return the
+       hashed password, but the raw value should be used when writing. Since
+       the password may contain chars which can not be passed on a shell
+       command line escape every non-alphanumeric character (some don't need
+       to be escaped, but it's safer to escape too much than too little).
+    */
+    while (1)
+    {
+        if ((inch = *p++) == 0)
+            break;
+
+        if (((inch >= 'a') && (inch <= 'z')) ||
+            ((inch >= 'A') && (inch <= 'Z')) ||
+            ((inch >= '0') && (inch <= '9')))
+        {
+            *c++ = inch;
+        }
+        else
+        {
+            *c++ = '\\';
+            *c++ = inch;
+        }
+    }
+
+    *c = 0;
+
+    system(cmd);
+
     return NULL;
 }
 
