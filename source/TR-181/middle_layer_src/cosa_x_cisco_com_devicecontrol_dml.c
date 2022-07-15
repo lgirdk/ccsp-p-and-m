@@ -476,10 +476,14 @@ X_CISCO_COM_DeviceControl_GetParamUlongValue
 
     if (strcmp(ParamName, "DeviceMode") == 0)
     {
+#ifdef _LG_MV3_
+        *puLong = 4; //For MV3, 1.3 hardcode DeviceMode to dual. Needs to be removed in 1.4
+#else
         if (CosaDmlDcGetDeviceMode(NULL, &ipAddr) != ANSC_STATUS_SUCCESS)
             return FALSE;
 
         *puLong = ipAddr;
+#endif
         return TRUE;
     }
 
