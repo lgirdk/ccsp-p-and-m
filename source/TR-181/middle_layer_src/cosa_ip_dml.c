@@ -1204,7 +1204,8 @@ Interface2_GetParamUlongValue
 
     if (strcmp(ParamName, "MaxMTUSize") == 0)
     {
-        /* collect value */
+        pIPInterface->Cfg.MaxMTUSize = CosaUtilIoctlXXX((char *)pIPInterface->Info.Name, "mtu", NULL);
+
         *puLong = pIPInterface->Cfg.MaxMTUSize;
 
 #if defined (_INTEL_MAX_MTU_PROPOSED_FEATURE_)
