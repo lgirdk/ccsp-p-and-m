@@ -4267,6 +4267,12 @@ CosaDmlLanMngm_SetConf(ULONG ins, PCOSA_DML_LAN_MANAGEMENT pLanMngm)
         Utopia_SetLanSettings(&utctx, &lan);
         AnscCreateTask(update_iptable_thread, USER_DEFAULT_TASK_STACK_SIZE, USER_DEFAULT_TASK_PRIORITY, (void *)&lan, "UpdateIPTableThread");
 
+        if((orgLanMngm.LanIPAddress.Value != pLanMngm->LanIPAddress.Value) || (orgLanMngm.LanSubnetMask.Value != pLanMngm->LanSubnetMask.Value))
+        {
+              //Set refresh-switch when change in subnet ip/subnet mask
+              commonSyseventSet("refresh-switch", "true");
+        }
+
 #if defined(_COSA_INTEL_USG_ARM_) && !defined(INTEL_PUMA7) && defined(ENABLE_FEATURE_MESHWIFI)
         // Send subnet change message to ATOM so that MESH is notified.
         {
