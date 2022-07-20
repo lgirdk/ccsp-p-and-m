@@ -122,12 +122,15 @@ ANSC_STATUS CosaDmlGiGetSKU (ANSC_HANDLE hContext, char *pValue, ULONG ulSize)
     char buf[20];
     char *sku = NULL;
     int customerId = 0;
-    ULONG len;
 
     if (syscfg_get (NULL, "Customer_Index", buf, sizeof(buf)) == 0)
     {
         customerId = atoi(buf);
     }
+
+#if defined (_PUMA6_ARM_)
+
+    ULONG len;
 
     buf[0] = 0;
     len = sizeof(buf);
@@ -144,29 +147,31 @@ ANSC_STATUS CosaDmlGiGetSKU (ANSC_HANDLE hContext, char *pValue, ULONG ulSize)
             sku = "Hub 3";
         }
     }
-    else if (strcmp (buf, "MERCV2P") == 0)
+
+#elif defined (_LG_MV2_PLUS_)
+
+    if (customerId == 8)
     {
-        if (customerId == 8)
-        {
-            sku = "Hub 5";
-        }
-        else if (customerId == 20)
-        {
-            sku = "SmartWifi modem";
-        }
-        else if (customerId == 41)
-        {
-            sku = "Virgin Media Hub 6";
-        }
-        else if (customerId == 51)
-        {
-            sku = "Connect Box 3";
-        }
-        else if (customerId == 53)
-        {
-            sku = "Giga Connect Box 6";
-        }
+        sku = "Hub 5";
     }
+    else if (customerId == 20)
+    {
+        sku = "SmartWifi modem";
+    }
+    else if (customerId == 41)
+    {
+        sku = "Virgin Media Hub 6";
+    }
+    else if (customerId == 51)
+    {
+        sku = "Connect Box 3";
+    }
+    else if (customerId == 53)
+    {
+        sku = "Giga Connect Box 6";
+    }
+
+#endif
 
     if (sku == NULL)
     {
