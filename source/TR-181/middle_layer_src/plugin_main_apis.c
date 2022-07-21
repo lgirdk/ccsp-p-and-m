@@ -403,6 +403,8 @@ CosaBackEndManagerInitialize
     AnscTraceWarning(("  CosaArrisPlumeCreate done !\n"));
     pMyObject->hLgiGeneral = (ANSC_HANDLE)CosaLgiGeneralCreate();
     AnscTraceWarning(("  CosaLgiGeneralCreate done !\n"));
+    pMyObject->hLgiIperf = (ANSC_HANDLE)CosaLgiIperfCreate();
+    AnscTraceWarning(("  CosaLgiIperfCreate done !\n"));
 #if !defined (RESOURCE_OPTIMIZATION)
     pMyObject->hNeighdisc     = (ANSC_HANDLE)CosaNeighdiscCreate();
     AnscTraceWarning(("  CosaNeighdiscCreate done!\n"));
@@ -861,6 +863,10 @@ CosaBackEndManagerRemove
         CosaLgiEventLogRemove((ANSC_HANDLE)pMyObject->hLgiEventlog);
     }
 
+    if (pMyObject->hLgiIperf)
+    {
+        CosaLgiIperfRemove((ANSC_HANDLE)pMyObject->hLgiIperf);
+    }
 
     /* Remove self */
     AnscFreeMemory((ANSC_HANDLE)pMyObject);
