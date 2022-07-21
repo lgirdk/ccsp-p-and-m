@@ -917,6 +917,84 @@
     </object>
 
     <object>
+        <name>X_LGI-COM_Iperf</name>
+        <objectType>object</objectType>
+        <functions>
+            <func_GetParamUlongValue>LgiIperf_GetParamUlongValue</func_GetParamUlongValue>
+            <func_SetParamUlongValue>LgiIperf_SetParamUlongValue</func_SetParamUlongValue>
+            <func_GetParamStringValue>LgiIperf_GetParamStringValue</func_GetParamStringValue>
+            <func_SetParamStringValue>LgiIperf_SetParamStringValue</func_SetParamStringValue>
+            <func_Validate>LgiIperf_Validate</func_Validate>
+            <func_Commit>LgiIperf_Commit</func_Commit>
+            <func_Rollback>LgiIperf_Rollback</func_Rollback>
+        </functions>
+        <parameters>
+            <parameter>
+                <name>DiagnosticsState</name>
+                <description>
+                    Parameter to set/get the iperf test state
+                </description>
+                <type>string(128)</type>
+                <syntax>string</syntax>
+                <writable>true</writable>
+            </parameter>
+            <parameter>
+                <name>Command</name>
+                <description>
+                    Parameter to specify the entire set of command line
+                    options that are passed to the iperf application.
+                </description>
+                <type>string(256)</type>
+                <syntax>string</syntax>
+                <writable>true</writable>
+            </parameter>
+            <parameter>
+                <name>Result</name>
+                <description>
+                    Parameter to store the latest iperf
+                </description>
+                <type>string</type>
+                <syntax>string</syntax>
+                <writable>false</writable>
+            </parameter>
+            <parameter>
+                <name>ConnectionTimeout</name>
+                <description>
+                    Parameter to define the length of time the iperf client will wait without
+                    receiving a response before the connection is determined to have timed out.
+                </description>
+                <type>unsignedInt</type>
+                <syntax>uint32</syntax>
+                <writable>true</writable>
+            </parameter>
+            <parameter>
+                <name>PeakCPUUsage</name>
+                <description>
+                    Parameter to store the peak CPU usage as a percentage measured
+                    over the full duration of the previous successfully completed iperf test.
+                    If no test has been successfully completed, this parameter should return
+                    an empty value when read. It is expected that this be applied to both client and server modes of iperf operation.
+                </description>
+                <type>unsignedInt[1:100]</type>
+                <syntax>uint32</syntax>
+                <writable>false</writable>
+            </parameter>
+            <parameter>
+                <name>AverageCPUUsage</name>
+                <description>
+                    Parameter to store the average (mean) CPU usage as a percentage measured
+                    over the full duration of the previous successfully completed iperf test.
+                    If no test has been successfully completed, this parameter should return
+                    an empty value when read. It is expected that this be applied to both client and server modes of iperf operation.
+                </description>
+                <type>unsignedInt[1:100]</type>
+                <syntax>uint32</syntax>
+                <writable>false</writable>
+            </parameter>
+        </parameters>
+    </object>
+
+    <object>
 
       <name>DeviceInfo</name>
 
