@@ -388,6 +388,8 @@ CosaBackEndManagerInitialize
     AnscTraceWarning(("  CosaNeighdiscCreate done!\n"));
     pMyObject->hMld           = (ANSC_HANDLE)CosaMldCreate();
     //AnscTraceWarning(("  CosaMldCreate done!\n"));
+    pMyObject->hLgiIperf = (ANSC_HANDLE)CosaLgiIperfCreate();
+    AnscTraceWarning(("  CosaLgiIperfCreate done !\n"));
 
     /*
 #ifdef CONFIG_TI_PACM
@@ -811,6 +813,10 @@ CosaBackEndManagerRemove
         CosaLgiEventLogRemove((ANSC_HANDLE)pMyObject->hLgiEventlog);
     }
 
+    if (pMyObject->hLgiIperf)
+    {
+        CosaLgiIperfRemove((ANSC_HANDLE)pMyObject->hLgiIperf);
+    }
 
     /* Remove self */
     AnscFreeMemory((ANSC_HANDLE)pMyObject);

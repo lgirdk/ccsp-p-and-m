@@ -175,6 +175,7 @@ extern COSARegisterCallBackAfterInitDmlProc  g_RegisterCallBackAfterInitDml;
 #define COSA_DATAMODEL_LGI_CLOUDUI_OID                         130
 #define COSA_DATAMODEL_LGI_PLUME_OID                           132
 #define COSA_DATAMODEL_LGI_WOL_OID                             134 /* LGI ADD */
+#define COSA_DATAMODEL_LGI_IPERF_OID                           135 /* LGI ADD */
 #define COSA_DATAMODEL_LGI_GENERAL_OID                         140
 #define COSA_DATAMODEL_LGI_APPLICATIONS_OID                    144
 #define COSA_DATAMODEL_LGI_MULTICAST_OID                       146 
@@ -232,6 +233,7 @@ extern COSARegisterCallBackAfterInitDmlProc  g_RegisterCallBackAfterInitDml;
     ANSC_HANDLE                  hLanMngm;                                                  \
     ANSC_HANDLE                  hLgiCloudUi;                                           \
     ANSC_HANDLE                  hLgiPlume;                                             \
+    ANSC_HANDLE                  hLgiIperf;                                             \
     ANSC_HANDLE                  hXpc;                                                    \
     ANSC_HANDLE                  hOnboardLogging;                                                    \
     ANSC_HANDLE                  hLgiWoL;                        /* LGI ADD             */  \
