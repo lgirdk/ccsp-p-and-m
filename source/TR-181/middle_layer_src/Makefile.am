@@ -116,7 +116,7 @@ libCcspPandM_middle_layer_src_la_SOURCES = \
     portmappingdoc.c \
     webcfgparam.c
 
-libCcspPandM_middle_layer_src_la_LDFLAGS = -lccsp_common -lmsgpackc -lwebconfig_framework -lhal_platform -lcrypto
+libCcspPandM_middle_layer_src_la_LDFLAGS = -lccsp_common -lmsgpackc -lwebconfig_framework -lhal_platform -lcrypto -lutil
 
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_mac_filter_dml.c cosa_mac_filter_internal.c
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_wol_dml.c cosa_lgi_wol_apis.c cosa_lgi_wol_internal.c
@@ -124,6 +124,7 @@ libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_cloudui_internal.c cosa_lgi
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_x_lgi_com_gateway_apis.c cosa_x_lgi_com_gateway_dml.c cosa_x_lgi_com_gateway_internal.c
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_general_dml.c cosa_lgi_general_internal.c
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_plume_apis.c cosa_lgi_plume_dml.c cosa_lgi_plume_internal.c
+libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_iperf_apis.c cosa_lgi_iperf_dml.c cosa_lgi_iperf_internal.c
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_userinterface_apis.c cosa_lgi_userinterface_dml.c
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_applications_dml.c cosa_lgi_applications_apis.c cosa_lgi_applications_internal.c
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_multicast_dml.c cosa_lgi_multicast_apis.c cosa_lgi_multicast_internal.c
