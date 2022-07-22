@@ -128,6 +128,7 @@ CosaLgiGeneralInitialize
     memset(pMyObject->DefaultAdminPassword, 0, size_DefaultAdminPassword);
     CosaDmlGiGetDefaultAdminPassword(NULL, pMyObject->DefaultAdminPassword, &size_DefaultAdminPassword);
 
+    CosaDmlGiGetBrightness(NULL, &pMyObject->Brightness);
     CosaDmlGiGetUserBridgeModeAllowed(NULL, &pMyObject->UserBridgeModeAllowed);
     CosaDmlGiGetLedDSErrorTimer(NULL, &pMyObject->LedDSErrorTimer);
     CosaDmlGiGetLedUSErrorTimer(NULL, &pMyObject->LedUSErrorTimer);
