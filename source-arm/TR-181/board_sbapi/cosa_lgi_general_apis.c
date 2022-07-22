@@ -421,6 +421,34 @@ CosaDmlLGiSetUiHashPassword
     return ANSC_STATUS_SUCCESS;
 }
 
+ANSC_STATUS
+CosaDmlGiGetBrightness
+    (
+        ANSC_HANDLE                 hContext,
+        ULONG                       *pValue
+    )
+{
+    char buf[ 12 ] = { 0 };
+
+    if (0 == syscfg_get (NULL, "led_brightness", buf, sizeof(buf)))
+    {
+        *pValue = (ULONG)atoi(buf);
+        return ANSC_STATUS_SUCCESS;
+    }
+    return ANSC_STATUS_FAILURE;
+}
+
+ULONG
+CosaDmlGiSetBrightness
+    (
+        ANSC_HANDLE                 hContext,
+        ULONG                       pValue
+    )
+{
+    syscfg_set_u (NULL, "led_brightness", pValue);
+
+    return ANSC_STATUS_SUCCESS;
+}
 ULONG CosaDmlGiGetDefaultAdminPassword ( ANSC_HANDLE hContext, char *pValue, ULONG *pUlSize )
 {
     if (platform_hal_getUIDefaultPassword (pValue, *pUlSize) == RETURN_OK)
