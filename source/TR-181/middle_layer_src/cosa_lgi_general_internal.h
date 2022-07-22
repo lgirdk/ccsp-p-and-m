@@ -46,6 +46,7 @@ _COSA_DATAMODEL_LGI_GENERAL_CLASS_CONTENT
     int                             LedUSErrorTimer;
     int                             LedRegistrationErrorTimer;
     char                            SKUName[64];
+    ULONG                           Brightness;
 }
 COSA_DATAMODEL_LGI_GENERAL, *PCOSA_DATAMODEL_LGI_GENERAL;
 
