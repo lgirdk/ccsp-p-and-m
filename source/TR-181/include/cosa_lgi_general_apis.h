@@ -154,6 +154,20 @@ CosaDmlGiSetCurrentLanguage
     char                        *pValue
 );
 
+ANSC_STATUS
+CosaDmlGiGetBrightness
+(
+    ANSC_HANDLE                 hContext,
+    ULONG                       *pValue
+);
+
+ULONG
+CosaDmlGiSetBrightness
+(
+    ANSC_HANDLE                 hContext,
+    ULONG                       pValue
+);
+
 ULONG
 CosaDmlGiGetDefaultAdminPassword
 (
