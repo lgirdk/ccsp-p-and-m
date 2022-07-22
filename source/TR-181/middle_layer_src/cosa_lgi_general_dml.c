@@ -187,7 +187,14 @@ LgiGeneral_GetParamUlongValue
         CosaDmlGiGetCustomerId(NULL, puLong);
         return TRUE;
     }
-    
+    else if (strcmp(ParamName, "Brightness") == 0)
+    {
+#ifdef _LG_MV3_
+        CosaDmlGiGetBrightness(NULL, puLong);
+#endif
+        return TRUE;
+    }
+	
     return FALSE;
 }
 /**********************************************************************
@@ -480,6 +487,13 @@ LgiGeneral_SetParamUlongValue
             return TRUE;
         }
     }
+    else if (strcmp(ParamName, "Brightness") == 0)
+    {
+#ifdef _LG_MV3_
+        pMyObject->Brightness = uValuepUlong;
+#endif
+        return TRUE;
+    }
     return FALSE;
 }
 BOOL
@@ -573,6 +587,7 @@ LgiGeneral_Commit
     CosaDmlGiSetTroubleshootWizardEnable(NULL, pMyObject->TroubleshootWizardEnable);
     CosaDmlGiSetWebUISkin(NULL, pMyObject->WebUISkin);
     CosaDmlGiSetCustomerId(NULL, pMyObject->CustomerId);
+    CosaDmlGiSetBrightness(NULL, pMyObject->Brightness);
     CosaDmlGiSetUserBridgeModeAllowed(NULL, pMyObject->UserBridgeModeAllowed);
     CosaDmlGiSetLedDSErrorTimer(NULL, pMyObject->LedDSErrorTimer);
     CosaDmlGiSetLedUSErrorTimer(NULL, pMyObject->LedUSErrorTimer);
