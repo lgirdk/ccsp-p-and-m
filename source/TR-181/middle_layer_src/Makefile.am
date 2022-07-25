@@ -129,3 +129,4 @@ libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_applications_dml.c cosa_lgi
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_multicast_dml.c cosa_lgi_multicast_apis.c cosa_lgi_multicast_internal.c
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_lgi_eventlog_dml.c cosa_lgi_eventlog_internal.c
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_ssam_dml.c cosa_ssam_apis.c
+libCcspPandM_middle_layer_src_la_SOURCES += cosa_networklogs_dml.c
