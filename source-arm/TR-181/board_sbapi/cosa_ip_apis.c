@@ -303,22 +303,6 @@ static int _is_in_linux_bridge(char * if_name, char * br_name)
 **********************************************************************/
 #if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
 
-#ifdef _COSA_INTEL_USG_ARM_
-    #define COSA_USG_IF_NUM 4
-#endif
-#if defined(_COSA_BCM_MIPS_) || defined(_PLATFORM_RASPBERRYPI_) || defined(_ENABLE_DSL_SUPPORT_)
-    #if defined(COSA_USG_IF_NUM)
-        #undef COSA_USG_IF_NUM
-    #endif
-    #define COSA_USG_IF_NUM 3 // we only have 3 interfaces for XF3
-#endif
-#ifdef _PLATFORM_TURRIS_
-    #if defined(COSA_USG_IF_NUM)
-        #undef COSA_USG_IF_NUM
-    #endif
-    #define COSA_USG_IF_NUM 3
-#endif
-
 typedef struct USG_IF_CFG
 {
     char                            IfName[64];
@@ -327,7 +311,7 @@ typedef struct USG_IF_CFG
     BOOLEAN                         bUpstream;
 }USG_IF_CFG_T;
 
-USG_IF_CFG_T g_usg_if_cfg[COSA_USG_IF_NUM] =
+USG_IF_CFG_T g_usg_if_cfg[] =
 {
 #ifndef _WNXL11BWL_PRODUCT_REQ_
     {"erouter0",    COSA_DML_LINK_TYPE_EthLink, TRUE},
@@ -347,6 +331,7 @@ USG_IF_CFG_T g_usg_if_cfg[COSA_USG_IF_NUM] =
     {"brlan0",      COSA_DML_LINK_TYPE_Bridge,  FALSE}
 };
 
+#define COSA_USG_IF_NUM (sizeof(g_usg_if_cfg)/sizeof(g_usg_if_cfg[0]))
 #define G_USG_IF_NAME(i) g_usg_if_cfg[i].IfName
 #define G_USG_IF_LINKTYPE(i) g_usg_if_cfg[i].LinkType 
 
