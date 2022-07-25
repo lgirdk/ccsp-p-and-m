@@ -325,7 +325,7 @@ typedef struct USG_IF_CFG
 static USG_IF_CFG_T g_usg_if_cfg[] =
 {
     {"erouter0",    COSA_DML_LINK_TYPE_EthLink, TRUE},
-#if defined(_COSA_INTEL_USG_ARM_) && !defined(_ENABLE_DSL_SUPPORT_)
+#if defined(_COSA_INTEL_USG_ARM_) && !defined(_ENABLE_DSL_SUPPORT_) && !defined(FEATURE_GPON)
 #ifndef _PLATFORM_RASPBERRYPI_
 #ifndef _PLATFORM_TURRIS_
     {"wan0",        COSA_DML_LINK_TYPE_DOCSIS,  TRUE},  /*DH  wan0 should never appear here -- CM extensions are for DOCSIS interfaces */
