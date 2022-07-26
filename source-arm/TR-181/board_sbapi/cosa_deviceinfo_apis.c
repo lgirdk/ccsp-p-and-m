@@ -951,7 +951,7 @@ CosaDmlDiGetFirstUseDate
 
     if(rc || firstUseDate[0] == '\0')
     {
-        safec_rc = strcpy_s(firstUseDate, sizeof(firstUseDate), "2013-11-22T00:00:00");
+        safec_rc = strcpy_s(firstUseDate, sizeof(firstUseDate), UNKNOWN_TIME);
         if(rc != EOK)
         {
             ERR_CHK(safec_rc);
