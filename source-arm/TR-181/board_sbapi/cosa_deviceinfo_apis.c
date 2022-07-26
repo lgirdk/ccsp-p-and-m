@@ -803,7 +803,7 @@ CosaDmlDiGetFirstUseDate
 
     if(rc || firstUseDate[0] == '\0')
     {
-        safec_rc = strcpy_s(firstUseDate, sizeof(firstUseDate), "Unknown");
+        safec_rc = strcpy_s(firstUseDate, sizeof(firstUseDate), UNKNOWN_TIME);
         if(rc != EOK)
         {
             ERR_CHK(safec_rc);
