@@ -853,6 +853,36 @@
                       <syntax>uint32</syntax>
                       <writable>true</writable>
                   </parameter>
+                  <parameter>
+                      <name>PONRegistrationErrorConditionTimer</name>
+                      <description>
+                            This timer describes the time in seconds after which the LED should display an error condition
+                            if Booting stage 4, PON Registration, has not completed inside the configured period.
+                      </description>
+                      <type>int[10:600]</type>
+                      <syntax>int</syntax>
+                      <writable>true</writable>
+                  </parameter>
+                  <parameter>
+                      <name>OLTProvisioningErrorConditionTimer</name>
+                      <description>
+                              This timer describes the time in seconds after which the LED should display an error condition
+                              if Booting stage 6, OLT provisioning is not received and UNI interface  "veip0" is DOWN, inside the configured period.
+                      </description>
+                      <type>int[10:600]</type>
+                      <syntax>int</syntax>
+                      <writable>true</writable>
+                  </parameter>
+                  <parameter>
+                      <name>WanDhcpErrorConditionTimer</name>
+                      <description>
+                              This timer describes the time in seconds after which the LED should display an error condition
+                              if Booting stage 7, WAN IP Address request (DHCP), has not completed inside the configured period.
+                      </description>
+                      <type>int[10:600]</type>
+                      <syntax>int</syntax>
+                      <writable>true</writable>
+                  </parameter>
               </parameters>
             </object>
           </objects>
