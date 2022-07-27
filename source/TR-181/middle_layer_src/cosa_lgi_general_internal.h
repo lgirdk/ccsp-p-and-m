@@ -47,6 +47,9 @@ _COSA_DATAMODEL_LGI_GENERAL_CLASS_CONTENT
     int                             LedRegistrationErrorTimer;
     char                            SKUName[64];
     ULONG                           Brightness;
+    int                             PONRegistrationErrorTimer;
+    int                             OLTProvisioningErrorTimer;
+    int                             WanDhcpErrorTimer;
 }
 COSA_DATAMODEL_LGI_GENERAL, *PCOSA_DATAMODEL_LGI_GENERAL;
 
