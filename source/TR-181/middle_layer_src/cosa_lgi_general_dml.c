@@ -395,6 +395,30 @@ BOOL LgiGeneral_GetParamIntValue ( ANSC_HANDLE hInsContext, char *ParamName, int
         return TRUE;
     }
 
+    if (strcmp(ParamName, "PONRegistrationErrorConditionTimer") == 0)
+    {
+#ifdef _LG_MV3_
+        *pInt = pMyObject->PONRegistrationErrorTimer;
+#endif
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "OLTProvisioningErrorConditionTimer") == 0)
+    {
+#ifdef _LG_MV3_
+        *pInt = pMyObject->OLTProvisioningErrorTimer;
+#endif
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "WanDhcpErrorConditionTimer") == 0)
+    {
+#ifdef _LG_MV3_
+        *pInt = pMyObject->WanDhcpErrorTimer;
+#endif
+        return TRUE;
+    }
+
     return FALSE;
 }
 
@@ -452,6 +476,30 @@ BOOL LgiGeneral_SetParamIntValue ( ANSC_HANDLE hInsContext, char *ParamName, int
     if (strcmp(ParamName, "RegistrationErrorConditionTimer") == 0)
     {
         pMyObject->LedRegistrationErrorTimer = value;
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "PONRegistrationErrorConditionTimer") == 0)
+    {
+#ifdef _LG_MV3_
+        pMyObject->PONRegistrationErrorTimer = value;
+#endif
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "OLTProvisioningErrorConditionTimer") == 0)
+    {
+#ifdef _LG_MV3_
+        pMyObject->OLTProvisioningErrorTimer = value;
+#endif
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "WanDhcpErrorConditionTimer") == 0)
+    {
+#ifdef _LG_MV3_
+        pMyObject->WanDhcpErrorTimer = value;
+#endif
         return TRUE;
     }
 
@@ -592,6 +640,10 @@ LgiGeneral_Commit
     CosaDmlGiSetLedDSErrorTimer(NULL, pMyObject->LedDSErrorTimer);
     CosaDmlGiSetLedUSErrorTimer(NULL, pMyObject->LedUSErrorTimer);
     CosaDmlGiSetLedRegistrationErrorTimer(NULL, pMyObject->LedRegistrationErrorTimer);
+
+    CosaDmlGiSetLedPONRegistrationErrorTimer(NULL, pMyObject->PONRegistrationErrorTimer);
+    CosaDmlGiSetLedOLTProvisioningErrorTimer(NULL, pMyObject->OLTProvisioningErrorTimer);
+    CosaDmlGiSetLedWanDhcpErrorTimer(NULL, pMyObject->WanDhcpErrorTimer);
     CosaDmlGiSaveSettings();
     return 0;
 }
