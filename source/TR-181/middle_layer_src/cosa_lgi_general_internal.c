@@ -133,6 +133,10 @@ CosaLgiGeneralInitialize
     CosaDmlGiGetLedDSErrorTimer(NULL, &pMyObject->LedDSErrorTimer);
     CosaDmlGiGetLedUSErrorTimer(NULL, &pMyObject->LedUSErrorTimer);
     CosaDmlGiGetLedRegistrationErrorTimer(NULL, &pMyObject->LedRegistrationErrorTimer);
+    CosaDmlGiGetLedPONRegistrationErrorTimer(NULL, &pMyObject->PONRegistrationErrorTimer);
+    CosaDmlGiGetLedOLTProvisioningErrorTimer(NULL, &pMyObject->OLTProvisioningErrorTimer);
+    CosaDmlGiGetLedWanDhcpErrorTimer(NULL, &pMyObject->WanDhcpErrorTimer);
+
 
     /* Further implementation of this parameter is still under design discussion*/
     AnscCopyString(pMyObject->DataModelVersion, "2.1.0");
