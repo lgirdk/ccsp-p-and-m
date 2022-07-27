@@ -198,6 +198,12 @@ ANSC_STATUS CosaDmlGiGetLedUSErrorTimer (ANSC_HANDLE hContext, int *pValue);
 ANSC_STATUS CosaDmlGiSetLedUSErrorTimer (ANSC_HANDLE hContext, int value);
 ANSC_STATUS CosaDmlGiGetLedRegistrationErrorTimer (ANSC_HANDLE hContext, int *pValue);
 ANSC_STATUS CosaDmlGiSetLedRegistrationErrorTimer (ANSC_HANDLE hContext, int value);
+ANSC_STATUS CosaDmlGiGetLedPONRegistrationErrorTimer (ANSC_HANDLE hContext, int *pValue);
+ANSC_STATUS CosaDmlGiSetLedPONRegistrationErrorTimer (ANSC_HANDLE hContext, int value);
+ANSC_STATUS CosaDmlGiGetLedOLTProvisioningErrorTimer (ANSC_HANDLE hContext, int *pValue);
+ANSC_STATUS CosaDmlGiSetLedOLTProvisioningErrorTimer (ANSC_HANDLE hContext, int value);
+ANSC_STATUS CosaDmlGiGetLedWanDhcpErrorTimer (ANSC_HANDLE hContext, int *pValue);
+ANSC_STATUS CosaDmlGiSetLedWanDhcpErrorTimer (ANSC_HANDLE hContext, int value);
 ULONG CosaDmlGiSaveSettings();
 
 #endif
