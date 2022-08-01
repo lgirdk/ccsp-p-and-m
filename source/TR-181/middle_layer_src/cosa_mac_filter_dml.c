@@ -280,7 +280,7 @@ MACFilter_Validate
         PCOSA_CONTEXT_LINK_OBJECT pobj = ACCESS_COSA_CONTEXT_LINK_OBJECT(pSLinkEntry);
         COSA_DML_FW_MACFILTER *pFilter = (COSA_DML_FW_MACFILTER *)(pobj->hContext);
 
-        if (strcasecmp(pFilter->MACAddress, pFwMACFilter->MACAddress) == 0)
+        if (strcasecmp(pFilter->MACAddress, pFwMACFilter->MACAddress) == 0 || (strcasecmp(pFilter->Hostname, pFwMACFilter->Hostname) == 0) )
         {
             if (pFilter == pFwMACFilter)
             {
@@ -288,9 +288,17 @@ MACFilter_Validate
                 continue;
             }
 
-            // clear macaddress of new dml entry, to avoid displaying in dmcli
+            // clear new dml entry, to avoid displaying in dmcli
             pFwMACFilter->MACAddress[0] = 0;
-            _ansc_strcpy(pReturnParamName, "MACAddress");
+            pFwMACFilter->Hostname[0] = 0;
+            pFwMACFilter->Enable = false;
+            pFwMACFilter->Description[0] = 0;
+
+            if (strcasecmp(pFilter->MACAddress, pFwMACFilter->MACAddress) == 0)
+                _ansc_strcpy(pReturnParamName, "MACAddress");
+            else
+                _ansc_strcpy(pReturnParamName, "Hostname");
+
             return FALSE;
         }
 
