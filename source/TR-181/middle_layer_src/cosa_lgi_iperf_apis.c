@@ -15,6 +15,7 @@
  *********************************************************************************/
 
 #include "cosa_lgi_iperf_apis.h"
+#include "cosa_deviceinfo_apis.h"
 
 #include <pthread.h>
 #include <pty.h>
@@ -105,7 +106,7 @@ static void detect_iperf_state(PCOSA_DATAMODEL_LGI_IPERF pObj, const char *line,
     /* TODO: Fix connection detection */
     if (strstr(line, "connected to"))
     {
-        pObj->cancelTimer = TRUE;
+        pObj->cancelTimerThread = TRUE;
         pthread_cond_signal(&pObj->cond);
     }
     else if (strstr(line, "Connection refused"))
@@ -122,6 +123,39 @@ static void detect_iperf_state(PCOSA_DATAMODEL_LGI_IPERF pObj, const char *line,
     }
 }
 
+static void *cpuThread(void *argp)
+{
+    PCOSA_DATAMODEL_LGI_IPERF pObj = argp;
+    ULONG cpuUsage = 0;
+    ULONG count = 0;
+    ULONG sum = 0;
+
+    CcspTraceInfo(("Creating cpuThread\n"));
+
+    pthread_mutex_lock(&pObj->lock);
+    pObj->averageCPUUsage = 0;
+    pObj->peakCPUUsage = 0;
+    pthread_mutex_unlock(&pObj->lock);
+
+    while (!pObj->cancelCpuThread)
+    {
+        cpuUsage = COSADmlGetCpuUsage();
+        sum += cpuUsage;
+        count++;
+
+        pthread_mutex_lock(&pObj->lock);
+        pObj->averageCPUUsage = sum / count;
+        if (cpuUsage > pObj->peakCPUUsage)
+            pObj->peakCPUUsage = cpuUsage;
+        pthread_mutex_unlock(&pObj->lock);
+
+    }
+
+    CcspTraceInfo(("Destroying cpuThread\n"));
+
+    return NULL;
+}
+
 static void *timerThread(void *argp)
 {
     PCOSA_DATAMODEL_LGI_IPERF pObj = argp;
@@ -134,7 +168,7 @@ static void *timerThread(void *argp)
     clock_gettime(CLOCK_REALTIME, &ts);
     ts.tv_sec += pObj->connectionTimeout;
 
-    while (!pObj->cancelTimer)
+    while (!pObj->cancelTimerThread)
     {
         if (pthread_cond_timedwait(&pObj->cond, &pObj->lock, &ts) == ETIMEDOUT)
         {
@@ -162,7 +196,7 @@ static void *iperfThread(void *argp)
     int idx = 0, size = 0;
     int err;
     char line[512];
-    pthread_t timerTid;
+    pthread_t timerTid, cpuTid;
 
     pthread_mutex_lock(&pObj->lock);
 
@@ -189,17 +223,31 @@ static void *iperfThread(void *argp)
         pObj->result = NULL;
     }
 
-    /* Create timer */
-    pObj->cancelTimer = FALSE;
+    /* Create CPU thread */
+    pObj->cancelCpuThread = FALSE;
+    err = pthread_create(&cpuTid, NULL, &cpuThread, pObj);
+    if (err)
+    {
+        CcspTraceError(("pthread_create for CPU stat tracker is failed: %s\n", strerror(err)));
+        pthread_mutex_lock(&pObj->lock);
+        CosaDmlIperfSetDiagnosticsState(pObj, "Error_Other", FALSE);
+        pthread_mutex_unlock(&pObj->lock);
+        return NULL;
+    }
+
+    /* Create timer thread */
+    pObj->cancelTimerThread = FALSE;
     pthread_mutex_unlock(&pObj->lock);
 
     err = pthread_create(&timerTid, NULL, &timerThread, pObj);
     if (err)
     {
-        CcspTraceError(("pthread_create failed: %s\n", strerror(err)));
+        CcspTraceError(("pthread_create for timeout timer is failed: %s\n", strerror(err)));
         pthread_mutex_lock(&pObj->lock);
         CosaDmlIperfSetDiagnosticsState(pObj, "Error_Other", FALSE);
+        pObj->cancelCpuThread = TRUE;
         pthread_mutex_unlock(&pObj->lock);
+        pthread_join(cpuTid, NULL);
         return NULL;
     }
 
@@ -228,24 +276,35 @@ static void *iperfThread(void *argp)
 
     pclose_pid(fp, &pObj->iperfPid);
 
-    /* Destroy timer */
-    pObj->cancelTimer = TRUE;
+    /* Destroy timer thread */
+    pObj->cancelTimerThread = TRUE;
     pthread_cond_signal(&pObj->cond);
+
+    /* Destroy CPU thread */
+    pObj->cancelCpuThread = TRUE;
 
     if (isCompleted)
     {
         /* iPerf session is gracefully completed */
         CosaDmlIperfSetDiagnosticsState(pObj, "Completed", FALSE);
     }
-    else if (strcmp(pObj->diagnosticsState, "Requested") == 0)
+    else
     {
-        /* If test is failed due to an unknown error, set state to Error_Other  */
-        CosaDmlIperfSetDiagnosticsState(pObj, "Error_Other", FALSE);
+        /* Test is not completed. Invalidate CPU stats */
+        pObj->peakCPUUsage = 0;
+        pObj->averageCPUUsage = 0;
+
+        if (strcmp(pObj->diagnosticsState, "Requested") == 0)
+        {
+            /* If test is failed due to an unknown error, set state to Error_Other  */
+            CosaDmlIperfSetDiagnosticsState(pObj, "Error_Other", FALSE);
+        }
     }
 
     pthread_mutex_unlock(&pObj->lock);
 
     pthread_join(timerTid, NULL);
+    pthread_join(cpuTid, NULL);
 }
 
 /* Called under lock */
