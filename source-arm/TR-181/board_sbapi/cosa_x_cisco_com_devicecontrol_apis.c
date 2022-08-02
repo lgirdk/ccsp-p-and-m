@@ -3668,6 +3668,13 @@ void* bridge_mode_wifi_notifier_thread(void* arg) {
     
     checkTicket(pNotify->ticket);
 
+    /* Make sure WiFi component is up before executing the thread */
+    while (ppComponents == NULL && initWifiComp())
+    {
+        AnscTraceInfo((" Waiting for WiFi Componenet to come up \n"));
+        sleep(1);
+    }
+
     openCommonSyseventConnection();
     sysevent_set(commonSyseventFd, commonSyseventToken, "wifi-notifier-done", "0" , 0);
 
@@ -4656,11 +4663,6 @@ static void configBridgeMode(int bEnable) {
         g_SetParamValueBool(brpdm, (bEnable>0?true:false));
 #endif
 
-        if (ppComponents == NULL && initWifiComp()) {
-            syslog_systemlog("Local Network", LOG_NOTICE, "Bridge mode transition: Failed to acquire wifi component.");
-            AnscFreeMemory( pnotifypara ); /*RDKB-6845, CID-33015, free unused resource before return */
-            return;
-        }
         totalticket += 1;
         pnotifypara->flag = brmode[0] == '3' ? 3 : bEnable;
         pnotifypara->ticket = totalticket;
