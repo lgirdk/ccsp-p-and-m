@@ -82,7 +82,8 @@ ANSC_STATUS CosaLgiIperfInitialize(ANSC_HANDLE hThisObject)
     pObj->averageCPUUsage = 0;
     pObj->peakCPUUsage = 0;
     pObj->iperfPid = -1;
-    pObj->cancelTimer = FALSE;
+    pObj->cancelTimerThread = FALSE;
+    pObj->cancelCpuThread = FALSE;
     pObj->iperfThreadExists = FALSE;
     pObj->markedForDestruction = FALSE;
 
