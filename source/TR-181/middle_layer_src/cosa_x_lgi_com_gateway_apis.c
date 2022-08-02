@@ -15,8 +15,15 @@
  **********************************************************************/
 
 #include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <signal.h>
 #include "cosa_x_lgi_com_gateway_apis.h"
 #include <syscfg/syscfg.h>
+#include <utctx/utctx.h>
+#include <utapi/utapi.h>
+#include <utapi/utapi_util.h>
 #include "cosa_dhcpv6_apis.h"
 #include "cosa_deviceinfo_apis_custom.h"
 #include "cosa_drg_common.h"
@@ -358,3 +365,231 @@ ANSC_STATUS CosaDml_Gateway_GetIPv6LeaseTimeRemaining(ULONG *pValue)
     return retVal;
 }
 
+static int DNS_Whitelist_InsGetIndex (ULONG ins)
+{
+    int i, ins_num, ret = -1;
+    int total_count = 0;
+    UtopiaContext ctx;
+
+    if (!Utopia_Init(&ctx))
+        return ANSC_STATUS_FAILURE;
+
+    Utopia_GetNumberOfDNSWhitelistedUrl(&ctx, &total_count);
+    for (i = 0; i < total_count; i++)
+    {
+        Utopia_GetDNSWhitelistInsNumByIndex(&ctx, i, &ins_num);
+        if (ins_num == ins)
+        {
+            ret = i;
+            break;
+        }
+    }
+
+    Utopia_Free(&ctx, 0);
+    return ret;
+}
+
+static void stop_dns_filter(void)
+{
+    FILE *fd;
+    char buff[64];
+    int pid = 0;
+
+    fd = fopen("/var/run/dns-filter.pid", "r");
+    if (fd == NULL)
+    {
+        return;
+    }
+
+    if (fgets(buff, sizeof(buff), fd) != NULL)
+    {
+        pid = atoi(buff);
+    }
+    fclose(fd);
+    fd = NULL;
+
+    if (pid > 0)
+    {
+        sprintf(buff, "/proc/%d/cmdline", pid);
+        fd = fopen(buff, "r");
+        if (fd)
+        {
+            if (fgets(buff, sizeof(buff), fd) != NULL)
+            {
+                if (strstr(buff, "dns_filter"))
+                {
+                    if (kill(pid, SIGKILL) < 0)
+                    {
+                        CcspTraceInfo(("stop_dns_filter: kill returns error\n"));
+                    }
+                }
+            }
+
+            fclose(fd);
+        }
+    }
+}
+
+static void restart_dns_filter(void)
+{
+    stop_dns_filter();
+    system("/usr/bin/dns_filter &");
+}
+
+ANSC_STATUS CosaDmlDNS_Rebind_GetConf( BOOL* value )
+{
+    char buf[8];
+
+    syscfg_get(NULL, "dns_rebind_protection_enable", buf, sizeof(buf));
+
+    *value = atoi(buf);
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS CosaDmlDNS_Rebind_SetConf( BOOL value )
+{
+    syscfg_set_commit(NULL, "dns_rebind_protection_enable", value ? "1" : "0");
+
+    if (value)
+    {
+        system("/usr/bin/dns_filter &");
+    }
+    else
+    {
+        stop_dns_filter();
+    }
+
+    commonSyseventSet("firewall-restart", "");
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ULONG CosaDmlDNS_Whitelist_GetNumberOfEntries(void)
+{
+    UtopiaContext ctx;
+    int total_count = 0;
+
+    if (!Utopia_Init(&ctx))
+        return ANSC_STATUS_FAILURE;
+
+    Utopia_GetNumberOfDNSWhitelistedUrl(&ctx, &total_count);
+    Utopia_Free(&ctx, 0);
+
+    return total_count;
+}
+
+ANSC_STATUS CosaDmlDNS_Whitelist_GetEntryByIndex(ULONG index, COSA_DML_DNS_WHITELIST *entry)
+{
+    UtopiaContext ctx;
+    int total_count = 0;
+    dns_whitelist_url_t dns_whitelist_entry;
+
+    if (!Utopia_Init(&ctx))
+        return ANSC_STATUS_FAILURE;
+
+    Utopia_GetNumberOfDNSWhitelistedUrl(&ctx, &total_count);
+    if (index >= total_count)
+        return ANSC_STATUS_FAILURE;
+
+    Utopia_GetDNSWhitelistByIndex(&ctx, index, &dns_whitelist_entry);
+    entry->InstanceNumber = dns_whitelist_entry.InstanceNumber;
+    strncpy(entry->Url, dns_whitelist_entry.Url, sizeof(entry->Url));
+    strncpy(entry->Description, dns_whitelist_entry.Description, sizeof(entry->Description));
+
+    Utopia_Free(&ctx, 0);
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS CosaDmlDNS_Whitelist_AddEntry(COSA_DML_DNS_WHITELIST *entry, BOOL dns_rebind_protection_enable)
+{
+    int rc = -1;
+    UtopiaContext ctx;
+    dns_whitelist_url_t dns_whitelist_entry;
+
+    if (!Utopia_Init(&ctx))
+        return ANSC_STATUS_FAILURE;
+
+    dns_whitelist_entry.InstanceNumber = entry->InstanceNumber;
+
+    strncpy(dns_whitelist_entry.Url, entry->Url, sizeof(dns_whitelist_entry.Url));
+    strncpy(dns_whitelist_entry.Description, entry->Description, sizeof(dns_whitelist_entry.Description));
+
+    rc = Utopia_AddDNSWhitelist(&ctx, &dns_whitelist_entry);
+
+    Utopia_Free(&ctx, !rc);
+
+    if (rc != 0)
+        return ANSC_STATUS_FAILURE;
+
+    if (dns_rebind_protection_enable)
+    {
+        restart_dns_filter();
+    }
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS CosaDmlDNS_Whitelist_DelEntry(ULONG ins, BOOL dns_rebind_protection_enable)
+{
+    int rc = -1;
+    UtopiaContext ctx;
+
+    if (!Utopia_Init(&ctx))
+        return ANSC_STATUS_FAILURE;
+
+    rc = Utopia_DelDNSWhitelist(&ctx, ins);
+
+    Utopia_Free(&ctx, !rc);
+
+    if (rc != 0)
+        return ANSC_STATUS_FAILURE;
+
+    if (dns_rebind_protection_enable)
+    {
+        restart_dns_filter();
+    }
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS CosaDmlDNS_Whitelist_GetConf(ULONG ins, COSA_DML_DNS_WHITELIST *entry)
+{
+    int index;
+
+    if ((index = DNS_Whitelist_InsGetIndex(ins)) == -1)
+        return ANSC_STATUS_FAILURE;
+
+    return CosaDmlDNS_Whitelist_GetEntryByIndex(index, entry);
+}
+
+ANSC_STATUS CosaDmlDNS_Whitelist_SetConf(ULONG ins, COSA_DML_DNS_WHITELIST *entry, BOOL dns_rebind_protection_enable)
+{
+    int index;
+    UtopiaContext ctx;
+    dns_whitelist_url_t dns_whitelist_entry;
+    int rc = -1;
+
+    index = DNS_Whitelist_InsGetIndex(ins);
+    if (index == -1 || !Utopia_Init(&ctx))
+        return ANSC_STATUS_FAILURE;
+
+    dns_whitelist_entry.InstanceNumber = entry->InstanceNumber;
+    strncpy(dns_whitelist_entry.Url, entry->Url, sizeof(dns_whitelist_entry.Url));
+    strncpy(dns_whitelist_entry.Description, entry->Description, sizeof(dns_whitelist_entry.Description));
+
+    rc = Utopia_SetDNSWhitelistByIndex(&ctx, index, &dns_whitelist_entry);
+
+    Utopia_Free(&ctx, !rc);
+
+    if (rc != 0)
+        return ANSC_STATUS_FAILURE;
+
+    if (dns_rebind_protection_enable)
+    {
+        restart_dns_filter();
+    }
+
+    return ANSC_STATUS_SUCCESS;
+}
