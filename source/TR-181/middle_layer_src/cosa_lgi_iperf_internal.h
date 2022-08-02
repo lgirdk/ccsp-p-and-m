@@ -47,7 +47,8 @@ _COSA_DATAMODEL_LGI_IPERF_CLASS_CONTENT
     pthread_t iperfTid;
     int iperfPid;
     BOOL iperfThreadExists;
-    BOOL cancelTimer;
+    BOOL cancelTimerThread;
+    BOOL cancelCpuThread;
 }
 COSA_DATAMODEL_LGI_IPERF, *PCOSA_DATAMODEL_LGI_IPERF;
 
