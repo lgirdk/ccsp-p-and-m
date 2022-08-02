@@ -17,8 +17,6 @@
 #ifndef   _COSA_LGI_GATEWAY_DML_H
 #define   _COSA_LGI_GATEWAY_DML_H
 
-#include "cosa_x_lgi_com_gateway_apis.h"
-
 BOOL
 LgiGateway_GetParamUlongValue
     (
@@ -71,6 +69,87 @@ LgiGateway_SetParamStringValue
         ANSC_HANDLE                 hInsContext,
         char*                       ParamName,
         char*                       strValue
+    );
+
+BOOL
+DNS_Rebind_Protection_GetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL*                       pBool
+    );
+
+BOOL
+DNS_Rebind_Protection_SetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL                        bValue
+    );
+
+ULONG
+Whitelist_GetEntryCount
+    (
+        ANSC_HANDLE                 hInsContext
+    );
+
+ANSC_HANDLE
+Whitelist_GetEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG                       nIndex,
+        ULONG*                      pInsNumber
+    );
+
+ANSC_HANDLE
+Whitelist_AddEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG*                      pInsNumber
+    );
+
+ULONG
+Whitelist_DelEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ANSC_HANDLE                 hInstance
+    );
+
+ULONG
+Whitelist_GetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pValue,
+        ULONG*                      pUlSize
+    );
+
+BOOL
+Whitelist_SetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       strValue
+    );
+
+BOOL
+Whitelist_Validate
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       pReturnParamName,
+        ULONG*                      puLength
+    );
+
+ULONG
+Whitelist_Commit
+    (
+        ANSC_HANDLE                 hInsContext
+    );
+
+ULONG
+Whitelist_Rollback
+    (
+        ANSC_HANDLE                 hInsContext
     );
 
 #endif
