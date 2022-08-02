@@ -19,11 +19,20 @@
 
 #include "cosa_apis.h"
 #include "plugin_main_apis.h"
-#include "cosa_x_lgi_com_gateway_apis.h"
+#include "poam_irepfo_interface.h"
+#include "sys_definitions.h"
+
+#define COSA_IREP_FOLDER_NAME_DNS_WHITELIST_URL              "DNSWhitelistUrl"
+#define COSA_DML_RR_NAME_DNS_WHITELIST_URL_NextInsNumber     "DNSWhitelistUrlNextInstanceNumber"
+#define COSA_DML_RR_NAME_DNS_WHITELIST_URL_InsNum            "DNSWhitelistUrlInstanceNumber"
 
 #define  COSA_DATAMODEL_LGI_GATEWAY_CLASS_CONTENT      \
     /* duplication of the base object class content */ \
     COSA_BASE_CONTENT                                  \
+    ANSC_HANDLE                     hIrepFolderDNSWhitelistCOSA; \
+    SLIST_HEADER                    DNSWhitelistList;            \
+    ULONG                           DNSWhitelistNextInsNum;      \
+    ANSC_HANDLE                     hIrepFolderDNSWhitelist;     \
 
 typedef  struct
 _COSA_DATAMODEL_LGI_GATEWAY_CLASS_CONTENT
@@ -35,12 +44,22 @@ _COSA_DATAMODEL_LGI_GATEWAY_CLASS_CONTENT
     BOOL                            dns_override;
     BOOL                            isDnsUpdated;
     BOOL                            dns_forcestatic;
+    BOOL                            dns_rebind_protection_enable;
     char                            dns_ipv4_preferred[16];
     char                            dns_ipv4_alternate[16];
     char                            dns_ipv6_preferred[64];
     char                            dns_ipv6_alternate[64];
 }
 COSA_DATAMODEL_LGI_GATEWAY, *PCOSA_DATAMODEL_LGI_GATEWAY;
+
+typedef struct
+_COSA_DML_DNS_WHITELIST
+{
+    ULONG                      InstanceNumber;
+    char                       Url[2048];
+    char                       Description[2048];
+}
+COSA_DML_DNS_WHITELIST, *PCOSA_DML_DNS_WHITELIST;
 
 /*
     Standard function declaration
@@ -61,6 +80,26 @@ ANSC_STATUS
 CosaLgiGatewayRemove
     (
         ANSC_HANDLE                 hThisObject
+    );
+
+ANSC_STATUS
+CosaDNS_Whitelist_UrlGetInfo
+    (
+        ANSC_HANDLE                 hThisObject
+    );
+
+ANSC_STATUS
+CosaDNS_Whitelist_UrlAddInfo
+    (
+        ANSC_HANDLE                 hThisObject,
+        ANSC_HANDLE                 hCosaContext
+    );
+
+ANSC_STATUS
+CosaDNS_Whitelist_UrlDelInfo
+    (
+        ANSC_HANDLE                 hThisObject,
+        ANSC_HANDLE                 hCosaContext
     );
 
 #endif
