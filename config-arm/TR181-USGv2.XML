@@ -505,6 +505,62 @@
                 <syntax>uint32</syntax>
             </parameter>
           </parameters>
+          <objects>
+            <object>
+              <name>DNSRebindProtection</name>
+              <objectType>object</objectType>
+
+              <functions>
+                <func_GetParamBoolValue>DNS_Rebind_Protection_GetParamBoolValue</func_GetParamBoolValue>
+                <func_SetParamBoolValue>DNS_Rebind_Protection_SetParamBoolValue</func_SetParamBoolValue>
+              </functions>
+
+              <parameters>
+                <parameter>
+                  <name>Enable</name>
+                  <type>boolean</type>
+                  <syntax>bool</syntax>
+                  <writable>true</writable>
+                </parameter>
+              </parameters>
+
+              <objects>
+                <object>
+                  <name>Whitelist</name>
+                  <objectType>writableTable</objectType>
+                  <maxInstance>128</maxInstance>
+
+                  <functions>
+                    <func_GetEntryCount>Whitelist_GetEntryCount</func_GetEntryCount>
+                    <func_GetEntry>Whitelist_GetEntry</func_GetEntry>
+                    <func_AddEntry>Whitelist_AddEntry</func_AddEntry>
+                    <func_DelEntry>Whitelist_DelEntry</func_DelEntry>
+                    <func_GetParamStringValue>Whitelist_GetParamStringValue</func_GetParamStringValue>
+                    <func_SetParamStringValue>Whitelist_SetParamStringValue</func_SetParamStringValue>
+                    <func_Validate>Whitelist_Validate</func_Validate>
+                    <func_Commit>Whitelist_Commit</func_Commit>
+                    <func_Rollback>Whitelist_Rollback</func_Rollback>
+                  </functions>
+
+                  <parameters>
+                    <parameter>
+                      <name>Url</name>
+                      <type>string(2048)</type>
+                      <syntax>string</syntax>
+                      <writable>true</writable>
+                    </parameter>
+                    <parameter>
+                      <name>Description</name>
+                      <type>string(2048)</type>
+                      <syntax>string</syntax>
+                      <writable>true</writable>
+                    </parameter>
+                  </parameters>
+
+                </object>
+              </objects>
+            </object>
+          </objects>
     </object>
    <object>
         <name>X_LGI-COM_CloudUI</name>
