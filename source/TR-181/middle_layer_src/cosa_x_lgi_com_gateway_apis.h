@@ -18,6 +18,7 @@
 #define _COSA_LGI_GATEWAY_APIS_H
 
 #include "../middle_layer_src/cosa_apis.h"
+#include "cosa_x_lgi_com_gateway_internal.h"
 
 
 /**********************************************************************
@@ -38,5 +39,14 @@ int CosaDmlLgiGwGetDnsIpv6Alternate ( char *pValue, ULONG *pUlSize );
 ANSC_STATUS CosaDml_Gateway_GetErouterInitMode(ULONG *pInitMode);
 ANSC_STATUS CosaDml_Gateway_SetErouterInitMode(ULONG initMode);
 ANSC_STATUS CosaDml_Gateway_GetIPv6LeaseTimeRemaining(ULONG *pValue);
+
+ANSC_STATUS CosaDmlDNS_Rebind_SetConf( BOOL value );
+ANSC_STATUS CosaDmlDNS_Rebind_GetConf( BOOL* value );
+ULONG CosaDmlDNS_Whitelist_GetNumberOfEntries( void );
+ANSC_STATUS CosaDmlDNS_Whitelist_GetEntryByIndex( ULONG index, COSA_DML_DNS_WHITELIST *entry );
+ANSC_STATUS CosaDmlDNS_Whitelist_AddEntry( COSA_DML_DNS_WHITELIST *entry, BOOL dns_rebind_protection_enable );
+ANSC_STATUS CosaDmlDNS_Whitelist_DelEntry( ULONG ins, BOOL dns_rebind_protection_enable );
+ANSC_STATUS CosaDmlDNS_Whitelist_GetConf( ULONG ins, COSA_DML_DNS_WHITELIST *entry );
+ANSC_STATUS CosaDmlDNS_Whitelist_SetConf( ULONG ins, COSA_DML_DNS_WHITELIST *entry, BOOL dns_rebind_protection_enable );
 
 #endif
