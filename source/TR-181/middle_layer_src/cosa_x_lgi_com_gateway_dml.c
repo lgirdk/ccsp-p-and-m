@@ -410,3 +410,262 @@ LgiGateway_Rollback
     CosaDmlLgiGwGetDnsIpv6Alternate(pMyObject->dns_ipv6_alternate, &size);
     return 0;
 }
+
+BOOL
+DNS_Rebind_Protection_GetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL*                       pBool
+    )
+{
+    PCOSA_DATAMODEL_LGI_GATEWAY pMyObject = (PCOSA_DATAMODEL_LGI_GATEWAY)g_pCosaBEManager->hLgiGateway;
+
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+        *pBool = pMyObject->dns_rebind_protection_enable;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+BOOL
+DNS_Rebind_Protection_SetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL                        bValue
+    )
+{
+    PCOSA_DATAMODEL_LGI_GATEWAY  pMyObject = (PCOSA_DATAMODEL_LGI_GATEWAY)g_pCosaBEManager->hLgiGateway;
+
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+        if (bValue != pMyObject->dns_rebind_protection_enable)
+        {
+            pMyObject->dns_rebind_protection_enable = bValue;
+            CosaDmlDNS_Rebind_SetConf(pMyObject->dns_rebind_protection_enable);
+        }
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+ULONG
+Whitelist_GetEntryCount
+    (
+        ANSC_HANDLE                 hInsContext
+    )
+{
+    COSA_DATAMODEL_LGI_GATEWAY *pMyObject = (COSA_DATAMODEL_LGI_GATEWAY*)g_pCosaBEManager->hLgiGateway;
+    return AnscSListQueryDepth(&pMyObject->DNSWhitelistList);
+}
+
+ANSC_HANDLE
+Whitelist_GetEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG                       nIndex,
+        ULONG*                      pInsNumber
+    )
+{
+    COSA_DATAMODEL_LGI_GATEWAY *pMyObject = (COSA_DATAMODEL_LGI_GATEWAY*)g_pCosaBEManager->hLgiGateway;
+    PCOSA_CONTEXT_LINK_OBJECT pLinkObj = NULL;
+    PSINGLE_LINK_ENTRY pSLinkEntry = NULL;
+
+    pSLinkEntry = AnscQueueGetEntryByIndex((ANSC_HANDLE)&pMyObject->DNSWhitelistList, nIndex);
+
+    if (pSLinkEntry)
+    {
+        pLinkObj = ACCESS_COSA_CONTEXT_LINK_OBJECT(pSLinkEntry);
+        *pInsNumber = pLinkObj->InstanceNumber;
+    }
+
+    return pLinkObj;
+}
+
+ANSC_HANDLE
+Whitelist_AddEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ULONG*                      pInsNumber
+    )
+{
+    COSA_DATAMODEL_LGI_GATEWAY *pMyObject = (COSA_DATAMODEL_LGI_GATEWAY*)g_pCosaBEManager->hLgiGateway;
+    PCOSA_CONTEXT_LINK_OBJECT pLinkObj = NULL;
+    COSA_DML_DNS_WHITELIST *pWhitelistEntry = NULL;
+
+    pLinkObj = AnscAllocateMemory(sizeof(COSA_CONTEXT_LINK_OBJECT));
+    if (!pLinkObj)
+        return NULL;
+
+    pWhitelistEntry = AnscAllocateMemory(sizeof(COSA_DML_DNS_WHITELIST));
+    if (!pWhitelistEntry)
+    {
+        AnscFreeMemory(pLinkObj);
+        return NULL;
+    }
+
+     /* now we have this link content */
+    pLinkObj->InstanceNumber = pMyObject->DNSWhitelistNextInsNum;
+    pWhitelistEntry->InstanceNumber = pMyObject->DNSWhitelistNextInsNum;
+    pMyObject->DNSWhitelistNextInsNum++;
+    if (pMyObject->DNSWhitelistNextInsNum == 0)
+        pMyObject->DNSWhitelistNextInsNum = 1;
+
+    pLinkObj->hContext = (ANSC_HANDLE)pWhitelistEntry;
+    pLinkObj->hParentTable = NULL;
+    pLinkObj->bNew = TRUE;
+
+    CosaSListPushEntryByInsNum((PSLIST_HEADER)&pMyObject->DNSWhitelistList, pLinkObj);
+    CosaDNS_Whitelist_UrlAddInfo((ANSC_HANDLE)pMyObject, (ANSC_HANDLE)pLinkObj);
+
+    *pInsNumber = pLinkObj->InstanceNumber;
+
+    return pLinkObj;
+}
+
+ULONG
+Whitelist_DelEntry
+    (
+        ANSC_HANDLE                 hInsContext,
+        ANSC_HANDLE                 hInstance
+    )
+{
+    ANSC_STATUS returnStatus = ANSC_STATUS_SUCCESS;
+    COSA_DATAMODEL_LGI_GATEWAY *pMyObject = (COSA_DATAMODEL_LGI_GATEWAY*)g_pCosaBEManager->hLgiGateway;
+    PCOSA_CONTEXT_LINK_OBJECT pLinkObj = (PCOSA_CONTEXT_LINK_OBJECT)hInstance;
+    COSA_DML_DNS_WHITELIST *pWhitelistEntry = (COSA_DML_DNS_WHITELIST*)pLinkObj->hContext;
+
+    if (pLinkObj->bNew)
+    {
+        /* Set bNew to FALSE to indicate this node is not going to save to SysRegistry */
+        pLinkObj->bNew = FALSE;
+        returnStatus = CosaDNS_Whitelist_UrlDelInfo((ANSC_HANDLE)pMyObject, (ANSC_HANDLE)pLinkObj);
+    }
+    else
+    {
+        returnStatus = CosaDmlDNS_Whitelist_DelEntry(pLinkObj->InstanceNumber, pMyObject->dns_rebind_protection_enable);
+    }
+
+    if (returnStatus == ANSC_STATUS_SUCCESS)
+    {
+        AnscSListPopEntryByLink((PSLIST_HEADER)&pMyObject->DNSWhitelistList, &pLinkObj->Linkage);
+        AnscFreeMemory(pWhitelistEntry);
+        AnscFreeMemory(pLinkObj);
+    }
+
+    return returnStatus;
+}
+
+ULONG
+Whitelist_GetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pValue,
+        ULONG*                      pUlSize
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT pLinkObj = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_DNS_WHITELIST *pWhitelistEntry = (COSA_DML_DNS_WHITELIST*)pLinkObj->hContext;
+
+    if (strcmp(ParamName, "Url") == 0)
+    {
+        AnscCopyString(pValue, pWhitelistEntry->Url);
+        return 0;
+    }
+
+    if (strcmp(ParamName, "Description") == 0)
+    {
+        AnscCopyString(pValue, pWhitelistEntry->Description);
+        return 0;
+    }
+
+    return -1;
+}
+
+BOOL
+Whitelist_SetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       strValue
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT pLinkObj = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_DNS_WHITELIST *pWhitelistEntry = (COSA_DML_DNS_WHITELIST*)pLinkObj->hContext;
+
+    if (strcmp(ParamName, "Url") == 0)
+    {
+        snprintf(pWhitelistEntry->Url, sizeof(pWhitelistEntry->Url), "%s", strValue);
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "Description") == 0)
+    {
+        snprintf(pWhitelistEntry->Description, sizeof(pWhitelistEntry->Description), "%s", strValue);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+BOOL
+Whitelist_Validate
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       pReturnParamName,
+        ULONG*                      puLength
+    )
+{
+    return TRUE;
+}
+
+ULONG
+Whitelist_Commit
+    (
+        ANSC_HANDLE                 hInsContext
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT pLinkObj = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_DNS_WHITELIST *pWhitelistEntry = (COSA_DML_DNS_WHITELIST*)pLinkObj->hContext;
+    COSA_DATAMODEL_LGI_GATEWAY *pLGIGateway = (COSA_DATAMODEL_LGI_GATEWAY*)g_pCosaBEManager->hLgiGateway;
+
+    if (pLinkObj->bNew)
+    {
+        if (CosaDmlDNS_Whitelist_AddEntry(pWhitelistEntry, pLGIGateway->dns_rebind_protection_enable) != ANSC_STATUS_SUCCESS)
+            return -1;
+        CosaDNS_Whitelist_UrlDelInfo((ANSC_HANDLE)pLGIGateway, (ANSC_HANDLE)pLinkObj);
+        pLinkObj->bNew = FALSE;
+    }
+    else
+    {
+        if (CosaDmlDNS_Whitelist_SetConf(pWhitelistEntry->InstanceNumber, pWhitelistEntry, pLGIGateway->dns_rebind_protection_enable) != ANSC_STATUS_SUCCESS)
+        {
+            CosaDmlDNS_Whitelist_GetConf(pWhitelistEntry->InstanceNumber, pWhitelistEntry);
+            return -1;
+        }
+        else
+            CosaDmlDNS_Whitelist_GetConf(pWhitelistEntry->InstanceNumber, pWhitelistEntry);
+    }
+
+    return 0;
+}
+
+ULONG
+Whitelist_Rollback
+    (
+        ANSC_HANDLE                 hInsContext
+    )
+{
+    PCOSA_CONTEXT_LINK_OBJECT pLinkObj = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_DNS_WHITELIST *pWhitelistEntry = (COSA_DML_DNS_WHITELIST*)pLinkObj->hContext;
+
+    if (CosaDmlDNS_Whitelist_GetConf(pWhitelistEntry->InstanceNumber, pWhitelistEntry) != ANSC_STATUS_SUCCESS)
+        return -1;
+
+    return 0;
+}
