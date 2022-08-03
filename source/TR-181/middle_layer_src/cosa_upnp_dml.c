@@ -421,19 +421,7 @@ Device_SetParamBoolValue
     {
         if (bValue == false)
         {
-            pNatPMapping = CosaDmlNatGetPortMappings(NULL, &count);
-            if (pNatPMapping)
-            {
-                tmp = (pNatPMapping->InstanceNumber) + count;
-                for (index = 0; index <= tmp; index++)
-                {
-
-                    if (strcmp(pNatPMapping[index].RuleSource, "UPnP") == 0)
-                    {
-                        CosaDmlNatDelPortMapping(NULL, pNatPMapping[index].InstanceNumber);
-                    }
-                }
-            }
+            CosaDmlNatDelDynPortMappings();
         }    
         /* save update to backup */
         pMyObject->bUpnpDevIgdEnable = bValue;
