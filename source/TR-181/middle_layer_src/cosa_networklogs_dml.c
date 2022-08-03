@@ -19,6 +19,9 @@
 #include "ansc_platform.h"
 #include "plugin_main_apis.h"
 #include "cosa_networklogs_dml.h"
+#include "cosa_networklogs_internal.h"
+#include "cosa_networklogs_apis.h"
+#include "safec_lib_common.h"
 
 /***********************************************************************
 
@@ -64,7 +67,10 @@ Logs_GetEntryCount
         ANSC_HANDLE         hInsContext
     )
 {
-    return 0; 
+    UNREFERENCED_PARAMETER(hInsContext);
+    PCOSA_DML_NETWORKLOGS pMyObject = (PCOSA_DML_NETWORKLOGS)g_pCosaBEManager->hNetworkLogs;
+
+    return pMyObject->NetworkLogsLogNumber;
 }
 
 /**********************************************************************  
@@ -106,6 +112,16 @@ Logs_GetEntry
         ULONG*                      pInsNumber
     )
 {
+    UNREFERENCED_PARAMETER(hInsContext);
+    PCOSA_DML_NETWORKLOGS pMyObject = (PCOSA_DML_NETWORKLOGS)g_pCosaBEManager->hNetworkLogs;
+
+    if (nIndex < pMyObject->NetworkLogsLogNumber)
+    {
+        *pInsNumber = nIndex + 1;
+
+        return  (ANSC_HANDLE)&pMyObject->pNetworkLogs_Log[nIndex];
+    }
+
     return NULL;
 }
 
@@ -138,7 +154,25 @@ Logs_IsUpdated
         ANSC_HANDLE                 hInsContext
     )
 {
-    return FALSE;
+    UNREFERENCED_PARAMETER(hInsContext);
+    PCOSA_DML_NETWORKLOGS pMyObject = (PCOSA_DML_NETWORKLOGS)g_pCosaBEManager->hNetworkLogs;
+
+    if( !pMyObject->NetworkLogUpdateTime )
+    {
+        pMyObject->NetworkLogUpdateTime = AnscGetTickInSeconds();
+        return TRUE;
+    }
+
+    if( pMyObject->NetworkLogUpdateTime >= TIME_NO_NEGATIVE(AnscGetTickInSeconds() - REFRESH_INTERVAL) )
+    {
+        return FALSE;
+    }
+    else
+    {
+        pMyObject->NetworkLogUpdateTime = AnscGetTickInSeconds();
+
+        return TRUE;
+    }
 }
 
 /**********************************************************************  
@@ -170,6 +204,31 @@ Logs_Synchronize
         ANSC_HANDLE                 hInsContext
     )
 {
+    UNREFERENCED_PARAMETER(hInsContext);
+    PCOSA_DML_NETWORKLOGS pMyObject = (PCOSA_DML_NETWORKLOGS)g_pCosaBEManager->hNetworkLogs;
+    ANSC_STATUS ret = ANSC_STATUS_SUCCESS;
+
+    if( pMyObject->pNetworkLogs_Log )
+    {
+        AnscFreeMemory(pMyObject->pNetworkLogs_Log);
+        pMyObject->pNetworkLogs_Log = NULL;
+    }
+
+    pMyObject->NetworkLogsLogNumber = 0;
+
+    ret = CosaDmlGetNetworkLogs
+        (
+            (ANSC_HANDLE)NULL,
+            &pMyObject->NetworkLogsLogNumber,
+            &pMyObject->pNetworkLogs_Log
+        );
+
+    if( ret != ANSC_STATUS_SUCCESS )
+    {
+        pMyObject->pNetworkLogs_Log = NULL;
+        pMyObject->NetworkLogsLogNumber = 0;
+    }
+
     return 0;
 }
 
@@ -212,7 +271,42 @@ Logs_GetParamUlongValue
         ULONG*                      puLong
     )
 {
-    return TRUE;
+    PCOSA_DML_NETWORKLOGS_LOG pConf = (PCOSA_DML_NETWORKLOGS_LOG)hInsContext;
+    errno_t rc = -1;
+    int ind = -1;
+
+    /* check the parameter name and return the corresponding value */
+    rc = strcmp_s("Index", strlen("Index"), ParamName, &ind);
+    ERR_CHK(rc);
+    if((!ind) && (rc == EOK))
+    {
+        /* collect value */
+        *puLong = pConf->Index;
+
+        return TRUE;
+    }
+
+    rc = strcmp_s("EventID", strlen("EventID"), ParamName, &ind);
+    ERR_CHK(rc);
+    if((!ind) && (rc == EOK))
+    {
+        /* collect value */
+        *puLong = pConf->EventID;
+
+        return TRUE;
+    }
+
+    rc = strcmp_s("EventLevel", strlen("EventLevel"), ParamName, &ind);
+    ERR_CHK(rc);
+    if((!ind) && (rc == EOK))
+    {
+        /* collect value */
+        *puLong = pConf->EventLevel;
+
+        return TRUE;
+    }
+
+    return FALSE;
 }
 
 /**********************************************************************  
@@ -263,7 +357,53 @@ Logs_GetParamStringValue
         ULONG*                      pUlSize  
     )
 {
-    return 0;
+    PCOSA_DML_NETWORKLOGS_LOG pConf = (PCOSA_DML_NETWORKLOGS_LOG)hInsContext;
+    errno_t rc = -1;
+    int ind = -1;
+
+    /* check the parameter name and return the corresponding value */
+    rc =  strcmp_s("Description", strlen("Description"), ParamName, &ind);
+    ERR_CHK(rc);
+    if((!ind) && (rc == EOK))
+    {
+        /* collect value */
+        if( strlen(pConf->Description) >= *pUlSize )
+        {
+            *pUlSize = strlen(pConf->Description);
+            return 1;
+        }
+
+        rc = strcpy_s(pValue, *pUlSize, pConf->Description);
+        if(rc != EOK)
+        {
+            ERR_CHK(rc);
+            return -1;
+        }
+        return 0;
+    }
+
+    rc = strcmp_s("Time", strlen("Time"), ParamName, &ind);
+    ERR_CHK(rc);
+    if((!ind) && (rc == EOK))
+    {
+        /* collect value */
+        if ( strlen(pConf->Time) >= *pUlSize )
+        {
+            *pUlSize = strlen(pConf->Time);
+            return 1;
+        }
+
+        rc = strcpy_s(pValue, *pUlSize, pConf->Time);
+        if(rc != EOK)
+        {
+            ERR_CHK(rc);
+            return -1;
+        }
+
+        return 0;
+    }
+
+    return -1;
 }
 
 #endif
