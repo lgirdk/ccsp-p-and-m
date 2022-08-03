@@ -165,6 +165,10 @@
 #include "cosa_lgi_plume_internal.h"
 #include "cosa_ssam_apis.h"
 
+#ifdef FEATURE_RDKB_WAN_MANAGER
+#include "cosa_networklogs_internal.h"
+#endif
+
 static void CheckAndSetRebootReason();
 
 #if defined(_PLATFORM_RASPBERRYPI_)
@@ -498,6 +502,11 @@ if(id != 0)
     pMyObject->hLgiEventlog = (ANSC_HANDLE)CosaLgiEventLogCreate();
     AnscTraceWarning(("  CosaLgiEventLogCreate done !\n"));
 
+#ifdef FEATURE_RDKB_WAN_MANAGER
+    pMyObject->hNetworkLogs = (ANSC_HANDLE)CosaNetworkLogsCreate();
+    AnscTraceWarning((" CosaNetworkLogsCreate done !\n"));
+#endif
+
     printf("PandM DM initialization done!\n");
     CcspTraceWarning(("RDKB_SYSTEM_BOOT_UP_LOG : PandM DM initialization done!\n"));
     //Unknown Reboot Reason 
@@ -798,6 +807,13 @@ CosaBackEndManagerRemove
     {
         CosaLgiIperfRemove((ANSC_HANDLE)pMyObject->hLgiIperf);
     }
+
+#ifdef FEATURE_RDKB_WAN_MANAGER
+    if(pMyObject->hNetworkLogs)
+    {
+        CosaNetworkLogsRemove((ANSC_HANDLE)pMyObject->hNetworkLogs);
+    }
+#endif
 
     /* Remove self */
     AnscFreeMemory((ANSC_HANDLE)pMyObject);
