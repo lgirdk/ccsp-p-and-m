@@ -4830,5 +4830,17 @@ CosaDmlFW_NATPassthrough_SetConf(ULONG ins, COSA_DML_NATPASS *pEntry)
 
 }
 //LG ADD END CR14
+
+void CosaDmlNatDelDynPortMappings()
+{
+    int index, count = 0;
+
+    Utopia_GetDynPortMappingCount(&count);
+    for (index = count; index > 0; index--)
+    {
+        Utopia_DeleteDynPortMappingIndex(index);
+    }
+ }
+
 #endif
 
