@@ -1180,30 +1180,43 @@ BOOL FW_V4_IpFilter_SetParamStringValue ( ANSC_HANDLE hInsContext, char* ParamNa
 
     if (strcmp(ParamName, "Description") == 0)
     {
-        _ansc_snprintf(pFwIpFilter->Description, sizeof(pFwIpFilter->Description), "%s", strValue);
+        snprintf(pFwIpFilter->Description, sizeof(pFwIpFilter->Description), "%s", strValue);
         return TRUE;
     }
+
     if (strcmp(ParamName, "SrcStartAddr") == 0)
     {
-        _ansc_snprintf(pFwIpFilter->SrcStartIPAddress, sizeof(pFwIpFilter->SrcStartIPAddress), "%s", strValue);
+        if (inet_pton(AF_INET, strValue, buf) != 1)
+            return FALSE;
+
+        snprintf(pFwIpFilter->SrcStartIPAddress, sizeof(pFwIpFilter->SrcStartIPAddress), "%s", strValue);
         return TRUE;
     }
+
     if (strcmp(ParamName, "SrcEndAddr") == 0)
     {
-        _ansc_snprintf(pFwIpFilter->SrcEndIPAddress, sizeof(pFwIpFilter->SrcEndIPAddress), "%s", strValue);
+        if (inet_pton(AF_INET, strValue, buf) != 1)
+            return FALSE;
+
+        snprintf(pFwIpFilter->SrcEndIPAddress, sizeof(pFwIpFilter->SrcEndIPAddress), "%s", strValue);
         return TRUE;
     }
+
     if (strcmp(ParamName, "DstStartAddr") == 0)
     {
-       if(inet_pton(AF_INET,strValue,buf))
-       {
-               _ansc_snprintf(pFwIpFilter->DstStartIPAddress, sizeof(pFwIpFilter->DstStartIPAddress), "%s", strValue);
-               return TRUE;
-       }
+        if (inet_pton(AF_INET, strValue, buf) != 1)
+            return FALSE;
+
+        snprintf(pFwIpFilter->DstStartIPAddress, sizeof(pFwIpFilter->DstStartIPAddress), "%s", strValue);
+        return TRUE;
     }
+
     if (strcmp(ParamName, "DstEndAddr") == 0)
     {
-        _ansc_snprintf(pFwIpFilter->DstEndIPAddress, sizeof(pFwIpFilter->DstEndIPAddress), "%s", strValue);
+        if (inet_pton(AF_INET, strValue, buf) != 1)
+            return FALSE;
+
+        snprintf(pFwIpFilter->DstEndIPAddress, sizeof(pFwIpFilter->DstEndIPAddress), "%s", strValue);
         return TRUE;
     }
 
@@ -1911,22 +1924,26 @@ BOOL FW_V6_IpFilter_SetParamStringValue ( ANSC_HANDLE hInsContext, char* ParamNa
 
     if (strcmp(ParamName, "Description") == 0)
     {
-        _ansc_snprintf(pFwIpFilter->Description, sizeof(pFwIpFilter->Description), "%s", strValue);
+        snprintf(pFwIpFilter->Description, sizeof(pFwIpFilter->Description), "%s", strValue);
         return TRUE;
     }
+
     if (strcmp(ParamName, "SrcStartAddr") == 0)
     {
-        _ansc_snprintf(pFwIpFilter->SrcStartIPAddress, sizeof(pFwIpFilter->SrcStartIPAddress), "%s", strValue);
+        if (inet_pton(AF_INET6, strValue, buf) != 1)
+            return FALSE;
+
+        snprintf(pFwIpFilter->SrcStartIPAddress, sizeof(pFwIpFilter->SrcStartIPAddress), "%s", strValue);
         return TRUE;
     }
+
     if (strcmp(ParamName, "DstStartAddr") == 0)
     {
-       if(inet_pton(AF_INET6,strValue,buf))
-       {
-               _ansc_snprintf(pFwIpFilter->DstStartIPAddress, sizeof(pFwIpFilter->DstStartIPAddress), "%s", strValue);
-               return TRUE;
-       }
+        if (inet_pton(AF_INET6, strValue, buf) != 1)
+            return FALSE;
 
+        snprintf(pFwIpFilter->DstStartIPAddress, sizeof(pFwIpFilter->DstStartIPAddress), "%s", strValue);
+        return TRUE;
     }
 
     return FALSE;
