@@ -438,5 +438,8 @@ CosaDmlNatGetActiveIPv4TcpInternalPorts
     (
         int*                       nports        
     );
+
+void
+CosaDmlNatDelDynPortMappings(void);
 #endif
 #endif
