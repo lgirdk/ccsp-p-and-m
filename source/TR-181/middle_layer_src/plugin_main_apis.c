@@ -160,6 +160,10 @@
 #include "cosa_ssam_apis.h"
 // LGI ADD END
 
+#ifdef FEATURE_RDKB_WAN_MANAGER
+#include "cosa_networklogs_internal.h"
+#endif
+
 #if  defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED) ||  defined(RBUS_BUILD_FLAG_ENABLE) || defined (_HUB4_PRODUCT_REQ_)
 #include "cosa_rbus_handler_apis.h"
 #endif
@@ -515,6 +519,11 @@ if(id != 0)
     pMyObject->hLgiEventlog = (ANSC_HANDLE)CosaLgiEventLogCreate();
     AnscTraceWarning(("  CosaLgiEventLogCreate done !\n"));
 
+#ifdef FEATURE_RDKB_WAN_MANAGER
+    pMyObject->hNetworkLogs = (ANSC_HANDLE)CosaNetworkLogsCreate();
+    AnscTraceWarning((" CosaNetworkLogsCreate done !\n"));
+#endif
+
     printf("PandM DM initialization done!\n");
     CcspTraceWarning(("RDKB_SYSTEM_BOOT_UP_LOG : PandM DM initialization done!\n"));
     //Unknown Reboot Reason 
@@ -817,6 +826,13 @@ CosaBackEndManagerRemove
     {
         CosaLgiIperfRemove((ANSC_HANDLE)pMyObject->hLgiIperf);
     }
+
+#ifdef FEATURE_RDKB_WAN_MANAGER
+    if(pMyObject->hNetworkLogs)
+    {
+        CosaNetworkLogsRemove((ANSC_HANDLE)pMyObject->hNetworkLogs);
+    }
+#endif
 
     /* Remove self */
     AnscFreeMemory((ANSC_HANDLE)pMyObject);
