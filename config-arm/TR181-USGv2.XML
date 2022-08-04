@@ -11630,7 +11630,7 @@
 
             <parameter>
 
-              <name>MinAddress</name>
+              <name>MaxAddress</name>
 
               <type>string</type>
 
@@ -11642,7 +11642,7 @@
 
             <parameter>
 
-              <name>MaxAddress</name>
+              <name>MinAddress</name>
 
               <type>string</type>
 
