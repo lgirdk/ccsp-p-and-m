@@ -10998,7 +10998,7 @@
             </parameter>
             <parameter>
               <name>Timestamp</name>
-              <type>string</type>
+              <type>dateTime</type>
               <syntax>string</syntax>
             </parameter>
             <parameter>
