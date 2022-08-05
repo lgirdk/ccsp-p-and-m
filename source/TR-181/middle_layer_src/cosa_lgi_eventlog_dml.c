@@ -113,7 +113,6 @@ CosaDmlGetEventLog
     char tag[EVENT_LOG_STR_SIZE] = {0};
     char pri[EVENT_LOG_STR_SIZE] = {0};
     char desc[LGI_EVENT_LOG_INFO_LEN] = {0};
-    char tmp[EVENT_LOG_STR_SIZE] = {0};
     FILE *fp = NULL;
     int log0_lines =  0;
 
@@ -184,8 +183,7 @@ CosaDmlGetEventLog
                 //ignore this line if the format is not correct
                 continue;
             }
-            snprintf(tmp,LGI_EVENT_LOG_TIME_LEN,"%s,%s.0", date,time);
-            strncpy(pEVENTLog[i].Timestamp,tmp,LGI_EVENT_LOG_TIME_LEN);
+            snprintf(pEVENTLog[i].Timestamp, sizeof(pEVENTLog[i].Timestamp), "%sT%s", date, time);
 
          strncpy(pEVENTLog[i].Tag, tag, EVENT_LOG_STR_SIZE);
          sscanf(pri, "%d", &pEVENTLog[i].Pri);
