@@ -14,61 +14,27 @@
  * limitations under the License.
  *********************************************************************************/
 
-#ifndef  _COSA_LGI_EVENTLOG_DML_H_
-#define  _COSA_LGI_EVENTLOG_DML_H_
-#define TIME_NO_NEGATIVE(x) ((long)(x) < 0 ? 0 : (x))
+#ifndef _COSA_LGI_EVENTLOG_DML_H_
+#define _COSA_LGI_EVENTLOG_DML_H_
 
 #define LGI_EVENT_LOG_TIME_LEN 64
+#define LGI_EVENT_LOG_TAG_LEN 128
 #define LGI_EVENT_LOG_INFO_LEN 512
 
-
-typedef  struct
-_COSA_DATAMODEL_LGI_EVENTLOG
+typedef struct _COSA_DATAMODEL_LGI_EVENTLOG
 {
-    char                           Tag[128];
-    unsigned long int              Pri;
-    char                           Timestamp[LGI_EVENT_LOG_TIME_LEN];
-    char                           Message[LGI_EVENT_LOG_INFO_LEN];
-
+    unsigned long   Pri;
+    char            Timestamp[LGI_EVENT_LOG_TIME_LEN];
+    char            Tag[LGI_EVENT_LOG_TAG_LEN];
+    char            Message[LGI_EVENT_LOG_INFO_LEN];
 }
 COSA_DATAMODEL_LGI_EVENTLOG, *PCOSA_DATAMODEL_LGI_EVENTLOG;
 
-ULONG
-EventLog_GetEntryCount
-    (
-        ANSC_HANDLE                 hInsContext
-    );
-ANSC_HANDLE
-EventLog_GetEntry
-    (
-        ANSC_HANDLE                 hInsContext,
-        ULONG                       nIndex,
-        ULONG*                      pInsNumber
-    );
-BOOL
-EventLog_IsUpdated
-    (
-        ANSC_HANDLE                 hInsContext
-    );
-ULONG
-EventLog_Synchronize
-    (
-        ANSC_HANDLE                 hInsContext
-    );
-BOOL
-EventLog_GetParamUlongValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        ULONG*                      puLong
-    );
-ULONG
-EventLog_GetParamStringValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        char*                       pValue,
-        ULONG*                      pUlSize
-    );
+ULONG EventLog_GetEntryCount (ANSC_HANDLE hInsContext);
+ANSC_HANDLE EventLog_GetEntry (ANSC_HANDLE hInsContext, ULONG nIndex, ULONG *pInsNumber);
+BOOL EventLog_IsUpdated (ANSC_HANDLE hInsContext);
+ULONG EventLog_Synchronize (ANSC_HANDLE hInsContext);
+BOOL EventLog_GetParamUlongValue (ANSC_HANDLE hInsContext, char *ParamName, ULONG *puLong);
+ULONG EventLog_GetParamStringValue (ANSC_HANDLE hInsContext, char *ParamName, char *pValue, ULONG *pUlSize);
 
 #endif
