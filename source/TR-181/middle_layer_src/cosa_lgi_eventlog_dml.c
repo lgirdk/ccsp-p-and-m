@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *********************************************************************************/
+
 #define _GNU_SOURCE
+
 #include "ctype.h"
 #include "ansc_platform.h"
 #include "plugin_main_apis.h"
@@ -22,128 +24,98 @@
 #include <sys/time.h>
 #include <sys/stat.h>
 
-/***********************************************************************
- IMPORTANT NOTE:
-
- According to TR69 spec:
- On successful receipt of a SetParameterValues RPC, the CPE MUST apply
- the changes to all of the specified Parameters atomically. That is, either
- all of the value changes are applied together, or none of the changes are
- applied at all. In the latter case, the CPE MUST return a fault response
- indicating the reason for the failure to apply the changes.
-
- The CPE MUST NOT apply any of the specified changes without applying all
- of them.
-
- In order to set parameter values correctly, the back-end is required to
- hold the updated values until "Validate" and "Commit" are called. Only after
- all the "Validate" passed in different objects, the "Commit" will be called.
- Otherwise, "Rollback" will be called instead.
-
- The sequence in COSA Data Model will be:
-
- SetParamBoolValue/SetParamIntValue/SetParamUlongValue/SetParamStringValue
- -- Backup the updated values;
-
- if( Validate_XXX())
- {
-     Commit_XXX();    -- Commit the update all together in the same object
- }
- else
- {
-     Rollback_XXX();  -- Remove the update at backup;
- }
-
-***********************************************************************/
-#define EVENT_LOG_REFRESH_INTERVAL 20
 #define EVENT_LOG_SIZE 100
-/* Event Log format: <date> <time> <pri> <tag> <message> */
-/* eg. 2021-10-26 09:37:08 [4][WI] Radar signal detected, DFS sequence applied, channel changed from 100/80 to 36/80 */
-#define EVENT_LOG_LINE_FORMAT "%127s %127s [%127[^]]][%127[^]]] %511[^\t\n]"
-#define EVENT_LOG_STR_SIZE 128
-#define EVENT_LOG_PARAM_NUM_IN_LINE 5
-#define LGI_EVENT_LOG_FILE "/tmp/channel_event_1.log"
-#define LGI_EVENT_LOG_FILE_TEMP "/tmp/EventLogTemp"
+#define EVENT_LOG_REFRESH_INTERVAL 20
 
-static ulong logupdatetime;
+#define LGI_EVENT_LOG_FILE          "/tmp/channel_event_1.log"
+#define LGI_EVENT_LOG_FILE_TEMP     "/tmp/EventLogTemp"
 
-static ULONG getLogLines(char *filename)
+#define TIME_NO_NEGATIVE(x) ((long)(x) < 0 ? 0 : (x))
+
+static unsigned long logupdatetime;
+
+
+static int update_pValue (char *pValue, PULONG pulSize, char *str)
 {
-    FILE *fp = NULL;
-    char ch = '\0';
-    ULONG lines = 0;
+    if (!str)
+        return -1;
 
-    fp = fopen(filename, "r");
-    if (fp == NULL)
+    size_t len = strlen(str);
+
+    if (len < *pulSize)
+    {
+        memcpy(pValue, str, len + 1);
+        return 0;
+    }
+
+    *pulSize = len + 1;
+    return 1;
+}
+
+static int getLogLines (char *filename)
+{
+    FILE *fp;
+    int lines = 0;
+
+    if ((fp = fopen(filename, "r")) == NULL)
     {
         return 0;
     }
 
-    while(!feof(fp))
+    while (!feof(fp))
     {
-        ch = fgetc(fp);
-        if(ch == '\n')
+        if (fgetc(fp) == '\n')
         {
             lines++;
         }
     }
+
     fclose(fp);
+
     return lines;
 }
 
-ANSC_STATUS
-CosaDmlGetEventLog
-    (
-        ANSC_HANDLE                 hContext,
-        PULONG                      pulCount,
-        PCOSA_DATAMODEL_LGI_EVENTLOG    *ppConf
-    )
+static ANSC_STATUS CosaDmlGetEventLog (PCOSA_DATAMODEL_LGI_EVENTLOGTABLE pMyObject)
 {
-    int log_max_num = 0;
-    int count = 0;
-    int i = 0;
-    int param_num = 0;
-    PCOSA_DATAMODEL_LGI_EVENTLOG pEVENTLog = NULL;
-    unsigned long long pos = 0;
-
-    char str[EVENT_LOG_PARAM_NUM_IN_LINE*EVENT_LOG_STR_SIZE] = {0};
-    char cmd[EVENT_LOG_STR_SIZE] = {0};
-    char date[EVENT_LOG_STR_SIZE] = {0};
-    char time[EVENT_LOG_STR_SIZE] = {0};
-    char tag[EVENT_LOG_STR_SIZE] = {0};
-    char pri[EVENT_LOG_STR_SIZE] = {0};
-    char desc[LGI_EVENT_LOG_INFO_LEN] = {0};
-    FILE *fp = NULL;
-    int log0_lines =  0;
+    char str[ LGI_EVENT_LOG_TIME_LEN + 32 + LGI_EVENT_LOG_TAG_LEN + LGI_EVENT_LOG_INFO_LEN + 32 ];
+    PCOSA_DATAMODEL_LGI_EVENTLOG pEVENTLog;
+    FILE *fp;
+    int log0_lines = 0;
+    int log_max_num;
+    int count;
+    long pos;
+    int i;
 
     if (access(LGI_EVENT_LOG_FILE, F_OK) == 0)
     {
         log0_lines = getLogLines(LGI_EVENT_LOG_FILE);
     }
-    if(log0_lines == 0)
+
+    if (log0_lines == 0)
     {
         return ANSC_STATUS_FAILURE;
     }
 
-    /* Read the last 100 lines from /tmp/channel_event_1.log */
-    sprintf(cmd, "tail -100 %s > %s", LGI_EVENT_LOG_FILE, LGI_EVENT_LOG_FILE_TEMP);
- 
-    system(cmd);
-    log_max_num =( log0_lines < EVENT_LOG_SIZE) ? (log0_lines) : (EVENT_LOG_SIZE);
-    pEVENTLog= (PCOSA_DATAMODEL_LGI_EVENTLOG)AnscAllocateMemory(log_max_num * sizeof(COSA_DATAMODEL_LGI_EVENTLOG));
-    if(pEVENTLog== NULL)
+    log_max_num = (log0_lines < EVENT_LOG_SIZE) ? log0_lines : EVENT_LOG_SIZE;
+
+    pEVENTLog = AnscAllocateMemory(sizeof(COSA_DATAMODEL_LGI_EVENTLOG) * log_max_num);
+
+    if (pEVENTLog == NULL)
     {
-        unlink(LGI_EVENT_LOG_FILE_TEMP);
         return ANSC_STATUS_FAILURE;
     }
 
-    fp = fopen(LGI_EVENT_LOG_FILE_TEMP, "r");
-    if(!fp)
+    /* Read the last 100 lines (ie EVENT_LOG_SIZE) from /tmp/channel_event_1.log into new temp file */
+
+    system("tail -100 " LGI_EVENT_LOG_FILE " > " LGI_EVENT_LOG_FILE_TEMP);
+
+    if ((fp = fopen(LGI_EVENT_LOG_FILE_TEMP, "r")) == NULL)
     {
         AnscFreeMemory(pEVENTLog);
         unlink(LGI_EVENT_LOG_FILE_TEMP);
         return ANSC_STATUS_FAILURE;
     }
+
     if (fseek(fp, 0, SEEK_END))
     {
         AnscFreeMemory(pEVENTLog);
@@ -151,51 +123,58 @@ CosaDmlGetEventLog
         unlink(LGI_EVENT_LOG_FILE_TEMP);
         return ANSC_STATUS_FAILURE;
     }
-    else
-    {
-        fseek(fp, 0, SEEK_SET);
-        pos = ftell(fp);
+
+    fseek(fp, 0, SEEK_SET);
+    pos = ftell(fp);
+    count = 0;
 
     while (pos)
     {
         if (!fseek(fp, --pos, SEEK_SET))
-            {
-                if (fgetc(fp) == '\n')
-                {
-                    if (count++ == EVENT_LOG_SIZE)
-                    {
-                        break;
-                    }
-                }
-            }
-        }
-        while (fgets(str, sizeof(str), fp))
         {
-            if (i >= log_max_num)
+            if (fgetc(fp) == '\n')
+            {
+                if (count++ == EVENT_LOG_SIZE)
                 {
                     break;
                 }
-            /* Event Log format: <date> <time> <pri> <tag> <message> */
-            param_num = sscanf(str, EVENT_LOG_LINE_FORMAT, date, time, pri, tag, desc);
-
-        if (param_num != EVENT_LOG_PARAM_NUM_IN_LINE)
-            {
-                //ignore this line if the format is not correct
-                continue;
             }
-            snprintf(pEVENTLog[i].Timestamp, sizeof(pEVENTLog[i].Timestamp), "%sT%s", date, time);
-
-         strncpy(pEVENTLog[i].Tag, tag, EVENT_LOG_STR_SIZE);
-         sscanf(pri, "%d", &pEVENTLog[i].Pri);
-         strncpy(pEVENTLog[i].Message, desc, LGI_EVENT_LOG_INFO_LEN);
-            i++;
-        
-       }
+        }
     }
+
+    i = 0;
+
+    while (fgets(str, sizeof(str), fp))
+    {
+        char time[20];
+
+        if (i >= log_max_num)
+        {
+            break;
+        }
+
+        /*
+           Event Log format: <date> <time> <pri> <tag> <message>
+           Example: 2021-10-26 09:37:08 [4][WI] Radar signal detected, DFS sequence applied, channel changed from 100/80 to 36/80
+        */
+        if (sscanf(str, "%31s %19s [%lu][%127[^]]] %511[^\t\n]", pEVENTLog[i].Timestamp, time, &pEVENTLog[i].Pri, pEVENTLog[i].Tag, pEVENTLog[i].Message) != 5)
+        {
+            continue;
+        }
+
+        strcat(pEVENTLog[i].Timestamp, "T");
+        strcat(pEVENTLog[i].Timestamp, time);
+
+        i++;
+    }
+
     fclose(fp);
+
     unlink(LGI_EVENT_LOG_FILE_TEMP);
-    *pulCount = i;
-    *ppConf = pEVENTLog;
+
+    pMyObject->pEventLogTable = pEVENTLog;
+    pMyObject->EventLogEntryCount = i;
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -213,303 +192,96 @@ CosaDmlGetEventLog
     *  EventLog_GetParamStringValue
 
 ***********************************************************************/
-/**********************************************************************
 
-    caller:     owner of this object
-
-    prototype:
-
-        ULONG
-        EventLog_GetEntryCount
-            (
-                ANSC_HANDLE                 hInsContext
-            );
-
-    description:
-
-        This function is called to retrieve the count of the table.
-
-    argument:   ANSC_HANDLE                 hInsContext,
-                The instance handle;
-
-    return:     The count of the table
-
-**********************************************************************/
-ULONG
-EventLog_GetEntryCount
-    (
-        ANSC_HANDLE                 hInsContext
-    )
+ULONG EventLog_GetEntryCount (ANSC_HANDLE hInsContext)
 {
-    PCOSA_DATAMODEL_LGI_EVENTLOGTABLE            pMyObject     = (PCOSA_DATAMODEL_LGI_EVENTLOGTABLE)g_pCosaBEManager->hLgiEventlog;
+    PCOSA_DATAMODEL_LGI_EVENTLOGTABLE pMyObject = (PCOSA_DATAMODEL_LGI_EVENTLOGTABLE) g_pCosaBEManager->hLgiEventlog;
+
     return pMyObject->EventLogEntryCount;
 }
 
-/**********************************************************************
-
-    caller:     owner of this object
-
-    prototype:
-
-        ANSC_HANDLE
-        EventLog_GetEntry
-            (
-                ANSC_HANDLE                 hInsContext,
-                ULONG                       nIndex,
-                ULONG*                      pInsNumber
-            );
-
-    description:
-
-        This function is called to retrieve the entry specified by the index.
-
-    argument:   ANSC_HANDLE                 hInsContext,
-                The instance handle;
-
-                ULONG                       nIndex,
-                The index of this entry;
-
-                ULONG*                      pInsNumber
-                The output instance number;
-
-    return:     The handle to identify the entry
-
-**********************************************************************/
-ANSC_HANDLE
-EventLog_GetEntry
-    (
-        ANSC_HANDLE                 hInsContext,
-        ULONG                       nIndex,
-        ULONG*                      pInsNumber
-    )
+ANSC_HANDLE EventLog_GetEntry (ANSC_HANDLE hInsContext, ULONG nIndex, ULONG *pInsNumber)
 {
-    PCOSA_DATAMODEL_LGI_EVENTLOGTABLE            pMyObject     = (PCOSA_DATAMODEL_LGI_EVENTLOGTABLE)g_pCosaBEManager->hLgiEventlog;
+    PCOSA_DATAMODEL_LGI_EVENTLOGTABLE pMyObject = (PCOSA_DATAMODEL_LGI_EVENTLOGTABLE) g_pCosaBEManager->hLgiEventlog;
+
     if (nIndex < pMyObject->EventLogEntryCount)
     {
-        *pInsNumber  = nIndex + 1;
-        return  &pMyObject->pEventLogTable[nIndex];
+        *pInsNumber = nIndex + 1;
+        return &pMyObject->pEventLogTable[nIndex];
     }
-    return NULL; /* return the handle */
+
+    return NULL;
 }
-/**********************************************************************
 
-    caller:     owner of this object
-
-    prototype:
-
-        BOOL
-        EventLog_IsUpdated
-            (
-                ANSC_HANDLE                 hInsContext
-            );
-
-    description:
-
-        This function is checking whether the table is updated or not.
-
-    argument:   ANSC_HANDLE                 hInsContext,
-                The instance handle;
-
-    return:     TRUE or FALSE.
-
-**********************************************************************/
-BOOL
-EventLog_IsUpdated
-    (
-        ANSC_HANDLE                 hInsContext
-    )
+BOOL EventLog_IsUpdated (ANSC_HANDLE hInsContext)
 {
-    PCOSA_DATAMODEL_LGI_EVENTLOGTABLE            pMyObject     = (PCOSA_DATAMODEL_LGI_EVENTLOGTABLE)g_pCosaBEManager->hLgiEventlog;
-    if ( !logupdatetime)
+    PCOSA_DATAMODEL_LGI_EVENTLOGTABLE pMyObject = (PCOSA_DATAMODEL_LGI_EVENTLOGTABLE) g_pCosaBEManager->hLgiEventlog;
+
+    if (logupdatetime == 0)
     {
         logupdatetime = AnscGetTickInSeconds();
+
         return TRUE;
     }
-    if ( logupdatetime >= TIME_NO_NEGATIVE(AnscGetTickInSeconds() - EVENT_LOG_REFRESH_INTERVAL) )
+
+    if (logupdatetime >= TIME_NO_NEGATIVE(AnscGetTickInSeconds() - EVENT_LOG_REFRESH_INTERVAL))
     {
         return FALSE;
     }
-    else
-    {
-        logupdatetime = AnscGetTickInSeconds();
-        return TRUE;
-    }
+
+    logupdatetime = AnscGetTickInSeconds();
+
+    return TRUE;
 }
-/**********************************************************************
 
-    caller:     owner of this object
-
-    prototype:
-
-        ULONG
-        EventLog_Synchronize
-            (
-                ANSC_HANDLE                 hInsContext
-            );
-
-    description:
-
-        This function is called to synchronize the table.
-
-    argument:   ANSC_HANDLE                 hInsContext,
-                The instance handle;
-
-    return:     The status of the operation.
-
-**********************************************************************/
-ULONG
-EventLog_Synchronize
-    (
-        ANSC_HANDLE                 hInsContext
-    )
+ULONG EventLog_Synchronize (ANSC_HANDLE hInsContext)
 {
-    PCOSA_DATAMODEL_LGI_EVENTLOGTABLE            pMyObject     = (PCOSA_DATAMODEL_LGI_EVENTLOGTABLE)g_pCosaBEManager->hLgiEventlog;
-    ANSC_STATUS                     ret           = ANSC_STATUS_SUCCESS;
-    
-    if ( pMyObject->pEventLogTable )
+    PCOSA_DATAMODEL_LGI_EVENTLOGTABLE pMyObject = (PCOSA_DATAMODEL_LGI_EVENTLOGTABLE) g_pCosaBEManager->hLgiEventlog;
+
+    if (pMyObject->pEventLogTable)
     {
         AnscFreeMemory(pMyObject->pEventLogTable);
-        pMyObject->pEventLogTable = NULL;
-        pMyObject->EventLogEntryCount = 0;
     }
-    ret = CosaDmlGetEventLog
-        (
-            (ANSC_HANDLE)NULL,
-            &pMyObject->EventLogEntryCount,
-            &pMyObject->pEventLogTable
-        );
-    if ( ret != ANSC_STATUS_SUCCESS )
-    {
-        pMyObject->pEventLogTable = NULL;
-        pMyObject->EventLogEntryCount = 0;
-    }
+
+    pMyObject->pEventLogTable = NULL;
+    pMyObject->EventLogEntryCount = 0;
+
+    CosaDmlGetEventLog(pMyObject);
+
     return ANSC_STATUS_SUCCESS;
 }
-/**********************************************************************
 
-    caller:     owner of this object
-
-    prototype:
-
-        BOOL
-        EventLog_GetParamUlongValue
-            (
-                ANSC_HANDLE                 hInsContext,
-                char*                       ParamName,
-                ULONG*                      puLong
-            );
-
-    description:
-
-        This function is called to retrieve ULONG parameter value;
-
-    argument:   ANSC_HANDLE                 hInsContext,
-                The instance handle;
-
-                char*                       ParamName,
-                The parameter name;
-
-                ULONG*                      puLong
-                The buffer of returned ULONG value;
-
-    return:     TRUE if succeeded.
-
-**********************************************************************/
-BOOL
-EventLog_GetParamUlongValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        ULONG*                      puLong
-    )
+BOOL EventLog_GetParamUlongValue (ANSC_HANDLE hInsContext, char *ParamName, ULONG *puLong)
 {
-    
-    PCOSA_DATAMODEL_LGI_EVENTLOG    pEventLogInfo  = (PCOSA_DATAMODEL_LGI_EVENTLOG)hInsContext;
+    PCOSA_DATAMODEL_LGI_EVENTLOG pEventLogInfo = (PCOSA_DATAMODEL_LGI_EVENTLOG) hInsContext;
+
     if (strcmp(ParamName, "Pri") == 0)
-     {
-         *puLong = pEventLogInfo->Pri;
-         return TRUE;
-     }
+    {
+        *puLong = pEventLogInfo->Pri;
+
+        return TRUE;
+    }
+
     return FALSE;
 }
-/**********************************************************************
 
-    caller:     owner of this object
-
-    prototype:
-
-        ULONG
-        EventLog_GetParamStringValue
-            (
-                ANSC_HANDLE                 hInsContext,
-                char*                       ParamName,
-                char*                       pValue,
-                ULONG*                      pUlSize
-            );
-
-    description:
-
-        This function is called to retrieve string parameter value;
-
-    argument:   ANSC_HANDLE                 hInsContext,
-                The instance handle;
-
-                char*                       ParamName,
-                The parameter name;
-
-                char*                       pValue,
-                The string value buffer;
-
-                ULONG*                      pUlSize
-                The buffer of length of string value;
-                Usually size of 1023 will be used.
-                If it's not big enough, put required size here and return 1;
-
-    return:     0 if succeeded;
-                1 if short of buffer size; (*pUlSize = required size)
-                -1 if not supported.
-
-**********************************************************************/
-ULONG
-EventLog_GetParamStringValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        char*                       pValue,
-        ULONG*                      pUlSize
-    )
+ULONG EventLog_GetParamStringValue (ANSC_HANDLE hInsContext, char *ParamName, char *pValue, ULONG *pUlSize)
 {
+    PCOSA_DATAMODEL_LGI_EVENTLOG pEventLogInfo = (PCOSA_DATAMODEL_LGI_EVENTLOG) hInsContext;
 
-    PCOSA_DATAMODEL_LGI_EVENTLOG    pEventLogInfo  = (PCOSA_DATAMODEL_LGI_EVENTLOG)hInsContext;
     if (strcmp(ParamName, "Tag") == 0)
     {
-        if ( _ansc_strlen(pEventLogInfo->Tag) >= *pUlSize )
-        {
-            *pUlSize = _ansc_strlen(pEventLogInfo->Tag);
-            return 1;
-        }
-        AnscCopyString(pValue, pEventLogInfo->Tag);
-        return 0;
+        return update_pValue(pValue, pUlSize, pEventLogInfo->Tag);
     }
+
     if (strcmp(ParamName, "Timestamp") == 0)
     {
-        if ( _ansc_strlen(pEventLogInfo->Timestamp) >= *pUlSize )
-        {
-            *pUlSize = _ansc_strlen(pEventLogInfo->Timestamp);
-            return 1;
-        }
-        AnscCopyString(pValue, pEventLogInfo->Timestamp);
-        return 0;
+        return update_pValue(pValue, pUlSize, pEventLogInfo->Timestamp);
     }
+
     if (strcmp(ParamName, "Message") == 0)
     {
-        if ( _ansc_strlen(pEventLogInfo->Message) >= *pUlSize )
-        {
-            *pUlSize = _ansc_strlen(pEventLogInfo->Message);
-            return 1;
-        }
-        AnscCopyString(pValue, pEventLogInfo->Message);
-        return 0;
+        return update_pValue(pValue, pUlSize, pEventLogInfo->Message);
     }
 
     return -1;
