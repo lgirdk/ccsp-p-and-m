@@ -4164,7 +4164,13 @@ void* update_iptable_thread(void* arg)
 
 void clear_rules_out_of_range(lanSetting_t lan_info)
 {
-    AnscCreateTask(update_iptable_thread, USER_DEFAULT_TASK_STACK_SIZE, USER_DEFAULT_TASK_PRIORITY, (void *)&lan_info, "UpdateIPTableThread");
+    void *tid = NULL;
+
+    tid = AnscCreateTask(update_iptable_thread, USER_DEFAULT_TASK_STACK_SIZE, USER_DEFAULT_TASK_PRIORITY, (void *)&lan_info, "UpdateIPTableThread");
+    if(tid != NULL)
+    {
+        pthread_detach((pthread_t)tid);
+    }
 }
 
 ANSC_STATUS
@@ -4182,6 +4188,7 @@ CosaDmlLanMngm_SetConf(ULONG ins, PCOSA_DML_LAN_MANAGEMENT pLanMngm)
 	char pComponentPath[64]="/com/cisco/spvtg/ccsp/moca";
 	char *paramNames[]={"Device.MoCA.Interface.1.Enable"};
 	int nval;
+	void *tid = NULL;
 #endif
     
     COSA_DML_LAN_MANAGEMENT orgLanMngm;
@@ -4268,7 +4275,11 @@ CosaDmlLanMngm_SetConf(ULONG ins, PCOSA_DML_LAN_MANAGEMENT pLanMngm)
         inet_ntop(AF_INET, &(pLanMngm->LanSubnetMask), str, sizeof(str));
         memcpy(&(lan.netmask), str, sizeof(str));
         Utopia_SetLanSettings(&utctx, &lan);
-        AnscCreateTask(update_iptable_thread, USER_DEFAULT_TASK_STACK_SIZE, USER_DEFAULT_TASK_PRIORITY, (void *)&lan, "UpdateIPTableThread");
+        tid = AnscCreateTask(update_iptable_thread, USER_DEFAULT_TASK_STACK_SIZE, USER_DEFAULT_TASK_PRIORITY, (void *)&lan, "UpdateIPTableThread");
+        if(tid != NULL)
+        {
+            pthread_detach((pthread_t)tid);
+        }
 
         if((orgLanMngm.LanIPAddress.Value != pLanMngm->LanIPAddress.Value) || (orgLanMngm.LanSubnetMask.Value != pLanMngm->LanSubnetMask.Value))
         {
