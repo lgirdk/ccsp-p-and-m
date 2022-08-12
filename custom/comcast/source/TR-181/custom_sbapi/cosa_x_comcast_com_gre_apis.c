@@ -444,6 +444,7 @@ CosaDml_GreInit(void)
     int shmid;
 #if !defined (_SR213_PRODUCT_REQ_) || (defined (_SR213_PRODUCT_REQ_) && !defined(RDK_ONEWIFI)) //SHARMAN-1054
     void *params = NULL;
+    void *tid = NULL;
 #endif
 	CcspTraceInfo(( "%s %d - Entry\n", __FUNCTION__, __LINE__ ));
 
@@ -477,7 +478,11 @@ CosaDml_GreInit(void)
 #if !defined (_SR213_PRODUCT_REQ_) || (defined (_SR213_PRODUCT_REQ_) && !defined(RDK_ONEWIFI)) //SHARMAN-1054
 	CcspTraceInfo(( "%s %d - Creating circuit_id_init_thread thread\n", __FUNCTION__, __LINE__ ));
 
-    AnscCreateTask(circuit_id_init_thread, USER_DEFAULT_TASK_STACK_SIZE, USER_DEFAULT_TASK_PRIORITY, params, "CircuitIDInitThread");
+    tid = AnscCreateTask(circuit_id_init_thread, USER_DEFAULT_TASK_STACK_SIZE, USER_DEFAULT_TASK_PRIORITY, params, "CircuitIDInitThread");
+    if(tid != NULL)
+    {
+        pthread_detach((pthread_t)tid);
+    }
 
 	CcspTraceInfo(( "%s %d - Init Hotspot GRE Done\n", __FUNCTION__, __LINE__ ));
 #endif
