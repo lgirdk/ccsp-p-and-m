@@ -4492,6 +4492,7 @@ Pool1_GetParamIntValue
     if (strcmp(ParamName, "LeaseTime") == 0)
     {
         /* collect value */
+        CosaDmlDhcpv6sGetPoolCfg( NULL, &pPool->Cfg);
         *pInt  = pPool->Cfg.LeaseTime;
 
         return TRUE;
