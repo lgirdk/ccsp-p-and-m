@@ -4328,7 +4328,13 @@ void* update_iptable_thread(void* arg)
 
 void clear_rules_out_of_range(lanSetting_t lan_info)
 {
-    AnscCreateTask(update_iptable_thread, USER_DEFAULT_TASK_STACK_SIZE, USER_DEFAULT_TASK_PRIORITY, (void *)&lan_info, "UpdateIPTableThread");
+    void *tid = NULL;
+
+    tid = AnscCreateTask(update_iptable_thread, USER_DEFAULT_TASK_STACK_SIZE, USER_DEFAULT_TASK_PRIORITY, (void *)&lan_info, "UpdateIPTableThread");
+    if(tid != NULL)
+    {
+        pthread_detach((pthread_t)tid);
+    }
 }
 
 ANSC_STATUS
@@ -4340,6 +4346,7 @@ CosaDmlLanMngm_SetConf(ULONG ins, PCOSA_DML_LAN_MANAGEMENT pLanMngm)
     bridgeInfo_t bridge_info;
     char str[IFNAME_SZ];    
     napt_mode_t napt;
+    void *tid = NULL;
 #if !defined (NO_MOCA_FEATURE_SUPPORT)
 	parameterValStruct_t **valMoCAstatus = NULL;
 	char pMoCAComponentName[64]="eRT.com.cisco.spvtg.ccsp.moca";
@@ -4444,7 +4451,11 @@ CosaDmlLanMngm_SetConf(ULONG ins, PCOSA_DML_LAN_MANAGEMENT pLanMngm)
         inet_ntop(AF_INET, &(pLanMngm->LanSubnetMask), str, sizeof(str));
         memcpy(&(lan.netmask), str, sizeof(str));
         Utopia_SetLanSettings(&utctx, &lan);
-        AnscCreateTask(update_iptable_thread, USER_DEFAULT_TASK_STACK_SIZE, USER_DEFAULT_TASK_PRIORITY, (void *)&lan, "UpdateIPTableThread");
+        tid = AnscCreateTask(update_iptable_thread, USER_DEFAULT_TASK_STACK_SIZE, USER_DEFAULT_TASK_PRIORITY, (void *)&lan, "UpdateIPTableThread");
+        if(tid != NULL)
+        {
+            pthread_detach((pthread_t)tid);
+        }
 
         if((orgLanMngm.LanIPAddress.Value != pLanMngm->LanIPAddress.Value) || (orgLanMngm.LanSubnetMask.Value != pLanMngm->LanSubnetMask.Value))
         {
