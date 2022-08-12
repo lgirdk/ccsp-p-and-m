@@ -3984,6 +3984,17 @@
                             <syntax>string</syntax>
 
                         </parameter>
+                        <parameter>
+
+                            <name>X_LGI-COM_CutOutTempExceeded</name>
+
+                            <type>boolean</type>
+
+                            <syntax>bool</syntax>
+
+                            <writable>false</writable>
+
+                        </parameter>
 
                     </parameters>
 
