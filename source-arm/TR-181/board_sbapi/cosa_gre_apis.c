@@ -566,6 +566,7 @@ CosaDmlGREInit_HotspotParams(
     int                        shmid          = 0;
     int                        shmid_snooper  = 0;
     int                        hotspotPresent = 0;
+    void*                      tid            = NULL;
 
     pSLinkEntry = AnscSListGetFirstEntry(&pGREContext->GRETunnelTR181List);
 
@@ -630,7 +631,11 @@ CosaDmlGREInit_HotspotParams(
 
     if(hotspotPresent)
     {
-        AnscCreateTask(GRE_HS_circuit_id_init_thread, USER_DEFAULT_TASK_STACK_SIZE, USER_DEFAULT_TASK_PRIORITY, params, "GRE_HS_CircuitIDInitThread");
+        tid = AnscCreateTask(GRE_HS_circuit_id_init_thread, USER_DEFAULT_TASK_STACK_SIZE, USER_DEFAULT_TASK_PRIORITY, params, "GRE_HS_CircuitIDInitThread");
+        if(tid != NULL)
+        {
+            pthread_detach((pthread_t)tid);
+        }
     }
 
     return ANSC_STATUS_SUCCESS;
