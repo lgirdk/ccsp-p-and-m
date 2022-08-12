@@ -440,6 +440,7 @@ CosaDml_GreInit(void)
 {
     int shmid;
     void *params = NULL;
+    void *tid = NULL;
 
 	CcspTraceInfo(( "%s %d - Entry\n", __FUNCTION__, __LINE__ ));
 
@@ -473,7 +474,11 @@ CosaDml_GreInit(void)
     
 	CcspTraceInfo(( "%s %d - Creating circuit_id_init_thread thread\n", __FUNCTION__, __LINE__ ));
 
-    AnscCreateTask(circuit_id_init_thread, USER_DEFAULT_TASK_STACK_SIZE, USER_DEFAULT_TASK_PRIORITY, params, "CircuitIDInitThread");
+    tid = AnscCreateTask(circuit_id_init_thread, USER_DEFAULT_TASK_STACK_SIZE, USER_DEFAULT_TASK_PRIORITY, params, "CircuitIDInitThread");
+    if(tid != NULL)
+    {
+        pthread_detach((pthread_t)tid);
+    }
 
 	CcspTraceInfo(( "%s %d - Init Hotspot GRE Done\n", __FUNCTION__, __LINE__ ));
 
