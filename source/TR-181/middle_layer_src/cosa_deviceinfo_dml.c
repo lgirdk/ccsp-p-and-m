@@ -5637,6 +5637,12 @@ TemperatureSensor_GetParamBoolValue
         return TRUE;
     }
 
+    if (strcmp(ParamName, "X_LGI-COM_CutOutTempExceeded") == 0)
+    {
+        *pBool = PTempSensorEntry->CutOutTempExceeded;
+        return TRUE;
+    }
+
     return FALSE;
 }
 
@@ -6043,13 +6049,19 @@ TemperatureSensor_SetParamIntValue
     /* check the parameter name and set the corresponding value */
     if (strcmp(ParamName, "LowAlarmValue") == 0)
     {
-        CosaTemperatureSensorSetLowAlarm(bValue, pTempSensorEntry);
+        if (CosaTemperatureSensorSetLowAlarm(bValue, pTempSensorEntry) != ANSC_STATUS_SUCCESS)
+        {
+            return FALSE;
+        }
         return TRUE;
     }
 
     if (strcmp(ParamName, "HighAlarmValue") == 0)
     {
-        CosaTemperatureSensorSetHighAlarm(bValue, pTempSensorEntry);
+        if (CosaTemperatureSensorSetHighAlarm(bValue, pTempSensorEntry) != ANSC_STATUS_SUCCESS)
+        {
+            return FALSE;
+        }
         return TRUE;
     }
 

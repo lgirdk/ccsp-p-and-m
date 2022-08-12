@@ -280,6 +280,7 @@ _COSA_TEMPERATURE_SENSOR_ENTRY
     int                                     HighAlarmValue;
     unsigned long                           PollingInterval;
     char                                    HighAlarmTime[64];
+    BOOL                                    CutOutTempExceeded;
 }
 COSA_TEMPERATURE_SENSOR_ENTRY, *PCOSA_TEMPERATURE_SENSOR_ENTRY;
 
@@ -312,8 +313,8 @@ ULONG COSADmlGetMaxWindowSize();
 
 ANSC_HANDLE CosaTemperatureStatusCreate (void);
 void COSADmlRemoveTemperatureInfo (PCOSA_DATAMODEL_TEMPERATURE_STATUS pObj);
-void CosaTemperatureSensorSetLowAlarm (int lowAlarmValue, PCOSA_TEMPERATURE_SENSOR_ENTRY pTempSensor);
-void CosaTemperatureSensorSetHighAlarm (int highAlarmValue, PCOSA_TEMPERATURE_SENSOR_ENTRY pTempSensor);
+ANSC_STATUS CosaTemperatureSensorSetLowAlarm (int lowAlarmValue, PCOSA_TEMPERATURE_SENSOR_ENTRY pTempSensor);
+ANSC_STATUS CosaTemperatureSensorSetHighAlarm (int highAlarmValue, PCOSA_TEMPERATURE_SENSOR_ENTRY pTempSensor);
 void CosaTemperatureSensorSetPollingTime (ULONG pollingInterval, PCOSA_TEMPERATURE_SENSOR_ENTRY pTempSensor);
 void CosaTemperatureSensorReset (BOOL isEnable, PCOSA_TEMPERATURE_SENSOR_ENTRY pTempSensor);
 
