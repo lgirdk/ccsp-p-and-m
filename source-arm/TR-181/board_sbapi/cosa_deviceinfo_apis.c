@@ -335,9 +335,11 @@ void CosaDmlDiCheckAndEnableMoCA( void )
 #define ABSOLUTE_ZERO_TEMPERATURE   -274
 #define UNKNOWN_TIME                "0001-01-01T00:00:00Z"
 
-#if defined (_LG_MV2_PLUS_)
+/*
+   Temperature limit in Celsius. Attempts to set the high temperature alarm
+   above this value (ie to effectively disable the alarm) will be rejected.
+*/
 #define TEMP_SENSOR_HIGH_ALARM_LIMIT 99
-#endif
 
 static pthread_t gPoll_threadId[MAX_TEMPSENSOR_INSTANCE];
 
@@ -1947,10 +1949,10 @@ static int pollTemperature_oneshot (PCOSA_DATAMODEL_TEMPERATURE_STATUS pTempStat
             strcpy(pTempSensor->LowAlarmTime, currTime);
         }
 
-        if ((pTempSensor->HighAlarmValue != ABSOLUTE_ZERO_TEMPERATURE) &&
-            (currTemp >= pTempSensor->HighAlarmValue) &&
+        if ((currTemp >= pTempSensor->HighAlarmValue) &&
             (strcmp(pTempSensor->HighAlarmTime, UNKNOWN_TIME) == 0))
         {
+            pTempSensor->CutOutTempExceeded = TRUE;
             strcpy(pTempSensor->HighAlarmTime, currTime);
         }
     }
@@ -2024,6 +2026,7 @@ void CosaTemperatureSensorReset (BOOL isEnable, PCOSA_TEMPERATURE_SENSOR_ENTRY p
         pTempSensor->Value = ABSOLUTE_ZERO_TEMPERATURE;
         pTempSensor->MinValue = ABSOLUTE_ZERO_TEMPERATURE;
         pTempSensor->MaxValue = ABSOLUTE_ZERO_TEMPERATURE;
+        pTempSensor->CutOutTempExceeded = FALSE;
 
         strcpy(pTempSensor->ResetTime, currTime);
         strcpy(pTempSensor->LastUpdate, UNKNOWN_TIME);
@@ -2084,7 +2087,7 @@ void CosaTemperatureSensorSetPollingTime (ULONG pollingInterval, PCOSA_TEMPERATU
     pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
 }
 
-void CosaTemperatureSensorSetLowAlarm (int lowAlarmValue, PCOSA_TEMPERATURE_SENSOR_ENTRY pTempSensor)
+ANSC_STATUS CosaTemperatureSensorSetLowAlarm (int lowAlarmValue, PCOSA_TEMPERATURE_SENSOR_ENTRY pTempSensor)
 {
     PCOSA_DATAMODEL_TEMPERATURE_STATUS pTempStatus = (PCOSA_DATAMODEL_TEMPERATURE_STATUS)g_pCosaBEManager->hTemperatureStatus;
     int index = pTempSensor->InstanceNumber;
@@ -2093,22 +2096,25 @@ void CosaTemperatureSensorSetLowAlarm (int lowAlarmValue, PCOSA_TEMPERATURE_SENS
     pTempSensor->LowAlarmValue = lowAlarmValue;
     strcpy(pTempSensor->LowAlarmTime, UNKNOWN_TIME);
     pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
+    return ANSC_STATUS_SUCCESS;
 }
 
-void CosaTemperatureSensorSetHighAlarm (int highAlarmValue, PCOSA_TEMPERATURE_SENSOR_ENTRY pTempSensor)
+ANSC_STATUS CosaTemperatureSensorSetHighAlarm (int highAlarmValue, PCOSA_TEMPERATURE_SENSOR_ENTRY pTempSensor)
 {
     PCOSA_DATAMODEL_TEMPERATURE_STATUS pTempStatus = (PCOSA_DATAMODEL_TEMPERATURE_STATUS)g_pCosaBEManager->hTemperatureStatus;
     int index = pTempSensor->InstanceNumber;
 
-#if defined (TEMP_SENSOR_HIGH_ALARM_LIMIT)
     if (highAlarmValue > TEMP_SENSOR_HIGH_ALARM_LIMIT)
-        highAlarmValue = TEMP_SENSOR_HIGH_ALARM_LIMIT;
-#endif
+    {
+        return ANSC_STATUS_FAILURE;
+    }
 
     pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
     pTempSensor->HighAlarmValue = highAlarmValue;
     strcpy(pTempSensor->HighAlarmTime, UNKNOWN_TIME);
+    pTempSensor->CutOutTempExceeded = FALSE;
     pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
+    return ANSC_STATUS_SUCCESS;
 }
 
 ANSC_HANDLE CosaTemperatureStatusCreate (void)
@@ -2155,7 +2161,7 @@ ANSC_HANDLE CosaTemperatureStatusCreate (void)
         pTempSensor->MinValue = ABSOLUTE_ZERO_TEMPERATURE;
         pTempSensor->MaxValue = ABSOLUTE_ZERO_TEMPERATURE;
         pTempSensor->LowAlarmValue = ABSOLUTE_ZERO_TEMPERATURE;
-        pTempSensor->HighAlarmValue = ABSOLUTE_ZERO_TEMPERATURE;
+        pTempSensor->HighAlarmValue = TEMP_SENSOR_HIGH_ALARM_LIMIT;
         pTempSensor->PollingInterval = 0;
 
         strcpy(pTempSensor->ResetTime, currTime);
