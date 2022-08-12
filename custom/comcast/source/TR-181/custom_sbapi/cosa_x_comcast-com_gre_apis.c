@@ -445,6 +445,7 @@ CosaDml_GreTunnelInit(void)
 {
     int shmid;
     void *params = NULL;
+    void *tid = NULL;
 
     sysevent_fd = sysevent_open(
             "127.0.0.1", SE_SERVER_WELL_KNOWN_PORT, 
@@ -470,7 +471,11 @@ CosaDml_GreTunnelInit(void)
         return ANSC_STATUS_FAILURE;
     }
     
-    AnscCreateTask(GreTunnel_circuit_id_init_thread, USER_DEFAULT_TASK_STACK_SIZE, USER_DEFAULT_TASK_PRIORITY, params, "CircuitIDInitThread");
+    tid = AnscCreateTask(GreTunnel_circuit_id_init_thread, USER_DEFAULT_TASK_STACK_SIZE, USER_DEFAULT_TASK_PRIORITY, params, "CircuitIDInitThread");
+    if(tid != NULL)
+    {
+        pthread_detach((pthread_t)tid);
+    }
 
     AnscTraceDebug(("Init Hotspot GRE Done\n"));
 
