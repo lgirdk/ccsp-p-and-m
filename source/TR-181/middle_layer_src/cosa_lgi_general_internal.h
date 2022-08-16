@@ -41,6 +41,7 @@ _COSA_DATAMODEL_LGI_GENERAL_CLASS_CONTENT
     char                            DataModelSpecification[32];
     BOOL                            FirstInstallWizardEnable;
     char                            WebUISkin[16];
+    BOOL                            STPEnable;
     BOOL                            UserBridgeModeAllowed;
     int                             LedDSErrorTimer;
     int                             LedUSErrorTimer;
