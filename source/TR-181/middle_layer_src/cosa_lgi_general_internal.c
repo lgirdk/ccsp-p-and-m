@@ -113,6 +113,8 @@ CosaLgiGeneralInitialize
 
     CosaDmlGiGetFirstInstallWizardEnable(NULL, &pMyObject->FirstInstallWizardEnable);
 
+    CosaDmlGiGetSTPEnable(NULL, &pMyObject->STPEnable);
+
     memset(pMyObject->CAppName, 0, sizeof(pMyObject->CAppName));
     CosaDmlGiGetCAppName(NULL, pMyObject->CAppName, sizeof(pMyObject->CAppName));
 
