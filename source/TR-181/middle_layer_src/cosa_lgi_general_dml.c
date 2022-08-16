@@ -108,6 +108,7 @@ LgiGeneral_GetParamBoolValue
     )
 {
     BOOL dsliteEnabled;
+    PCOSA_DATAMODEL_LGI_GENERAL pMyObject = (PCOSA_DATAMODEL_LGI_GENERAL) g_pCosaBEManager->hLgiGeneral;
 
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "FirstInstallWizardEnable") == 0)
@@ -137,6 +138,13 @@ LgiGeneral_GetParamBoolValue
         }
         return TRUE;
     }
+
+    if (strcmp(ParamName, "STPEnable") == 0)
+    {
+        *pBool = pMyObject->STPEnable;
+        return TRUE;
+    }
+
     // LGI ADD END
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
@@ -453,6 +461,12 @@ LgiGeneral_SetParamBoolValue
         pMyObject->UserBridgeModeAllowed = bValue;
         return TRUE;
     }
+    if (strcmp(ParamName, "STPEnable") == 0)
+    {
+        pMyObject->STPEnable = bValue;
+        return TRUE;
+    }
+
     return FALSE;
 }
 
@@ -644,7 +658,15 @@ LgiGeneral_Commit
     CosaDmlGiSetLedPONRegistrationErrorTimer(NULL, pMyObject->PONRegistrationErrorTimer);
     CosaDmlGiSetLedOLTProvisioningErrorTimer(NULL, pMyObject->OLTProvisioningErrorTimer);
     CosaDmlGiSetLedWanDhcpErrorTimer(NULL, pMyObject->WanDhcpErrorTimer);
-    CosaDmlGiSaveSettings();
+
+    CosaDmlGiSetSTPEnable(NULL, pMyObject->STPEnable);
+    /*
+       The above call to CosaDmlGiSetSTPEnable() includes an unconditional call
+       to syscfg_set_commit(), so we don't need another call to syscfg_commit()
+       from CosaDmlGiSaveSettings()
+    */
+    // CosaDmlGiSaveSettings();
+
     return 0;
 }
 
