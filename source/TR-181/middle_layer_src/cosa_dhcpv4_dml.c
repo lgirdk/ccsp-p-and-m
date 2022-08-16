@@ -3555,21 +3555,6 @@ Server_GetParamBoolValue
         return TRUE;
     }
 
-    else if (strcmp(ParamName, "X_LGI-COM_DAD") == 0)
-    {
-        char strBuf[8];
-
-        syscfg_get (NULL, "dhcp_disable_ip_conflict_det", strBuf, sizeof(strBuf));
-
-        /*
-           Note that the "dhcp_disable_ip_conflict_det" syscfg value is the
-           inverse of the Device.DHCPv4.Server.X_LGI-COM_DAD data model object.
-        */
-        *pBool = (strcmp (strBuf, "0") == 0) ? TRUE : FALSE;
-
-        return TRUE;
-    }
-
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
 }
@@ -3783,23 +3768,6 @@ Server_SetParamBoolValue
             return FALSE;
         }
         
-        return TRUE;
-    }
-
-    else if (strcmp(ParamName, "X_LGI-COM_DAD") == 0)
-    {
-        /*
-           Note that the "dhcp_disable_ip_conflict_det" syscfg value is the
-           inverse of the Device.DHCPv4.Server.X_LGI-COM_DAD data model object.
-        */
-        if (syscfg_set_commit (NULL, "dhcp_disable_ip_conflict_det", bValue ? "0" : "1") != 0)
-        {
-            CcspTraceWarning(("syscfg_set failed\n"));
-            return -1;
-        }
-
-        system ("sysevent set dhcp_server-restart");
-
         return TRUE;
     }
 
