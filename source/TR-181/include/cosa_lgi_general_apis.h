@@ -39,6 +39,20 @@ CosaDmlGiSetFirstInstallWizardEnable
 );
 
 ANSC_STATUS
+CosaDmlGiGetSTPEnable
+(
+    ANSC_HANDLE                 hContext,
+    BOOL                        *pValue
+);
+
+ANSC_STATUS
+CosaDmlGiSetSTPEnable
+(
+    ANSC_HANDLE                 hContext,
+    BOOL                        bValue
+);
+
+ANSC_STATUS
 CosaDmlGiGetCustomerId
 (
     ANSC_HANDLE                 hContext,
