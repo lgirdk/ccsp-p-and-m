@@ -53,6 +53,66 @@ CosaDmlGiSetFirstInstallWizardEnable
     return ANSC_STATUS_SUCCESS;
 }
 
+ANSC_STATUS
+CosaDmlGiGetSTPEnable
+    (
+        ANSC_HANDLE                 hContext,
+        BOOL                        *pValue
+    )
+{
+    char buf[8];
+
+    syscfg_get (NULL, "stp_enable", buf, sizeof(buf));
+
+    *pValue = (strcmp(buf, "true") == 0);
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaDmlGiSetSTPEnable
+    (
+        ANSC_HANDLE                 hContext,
+        BOOL                        bValue
+    )
+{
+    syscfg_set_commit (NULL, "stp_enable", bValue ? "true" : "false");
+
+#ifdef _LG_MV2_PLUS_
+    if (access("/sys/class/net/brlan0/", F_OK) != 0)
+    {
+        return ANSC_STATUS_SUCCESS;
+    }
+    else
+    {	
+        if (bValue)
+        {
+            if (access("/sys/devices/virtual/net/ovs-system/", F_OK) == 0)
+            {
+                system("ovs-vsctl set bridge brlan0 stp_enable=true");
+            }
+            else
+            {
+                system("brctl stp brlan0 on");
+            }
+        }
+        else
+        {
+            if (access("/sys/devices/virtual/net/ovs-system/", F_OK) == 0)
+            {
+                system("ovs-vsctl set bridge brlan0 stp_enable=false");
+            }
+            else
+            {
+                system("brctl stp brlan0 off");
+            }
+        }
+    }
+#endif
+
+    return ANSC_STATUS_SUCCESS;
+}
+
 ULONG
 CosaDmlGiSaveSettings()
 {
