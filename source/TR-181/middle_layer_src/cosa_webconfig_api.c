@@ -28,11 +28,10 @@ t_cache pf_cache_bkup[PORTMAP_CACHE_SIZE];
 t_cache dmz_cache[DMZ_CACHE_SIZE];
 t_cache dmz_cache_bkup[DMZ_CACHE_SIZE];
 
-int pf_cache_size = 0;
-int pf_cache_size_bkup = 0;
+static int pf_cache_size = 0;
+static int pf_cache_size_bkup = 0;
 
-char pf_param_name[128] = {0};
-int gpfEnable = 0;
+static int gpfEnable = 0;
 
 int  get_base64_decodedbuffer(char *pString, char **buffer, int *size)
 {
@@ -154,50 +153,47 @@ int CheckIfPortsAreValid( char *port, char *port_end_range )
 
     return 0;
 }
+
 /* API to get the subdoc version */
-
-
-uint32_t getBlobVersion(char* subdoc)
+uint32_t getBlobVersion (char *subdoc)
 {
+    char buf[64 + 8];
+    char subdoc_ver[12];
 
-	char subdoc_ver[64] = {0}, buf[72] = {0};
-    	snprintf(buf,sizeof(buf),"%s_version",subdoc);
-    	if ( syscfg_get( NULL, buf, subdoc_ver, sizeof(subdoc_ver)) == 0 )
-    	{
-        	int version = atoi(subdoc_ver);
-      		//  uint32_t version = strtoul(subdoc_ver, NULL, 10) ; 
+    snprintf(buf, sizeof(buf), "%s_version", subdoc);
 
-        	return (uint32_t)version;
-    	}
-    	return 0;
+    if (syscfg_get(NULL, buf, subdoc_ver, sizeof(subdoc_ver)) == 0)
+    {
+        return (uint32_t) atoi(subdoc_ver);
+    }
+
+    return 0;
 }
 
 /* API to update the subdoc version */
-int setBlobVersion(char* subdoc,uint32_t version)
+int setBlobVersion (char *subdoc, uint32_t version)
 {
+    char buf[256];
+    char subdoc_ver[12];
 
-	char subdoc_ver[32] = {0}, buf[72] = {0};
-  	snprintf(subdoc_ver,sizeof(subdoc_ver),"%u",version);
-  	snprintf(buf,sizeof(buf),"%s_version",subdoc);
+    snprintf(subdoc_ver, sizeof(subdoc_ver), "%u", version);
 
-    if (strcmp(subdoc,"hotspot") == 0 )
+    if (strcmp(subdoc, "hotspot") == 0)
     {
-        char cmd[256] = {0};
-        memset(cmd,0,sizeof(cmd));
-        snprintf(cmd,sizeof(cmd),"mv /tmp/.%s%s %s",subdoc,subdoc_ver,HOTSPOT_BLOB_FILE);
-        CcspTraceInfo(("%s : cmd to move filename is %s\n",__FUNCTION__,cmd));
-
-        system(cmd);
-
+        snprintf(buf, sizeof(buf), "mv /tmp/.%s%s %s", subdoc, subdoc_ver, HOTSPOT_BLOB_FILE);
+        CcspTraceInfo(("%s : cmd to move filename is %s\n", __FUNCTION__, buf));
+        system(buf);
     }
- 	if(syscfg_set_commit(NULL,buf,subdoc_ver) != 0)
- 	{
-        	CcspTraceError(("syscfg_set failed\n"));
-        	return -1;
- 	}
-     	
-	return 0;
-     	 
+
+    snprintf(buf, sizeof(buf), "%s_version", subdoc);
+
+    if (syscfg_set_commit(NULL, buf, subdoc_ver) != 0)
+    {
+        CcspTraceError(("syscfg_set failed\n"));
+        return -1;
+    }
+
+    return 0;
 }
 
 /* API to register all the supported subdocs , versionGet and versionSet are callback functions to get and set the subdoc versions in db */
@@ -242,14 +238,7 @@ void webConfigFrameworkInit()
 /* API to clear the buffer */
 void clear_pf_cache(t_cache *tmp_pf_cache)
 {
-	int i = 0;
-    	for(i = 0; i < PORTMAP_CACHE_SIZE; i++)
-    	{
-        	memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
-        	memset(tmp_pf_cache[i].val,0,VAL_BLOCK_SIZE);
-
-    	}
-
+    memset (tmp_pf_cache, 0, sizeof(t_cache) * PORTMAP_CACHE_SIZE);
 }
 
 /* API to print cache */
@@ -263,11 +252,6 @@ void print_pf_cache(t_cache *tmp_pf_cache)
     	}	
 
 }
-#if 1
-/*int syscfg_set(void *p, char *cmd, char)
-{
-    
-}*/
 
 /* API to unset the entries from DB */
 int clear_pf_cache_DB(t_cache *tmp_pf_cache)
@@ -331,9 +315,9 @@ int apply_pf_cache_ToDB(t_cache *tmp_pf_cache, int cache_size,int pmapEnable)
 	    int i = 0;
         if ( gpfEnable !=  pmapEnable )
         {
-                if (syscfg_set(NULL,pf_param_name, (pmapEnable == 1) ? "1" : "0" ) != 0)
+                if (syscfg_set("CosaNAT", "port_forward_enabled", (pmapEnable == 1) ? "1" : "0" ) != 0)
                 {
-                    CcspTraceError(("syscfg_set failed to set %s parameter\n",pf_param_name));
+                    CcspTraceError(("syscfg_set failed to set %s::%s parameter\n", "CosaNAT", "port_forward_enabled"));
                     return SYSCFG_FAILURE;
                 }    
         }
@@ -391,7 +375,7 @@ int apply_pf_cache_ToDB(t_cache *tmp_pf_cache, int cache_size,int pmapEnable)
 
     return 0;
 }
-#endif
+
 #if 0
 void fill_portmap_entry(int count)
 {
@@ -576,116 +560,95 @@ int set_portmap_conf(portmappingdoc_t *rpm)
 /* Initialize cache , this API will be called once in boot up */
 void init_pf_cache(t_cache *tmp_pf_cache)
 {
-	int i = 0;
-    	int spf_count = 0;
-    	int pfr_count = 0;
-    	char alias_pre[8];
-    	errno_t rc = -1;
-        char buf[8] = {0} ;
-        snprintf(pf_param_name,sizeof(pf_param_name),"%s::%s",COSA_NAT_SYSCFG_NAMESPACE,PORT_FORWARD_ENABLED_KEY);
+    int i, j;
+    int spf_count;
+    int pfr_count;
+    bool commit = false;
 
-        if( 0 == syscfg_get( NULL, pf_param_name , buf, sizeof( buf ) ) &&  ( '\0' != buf[0] ) )
+    syscfg_get("CosaNAT", "port_forward_enabled", tmp_pf_cache[0].val, sizeof(tmp_pf_cache[0].val));
+
+    gpfEnable = atoi(tmp_pf_cache[0].val);
+
+    if (syscfg_get(NULL, "SinglePortForwardCount", tmp_pf_cache[0].val, VAL_BLOCK_SIZE) != 0)
+    {
+        strcpy(tmp_pf_cache[0].val, "0");
+    }
+
+    if (syscfg_get(NULL, "PortRangeForwardCount", tmp_pf_cache[1].val, VAL_BLOCK_SIZE) != 0)
+    {
+        strcpy(tmp_pf_cache[1].val, "0");
+    }
+
+    i = 2;
+
+    spf_count = atoi(tmp_pf_cache[0].val);
+
+    for (j = 1; j < (spf_count + 1); j++)
+    {
+        if (i + 9 > PORTMAP_CACHE_SIZE)
         {
-                gpfEnable = atoi(buf);
-        }        
+            spf_count = j - 1;
+            snprintf(tmp_pf_cache[0].val, VAL_BLOCK_SIZE, "%d", spf_count);
+            syscfg_set(NULL, "SinglePortForwardCount", tmp_pf_cache[0].val);
+            commit = true;
+            break;
+        }
 
-    	memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
-    	memset(tmp_pf_cache[i].val,0,VAL_BLOCK_SIZE);
-    	snprintf(tmp_pf_cache[i].cmd,BLOCK_SIZE,"SinglePortForwardCount");
-        /* CID : 144101 Array compared against 0*/
-        if(!syscfg_get( NULL, tmp_pf_cache[i].cmd, tmp_pf_cache[i].val, VAL_BLOCK_SIZE))
-           spf_count = atoi(tmp_pf_cache[i++].val);
-        //i++;
-        snprintf(tmp_pf_cache[i].cmd,BLOCK_SIZE,"PortRangeForwardCount");
-        /*CID: 144101 Array compared against 0*/
-        if (!syscfg_get( NULL, tmp_pf_cache[i].cmd, tmp_pf_cache[i].val, VAL_BLOCK_SIZE))
-            pfr_count = atoi(tmp_pf_cache[i++].val);
-        
-       // i++;
-//  for(i; i < PORTMAP_CACHE_SIZE; i++)
-	{
-		//memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
-		//memset(tmp_pf_cache[i].val,0,BLOCK_SIZE);
-		//snprintf(tmp_pf_cache[i].cmd,BLOCK_SIZE,"SinglePortForwardCount");
-		//spf_count++;
-		int j = 0;
-		for(j = 1; j< spf_count+1; j++)
-		{
-			memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
-			memset(tmp_pf_cache[i].val,0,VAL_BLOCK_SIZE);
-			snprintf(tmp_pf_cache[i].cmd,BLOCK_SIZE,ALIAS_SPF"%d",j);
-			syscfg_get( NULL, tmp_pf_cache[i].cmd, tmp_pf_cache[i].val, VAL_BLOCK_SIZE);
-			/* CID : 144101 Array compared against 0*/
-			memset(alias_pre,0,8);
-			strcpy(alias_pre,tmp_pf_cache[i].val);
-			printf("alias_pre = %s  %s\n",alias_pre,tmp_pf_cache[i].val);
-			i++;
-			//strcpy(alias_pre,ALIAS_PRE_SPF);
-			memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
-			snprintf(tmp_pf_cache[i++].cmd,BLOCK_SIZE,"%s"ALIAS_POS_EXT_PORT,alias_pre);
-			memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
-			snprintf(tmp_pf_cache[i++].cmd,BLOCK_SIZE,"%s"ALIAS_POS_IP,alias_pre);
-			memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
-			snprintf(tmp_pf_cache[i++].cmd,BLOCK_SIZE,"%s"ALIAS_POS_NAME,alias_pre);
-			memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
-			snprintf(tmp_pf_cache[i++].cmd,BLOCK_SIZE,"%s"ALIAS_POS_ENABLE,alias_pre);
-			memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
-			snprintf(tmp_pf_cache[i++].cmd,BLOCK_SIZE,"%s"ALIAS_POS_PROTO,alias_pre);
-			memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
-			snprintf(tmp_pf_cache[i++].cmd,BLOCK_SIZE,"%s"ALIAS_POS_INT_PORT,alias_pre);
-			memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
-			snprintf(tmp_pf_cache[i++].cmd,BLOCK_SIZE,"%s"ALIAS_POS_IPV6,alias_pre);
-			memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
-			rc = sprintf_s(tmp_pf_cache[i++].cmd,BLOCK_SIZE,"%s"ALIAS_POS_PREV_STATE,alias_pre);
-			if(rc < EOK) ERR_CHK(rc);
-		}
+        snprintf(tmp_pf_cache[i].cmd, BLOCK_SIZE, "SinglePortForward_%d", j);
+        syscfg_get(NULL, tmp_pf_cache[i].cmd, tmp_pf_cache[i].val, VAL_BLOCK_SIZE);
 
+        printf("alias_pre = %s\n", tmp_pf_cache[i].val);
 
-    //  i++;
+        snprintf(tmp_pf_cache[i + 1].cmd, BLOCK_SIZE, "%s" ALIAS_POS_EXT_PORT,   tmp_pf_cache[i].val);
+        snprintf(tmp_pf_cache[i + 2].cmd, BLOCK_SIZE, "%s" ALIAS_POS_IP,         tmp_pf_cache[i].val);
+        snprintf(tmp_pf_cache[i + 3].cmd, BLOCK_SIZE, "%s" ALIAS_POS_NAME,       tmp_pf_cache[i].val);
+        snprintf(tmp_pf_cache[i + 4].cmd, BLOCK_SIZE, "%s" ALIAS_POS_ENABLE,     tmp_pf_cache[i].val);
+        snprintf(tmp_pf_cache[i + 5].cmd, BLOCK_SIZE, "%s" ALIAS_POS_PROTO,      tmp_pf_cache[i].val);
+        snprintf(tmp_pf_cache[i + 6].cmd, BLOCK_SIZE, "%s" ALIAS_POS_INT_PORT,   tmp_pf_cache[i].val);
+        snprintf(tmp_pf_cache[i + 7].cmd, BLOCK_SIZE, "%s" ALIAS_POS_IPV6,       tmp_pf_cache[i].val);
+        snprintf(tmp_pf_cache[i + 8].cmd, BLOCK_SIZE, "%s" ALIAS_POS_PREV_STATE, tmp_pf_cache[i].val);
 
-		for(j = 1; j< pfr_count+1; j++)
-		{
-			memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
-			snprintf(tmp_pf_cache[i].cmd,BLOCK_SIZE,ALIAS_PFR"%d",j);
-			syscfg_get( NULL, tmp_pf_cache[i].cmd, tmp_pf_cache[i].val, VAL_BLOCK_SIZE);
-			/* CID : 144101 Array compared against 0*/
-			//  strcpy(alias_pre,tmp_pf_cache[i].val);
-			memset(alias_pre,0,8);
-			strcpy(alias_pre,tmp_pf_cache[i].val);
-			printf("alias_pre = %s\n",alias_pre);
+        i += 9;
+    }
 
+    pfr_count = atoi(tmp_pf_cache[1].val);
 
-			i++;
+    for (j = 1; j < (pfr_count + 1); j++)
+    {
+        if (i + 11 > PORTMAP_CACHE_SIZE)
+        {
+            pfr_count = j - 1;
+            snprintf(tmp_pf_cache[1].val, VAL_BLOCK_SIZE, "%d", pfr_count);
+            syscfg_set(NULL, "PortRangeForwardCount", tmp_pf_cache[1].val);
+            commit = true;
+            break;
+        }
 
-			memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
-			//  snprintf(tmp_pf_cache[i++].val,BLOCK_SIZE,"%s",alias_pre);
-			memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
-			snprintf(tmp_pf_cache[i++].cmd,BLOCK_SIZE,"%s"ALIAS_POS_EXT_PORT_RANGE,alias_pre);
-			memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
-			snprintf(tmp_pf_cache[i++].cmd,BLOCK_SIZE,"%s"ALIAS_PFR_PUBLIC_IP,alias_pre);
-			memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
-			rc = sprintf_s(tmp_pf_cache[i++].cmd,BLOCK_SIZE,"%s"ALIAS_PFR_INT_RANGE,alias_pre);
-			if(rc < EOK) ERR_CHK(rc);
-			memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
-			snprintf(tmp_pf_cache[i++].cmd,BLOCK_SIZE,"%s"ALIAS_POS_IP,alias_pre);
-			memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
-			snprintf(tmp_pf_cache[i++].cmd,BLOCK_SIZE,"%s"ALIAS_POS_NAME,alias_pre);
-			memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
-			snprintf(tmp_pf_cache[i++].cmd,BLOCK_SIZE,"%s"ALIAS_POS_ENABLE,alias_pre);
-			memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
-			snprintf(tmp_pf_cache[i++].cmd,BLOCK_SIZE,"%s"ALIAS_POS_PROTO,alias_pre);
-			memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
-			snprintf(tmp_pf_cache[i++].cmd,BLOCK_SIZE,"%s"ALIAS_POS_INT_PORT,alias_pre);
-			memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
-			snprintf(tmp_pf_cache[i++].cmd,BLOCK_SIZE,"%s"ALIAS_POS_IPV6,alias_pre);
-			memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
-			rc = sprintf_s(tmp_pf_cache[i++].cmd,BLOCK_SIZE,"%s"ALIAS_POS_PREV_STATE,alias_pre);
-			if(rc < EOK) ERR_CHK(rc);
-		}
+        snprintf(tmp_pf_cache[i].cmd, BLOCK_SIZE, "PortRangeForward_%d", j);
+        syscfg_get(NULL, tmp_pf_cache[i].cmd, tmp_pf_cache[i].val, VAL_BLOCK_SIZE);
 
+        printf("alias_pre = %s\n", tmp_pf_cache[i].val);
 
-	}
-	pf_cache_size = i;
+        snprintf(tmp_pf_cache[i + 1].cmd, BLOCK_SIZE, "%s" ALIAS_POS_EXT_PORT_RANGE, tmp_pf_cache[i].val);
+        snprintf(tmp_pf_cache[i + 2].cmd, BLOCK_SIZE, "%s" ALIAS_PFR_PUBLIC_IP,      tmp_pf_cache[i].val);
+        snprintf(tmp_pf_cache[i + 3].cmd, BLOCK_SIZE, "%s" ALIAS_PFR_INT_RANGE,      tmp_pf_cache[i].val);
+        snprintf(tmp_pf_cache[i + 4].cmd, BLOCK_SIZE, "%s" ALIAS_POS_IP,             tmp_pf_cache[i].val);
+        snprintf(tmp_pf_cache[i + 5].cmd, BLOCK_SIZE, "%s" ALIAS_POS_NAME,           tmp_pf_cache[i].val);
+        snprintf(tmp_pf_cache[i + 6].cmd, BLOCK_SIZE, "%s" ALIAS_POS_ENABLE,         tmp_pf_cache[i].val);
+        snprintf(tmp_pf_cache[i + 7].cmd, BLOCK_SIZE, "%s" ALIAS_POS_PROTO,          tmp_pf_cache[i].val);
+        snprintf(tmp_pf_cache[i + 8].cmd, BLOCK_SIZE, "%s" ALIAS_POS_INT_PORT,       tmp_pf_cache[i].val);
+        snprintf(tmp_pf_cache[i + 9].cmd, BLOCK_SIZE, "%s" ALIAS_POS_IPV6,           tmp_pf_cache[i].val);
+        snprintf(tmp_pf_cache[i + 10].cmd, BLOCK_SIZE, "%s" ALIAS_POS_PREV_STATE,    tmp_pf_cache[i].val);
+
+        i += 11;
+    }
+
+    pf_cache_size = i;
+
+    if (commit)
+    {
+        syscfg_commit();
+    }
 }
 
 /* CallBack API to execute Portforwarding Blob request */
