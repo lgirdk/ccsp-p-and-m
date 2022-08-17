@@ -1117,7 +1117,7 @@ X_CISCO_COM_DMZ_SetParamStringValue
     if (strcmp(ParamName, "InternalIP") == 0)
     {
         /* save update to backup */
-        if (AnscEqualString(pString, "0.0.0.0", FALSE)){ /* keep sync between gui and snmp */
+        if (strcasecmp(pString, "0.0.0.0") == 0){ /* keep sync between gui and snmp */
             // pDmz->bEnabled = FALSE;
             rc = STRCPY_S_NOCLOBBER(pDmz->InternalIP, sizeof(pDmz->InternalIP), pString);
             if (rc != EOK)
