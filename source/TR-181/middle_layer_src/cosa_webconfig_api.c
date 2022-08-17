@@ -28,11 +28,10 @@ t_cache pf_cache_bkup[PORTMAP_CACHE_SIZE];
 t_cache dmz_cache[DMZ_CACHE_SIZE];
 t_cache dmz_cache_bkup[DMZ_CACHE_SIZE];
 
-int pf_cache_size = 0;
-int pf_cache_size_bkup = 0;
+static int pf_cache_size = 0;
+static int pf_cache_size_bkup = 0;
 
-char pf_param_name[128] = {0};
-int gpfEnable = 0;
+static int gpfEnable = 0;
 
 int  get_base64_decodedbuffer(char *pString, char **buffer, int *size)
 {
@@ -154,50 +153,45 @@ int CheckIfPortsAreValid( char *port, char *port_end_range )
 
     return 0;
 }
-/* API to get the subdoc version */
 
-
-uint32_t getBlobVersion(char* subdoc)
+uint32_t getBlobVersion (char *subdoc)
 {
+    char buf[64 + 8];
+    char subdoc_ver[12];
 
-	char subdoc_ver[64] = {0}, buf[72] = {0};
-    	snprintf(buf,sizeof(buf),"%s_version",subdoc);
-    	if ( syscfg_get( NULL, buf, subdoc_ver, sizeof(subdoc_ver)) == 0 )
-    	{
-        	int version = atoi(subdoc_ver);
-      		//  uint32_t version = strtoul(subdoc_ver, NULL, 10) ; 
+    snprintf(buf, sizeof(buf), "%s_version", subdoc);
 
-        	return (uint32_t)version;
-    	}
-    	return 0;
+    if (syscfg_get(NULL, buf, subdoc_ver, sizeof(subdoc_ver)) == 0)
+    {
+        return (uint32_t) atoi(subdoc_ver);
+    }
+
+    return 0;
 }
 
-/* API to update the subdoc version */
-int setBlobVersion(char* subdoc,uint32_t version)
+int setBlobVersion (char *subdoc, uint32_t version)
 {
+    char buf[256];
+    char subdoc_ver[12];
 
-	char subdoc_ver[32] = {0}, buf[72] = {0};
-  	snprintf(subdoc_ver,sizeof(subdoc_ver),"%u",version);
-  	snprintf(buf,sizeof(buf),"%s_version",subdoc);
+    snprintf(subdoc_ver, sizeof(subdoc_ver), "%u", version);
 
-    if (strcmp(subdoc,"hotspot") == 0 )
+    if (strcmp(subdoc, "hotspot") == 0)
     {
-        char cmd[256] = {0};
-        memset(cmd,0,sizeof(cmd));
-        snprintf(cmd,sizeof(cmd),"mv /tmp/.%s%s %s",subdoc,subdoc_ver,HOTSPOT_BLOB_FILE);
-        CcspTraceInfo(("%s : cmd to move filename is %s\n",__FUNCTION__,cmd));
-
-        system(cmd);
-
+        snprintf(buf, sizeof(buf), "mv /tmp/.%s%s %s", subdoc, subdoc_ver, HOTSPOT_BLOB_FILE);
+        CcspTraceInfo(("%s : cmd to move filename is %s\n", __FUNCTION__, buf));
+        system(buf);
     }
- 	if(syscfg_set_commit(NULL,buf,subdoc_ver) != 0)
- 	{
-        	CcspTraceError(("syscfg_set failed\n"));
-        	return -1;
- 	}
-     	
-	return 0;
-     	 
+
+    snprintf(buf, sizeof(buf), "%s_version", subdoc);
+
+    if (syscfg_set_commit(NULL, buf, subdoc_ver) != 0)
+    {
+        CcspTraceError(("syscfg_set failed\n"));
+        return -1;
+    }
+
+    return 0;
 }
 
 /* API to register all the supported subdocs , versionGet and versionSet are callback functions to get and set the subdoc versions in db */
@@ -242,14 +236,7 @@ void webConfigFrameworkInit()
 /* API to clear the buffer */
 void clear_pf_cache(t_cache *tmp_pf_cache)
 {
-	int i = 0;
-    	for(i = 0; i < PORTMAP_CACHE_SIZE; i++)
-    	{
-        	memset(tmp_pf_cache[i].cmd,0,BLOCK_SIZE);
-        	memset(tmp_pf_cache[i].val,0,VAL_BLOCK_SIZE);
-
-    	}
-
+    memset (tmp_pf_cache, 0, sizeof(t_cache) * PORTMAP_CACHE_SIZE);
 }
 
 /* API to print cache */
@@ -331,9 +318,9 @@ int apply_pf_cache_ToDB(t_cache *tmp_pf_cache, int cache_size,int pmapEnable)
 	    int i = 0;
         if ( gpfEnable !=  pmapEnable )
         {
-                if (syscfg_set(NULL,pf_param_name, (pmapEnable == 1) ? "1" : "0" ) != 0)
+                if (syscfg_set(COSA_NAT_SYSCFG_NAMESPACE, PORT_FORWARD_ENABLED_KEY, (pmapEnable == 1) ? "1" : "0" ) != 0)
                 {
-                    CcspTraceError(("syscfg_set failed to set %s parameter\n",pf_param_name));
+                    CcspTraceError(("syscfg_set failed to set %s::%s parameter\n", COSA_NAT_SYSCFG_NAMESPACE, PORT_FORWARD_ENABLED_KEY));
                     return SYSCFG_FAILURE;
                 }    
         }
@@ -582,9 +569,8 @@ void init_pf_cache(t_cache *tmp_pf_cache)
     	char alias_pre[8];
     	errno_t rc = -1;
         char buf[8] = {0} ;
-        snprintf(pf_param_name,sizeof(pf_param_name),"%s::%s",COSA_NAT_SYSCFG_NAMESPACE,PORT_FORWARD_ENABLED_KEY);
 
-        if( 0 == syscfg_get( NULL, pf_param_name , buf, sizeof( buf ) ) &&  ( '\0' != buf[0] ) )
+        if ((syscfg_get(COSA_NAT_SYSCFG_NAMESPACE, PORT_FORWARD_ENABLED_KEY, buf, sizeof(buf)) == 0) && (buf[0] != 0))
         {
                 gpfEnable = atoi(buf);
         }        
