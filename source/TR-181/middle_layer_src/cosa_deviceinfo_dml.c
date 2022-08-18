@@ -21389,6 +21389,10 @@ NonRootSupport_SetParamStringValue
      tmp_fptr = fopen(TMP_FILE,"w+");
      if( (!pValue) || (strstr(pValue,":") == NULL) || (tmp_fptr == NULL) ) {
          CcspTraceError(("Failed to open the file or invalid argument\n"));
+         if(fptr)
+            fclose(fptr);
+         if(tmp_fptr)
+            fclose(tmp_fptr);
          return FALSE;
      }
      /* Traversing the Blocklist file and write the contents into tmp file expect the entry in Blocklist if it matches with input arguments */
