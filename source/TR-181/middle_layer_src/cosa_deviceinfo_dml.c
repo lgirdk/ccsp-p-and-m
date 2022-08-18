@@ -18704,6 +18704,7 @@ RPC_SetParamBoolValue
                if ((file = fopen("/tmp/.deferringreboot", "r"))) {
                    if ((Abortfile = fopen("/tmp/AbortReboot", "r"))) {
                        fclose(Abortfile);
+                       fclose(file);
                        CcspTraceWarning(("Abort already done '%s'\n", ParamName));
                        return TRUE;
                    }
