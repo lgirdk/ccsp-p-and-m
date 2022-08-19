@@ -1019,7 +1019,7 @@ static int GetWanDhcpDns(DNS_Client_t *dns)
 
 static int RestartPlatform(boolean_t doIpv6Restart)
 {
-    int rc = vsystem(UPDATE_RESOLV_CMD);
+    int rc = system(UPDATE_RESOLV_CMD);
     if ((rc == 0) && (doIpv6Restart == TRUE))
     {
         rc = CosaDmlDHCPv6sTriggerRestart(FALSE);

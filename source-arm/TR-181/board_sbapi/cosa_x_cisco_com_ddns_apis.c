@@ -786,7 +786,7 @@ DdnsRestart(void)
     char    cmd[512] = {0};
     ULONG   n = 0;
     
-    if (vsystem("killall -9 ez-ipupdate") != 0)
+    if (system("killall -9 ez-ipupdate") != 0)
     {
         fprintf(stderr, "%s: fail to killall ez-ipupdate\n", __FUNCTION__);
     }
@@ -1233,7 +1233,7 @@ CosaDmlDdnsSetConfig
 
     if (g_bEnabled == FALSE)
     {
-        if (vsystem("killall -9 ez-ipupdate") != 0)
+        if (system("killall -9 ez-ipupdate") != 0)
         {
             fprintf(stderr, "%s: fail to killall ez-ipupdate\n", __FUNCTION__);
         }

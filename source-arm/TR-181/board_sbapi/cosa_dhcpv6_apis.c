@@ -5200,7 +5200,7 @@ else {
         commonSyseventSet("dibbler_server_conf-status","ready");
 }
 
-    vsystem("/bin/sh /etc/utopia/service.d/set_ipv6_dns.sh dibbler");
+    system("/bin/sh /etc/utopia/service.d/set_ipv6_dns.sh dibbler");
 
 EXIT:
 
