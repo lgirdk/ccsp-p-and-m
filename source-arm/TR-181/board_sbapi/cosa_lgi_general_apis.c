@@ -171,6 +171,37 @@ ANSC_STATUS CosaDmlGiGetSKU (ANSC_HANDLE hContext, char *pValue, ULONG ulSize)
         sku = "Giga Connect Box 6";
     }
 
+#elif defined (_LG_MV3_)
+
+    if (customerId == 8)
+    {
+        sku = "Hub 5x";
+    }
+    else if (customerId == 20)
+    {
+        sku = "SmartWifi modem";
+    }
+    else if (customerId == 41)
+    {
+        char modelname[64];
+
+        if (platform_hal_GetModelName(modelname) == RETURN_OK)
+        {
+            if (strcmp (modelname, "F5685LGB") == 0)
+            {
+                sku = "Virgin Media Hub 6 Fiber";
+            }
+        }
+    }
+    else if (customerId == 51)
+    {
+        sku = "Connect Box 3 Fiber";
+    }
+    else if (customerId == 53)
+    {
+        sku = "Giga Connect Box 6 Fiber";
+    }
+
 #endif
 
     if (sku == NULL)
