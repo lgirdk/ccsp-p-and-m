@@ -38,6 +38,7 @@
 #include <utctx_api.h>
 #include <utapi.h>
 #include <utapi_util.h>
+#include "secure_wrapper.h"
 
 /* 
  * For USGv2 (_COSA_INTEL_USG_ARM_):
@@ -167,9 +168,9 @@ RLog_Restart(PCOSA_DML_RLOG conf)
 #endif
 #if 0 /* no PID file in current version */
     if (access(SYSLOGD_PID_FILE, F_OK) == 0)
-        vsystem("kill `cat %s`", SYSLOGD_PID_FILE);
+        v_secure_system("kill `cat " SYSLOGD_PID_FILE "`");
 #else
-    vsystem("kill `busybox ps | awk '/syslogd/ && !/awk/ {print $1}'`");
+    v_secure_system("kill `busybox ps | awk '/syslogd/ && !/awk/ {print $1}'`");
 #endif
 
     if (conf->Enable && strlen(conf->Host) > 0)
@@ -209,7 +210,7 @@ CosaDmlRLog_Init(void)
         return ANSC_STATUS_FAILURE;
     }
 
-    if (!conf.Enable && vsystem("busybox ps | grep syslogd | grep -v grep >/dev/null") == 0)
+    if (!conf.Enable && v_secure_system("busybox ps | grep syslogd | grep -v grep >/dev/null") == 0)
     {
         /* do not restart syslogd */
         RLOG_DBG("%s: Nothing need to do !\n", __FUNCTION__);

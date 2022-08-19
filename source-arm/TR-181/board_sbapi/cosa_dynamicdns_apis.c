@@ -25,6 +25,7 @@
 #include <syscfg/syscfg.h>
 #include <sysevent/sysevent.h>
 #include "safec_lib_common.h"
+#include "secure_wrapper.h"
 
       /* MACROS */
 #define  SYSCFG_SERVER_ENABLE_KEY         "ddns_server_enable_%lu"
@@ -1193,7 +1194,7 @@ CosaDmlDynamicDns_Server_SetConf
     }
 
 #ifndef DDNS_SERVICE_BIN
-    if (vsystem("killall -9 ez-ipupdate") != 0)
+    if (v_secure_system("killall -9 ez-ipupdate") != 0)
     {
        fprintf(stderr, "%s: fail to killall ez-ipupdate\n", __FUNCTION__);
     }
