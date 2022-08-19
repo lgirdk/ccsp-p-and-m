@@ -118,6 +118,7 @@ BOOL LgiIperf_SetParamUlongValue(ANSC_HANDLE hInsContext, char *ParamName, ULONG
         if (uOldValue != uValue)
         {
             CosaDmlIperfSetConnectionTimeout(pObj, uValue);
+            CosaDmlIperfSetDiagnosticsState(pObj, "None", TRUE);
         }
     }
     else
