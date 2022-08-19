@@ -396,9 +396,9 @@ void* WebGuiRestart( void *arg )
     pthread_detach(pthread_self());
     sleep(30);
     #if defined (_XB6_PRODUCT_REQ_) || defined (_CBR_PRODUCT_REQ_)
-        v_secure_system("/bin/systemctl restart CcspWebUI.service");
+        system("/bin/systemctl restart CcspWebUI.service");
     #else
-        v_secure_system("/bin/sh /etc/webgui.sh &");
+        system("/bin/sh /etc/webgui.sh &");
     #endif
     return NULL;
 }
@@ -433,7 +433,7 @@ void* WebServRestart( void *arg )
     UNREFERENCED_PARAMETER(arg);
 
     pthread_detach(pthread_self());
-    if (v_secure_system("/bin/sh /etc/webgui.sh") != 0) {
+    if (system("/bin/sh /etc/webgui.sh") != 0) {
         fprintf(stderr, "%s: fail to restart lighttpd\n", __FUNCTION__);
         return NULL;
     }
@@ -1181,7 +1181,7 @@ CosaDmlDcSetWanNameServer
 	
     Utopia_Free(&utctx, 1);
     
-    if (v_secure_system("/bin/sh /etc/utopia/service.d/set_resolv_conf.sh") != 0) {
+    if (system("/bin/sh /etc/utopia/service.d/set_resolv_conf.sh") != 0) {
         fprintf(stderr, "%s: fail to set resolv.conf\n", __FUNCTION__);
         return ANSC_STATUS_FAILURE;
     }
@@ -1208,7 +1208,7 @@ CosaDmlDcSetHostName
 	
     Utopia_Free(&utctx,1);
 
-    if (v_secure_system("/bin/sh /etc/utopia/service.d/set_hostname.sh") != 0) {
+    if (system("/bin/sh /etc/utopia/service.d/set_hostname.sh") != 0) {
         fprintf(stderr, "%s: fail to set resolv.conf\n", __FUNCTION__);
         return ANSC_STATUS_FAILURE;
     }
@@ -1246,7 +1246,7 @@ CosaDmlDcSetDomainName
 	
     Utopia_Free(&utctx,1);
 
-    if (v_secure_system("/bin/sh /etc/utopia/service.d/set_wandomain.sh") != 0) {
+    if (system("/bin/sh /etc/utopia/service.d/set_wandomain.sh") != 0) {
         fprintf(stderr, "%s: fail to set wan domain name\n", __FUNCTION__);
         return ANSC_STATUS_FAILURE;
     }
@@ -2599,11 +2599,11 @@ CosaDmlDcSetEnableStaticNameServer
     if(!bFlag)
     {
 	// Call set_resolv_conf to delete static dns entries from dns server
-        v_secure_system("/bin/sh /etc/utopia/service.d/set_resolv_conf.sh");
+        system("/bin/sh /etc/utopia/service.d/set_resolv_conf.sh");
         commonSyseventSet("wan-restart", "");
     }
     else{
-        if (v_secure_system("/bin/sh /etc/utopia/service.d/set_resolv_conf.sh") != 0) {
+        if (system("/bin/sh /etc/utopia/service.d/set_resolv_conf.sh") != 0) {
             fprintf(stderr, "%s: fail to set resolv.conf\n", __FUNCTION__);
             return ANSC_STATUS_FAILURE;
         }
@@ -2841,12 +2841,12 @@ CosaDmlDcSetIGMPProxyEnable
     {
         if ( detect_process("igmpproxy") == 0 )
         {
-            v_secure_system("igmpproxy &");
+            system("igmpproxy &");
         }
     }
     else
     {
-        v_secure_system("killall igmpproxy");
+        system("killall igmpproxy");
     }
     return ANSC_STATUS_SUCCESS;
 }
@@ -2884,12 +2884,12 @@ CosaDmlDcSetDNSProxyEnable
     {
         if ( detect_process("dnsproxy") == 0 )
         {
-            v_secure_system("dnsproxy &");
+            system("dnsproxy &");
         }
     }
     else
     {
-        v_secure_system("killall dnsproxy");
+        system("killall dnsproxy");
     }
     return ANSC_STATUS_SUCCESS;
 }
@@ -4503,7 +4503,7 @@ CosaDmlLanMngm_SetConf(ULONG ins, PCOSA_DML_LAN_MANAGEMENT pLanMngm)
 		fprintf(stderr, "%s: set WiFi.Radio.2.X_CISCO_COM_ApplySetting Enable OK\n", __FUNCTION__);
 	}
 	sleep(1);
-	v_secure_system("/bin/sh /etc/webgui.sh &");
+	system("/bin/sh /etc/webgui.sh &");
 #endif
         //configBridgeMode(bEnable);
 
@@ -4661,7 +4661,7 @@ static void configBridgeMode(int bEnable) {
 #if defined (_XB7_PRODUCT_REQ_) && defined (_COSA_BCM_ARM_)
         g_SetParamValueBool(brpdm, bEnable);
         if (brmode[0] == '0') {
-            v_secure_system("/bin/sh /etc/webgui.sh &");
+            system("/bin/sh /etc/webgui.sh &");
         }
 #elif (!defined _XF3_PRODUCT_REQ_)
         g_SetParamValueBool(brpdm, bEnable);
@@ -4670,7 +4670,7 @@ static void configBridgeMode(int bEnable) {
 	  */
         if (brmode[0] == '0')
 	{
-           v_secure_system("/bin/sh /etc/webgui.sh &");
+           system("/bin/sh /etc/webgui.sh &");
 	}
 #elif defined( _XF3_PRODUCT_REQ_)
         g_SetParamValueBool(brpdm, (bEnable>0?true:false));
