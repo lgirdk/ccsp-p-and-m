@@ -52,7 +52,6 @@ static FILE *popen_pid(PCOSA_DATAMODEL_LGI_IPERF pObj)
     if (pid == -1)
     {
         CcspTraceError(("forkpty failure, %s\n", strerror(errno)));
-
         return NULL;
     }
     else if (pid == 0)
@@ -92,7 +91,11 @@ static FILE *popen_pid(PCOSA_DATAMODEL_LGI_IPERF pObj)
             argv[i] = token;
         }
 
-        execvp(argv[0], argv);
+        if (execvp(argv[0], argv))
+        {
+            CcspTraceError(("execvp failure, %s\n", strerror(errno)));
+            exit(errno);
+        }
     }
 
     pObj->iperfPid = pid;
@@ -123,6 +126,18 @@ static void detect_iperf_state(PCOSA_DATAMODEL_LGI_IPERF pObj, const char *line,
     }
 }
 
+/* Called under lock */
+/* TODO: Other ways of validating the command can be added if needed */
+static BOOL isCommandValid(const char *command)
+{
+    if (strlen(command) == 0)
+    {
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
 static void *cpuThread(void *argp)
 {
     PCOSA_DATAMODEL_LGI_IPERF pObj = argp;
@@ -131,11 +146,6 @@ static void *cpuThread(void *argp)
     ULONG sum = 0;
 
     CcspTraceInfo(("Creating cpuThread\n"));
-
-    pthread_mutex_lock(&pObj->lock);
-    pObj->averageCPUUsage = 0;
-    pObj->peakCPUUsage = 0;
-    pthread_mutex_unlock(&pObj->lock);
 
     while (!pObj->cancelCpuThread)
     {
@@ -206,6 +216,23 @@ static void *iperfThread(void *argp)
         return NULL;
     }
 
+    /* Reset result buffer and CPU usage data */
+    pObj->averageCPUUsage = 0;
+    pObj->peakCPUUsage = 0;
+    if (pObj->result)
+    {
+        free(pObj->result);
+        pObj->result = NULL;
+    }
+
+    if (!isCommandValid(pObj->command))
+    {
+        CcspTraceError(("Command is not valid! current command=\"%s\"\n", pObj->command));
+        CosaDmlIperfSetDiagnosticsState(pObj, "Error_Other", FALSE);
+        pthread_mutex_unlock(&pObj->lock);
+        return NULL;
+    }
+
     /* Create iPerf process */
     fp = popen_pid(pObj);
     if (!fp)
@@ -216,12 +243,6 @@ static void *iperfThread(void *argp)
         return NULL;
     }
 
-    /* Reset result buffer */
-    if (pObj->result)
-    {
-        free(pObj->result);
-        pObj->result = NULL;
-    }
 
     /* Create CPU thread */
     pObj->cancelCpuThread = FALSE;
@@ -283,6 +304,13 @@ static void *iperfThread(void *argp)
     /* Destroy CPU thread */
     pObj->cancelCpuThread = TRUE;
 
+    pthread_mutex_unlock(&pObj->lock);
+
+    pthread_join(timerTid, NULL);
+    pthread_join(cpuTid, NULL);
+
+    /* All threads are completed, time to update state (if needed) and cleanup */
+    pthread_mutex_lock(&pObj->lock);
     if (isCompleted)
     {
         /* iPerf session is gracefully completed */
@@ -300,11 +328,7 @@ static void *iperfThread(void *argp)
             CosaDmlIperfSetDiagnosticsState(pObj, "Error_Other", FALSE);
         }
     }
-
     pthread_mutex_unlock(&pObj->lock);
-
-    pthread_join(timerTid, NULL);
-    pthread_join(cpuTid, NULL);
 }
 
 /* Called under lock */
@@ -369,7 +393,7 @@ ANSC_STATUS CosaDmlDestroyIperfThread(PCOSA_DATAMODEL_LGI_IPERF pObj)
      */
     pObj->markedForDestruction = TRUE;
 
-    CcspTraceInfo(("%s:%d Destroying iPerf thread\n", __func__, __LINE__));
+    CcspTraceInfo(("Destroying iPerf thread\n"));
 
     if (pObj->iperfPid > 0)
     {
@@ -417,6 +441,15 @@ ANSC_STATUS CosaDmlDiagnosticsStateChangeAction(PCOSA_DATAMODEL_LGI_IPERF pObj)
     if (isRequested)
     {
         CcspTraceInfo(("Creating the iPerf thread\n"));
+
+        /* update diagnostics state because CosaDmlDestroyIperfThread may change it. */
+        pthread_mutex_lock(&pObj->lock);
+        if (strcmp(pObj->diagnosticsState, "Requested"))
+        {
+            CosaDmlIperfSetDiagnosticsState(pObj, "Requested", TRUE);
+        }
+        pthread_mutex_unlock(&pObj->lock);
+
         ret = CosaDmlCreateIperfThread(pObj);
         if (ret != ANSC_STATUS_SUCCESS)
         {
