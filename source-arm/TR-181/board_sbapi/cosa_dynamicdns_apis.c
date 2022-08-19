@@ -1186,7 +1186,7 @@ CosaDmlDynamicDns_Server_SetConf
     }
 
 #ifndef DDNS_SERVICE_BIN
-    if (vsystem("killall -9 ez-ipupdate") != 0)
+    if (system("killall -9 ez-ipupdate") != 0)
     {
        fprintf(stderr, "%s: fail to killall ez-ipupdate\n", __FUNCTION__);
     }

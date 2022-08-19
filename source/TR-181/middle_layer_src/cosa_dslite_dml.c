@@ -104,7 +104,7 @@ DSLite_SetParamBoolValue
         {
               return FALSE;
         }
-        rc = vsystem(UPDATE_RESOLV_CMD);
+        rc = system(UPDATE_RESOLV_CMD);
 	return (rc == 0) ? TRUE : FALSE;
     }
     return FALSE;
