@@ -395,9 +395,9 @@ void* WebGuiRestart( void *arg )
     pthread_detach(pthread_self());
     sleep(30);
     #if defined (_XB6_PRODUCT_REQ_) || defined (_CBR_PRODUCT_REQ_)
-        vsystem("/bin/systemctl restart CcspWebUI.service");
+        system("/bin/systemctl restart CcspWebUI.service");
     #else
-        vsystem("/bin/sh /etc/webgui.sh &");
+        system("/bin/sh /etc/webgui.sh &");
     #endif
     return NULL;
 }
@@ -430,42 +430,9 @@ DmSetBool(const char *param, BOOL value)
 void* WebServRestart( void *arg )
 {
     UNREFERENCED_PARAMETER(arg);
-#if 0
-    if (access(HTTPD_CONF, F_OK) != 0) {
-        if (vsystem("cp %s %s", HTTPD_DEF_CONF, HTTPD_CONF) != 0) {
-            fprintf(stderr, "%s: no config file\n", __FUNCTION__);
-            return -1;
-        }
-    }
 
-    if (vsystem("sed -i ':a;N;$!ba;s#[ \\t]*server.port[ \\t]*=[ 0-9]*#server.port = %d#' %s", 
-                conf->httpport, HTTPD_CONF) != 0
-            || vsystem("sed -i ':a;N;$!ba;s#\\$SERVER\\[[^]]*\\] == \"[^\"]*#$SERVER[\"socket\"] == \":%d\"#' %s", 
-                conf->httpsport, HTTPD_CONF) != 0) {
-        fprintf(stderr, "%s: fail to set config file\n", __FUNCTION__);
-        return -1;
-    }
-
-    if (vsystem("lighttpd -t -f %s", HTTPD_CONF) != 0) {
-        fprintf(stderr, "%s: bad config file format\n", __FUNCTION__);
-        return -1;
-    }
-
-    if (access(HTTPD_PID, F_OK) == 0) {
-        if (vsystem("kill `cat %s`", HTTPD_PID) != 0) {
-            fprintf(stderr, "%s: fail to stop lighttpd\n", __FUNCTION__);
-            return -1;
-        }
-    }
-
-    if (vsystem("lighttpd -f %s", HTTPD_CONF) != 0) {
-        fprintf(stderr, "%s: fail to start lighttpd\n", __FUNCTION__);
-        return -1;
-    }
-#endif
     pthread_detach(pthread_self());
-    CcspTraceInfo(("%s vsystem %d \n", __FUNCTION__,__LINE__)); 
-    if (vsystem("/bin/sh /etc/webgui.sh") != 0) {
+    if (system("/bin/sh /etc/webgui.sh") != 0) {
         fprintf(stderr, "%s: fail to restart lighttpd\n", __FUNCTION__);
         return NULL;
     }
@@ -1213,8 +1180,7 @@ CosaDmlDcSetWanNameServer
 	
     Utopia_Free(&utctx, 1);
     
-    CcspTraceInfo(("%s vsystem %d \n", __FUNCTION__,__LINE__)); 
-    if (vsystem("/bin/sh /etc/utopia/service.d/set_resolv_conf.sh") != 0) {
+    if (system("/bin/sh /etc/utopia/service.d/set_resolv_conf.sh") != 0) {
         fprintf(stderr, "%s: fail to set resolv.conf\n", __FUNCTION__);
         return ANSC_STATUS_FAILURE;
     }
@@ -1241,8 +1207,7 @@ CosaDmlDcSetHostName
 	
     Utopia_Free(&utctx,1);
 
-    CcspTraceInfo(("%s vsystem %d \n", __FUNCTION__,__LINE__)); 
-    if (vsystem("/bin/sh /etc/utopia/service.d/set_hostname.sh") != 0) {
+    if (system("/bin/sh /etc/utopia/service.d/set_hostname.sh") != 0) {
         fprintf(stderr, "%s: fail to set resolv.conf\n", __FUNCTION__);
         return ANSC_STATUS_FAILURE;
     }
@@ -1280,8 +1245,7 @@ CosaDmlDcSetDomainName
 	
     Utopia_Free(&utctx,1);
 
-    CcspTraceInfo(("%s vsystem %d \n", __FUNCTION__,__LINE__)); 
-    if (vsystem("/bin/sh /etc/utopia/service.d/set_wandomain.sh") != 0) {
+    if (system("/bin/sh /etc/utopia/service.d/set_wandomain.sh") != 0) {
         fprintf(stderr, "%s: fail to set wan domain name\n", __FUNCTION__);
         return ANSC_STATUS_FAILURE;
     }
@@ -2601,12 +2565,11 @@ CosaDmlDcSetEnableStaticNameServer
     if(!bFlag)
     {
 	// Call set_resolv_conf to delete static dns entries from dns server
-        vsystem("/bin/sh /etc/utopia/service.d/set_resolv_conf.sh");
+        system("/bin/sh /etc/utopia/service.d/set_resolv_conf.sh");
         commonSyseventSet("wan-restart", "");
     }
     else{
-        CcspTraceInfo(("%s vsystem %d \n", __FUNCTION__,__LINE__)); 
-        if (vsystem("/bin/sh /etc/utopia/service.d/set_resolv_conf.sh") != 0) {
+        if (system("/bin/sh /etc/utopia/service.d/set_resolv_conf.sh") != 0) {
             fprintf(stderr, "%s: fail to set resolv.conf\n", __FUNCTION__);
             return ANSC_STATUS_FAILURE;
         }
@@ -2844,12 +2807,12 @@ CosaDmlDcSetIGMPProxyEnable
     {
         if ( detect_process("igmpproxy") == 0 )
         {
-            vsystem("igmpproxy &");
+            system("igmpproxy &");
         }
     }
     else
     {
-        vsystem("killall igmpproxy");
+        system("killall igmpproxy");
     }
     return ANSC_STATUS_SUCCESS;
 }
@@ -2887,12 +2850,12 @@ CosaDmlDcSetDNSProxyEnable
     {
         if ( detect_process("dnsproxy") == 0 )
         {
-            vsystem("dnsproxy &");
+            system("dnsproxy &");
         }
     }
     else
     {
-        vsystem("killall dnsproxy");
+        system("killall dnsproxy");
     }
     return ANSC_STATUS_SUCCESS;
 }
@@ -4506,7 +4469,7 @@ CosaDmlLanMngm_SetConf(ULONG ins, PCOSA_DML_LAN_MANAGEMENT pLanMngm)
 		fprintf(stderr, "%s: set WiFi.Radio.2.X_CISCO_COM_ApplySetting Enable OK\n", __FUNCTION__);
 	}
 	sleep(1);
-	vsystem("/bin/sh /etc/webgui.sh &");
+	system("/bin/sh /etc/webgui.sh &");
 #endif
         //configBridgeMode(bEnable);
 
@@ -4658,7 +4621,7 @@ static void configBridgeMode(int bEnable) {
 #if defined (_XB7_PRODUCT_REQ_) && defined (_COSA_BCM_ARM_)
         g_SetParamValueBool(brpdm, bEnable);
         if (brmode[0] == '0') {
-            vsystem("/bin/sh /etc/webgui.sh &");
+            system("/bin/sh /etc/webgui.sh &");
         }
 #elif (!defined _XF3_PRODUCT_REQ_)
         g_SetParamValueBool(brpdm, bEnable);
@@ -4667,7 +4630,7 @@ static void configBridgeMode(int bEnable) {
 	  */
         if (brmode[0] == '0')
 	{
-           vsystem("/bin/sh /etc/webgui.sh &");
+           system("/bin/sh /etc/webgui.sh &");
 	}
 #elif defined( _XF3_PRODUCT_REQ_)
         g_SetParamValueBool(brpdm, (bEnable>0?true:false));
