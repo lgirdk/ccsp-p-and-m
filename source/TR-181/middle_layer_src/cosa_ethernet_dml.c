@@ -2207,6 +2207,36 @@ Link_GetParamUlongValue
     PCOSA_CONTEXT_LINK_OBJECT       pContextLinkObject      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     PCOSA_DML_ETH_LINK_FULL         pEntry                  = (PCOSA_DML_ETH_LINK_FULL)pContextLinkObject->hContext;
 
+    // Get the lower layer name if not present in the entry.
+    if (strlen(pEntry->StaticInfo.Name) == 0)
+    {
+        char lowerName[16] = { 0 };
+        ANSC_STATUS returnStatus;
+        ULONG ulNameBufSize;
+
+        ulNameBufSize = sizeof(pEntry->StaticInfo.Name);
+
+        returnStatus =
+            CosaUtilGetLowerLayerName
+                (
+                    pEntry->Cfg.LinkType,
+                    pEntry->Cfg.LinkInstNum,
+                    pEntry->StaticInfo.Name,
+                    &ulNameBufSize
+                );
+
+        if ( returnStatus != ANSC_STATUS_SUCCESS )
+        {
+            AnscTraceWarning(("%s -- failed to retrieve LowerLayer name parameter, error code %lu\n", __FUNCTION__, returnStatus));
+        }
+        else
+        {
+            CosaDmlEthLinkUpdateStaticLowerLayerName( pMyObject->hSbContext,
+                                                        pEntry->Cfg.InstanceNumber,
+                                                        pEntry );
+        }
+    }
+
     CosaDmlEthLinkGetDinfo(pMyObject->hSbContext, pEntry->Cfg.InstanceNumber, &pEntry->DynamicInfo);
  
     /* check the parameter name and return the corresponding value */
