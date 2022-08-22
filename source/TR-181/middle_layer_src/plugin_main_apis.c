@@ -731,8 +731,10 @@ CosaBackEndManagerRemove
 static void CheckAndSetRebootReason()
 {
     int value = -1;
+    FILE *fpLastReboot;
 
-    if(fopen("/var/tmp/lastrebootreason","r")==NULL)
+    fpLastReboot = fopen("/var/tmp/lastrebootreason","r");
+    if(fpLastReboot == NULL)
     {
         char rebootReason[64] = "unknown";
         char BOOT_TIME_LOG_FILE[32] = "/rdklogs/logs/BootTime.log";
@@ -780,6 +782,7 @@ static void CheckAndSetRebootReason()
     else
     {
         CcspTraceWarning(("/var/tmp/lastrebootreason File exists\n"));
+        fclose(fpLastReboot);
     }
 }
 
