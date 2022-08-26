@@ -2121,18 +2121,27 @@ PortMapping_GetParamStringValue
     if (strcmp(ParamName, "Interface") == 0)
     {
         /* collect value */
+/*
+        The original code will cause the value of setting and getting will be different. 
+        For example, it expects the parameter of setv is wan0, then getv returns Device.IP.Interface.2.
+        Here is how it's defined: The value MUST be the Path Name of a row in the IP.Interface table. 
+*/
+#if 0
         pString = CosaUtilGetFullPathNameByKeyword
                     (
                         (PUCHAR)"Device.IP.Interface.",
                         (PUCHAR)"Name",
                         (PUCHAR)pNatPMapping->Interface
                     );
+#else
+        pString = (PUCHAR) pNatPMapping->Interface;
+#endif
         if ( pString )
         {
             if ( AnscSizeOfString((const char*)pString) < *pUlSize)
             {
                 rc = strcpy_s(pValue, *pUlSize, (char*)pString);
-                AnscFreeMemory(pString);
+//              AnscFreeMemory(pString);
                 if (rc != EOK)
                 {
                     ERR_CHK(rc);
@@ -2144,7 +2153,7 @@ PortMapping_GetParamStringValue
             {
                 *pUlSize = AnscSizeOfString((const char*)pString)+1;
 
-                AnscFreeMemory(pString);
+//              AnscFreeMemory(pString);
 
                 return 1;
             }
