@@ -1132,6 +1132,36 @@ SwitchToUDHCPC_SetParamBoolValue
         BOOL                        bValue
     );
 
+/***********************************************************************
+
+ APIs for Object:
+
+    DeviceInfo.X_RDKCENTRAL-COM_xOpsDeviceMgmt.ReverseSSH.
+
+    *  ReverseSSH_GetParamStringValue
+    *  ReverseSSH_SetParamStringValue
+    
+***********************************************************************/
+
+
+ULONG
+ReverseSSH_GetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pValue,
+        ULONG*                      pulSize
+    );
+
+
+BOOL
+ReverseSSH_SetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pString
+    );
+
 
 /***********************************************************************
 
