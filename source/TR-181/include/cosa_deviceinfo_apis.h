@@ -495,6 +495,14 @@ ANSC_STATUS getXOpsReverseSshArgs
     );
 int isRevSshActive(void);
 
+ANSC_STATUS setXOpsReverseSshIface(const char *pValue);
+
+ANSC_STATUS getXOpsReverseSshIface
+    (
+        ANSC_HANDLE                 hContext,
+        char*                       pValue,
+        ULONG*                      pulSize
+    );
 
 ANSC_STATUS
 CosaDmlDiGetSyndicationPartnerId

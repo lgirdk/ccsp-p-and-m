@@ -11450,6 +11450,12 @@ ReverseSSH_GetParamStringValue
         return 0;
     }
 
+    if (strcmp(ParamName, "xOpsReverseSshIface") == 0)
+    {
+        getXOpsReverseSshIface(NULL, pValue, pulSize);
+        return 0;
+    }
+
     CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName));
     return -1;
 }
@@ -11507,6 +11513,12 @@ ReverseSSH_SetParamStringValue
     {
         setXOpsReverseSshTrigger(pString);
         return TRUE;
+    }
+
+    if (strcmp(ParamName, "xOpsReverseSshIface") == 0)
+    {
+        setXOpsReverseSshIface(pString);
+        return TRUE ;
     }
 
     CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName));
