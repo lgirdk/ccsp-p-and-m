@@ -341,15 +341,15 @@ struct revSSHParam{
 }revsshparam;
 #define sshCommand "/lib/rdk/startTunnel.sh"
 
-#ifdef ENABLE_SHORTS
-static char shortsHostLogin[256];
-const char localHost[] = "localhost";
 struct stunnelSSHArgs{
         int localport;
         int stunnelport;
         char host[512];
         char hostIp[512];
 }stunnelsshargs;
+#ifdef ENABLE_SHORTS
+static char shortsHostLogin[256];
+const char localHost[] = "localhost";
 #define stunnelCommand "/lib/rdk/startStunnel.sh"
 #endif
 static const char* rsshPidFile = "/var/tmp/rssh.pid";
