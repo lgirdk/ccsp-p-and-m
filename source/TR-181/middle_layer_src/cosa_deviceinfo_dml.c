@@ -6050,6 +6050,138 @@ TemperatureSensor_GetParamStringValue
 
     return -1;
 }
+/**********************************************************************
+
+
+ APIs for Object:
+
+    Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.SHORTS.Enable
+
+    *  SHORTS_SetParamBoolValue // Set args required for SHORTS
+    *  SHORTS_GetParamBoolValue // Get args set for SHORTS
+
+***********************************************************************/
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        SHORTS_GetParamBoolValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                BOOL*                       pBool,
+            );
+
+    description:
+
+        This function is called to retrieve boolean  parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+                BOOL*                       pBool,
+                The buffer of returned boolean value;
+
+     return:     TRUE if succeeded.
+
+
+**********************************************************************/
+BOOL
+SHORTS_GetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL*                       pBool
+    )
+{
+    UNREFERENCED_PARAMETER(hInsContext);
+
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+        char buf[8] = {0};
+        if (syscfg_get(NULL, "ShortsEnabled", buf, sizeof(buf)) == 0)
+        {
+            if (strncmp(buf, "true", sizeof(buf)) == 0)
+                *pBool = TRUE;
+            else
+                *pBool = FALSE;
+        }
+        else
+        {
+            CcspTraceError(("%s syscfg_get failed  for SHORTSEnable\n", __FUNCTION__));
+            *pBool = FALSE;
+        }
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        SHORTS_SetParamBoolValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                BOOL                        bValue
+            );
+
+    description:
+
+        This function is called to set BOOL parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                BOOL                        bValue
+                The updated BOOL value;
+
+    return:     TRUE if succeeded.
+
+**********************************************************************/
+BOOL
+SHORTS_SetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL                        bValue
+    )
+{
+    if (IsBoolSame(hInsContext, ParamName, bValue, SHORTS_GetParamBoolValue))
+        return TRUE;
+
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+        if (syscfg_set(NULL, "ShortsEnabled", (bValue == TRUE) ? "true" : "false") != 0)
+        {
+            CcspTraceError(("[%s] syscfg_set failed for SHORTS\n", __FUNCTION__));
+            return FALSE;
+        }
+        if (syscfg_commit() != 0)
+        {
+            AnscTraceWarning(("syscfg_commit failed for SHORTS param update\n"));
+            return FALSE;
+        }
+        return TRUE;
+    }
+
+    return FALSE;
+}
 
 /**********************************************************************
 
@@ -11460,6 +11592,173 @@ RDKFirmwareUpgrader_SetParamBoolValue
             return TRUE;
         }
     }
+     return FALSE;
+}
+/***********************************************************************
+
+ APIs for Object:
+
+    Device.DeviceInfo.X_RDKCENTRAL-COM_xOpsDeviceMgmt.ReverseSSH
+
+    *  ReverseSSH_SetParamStringValue // Set args required for reverse SSH
+    *  ReverseSSH_GetParamStringValue // Get args set for reverse SSH
+
+***********************************************************************/
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ULONG
+        ReverseSSH_GetParamStringValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                char*                       pValue,
+                ULONG*                      pUlSize
+            );
+
+    description:
+
+        This function is called to retrieve string parameter value;
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                char*                       pValue,
+                The string value buffer;
+
+                ULONG*                      pUlSize
+                The buffer of length of string value;
+                Usually size of 1023 will be used.
+                If it's not big enough, put required size here and return 1;
+
+    return:     0 if succeeded;
+                1 if short of buffer size; (*pUlSize = required size)
+                -1 if not supported.
+
+**********************************************************************/
+ULONG
+ReverseSSH_GetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pValue,
+        ULONG*                      pulSize
+    )
+{
+    UNREFERENCED_PARAMETER(hInsContext);
+    char* activeStr = "ACTIVE";
+    char* inActiveStr = "INACTIVE";
+    errno_t  rc = -1;
+
+    /* check the parameter name and return the corresponding value */
+    if (strcmp(ParamName, "xOpsReverseSshArgs") == 0)
+    {
+        getXOpsReverseSshArgs(NULL, pValue, pulSize);
+        return 0;
+    }
+
+    if (strcmp(ParamName, "xOpsReverseSshStatus") == 0)
+    {
+        if (isRevSshActive())
+        {
+            rc = strcpy_s(pValue, *pulSize, activeStr);
+            if (rc != EOK)
+            {
+                ERR_CHK(rc);
+                return -1;
+            }
+        }
+        else
+        {
+            rc = strcpy_s(pValue, *pulSize, inActiveStr);
+            if (rc != EOK)
+            {
+                ERR_CHK(rc);
+                return -1;
+            }
+        }
+
+        return 0;
+    }
+
+    if (strcmp(ParamName, "xOpsReverseSshTrigger") == 0)
+    {
+        rc = strcpy_s(pValue, *pulSize, "");
+        if (rc != EOK)
+        {
+            ERR_CHK(rc);
+            return -1;
+        }
+        return 0;
+    }
+
+    CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName));
+    return -1;
+}
+
+
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        ReverseSSH_SetParamStringValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                char*                       pString
+            );
+
+    description:
+
+        This function is called to set string parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                char*                       pString
+                The updated string value;
+
+    return:     TRUE if succeeded,
+                FALSE if failed.
+
+**********************************************************************/
+BOOL
+ReverseSSH_SetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pString
+    )
+{
+    UNREFERENCED_PARAMETER(hInsContext);
+    /* check the parameter name and set the corresponding value */
+    if (strcmp(ParamName, "xOpsReverseSshArgs") == 0)
+    {
+        setXOpsReverseSshArgs(pString);
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "xOpsReverseSshTrigger") == 0)
+    {
+        setXOpsReverseSshTrigger(pString);
+        return TRUE;
+    }
+
+    CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName));
+
     return FALSE;
 }
 
