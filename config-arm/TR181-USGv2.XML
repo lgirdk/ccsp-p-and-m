@@ -1964,6 +1964,34 @@
 			</parameters>
 
 		</object>
+            <object>
+              <name>ReverseSSH</name>
+              <objectType>object</objectType>
+              <functions>
+                <func_SetParamStringValue>ReverseSSH_SetParamStringValue</func_SetParamStringValue>
+                <func_GetParamStringValue>ReverseSSH_GetParamStringValue</func_GetParamStringValue>
+              </functions>
+              <parameters>
+                <parameter>
+                  <name>xOpsReverseSshArgs</name>
+                  <type>string</type>
+                  <syntax>string</syntax>
+                  <writable>true</writable>
+                </parameter>
+                <parameter>
+                  <name>xOpsReverseSshTrigger</name>
+                  <type>string</type>
+                  <syntax>string</syntax>
+                  <writable>true</writable>
+                </parameter>
+                <parameter>
+                  <name>xOpsReverseSshStatus</name>
+                  <type>string</type>
+                  <syntax>string</syntax>
+                  <writable>false</writable>
+                </parameter>
+              </parameters>
+            </object>
 			<object>
               <name>RPC</name>
               <objectType>object</objectType>
@@ -2336,6 +2364,22 @@
                             </parameters>
                         </object>
 <?endif?>
+                    <object>
+                            <name>SHORTS</name>
+                            <objectType>object</objectType>
+                            <functions>
+                                <func_GetParamBoolValue>SHORTS_GetParamBoolValue</func_GetParamBoolValue>
+                                <func_SetParamBoolValue>SHORTS_SetParamBoolValue</func_SetParamBoolValue>
+                            </functions>
+                            <parameters>
+                                <parameter>
+                                    <name>Enable</name>
+                                    <type>boolean</type>
+                                    <syntax>bool</syntax>
+                                    <writable>true</writable>
+                                </parameter>
+                            </parameters>
+                    </object>
                         <object>
                             <name>Telemetry</name>
                             <objectType>object</objectType>
