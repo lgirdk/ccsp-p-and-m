@@ -174,6 +174,7 @@ extern  ANSC_HANDLE             bus_handle;
 #include "autoconf.h"     
 #include "secure_wrapper.h"
 #include "ansc_string_util.h"
+#include "ifaddrs.h"
 
 #define _ERROR_ "NOT SUPPORTED"
 #define _START_TIME_12AM_ "0"
@@ -214,6 +215,9 @@ static pthread_t gPoll_threadId[MAX_TEMPSENSOR_INSTANCE];
 static const int OK = 1 ;
 static const int NOK = 0 ;
 static char reverseSSHArgs[256];
+static char reverseSSHArgsExtended[512]; // LGI: reverseSSHArgs + bind address calculated at each rssh trigger
+static int reverseSSHHostIpVersion = AF_UNSPEC;
+
 struct stunnelSSHArgs{
         int localport;
         int stunnelport;
@@ -252,6 +256,94 @@ PsmGet(const char *param, char *value, int size)
     return 0;
 }
 
+int getHostIpVersion(const char *ip)
+{
+    unsigned char buf[sizeof(struct in6_addr)];
+
+    if (inet_pton(AF_INET, ip, buf) == 1)
+        return AF_INET;
+    if (inet_pton(AF_INET6, ip, buf) == 1)
+        return AF_INET6;
+
+    return AF_UNSPEC;
+}
+
+ANSC_STATUS appendBindAddress(void)
+{
+    struct ifaddrs *ifap, *ifa;
+    char addr[INET6_ADDRSTRLEN + 2];
+    char reverseSSHIface[IF_NAMESIZE];
+    ULONG len = IF_NAMESIZE;
+
+    memset(addr, 0, sizeof(addr));
+    memset(reverseSSHArgsExtended, 0, sizeof(reverseSSHArgsExtended));
+    strncpy(reverseSSHArgsExtended, reverseSSHArgs, strlen(reverseSSHArgs));
+
+    if (getXOpsReverseSshIface(NULL, reverseSSHIface, &len) != ANSC_STATUS_SUCCESS)
+    {
+        CcspTraceError(("getXOpsReverseSshIface failed: %s\n", strerror(errno)));
+        return ANSC_STATUS_FAILURE;
+    }
+    if (getifaddrs(&ifap))
+    {
+        CcspTraceError(("getifaddrs failed: %s\n", strerror(errno)));
+        return ANSC_STATUS_FAILURE;
+    }
+    for (ifa = ifap; ifa; ifa = ifa->ifa_next)
+    {
+        if ((ifa->ifa_addr == NULL) ||
+            (ifa->ifa_addr->sa_family != reverseSSHHostIpVersion) ||
+            (strcmp(ifa->ifa_name, reverseSSHIface)))
+        {
+            continue;
+        }
+
+        if (ifa->ifa_addr->sa_family == AF_INET6)
+        {
+            struct sockaddr_in6 *in6 = (struct sockaddr_in6*) ifa->ifa_addr;
+            if (IN6_IS_ADDR_LINKLOCAL(&in6->sin6_addr))
+            {
+                continue;
+            }
+            /* Dbclient interprets the string after the last colon as the port number. To tackle
+             * this assumption, workaround is to add port 0 and let OS find out n unused port
+             * for dropbear to bind
+             */
+            if (!inet_ntop(AF_INET6, &in6->sin6_addr, addr, sizeof(addr)))
+            {
+                CcspTraceError(("inet_ntop failed: %s\n", strerror(errno)));
+                return ANSC_STATUS_FAILURE;
+            }
+            strcat(addr, ":0");
+
+            break;
+        }
+        if (ifa->ifa_addr->sa_family == AF_INET) {
+            struct sockaddr_in *in = (struct sockaddr_in *) ifa->ifa_addr;
+
+            if (!inet_ntop(AF_INET, &in->sin_addr, addr, sizeof(addr)))
+            {
+                CcspTraceError(("inet_ntop failed: %s\n", strerror(errno)));
+                return ANSC_STATUS_FAILURE;
+            }
+            break;
+        }
+    }
+
+    if (addr[0] != '\0')
+    {
+        int len = strlen(addr) + 4; // 4 is for " -b "
+
+        if (sizeof(reverseSSHArgsExtended) > (strlen(reverseSSHArgs) + len))
+        {
+            sprintf(reverseSSHArgsExtended + strlen(reverseSSHArgs), " -b %s", addr);
+        }
+        CcspTraceInfo(("Resulting extended SSHargs:\"%s\"\n", reverseSSHArgsExtended));
+    }
+
+    return ANSC_STATUS_SUCCESS;
+}
+
 /**
  * Form dropbear equivalent options from input arguments accepted by TR-69/181
  */
@@ -271,7 +363,7 @@ static char *mapArgsToSSHOption(char *revSSHConfig, bool shortsFlag)
     {
         if ((value = strstr(revSSHConfig, "idletimeout=")))
         {
-            rc = sprintf_s(option, 125, " -I %s -f -N -y -T", value + strlen("idletimeout="));
+            rc = sprintf_s(option, 125, " -I %s", value + strlen("idletimeout="));
             if (rc < EOK)
             {
                 ERR_CHK(rc);
@@ -447,6 +539,7 @@ static char *getHostLogin(char *tempStr, bool shortsFlag)
             }
         }
         CcspTraceInfo(("%s Host Login value: %s \n", __FUNCTION__, hostLogin));
+        reverseSSHHostIpVersion = getHostIpVersion(hostIp);
     }
 
     if (user)
@@ -2497,6 +2590,7 @@ int setXOpsReverseSshArgs(char *pString)
     char *tempStr = NULL;
     char *option = NULL;
     char *hostLogin = NULL;
+    char extraArgs[] = " -N -y -T ";
     int inputMsgSize = 0;
     int hostloglen = 0;
     char *st = NULL;
@@ -2583,6 +2677,8 @@ int setXOpsReverseSshArgs(char *pString)
     }
     if (hostLogin)
         free(hostLogin);
+    if (sizeof(reverseSSHArgs) > (strlen(reverseSSHArgs) + strlen(extraArgs)))
+        strncat(reverseSSHArgs, extraArgs, strlen(extraArgs));
 
     return ANSC_STATUS_SUCCESS;
 }
@@ -2621,20 +2717,25 @@ int setXOpsReverseSshTrigger(char *input)
     trigger = strstr(input, "start");
     if (trigger)
     {
+        if (appendBindAddress() != ANSC_STATUS_SUCCESS)
+        {
+            CcspTraceError(("appendBindAddress failed! Returning"));
+            return NOK;
+        }
 #ifdef ENABLE_SHORTS
         char *trigger_shorts = NULL;
         trigger_shorts = strstr(input, "start shorts");
         if (isShortsEnabled() && trigger_shorts)
         {
-            CcspTraceInfo(("[%s] Starting Stunnel \n", __FUNCTION__));
-            CcspTraceInfo(("[%s] Stunnel Commmand = %s %d %s %s %d %s \n", __FUNCTION__, stunnelCommand, stunnelsshargs.localport, stunnelsshargs.host, stunnelsshargs.hostIp, stunnelsshargs.stunnelport, reverseSSHArgs));
-            v_secure_system("/bin/sh %s %d %s %s %d %s &", stunnelCommand, stunnelsshargs.localport, stunnelsshargs.host, stunnelsshargs.hostIp, stunnelsshargs.stunnelport, reverseSSHArgs);
+            CcspTraceInfo(("[%s] Starting Stunnel \n",__FUNCTION__));
+            CcspTraceInfo(("[%s] Stunnel Commmand = %s %d %s %s %d %s \n", __FUNCTION__, stunnelCommand, stunnelsshargs.localport, stunnelsshargs.host, stunnelsshargs.hostIp, stunnelsshargs.stunnelport, reverseSSHArgsExtended));
+            v_secure_system("/bin/sh %s %d %s %s %d %s &", stunnelCommand, stunnelsshargs.localport, stunnelsshargs.host, stunnelsshargs.hostIp, stunnelsshargs.stunnelport, reverseSSHArgsExtended);
         }
         else
         {
 #endif
-            CcspTraceInfo(("[%s] ReverseSSH arguments = %s  \n", __FUNCTION__, reverseSSHArgs));
-            v_secure_system(sshCommand " start %s", reverseSSHArgs);
+            CcspTraceInfo(("[%s] ReverseSSH arguments = %s  \n",__FUNCTION__,reverseSSHArgsExtended));
+            v_secure_system(sshCommand " start %s", reverseSSHArgsExtended);
 #ifdef ENABLE_SHORTS
         }
 #endif
@@ -2672,6 +2773,37 @@ int isRevSshActive(void)
     }
 
     return status;
+}
+
+ANSC_STATUS setXOpsReverseSshIface(const char *pValue)
+{
+    if (!pValue)
+    {
+        CcspTraceInfo(("Input args are empty \n"));
+        return ANSC_STATUS_FAILURE;
+    }
+
+    if ((syscfg_set_commit(NULL, "rssh_bind_interface", pValue) != 0))
+    {
+        CcspTraceInfo(("rssh_bind_interface : syscfg_set failed\n"));
+        return ANSC_STATUS_FAILURE;
+    }
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS getXOpsReverseSshIface(ANSC_HANDLE hContext, char *pValue, ULONG *pulSize)
+{
+    UNREFERENCED_PARAMETER(hContext);
+    errno_t rc = -1;
+
+    if (syscfg_get(NULL, "rssh_bind_interface", pValue, *pulSize))
+    {
+        CcspTraceWarning(("%s: syscfg_get failed\n", __func__));
+        return ANSC_STATUS_FAILURE;
+    }
+
+    return ANSC_STATUS_SUCCESS;
 }
 
 #define PARTNER_ID_LEN 64 
