@@ -188,7 +188,7 @@ X_CISCO_COM_DeviceControl_GetParamBoolValue
         if (retStatus != ANSC_STATUS_SUCCESS) {
             return FALSE;
         }
-        if (strcasecmp(buf, "0") == 0) {
+        if (strcmp(buf, "0") == 0) {
             *pBool = FALSE;
         }
         else {
