@@ -2034,7 +2034,25 @@ CosaDmlIpIfGetEntry
         pEntry->Cfg.Loopback = FALSE;
     }
 
-    pEntry->Cfg.MaxMTUSize   = CosaUtilIoctlXXX((char *)g_ipif_names[ulIndex], "mtu", NULL);
+    if(!strcmp((char *)g_ipif_names[ulIndex],"erouter0"))
+    {
+        char out[8]= {0};
+        UtopiaContext utctx;
+
+        if (!Utopia_Init(&utctx))
+        {
+            return ANSC_STATUS_FAILURE;
+        }
+
+        Utopia_RawGet(&utctx,NULL,"wan_mtu",out,sizeof(out));
+        Utopia_Free(&utctx,0);
+
+        pEntry->Cfg.MaxMTUSize = strtol(out, NULL, 10);
+    }
+    else
+    {
+        pEntry->Cfg.MaxMTUSize   = CosaUtilIoctlXXX((char *)g_ipif_names[ulIndex], "mtu", NULL);
+    }
     pEntry->Cfg.AutoIPEnable = FALSE;
     
     if (!pEntry->Cfg.bEnabled)
