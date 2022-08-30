@@ -18883,7 +18883,7 @@
         </parameter>
         <parameter>
           <name>MaxStartDelay</name>
-          <type>unsignedInt</type>
+          <type>unsignedInt[0:60]</type>
           <syntax>uint32</syntax>
           <writable>true</writable>
         </parameter>
