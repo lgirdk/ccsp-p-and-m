@@ -1278,6 +1278,8 @@ X_CISCO_COM_DeviceControl_SetParamUlongValue
             pMyObject->WebServerChanged = TRUE;
             return TRUE;
         }
+
+        return FALSE;
     }
 
     if (strcmp(ParamName, "HTTPSPort") == 0)
@@ -1293,6 +1295,8 @@ X_CISCO_COM_DeviceControl_SetParamUlongValue
             pMyObject->WebServerChanged = TRUE;
             return TRUE;
         }
+
+        return FALSE;
     }
 
     if (strcmp(ParamName, "ReinitMacThreshold") == 0)
