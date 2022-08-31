@@ -8594,7 +8594,7 @@
             
                 <name>X_CISCO_COM_Md5KeyID</name>
                 
-                <type>unsignedInt</type>
+                <type>unsignedInt[:255]</type>
                 
                 <syntax>uint32</syntax>
                 
