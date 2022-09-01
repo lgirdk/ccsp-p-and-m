@@ -1365,7 +1365,11 @@ static void RestartRIPInterfaces(int ripEnable)
                 }
             }
         }
-        RestartBrlanInterface(brlan_ip,brlan_mask,brlan_dhcp_start,brlan_dhcp_end,ripEnable);
+
+        if (strlen(brlan_ip) > 0) {
+            /* Restart brlan0 interface only if brlan_ip has a valid address. */
+            RestartBrlanInterface(brlan_ip,brlan_mask,brlan_dhcp_start,brlan_dhcp_end,ripEnable);
+        }
     }//End of else if(strcmp(staticBrlanEnable, "true") == 0)
 
 }
