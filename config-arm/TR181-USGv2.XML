@@ -18992,6 +18992,92 @@
 
 <?endif?>
 
+    <object>
+      <name>X_LGI-COM_TunneledStaticIPService</name>
+      <objectType>object</objectType>
+      <functions>
+        <func_GetParamIntValue>X_LGI_COM_TunneledStaticIPService_GetParamIntValue</func_GetParamIntValue>
+        <func_SetParamIntValue>X_LGI_COM_TunneledStaticIPService_SetParamIntValue</func_SetParamIntValue>
+        <func_GetParamStringValue>X_LGI_COM_TunneledStaticIPService_GetParamStringValue</func_GetParamStringValue>
+        <func_SetParamStringValue>X_LGI_COM_TunneledStaticIPService_SetParamStringValue</func_SetParamStringValue>
+        <func_GetParamBoolValue>X_LGI_COM_TunneledStaticIPService_GetParamBoolValue</func_GetParamBoolValue>
+        <func_SetParamBoolValue>X_LGI_COM_TunneledStaticIPService_SetParamBoolValue</func_SetParamBoolValue>
+        <func_GetParamUlongValue>X_LGI_COM_TunneledStaticIPService_GetParamUlongValue</func_GetParamUlongValue>
+        <func_SetParamUlongValue>X_LGI_COM_TunneledStaticIPService_SetParamUlongValue</func_SetParamUlongValue>
+        <func_Validate>X_LGI_COM_TunneledStaticIPService_Validate</func_Validate>
+        <func_Commit>X_LGI_COM_TunneledStaticIPService_Commit</func_Commit>
+        <func_Rollback>X_LGI_COM_TunneledStaticIPService_Rollback</func_Rollback>
+      </functions>
+      <parameters>
+        <parameter>
+          <name>Enable</name>
+          <type>boolean</type>
+          <syntax>bool</syntax>
+          <writable>true</writable>
+        </parameter>
+        <parameter>
+          <name>Username</name>
+          <type>string(256)</type>
+          <syntax>string</syntax>
+          <writable>true</writable>
+        </parameter>
+        <parameter>
+          <name>Password</name>
+          <type>string(256)</type>
+          <syntax>string</syntax>
+          <writable>true</writable>
+        </parameter>
+        <parameter>
+          <name>RadiusInterface</name>
+          <type>string: eRouter(1),eCM(2)</type>
+          <syntax>uint32/mapped</syntax>
+          <writable>true</writable>
+        </parameter>
+        <parameter>
+          <name>RadiusAuthServerIPAddr</name>
+          <type>string(45)</type>
+          <syntax>string</syntax>
+          <writable>true</writable>
+        </parameter>
+        <parameter>
+          <name>RadiusAuthSecret</name>
+          <type>string(45)</type>
+          <syntax>string</syntax>
+          <writable>true</writable>
+        </parameter>
+        <parameter>
+          <name>RadiusAuthServerPort</name>
+          <type>int</type>
+          <syntax>int</syntax>
+          <writable>true</writable>
+        </parameter>
+        <parameter>
+          <name>NAS-Identifier</name>
+          <type>string(45)</type>
+          <syntax>string</syntax>
+          <writable>true</writable>
+        </parameter>
+        <parameter>
+          <name>RadiusAccServerIPAddr</name>
+          <type>string(45)</type>
+          <syntax>string</syntax>
+          <writable>true</writable>
+        </parameter>
+        <parameter>
+          <name>RadiusAccSecret</name>
+          <type>string(45)</type>
+          <syntax>string</syntax>
+          <writable>true</writable>
+        </parameter>
+        <parameter>
+          <name>RadiusAccServerPort</name>
+          <type>int</type>
+          <syntax>int</syntax>
+          <writable>true</writable>
+        </parameter>
+      </parameters> 
+    </object>
+
 	  </objects>
 
 </dataModelInfo>
