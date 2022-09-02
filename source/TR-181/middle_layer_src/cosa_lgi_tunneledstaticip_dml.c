@@ -14,7 +14,6 @@
  * limitations under the License.
  ****************************************************************************/
 
-
 #include "ansc_platform.h"
 #include "plugin_main_apis.h"
 #include "cosa_lgi_tunneledstaticip_dml.h"
@@ -23,18 +22,10 @@
 #include <syscfg/syscfg.h>
 
 
-
-BOOL
-X_LGI_COM_TunneledStaticIPService_GetParamBoolValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL*                       pBool
-    )
+BOOL X_LGI_COM_TunneledStaticIPService_GetParamBoolValue (ANSC_HANDLE hInsContext, char *ParamName, BOOL* pBool)
 {
-    PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP  pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP)g_pCosaBEManager->hLgiTunneledStaticIP;
+    PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP) g_pCosaBEManager->hLgiTunneledStaticIP;
 
-    /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "Enable") == 0)
     {
         *pBool = pMyObject->Enable;
@@ -44,18 +35,10 @@ X_LGI_COM_TunneledStaticIPService_GetParamBoolValue
     return FALSE;
 }
 
-
-BOOL
-X_LGI_COM_TunneledStaticIPService_SetParamBoolValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        BOOL                        bValue
-    )
+BOOL X_LGI_COM_TunneledStaticIPService_SetParamBoolValue (ANSC_HANDLE hInsContext, char *ParamName, BOOL bValue)
 {
-    PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP  pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP)g_pCosaBEManager->hLgiTunneledStaticIP;
+    PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP) g_pCosaBEManager->hLgiTunneledStaticIP;
 
-    /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "Enable") == 0)
     {
         pMyObject->Enable = bValue;
@@ -65,18 +48,10 @@ X_LGI_COM_TunneledStaticIPService_SetParamBoolValue
     return FALSE;
 }
 
-
-BOOL
-X_LGI_COM_TunneledStaticIPService_GetParamIntValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        int*                        pInt
-    )
+BOOL X_LGI_COM_TunneledStaticIPService_GetParamIntValue (ANSC_HANDLE hInsContext, char *ParamName, int *pInt)
 {
-    PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP  pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP)g_pCosaBEManager->hLgiTunneledStaticIP;
+    PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP) g_pCosaBEManager->hLgiTunneledStaticIP;
 
-    /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "RadiusAuthServerPort") == 0)
     {
         *pInt = pMyObject->RadiusAuthServerPort;
@@ -92,18 +67,10 @@ X_LGI_COM_TunneledStaticIPService_GetParamIntValue
     return FALSE;
 }
 
-
-BOOL
-X_LGI_COM_TunneledStaticIPService_SetParamIntValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        int                         value
-    )
+BOOL X_LGI_COM_TunneledStaticIPService_SetParamIntValue (ANSC_HANDLE hInsContext, char *ParamName, int value)
 {
-    PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP  pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP)g_pCosaBEManager->hLgiTunneledStaticIP;
+    PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP) g_pCosaBEManager->hLgiTunneledStaticIP;
 
-    /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "RadiusAuthServerPort") == 0)
     {
         pMyObject->RadiusAuthServerPort = value;
@@ -119,19 +86,10 @@ X_LGI_COM_TunneledStaticIPService_SetParamIntValue
     return FALSE;
 }
 
-
-ULONG
-X_LGI_COM_TunneledStaticIPService_GetParamStringValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        char*                       pValue,
-        ULONG*                      pUlSize
-    )
+ULONG X_LGI_COM_TunneledStaticIPService_GetParamStringValue (ANSC_HANDLE hInsContext, char *ParamName, char *pValue, ULONG *pUlSize)
 {
-    PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP  pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP)g_pCosaBEManager->hLgiTunneledStaticIP;
+    PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP) g_pCosaBEManager->hLgiTunneledStaticIP;
 
-    /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "Username") == 0)
     {
         AnscCopyString(pValue, pMyObject->Username);
@@ -177,19 +135,10 @@ X_LGI_COM_TunneledStaticIPService_GetParamStringValue
     return -1;
 }
 
-
-BOOL
-X_LGI_COM_TunneledStaticIPService_SetParamStringValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        char*                       strValue
-    )
+BOOL X_LGI_COM_TunneledStaticIPService_SetParamStringValue (ANSC_HANDLE hInsContext, char *ParamName, char *strValue)
 {
+    PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP) g_pCosaBEManager->hLgiTunneledStaticIP;
 
-    PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP  pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP)g_pCosaBEManager->hLgiTunneledStaticIP;
-
-    /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "Username") == 0)
     {
         AnscCopyString(pMyObject->Username, strValue);
@@ -235,73 +184,40 @@ X_LGI_COM_TunneledStaticIPService_SetParamStringValue
     return FALSE;
 }
 
-
-
-BOOL
-X_LGI_COM_TunneledStaticIPService_GetParamUlongValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        ULONG*                      puLong
-    )
+BOOL X_LGI_COM_TunneledStaticIPService_GetParamUlongValue (ANSC_HANDLE hInsContext, char *ParamName, ULONG *puLong)
 {
-
-    PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP  pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP)g_pCosaBEManager->hLgiTunneledStaticIP;
-
-    /* check the parameter name and return the corresponding value */
+    PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP) g_pCosaBEManager->hLgiTunneledStaticIP;
 
     if (strcmp(ParamName, "RadiusInterface") == 0)
     {
-        *puLong = pMyObject->RadiusInterface;
+        *puLong = (ULONG) pMyObject->RadiusInterface;
         return TRUE;
     }
 
     return FALSE;
 }
 
-
-BOOL
-X_LGI_COM_TunneledStaticIPService_SetParamUlongValue
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       ParamName,
-        ULONG                       uValuepUlong
-    )
+BOOL X_LGI_COM_TunneledStaticIPService_SetParamUlongValue (ANSC_HANDLE hInsContext, char *ParamName, ULONG uValuepUlong)
 {
-
-    PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP  pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP)g_pCosaBEManager->hLgiTunneledStaticIP;
-
-    /* check the parameter name and return the corresponding value */
+    PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP) g_pCosaBEManager->hLgiTunneledStaticIP;
 
     if (strcmp(ParamName, "RadiusInterface") == 0)
     {
-        pMyObject->RadiusInterface = uValuepUlong;
+        pMyObject->RadiusInterface = (int) uValuepUlong;
         return TRUE;
     }
 
     return FALSE;
 }
 
-
-BOOL
-X_LGI_COM_TunneledStaticIPService_Validate
-    (
-        ANSC_HANDLE                 hInsContext,
-        char*                       pReturnParamName,
-        ULONG*                      puLength
-  )
+BOOL X_LGI_COM_TunneledStaticIPService_Validate (ANSC_HANDLE hInsContext, char *pReturnParamName, ULONG *puLength)
 {
     return TRUE;
 }
 
-
-ULONG
-X_LGI_COM_TunneledStaticIPService_Commit
-    (
-        ANSC_HANDLE                 hInsContext
-    )
+ULONG X_LGI_COM_TunneledStaticIPService_Commit (ANSC_HANDLE hInsContext)
 {
-    PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP  pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP)g_pCosaBEManager->hLgiTunneledStaticIP;
+    PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP) g_pCosaBEManager->hLgiTunneledStaticIP;
 
     CosaDmlTunneledStaticIPSetEnable(NULL, pMyObject->Enable);
     CosaDmlTunneledStaticIPSetUsername(NULL, pMyObject->Username);
@@ -314,16 +230,11 @@ X_LGI_COM_TunneledStaticIPService_Commit
     CosaDmlTunneledStaticIPSetRadiusAccServerIPAddr(NULL, pMyObject->RadiusAccServerIPAddr);
     CosaDmlTunneledStaticIPSetRadiusAccSecret(NULL, pMyObject->RadiusAccSecret);
     CosaDmlTunneledStaticIPSetRadiusAccServerPort(NULL, pMyObject->RadiusAccServerPort);
+
     return 0;
 }
 
-
-ULONG
-X_LGI_COM_TunneledStaticIPService_Rollback
-    (
-        ANSC_HANDLE                 hInsContext
-    )
+ULONG X_LGI_COM_TunneledStaticIPService_Rollback (ANSC_HANDLE hInsContext)
 {
     return 0;
 }
-

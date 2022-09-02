@@ -14,54 +14,41 @@
  * limitations under the License.
  ****************************************************************************/
 
-
 #include "cosa_lgi_tunneledstaticip_apis.h"
 #include "cosa_lgi_tunneledstaticip_internal.h"
 
 
-
-ANSC_HANDLE
-CosaLgiTunneledStaticIPCreate
-    (
-        VOID
-    )
+ANSC_HANDLE CosaLgiTunneledStaticIPCreate (void)
 {
-    PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP  pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP)NULL;
+    PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP) NULL;
 
     /*
      * We create object by first allocating memory for holding the variables and member functions.
      */
-    pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP)AnscAllocateMemory(sizeof(COSA_DATAMODEL_LGI_TUNNELEDSTATICIP));
+    pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP) AnscAllocateMemory(sizeof(COSA_DATAMODEL_LGI_TUNNELEDSTATICIP));
 
-    if ( !pMyObject )
+    if (!pMyObject)
     {
-        return  (ANSC_HANDLE)NULL;
+        return (ANSC_HANDLE) NULL;
     }
 
     /*
      * Initialize the common variables and functions for a container object.
      */
-    pMyObject->Oid               = COSA_DATAMODEL_LGI_TUNNELEDSTATICIP_OID;
-    pMyObject->Create            = CosaLgiTunneledStaticIPCreate;
-    pMyObject->Remove            = CosaLgiTunneledStaticIPRemove;
-    pMyObject->Initialize        = CosaLgiTunneledStaticIPInitialize;
+    pMyObject->Oid = COSA_DATAMODEL_LGI_TUNNELEDSTATICIP_OID;
+    pMyObject->Create = CosaLgiTunneledStaticIPCreate;
+    pMyObject->Remove = CosaLgiTunneledStaticIPRemove;
+    pMyObject->Initialize = CosaLgiTunneledStaticIPInitialize;
 
-    pMyObject->Initialize   ((ANSC_HANDLE)pMyObject);
+    pMyObject->Initialize ((ANSC_HANDLE) pMyObject);
 
-    return  (ANSC_HANDLE)pMyObject;
+    return (ANSC_HANDLE) pMyObject;
 }
 
-
-
-ANSC_STATUS
-CosaLgiTunneledStaticIPInitialize
-    (
-        ANSC_HANDLE                 hThisObject
-    )
+ANSC_STATUS CosaLgiTunneledStaticIPInitialize (ANSC_HANDLE hThisObject)
 {
-
-    ANSC_STATUS                   returnStatus = ANSC_STATUS_SUCCESS;
-    PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP)hThisObject;
+    ANSC_STATUS returnStatus = ANSC_STATUS_SUCCESS;
+    PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP) hThisObject;
 
     CosaDmlTunneledStaticIPGetEnable(NULL, &pMyObject->Enable);
     CosaDmlTunneledStaticIPGetUsername(NULL, &pMyObject->Username);
@@ -78,24 +65,15 @@ CosaLgiTunneledStaticIPInitialize
     return returnStatus;
 }
 
-
-
-
-ANSC_STATUS
-CosaLgiTunneledStaticIPRemove
-    (
-        ANSC_HANDLE                 hThisObject
-    )
+ANSC_STATUS CosaLgiTunneledStaticIPRemove (ANSC_HANDLE hThisObject)
 {
-    ANSC_STATUS                   returnStatus = ANSC_STATUS_SUCCESS;
-    PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP)hThisObject;
+    ANSC_STATUS returnStatus = ANSC_STATUS_SUCCESS;
+    PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP) hThisObject;
 
     /* Remove necessary resource */
     
-
     /* Remove self */
     AnscFreeMemory((ANSC_HANDLE)pMyObject);
 
     return returnStatus;
 }    
-
