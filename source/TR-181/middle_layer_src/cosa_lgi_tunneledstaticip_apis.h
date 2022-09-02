@@ -14,188 +14,32 @@
  * limitations under the License.
  ****************************************************************************/
 
-
-#ifndef  _COSA_LGI_TUNNELEDSTATICIP_APIS_H
-#define  _COSA_LGI_TUNNELEDSTATICIP_APIS_H
+#ifndef _COSA_LGI_TUNNELEDSTATICIP_APIS_H
+#define _COSA_LGI_TUNNELEDSTATICIP_APIS_H
 
 #include "cosa_apis.h"
 
-
-
-ANSC_STATUS
-CosaDmlTunneledStaticIPGetEnable
-    (
-        ANSC_HANDLE                 hContext,
-        BOOL                        *pValue
-    );
-
-
-ANSC_STATUS
-CosaDmlTunneledStaticIPSetEnable
-    (
-        ANSC_HANDLE                 hContext,
-        BOOL                        bValue
-    );
-
-
-ANSC_STATUS 
-CosaDmlTunneledStaticIPGetRadiusAuthServerPort 
-    ( 
-        ANSC_HANDLE                 hContext, 
-        int                         *pValue 
-    );
-
-
-ANSC_STATUS 
-CosaDmlTunneledStaticIPSetRadiusAuthServerPort 
-    ( 
-        ANSC_HANDLE                 hContext, 
-        int                         value 
-    );
-
-
-ANSC_STATUS 
-CosaDmlTunneledStaticIPGetRadiusAccServerPort
-    ( 
-        ANSC_HANDLE                 hContext, 
-        int                         *pValue 
-    );
-
-
-ANSC_STATUS 
-CosaDmlTunneledStaticIPSetRadiusAccServerPort
-    ( 
-        ANSC_HANDLE                 hContext, 
-        int                         value 
-    );
-
-
-ANSC_STATUS
-CosaDmlTunneledStaticIPGetUsername
-    (
-        ANSC_HANDLE                 hContext,
-        char                        *pValue
-    );
-
-
-ANSC_STATUS
-CosaDmlTunneledStaticIPSetUsername
-    (
-        ANSC_HANDLE                 hContext,
-        char                        bValue
-    );
-
-
-ANSC_STATUS
-CosaDmlTunneledStaticIPGetPassword
-    (
-        ANSC_HANDLE                 hContext,
-        char                        *pValue
-    );
-
-
-ANSC_STATUS
-CosaDmlTunneledStaticIPSetPassword
-    (
-        ANSC_HANDLE                 hContext,
-        char                        bValue
-    );
-
-
-ANSC_STATUS
-CosaDmlTunneledStaticIPGetRadiusAuthServerIPAddr
-    (
-        ANSC_HANDLE                 hContext,
-        char                        *pValue
-    );
-
-
-ANSC_STATUS
-CosaDmlTunneledStaticIPSetRadiusAuthServerIPAddr
-    (
-        ANSC_HANDLE                 hContext,
-        char                        bValue
-    );
-
-
-ANSC_STATUS
-CosaDmlTunneledStaticIPGetRadiusAuthSecret
-    (
-        ANSC_HANDLE                 hContext,
-        char                        *pValue
-    );
-
-
-ANSC_STATUS
-CosaDmlTunneledStaticIPSetRadiusAuthSecret
-    (
-        ANSC_HANDLE                 hContext,
-        char                        bValue
-    );
-
-
-ANSC_STATUS
-CosaDmlTunneledStaticIPGetNASIdentifier
-    (
-        ANSC_HANDLE                 hContext,
-        char                        *pValue
-    );
-
-
-ANSC_STATUS
-CosaDmlTunneledStaticIPSetNASIdentifier
-    (
-        ANSC_HANDLE                 hContext,
-        char                        bValue
-    );
-
-
-ANSC_STATUS
-CosaDmlTunneledStaticIPGetRadiusAccServerIPAddr
-    (
-        ANSC_HANDLE                 hContext,
-        char                        *pValue
-    );
-
-
-ANSC_STATUS
-CosaDmlTunneledStaticIPSetRadiusAccServerIPAddr
-    (
-        ANSC_HANDLE                 hContext,
-        char                        bValue
-    );
-
-
-ANSC_STATUS
-CosaDmlTunneledStaticIPGetRadiusAccSecret
-    (
-        ANSC_HANDLE                 hContext,
-        char                        *pValue
-    );
-
-
-ANSC_STATUS
-CosaDmlTunneledStaticIPSetRadiusAccSecret
-    (
-        ANSC_HANDLE                 hContext,
-        char                        bValue
-    );
-
-
-ANSC_STATUS
-CosaDmlTunneledStaticIPGetRadiusInterface
-    (
-        ANSC_HANDLE                 hContext,
-        ULONG                        *pValue
-    );
-
-
-ANSC_STATUS
-CosaDmlTunneledStaticIPSetRadiusInterface
-    (
-        ANSC_HANDLE                 hContext,
-        ULONG                        bValue
-    );
+ANSC_STATUS CosaDmlTunneledStaticIPGetEnable (ANSC_HANDLE hContext, BOOL *pValue);
+ANSC_STATUS CosaDmlTunneledStaticIPSetEnable (ANSC_HANDLE hContext, BOOL bValue);
+ANSC_STATUS CosaDmlTunneledStaticIPGetRadiusAuthServerPort (ANSC_HANDLE hContext, int *pValue);
+ANSC_STATUS CosaDmlTunneledStaticIPSetRadiusAuthServerPort (ANSC_HANDLE hContext, int value);
+ANSC_STATUS CosaDmlTunneledStaticIPGetRadiusAccServerPort (ANSC_HANDLE hContext, int *pValue);
+ANSC_STATUS CosaDmlTunneledStaticIPSetRadiusAccServerPort (ANSC_HANDLE hContext, int value);
+ANSC_STATUS CosaDmlTunneledStaticIPGetUsername (ANSC_HANDLE hContext, char *pValue);
+ANSC_STATUS CosaDmlTunneledStaticIPSetUsername (ANSC_HANDLE hContext, char bValue);
+ANSC_STATUS CosaDmlTunneledStaticIPGetPassword (ANSC_HANDLE hContext, char *pValue);
+ANSC_STATUS CosaDmlTunneledStaticIPSetPassword (ANSC_HANDLE hContext, char bValue);
+ANSC_STATUS CosaDmlTunneledStaticIPGetRadiusAuthServerIPAddr (ANSC_HANDLE hContext, char *pValue);
+ANSC_STATUS CosaDmlTunneledStaticIPSetRadiusAuthServerIPAddr (ANSC_HANDLE hContext, char bValue);
+ANSC_STATUS CosaDmlTunneledStaticIPGetRadiusAuthSecret (ANSC_HANDLE hContext, char *pValue);
+ANSC_STATUS CosaDmlTunneledStaticIPSetRadiusAuthSecret (ANSC_HANDLE hContext, char bValue);
+ANSC_STATUS CosaDmlTunneledStaticIPGetNASIdentifier (ANSC_HANDLE hContext, char *pValue);
+ANSC_STATUS CosaDmlTunneledStaticIPSetNASIdentifier (ANSC_HANDLE hContext, char bValue);
+ANSC_STATUS CosaDmlTunneledStaticIPGetRadiusAccServerIPAddr (ANSC_HANDLE hContext, char *pValue);
+ANSC_STATUS CosaDmlTunneledStaticIPSetRadiusAccServerIPAddr (ANSC_HANDLE hContext, char bValue);
+ANSC_STATUS CosaDmlTunneledStaticIPGetRadiusAccSecret (ANSC_HANDLE hContext, char *pValue);
+ANSC_STATUS CosaDmlTunneledStaticIPSetRadiusAccSecret (ANSC_HANDLE hContext, char bValue);
+ANSC_STATUS CosaDmlTunneledStaticIPGetRadiusInterface (ANSC_HANDLE hContext, int *pValue);
+ANSC_STATUS CosaDmlTunneledStaticIPSetRadiusInterface (ANSC_HANDLE hContext, int value);
 
 #endif
-

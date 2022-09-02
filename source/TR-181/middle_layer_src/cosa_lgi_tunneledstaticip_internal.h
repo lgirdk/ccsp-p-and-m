@@ -14,19 +14,16 @@
  * limitations under the License.
  ****************************************************************************/
 
-
-#ifndef  _COSA_LGI_TUNNELEDSTATICIP_INTERNAL_H
-#define  _COSA_LGI_TUNNELEDSTATICIP_INTERNAL_H
+#ifndef _COSA_LGI_TUNNELEDSTATICIP_INTERNAL_H
+#define _COSA_LGI_TUNNELEDSTATICIP_INTERNAL_H
 
 #include "cosa_apis.h"
 #include "plugin_main_apis.h"
 #include "cosa_lgi_tunneledstaticip_apis.h"
 
-
-
-#define  COSA_DATAMODEL_LGI_TUNNELEDSTATICIP_CLASS_CONTENT    \
-    /* duplication of the base object class content */ \
-    COSA_BASE_CONTENT                                  \
+#define  COSA_DATAMODEL_LGI_TUNNELEDSTATICIP_CLASS_CONTENT \
+    /* duplication of the base object class content */     \
+    COSA_BASE_CONTENT                                      \
 
 typedef  struct
 _COSA_DATAMODEL_LGI_TUNNELEDSTATICIP_CLASS_CONTENT
@@ -47,25 +44,8 @@ _COSA_DATAMODEL_LGI_TUNNELEDSTATICIP_CLASS_CONTENT
 }
 COSA_DATAMODEL_LGI_TUNNELEDSTATICIP, *PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP;
 
-
-
-ANSC_HANDLE
-CosaLgiTunneledStaticIPCreate
-    (
-        VOID
-    );
-
-ANSC_STATUS
-CosaLgiTunneledStaticIPInitialize
-    (
-        ANSC_HANDLE                 hThisObject
-    );
-
-ANSC_STATUS
-CosaLgiTunneledStaticIPRemove
-    (
-        ANSC_HANDLE                 hThisObject
-    );
+ANSC_HANDLE CosaLgiTunneledStaticIPCreate (void);
+ANSC_STATUS CosaLgiTunneledStaticIPInitialize (ANSC_HANDLE hThisObject);
+ANSC_STATUS CosaLgiTunneledStaticIPRemove (ANSC_HANDLE hThisObject);
 
 #endif
-
