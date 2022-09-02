@@ -173,6 +173,9 @@
 #include "cosa_managedwifi_webconfig_apis.h"
 #endif /*WIFI_MANAGE_SUPPORTED*/
 
+#include "cosa_lgi_tunneledstaticip_apis.h"
+#include "cosa_lgi_tunneledstaticip_internal.h"
+
 static void CheckAndSetRebootReason();
 
 #if defined(_PLATFORM_RASPBERRYPI_)
@@ -530,6 +533,10 @@ if(id != 0)
     AnscTraceWarning((" CosaNetworkLogsCreate done !\n"));
 #endif
 
+    pMyObject->hLgiTunneledStaticIP = (ANSC_HANDLE)CosaLgiTunneledStaticIPCreate();
+    AnscTraceWarning(("  CosaLgiTunneledStaticIPCreate done !\n"));
+
+
     printf("PandM DM initialization done!\n");
     CcspTraceWarning(("RDKB_SYSTEM_BOOT_UP_LOG : PandM DM initialization done!\n"));
     //Unknown Reboot Reason 
@@ -830,6 +837,12 @@ CosaBackEndManagerRemove
     {
         CosaLgiEventLogRemove((ANSC_HANDLE)pMyObject->hLgiEventlog);
     }
+
+    if (pMyObject->hLgiTunneledStaticIP)
+    {
+        CosaLgiTunneledStaticIPRemove((ANSC_HANDLE)pMyObject->hLgiTunneledStaticIP);
+    }
+
 
     if (pMyObject->hLgiIperf)
     {
