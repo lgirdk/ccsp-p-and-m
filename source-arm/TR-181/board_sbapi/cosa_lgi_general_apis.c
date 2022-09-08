@@ -243,15 +243,7 @@ ANSC_STATUS CosaDmlGiGetSKU (ANSC_HANDLE hContext, char *pValue, ULONG ulSize)
     }
     else if (customerId == 41)
     {
-        char modelname[64];
-
-        if (platform_hal_GetModelName(modelname) == RETURN_OK)
-        {
-            if (strcmp (modelname, "F5685LGB") == 0)
-            {
-                sku = "Virgin Media Hub 6 Fiber";
-            }
-        }
+        sku = "Fibre Hub";
     }
     else if (customerId == 51)
     {
