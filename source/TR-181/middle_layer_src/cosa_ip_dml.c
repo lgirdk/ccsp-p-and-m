@@ -1049,8 +1049,21 @@ Interface2_GetParamBoolValue
 
     if (strcmp(ParamName, "IPv4Enable") == 0)
     {
-        /* collect value */
-        *pBool = TRUE;
+        if(pIPInterface->Cfg.InstanceNumber == 1)
+        {
+            if(CosaUtilGetIfAddr(pIPInterface->Info.Name) != 0)
+            {
+                *pBool = TRUE;
+            }
+            else
+            {
+                *pBool = FALSE;
+            }
+        }
+        else
+        {
+            *pBool = TRUE;
+        }
         return TRUE;
     }
 
@@ -1058,7 +1071,26 @@ Interface2_GetParamBoolValue
     {
         /* collect value */
 #if defined (MULTILAN_FEATURE)
-        *pBool = pIPInterface->Cfg.bIPv6Enabled;
+        if(pIPInterface->Cfg.InstanceNumber == 1)
+        {
+            FILE *fp = NULL;
+            char buffer[8];
+
+            fp = fopen("/proc/sys/net/ipv6/conf/erouter0/disable_ipv6", "r");
+
+            if(fp != NULL)
+            {
+                fgets(buffer, sizeof(buffer), fp);
+                *pBool = (atoi(buffer) == 1) ? FALSE : TRUE;
+                fclose(fp);
+            }
+
+            fp = NULL;
+        }
+        else
+        {
+            *pBool = pIPInterface->Cfg.bIPv6Enabled;
+        }
 #else
 	*pBool = TRUE;
 #endif
