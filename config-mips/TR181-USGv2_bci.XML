@@ -768,12 +768,6 @@
                 <syntax>string</syntax>
                 <writable>true</writable>
             </parameter>
-            <parameter>
-                <name>AdvsecRedirectorURL</name>
-                <type>string</type>
-                <syntax>string</syntax>
-                <writable>true</writable>
-            </parameter>
         </parameters>
         <objects>
         <object>
