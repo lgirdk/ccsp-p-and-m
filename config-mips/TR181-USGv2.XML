@@ -825,12 +825,6 @@
                 <syntax>string</syntax>
                 <writable>true</writable>
             </parameter>
-            <parameter>
-                <name>MeshRedirectorURL</name>
-                <type>string</type>
-                <syntax>string</syntax>
-                <writable>true</writable>
-            </parameter>
         </parameters>
          <objects>
         <object>
