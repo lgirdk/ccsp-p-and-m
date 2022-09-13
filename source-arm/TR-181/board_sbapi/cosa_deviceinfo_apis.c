@@ -3704,7 +3704,6 @@ void FillPartnerIDValues(cJSON *json , char *partnerID , PCOSA_DATAMODEL_RDKB_UI
                                 paramObj = cJSON_GetObjectItem( partnerObj, "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.TR69CertLocation");
                                 if ( paramObj != NULL )
                                 {
-                                        CcspTraceWarning(("%s - TR69CertLocation Object is found\n", __FUNCTION__ ));
                                         char *valuestr = NULL;
                                         paramObjVal = cJSON_GetObjectItem(paramObj, "UpdateSource");
                                         if (paramObjVal)
@@ -3724,30 +3723,7 @@ void FillPartnerIDValues(cJSON *json , char *partnerID , PCOSA_DATAMODEL_RDKB_UI
                                 {
                                         CcspTraceWarning(("%s - TR69CertLocation Object is NULL\n", __FUNCTION__ ));
                                 }
-//Prash
-                                paramObj = cJSON_GetObjectItem( partnerObj, "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.MeshRedirectorURL");
-                                if ( paramObj != NULL )
-                                {
-                                        CcspTraceWarning(("%s - MeshRedirectorURL Object is found\n", __FUNCTION__ ));
-                                        char *valuestr = NULL;
-                                        paramObjVal = cJSON_GetObjectItem(paramObj, "ActiveValue");
-                                        if (paramObjVal)
-                                            valuestr = paramObjVal->valuestring;
-                                        if (valuestr != NULL)
-                                        {   
-                                            rc = STRCPY_S_NOCLOBBER(pDeviceInfo->MeshRedirectorURL.ActiveValue, sizeof(pDeviceInfo->MeshRedirectorURL.ActiveValue), valuestr);
-                                            ERR_CHK(rc);
-                                            valuestr = NULL;
-                                        }
-                                        else
-                                        {   
-                                            CcspTraceWarning(("%s - MeshRedirectorURL.ActiveValue is NULL\n", __FUNCTION__ ));
-                                        }
-                                }
-                                else
-                                {
-                                        CcspTraceWarning(("%s - MeshRedirectorURL Object is NULL\n", __FUNCTION__ ));
-                                }
+
 //RDKB-42418
                                 paramObj = cJSON_GetObjectItem( partnerObj, "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.XconfURL");
                                 if ( paramObj != NULL )
