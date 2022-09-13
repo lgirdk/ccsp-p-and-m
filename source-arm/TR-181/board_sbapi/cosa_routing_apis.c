@@ -79,7 +79,7 @@
 #include "cosa_drg_common.h"
 #endif
 
-#define RIPD_PID_FILE "/var/tmp/ripd.pid"
+#define RIPD_PID_FILE "/var/ripd.pid"
 
 #include "safec_lib_common.h"
 
