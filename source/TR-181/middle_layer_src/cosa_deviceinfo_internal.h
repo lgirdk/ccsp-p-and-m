@@ -104,7 +104,6 @@ _COSA_DATAMODEL_DEVICEINFO_CLASS_CONTENT
 	CHAR 		DeviceManageableNotification[64];
 	BOOL            CustomDataModelEnabled;
 	COSA_BOOTSTRAP_STR 		TR69CertLocation;
-	COSA_BOOTSTRAP_STR 		MeshRedirectorURL; //Prash
         COSA_BOOTSTRAP_STR              XconfURL;
         COSA_BOOTSTRAP_STR              LogUploadURL;
         COSA_BOOTSTRAP_STR              TelemetryURL;
