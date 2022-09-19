@@ -3856,8 +3856,13 @@ parameterValStruct_t valCommit1[] = {
                     faultParam = NULL;
                 }  
 #endif
+
+        char rebootevent[8];
+        sysevent_get(commonSyseventFd, commonSyseventToken, "reboot-triggered", rebootevent, sizeof(rebootevent));
+        if( atoi(rebootevent) != 1 )
+        {
                
-      ret = CcspBaseIf_setParameterValues
+            ret = CcspBaseIf_setParameterValues
                         (
                                 bus_handle,
                                 ppComponents[0]->componentName,
@@ -3875,7 +3880,7 @@ parameterValStruct_t valCommit1[] = {
                     faultParam = NULL;
                 }  
   #ifdef _XF3_PRODUCT_REQ_
-      ret = CcspBaseIf_setParameterValues
+            ret = CcspBaseIf_setParameterValues
                         (
                                 bus_handle,
                                 ppComponents[0]->componentName,
@@ -3886,16 +3891,16 @@ parameterValStruct_t valCommit1[] = {
                                 TRUE,   /* no commit */
                                 &faultParam
                         );
-        if (ret != CCSP_SUCCESS && faultParam)
-        {
-            AnscTraceError(("Error:Failed to SetValue for param '%s'\n", faultParam));
-            bus_info->freefunc(faultParam);
-            faultParam = NULL;
-        } 
+            if (ret != CCSP_SUCCESS && faultParam)
+            {
+                AnscTraceError(("Error:Failed to SetValue for param '%s'\n", faultParam));
+                bus_info->freefunc(faultParam);
+                faultParam = NULL;
+            } 
  #endif
 
 	// All the cases Radio should get update since transition will happen during full - psedo - router
-        {
+           {
                 parameterValStruct_t resetRadio[] = {{"Device.WiFi.X_CISCO_COM_ResetRadios", "true", ccsp_boolean}};
 
                 ret = CcspBaseIf_setParameterValues
@@ -3916,6 +3921,7 @@ parameterValStruct_t valCommit1[] = {
                     bus_info->freefunc(faultParam);
                     faultParam = NULL;
                 }
+            }
         }
 
         curticket++;
