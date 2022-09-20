@@ -1772,6 +1772,7 @@ ANSC_STATUS _AddPortMapping(
         snprintf(singleInfo.rule_source, sizeof(singleInfo.rule_source), (strlen(pEntry->RuleSource) != 0) ? pEntry->RuleSource : "Manual");
         strncpy(singleInfo.dest_ipv6, pEntry->X_CISCO_COM_InternalClientV6, sizeof(singleInfo.dest_ipv6));
         strncpy(singleInfo.interface, pEntry->Interface, sizeof(singleInfo.interface));
+        strncpy(singleInfo.alias, pEntry->Alias, sizeof(singleInfo.alias));
         
         rc = Utopia_AddPortForwarding(pCtx, &singleInfo);
         if ( rc != SUCCESS )
@@ -1817,6 +1818,7 @@ ANSC_STATUS _AddPortMapping(
         snprintf(rangeInfo.rule_source, sizeof(rangeInfo.rule_source), (strlen(pEntry->RuleSource) != 0) ? pEntry->RuleSource : "Manual");
         strncpy(rangeInfo.dest_ipv6, pEntry->X_CISCO_COM_InternalClientV6, sizeof(rangeInfo.dest_ipv6));
         strncpy(rangeInfo.interface, pEntry->Interface, sizeof(rangeInfo.interface));
+        strncpy(rangeInfo.alias, pEntry->Alias, sizeof(rangeInfo.alias));
 
         rc = Utopia_AddPortForwardingRange(pCtx, &rangeInfo);
         if ( rc != SUCCESS )
@@ -2591,6 +2593,8 @@ CosaDmlNatGetPortMappings
             pNatPMapping[ulIndex].X_CISCO_COM_Origin = COSA_DML_NAT_PMAPPING_Origin_Static;
             safec_rc = strcpy_s(pNatPMapping[ulIndex].Interface,sizeof(pNatPMapping[ulIndex].Interface), singleInfo[i].interface);
             ERR_CHK(safec_rc);
+            safec_rc = strcpy_s(pNatPMapping[ulIndex].Alias,sizeof(pNatPMapping[ulIndex].Alias), singleInfo[i].alias);
+            ERR_CHK(safec_rc);
             safec_rc = strcpy_s(pNatPMapping[ulIndex].Description,sizeof(pNatPMapping[ulIndex].Description), singleInfo[i].name);
             ERR_CHK(safec_rc);
             safec_rc = strcpy_s(pNatPMapping[ulIndex].X_CISCO_COM_InternalClientV6,sizeof(pNatPMapping[ulIndex].X_CISCO_COM_InternalClientV6), singleInfo[i].dest_ipv6);
@@ -2621,6 +2625,8 @@ CosaDmlNatGetPortMappings
             pNatPMapping[ulIndex].InstanceNumber = rangeInfo[i].rule_id;
             pNatPMapping[ulIndex].X_CISCO_COM_Origin = COSA_DML_NAT_PMAPPING_Origin_Static;
             safec_rc = strcpy_s(pNatPMapping[ulIndex].Interface,sizeof(pNatPMapping[ulIndex].Interface), rangeInfo[i].interface);
+            ERR_CHK(safec_rc);
+            safec_rc = strcpy_s(pNatPMapping[ulIndex].Alias,sizeof(pNatPMapping[ulIndex].Alias), rangeInfo[i].alias);
             ERR_CHK(safec_rc);
             safec_rc = strcpy_s(pNatPMapping[ulIndex].Description,sizeof(pNatPMapping[ulIndex].Description), rangeInfo[i].name);
             ERR_CHK(safec_rc);
