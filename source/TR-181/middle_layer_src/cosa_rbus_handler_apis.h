@@ -23,7 +23,7 @@
 #if defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED)
 
 #include <stdbool.h>
-#include <rbus.h>
+#include <rbus/rbus.h>
 #include <pthread.h>
 
 #define NUM_OF_RBUS_PARAMS	1
