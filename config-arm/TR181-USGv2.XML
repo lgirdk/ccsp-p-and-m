@@ -17458,6 +17458,12 @@
                         <type>string: Enabled(1), Disabled(2), Error(3)</type>
                         <syntax>uint32/mapped</syntax>
                     </parameter>
+                    <parameter>
+                        <name>Alias</name>
+                        <type>string(64)</type>
+                        <syntax>string</syntax>
+                        <writable>true</writable>
+                    </parameter>
 					<parameter>
                         <name>LastChange</name>
                         <type>unsignedInt</type>
@@ -17513,6 +17519,12 @@
 					<parameter>
                         <name>KeepAlivePolicy</name>
                         <type>string: None(1), ICMP(2)</type>
+                        <syntax>uint32/mapped</syntax>
+                        <writable>true</writable>
+                    </parameter>
+                    <parameter>
+                        <name>DeliveryHeaderProtocol</name>
+                        <type>string: IPv4(1), IPv6(2)</type>
                         <syntax>uint32/mapped</syntax>
                         <writable>true</writable>
                     </parameter>
