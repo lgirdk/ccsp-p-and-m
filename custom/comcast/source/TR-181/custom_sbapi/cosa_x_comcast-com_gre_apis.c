@@ -119,6 +119,8 @@ printf a;            \
 //#define GRETU_PARAM_GREIF        	GRE_OBJ_GRETU "%lu.GRENetworkInterface"		//GRENetworkInterface: Device.X_CISCO_COM_GRE.Interface.1.
 //TODO: remove the reference to Cisco GRE: Device.X_CISCO_COM_GRE.Interface.1.
 #define GRETU_PARAM_GRETU        	GRE_OBJ_GRETU "%lu.GRENetworkTunnel"
+#define GRETU_PARAM_DELIVERYHEADERPROTOCOL        	GRE_OBJ_GRETU "%lu.DeliveryHeaderProtocol"
+#define GRETU_PARAM_ALIAS        	GRE_OBJ_GRETU "%lu.Alias"
 
 #define GRE_OBJ_GRETUIF           "dmsb.hotspot.tunnel.%lu.interface."
 #define GRETUIF_PARAM_ENABLE        GRE_OBJ_GRETUIF "%lu.Enable"
@@ -1337,6 +1339,40 @@ CosaDml_GreTunnelSetSecondaryEndpoints(ULONG tuIns, const char *sec)
 }
 
 ANSC_STATUS
+CosaDml_GreTunnelGetAlias(ULONG ins, char *eps, ULONG size)
+{
+    if (ins != 1 || !eps)
+        return ANSC_STATUS_FAILURE;
+
+    memset(eps, 0, size);
+    if (GrePsmGetStr(GRETU_PARAM_ALIAS, ins, eps, size) != 0)
+            return ANSC_STATUS_FAILURE;
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaDml_GreTunnelSetAlias(ULONG ins, const char *eps)
+{
+    char psmRec[MAX_GRE_PSM_REC + 1];
+
+    if (ins != 1 || !eps)
+        return ANSC_STATUS_FAILURE;
+
+    if (eps[0] == 0)
+        return ANSC_STATUS_FAILURE;
+
+    /* save to PSM */
+    snprintf(psmRec, sizeof(psmRec), GRETU_PARAM_ALIAS, ins);
+    if (GrePsmSet(psmRec, eps) != 0)
+        return ANSC_STATUS_FAILURE;
+
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+
+ANSC_STATUS
 CosaDml_GreTunnelGetEndpoints(ULONG ins, char *eps, ULONG size)
 {
     if (ins != 1 || !eps)
@@ -2034,6 +2070,36 @@ CosaDml_GreTunnelGetKeepAliveCount(ULONG tuIns, ULONG *val)
         return ANSC_STATUS_FAILURE;
 
     if (GrePsmGetUlong(GRETU_PARAM_KACNT, tuIns, val) != 0)
+        return ANSC_STATUS_FAILURE;
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaDml_GreTunnelGetDeliveryHeaderProtocol(ULONG tuIns, ULONG *val)
+{
+    if (!val)
+        return ANSC_STATUS_FAILURE;
+
+    if (GrePsmGetUlong(GRETU_PARAM_DELIVERYHEADERPROTOCOL, tuIns, val) != 0)
+        return ANSC_STATUS_FAILURE;
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaDml_GreTunnelSetDeliveryHeaderProtocol(ULONG tuIns, ULONG val)
+{
+    char psmRec[MAX_GRE_PSM_REC + 1];
+    char psmVal[16];
+
+    if (tuIns != 1)
+        return ANSC_STATUS_FAILURE;
+
+    /* save to PSM */
+    snprintf(psmRec, sizeof(psmRec), GRETU_PARAM_DELIVERYHEADERPROTOCOL, tuIns);
+    snprintf(psmVal, sizeof(psmVal), "%lu", val);
+    if (GrePsmSet(psmRec, psmVal) != 0)
         return ANSC_STATUS_FAILURE;
 
     return ANSC_STATUS_SUCCESS;
