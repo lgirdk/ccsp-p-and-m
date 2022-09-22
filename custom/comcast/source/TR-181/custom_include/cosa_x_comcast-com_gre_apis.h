@@ -120,6 +120,8 @@ _COSA_DML_GRE_TUNNEL_CHANGE_FLAG
     GRETU_CF_GRERMEP        = 0x01<<21,
     GRETU_CF_DHCPOPTION60   = 0x01<<22,
     GRETU_CF_TCPMSS         = 0x01<<23,
+    GRETU_CF_HPROTOCOL      = 0x01<<24,
+    GRETU_CF_ALIAS          = 0x01<<25,
 }
 COSA_DML_GRE_TUNNEL_CHANGE_FLAG;
 
@@ -190,7 +192,9 @@ _COSA_DML_GRE_TUNNEL
 	ULONG                       RemoteEndpointHealthCheckPingFailThreshold;
 	ULONG                       RemoteEndpointHealthCheckPingCount; 
  	ULONG                       RemoteEndpointHealthCheckPingIntervalInFailure;
- 	ULONG                       ReconnectToPrimaryRemoteEndpoint;	
+ 	ULONG                       ReconnectToPrimaryRemoteEndpoint;
+	ULONG                       DeliveryHeaderProtocol;
+
  	BOOL                        EnableCircuitID;
  	BOOL                        EnableRemoteID;
 	BOOL                        EnableVendorClassID;
@@ -204,6 +208,7 @@ _COSA_DML_GRE_TUNNEL
     char                        TunnelStatus[32];
 	char                        RemoteEndpoints[257];
 	ULONG                       GreTcpMss;
+	char                        Alias[64];
 } 
 COSA_DML_GRE_TUNNEL;
 
