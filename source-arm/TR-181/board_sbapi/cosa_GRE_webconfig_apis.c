@@ -24,7 +24,7 @@
 #include "ccsp_psm_helper.h"
 #include "safec_lib_common.h"
 #include "cosa_drg_common.h"
-#include <rbus.h>
+#include <rbus/rbus.h>
 
 #define RDKB_WIFI_COMPONENT_NAME                  "com.cisco.spvtg.ccsp.wifi"
 #define RDKB_WIFI_DBUS_PATH                       "/com/cisco/spvtg/ccsp/wifi"

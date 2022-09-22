@@ -106,7 +106,7 @@
 #include <stdbool.h>
 #include "cosa_deviceinfo_apis.h"
 #include "ccsp_psm_helper.h"
-#include <rbus.h>
+#include <rbus/rbus.h>
 
 extern ULONG g_currentBsUpdate;
 extern char g_currentParamFullName[512];
