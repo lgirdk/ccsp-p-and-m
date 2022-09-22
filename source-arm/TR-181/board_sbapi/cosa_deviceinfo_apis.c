@@ -141,8 +141,8 @@ static int writeToJson(char *data, char *file);
 #endif
 extern  ANSC_HANDLE             bus_handle;
 
-#include <utctx.h>
-#include <utctx_api.h>
+#include <utctx/utctx.h>
+#include <utctx/utctx_api.h>
 #include <utapi.h>
 #include <time.h>
 #include <utapi_util.h>
