@@ -23,7 +23,7 @@
 
 
 #include <stdbool.h>
-#include <rbus.h>
+#include <rbus/rbus.h>
 #include <pthread.h>
 
 #define NUM_OF_RBUS_PARAMS	1
