@@ -9332,7 +9332,7 @@ dhcpv6c_dbg_thrd(void * in)
 #endif
                    }
 
-#ifdef DSLITE_FEATURE_SUPPORT
+#if defined(DSLITE_FEATURE_SUPPORT) && defined(_LG_MV3_)
                    /* Fixme: needs review. Temp fix for Mv3 and perhaps not appropriate for other targets? */
                    v_secure_system("service_dslite restart &");
 #endif
