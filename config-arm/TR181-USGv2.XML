@@ -9289,7 +9289,7 @@
                 <object>
                   <name>Device</name>
                   <objectType>writableTable</objectType>
-                  <maxInstance>128</maxInstance>
+                  <maxInstance>32</maxInstance>
                   <functions>
                     <func_GetEntryCount>MACFilter_GetEntryCount</func_GetEntryCount>
                     <func_GetEntry>MACFilter_GetEntry</func_GetEntry>
