@@ -1082,8 +1082,8 @@ DeviceInfo_GetParamStringValue
 
     if (strcmp(ParamName, "X_COMCAST-COM_EMS_ServerURL") == 0)
     {
-        syscfg_get(NULL, "ems_server_url", pValue, *pulSize);
-        return 0;
+        // Not used in LG environment, updating empty url to avoid adding some wrong vendor URL
+        return update_pValue (pValue, pulSize, "");
     }
 
     if (strcmp(ParamName, "RouterName") == 0)
