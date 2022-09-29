@@ -1334,21 +1334,23 @@ static void RestartRIPInterfaces(int ripEnable)
             {
                 if(syscfg_get(NULL, "brlan_static_lan_netmask", brlan_mask, sizeof(brlan_mask)) == 0)
                 {
-                    /* swap lan_ipaddr, dhcp_start and dhcp_end with brlan static ip ranges */
                     syscfg_get(NULL, "brlan_static_dhcp_start", brlan_dhcp_start, sizeof(brlan_dhcp_start));
                     syscfg_get(NULL, "brlan_static_dhcp_end", brlan_dhcp_end, sizeof(brlan_dhcp_end));
+                    /* swap lan_ipaddr, dhcp_start and dhcp_end with brlan static ip ranges if not already done*/
+                    if (syscfg_get(NULL, "brlan_lan_ipaddr", ip_buf, sizeof(ip_buf)))
+                    {
+                        syscfg_get(NULL, "lan_ipaddr", ip_buf, sizeof(ip_buf));
+                        syscfg_set(NULL, "brlan_lan_ipaddr", ip_buf);
 
-                    syscfg_get(NULL, "lan_ipaddr", ip_buf, sizeof(ip_buf));
-                    syscfg_set(NULL, "brlan_lan_ipaddr", ip_buf);
+                        syscfg_get(NULL, "lan_netmask", ip_buf, sizeof(ip_buf));
+                        syscfg_set(NULL, "brlan_lan_netmask", ip_buf);
 
-                    syscfg_get(NULL, "lan_netmask", ip_buf, sizeof(ip_buf));
-                    syscfg_set(NULL, "brlan_lan_netmask", ip_buf);
+                        syscfg_get(NULL, "dhcp_start", ip_buf, sizeof(ip_buf));
+                        syscfg_set(NULL, "brlan_dhcp_start", ip_buf);
 
-                    syscfg_get(NULL, "dhcp_start", ip_buf, sizeof(ip_buf));
-                    syscfg_set(NULL, "brlan_dhcp_start", ip_buf);
-
-                    syscfg_get(NULL, "dhcp_end", ip_buf, sizeof(ip_buf));
-                    syscfg_set(NULL, "brlan_dhcp_end", ip_buf);
+                        syscfg_get(NULL, "dhcp_end", ip_buf, sizeof(ip_buf));
+                        syscfg_set(NULL, "brlan_dhcp_end", ip_buf);
+                    }
 	        }
 	    }
         }// End of if(ripEnable)
@@ -1361,7 +1363,7 @@ static void RestartRIPInterfaces(int ripEnable)
                     /* swap lan_ipaddr, dhcp_start and dhcp_end with brlan ip ranges */
                     syscfg_get(NULL, "brlan_dhcp_start", brlan_dhcp_start, sizeof(brlan_dhcp_start));
                     syscfg_get(NULL, "brlan_dhcp_end", brlan_dhcp_end, sizeof(brlan_dhcp_end));
-
+                    syscfg_unset(NULL,"brlan_lan_ipaddr");
                 }
             }
         }
