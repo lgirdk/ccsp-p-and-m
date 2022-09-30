@@ -55,7 +55,7 @@
 #include "ccsp_psm_helper.h"
 #include "ansc_platform.h"
 #include "plugin_main_apis.h"
-#include "syscfg.h" 
+#include <syscfg/syscfg.h>
 #include "hotspotfd.h"
 #include "dhcpsnooper.h"
 #include "safec_lib_common.h"
