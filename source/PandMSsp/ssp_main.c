@@ -42,7 +42,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#include "syscfg.h"
+#include <syscfg/syscfg.h>
 #include "ssp_global.h"
 #include "stdlib.h"
 #include "ccsp_dm_api.h"
