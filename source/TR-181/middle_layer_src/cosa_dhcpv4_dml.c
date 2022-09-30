@@ -7901,14 +7901,6 @@ StaticAddress_SetParamUlongValue
     /* check the parameter name and set the corresponding value */
     if (strcmp(ParamName, "Yiaddr") == 0)
     {
-#if 1/*added by song to check whether the IP is in the range*/
-        COSA_DML_DHCPS_POOL_CFG poolCfg;
-        poolCfg.InstanceNumber = 1;
-        CosaDmlDhcpsGetPoolCfg(NULL, &poolCfg);
-        if(( ntohl(uValue)< ntohl(poolCfg.MinAddress.Value))||( ntohl(uValue)> ntohl(poolCfg.MaxAddress.Value) )){
-            return(FALSE);
-        }
-#endif
         /* save update to backup */
         pDhcpStaticAddress->Yiaddr.Value  =  uValue;
 
