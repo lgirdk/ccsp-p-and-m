@@ -36,7 +36,7 @@
 #include "cosa_x_rdkcentral_com_videoservice_dml.h"
 #include "dml_tr181_custom_cfg.h"
 #include "ccsp_trace.h"
-#include "syscfg.h"
+#include <syscfg/syscfg.h>
 #include "cosa_deviceinfo_dml.h"
 
 //static BOOL videoServiceEnable = FALSE;

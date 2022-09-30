@@ -64,7 +64,7 @@
 
 #include "ccsp_psm_helper.h"
 #include "ansc_platform.h"
-#include "syscfg.h"
+#include <syscfg/syscfg.h>
 #include "cosa_gre_apis.h"
 #include "ccsp_psm_helper.h"
 #include "sys_definitions.h"
