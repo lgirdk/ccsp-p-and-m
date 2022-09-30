@@ -80,7 +80,7 @@
 
 #include "ccsp_psm_helper.h"
 #include "ansc_platform.h"
-#include "syscfg.h"
+#include <syscfg/syscfg.h>
 #include "ccsp_psm_helper.h"
 #include "sys_definitions.h"
 //#include "ccsp_custom.h"
