@@ -572,6 +572,33 @@ WebUI_SetParamUlongValue
 
  APIs for Object:
 
+    DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.SWDLDirect.Enable
+
+    *  SWDLDirect_GetParamBoolValue
+    *  SWDLDirect_SetParamBoolValue
+
+***********************************************************************/
+
+BOOL
+SWDLDirect_GetParamBoolValue
+(
+    ANSC_HANDLE                 hInsContext,
+    char*                       ParamName,
+    BOOL*                       pBool
+);
+
+BOOL
+SWDLDirect_SetParamBoolValue
+(
+    ANSC_HANDLE                 hInsContext,
+    char*                       ParamName,
+    BOOL                        bValue
+);
+
+/***********************************************************************
+
+ APIs for Object:
+
 	Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CognitiveMotionDetection.Enable
 
     *  CognitiveMotionDetection_GetParamBoolValue
