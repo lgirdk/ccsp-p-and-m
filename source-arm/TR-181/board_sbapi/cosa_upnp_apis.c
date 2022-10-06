@@ -188,7 +188,7 @@ CosaDmlUpnpDevGetArchVer
 #include <utctx_api.h>
 #include <utapi.h>
 #include <utapi_util.h>
-#include <ulog.h>
+#include <ulog/ulog.h>
 #include <ccsp_syslog.h>
 
 BOOLEAN         g_UpnpDevEnable             = TRUE;
