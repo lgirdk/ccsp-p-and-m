@@ -97,7 +97,7 @@
 #include <net/if_arp.h>
 
 #include <utctx_api.h>
-#include <ulog.h>
+#include <ulog/ulog.h>
 #include <syscfg/syscfg.h>
 #include <utapi/utapi_tr_dhcp.h>
 #include "dhcpv4c_api.h"
