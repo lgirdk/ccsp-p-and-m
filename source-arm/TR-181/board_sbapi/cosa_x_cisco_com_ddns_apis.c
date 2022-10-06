@@ -64,7 +64,7 @@
 #include "secure_wrapper.h"
 
 #if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
-#include "utctx/utctx_api.h"
+#include <utctx/utctx_api.h>
 #include <utapi.h>
 #include "dml_tr181_custom_cfg.h" 
 #include "safec_lib_common.h"
