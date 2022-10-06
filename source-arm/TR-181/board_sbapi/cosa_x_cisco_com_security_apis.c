@@ -2396,8 +2396,8 @@ void CosaDmlIaRemove()
 
 #elif (_COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_)
 
-#include <utctx.h>
-#include <utctx_api.h>
+#include <utctx/utctx.h>
+#include <utctx/utctx_api.h>
 #include <utapi.h>
 #include <utapi_util.h>
 #include "syscfg/syscfg.h"
