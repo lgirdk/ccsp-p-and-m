@@ -74,7 +74,7 @@
 #include <ctype.h>
 #include <utapi.h>
 #include <utapi_util.h>
-#include "utctx/utctx_api.h"
+#include <utctx/utctx_api.h>
 
 #define MAX_PREF        8       /* according to TR-181 */
 #define ZEBRA_CONF      "/var/zebra.conf"
