@@ -940,7 +940,7 @@ CosaDmlDnsRelayGetServer
 #include <utctx_api.h>
 #include <utapi.h>
 #include <utapi_util.h>
-#include <ulog.h>
+#include <ulog/ulog.h>
 #include <syscfg/syscfg.h>
 
 #include <sys/types.h>
