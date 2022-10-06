@@ -14,7 +14,7 @@
  * limitations under the License.
 **********************************************************************/
 #ifdef DSLITE_FEATURE_SUPPORT
-#include <utctx_api.h>
+#include <utctx/utctx_api.h>
 #include <utapi.h>
 #include "cosa_dslite_apis.h"
 #include <utapi/utapi_dslite.h>

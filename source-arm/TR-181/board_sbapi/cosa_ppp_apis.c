@@ -327,8 +327,8 @@ CosaPPPApiRemove(ANSC_HANDLE  hContext)
 }
 
 #elif ( defined _COSA_INTEL_USG_ARM_ ) || ( defined _COSA_BCM_MIPS_ )
-#include <utctx.h>
-#include <utctx_api.h>
+#include <utctx/utctx.h>
+#include <utctx/utctx_api.h>
 #include <utapi.h>
 #include <utapi_util.h>
 #include "syscfg/syscfg.h"

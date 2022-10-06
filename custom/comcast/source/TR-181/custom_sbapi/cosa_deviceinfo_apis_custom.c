@@ -77,8 +77,8 @@
 #include "safec_lib_common.h"
 
 #include "cosa_x_comcast_com_gre_apis.h"
-#include <utctx.h>
-#include <utctx_api.h>
+#include <utctx/utctx.h>
+#include <utctx/utctx_api.h>
 #include <utapi.h>
 #include <utapi_util.h>
 #include <pthread.h>

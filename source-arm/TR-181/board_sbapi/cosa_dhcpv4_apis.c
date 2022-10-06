@@ -96,7 +96,7 @@
 #include <netinet/if_ether.h>
 #include <net/if_arp.h>
 
-#include <utctx_api.h>
+#include <utctx/utctx_api.h>
 #include <ulog/ulog.h>
 #include <syscfg/syscfg.h>
 #include <utapi/utapi_tr_dhcp.h>
