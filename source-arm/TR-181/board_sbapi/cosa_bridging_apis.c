@@ -67,7 +67,7 @@
 #if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
 #include "cosa_bridging_apis_ext.h"
 #include "cosa_ethernet_apis_ext.h"
-#include "utctx/utctx_api.h"
+#include <utctx/utctx_api.h>
 #include "cosa_drg_common.h"
 #include "secure_wrapper.h"
 

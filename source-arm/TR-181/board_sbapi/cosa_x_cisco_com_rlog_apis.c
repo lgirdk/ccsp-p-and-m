@@ -34,8 +34,8 @@
 **********************************************************************/
 
 #include "cosa_x_cisco_com_rlog_apis.h"
-#include <utctx.h>
-#include <utctx_api.h>
+#include <utctx/utctx.h>
+#include <utctx/utctx_api.h>
 #include <utapi.h>
 #include <utapi_util.h>
 
