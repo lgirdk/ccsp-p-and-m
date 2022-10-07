@@ -4654,12 +4654,18 @@ CosaDmlLAN_Validate_ModifyLanIP(COSA_DML_LAN_Allowed_Subnet *pLanAllowedSubnet, 
 
         memset(&lanInfo, 0 ,sizeof(lanInfo));
 
+        // update default IPv4 address
         syscfg_get(NULL, "default_LanAllowedSubnet", lanInfo.ipaddr, sizeof(lanInfo.ipaddr));
         sscanf(lanInfo.ipaddr, "%d.%d.%d.%d", &temp[0], &temp[1], &temp[2], &temp[3]);
 
         sprintf(tmpbuff, "%d.%d.%d.%d", temp[0], temp[1], temp[2], 1);
         PSM_Set_Record_Value2(bus_handle, g_Subsystem, "dmsb.l3net.4.V4Addr", ccsp_string, tmpbuff);
         syscfg_set(NULL, "lan_ipaddr", tmpbuff);
+
+        // update default IPv4 subnet
+        snprintf(lanInfo.netmask, sizeof(lanInfo.netmask), "255.255.255.0");
+        PSM_Set_Record_Value2(bus_handle, g_Subsystem, "dmsb.l3net.4.V4SubnetMask", ccsp_string, "255.255.255.0");
+        syscfg_set(NULL, "lan_netmask", "255.255.255.0");
 
         sprintf(tmpbuff, "%d.%d.%d.%d", temp[0], temp[1], temp[2], 10);
         syscfg_set(NULL, "dhcp_start", tmpbuff);
