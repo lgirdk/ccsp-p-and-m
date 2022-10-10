@@ -16001,24 +16001,25 @@
             <name>Enable</name>
             <type>boolean</type>
             <syntax>bool</syntax>
-            <writable>true</writable>
+            <writable>false</writable>
           </parameter>
           <parameter>
             <name>Status</name>
             <type>string: Disabled(1),Enabled(2),Error_Misconfigured(3),Error(4)</type>
             <syntax>uint32/mapped</syntax>
+            <writable>false</writable>
           </parameter>
           <parameter>
             <name>Alias</name>
             <type>string(64)</type>
             <syntax>string</syntax>
-            <writable>true</writable>
+            <writable>false</writable>
           </parameter>
           <parameter>
             <name>Interface</name>
             <type>string</type>
             <syntax>string</syntax>
-            <writable>true</writable>
+            <writable>false</writable>
           </parameter>
           <parameter>
             <name>ManualPrefixes</name>
@@ -16030,6 +16031,7 @@
             <name>Prefixes</name>
             <type>string</type>
             <syntax>string</syntax>
+            <writable>false</writable>
           </parameter>
           <parameter>
             <name>MaxRtrAdvInterval</name>
