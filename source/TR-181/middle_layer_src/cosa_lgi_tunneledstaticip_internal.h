@@ -29,10 +29,8 @@
     COSA_BASE_CONTENT                                  \
 
 typedef  struct
-_COSA_DATAMODEL_LGI_TUNNELEDSTATICIP_CLASS_CONTENT
+_COSA_DML_LGI_TUNNELEDSTATICIP_CFG
 {
-    COSA_DATAMODEL_LGI_TUNNELEDSTATICIP_CLASS_CONTENT
-    /* start of LGITUNNELEDSTATICIP object class content */
     BOOL     Enable;
     char     Username[256];
     char     Password[256];
@@ -44,6 +42,18 @@ _COSA_DATAMODEL_LGI_TUNNELEDSTATICIP_CLASS_CONTENT
     char     RadiusAccServerIPAddr[45];
     char     RadiusAccSecret[45];
     int      RadiusAccServerPort;
+}
+COSA_DML_LGI_TUNNELEDSTATICIP_CFG, *PCOSA_DML_LGI_TUNNELEDSTATICIP_CFG;
+
+#define TUNNELEDSTATICIP_CFG_MEMBER_SIZE(__member) sizeof(((PCOSA_DML_LGI_TUNNELEDSTATICIP_CFG)NULL)->__member)
+
+typedef  struct
+_COSA_DATAMODEL_LGI_TUNNELEDSTATICIP_CLASS_CONTENT
+{
+    COSA_DATAMODEL_LGI_TUNNELEDSTATICIP_CLASS_CONTENT
+    /* start of LGITUNNELEDSTATICIP object class content */
+    COSA_DML_LGI_TUNNELEDSTATICIP_CFG Cfg;
+    COSA_DML_LGI_TUNNELEDSTATICIP_CFG OldCfg;
 }
 COSA_DATAMODEL_LGI_TUNNELEDSTATICIP, *PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP;
 
@@ -67,5 +77,10 @@ CosaLgiTunneledStaticIPRemove
         ANSC_HANDLE                 hThisObject
     );
 
+ANSC_STATUS
+CosaDmlTunneledStaticIPRestart
+    (
+        ANSC_HANDLE                 hThisObject
+    );
 #endif
 

@@ -82,7 +82,7 @@ ANSC_STATUS
 CosaDmlTunneledStaticIPSetUsername
     (
         ANSC_HANDLE                 hContext,
-        char                        bValue
+        char                        *pValue
     );
 
 
@@ -98,7 +98,7 @@ ANSC_STATUS
 CosaDmlTunneledStaticIPSetPassword
     (
         ANSC_HANDLE                 hContext,
-        char                        bValue
+        char                        *pValue
     );
 
 
@@ -114,7 +114,7 @@ ANSC_STATUS
 CosaDmlTunneledStaticIPSetRadiusAuthServerIPAddr
     (
         ANSC_HANDLE                 hContext,
-        char                        bValue
+        char                        *pValue
     );
 
 
@@ -130,7 +130,7 @@ ANSC_STATUS
 CosaDmlTunneledStaticIPSetRadiusAuthSecret
     (
         ANSC_HANDLE                 hContext,
-        char                        bValue
+        char                        *pValue
     );
 
 
@@ -146,7 +146,7 @@ ANSC_STATUS
 CosaDmlTunneledStaticIPSetNASIdentifier
     (
         ANSC_HANDLE                 hContext,
-        char                        bValue
+        char                        *pValue
     );
 
 
@@ -162,7 +162,7 @@ ANSC_STATUS
 CosaDmlTunneledStaticIPSetRadiusAccServerIPAddr
     (
         ANSC_HANDLE                 hContext,
-        char                        bValue
+        char                        *pValue
     );
 
 
@@ -178,7 +178,7 @@ ANSC_STATUS
 CosaDmlTunneledStaticIPSetRadiusAccSecret
     (
         ANSC_HANDLE                 hContext,
-        char                        bValue
+        char                        *pValue
     );
 
 
@@ -194,7 +194,7 @@ ANSC_STATUS
 CosaDmlTunneledStaticIPSetRadiusInterface
     (
         ANSC_HANDLE                 hContext,
-        ULONG                        bValue
+        ULONG                        value
     );
 
 #endif

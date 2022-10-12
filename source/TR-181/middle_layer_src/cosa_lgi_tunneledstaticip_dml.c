@@ -37,7 +37,7 @@ X_LGI_COM_TunneledStaticIPService_GetParamBoolValue
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "Enable") == 0)
     {
-        *pBool = pMyObject->Enable;
+        *pBool = pMyObject->Cfg.Enable;
         return TRUE;
     }
 
@@ -58,7 +58,7 @@ X_LGI_COM_TunneledStaticIPService_SetParamBoolValue
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "Enable") == 0)
     {
-        pMyObject->Enable = bValue;
+        pMyObject->Cfg.Enable = bValue;
         return TRUE;
     }
 
@@ -79,13 +79,13 @@ X_LGI_COM_TunneledStaticIPService_GetParamIntValue
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "RadiusAuthServerPort") == 0)
     {
-        *pInt = pMyObject->RadiusAuthServerPort;
+        *pInt = pMyObject->Cfg.RadiusAuthServerPort;
         return TRUE;
     }
    
     if (strcmp(ParamName, "RadiusAccServerPort") == 0)
     {
-        *pInt = pMyObject->RadiusAccServerPort;
+        *pInt = pMyObject->Cfg.RadiusAccServerPort;
         return TRUE;
     }
 
@@ -106,13 +106,13 @@ X_LGI_COM_TunneledStaticIPService_SetParamIntValue
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "RadiusAuthServerPort") == 0)
     {
-        pMyObject->RadiusAuthServerPort = value;
+        pMyObject->Cfg.RadiusAuthServerPort = value;
         return TRUE;
     }
 
     if (strcmp(ParamName, "RadiusAccServerPort") == 0)
     {
-        pMyObject->RadiusAccServerPort = value;
+        pMyObject->Cfg.RadiusAccServerPort = value;
         return TRUE;
     }
 
@@ -134,19 +134,19 @@ X_LGI_COM_TunneledStaticIPService_GetParamStringValue
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "Username") == 0)
     {
-        AnscCopyString(pValue, pMyObject->Username);
+        AnscCopyString(pValue, pMyObject->Cfg.Username);
         return 0;
     }
 
     if (strcmp(ParamName, "Password") == 0)
     {
-        AnscCopyString(pValue, pMyObject->Password);
+        AnscCopyString(pValue, pMyObject->Cfg.Password);
         return 0;
     }
 
     if (strcmp(ParamName, "RadiusAuthServerIPAddr") == 0)
     {
-        AnscCopyString(pValue, pMyObject->RadiusAuthServerIPAddr);
+        AnscCopyString(pValue, pMyObject->Cfg.RadiusAuthServerIPAddr);
         return 0;
     }
 
@@ -158,13 +158,13 @@ X_LGI_COM_TunneledStaticIPService_GetParamStringValue
 
     if (strcmp(ParamName, "NAS-Identifier") == 0)
     {
-        AnscCopyString(pValue, pMyObject->NASIdentifier);
+        AnscCopyString(pValue, pMyObject->Cfg.NASIdentifier);
         return 0;
     }
 
     if (strcmp(ParamName, "RadiusAccServerIPAddr") == 0)
     {
-        AnscCopyString(pValue, pMyObject->RadiusAccServerIPAddr);
+        AnscCopyString(pValue, pMyObject->Cfg.RadiusAccServerIPAddr);
         return 0;
     }
 
@@ -192,43 +192,43 @@ X_LGI_COM_TunneledStaticIPService_SetParamStringValue
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "Username") == 0)
     {
-        AnscCopyString(pMyObject->Username, strValue);
+        AnscCopyString(pMyObject->Cfg.Username, strValue);
         return TRUE;
     }
 
     if (strcmp(ParamName, "Password") == 0)
     {
-        AnscCopyString(pMyObject->Password, strValue);
+        AnscCopyString(pMyObject->Cfg.Password, strValue);
         return TRUE;
     }
 
     if (strcmp(ParamName, "RadiusAuthServerIPAddr") == 0)
     {
-        AnscCopyString(pMyObject->RadiusAuthServerIPAddr, strValue);
+        AnscCopyString(pMyObject->Cfg.RadiusAuthServerIPAddr, strValue);
         return TRUE;
     }
 
     if (strcmp(ParamName, "RadiusAuthSecret") == 0)
     {
-        AnscCopyString(pMyObject->RadiusAuthSecret, strValue);
+        AnscCopyString(pMyObject->Cfg.RadiusAuthSecret, strValue);
         return TRUE;
     }
 
     if (strcmp(ParamName, "NAS-Identifier") == 0)
     {
-        AnscCopyString(pMyObject->NASIdentifier, strValue);
+        AnscCopyString(pMyObject->Cfg.NASIdentifier, strValue);
         return TRUE;
     }
 
     if (strcmp(ParamName, "RadiusAccServerIPAddr") == 0)
     {
-        AnscCopyString(pMyObject->RadiusAccServerIPAddr, strValue);
+        AnscCopyString(pMyObject->Cfg.RadiusAccServerIPAddr, strValue);
         return TRUE;
     }
 
     if (strcmp(ParamName, "RadiusAccSecret") == 0)
     {
-        AnscCopyString(pMyObject->RadiusAccSecret, strValue);
+        AnscCopyString(pMyObject->Cfg.RadiusAccSecret, strValue);
         return TRUE;
     }
 
@@ -252,7 +252,7 @@ X_LGI_COM_TunneledStaticIPService_GetParamUlongValue
 
     if (strcmp(ParamName, "RadiusInterface") == 0)
     {
-        *puLong = pMyObject->RadiusInterface;
+        *puLong = pMyObject->Cfg.RadiusInterface;
         return TRUE;
     }
 
@@ -275,7 +275,7 @@ X_LGI_COM_TunneledStaticIPService_SetParamUlongValue
 
     if (strcmp(ParamName, "RadiusInterface") == 0)
     {
-        pMyObject->RadiusInterface = uValuepUlong;
+        pMyObject->Cfg.RadiusInterface = uValuepUlong;
         return TRUE;
     }
 
@@ -302,18 +302,81 @@ X_LGI_COM_TunneledStaticIPService_Commit
     )
 {
     PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP  pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP)g_pCosaBEManager->hLgiTunneledStaticIP;
+    BOOL bConfigChanged = FALSE;
 
-    CosaDmlTunneledStaticIPSetEnable(NULL, pMyObject->Enable);
-    CosaDmlTunneledStaticIPSetUsername(NULL, pMyObject->Username);
-    CosaDmlTunneledStaticIPSetPassword(NULL, pMyObject->Password);
-    CosaDmlTunneledStaticIPSetRadiusInterface(NULL, pMyObject->RadiusInterface);
-    CosaDmlTunneledStaticIPSetRadiusAuthServerIPAddr(NULL, pMyObject->RadiusAuthServerIPAddr);
-    CosaDmlTunneledStaticIPSetRadiusAuthSecret(NULL, pMyObject->RadiusAuthSecret);
-    CosaDmlTunneledStaticIPSetRadiusAuthServerPort(NULL, pMyObject->RadiusAuthServerPort);
-    CosaDmlTunneledStaticIPSetNASIdentifier(NULL, pMyObject->NASIdentifier);
-    CosaDmlTunneledStaticIPSetRadiusAccServerIPAddr(NULL, pMyObject->RadiusAccServerIPAddr);
-    CosaDmlTunneledStaticIPSetRadiusAccSecret(NULL, pMyObject->RadiusAccSecret);
-    CosaDmlTunneledStaticIPSetRadiusAccServerPort(NULL, pMyObject->RadiusAccServerPort);
+    if (pMyObject->Cfg.Enable != pMyObject->OldCfg.Enable)
+    {
+        bConfigChanged = TRUE;
+        CosaDmlTunneledStaticIPSetEnable(NULL, pMyObject->Cfg.Enable);
+    }
+
+    if (strcmp(pMyObject->Cfg.Username, pMyObject->OldCfg.Username))
+    {
+        bConfigChanged = TRUE;
+        CosaDmlTunneledStaticIPSetUsername(NULL, pMyObject->Cfg.Username);
+    }
+
+    if (strcmp(pMyObject->Cfg.Password, pMyObject->OldCfg.Password))
+    {
+        bConfigChanged = TRUE;
+        CosaDmlTunneledStaticIPSetPassword(NULL, pMyObject->Cfg.Password);
+    }
+
+    if (pMyObject->Cfg.RadiusInterface != pMyObject->OldCfg.RadiusInterface)
+    {
+        bConfigChanged = TRUE;
+        CosaDmlTunneledStaticIPSetRadiusInterface(NULL, pMyObject->Cfg.RadiusInterface);
+    }
+
+    if (strcmp(pMyObject->Cfg.RadiusAuthServerIPAddr, pMyObject->OldCfg.RadiusAuthServerIPAddr))
+    {
+        bConfigChanged = TRUE;
+        CosaDmlTunneledStaticIPSetRadiusAuthServerIPAddr(NULL, pMyObject->Cfg.RadiusAuthServerIPAddr);
+    }
+
+    if (strcmp(pMyObject->Cfg.RadiusAuthSecret, pMyObject->OldCfg.RadiusAuthSecret))
+    {
+        bConfigChanged = TRUE;
+        CosaDmlTunneledStaticIPSetRadiusAuthSecret(NULL, pMyObject->Cfg.RadiusAuthSecret);
+    }
+
+    if (pMyObject->Cfg.RadiusAuthServerPort != pMyObject->OldCfg.RadiusAuthServerPort)
+    {
+        bConfigChanged = TRUE;
+        CosaDmlTunneledStaticIPSetRadiusAuthServerPort(NULL, pMyObject->Cfg.RadiusAuthServerPort);
+    }
+
+    if (strcmp(pMyObject->Cfg.NASIdentifier, pMyObject->OldCfg.NASIdentifier))
+    {
+        bConfigChanged = TRUE;
+        CosaDmlTunneledStaticIPSetNASIdentifier(NULL, pMyObject->Cfg.NASIdentifier);
+    }
+
+    if (strcmp(pMyObject->Cfg.RadiusAccServerIPAddr, pMyObject->OldCfg.RadiusAccServerIPAddr))
+    {
+        bConfigChanged = TRUE;
+        CosaDmlTunneledStaticIPSetRadiusAccServerIPAddr(NULL, pMyObject->Cfg.RadiusAccServerIPAddr);
+    }
+
+    if (strcmp(pMyObject->Cfg.RadiusAccSecret, pMyObject->OldCfg.RadiusAccSecret))
+    {
+        bConfigChanged = TRUE;
+        CosaDmlTunneledStaticIPSetRadiusAccSecret(NULL, pMyObject->Cfg.RadiusAccSecret);
+    }
+
+    if (pMyObject->Cfg.RadiusAccServerPort != pMyObject->OldCfg.RadiusAccServerPort)
+    {
+        bConfigChanged = TRUE;
+        CosaDmlTunneledStaticIPSetRadiusAccServerPort(NULL, pMyObject->Cfg.RadiusAccServerPort);
+    }
+
+    if (bConfigChanged)
+    {
+        syscfg_commit();
+        pMyObject->OldCfg = pMyObject->Cfg;
+        CosaDmlTunneledStaticIPRestart(g_pCosaBEManager->hLgiTunneledStaticIP);
+    }
+
     return 0;
 }
 

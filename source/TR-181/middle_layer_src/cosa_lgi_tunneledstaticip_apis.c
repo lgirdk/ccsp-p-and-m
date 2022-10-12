@@ -28,6 +28,9 @@ CosaDmlTunneledStaticIPGetEnable
         BOOL                        *pValue
     )
 {
+    char buf[8];
+    syscfg_get(NULL, "tunneled_static_ip_enable", buf, sizeof(buf));
+    *pValue = (strcmp(buf, "1") == 0);
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -39,6 +42,8 @@ CosaDmlTunneledStaticIPSetEnable
         BOOL                        bValue
     )
 {
+    if (syscfg_set(NULL, "tunneled_static_ip_enable", bValue ? "1" : "0") != 0)
+        return ANSC_STATUS_FAILURE;
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -50,6 +55,9 @@ CosaDmlTunneledStaticIPGetRadiusAuthServerPort
         int                         *pValue 
     )
 {
+    char buf[8];
+    syscfg_get(NULL, "tunneled_static_ip_auth_port", buf, sizeof(buf));
+    *pValue = atoi(buf);
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -61,6 +69,10 @@ CosaDmlTunneledStaticIPSetRadiusAuthServerPort
         int                         value 
     )
 {
+    char buf[8];
+    snprintf(buf, sizeof(buf), "%d", value);
+    if (syscfg_set(NULL, "tunneled_static_ip_auth_port", buf) != 0)
+        return ANSC_STATUS_FAILURE;
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -72,6 +84,9 @@ CosaDmlTunneledStaticIPGetRadiusAccServerPort
         int                         *pValue 
     )
 {
+    char buf[8];
+    syscfg_get(NULL, "tunneled_static_ip_acct_port", buf, sizeof(buf));
+    *pValue = atoi(buf);
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -83,6 +98,10 @@ CosaDmlTunneledStaticIPSetRadiusAccServerPort
         int                         value 
     )
 {
+    char buf[8];
+    snprintf(buf, sizeof(buf), "%d", value);
+    if (syscfg_set(NULL, "tunneled_static_ip_acct_port", buf) != 0)
+        return ANSC_STATUS_FAILURE;
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -94,6 +113,7 @@ CosaDmlTunneledStaticIPGetUsername
         char                        *pValue
     )
 {
+    syscfg_get(NULL, "tunneled_static_ip_username", pValue, TUNNELEDSTATICIP_CFG_MEMBER_SIZE(Username));
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -102,9 +122,11 @@ ANSC_STATUS
 CosaDmlTunneledStaticIPSetUsername
     (
         ANSC_HANDLE                 hContext,
-        char                        bValue
+        char                        *pValue
     )
 {
+    if (syscfg_set(NULL, "tunneled_static_ip_username", pValue) != 0)
+        return ANSC_STATUS_FAILURE;
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -116,6 +138,7 @@ CosaDmlTunneledStaticIPGetPassword
         char                        *pValue
     )
 {
+    syscfg_get(NULL, "tunneled_static_ip_password", pValue, TUNNELEDSTATICIP_CFG_MEMBER_SIZE(Password));
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -124,9 +147,11 @@ ANSC_STATUS
 CosaDmlTunneledStaticIPSetPassword
     (
         ANSC_HANDLE                 hContext,
-        char                        bValue
+        char                        *pValue
     )
 {
+    if (syscfg_set(NULL, "tunneled_static_ip_password", pValue) != 0)
+        return ANSC_STATUS_FAILURE;
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -138,6 +163,7 @@ CosaDmlTunneledStaticIPGetRadiusAuthServerIPAddr
         char                        *pValue
     )
 {
+    syscfg_get(NULL, "tunneled_static_ip_authserver", pValue, TUNNELEDSTATICIP_CFG_MEMBER_SIZE(RadiusAuthServerIPAddr));
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -146,9 +172,11 @@ ANSC_STATUS
 CosaDmlTunneledStaticIPSetRadiusAuthServerIPAddr
     (
         ANSC_HANDLE                 hContext,
-        char                        bValue
+        char                        *pValue
     )
 {
+    if (syscfg_set(NULL, "tunneled_static_ip_authserver", pValue) != 0)
+        return ANSC_STATUS_FAILURE;
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -160,6 +188,7 @@ CosaDmlTunneledStaticIPGetRadiusAuthSecret
         char                        *pValue
     )
 {
+    syscfg_get(NULL, "tunneled_static_ip_authsecret", pValue, TUNNELEDSTATICIP_CFG_MEMBER_SIZE(RadiusAuthSecret));
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -168,9 +197,11 @@ ANSC_STATUS
 CosaDmlTunneledStaticIPSetRadiusAuthSecret
     (
         ANSC_HANDLE                 hContext,
-        char                        bValue
+        char                        *pValue
     )
 {
+    if (syscfg_set(NULL, "tunneled_static_ip_authsecret", pValue) != 0)
+        return ANSC_STATUS_FAILURE;
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -182,6 +213,7 @@ CosaDmlTunneledStaticIPGetNASIdentifier
         char                        *pValue
     )
 {
+    syscfg_get(NULL, "tunneled_static_ip_nasid", pValue, TUNNELEDSTATICIP_CFG_MEMBER_SIZE(NASIdentifier));
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -190,9 +222,11 @@ ANSC_STATUS
 CosaDmlTunneledStaticIPSetNASIdentifier
     (
         ANSC_HANDLE                 hContext,
-        char                        bValue
+        char                        *pValue
     )
 {
+    if (syscfg_set(NULL, "tunneled_static_ip_nasid", pValue) != 0)
+        return ANSC_STATUS_FAILURE;
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -204,6 +238,7 @@ CosaDmlTunneledStaticIPGetRadiusAccServerIPAddr
         char                        *pValue
     )
 {
+    syscfg_get(NULL, "tunneled_static_ip_acctserver", pValue, TUNNELEDSTATICIP_CFG_MEMBER_SIZE(RadiusAccServerIPAddr));
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -212,9 +247,11 @@ ANSC_STATUS
 CosaDmlTunneledStaticIPSetRadiusAccServerIPAddr
     (
         ANSC_HANDLE                 hContext,
-        char                        bValue
+        char                        *pValue
     )
 {
+    if (syscfg_set(NULL, "tunneled_static_ip_acctserver", pValue) != 0)
+        return ANSC_STATUS_FAILURE;
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -226,6 +263,7 @@ CosaDmlTunneledStaticIPGetRadiusAccSecret
         char                        *pValue
     )
 {
+    syscfg_get(NULL, "tunneled_static_ip_acctsecret", pValue, TUNNELEDSTATICIP_CFG_MEMBER_SIZE(RadiusAccSecret));
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -234,9 +272,11 @@ ANSC_STATUS
 CosaDmlTunneledStaticIPSetRadiusAccSecret
     (
         ANSC_HANDLE                 hContext,
-        char                        bValue
+        char                        *pValue
     )
 {
+    if (syscfg_set(NULL, "tunneled_static_ip_acctsecret", pValue) != 0)
+        return ANSC_STATUS_FAILURE;
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -248,6 +288,9 @@ CosaDmlTunneledStaticIPGetRadiusInterface
         ULONG                        *pValue
     )
 {
+    char buf[8];
+    syscfg_get(NULL, "tunneled_static_ip_interface", buf, sizeof(buf));
+    *pValue = atoi(buf);
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -256,9 +299,11 @@ ANSC_STATUS
 CosaDmlTunneledStaticIPSetRadiusInterface
     (
         ANSC_HANDLE                 hContext,
-        ULONG                        bValue
+        ULONG                        value
     )
 {
+    if (syscfg_set_u(NULL, "tunneled_static_ip_interface", value) != 0)
+        return ANSC_STATUS_FAILURE;
     return ANSC_STATUS_SUCCESS;
 }
 

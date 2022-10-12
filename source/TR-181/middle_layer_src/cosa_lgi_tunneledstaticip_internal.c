@@ -14,6 +14,8 @@
  * limitations under the License.
  ****************************************************************************/
 
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #include "cosa_lgi_tunneledstaticip_apis.h"
 #include "cosa_lgi_tunneledstaticip_internal.h"
@@ -63,17 +65,26 @@ CosaLgiTunneledStaticIPInitialize
     ANSC_STATUS                   returnStatus = ANSC_STATUS_SUCCESS;
     PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP)hThisObject;
 
-    CosaDmlTunneledStaticIPGetEnable(NULL, &pMyObject->Enable);
-    CosaDmlTunneledStaticIPGetUsername(NULL, &pMyObject->Username);
-    CosaDmlTunneledStaticIPGetPassword(NULL, &pMyObject->Password);
-    CosaDmlTunneledStaticIPGetRadiusInterface(NULL, &pMyObject->RadiusInterface);
-    CosaDmlTunneledStaticIPGetRadiusAuthServerIPAddr(NULL, &pMyObject->RadiusAuthServerIPAddr);
-    CosaDmlTunneledStaticIPGetRadiusAuthSecret(NULL, &pMyObject->RadiusAuthSecret);
-    CosaDmlTunneledStaticIPGetRadiusAuthServerPort(NULL, &pMyObject->RadiusAuthServerPort);
-    CosaDmlTunneledStaticIPGetNASIdentifier(NULL, &pMyObject->NASIdentifier);
-    CosaDmlTunneledStaticIPGetRadiusAccServerIPAddr(NULL, &pMyObject->RadiusAccServerIPAddr);
-    CosaDmlTunneledStaticIPGetRadiusAccSecret(NULL, &pMyObject->RadiusAccSecret);
-    CosaDmlTunneledStaticIPGetRadiusAccServerPort(NULL, &pMyObject->RadiusAccServerPort);
+    CosaDmlTunneledStaticIPGetEnable(NULL, &pMyObject->Cfg.Enable);
+    CosaDmlTunneledStaticIPGetUsername(NULL, &pMyObject->Cfg.Username);
+    CosaDmlTunneledStaticIPGetPassword(NULL, &pMyObject->Cfg.Password);
+    CosaDmlTunneledStaticIPGetRadiusInterface(NULL, &pMyObject->Cfg.RadiusInterface);
+    CosaDmlTunneledStaticIPGetRadiusAuthServerIPAddr(NULL, &pMyObject->Cfg.RadiusAuthServerIPAddr);
+    CosaDmlTunneledStaticIPGetRadiusAuthSecret(NULL, &pMyObject->Cfg.RadiusAuthSecret);
+    CosaDmlTunneledStaticIPGetRadiusAuthServerPort(NULL, &pMyObject->Cfg.RadiusAuthServerPort);
+    CosaDmlTunneledStaticIPGetNASIdentifier(NULL, &pMyObject->Cfg.NASIdentifier);
+    CosaDmlTunneledStaticIPGetRadiusAccServerIPAddr(NULL, &pMyObject->Cfg.RadiusAccServerIPAddr);
+    CosaDmlTunneledStaticIPGetRadiusAccSecret(NULL, &pMyObject->Cfg.RadiusAccSecret);
+    CosaDmlTunneledStaticIPGetRadiusAccServerPort(NULL, &pMyObject->Cfg.RadiusAccServerPort);
+
+    pMyObject->OldCfg = pMyObject->Cfg;
+
+    CosaDmlTunneledStaticIPRestart(hThisObject);
+
+#ifdef VMB_MODE
+    /* TODO: is this correct event to get when erouter is up & running? */
+    system("sysevent async ipv4_erouter0_ipaddr /usr/bin/vmbauth.sh");
+#endif
 
     return returnStatus;
 }
@@ -98,4 +109,40 @@ CosaLgiTunneledStaticIPRemove
 
     return returnStatus;
 }    
+
+ANSC_STATUS
+CosaDmlTunneledStaticIPRestart
+    (
+        ANSC_HANDLE                 hThisObject
+    )
+{
+#ifdef VMB_MODE
+    PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP pMyObject = (PCOSA_DATAMODEL_LGI_TUNNELEDSTATICIP)hThisObject;
+    FILE *fp;
+
+    mkdir("/tmp/vmb-radius-client", S_IRWXU);
+
+    fp = fopen("/tmp/vmb-radius-client/servers", "w");
+    if (!fp)
+        return ANSC_STATUS_FAILURE;
+    fprintf(fp, "%s %s\n", pMyObject->Cfg.RadiusAuthServerIPAddr, pMyObject->Cfg.RadiusAuthSecret);
+    fclose(fp);
+
+    fp = fopen("/tmp/vmb-radius-client/radiusclient.conf", "w");
+    if (!fp)
+        return ANSC_STATUS_FAILURE;
+    fprintf(fp, "nas-identifier %s\n", pMyObject->Cfg.NASIdentifier);
+    fprintf(fp, "authserver %s:%d\n", pMyObject->Cfg.RadiusAuthServerIPAddr, pMyObject->Cfg.RadiusAuthServerPort);
+    fprintf(fp, "servers /tmp/vmb-radius-client/servers\n");
+    fprintf(fp, "dictionary /usr/share/radcli/dictionary\n");
+    fprintf(fp, "default_realm\n");
+    fprintf(fp, "radius_timeout  10\n");
+    fprintf(fp, "radius_retries  3\n");
+    fprintf(fp, "bindaddr *\n");
+    fclose(fp);
+
+    system("vmbauth.sh");
+#endif
+    return ANSC_STATUS_SUCCESS;
+}
 
