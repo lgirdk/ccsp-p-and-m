@@ -1107,6 +1107,12 @@ X_CISCO_COM_DMZ_SetParamStringValue
 
     if (strcmp(ParamName, "InternalIP") == 0)
     {
+        /* Allow default dmz ip (i.e. LAN subnet) when DMZ is disabled to support the Backup and Restore functionality of C-Web/App */
+        if ((pDmz->bEnabled == FALSE) && (strcmp(pDmz->InternalIP, pString) == 0))
+        {
+            return TRUE;
+        }
+
         /* save update to backup */
         if (strcmp(pString, "0.0.0.0") == 0) { /* keep sync between gui and snmp */
             // pDmz->bEnabled = FALSE;
