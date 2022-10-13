@@ -4339,22 +4339,23 @@ void __cosa_dhcpsv6_refresh_config()
     ULONG Index  = 0;
     ULONG Index2 = 0;
     ULONG Index3 = 0;
+    int Index4 = 0;
     ULONG uSize = 0;
     ULONG preferedTime = 3600;
-    ULONG validTime = 7200;    
+    ULONG validTime = 7200;
     int   returnValue = 0;
-    BOOL  isInCaptivePortal = FALSE;
+    ULONG ret = 0;
     char * saveptr = NULL;
     char *pServerOption = NULL;
     FILE *responsefd=NULL;
     char *networkResponse = "/var/tmp/networkresponse.txt";
     int iresCode = 0;
     char responseCode[10];
+    BOOL  isInCaptivePortal = FALSE;
     int inWifiCp=0;
-    char buf[20]={0};
+    char buf[6];
     ULONG  T1 = 0;
     ULONG  T2 = 0;
-    int Index4 = 0;
     struct stat check_ConfigFile;
     UtopiaContext utctx = {0};
     char isLgi[4] = {0};
@@ -4363,23 +4364,26 @@ void __cosa_dhcpsv6_refresh_config()
     errno_t rc = -1;
 
     if (!fp)
-        goto EXIT;
+        return;
 
-    if (!Utopia_Init(&utctx))
-        goto EXIT;
+    if (!Utopia_Init(&utctx)) {
+        fclose(fp);
+        return;
+    }
 
     /*Begin write configuration */
     fprintf(fp, "log-level 8\n");
     fprintf(fp, "log-mode syslog\n");
-	
+
     //Intel Proposed RDKB Generic Bug Fix from XB6 SDK
     fprintf(fp, "reconfigure-enabled 1\n");
 
     //strict RFC compliance rfc3315 Section 13
     fprintf(fp, "drop-unicast\n");
+
     //support relay
     fprintf(fp, "guess-mode\n");
-    
+
     for ( Index = 0; Index < uDhcpv6ServerPoolNum; Index++ )
     {
         /* We need get interface name according to Interface field*/
@@ -4388,7 +4392,8 @@ void __cosa_dhcpsv6_refresh_config()
 
         fprintf(fp, "iface %s {\n", COSA_DML_DHCPV6_SERVER_IFNAME);
         Cnt += sprintf(relayStr+Cnt,"iface  relay1 {\n");
-        Cnt += sprintf(relayStr+Cnt,"   relay %s\n",  COSA_DML_DHCPV6_SERVER_IFNAME);  
+        Cnt += sprintf(relayStr+Cnt,"   relay %s\n",  COSA_DML_DHCPV6_SERVER_IFNAME);
+
         if ( sDhcpv6ServerPool[Index].Cfg.RapidEnable ){
             fprintf(fp, "   rapid-commit yes\n");
             Cnt += sprintf(relayStr+Cnt,"   rapid-commit yes\n");
@@ -4408,22 +4413,24 @@ void __cosa_dhcpsv6_refresh_config()
         /* on GUI, we will limit the order to be [1-256]*/
         fprintf(fp, "   preference %d\n", 255); /*256-(sDhcpv6ServerPool[Index].Cfg.Order%257));*/
         Cnt += sprintf(relayStr+Cnt,"   preference %d\n", 255);
+
         /*begin class
                     fc00:1:0:0:4::/80,fc00:1:0:0:5::/80,fc00:1:0:0:6::/80
                 */
         if ( sDhcpv6ServerPool[Index].Cfg.IANAEnable && sDhcpv6ServerPool[Index].Info.IANAPrefixes[0] )
         {
-            pTmp1 = AnscCloneString((char*)sDhcpv6ServerPool[Index].Info.IANAPrefixes);              
+            pTmp1 = AnscCloneString((char*)sDhcpv6ServerPool[Index].Info.IANAPrefixes);
             pTmp3 = pTmp1;
+            pTmp2 = pTmp1;
 
-            for (pTmp2 = pTmp1; ; pTmp2 = NULL) 
+            for (; ; pTmp2 = NULL)
             {
                 pTmp1 = strtok_r(pTmp2, ",", &saveptr);
                 if (pTmp1 == NULL)
                     break;
 
                 /* This pTmp1 is IP.Interface.{i}.IPv6Prefix.{i}., we need ipv6 address(eg:2000:1:0:0:6::/64) according to it*/
-                rc = sprintf_s((char*)prefixFullName, sizeof(prefixFullName), "%sPrefix",pTmp1);
+                rc = sprintf_s(prefixFullName, sizeof(prefixFullName), "%sPrefix",pTmp1);
                 if(rc < EOK)
                 {
                     ERR_CHK(rc);
@@ -4437,6 +4444,7 @@ void __cosa_dhcpsv6_refresh_config()
 
                 fprintf(fp, "   class {\n");
                 Cnt += sprintf(relayStr+Cnt,"   class {\n");
+
 #ifdef CONFIG_CISCO_DHCP6S_REQUIREMENT_FROM_DPC3825
                 /*When enable EUI64, the pool prefix value must use xxx/64 format*/
                 if ( sDhcpv6ServerPool[Index].Cfg.EUI64Enable){
@@ -4552,10 +4560,10 @@ OPTIONS:
         {
             if ( !sDhcpv6ServerPoolOption[Index][Index2].bEnabled )
                 continue;
-            
+
             for ( Index3 = 0; Index3 < sizeof(tagList)/sizeof(struct DHCP_TAG);Index3++ )
             {
-                if (tagList[Index3].tag != (int)sDhcpv6ServerPoolOption[Index][Index2].Tag )
+                if ( tagList[Index3].tag != (int)sDhcpv6ServerPoolOption[Index][Index2].Tag )
                     continue;
                 else
                     break;
@@ -4569,15 +4577,14 @@ OPTIONS:
 
             iresCode = 0;
 
-            if((responsefd = fopen(networkResponse, "r")) != NULL)
+            if ( ( responsefd = fopen( networkResponse, "r" ) ) != NULL )
             {
-                if(fgets(responseCode, sizeof(responseCode), responsefd) != NULL)
+                if (fgets( responseCode, sizeof(responseCode), responsefd ) != NULL )
                 {
-                    iresCode = atoi(responseCode);
+                    iresCode = atoi( responseCode );
                 }
 
                 /* RDKB-6780, CID-33149, free unused resources before return */
-                //ARRISXB6-7321
                 fclose(responsefd);
                 responsefd = NULL;
             }
@@ -4591,26 +4598,28 @@ OPTIONS:
                 char linklocalstr[128] = {'\0'};
 
                 pp = popen("ifconfig brlan0 | grep Scope:Link | awk '{print $3}'", "r");
-                if(pp)
+                if (pp)
                 {
-                        if(fgets(linklocalstr, sizeof(linklocalstr), pp))
-                        {
-                                str_ptr = strstr(linklocalstr, "/64");
-                                *str_ptr = '\0';
-                        }
-                        pclose(pp);
+                    if (fgets(linklocalstr, sizeof(linklocalstr), pp))
+                    {
+                        str_ptr = strstr(linklocalstr, "/64");
+                        *str_ptr = '\0';
+                    }
+                    pclose(pp);
                 }
-                if ((strncmp(buf,"true",4) == 0) && iresCode == 204)
+
+                if ((strcmp(buf, "true") == 0) && (iresCode == 204))
                 {
-                        inWifiCp = 1;
-                        CcspTraceWarning((" _cosa_dhcpsv6_refresh_config -- Box is in captive portal mode \n"));
+                    inWifiCp = 1;
+                    CcspTraceWarning((" _cosa_dhcpsv6_refresh_config -- Box is in captive portal mode \n"));
                 }
                 else
                 {
-                        //By default isInCaptivePortal is false
-                        CcspTraceWarning((" _cosa_dhcpsv6_refresh_config -- Box is not in captive portal mode \n"));
+                    //By default isInCaptivePortal is false
+                    CcspTraceWarning((" _cosa_dhcpsv6_refresh_config -- Box is not in captive portal mode \n"));
                 }
             }
+
 #if defined (_XB6_PRODUCT_REQ_)
         char rfCpEnable[6] = {0};
         char rfCpMode[6] = {0};
@@ -4972,17 +4981,17 @@ OPTIONS:
                     else
                         break;
                 }
-                ULONG ret = 0;
+
                 if ( Index4 >= g_recv_option_num )
                     continue;
 
                 /* We need to translate hex to normal string */
                 if ( g_recv_options[Index4].Tag == 23 )
                 { //dns
-                   char dnsStr[ 256 ] = { 0 };
+                   char dnsStr[256] = {0};
                    char l_cSecWebUI_Enabled[8] = {0};
                    syscfg_get(NULL, "SecureWebUI_Enable", l_cSecWebUI_Enabled, sizeof(l_cSecWebUI_Enabled));
-				   
+
 				   /* Static DNS Servers */
 				   if( 1 == sDhcpv6ServerPool[Index].Cfg.X_RDKCENTRAL_COM_DNSServersEnabled )
 				   {
@@ -5134,7 +5143,7 @@ OPTIONS:
                }
                 else if ( g_recv_options[Index4].Tag == 24 )
                 { //domain
-                    pServerOption =    CosaDmlDhcpv6sGetStringFromHex((char *)g_recv_options[Index4].Value);
+                    pServerOption =    CosaDmlDhcpv6sGetStringFromHex((char*)g_recv_options[Index4].Value);
                     if ( pServerOption )
                         fprintf(fp, "    option %s %s\n", tagList[Index3].cmdstring, pServerOption);
                 }else{
@@ -5193,7 +5202,7 @@ OPTIONS:
                 }
                 else if ( g_recv_options[Index4].Tag == 24 )
                 { //domain
-                    pServerOption = CosaDmlDhcpv6sGetStringFromHex((char*)g_recv_options[Index4].Value);
+                    pServerOption = CosaDmlDhcpv6sGetStringFromHex((char *)g_recv_options[Index4].Value);
 
                     if ( pServerOption ){
 #if defined(_XB6_PRODUCT_REQ_) && defined(_COSA_BCM_ARM_)
@@ -5216,8 +5225,7 @@ OPTIONS:
 #endif
                 }
             }
-
-        }     
+        }
 
         fprintf(fp, "}\n");
         Cnt += sprintf(relayStr+Cnt, "}\n");
@@ -5228,10 +5236,7 @@ OPTIONS:
 
     /* Close the file pointer before calling set_ipv6_dns.sh as it is getting updated again there. */
     if (fp != NULL)
-    {
         fclose(fp);
-        fp = NULL;
-    }
 
     Utopia_Free(&utctx,1);
 
@@ -5241,24 +5246,17 @@ OPTIONS:
         CcspTraceWarning(("%s rename failed %s\n", __FUNCTION__, strerror(errno)));
 #endif
 
-if (stat(SERVER_CONF_LOCATION, &check_ConfigFile) == -1) {
-	commonSyseventSet("dibbler_server_conf-status","");
-}
-else if (check_ConfigFile.st_size == 0) {
+    if (stat(SERVER_CONF_LOCATION, &check_ConfigFile) == -1) {
+        commonSyseventSet("dibbler_server_conf-status","");
+    }
+    else if (check_ConfigFile.st_size == 0) {
         commonSyseventSet("dibbler_server_conf-status","empty");
-}
-else {
+    }
+    else {
         commonSyseventSet("dibbler_server_conf-status","ready");
-}
+    }
 
     system("/bin/sh /etc/utopia/service.d/set_ipv6_dns.sh dibbler");
-
-EXIT:
-
-    if(fp != NULL)
-      fclose(fp);
-
-    return;
 }
 #endif
 
@@ -5285,21 +5283,21 @@ void __cosa_dhcpsv6_refresh_config()
     FILE *responsefd=NULL;
     char *networkResponse = "/var/tmp/networkresponse.txt";
     int iresCode = 0;
+    int IsCaptivePortalMode = 0;
     char responseCode[10];
+    char buf[6];
+    ULONG  T1 = 0;
+    ULONG  T2 = 0;
     struct stat check_ConfigFile;
-    errno_t rc = -1;
 #ifdef CISCO_CONFIG_DHCPV6_PREFIX_DELEGATION
     pd_pool_t           pd_pool;
     ia_pd_t             ia_pd;
 #endif
-    ULONG  T1 = 0;
-    ULONG  T2 = 0;
-        char buf[ 6 ];
-        int IsCaptivePortalMode = 0;
-    BOOL  bBadPrefixFormat = FALSE;
+    BOOL bBadPrefixFormat = FALSE;
+    errno_t rc = -1;
 
     if (!fp)
-        goto EXIT;
+        return;
 
 #if defined(CISCO_CONFIG_DHCPV6_PREFIX_DELEGATION)
     /* handle logic:
@@ -5317,7 +5315,6 @@ void __cosa_dhcpsv6_refresh_config()
         commonSyseventSet("service_ipv6-status", "error");
         return;
     }
-
 #endif
 
     /*Begin write configuration */
@@ -5576,31 +5573,32 @@ OPTIONS:
             if ( Index3 >= sizeof(tagList)/sizeof(struct DHCP_TAG) )
                 continue;
 
-                        // During captive portal no need to pass DNS
-                        // Check the reponse code received from Web Service
+            // During captive portal no need to pass DNS
+            // Check the reponse code received from Web Service
 
-                        iresCode = 0;
+            iresCode = 0;
 
-                        if( ( responsefd = fopen( networkResponse, "r" ) ) != NULL )
-                        {
-                                if( fgets( responseCode, sizeof( responseCode ), responsefd ) != NULL )
-                                {
-                                        iresCode = atoi( responseCode );
-                                }
+            if( ( responsefd = fopen( networkResponse, "r" ) ) != NULL )
+            {
+                if( fgets( responseCode, sizeof( responseCode ), responsefd ) != NULL )
+                {
+                    iresCode = atoi( responseCode );
+                }
 
-                                /* RDKB-6780, CID-33149, free unused resources before return */
-                                fclose(responsefd);
-                                responsefd = NULL;
-                        }
+                /* RDKB-6780, CID-33149, free unused resources before return */
+                fclose(responsefd);
+                responsefd = NULL;
+            }
 
-                        syscfg_get( NULL, "redirection_flag", buf, sizeof(buf));
-                        if( buf != NULL )
-                        {
-                                if ( ( strncmp( buf,"true",4 ) == 0 ) && iresCode == 204 )
-                                {
-                                         IsCaptivePortalMode = 1;
-                                }
-                        }
+            // Get value of redirection_flag
+            /* CID: 55578 Array compared against 0*/
+            if(!syscfg_get( NULL, "redirection_flag", buf, sizeof(buf)))
+            {
+                if ((strcmp(buf, "true") == 0) && (iresCode == 204))
+                {
+                    IsCaptivePortalMode = 1;
+                }
+            }
 
             if ( sDhcpv6ServerPoolOption[Index][Index2].PassthroughClient[0] )
             {
@@ -5622,7 +5620,6 @@ OPTIONS:
                 if ( g_recv_options[Index4].Tag == 23 )
                 { //dns
                    char dnsStr[256] = {0};
-
 
                                    /* Static DNS Servers */
                                    if( 1 == sDhcpv6ServerPool[Index].Cfg.X_RDKCENTRAL_COM_DNSServersEnabled )
@@ -5732,25 +5729,22 @@ OPTIONS:
                 }
             }
         }
+
         fprintf(fp, "}\n");
     }
-    if(fp != NULL)
-      fclose(fp);
 
+    if (fp != NULL)
+        fclose(fp);
 
-	if (stat(SERVER_CONF_LOCATION, &check_ConfigFile) == -1) {
-		commonSyseventSet("dibbler_server_conf-status","");
-	}
-	else if (check_ConfigFile.st_size == 0) {
-		commonSyseventSet("dibbler_server_conf-status","empty");
-	}
-	else {
-		commonSyseventSet("dibbler_server_conf-status","ready");
-	}
-
-EXIT:
-
-    return;
+    if (stat(SERVER_CONF_LOCATION, &check_ConfigFile) == -1) {
+        commonSyseventSet("dibbler_server_conf-status","");
+    }
+    else if (check_ConfigFile.st_size == 0) {
+        commonSyseventSet("dibbler_server_conf-status","empty");
+    }
+    else {
+        commonSyseventSet("dibbler_server_conf-status","ready");
+    }
 }
 
 #endif
