@@ -4593,21 +4593,6 @@ OPTIONS:
             /* CID: 55578 Array compared against 0*/
             if(!syscfg_get( NULL, "redirection_flag", buf, sizeof(buf)))
             {
-                FILE *pp = NULL;
-                char *str_ptr = NULL;
-                char linklocalstr[128] = {'\0'};
-
-                pp = popen("ifconfig brlan0 | grep Scope:Link | awk '{print $3}'", "r");
-                if (pp)
-                {
-                    if (fgets(linklocalstr, sizeof(linklocalstr), pp))
-                    {
-                        str_ptr = strstr(linklocalstr, "/64");
-                        *str_ptr = '\0';
-                    }
-                    pclose(pp);
-                }
-
                 if ((strcmp(buf, "true") == 0) && (iresCode == 204))
                 {
                     inWifiCp = 1;
