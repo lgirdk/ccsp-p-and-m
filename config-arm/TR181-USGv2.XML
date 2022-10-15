@@ -12861,7 +12861,6 @@
         <func_Rollback>DynamicDNS_Rollback</func_Rollback>
       </functions>
       <parameters>
-<!--
         <parameter>
             <name>X_RDK-COM_Enable</name>
             <description>
@@ -12871,7 +12870,6 @@
             <syntax>bool</syntax>
             <writable>true</writable>
         </parameter>
--->
         <parameter>
             <name>SupportedServices</name>
             <type>string(1024)</type>
