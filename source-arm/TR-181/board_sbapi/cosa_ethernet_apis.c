@@ -1766,9 +1766,9 @@ static int setIfCfg(PCosaEthInterfaceInfo pEthIf, PCOSA_DML_ETH_PORT_CFG pCfg)
 
 	enifStatus = getIfStatus((PUCHAR)pEthIf->sInfo->Name, &ifr);
 
-    if ( ( enifStatus == COSA_DML_IF_STATUS_Unknown ) || \
-		 ( enifStatus == COSA_DML_IF_STATUS_NotPresent )
-		)
+    if ( ( enifStatus == COSA_DML_IF_STATUS_Unknown ) ||
+         ( enifStatus == COSA_DML_IF_STATUS_NotPresent ) ||
+         ( enifStatus == COSA_DML_IF_STATUS_Error ) )
     {
         return ANSC_STATUS_FAILURE;
     }

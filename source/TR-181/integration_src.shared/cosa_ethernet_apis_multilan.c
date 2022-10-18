@@ -1123,9 +1123,9 @@ CosaDmlEthLinkSetCfg
 			
 			enifStatus = getIfStatus((PUCHAR)pEthLink->StaticInfo.Name, &ifr);
 			
-			if ( ( enifStatus == COSA_DML_IF_STATUS_Unknown ) || \
-				 ( enifStatus == COSA_DML_IF_STATUS_NotPresent )
-				)
+			if ( ( enifStatus == COSA_DML_IF_STATUS_Unknown ) ||
+			     ( enifStatus == COSA_DML_IF_STATUS_NotPresent ) ||
+			     ( enifStatus == COSA_DML_IF_STATUS_Error ) )
 			{
 				bProceedFurther = FALSE;
 			}
@@ -1376,58 +1376,57 @@ int _getMac(char* ifName, char* mac){
 COSA_DML_IF_STATUS getIfStatus(const PUCHAR name, struct ifreq *pIfr)
 {
     struct ifreq ifr;
-    int skfd=-1;
-    
-    //AnscTraceFlow(("%s...\n", __FUNCTION__));
+    int skfd = -1;
     errno_t rc = -1;
 
-    skfd = socket(AF_INET, SOCK_DGRAM, 0);
-    /* CID: 56442 Argument cannot be negative*/
-    if(skfd == -1)
-       return -1;
+    //AnscTraceFlow(("%s...\n", __FUNCTION__));
 
-    rc = strcpy_s(ifr.ifr_name, sizeof(ifr.ifr_name), (char*)name);
-    if(rc != EOK)
-    {
+    if (!isValid((char *) name)) {
+        return COSA_DML_IF_STATUS_Error;
+    }
+
+    rc = strcpy_s(ifr.ifr_name, sizeof(ifr.ifr_name), (char *) name);
+    if (rc != EOK) {
         ERR_CHK(rc);
-        return -1;
+        return COSA_DML_IF_STATUS_Error;
     }
 
-    if (!isValid((char*)name)) {
-        return -1;
+    skfd = socket(AF_INET, SOCK_DGRAM, 0);
+    if (skfd == -1) {
+        return COSA_DML_IF_STATUS_Error;
     }
-    
+
     if (ioctl(skfd, SIOCGIFFLAGS, &ifr) < 0) {
         if (errno == ENODEV) {
             close(skfd);
-            return -1;
+            return COSA_DML_IF_STATUS_Error;
         }
-		
-        CcspTraceWarning(("cosa_ethernet_apis.c - getIfStatus: Get interface %s error...\n", name));
+
         close(skfd);
 
-		if ( FALSE == getIfAvailability( name ) )
-		{
-			return COSA_DML_IF_STATUS_NotPresent;
-		}
+        CcspTraceWarning(("cosa_ethernet_apis.c - getIfStatus: Get interface %s error...\n", name));
+
+        if (getIfAvailability(name) == FALSE)
+        {
+            return COSA_DML_IF_STATUS_NotPresent;
+        }
 
         return COSA_DML_IF_STATUS_Unknown;
     }
+
     close(skfd);
 
     if ( pIfr )
     {
         AnscCopyMemory(pIfr, &ifr, sizeof(struct ifreq));
     }
-    
+
     if ( ifr.ifr_flags & IFF_UP )
     {
         return COSA_DML_IF_STATUS_Up;
     }
-    else
-    {
-        return COSA_DML_IF_STATUS_Down;
-    }
+
+    return COSA_DML_IF_STATUS_Down;
 }
 
 //unused function
