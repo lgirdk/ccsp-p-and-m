@@ -946,7 +946,7 @@ IPIF_getEntry_for_Ipv6Addr
                }
             }
 
-            commonSyseventGet(COSA_DML_DHCPV6S_ADDR_SYSEVENT_NAME, global_addr, sizeof(global_addr));
+            commonSyseventGet("lan_ipaddr_v6", global_addr, sizeof(global_addr));
             inet_pton(AF_INET6, global_addr, (struct sockaddr *) &sap.sin6_addr);
             sap.sin6_family = AF_INET6;
             inet_ntop(AF_INET6, (struct sockaddr *) &sap.sin6_addr, global_addr, sizeof(global_addr));
