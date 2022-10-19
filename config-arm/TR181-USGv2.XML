@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <?define CONFIG_CISCO_HOTSPOT=True?>
-<?define DDNS_BROADBANDFORUM=True?>
 <?define CONFIG_VENDOR_CUSTOMER_COMCAST=True?>
-<?define DSLITE_FEATURE_SUPPORT=True?>
 <!--
  If not stated otherwise in this file or this component's Licenses.txt file the
  following copyright and licenses apply:
