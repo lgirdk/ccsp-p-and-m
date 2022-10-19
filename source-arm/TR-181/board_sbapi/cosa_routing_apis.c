@@ -5789,30 +5789,12 @@ CosaDmlRouteInfoSetEnabled
     )
 {
     UtopiaContext utctx = {0};
-    char out[256] = {0};
-    errno_t safec_rc = -1;
 	
     /*handle syscfg*/
     if (!Utopia_Init(&utctx))
         return ANSC_STATUS_FAILURE;
 
-    if (value)
-    {
-        safec_rc = sprintf_s(out, sizeof(out), "1");
-        if(safec_rc < EOK)
-        {
-           ERR_CHK(safec_rc);
-        }
-    }
-    else
-    {
-        safec_rc = sprintf_s(out, sizeof(out), "0");
-        if(safec_rc < EOK)
-        {
-           ERR_CHK(safec_rc);
-        }
-    }
-    Utopia_RawSet(&utctx,NULL,SYSCFG_FORMAT_IPV6_ROUTEINFO"_enabled",out);
+    Utopia_RawSet(&utctx,NULL,SYSCFG_FORMAT_IPV6_ROUTEINFO"_enabled", value ? "1" : "0");
 
     Utopia_Free(&utctx,1);                    
 
