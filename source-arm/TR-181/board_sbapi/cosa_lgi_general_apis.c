@@ -505,10 +505,16 @@ CosaDmlGiSetBrightness
         ULONG                       pValue
     )
 {
+    if (platform_hal_SetLedBrightness(pValue) != RETURN_OK)
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
     syscfg_set_u (NULL, "led_brightness", pValue);
 
     return ANSC_STATUS_SUCCESS;
 }
+
 ULONG CosaDmlGiGetDefaultAdminPassword ( ANSC_HANDLE hContext, char *pValue, ULONG *pUlSize )
 {
     if (platform_hal_getUIDefaultPassword (pValue, *pUlSize) == RETURN_OK)
