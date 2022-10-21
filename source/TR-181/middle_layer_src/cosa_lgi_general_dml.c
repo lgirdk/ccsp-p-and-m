@@ -197,9 +197,7 @@ LgiGeneral_GetParamUlongValue
     }
     else if (strcmp(ParamName, "Brightness") == 0)
     {
-#ifdef _LG_MV3_
         CosaDmlGiGetBrightness(NULL, puLong);
-#endif
         return TRUE;
     }
 	
@@ -551,9 +549,7 @@ LgiGeneral_SetParamUlongValue
     }
     else if (strcmp(ParamName, "Brightness") == 0)
     {
-#ifdef _LG_MV3_
         pMyObject->Brightness = uValuepUlong;
-#endif
         return TRUE;
     }
     return FALSE;
