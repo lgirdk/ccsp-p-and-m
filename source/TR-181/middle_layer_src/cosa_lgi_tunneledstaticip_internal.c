@@ -114,8 +114,8 @@ ANSC_STATUS CosaDmlTunneledStaticIPRestart (ANSC_HANDLE hThisObject)
     fprintf(fp, "servers /tmp/vmb-radius-client/servers\n");
     fprintf(fp, "dictionary /usr/share/radcli/dictionary\n");
     fprintf(fp, "default_realm\n");
-    fprintf(fp, "radius_timeout  10\n");
-    fprintf(fp, "radius_retries  3\n");
+    fprintf(fp, "radius_timeout  0\n");
+    fprintf(fp, "radius_retries  5\n");
     fprintf(fp, "bindaddr *\n");
     fclose(fp);
 
