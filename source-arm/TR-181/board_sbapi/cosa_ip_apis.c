@@ -1573,6 +1573,9 @@ IPIF_getEntry_for_Ipv6Pre
     int  need_write = 0;
     errno_t safec_rc = -1;
 
+#if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
+    char sysEventName[256];
+#endif
 
     CosaUtilGetIpv6AddrInfo((char *)g_ipif_names[ulIndex], &p_v6addr, &v6addr_num);
 
@@ -1690,7 +1693,6 @@ IPIF_getEntry_for_Ipv6Pre
             commonSyseventGet("ipv6_brlan0-prefix", dhcpv6_pref, sizeof(dhcpv6_pref));
         else
             commonSyseventGet(COSA_DML_DHCPV6C_PREF_SYSEVENT_NAME, dhcpv6_pref, sizeof(dhcpv6_pref));
-
         if (dhcpv6_pref[0])
             p_dml_v6pre->Origin = (ulIndex == 0) ? COSA_DML_IP6PREFIX_ORIGIN_PrefixDelegation : COSA_DML_IP6PREFIX_ORIGIN_Child;
         else 
@@ -1704,8 +1706,14 @@ IPIF_getEntry_for_Ipv6Pre
 
         p_dml_v6pre = &g_ipif_be_bufs[ulIndex].V6PreList[g_ipif_be_bufs[ulIndex].ulNumOfV6Pre];
 
-        
+
+#if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
+        memset( sysEventName, 0, sizeof(sysEventName));
+        snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_PREF_SYSEVENT_NAME, (char *)g_ipif_names[ulIndex]);
+        commonSyseventGet(sysEventName, dhcpv6_pref, sizeof(dhcpv6_pref));
+#else
         commonSyseventGet(COSA_DML_DHCPV6C_PREF_SYSEVENT_NAME, dhcpv6_pref, sizeof(dhcpv6_pref));
+#endif
         if (dhcpv6_pref[0])
             p_dml_v6pre->Origin = COSA_DML_IP6PREFIX_ORIGIN_PrefixDelegation;
         else 
@@ -1773,27 +1781,57 @@ IPIF_getEntry_for_Ipv6Pre
         {
            ERR_CHK(safec_rc);
         }
+#if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
+        memset( sysEventName, 0, sizeof(sysEventName));
+        snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_PREF_IAID_SYSEVENT_NAME, (char *)g_ipif_names[ulIndex]);
+        if (!commonSyseventGet(sysEventName, out, sizeof(out)) )
+#else
         if (!commonSyseventGet(COSA_DML_DHCPV6C_PREF_IAID_SYSEVENT_NAME, out, sizeof(out)) )
+#endif
              g_ipif_be_bufs[ulIndex].Info.iapd_iaid  = atoi(out);
         else
              g_ipif_be_bufs[ulIndex].Info.iapd_iaid  = 0;
     
+#if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
+        memset( sysEventName, 0, sizeof(sysEventName));
+        snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_PREF_T1_SYSEVENT_NAME, (char *)g_ipif_names[ulIndex]);
+        if (!commonSyseventGet(sysEventName, out, sizeof(out)) )
+#else
         if (!commonSyseventGet(COSA_DML_DHCPV6C_PREF_T1_SYSEVENT_NAME, out, sizeof(out)) )
+#endif
              g_ipif_be_bufs[ulIndex].Info.iapd_t1 = atoi(out);
         else
              g_ipif_be_bufs[ulIndex].Info.iapd_t1  = 0;
     
+#if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
+        memset( sysEventName, 0, sizeof(sysEventName));
+        snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_PREF_T2_SYSEVENT_NAME, (char *)g_ipif_names[ulIndex]);
+        if (!commonSyseventGet(sysEventName, out, sizeof(out)) )
+#else
         if (!commonSyseventGet(COSA_DML_DHCPV6C_PREF_T2_SYSEVENT_NAME, out, sizeof(out)) )
+#endif
              g_ipif_be_bufs[ulIndex].Info.iapd_t2 = atoi(out);
         else
              g_ipif_be_bufs[ulIndex].Info.iapd_t2  = 0;
     
+#if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
+        memset( sysEventName, 0, sizeof(sysEventName));
+        snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_PREF_PRETM_SYSEVENT_NAME, (char *)g_ipif_names[ulIndex]);
+        if (!commonSyseventGet(sysEventName, out, sizeof(out)) )
+#else
         if (!commonSyseventGet(COSA_DML_DHCPV6C_PREF_PRETM_SYSEVENT_NAME, out, sizeof(out)) )
+#endif
              p_dml_v6pre->iapd_pretm = atoi(out);
         else
              p_dml_v6pre->iapd_pretm = 0;
     
+#if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
+        memset( sysEventName, 0, sizeof(sysEventName));
+        snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_PREF_VLDTM_SYSEVENT_NAME, (char *)g_ipif_names[ulIndex]);
+        if (!commonSyseventGet(sysEventName, out, sizeof(out)) )
+#else
         if (!commonSyseventGet(COSA_DML_DHCPV6C_PREF_VLDTM_SYSEVENT_NAME, out, sizeof(out)) )
+#endif
              p_dml_v6pre->iapd_vldtm = atoi(out);
         else
              p_dml_v6pre->iapd_vldtm = 0;

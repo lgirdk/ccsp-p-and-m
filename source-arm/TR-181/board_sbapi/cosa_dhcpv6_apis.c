@@ -4325,10 +4325,41 @@ void __cosa_dhcpsv6_refresh_config()
 				char s_iapd_pretm[32] = {0};
 				char s_iapd_vldtm[32] = {0};
 				ULONG  iapd_pretm, iapd_vldtm =0;
-				
-				commonSyseventGet(COSA_DML_DHCPV6C_PREF_PRETM_SYSEVENT_NAME, s_iapd_pretm, sizeof(s_iapd_pretm));
-				commonSyseventGet(COSA_DML_DHCPV6C_PREF_VLDTM_SYSEVENT_NAME, s_iapd_vldtm, sizeof(s_iapd_vldtm));
-							
+			
+#if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
+                /* This pTmp1 is IP.Interface.{i}.IPv6Prefix.{i}., Fetch Interface Name from it*/
+                int index, prefixIndex;
+                char dmName[256] ={0};
+                char dmValue[64] ={0};
+                char sysEventName[256] ={0};
+
+                sscanf (pTmp1,"Device.IP.Interface.%d.IPv6Prefix.%d.", &index, &prefixIndex);
+
+                rc = sprintf_s((char*)dmName, sizeof(dmName), "Device.IP.Interface.%d.Name",index);
+                if(rc < EOK)
+                {
+                    ERR_CHK(rc);
+                }
+
+                uSize = sizeof(dmValue);
+                returnValue = g_GetParamValueString(g_pDslhDmlAgent, dmName, dmValue, &uSize);
+                if ( returnValue != 0 )
+                {
+                    CcspTraceWarning(("_cosa_dhcpsv6_refresh_config -- g_GetParamValueString for iana:%d\n", returnValue));
+                }
+
+                memset( sysEventName, 0, sizeof(sysEventName));
+                snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_PREF_PRETM_SYSEVENT_NAME, dmValue);
+                commonSyseventGet(sysEventName, s_iapd_pretm, sizeof(s_iapd_pretm));
+
+                memset( sysEventName, 0, sizeof(sysEventName));
+                snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_PREF_VLDTM_SYSEVENT_NAME, dmValue);
+                commonSyseventGet(sysEventName, s_iapd_vldtm, sizeof(s_iapd_vldtm));
+#else
+                commonSyseventGet(COSA_DML_DHCPV6C_PREF_PRETM_SYSEVENT_NAME, s_iapd_pretm, sizeof(s_iapd_pretm));
+                commonSyseventGet(COSA_DML_DHCPV6C_PREF_VLDTM_SYSEVENT_NAME, s_iapd_vldtm, sizeof(s_iapd_vldtm));
+#endif
+
 				sscanf(s_iapd_pretm, "%lu", &iapd_pretm);
 				sscanf(s_iapd_vldtm, "%lu", &iapd_vldtm);
 				
@@ -7234,9 +7265,11 @@ void CosaDmlDhcpv6sRebootServer()
 #else
     FILE *fp = NULL;
     int fd = 0;
-    if (g_dhcpv6s_restart_count) {
+#if !defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
+    if (g_dhcpv6s_restart_count) 
+#endif
+    {
         g_dhcpv6s_restart_count=0;
-
         //when need stop, it's supposed the configuration file need to be updated.
         _cosa_dhcpsv6_refresh_config();
         CcspTraceInfo(("%s - Call _dibbler_server_operation stop\n",__FUNCTION__));
@@ -7283,7 +7316,10 @@ void CosaDmlDhcpv6sRebootServer()
 #endif
 
     // refresh lan if we were asked to
-    if (g_dhcpv6s_refresh_count) {
+#if !defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
+    if (g_dhcpv6s_refresh_count) 
+#endif
+    {
         g_dhcpv6s_refresh_count = 0;
         CcspTraceWarning(("%s: DBG calling  gw_lan_refresh\n", __func__));
         v_secure_system("gw_lan_refresh");
@@ -8404,7 +8440,181 @@ dhcpv6c_dbg_thrd(void * in)
 			
 				sleep(5);
 			  }
-		     	
+#if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
+            /*Move IPv6 handle to WanManager*/
+#if defined(FEATURE_RDKB_WAN_MANAGER)
+            /*
+             * Send data to wanmanager.
+             */
+
+            char dns_server[256] = {'\0'};
+            char sysEventName[256];
+            remove_single_quote(iapd_pretm);
+            remove_single_quote(iapd_vldtm);
+            sscanf(iapd_pretm, "%d", &hub4_preferred_lft);
+            sscanf(iapd_vldtm, "%d", &hub4_valid_lft);
+            ipc_dhcpv6_data_t dhcpv6_data;
+            memset(&dhcpv6_data, 0, sizeof(ipc_dhcpv6_data_t));
+
+            strncpy(dhcpv6_data.ifname, IfaceName, sizeof(dhcpv6_data.ifname));
+            if(strlen(v6pref) == 0) {
+                dhcpv6_data.isExpired = TRUE;
+            } else {
+                dhcpv6_data.isExpired = FALSE;
+                dhcpv6_data.prefixAssigned = TRUE;
+#if defined(FEATURE_MAPT)
+                    remove_single_quote(v6pref);
+                    strcpy(pdIPv6Prefix, v6pref);
+                    remove_single_quote(preflen);
+                    pref_len=atoi(preflen);
+#endif
+                rc = sprintf_s(dhcpv6_data.sitePrefix, sizeof(dhcpv6_data.sitePrefix), "%s/%d", v6pref, pref_len);
+                if(rc < EOK)
+                {
+                    ERR_CHK(rc);
+                }
+                memset( sysEventName, 0, sizeof(sysEventName));
+                snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_PREF_SYSEVENT_NAME, IfaceName);
+                commonSyseventSet(sysEventName,  dhcpv6_data.sitePrefix);
+
+                strncpy(dhcpv6_data.pdIfAddress, "", sizeof(dhcpv6_data.pdIfAddress));
+                /** DNS servers. **/
+                commonSyseventGet(SYSEVENT_FIELD_IPV6_DNS_SERVER, dns_server, sizeof(dns_server));
+                if (strlen(dns_server) != 0)
+                {
+                    dhcpv6_data.dnsAssigned = TRUE;
+                    sscanf (dns_server, "%s %s", dhcpv6_data.nameserver, dhcpv6_data.nameserver1);
+                }
+                dhcpv6_data.prefixPltime = hub4_preferred_lft;
+                dhcpv6_data.prefixVltime = hub4_valid_lft;
+                dhcpv6_data.maptAssigned = FALSE;
+                dhcpv6_data.mapeAssigned = FALSE;
+                dhcpv6_data.prefixCmd = 0;
+            }
+#ifdef FEATURE_MAPT
+            remove_single_quote(brIPv6Prefix);
+            remove_single_quote(ruleIPv4Prefix);
+            remove_single_quote(ruleIPv6Prefix);
+            remove_single_quote(mapAssigned);
+            remove_single_quote(v4Len);
+            remove_single_quote(v6Len);
+            remove_single_quote(eaLen);
+            remove_single_quote(psidOffset);
+            remove_single_quote(psidLen);
+            remove_single_quote(psid);
+            remove_single_quote(isFMR);
+
+            if(!strncmp(mapAssigned, "MAPT", 4))
+                dhcpv6_data.maptAssigned = TRUE;
+            else if(!strncmp(mapAssigned, "MAPE", 4))
+                dhcpv6_data.mapeAssigned = TRUE;
+
+            if((dhcpv6_data.maptAssigned == TRUE) || (dhcpv6_data.mapeAssigned == TRUE))
+            {
+                strncpy(dhcpv6_data.mapt.pdIPv6Prefix, pdIPv6Prefix, sizeof(pdIPv6Prefix));
+
+                strncpy(dhcpv6_data.mapt.ruleIPv6Prefix, ruleIPv6Prefix, sizeof(ruleIPv6Prefix));
+                if(strlen(ruleIPv6Prefix) == 0) {
+                    CcspTraceError(("[%s-%d] MAPT Rule_V6_Prefix is Empty \n", __FUNCTION__, __LINE__));
+                }
+
+                strncpy(dhcpv6_data.mapt.brIPv6Prefix, brIPv6Prefix, sizeof(brIPv6Prefix));
+                if(strlen(brIPv6Prefix) == 0) {
+                    CcspTraceError(("[%s-%d] MAPT Br_V6_Prefix is Empty \n", __FUNCTION__, __LINE__));
+                }
+
+                strncpy(dhcpv6_data.mapt.ruleIPv4Prefix, ruleIPv4Prefix, sizeof(ruleIPv4Prefix));
+                if(strlen(ruleIPv4Prefix) == 0) {
+                    CcspTraceError(("[%s-%d] MAPT Rule_V4_Prefix is Empty \n", __FUNCTION__, __LINE__));
+                }
+
+                dhcpv6_data.mapt.iapdPrefixLen = pref_len;
+                dhcpv6_data.mapt.v6Len = atoi(v6Len);
+                dhcpv6_data.mapt.isFMR = atoi(isFMR);
+                dhcpv6_data.mapt.eaLen = atoi(eaLen);
+                dhcpv6_data.mapt.v4Len = atoi(v4Len);
+                dhcpv6_data.mapt.psidOffset = atoi(psidOffset);
+                dhcpv6_data.mapt.psidLen = atoi(psidLen);
+                dhcpv6_data.mapt.psid = atoi(psid);
+                dhcpv6_data.mapt.ratio = 1 << (dhcpv6_data.mapt.eaLen - (32 - dhcpv6_data.mapt.v4Len));
+            }
+
+#endif //FEATURE_MAPT
+            if (send_dhcp_data_to_wanmanager(&dhcpv6_data) != ANSC_STATUS_SUCCESS) {
+                CcspTraceError(("[%s-%d] Failed to send dhcpv6 data to wanmanager!!! \n", __FUNCTION__, __LINE__));
+            }
+            g_dhcpv6_server_prefix_ready = TRUE;
+
+            /* Set Interface specific sysevnts. This is used for Ip interface DM */
+            if (iana_iaid[0] != '\0') {
+                remove_single_quote(iana_iaid);
+                memset( sysEventName, 0, sizeof(sysEventName));
+                snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_ADDR_IAID_SYSEVENT_NAME, IfaceName);
+                commonSyseventSet(sysEventName,  iana_iaid);
+            }
+            if (iana_t1[0] != '\0') {
+                remove_single_quote(iana_t1);
+                memset( sysEventName, 0, sizeof(sysEventName));
+                snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_ADDR_T1_SYSEVENT_NAME, IfaceName);
+                commonSyseventSet(sysEventName,    iana_t1);
+            }
+            if (iana_t2[0] != '\0') {
+                remove_single_quote(iana_t2);
+                memset( sysEventName, 0, sizeof(sysEventName));
+                snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_ADDR_T2_SYSEVENT_NAME, IfaceName);
+                commonSyseventSet(sysEventName,    iana_t2);
+            }
+            if (iana_pretm[0] != '\0') {
+                remove_single_quote(iana_pretm);
+                memset( sysEventName, 0, sizeof(sysEventName));
+                snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_ADDR_PRETM_SYSEVENT_NAME, IfaceName);
+                commonSyseventSet(sysEventName, iana_pretm);
+            }
+            if (iana_vldtm[0] != '\0') {
+                remove_single_quote(iana_vldtm);
+                memset( sysEventName, 0, sizeof(sysEventName));
+                snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_ADDR_VLDTM_SYSEVENT_NAME, IfaceName);
+                commonSyseventSet(sysEventName, iana_vldtm);
+            }
+
+            if (iapd_iaid[0] != '\0') {
+                remove_single_quote(iapd_iaid);
+                memset( sysEventName, 0, sizeof(sysEventName));
+                snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_PREF_IAID_SYSEVENT_NAME, IfaceName);
+                commonSyseventSet(sysEventName,  iapd_iaid);
+            }
+            if (iapd_t1[0] != '\0') {
+                remove_single_quote(iapd_t1);
+                memset( sysEventName, 0, sizeof(sysEventName));
+                snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_PREF_T1_SYSEVENT_NAME, IfaceName);
+                commonSyseventSet(sysEventName,    iapd_t1);
+            }
+            if (iapd_t2[0] != '\0') {
+                remove_single_quote(iapd_t2);
+                memset( sysEventName, 0, sizeof(sysEventName));
+                snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_PREF_T2_SYSEVENT_NAME, IfaceName);
+                commonSyseventSet(sysEventName,    iapd_t2);
+            }
+            if (iapd_pretm[0] != '\0') {
+                remove_single_quote(iapd_pretm);
+                memset( sysEventName, 0, sizeof(sysEventName));
+                snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_PREF_PRETM_SYSEVENT_NAME, IfaceName);
+                commonSyseventSet(sysEventName, iapd_pretm);
+            }
+            if (iapd_vldtm[0] != '\0') {
+                remove_single_quote(iapd_vldtm);
+                memset( sysEventName, 0, sizeof(sysEventName));
+                snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_PREF_VLDTM_SYSEVENT_NAME, IfaceName);
+                commonSyseventSet(sysEventName, iapd_vldtm);
+            }
+
+            continue;  
+            /* 
+             * Sysevent and Interface configuration will be done by WanManager. 
+             * Skiping below code. 
+             */
+#endif
+#endif		     	
                     /*for now we only support one address, one prefix notify, if need multiple addr/prefix, must modify dibbler-client code*/
                     if (strncmp(v6addr, "::", 2) != 0) 
                     {
@@ -8794,6 +9004,7 @@ dhcpv6c_dbg_thrd(void * in)
 #endif
 #else
 #if defined(FEATURE_RDKB_WAN_MANAGER)
+#if !defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
                        /*
                         * Send data to wanmanager.
                         */
@@ -8934,6 +9145,7 @@ dhcpv6c_dbg_thrd(void * in)
                             commonSyseventSet("lan_prefix_set", globalIP);
 #endif
                         }
+#endif
 #else
 #if defined(_HUB4_PRODUCT_REQ_) 
                     commonSyseventGet(SYSEVENT_FIELD_IPV6_PREFIXVLTIME,
