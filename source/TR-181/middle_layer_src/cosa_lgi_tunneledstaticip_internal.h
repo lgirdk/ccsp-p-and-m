@@ -36,7 +36,7 @@ _COSA_DATAMODEL_LGI_TUNNELEDSTATICIP_CLASS_CONTENT
     BOOL     Enable;
     char     Username[256];
     char     Password[256];
-    char     RadiusInterface;
+    int      RadiusInterface;
     char     RadiusAuthServerIPAddr[45];
     char     RadiusAuthSecret[45];
     int      RadiusAuthServerPort;
