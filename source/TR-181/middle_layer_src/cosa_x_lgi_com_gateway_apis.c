@@ -179,9 +179,125 @@ int CosaDmlLgiGwGetDnsIpv6Alternate ( char *pValue, ULONG *pUlSize )
     return 0;
 }
 
+#ifdef _LG_MV3_
+#define LANMODE     "Device.X_CISCO_COM_DeviceControl.LanManagementEntry.1.LanMode"
+#define ROUTER_MODE "router"
+#define BRIDGE_MODE "bridge-static"
+
+static void updateErouterInitMode(ULONG initMode)
+{
+    int olderoutermode = -1;
+    int neweroutermode = -1;
+    char buf[8];
+
+    if(!syscfg_get( NULL, "last_erouter_mode", buf, sizeof(buf)))
+        olderoutermode = atoi(buf);
+
+    switch (initMode)
+    {
+        case EROUTER_INIT_MODE_CONTROL_DISABLED:
+           neweroutermode = 0;
+           break;
+        case EROUTER_INIT_MODE_CONTROL_IPV4:
+           neweroutermode = 1;
+           break;
+        case EROUTER_INIT_MODE_CONTROL_IPV6:
+           neweroutermode = 2;
+           break;
+        case EROUTER_INIT_MODE_CONTROL_IPV4_IPV6:
+           neweroutermode = 3;
+           break;
+        case EROUTER_INIT_MODE_CONTROL_HONOR:
+           if(!syscfg_get( NULL, "default_erouter_mode", buf, sizeof(buf)))
+           {
+                 neweroutermode = atoi(buf);
+           }
+           break;
+        default:
+           return; //return if nothing matches
+    }
+
+    CcspTraceInfo(("%s %d : neweroutermode = %d, olderoutermode = %d, initMode = %d \n", __FUNCTION__, __LINE__, neweroutermode, olderoutermode, initMode));
+
+    if (olderoutermode == neweroutermode)
+        return; //do nothing
+
+    if (neweroutermode == 0 ) //This is case entering router to bridge mode
+    {
+        CcspTraceError(("%s %d: setting bridge mode\n", __FUNCTION__, __LINE__));
+        g_SetParamValueString(LANMODE, BRIDGE_MODE);
+    }
+
+    if (syscfg_set_u_commit(NULL, "last_erouter_mode", neweroutermode) != 0)
+    {
+        CcspTraceError(("%s %d: syscfg_set last_erouter_mode failed\n", __FUNCTION__, __LINE__));
+        return;
+    }
+    if (olderoutermode == 0 ) //This is case entering  bridge to router mode
+    {
+        CcspTraceError(("%s %d: setting router mode\n", __FUNCTION__, __LINE__));
+        g_SetParamValueString(LANMODE, ROUTER_MODE);
+    }
+
+    if (syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_LastRebootReason", "Erouter Mode Change") != 0)
+    {
+        CcspTraceError(("RDKB_REBOOT : RebootDevice syscfg_set failed erouter mode change\n"));
+    }
+    system("reboot");
+}
+
+int CosaApisGetErouterModeControl(ULONG *initMode)
+{
+    *initMode = EROUTER_INIT_MODE_CONTROL_HONOR;
+    char buf[2];
+    if(!syscfg_get( NULL, "ErouterModeControl", buf, sizeof(buf)))
+    {
+        *initMode = atoi(buf);
+    }
+    CcspTraceInfo(("Info: initMode = %d\n", initMode));
+    return 0;
+}
+
+int CosaApisSetErouterModeControl(ULONG initMode)
+{
+    ULONG initMode_current = -1;
+
+    CosaApisGetErouterModeControl(&initMode_current);
+
+    if (initMode == initMode_current)
+    {
+        return 0;
+    }
+
+    switch(initMode)
+    {
+        case EROUTER_INIT_MODE_CONTROL_DISABLED:
+        case EROUTER_INIT_MODE_CONTROL_IPV4:
+        case EROUTER_INIT_MODE_CONTROL_IPV6:
+        case EROUTER_INIT_MODE_CONTROL_IPV4_IPV6:
+        case EROUTER_INIT_MODE_CONTROL_HONOR:
+           if(syscfg_set_u_commit(NULL, "ErouterModeControl", initMode) != 0)
+           {
+                 CcspTraceInfo(("Error: %s %d: syscfg_set ErouterModeControl failed\n", __FUNCTION__, __LINE__));
+                 return 1;
+           }
+           updateErouterInitMode(initMode);
+           break;
+
+        default:
+           return 1;
+    }
+    return 0;
+}
+#endif
+
 ANSC_STATUS CosaDml_Gateway_GetErouterInitMode(ULONG *pInitMode)
 {
+#ifdef _LG_MV3_
+    if (!pInitMode || CosaApisGetErouterModeControl(pInitMode))
+#else
     if (!pInitMode || cm_hal_Get_ErouterModeControl(pInitMode))
+#endif
     {
         return ANSC_STATUS_FAILURE;
     }
@@ -192,8 +308,11 @@ ANSC_STATUS CosaDml_Gateway_GetErouterInitMode(ULONG *pInitMode)
 ANSC_STATUS CosaDml_Gateway_SetErouterInitMode(ULONG initMode)
 {
     ANSC_STATUS retVal = ANSC_STATUS_FAILURE;
-
+#ifdef _LG_MV3_
+    retVal = CosaApisSetErouterModeControl(initMode);
+#else
     retVal = cm_hal_Set_ErouterModeControl(initMode);
+#endif
         
     return retVal;
 }
