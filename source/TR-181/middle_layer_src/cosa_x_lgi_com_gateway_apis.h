@@ -49,4 +49,17 @@ ANSC_STATUS CosaDmlDNS_Whitelist_DelEntry( ULONG ins, BOOL dns_rebind_protection
 ANSC_STATUS CosaDmlDNS_Whitelist_GetConf( ULONG ins, COSA_DML_DNS_WHITELIST *entry );
 ANSC_STATUS CosaDmlDNS_Whitelist_SetConf( ULONG ins, COSA_DML_DNS_WHITELIST *entry, BOOL dns_rebind_protection_enable );
 
+#ifdef _LG_MV3_
+typedef enum
+{
+    EROUTER_INIT_MODE_CONTROL_UNKNOWN = 0,
+    EROUTER_INIT_MODE_CONTROL_DISABLED = 1,
+    EROUTER_INIT_MODE_CONTROL_IPV4 = 2,
+    EROUTER_INIT_MODE_CONTROL_IPV6 = 3,
+    EROUTER_INIT_MODE_CONTROL_IPV4_IPV6 = 4,
+    EROUTER_INIT_MODE_CONTROL_HONOR = 5,
+} eRouterInitMode_t;
+
+#endif
+
 #endif
