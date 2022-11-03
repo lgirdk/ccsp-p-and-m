@@ -7287,6 +7287,7 @@ void CosaDmlDhcpv6sRebootServer()
     // refresh lan if we were asked to
     if (g_dhcpv6s_refresh_count) {
         g_dhcpv6s_refresh_count = 0;
+        CcspTraceWarning(("%s: DBG calling  gw_lan_refresh\n", __func__));
         v_secure_system("gw_lan_refresh");
     }
 
@@ -8743,6 +8744,13 @@ dhcpv6c_dbg_thrd(void * in)
                             if ( globalIP2[0] ) 
                                commonSyseventSet("lan_ipaddr_v6_prev", globalIP2);
 
+                           // Making sure gw_lan_refresh doesn't get called 1st time
+                            if (strlen(globalIP2) != 0 )
+                            {
+                                g_dhcpv6s_refresh_count = bRestartLan;
+                                CcspTraceWarning(("%s: g_dhcpv6s_refresh_count %ld, globalIP2 is %s, strlen is %d\n", __func__, g_dhcpv6s_refresh_count,globalIP2,strlen(globalIP2)));
+
+                            }
                             rc = strcpy_s(globalIP2, sizeof(globalIP2), globalIP);
                             ERR_CHK(rc);
                         }else{
@@ -8753,8 +8761,12 @@ dhcpv6c_dbg_thrd(void * in)
 							    	bRestartLan = TRUE;
 								else
                             		bRestartLan = FALSE;
+
+
+                                g_dhcpv6s_refresh_count = bRestartLan;
+
 						}
-                        g_dhcpv6s_refresh_count = bRestartLan;
+
                         CcspTraceWarning(("%s: bRestartLan %d\n", __func__, bRestartLan));
 
                         fprintf(stderr, "%s -- %d !!! ret:%d bRestartLan:%d %s %s \n", __FUNCTION__, __LINE__,ret,  bRestartLan,  globalIP, globalIP2);
@@ -8989,6 +9001,13 @@ dhcpv6c_dbg_thrd(void * in)
                             if ( globalIP2[0] ) 
                                commonSyseventSet("lan_ipaddr_v6_prev", globalIP2);
 
+                            // Making sure gw_lan_refresh doesn't get called 1st time
+                            if (strlen(globalIP2) != 0 )
+                            {
+                                g_dhcpv6s_refresh_count = bRestartLan;
+                                CcspTraceWarning(("%s: g_dhcpv6s_refresh_count %ld, globalIP2 is %s, strlen is %d\n", __func__, g_dhcpv6s_refresh_count,globalIP2,strlen(globalIP2)));
+                            }
+
                             rc = strcpy_s(globalIP2, sizeof(globalIP2), globalIP);
                             ERR_CHK(rc);
                         }else{
@@ -8999,8 +9018,11 @@ dhcpv6c_dbg_thrd(void * in)
 							    	bRestartLan = TRUE;
 								else
                             		bRestartLan = FALSE;
+
+
+                                g_dhcpv6s_refresh_count = bRestartLan;
 						}
-                        g_dhcpv6s_refresh_count = bRestartLan;
+                    
                         CcspTraceWarning(("%s: bRestartLan %d\n", __func__, bRestartLan));
 
                         fprintf(stderr, "%s -- %d !!! ret:%d bRestartLan:%d %s %s \n", __FUNCTION__, __LINE__,ret,  bRestartLan,  globalIP, globalIP2);
