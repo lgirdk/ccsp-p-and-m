@@ -561,7 +561,7 @@ static char *mapArgsToSSHOption(char *revSSHConfig, bool shortsFlag)
         }
         else if ((value = strstr(revSSHConfig, "revsshport=")))
         {
-            rc = sprintf_s(option, 125, " -R %s:[CM_IP]:22", value + strlen("revsshport="));
+            rc = sprintf_s(option, 125, " -R %s:localhost:22", value + strlen("revsshport="));
             if (rc < EOK)
             {
                 ERR_CHK(rc);
@@ -2798,7 +2798,7 @@ int setXOpsReverseSshArgs(char *pString)
     char *tempStr = NULL;
     char *option = NULL;
     char *hostLogin = NULL;
-    char extraArgs[] = " -N -y -T ";
+    char extraArgs[] = " -N -y -T -o UseSyslog=yes";
     int inputMsgSize = 0;
     int hostloglen = 0;
     char *st = NULL;
