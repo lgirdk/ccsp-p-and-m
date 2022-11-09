@@ -106,6 +106,7 @@
 #define RFC_DEFAULTS_FILE       "/etc/rfcDefaults.json"
 #define RFC_STORE_FILE       "/opt/secure/RFC/tr181store.json"
 #define MAX_TIME_FORMAT     5
+#define MAX_RSSH_ARGS_LEN 256
 
 #define EROUTER_IF_NAME "erouter0"
 #define RTF_UP 0x0001
@@ -383,7 +384,39 @@ PsmGet(const char *param, char *value, int size)
     return 0;
 }
 
-int getHostIpVersion(const char *ip)
+static ANSC_STATUS validateReverseSshArgs(const char *args)
+{
+    char tmpArgs[MAX_RSSH_ARGS_LEN] = {"\0"};
+    char *arg, *rest;
+
+    if (MAX_RSSH_ARGS_LEN <= strlen(args))
+    {
+        CcspTraceError(("Maximum allowed arg len is (%u)\n", MAX_RSSH_ARGS_LEN - 1));
+        return ANSC_STATUS_BAD_SIZE;
+    }
+    strcpy(tmpArgs, args);
+
+    for (arg = strtok_r(tmpArgs, ";", &rest); arg != NULL; arg = strtok_r(NULL, ";", &rest))
+    {
+        int i = 0;
+
+        while (i < strlen(arg))
+        {
+            char c = arg[i];
+
+            if (!isalnum(c) && (c != '=') && (c != '.') && (c != ':'))
+            {
+                CcspTraceError(("invalid characted detected:\"%c\"\n", c));
+                return ANSC_STATUS_BAD_PARAMETER;
+            }
+            i++;
+        }
+    }
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+static int getHostIpVersion(const char *ip)
 {
     unsigned char buf[sizeof(struct in6_addr)];
 
@@ -395,7 +428,7 @@ int getHostIpVersion(const char *ip)
     return AF_UNSPEC;
 }
 
-ANSC_STATUS appendBindAddress(void)
+static ANSC_STATUS appendBindAddress(void)
 {
     struct ifaddrs *ifap, *ifa;
     char addr[INET6_ADDRSTRLEN + 2];
@@ -461,8 +494,15 @@ ANSC_STATUS appendBindAddress(void)
         if (sizeof(reverseSSHArgsExtended) > (strlen(reverseSSHArgs) + len))
         {
             sprintf(reverseSSHArgsExtended + strlen(reverseSSHArgs), " -b %s", addr);
+            CcspTraceInfo(("Resulting extended SSHargs:\"%s\"\n", reverseSSHArgsExtended));
         }
-        CcspTraceInfo(("Resulting extended SSHargs:\"%s\"\n", reverseSSHArgsExtended));
+        else
+        {
+            CcspTraceInfo(("Resulting buffer len(%lu) >= extended args len(%zu)\"%s\"\n",
+                           strlen(reverseSSHArgs) + len, sizeof(reverseSSHArgsExtended)));
+            return ANSC_STATUS_BAD_SIZE;
+        }
+
     }
 
     return ANSC_STATUS_SUCCESS;
@@ -605,6 +645,7 @@ static char *getHostLogin(char *tempStr, bool shortsFlag)
     char *temp = NULL;
     char *hostIp = NULL;
     char *user = NULL;
+    char *passwd = NULL;
     char *hostLogin = NULL;
     unsigned int inputMsgSize = 0;
     char tempCopy[512] = {0};
@@ -658,6 +699,18 @@ static char *getHostLogin(char *tempStr, bool shortsFlag)
     {
         user = (char *)calloc(125, sizeof(char));
         snprintf(user, 125, "%s", value + strlen("user="));
+    }
+    /* If password is found, it MUST be the first argument to reverseSSHArgs */
+    if ((value = strstr(tempCopy, "passwd=")))
+    {
+        passwd = findUntilFirstDelimiter(value);
+        if (passwd)
+        {
+            CcspTraceInfo(("%s Passwd extracted\n", __FUNCTION__));
+            snprintf(reverseSSHArgs, sizeof(reverseSSHArgs), "%s ", passwd);
+            free(passwd);
+            passwd = NULL;
+        }
     }
 
     if (user && hostIp)
@@ -2744,11 +2797,19 @@ int setXOpsReverseSshArgs(char *pString)
     int hostloglen = 0;
     char *st = NULL;
     errno_t rc = -1;
+    ANSC_STATUS ret;
     bool shortsFlag = false;
 
 #ifdef ENABLE_SHORTS
     shortsFlag = (isShortsEnabled() && isStunnelPortEnabled(pString));
 #endif
+
+    ret = validateReverseSshArgs(pString);
+    if (ret != ANSC_STATUS_SUCCESS)
+    {
+        CcspTraceInfo(("Failed to validate ssh arguments (arg:%s) \n", pString));
+        return ret;
+    }
 
     memset(reverseSSHIface, 0, sizeof(reverseSSHIface));
     memset(reverseSSHArgs, 0, sizeof(reverseSSHArgs));
