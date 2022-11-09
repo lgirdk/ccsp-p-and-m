@@ -174,6 +174,7 @@ extern  ANSC_HANDLE             bus_handle;
 #include "autoconf.h"     
 #include "secure_wrapper.h"
 #include "ansc_string_util.h"
+#include "ifaddrs.h"
 
 #define _ERROR_ "NOT SUPPORTED"
 #define _START_TIME_12AM_ "0"
@@ -340,6 +341,10 @@ static pthread_t gPoll_threadId[MAX_TEMPSENSOR_INSTANCE];
 static const int OK = 1 ;
 static const int NOK = 0 ;
 static char reverseSSHArgs[256];
+static char reverseSSHArgsExtended[512]; // reverseSSHArgs and bind address calculated at each rssh trigger
+static char reverseSSHIface[IF_NAMESIZE]; // bind interface
+static int reverseSSHHostIpVersion = AF_UNSPEC;
+
 struct stunnelSSHArgs{
         int localport;
         int stunnelport;
@@ -378,6 +383,91 @@ PsmGet(const char *param, char *value, int size)
     return 0;
 }
 
+int getHostIpVersion(const char *ip)
+{
+    unsigned char buf[sizeof(struct in6_addr)];
+
+    if (inet_pton(AF_INET, ip, buf) == 1)
+        return AF_INET;
+    if (inet_pton(AF_INET6, ip, buf) == 1)
+        return AF_INET6;
+
+    return AF_UNSPEC;
+}
+
+ANSC_STATUS appendBindAddress(void)
+{
+    struct ifaddrs *ifap, *ifa;
+    char addr[INET6_ADDRSTRLEN + 2];
+    ULONG len = IF_NAMESIZE;
+
+    memset(addr, 0, sizeof(addr));
+    memset(reverseSSHArgsExtended, 0, sizeof(reverseSSHArgsExtended));
+    strncpy(reverseSSHArgsExtended, reverseSSHArgs, strlen(reverseSSHArgs));
+
+    if (strlen(reverseSSHIface) == 0)
+    {
+        return ANSC_STATUS_SUCCESS;
+    }
+    if (getifaddrs(&ifap))
+    {
+        CcspTraceError(("getifaddrs failed: %s\n", strerror(errno)));
+        return ANSC_STATUS_FAILURE;
+    }
+    for (ifa = ifap; ifa; ifa = ifa->ifa_next)
+    {
+        if ((ifa->ifa_addr == NULL) ||
+            (ifa->ifa_addr->sa_family != reverseSSHHostIpVersion) ||
+            (strcmp(ifa->ifa_name, reverseSSHIface)))
+        {
+            continue;
+        }
+
+        if (ifa->ifa_addr->sa_family == AF_INET6)
+        {
+            struct sockaddr_in6 *in6 = (struct sockaddr_in6*) ifa->ifa_addr;
+            if (IN6_IS_ADDR_LINKLOCAL(&in6->sin6_addr))
+            {
+                continue;
+            }
+            /* Dbclient interprets the string after the last colon as the port number. To tackle
+             * this assumption, workaround is to add port 0 and let OS find out n unused port
+             * for dropbear to bind
+             */
+            if (!inet_ntop(AF_INET6, &in6->sin6_addr, addr, sizeof(addr)))
+            {
+                CcspTraceError(("inet_ntop failed: %s\n", strerror(errno)));
+                return ANSC_STATUS_FAILURE;
+            }
+            strcat(addr, ":0");
+            break;
+        }
+        if (ifa->ifa_addr->sa_family == AF_INET) {
+            struct sockaddr_in *in = (struct sockaddr_in *) ifa->ifa_addr;
+
+            if (!inet_ntop(AF_INET, &in->sin_addr, addr, sizeof(addr)))
+            {
+                CcspTraceError(("inet_ntop failed: %s\n", strerror(errno)));
+                return ANSC_STATUS_FAILURE;
+            }
+            break;
+        }
+    }
+
+    if (addr[0] != '\0')
+    {
+        int len = strlen(addr) + 4; // 4 is for " -b "
+
+        if (sizeof(reverseSSHArgsExtended) > (strlen(reverseSSHArgs) + len))
+        {
+            sprintf(reverseSSHArgsExtended + strlen(reverseSSHArgs), " -b %s", addr);
+        }
+        CcspTraceInfo(("Resulting extended SSHargs:\"%s\"\n", reverseSSHArgsExtended));
+    }
+
+    return ANSC_STATUS_SUCCESS;
+}
+
 /**
  * Form dropbear equivalent options from input arguments accepted by TR-69/181
  */
@@ -397,7 +487,7 @@ static char *mapArgsToSSHOption(char *revSSHConfig, bool shortsFlag)
     {
         if ((value = strstr(revSSHConfig, "idletimeout=")))
         {
-            rc = sprintf_s(option, 125, " -I %s -f -N -y -T", value + strlen("idletimeout="));
+            rc = sprintf_s(option, 125, " -I %s", value + strlen("idletimeout="));
             if (rc < EOK)
             {
                 ERR_CHK(rc);
@@ -474,6 +564,37 @@ static char *findUntilFirstDelimiter(char *input)
     return option;
 }
 
+static void getBindInterface(char *tempStr)
+{
+    char *value = NULL;
+    char *temp = NULL;
+    char *interface = NULL;
+    char tempCopy[512];
+    errno_t rc = -1;
+    unsigned int tempStrSize = 0;
+
+    if (!tempStr)
+        return NULL;
+   
+    tempStrSize = strlen(tempStr);
+
+    if (sizeof(tempCopy) <= tempStrSize)
+        return;
+
+    strncpy(tempCopy, tempStr, tempStrSize);
+    if ((value = strstr(tempCopy, "interface=")))
+    {
+        interface = findUntilFirstDelimiter(value);
+        if (interface)
+        {
+            CcspTraceInfo(("%s interface extracted: %s\n", __FUNCTION__, interface));
+            snprintf(reverseSSHIface, sizeof(reverseSSHIface), "%s", interface + strlen("interface="));
+            free(interface);
+            interface = NULL;
+        }
+    }
+}
+
 /**
  * Get login username/target for jump server
  */
@@ -493,15 +614,11 @@ static char *getHostLogin(char *tempStr, bool shortsFlag)
         return NULL;
 
     inputMsgSize = strlen(tempStr);
-    if (sizeof(tempCopy) > inputMsgSize)
-    {
-        strncpy(tempCopy, tempStr, inputMsgSize);
-    }
-    else
-    {
-        return NULL;
-    }
-    if ((value = strstr(tempStr, "hostIp=")) && shortsFlag)
+    if (sizeof(tempCopy) <= inputMsgSize)
+        return;
+
+    strncpy(tempCopy, tempStr, inputMsgSize);
+    if ((value = strstr(tempCopy, "hostIp=")) && shortsFlag)
     {
         sprintf_s(stunnelsshargs.hostIp, 512, value + strlen("hostIp="));
         CcspTraceInfo(("%s Host: %s \n", __FUNCTION__, stunnelsshargs.hostIp));
@@ -513,7 +630,7 @@ static char *getHostLogin(char *tempStr, bool shortsFlag)
             CcspTraceInfo(("%s HostIp extracted: %s \n", __FUNCTION__, stunnelsshargs.hostIp));
         }
     }
-    if ((value = strstr(tempStr, "host=")))
+    if ((value = strstr(tempCopy, "host=")))
     {
         if (shortsFlag)
         {
@@ -537,14 +654,12 @@ static char *getHostLogin(char *tempStr, bool shortsFlag)
             CcspTraceInfo(("%s Host: %s \n", __FUNCTION__, hostIp));
         }
     }
-    if ((value = strstr(tempStr, "user=")))
+    if ((value = strstr(tempCopy, "user=")))
     {
         user = (char *)calloc(125, sizeof(char));
         snprintf(user, 125, "%s", value + strlen("user="));
     }
 
-    if (user && hostIp)
-	if (user && hostIp) 
     if (user && hostIp)
     {
         temp = findUntilFirstDelimiter(user);
@@ -573,6 +688,7 @@ static char *getHostLogin(char *tempStr, bool shortsFlag)
             }
         }
         CcspTraceInfo(("%s Host Login value: %s \n", __FUNCTION__, hostLogin));
+        reverseSSHHostIpVersion = getHostIpVersion(hostIp);
     }
 
     if (user)
@@ -2623,6 +2739,7 @@ int setXOpsReverseSshArgs(char *pString)
     char *tempStr = NULL;
     char *option = NULL;
     char *hostLogin = NULL;
+    char extraArgs[] = " -N -y -T ";
     int inputMsgSize = 0;
     int hostloglen = 0;
     char *st = NULL;
@@ -2632,11 +2749,17 @@ int setXOpsReverseSshArgs(char *pString)
 #ifdef ENABLE_SHORTS
     shortsFlag = (isShortsEnabled() && isStunnelPortEnabled(pString));
 #endif
+
+    memset(reverseSSHIface, 0, sizeof(reverseSSHIface));
     memset(reverseSSHArgs, 0, sizeof(reverseSSHArgs));
     if (!pString)
     {
         return 1;
     }
+
+    /* Extract bind interface argument if present */
+    getBindInterface(pString);
+
     inputMsgSize = strlen(pString);
     hostLogin = getHostLogin(pString, shortsFlag);
     if (!hostLogin)
@@ -2709,6 +2832,8 @@ int setXOpsReverseSshArgs(char *pString)
     }
     if (hostLogin)
         free(hostLogin);
+    if (sizeof(reverseSSHArgs) > (strlen(reverseSSHArgs) + strlen(extraArgs)))
+        strncat(reverseSSHArgs, extraArgs, strlen(extraArgs));
 
     return ANSC_STATUS_SUCCESS;
 }
@@ -2747,20 +2872,25 @@ int setXOpsReverseSshTrigger(char *input)
     trigger = strstr(input, "start");
     if (trigger)
     {
+        if (appendBindAddress() != ANSC_STATUS_SUCCESS)
+        {
+            CcspTraceError(("appendBindAddress failed! Returning"));
+            return NOK;
+        }
 #ifdef ENABLE_SHORTS
         char *trigger_shorts = NULL;
         trigger_shorts = strstr(input, "start shorts");
         if (isShortsEnabled() && trigger_shorts)
         {
-            CcspTraceInfo(("[%s] Starting Stunnel \n", __FUNCTION__));
-            CcspTraceInfo(("[%s] Stunnel Commmand = %s %d %s %s %d %s \n", __FUNCTION__, stunnelCommand, stunnelsshargs.localport, stunnelsshargs.host, stunnelsshargs.hostIp, stunnelsshargs.stunnelport, reverseSSHArgs));
-            v_secure_system("/bin/sh %s %d %s %s %d %s &", stunnelCommand, stunnelsshargs.localport, stunnelsshargs.host, stunnelsshargs.hostIp, stunnelsshargs.stunnelport, reverseSSHArgs);
+            CcspTraceInfo(("[%s] Starting Stunnel \n",__FUNCTION__));
+            CcspTraceInfo(("[%s] Stunnel Commmand = %s %d %s %s %d %s \n", __FUNCTION__, stunnelCommand, stunnelsshargs.localport, stunnelsshargs.host, stunnelsshargs.hostIp, stunnelsshargs.stunnelport, reverseSSHArgsExtended));
+            v_secure_system("/bin/sh %s %d %s %s %d %s &", stunnelCommand, stunnelsshargs.localport, stunnelsshargs.host, stunnelsshargs.hostIp, stunnelsshargs.stunnelport, reverseSSHArgsExtended);
         }
         else
         {
 #endif
-            CcspTraceInfo(("[%s] ReverseSSH arguments = %s  \n", __FUNCTION__, reverseSSHArgs));
-            v_secure_system(sshCommand " start %s", reverseSSHArgs);
+            CcspTraceInfo(("[%s] ReverseSSH arguments = %s  \n",__FUNCTION__,reverseSSHArgsExtended));
+            v_secure_system(sshCommand " start %s", reverseSSHArgsExtended);
 #ifdef ENABLE_SHORTS
         }
 #endif
