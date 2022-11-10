@@ -12866,7 +12866,7 @@
               <writable>true</writable>
             </parameter>
             <parameter>
-              <name>X_LGI-COM_MaxClients</name>
+              <name>MaxClients</name>
               <description>Maximum number of DHCP clients allowed</description>
               <type>unsignedInt</type>
               <syntax>uint32</syntax>
