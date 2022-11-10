@@ -4578,7 +4578,7 @@ Pool1_GetParamUlongValue
         return TRUE;
     }
 
-    if (strcmp(ParamName, "X_LGI-COM_MaxClients") == 0)
+    if (strcmp(ParamName, "MaxClients") == 0)
     {
         /* collect value */
         CosaDmlDhcpv6sMaxClient( NULL, pPool->Cfg.InstanceNumber, puLong);
