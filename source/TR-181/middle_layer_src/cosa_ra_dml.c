@@ -1775,7 +1775,8 @@ InterfaceSetting1_Validate
             return FALSE;
         }
 
-        if (!(pRAInterface2->Cfg.AdvLinkMTU == 0) && !(pRAInterface2->Cfg.AdvLinkMTU >= 1280))
+        ULONG erouterMTU = CosaUtilIoctlXXX("erouter0", "mtu",NULL);
+        if (!(pRAInterface2->Cfg.AdvLinkMTU == 0) && ((pRAInterface2->Cfg.AdvLinkMTU < 1280) || (pRAInterface2->Cfg.AdvLinkMTU > erouterMTU)))
         {
             CcspTraceWarning(("InterfaceSetting1_Validate() failed due to AdvLinkMTU value.\n"));
             return FALSE;
