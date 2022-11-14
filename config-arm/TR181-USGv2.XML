@@ -1982,6 +1982,8 @@
               <functions>
                 <func_SetParamStringValue>ReverseSSH_SetParamStringValue</func_SetParamStringValue>
                 <func_GetParamStringValue>ReverseSSH_GetParamStringValue</func_GetParamStringValue>
+                <func_GetParamUlongValue>ReverseSSH_GetParamUlongValue</func_GetParamUlongValue>
+                <func_SetParamUlongValue>ReverseSSH_SetParamUlongValue</func_SetParamUlongValue>
               </functions>
               <parameters>
                 <parameter>
@@ -2001,6 +2003,12 @@
                   <type>string</type>
                   <syntax>string</syntax>
                   <writable>false</writable>
+                </parameter>
+                <parameter>
+                  <name>xOpsReverseSshIdleTimeout</name>
+                  <type>unsignedInt</type>
+                  <syntax>uint32</syntax>
+                  <writable>true</writable>
                 </parameter>
               </parameters>
             </object>
