@@ -362,6 +362,7 @@ static ANSC_STATUS getBindAddress(char *addr, const size_t addrSize)
 static ANSC_STATUS getExtraArgs(char *args, const size_t argsSize)
 {
     char bindAddr[INET6_ADDRSTRLEN + 2];
+    char idleTimeout[8];
     ULONG argsLen = 0;
     ULONG needed;
 
@@ -384,6 +385,23 @@ static ANSC_STATUS getExtraArgs(char *args, const size_t argsSize)
         argsLen += snprintf(args, argsSize, " -b %s", bindAddr);
     }
 
+    if (getxOpsReverseSshIdleTimeout(NULL, idleTimeout, sizeof(idleTimeout)) != ANSC_STATUS_SUCCESS)
+    {
+        CcspTraceError(("getxOpsReverseSshIdleTimeout failed\n"));
+        return ANSC_STATUS_FAILURE;
+    }
+
+    if (idleTimeout[0] != '\0')
+    {
+        needed = argsLen + strlen(" -I ") + strlen(idleTimeout) + 1;
+        if (argsSize < needed)
+        {
+            CcspTraceError(("Resulting buffer len(%lu) > extra args len(%zu)\n", needed, argsSize));
+            return ANSC_STATUS_BAD_SIZE;
+        }
+        argsLen += snprintf(args + argsLen, argsSize, " -I %s", idleTimeout);
+    }
+
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -404,15 +422,7 @@ static char *mapArgsToSSHOption(char *revSSHConfig, bool shortsFlag)
 
     if (option)
     {
-        if ((value = strstr(revSSHConfig, "idletimeout=")))
-        {
-            rc = sprintf_s(option, 125, " -I %s", value + strlen("idletimeout="));
-            if (rc < EOK)
-            {
-                ERR_CHK(rc);
-            }
-        }
-        else if ((value = strstr(revSSHConfig, "sshport=")) && !(value = strstr(revSSHConfig, "revsshport=")))
+        if ((value = strstr(revSSHConfig, "sshport=")) && !(value = strstr(revSSHConfig, "revsshport=")))
         {
             value = strstr(revSSHConfig, "sshport=");
             if (shortsFlag)
@@ -2869,6 +2879,39 @@ int isRevSshActive(void)
     }
 
     return status;
+}
+
+ANSC_STATUS getxOpsReverseSshIdleTimeout
+    (
+        ANSC_HANDLE                 hContext,
+        char*                       pValue,
+        ULONG                       ulSize
+    )
+{
+    UNREFERENCED_PARAMETER(hContext);
+
+    /* collect value */
+    if (syscfg_get(NULL, "rssh_idle_timeout", pValue, ulSize) != 0)
+    {
+        CcspTraceWarning(("syscfg_get failed to get \"rssh_idle_timeout\"\n"));
+        return ANSC_STATUS_FAILURE;
+    }
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS setxOpsReverseSshIdleTimeout
+    (
+        ULONG                       uValue
+    )
+{
+    if (syscfg_set_u_commit(NULL, "rssh_idle_timeout", uValue) != 0)
+    {
+        CcspTraceWarning(("syscfg_set_u_commit failed to set \"rssh_idle_timeout\"\n"));
+        return ANSC_STATUS_FAILURE;
+    }
+
+    return ANSC_STATUS_SUCCESS;
 }
 
 #define PARTNER_ID_LEN 64 

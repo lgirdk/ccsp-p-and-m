@@ -495,6 +495,17 @@ ANSC_STATUS getXOpsReverseSshArgs
     );
 int isRevSshActive(void);
 
+ANSC_STATUS getxOpsReverseSshIdleTimeout
+    (
+        ANSC_HANDLE                 hContext,
+        char*                       pValue,
+        ULONG                       ulSize
+    );
+
+ANSC_STATUS setxOpsReverseSshIdleTimeout
+    (
+        ULONG                       uValue
+    );
 
 ANSC_STATUS
 CosaDmlDiGetSyndicationPartnerId
