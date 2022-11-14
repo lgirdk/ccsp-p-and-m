@@ -11602,6 +11602,8 @@ RDKFirmwareUpgrader_SetParamBoolValue
 
     *  ReverseSSH_SetParamStringValue // Set args required for reverse SSH
     *  ReverseSSH_GetParamStringValue // Get args set for reverse SSH
+    *  ReverseSSH_SetParamUlongValue // Set args required for reverse SSH
+    *  ReverseSSH_GetParamUlongValue // Get args set for reverse SSH
 
 ***********************************************************************/
 
@@ -11759,6 +11761,57 @@ ReverseSSH_SetParamStringValue
 
     CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName));
 
+    return FALSE;
+}
+
+ULONG
+ReverseSSH_GetParamUlongValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        ULONG*                      puLong
+    )
+{
+    UNREFERENCED_PARAMETER(hInsContext);
+    char buf[8];
+
+    if (strcmp(ParamName, "xOpsReverseSshIdleTimeout") == 0)
+    {
+        /* collect value */
+        if (getxOpsReverseSshIdleTimeout(hInsContext, buf, sizeof(buf)) != ANSC_STATUS_SUCCESS)
+        {
+            CcspTraceWarning(("getxOpsReverseSshIdleTimeout failed\n"));
+            return FALSE;
+        }
+
+        *puLong = atoi(buf);
+        return TRUE;
+    }
+    return FALSE;
+}
+
+BOOL
+ReverseSSH_SetParamUlongValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        ULONG                       uValue
+    )
+{
+    UNREFERENCED_PARAMETER(hInsContext);
+
+    /* check the parameter name and set the corresponding value */
+    if (strcmp(ParamName, "xOpsReverseSshIdleTimeout") == 0)
+    {
+        if (setxOpsReverseSshIdleTimeout(uValue) != ANSC_STATUS_SUCCESS)
+        {
+            CcspTraceWarning(("setxOpsReverseSshIdleTimeout failed\n"));
+            return FALSE;
+        }
+        return TRUE;
+    }
+
+    /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
 }
 
