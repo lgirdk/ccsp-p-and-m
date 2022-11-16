@@ -3131,14 +3131,21 @@ CosaDmlDhcpv6cAddSentOption
     UNREFERENCED_PARAMETER(hContext);
     UtopiaContext utctx = {0};
     char out[16];
+    char *realloc_tmp;
 
     /*we only have one client*/
     if (ulClientInstanceNumber != g_dhcpv6_client.Cfg.InstanceNumber)
         return ANSC_STATUS_FAILURE;
 
-    g_sent_options = realloc(g_sent_options, (++g_sent_option_num)* sizeof(COSA_DML_DHCPCV6_SENT));
-    if (!g_sent_options)
+    realloc_tmp = realloc(g_sent_options, (++g_sent_option_num)* sizeof(COSA_DML_DHCPCV6_SENT));
+    if (!realloc_tmp)
+    {
         return ANSC_STATUS_FAILURE;
+    }
+    else
+    {
+        g_sent_options = realloc_tmp;
+    }
 
     _syscfg_add_sent_option(pEntry, g_sent_option_num);    
 
