@@ -1972,6 +1972,8 @@
                 <func_GetParamStringValue>ReverseSSH_GetParamStringValue</func_GetParamStringValue>
                 <func_GetParamUlongValue>ReverseSSH_GetParamUlongValue</func_GetParamUlongValue>
                 <func_SetParamUlongValue>ReverseSSH_SetParamUlongValue</func_SetParamUlongValue>
+                <func_GetParamBoolValue>ReverseSSH_GetParamBoolValue</func_GetParamBoolValue>
+                <func_SetParamBoolValue>ReverseSSH_SetParamBoolValue</func_SetParamBoolValue>
               </functions>
               <parameters>
                 <parameter>
@@ -1982,8 +1984,8 @@
                 </parameter>
                 <parameter>
                   <name>xOpsReverseSshTrigger</name>
-                  <type>string</type>
-                  <syntax>string</syntax>
+                  <type>boolean</type>
+                  <syntax>bool</syntax>
                   <writable>true</writable>
                 </parameter>
                 <parameter>
