@@ -11870,7 +11870,13 @@ ReverseSSH_GetParamStringValue
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "xOpsReverseSshArgs") == 0)
     {
-        getXOpsReverseSshArgs(NULL, pValue, pulSize);
+        rc = strcpy_s(pValue, *pulSize, "");
+        if (rc != EOK)
+        {
+            ERR_CHK(rc);
+            return -1;
+        }
+
         return 0;
     }
 
@@ -11895,17 +11901,6 @@ ReverseSSH_GetParamStringValue
             }
         }
 
-        return 0;
-    }
-
-    if (strcmp(ParamName, "xOpsReverseSshTrigger") == 0)
-    {
-        rc = strcpy_s(pValue, *pulSize, "");
-        if (rc != EOK)
-        {
-            ERR_CHK(rc);
-            return -1;
-        }
         return 0;
     }
 
@@ -11962,12 +11957,6 @@ ReverseSSH_SetParamStringValue
         return TRUE;
     }
 
-    if (strcmp(ParamName, "xOpsReverseSshTrigger") == 0)
-    {
-        setXOpsReverseSshTrigger(pString);
-        return TRUE;
-    }
-
     CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName));
 
     return FALSE;
@@ -12021,6 +12010,49 @@ ReverseSSH_SetParamUlongValue
     }
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
+    return FALSE;
+}
+
+BOOL
+ReverseSSH_GetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL*                       pBool
+    )
+{
+    UNREFERENCED_PARAMETER(hInsContext);
+
+    if (strcmp(ParamName, "xOpsReverseSshTrigger") == 0)
+    {
+        *pBool = FALSE;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+BOOL
+ReverseSSH_SetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL                        bValue
+    )
+{
+    UNREFERENCED_PARAMETER(hInsContext);
+
+    if (strcmp(ParamName, "xOpsReverseSshTrigger") == 0)
+    {
+        if (setXOpsReverseSshTrigger(bValue ? "start" : "stop") == 0)
+        {
+            CcspTraceError(("setXOpsReverseSshTrigger failed\n"));
+            return FALSE;
+        }
+
+        return TRUE;
+    }
+
     return FALSE;
 }
 
