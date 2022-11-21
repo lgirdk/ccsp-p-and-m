@@ -533,6 +533,54 @@ CosaDmlEthPortGetCfg
     return ANSC_STATUS_SUCCESS;
 }
 
+ANSC_STATUS CosaDmlEEEPortGetPsmCfg (ULONG ulInstanceNumber, PCOSA_DML_ETH_PORT_CFG pCfg)
+{
+    char recName[50];
+    char *strValue = NULL;
+    int retPsmGet;
+    int portIdx;
+
+    portIdx = getPortID(ulInstanceNumber);
+
+    if ((portIdx < CCSP_HAL_ETHSW_EthPort1) || (portIdx > CCSP_HAL_ETHSW_EthPort4))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    snprintf(recName, sizeof(recName), "Device.Ethernet.Interface.%d.EEEEnable", portIdx);
+    retPsmGet = PSM_Get_Record_Value2(g_MessageBusHandle, g_GetSubsystemPrefix(g_pDslhDmlAgent), recName, NULL, &strValue);
+    if ((retPsmGet == CCSP_SUCCESS) && (strValue != NULL))
+    {
+        pCfg->bEEEEnabled = (strcasecmp(strValue, "true") == 0) ? TRUE : FALSE;
+        ((CCSP_MESSAGE_BUS_INFO *)g_MessageBusHandle)->freefunc(strValue);
+    }
+
+    return retPsmGet;
+}
+
+ANSC_STATUS CosaDmlEEEPortSetPsmCfg (ULONG ulInstanceNumber, PCOSA_DML_ETH_PORT_CFG pCfg)
+{
+    char recName[50];
+    int retPsmSet;
+    int portIdx;
+
+    portIdx = getPortID(ulInstanceNumber);
+
+    if ((portIdx < CCSP_HAL_ETHSW_EthPort1) || (portIdx > CCSP_HAL_ETHSW_EthPort4))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    snprintf(recName, sizeof(recName), "Device.Ethernet.Interface.%d.EEEEnable", portIdx);
+    retPsmSet = PSM_Set_Record_Value2(g_MessageBusHandle, g_GetSubsystemPrefix(g_pDslhDmlAgent), recName, ccsp_string, pCfg->bEEEEnabled ? "true" : "false");
+    if (retPsmSet != CCSP_SUCCESS)
+    {
+        CcspTraceWarning(("%s - PSM_Set_Record_Value2 error %d setting %s\n", __FUNCTION__, retPsmSet, recName));
+    }
+
+    return retPsmSet;
+}
+
 ANSC_STATUS
 CosaDmlEthPortGetDinfo
     (
@@ -1547,11 +1595,6 @@ int puma6_getSwitchStats(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_STATS pStats){
 
 int puma6_getEntry(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_FULL pEntry)
 {
-    char *strValue = NULL;
-    char recName[256];
-    extern ANSC_HANDLE bus_handle;
-    extern char g_Subsystem[32];
-    char *eeeenabled = "Device.Ethernet.Interface.%d.EEEEnable";
     CCSP_HAL_ETHSW_PORT         port        = *((PCCSP_HAL_ETHSW_PORT)eth->hwid);
     CCSP_HAL_ETH_FULL_CFG       fullEntry;
     PCOSA_DML_ETH_PORT_CFG      pcfg = &(pEntry->Cfg);
@@ -1720,19 +1763,9 @@ int puma6_getEntry(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_FULL pEntry)
             }
         }
 
-        /*Reading eeeenable value from psm*/
-        sprintf(recName, eeeenabled, port);
-        if (CCSP_SUCCESS == PSM_Get_Record_Value2(bus_handle,
-                                                  g_Subsystem, recName, NULL, &strValue))
-            if (0 == strcmp(strValue, "true"))
-            {
-                pcfg->bEEEEnabled = TRUE;
-            }
-            else
-            {
-                pcfg->bEEEEnabled = FALSE;
-            }
-            ((CCSP_MESSAGE_BUS_INFO *)bus_handle)->freefunc(strValue);
+        //Get value from PSM and set in HAL
+        CosaDmlEEEPortGetPsmCfg(port,pcfg);
+        CosaDmlEEEPortSetCfg(port,pcfg);
     }
     else
     {

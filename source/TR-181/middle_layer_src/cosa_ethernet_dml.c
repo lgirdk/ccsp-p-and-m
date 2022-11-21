@@ -502,6 +502,7 @@ Interface_GetParamBoolValue
     if (strcmp(ParamName, "EEEEnable") == 0)
     {
         /* collect value */
+        CosaDmlEEEPortGetPsmCfg(pEthernetPortFull->Cfg.InstanceNumber, &pEthernetPortFull->Cfg);
         *pBool = pEthernetPortFull->Cfg.bEEEEnabled;
         return TRUE;
     }
@@ -860,11 +861,6 @@ Interface_SetParamBoolValue
         BOOL                        bValue
     )
 {
-    extern ANSC_HANDLE bus_handle;
-    extern char g_Subsystem[32];
-    char recValue[16];
-    char recName[256];
-    char *eeeenabled = "Device.Ethernet.Interface.%d.EEEEnable";
     PCOSA_DML_ETH_PORT_FULL         pEthernetPortFull = (PCOSA_DML_ETH_PORT_FULL)hInsContext;
     
     /* check the parameter name and set the corresponding value */
@@ -877,15 +873,11 @@ Interface_SetParamBoolValue
 
     if (strcmp(ParamName, "EEEEnable") == 0)
     {
-        sprintf(recName, eeeenabled, pEthernetPortFull->Cfg.InstanceNumber);
-        sprintf(recValue, "%s", (bValue ? "true" : "false"));
-        if (CCSP_SUCCESS == PSM_Set_Record_Value2(bus_handle,
-                                                  g_Subsystem, recName, ccsp_string, recValue))    
-        {
-        /* Set value */
+        //Store value in PSM and call HAL API.
         pEthernetPortFull->Cfg.bEEEEnabled = bValue;
+        CosaDmlEEEPortSetPsmCfg(pEthernetPortFull->Cfg.InstanceNumber, &pEthernetPortFull->Cfg);
+        CosaDmlEEEPortSetCfg(pEthernetPortFull->Cfg.InstanceNumber, &pEthernetPortFull->Cfg);
         return TRUE;
-        }
     }
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
