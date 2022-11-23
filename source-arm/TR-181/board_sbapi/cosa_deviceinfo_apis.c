@@ -216,6 +216,7 @@ static pthread_t gPoll_threadId[MAX_TEMPSENSOR_INSTANCE];
 static const int OK = 1 ;
 static const int NOK = 0 ;
 static char reverseSSHArgs[256];
+static char reverseSSHPasswd[256];
 static char reverseSSHIface[IF_NAMESIZE]; // bind interface
 static int reverseSSHHostIpVersion = AF_UNSPEC;
 
@@ -596,7 +597,7 @@ static char *getHostLogin(char *tempStr, bool shortsFlag)
         if (passwd)
         {
             CcspTraceInfo(("%s Passwd extracted\n", __FUNCTION__));
-            snprintf(reverseSSHArgs, sizeof(reverseSSHArgs), "%s ", passwd);
+            snprintf(reverseSSHPasswd, sizeof(reverseSSHPasswd), "%s ", passwd + strlen("passwd="));
             free(passwd);
             passwd = NULL;
         }
@@ -2700,6 +2701,7 @@ int setXOpsReverseSshArgs(char *pString)
         return ret;
     }
 
+    memset(reverseSSHPasswd, 0, sizeof(reverseSSHPasswd));
     memset(reverseSSHIface, 0, sizeof(reverseSSHIface));
     memset(reverseSSHArgs, 0, sizeof(reverseSSHArgs));
     if (!pString)
@@ -2810,6 +2812,8 @@ ANSC_STATUS getXOpsReverseSshArgs
 
 int setXOpsReverseSshTrigger(char *input)
 {
+    int cmdLen;
+    char *cmd;
     char *trigger = NULL;
     static char extraArgs[256];
 
@@ -2841,7 +2845,18 @@ int setXOpsReverseSshTrigger(char *input)
         {
 #endif
             CcspTraceInfo(("[%s] ReverseSSH arguments = %s %s \n",__FUNCTION__,reverseSSHArgs, extraArgs));
-            v_secure_system(sshCommand " start %s%s", reverseSSHArgs, extraArgs);
+
+            /* v_secure_system does not work since command involves giving env variable to script */
+            cmdLen = strlen(reverseSSHPasswd) + strlen(reverseSSHArgs) + strlen(extraArgs) + strlen(sshCommand) + 32;
+            cmd = calloc(1, cmdLen);
+            if (!cmd)
+            {
+                CcspTraceInfo(("[%s] Out of memory: calloc\n", __FUNCTION__));
+                return NOK;
+            }
+            snprintf(cmd, cmdLen, "PASSWD=%s %s start %s%s", reverseSSHPasswd, sshCommand, reverseSSHArgs, extraArgs);
+            system(cmd);
+            free(cmd);
 #ifdef ENABLE_SHORTS
         }
 #endif
