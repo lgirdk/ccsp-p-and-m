@@ -3519,7 +3519,7 @@ int _cosa_get_dhcps_client(ULONG instancenum, UCHAR *ifName, ULONG minAddress, U
     ULONG j = 0;
     ULONG index = 0;
     char   oneline[1024];
-    char * pExpire = NULL,*pTemp;
+    char * pExpire = NULL;
     char * pMac = NULL;
     char * pIP = NULL;
     char *pHost = NULL, *pVClass = NULL, *pCt=NULL;
@@ -3669,10 +3669,8 @@ int _cosa_get_dhcps_client(ULONG instancenum, UCHAR *ifName, ULONG minAddress, U
 			while( oneline[i] == ' ' ) i++;
 			if(oneline[i]){/*valid character*/
 				pVClass = &oneline[i++];
-				/*remove the new line charchter*/
-				pTemp = strchr(pVClass, '\n');
-				if(pTemp)
-				*pTemp = 0;
+				while( (oneline[i] != '"') && (oneline[i] != '\0') && (oneline[i] != '\n') ) i++;
+				oneline[i++] = 0;
 			}
 		}
 
