@@ -222,6 +222,10 @@ ANSC_STATUS CosaDmlGiGetSKU (ANSC_HANDLE hContext, char *pValue, ULONG ulSize)
     {
         sku = "Virgin Media Hub 6";
     }
+    else if (customerId == 50)
+    {
+        sku = "Home Cable Box 2";
+    }
     else if (customerId == 51)
     {
         sku = "Connect Box 3";
@@ -244,6 +248,10 @@ ANSC_STATUS CosaDmlGiGetSKU (ANSC_HANDLE hContext, char *pValue, ULONG ulSize)
     else if (customerId == 41)
     {
         sku = "Fibre Hub";
+    }
+    else if (customerId == 50)
+    {
+        sku = "Home Fiber Box 2";
     }
     else if (customerId == 51)
     {
