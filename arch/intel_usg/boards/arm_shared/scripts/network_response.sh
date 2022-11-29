@@ -19,9 +19,14 @@
 #######################################################################################
 
 # This script is used to check if the unit has got network access.
-# Query the response code of google service. If we get 204, then that means
-# we are not in DNS redirection mode.
-# Eg Command: curl -w '%{http_code}\n' http://clients3.google.com/generate_204 --connect-timeout 10 -m 10
+# Ping the DNS server in /etc/resolv.conf and check for response to ensure network access.
+# If response to ping is received, write "204" response code in /var/tmp/networkresponse.txt as a
+# workaround since that particular response code has been checked for webgui and other places.
+
+# NOTE:
+# Capturing the network response from google service (http://clients3.google.com/generate_204) 
+# is replaced with ping to DNS server in /etc/resolv.conf as the network access test
+# is dependent on the service by external party.
 
 source /lib/rdk/t2Shared_api.sh
 
@@ -31,25 +36,16 @@ REVERT_FLAG="/nvram/reverted"
 EROUTER_IP=""
 EROUTER_IP6=""
 HAS_IP=0
-URL_1="http://clients3.google.com/generate_204"
-URL_2="www.google.com"
-URL_3="www.amazon.com"
-URL_4="www.facebook.com"
 RESPONSE="/var/tmp/networkresponse.txt"
-RESPONSE_1="/var/tmp/url_1_response.txt"
-RESPONSE_2="/var/tmp/url_2_response.txt"
-RESPONSE_3="/var/tmp/url_3_response.txt"
-RESPONSE_4="/var/tmp/url_4_response.txt"
+ping_response=0
 SERVER6_CONF="/etc/dibbler/server.conf"
-responseCode_1=0
-responseCode_2=0
-responseCode_3=0
-responseCode_4=0
 responseCode=0
 superResponse=0
 gotResponse=0
 v4Count=0
 v6Count=0
+v4retry_count=0
+v6retry_count=0
 
 export PATH=$PATH:/fss/gw
 source /etc/utopia/service.d/log_capture_path.sh
@@ -325,6 +321,9 @@ restartLanServices()
     fi
 }
 
+dns_ipv6=(`sysevent get ipv6_nameserver`)
+dns_ipv4_count=$(sysevent get ipv4_${WAN_INTERFACE}_dns_number)
+dns_ipv6_count=${#dns_ipv6[*]}
 
 # Check if we are in captive portal mode.
 # If unit is in captive portal mode, then restart all necessary services
@@ -346,107 +345,66 @@ then
 			responseCode=`cat $RESPONSE`
 			rm -rf $RESPONSE				
 		fi
-
-		if [ -e $RESPONSE_1 ]
-		then
-			rm -rf $RESPONSE_1
-		fi
-
-		if [ -e $RESPONSE_2 ]
-		then
-			rm -rf $RESPONSE_2
-		fi
-
-		if [ -e $RESPONSE_3 ]
-		then
-			rm -rf $RESPONSE_3
-		fi
-
-		if [ -e $RESPONSE_4 ]
-		then
-			rm -rf $RESPONSE_4
-		fi
-	
 	
 	# RDKB-2752 : Comment out querying multiple URLs
 	#if [ $gotResponse -eq 0 ] 
 	#then
 	#	curl -sL -w '%{http_code}\n' --interface $WAN_INTERFACE $URL_2 --connect-timeout 10 -m 10 -o /dev/null > $RESPONSE_2 
 
-		echo_t "Network Response: Running curl commands to check network access"
-
-		# If any of the service returned success code, mark device is activated	
-		# Return codes can be 200 or 302
-		# 302 means : URL is redirected by the server
-		# 200 means : Successful GET
+		echo_t "Network Response: Running ping to DNS server to check network access"
 
 		if [ $responseCode -eq 204 ] && [ "$MODEL_NUM"  != "CGA4332COM" ]
 		then
 			echo_t "Network Response: Already $RESPONSE has been available with 204 response code."
-			echo $responseCode > $RESPONSE_1
+			ping_response=$responseCode
 		else
-		   # Check v4Count. This variable will be incremented only when we have IPv6 for erouter0
-		   # Try curl command for 3 times in v4 mode. If all 3 fails, try curl command for 3 times in v6 mode
-		   # only if erouter0 has an IPv6.
 		   has_ipv4=`ifconfig $WAN_INTERFACE | grep "inet addr" | cut -d":" -f2 | cut -d" " -f1`
 		   has_ipv6=`ifconfig $WAN_INTERFACE | grep inet6 | grep Global`
 
-		   if [ "$has_ipv4" != "" ] && [ $v4Count -lt 3 ]
+		   if [ "$has_ipv4" != "" ] && [ $v4Count -lt $dns_ipv4_count ];
 		   then
-		      echo_t "Network Response: Executing command for ipv4"
-		      curl -4 -w '%{http_code}\n' --interface $WAN_INTERFACE $URL_1 --connect-timeout 30 -m 30 > $RESPONSE_1
-		      
-                      if [ "$has_ipv6" != "" ]
-		      then
-		         echo_t "Network Response: Increment count as we have ipv6 ip"
-		         v4Count=`expr $v4Count + 1`
-		      else
-		         last_erouter_mode=`syscfg get last_erouter_mode`
-		         if [ "$last_erouter_mode" = "1" ];then	
-		          echo_t "Network Response: CDV device, not having ipv6  exiting !!"
-		          exit 0
-		         fi
-		      fi
+				dns_ipv4=$(sysevent get ipv4_${WAN_INTERFACE}_dns_${v4Count})
+				ping_response=`ping -4 -I $WAN_INTERFACE -c 1 -W 5 ${dns_ipv4} &> /dev/null && echo "204" || echo "0"`
+				v4Count=$(($v4Count + 1))
+
+				if [ $ping_response -eq 0 ] && [ $v4Count -eq $dns_ipv4_count ] && [ $v4retry_count -lt 2 ];
+				then
+					v4Count=0;
+					v4retry_count=$(($v4retry_count + 1))
+				fi
+		   elif [ "$has_ipv6" != "" ] && [ $v6Count -lt $dns_ipv6_count ];
+		   then
+				ping_response=`ping -6 -I $WAN_INTERFACE -c 1 -W 5 ${dns_ipv6[$v6Count]} &> /dev/null && echo "204" || echo "0"`
+				v6Count=$(($v6Count + 1))
+
+				if [ $ping_response -eq 0 ] && [ $v6Count -eq $dns_ipv6_count ] && [ $v6retry_count -lt 2 ];
+				then
+					v6Count=0;
+					v6retry_count=$(($v6retry_count + 1))
+				fi
 		   else
-		      # We will come into this else condition, only if erouter0 has IPv6 and 
-		      # curl command failed 3 times for IPv4
-		      if [ "$has_ipv6" != "" ] && [ $v6Count -lt 3 ]
-		      then
-		         echo_t "Network Response: Executing command for ipv6"
-		         curl -6 -w '%{http_code}\n' --interface $WAN_INTERFACE $URL_1 --connect-timeout 30 -m 30 > $RESPONSE_1
-		         v6Count=`expr $v6Count + 1`
-		      else
-		         echo_t "Network Response: failed 3 times for IPv4 / IPv6"
-		         exit 0
-		      fi
+				echo_t "Network Response: Ping using IPv6 or IPv4 to dns server doesn't get reply. Exit."
+				exit 0
 		   fi
 
 		fi
         
-		if [ -e $RESPONSE_1 ]
+		# Touching this file and will be checked from webgui.sh
+		touch /tmp/.gotnetworkresponse
+		echo_t "Network Response: Response code received is $ping_response"
+
+		if [ $ping_response -eq 204 ]
 		then
-                        # Touching this file and will be checked from webgui.sh
-                        touch /tmp/.gotnetworkresponse
+			echo_t "Network Response: Ping to the dns server is successful."
+			gotResponse=1
+		else
+			echo_t "Network Response: Ping to the dns server failed."
 
-			responseCode_1=`cat $RESPONSE_1`
-			echo_t "Network Response: Response code received is $responseCode_1"
-			if [ "$responseCode_1" = "" ]
-			then
-				echo_t "Network Response: Responsefile for $URL_1 was empty.."
-				responseCode_1=0
+			if [ -f "/etc/ONBOARD_LOGGING_ENABLE" ] && [ ! -e "/nvram/.device_onboarded" ]; then
+				echo_t "Network Response: Enabling onboard logs backup"
+				touch /tmp/backup_onboardlogs
 			fi
-
-			if [ "$responseCode_1" = "204" ]
-			then
-				echo_t "Network Response: Got success response with URL1"
-				gotResponse=1
-			else
-				if [ -f "/etc/ONBOARD_LOGGING_ENABLE" ] && [ ! -e "/nvram/.device_onboarded" ]; then
-				    echo_t "Network Response: Enabling onboard logs backup"
-					touch /tmp/backup_onboardlogs
-				fi
-			fi
-		fi	
+		fi
 	
 		if [ $gotResponse -eq 1 ] 
 		then
@@ -549,7 +507,6 @@ then
 				    restartLanServices
 				fi
                         
-				sleep 5
 		fi
 
 	done
