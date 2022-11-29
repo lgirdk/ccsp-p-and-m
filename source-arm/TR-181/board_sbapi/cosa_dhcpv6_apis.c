@@ -9807,6 +9807,21 @@ dhcpv6c_dbg_thrd(void * in)
 
 #if defined(DSLITE_FEATURE_SUPPORT) && defined(_LG_MV3_)
                    /* Fixme: needs review. Temp fix for Mv3 */
+                   //This is workaround fix to force all the device running previously on 1.3 factory image to come with dslite enabled by true for VM-IE
+                   //This needs to be reviewed and fixed.
+
+                   char countryindex[8],erouter_mode[8],dsliteforceenable[8];
+
+                   syscfg_get(NULL, "Customer_Index", countryindex, sizeof(countryindex));
+                   syscfg_get(NULL, "last_erouter_mode", erouter_mode, sizeof(erouter_mode));
+                   syscfg_get(NULL, "dslite_enable_vm_ie", dsliteforceenable, sizeof(dsliteforceenable));
+
+                   if((strcmp(countryindex, "41") == 0) && (strcmp(erouter_mode, "2") == 0) && strcmp(dsliteforceenable, "1"))//VM-IE, 2->IPV6 mode,dslite not force enable
+                   {
+                       g_SetParamValueBool("Device.DSLite.Enable", TRUE);
+                       g_SetParamValueBool("Device.DSLite.InterfaceSetting.1.Enable", TRUE);
+                       syscfg_set_commit(NULL, "dslite_enable_vm_ie", "1");
+                   }
                    v_secure_system("service_dslite restart &");
 #endif
                 }
