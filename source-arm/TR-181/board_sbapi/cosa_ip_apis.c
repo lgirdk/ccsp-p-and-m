@@ -3010,7 +3010,7 @@ unsigned int mask2cidr(char *subnetMask)
 
     sscanf(subnetMask, "%d.%d.%d.%d", &l_iFirstByte, &l_iSecondByte,
             &l_iThirdByte, &l_iFourthByte);
-    if(l_iFirstByte == 255 && l_iSecondByte == 255 && l_iThirdByte == 255 && (l_iFourthByte == 252 || l_iFourthByte == 248 || l_iFourthByte == 240 ))
+    if(l_iFirstByte == 255 && l_iSecondByte == 255 && l_iThirdByte == 255 && (l_iFourthByte == 252 || l_iFourthByte == 248 || l_iFourthByte == 240 || l_iFourthByte == 224 || l_iFourthByte == 192))
     {
         return 24 + countSetBits(l_iFourthByte);
     }
@@ -3101,9 +3101,12 @@ CosaDmlIpIfSetV4Addr
             {
                 CcspTraceWarning(("%s Error CIDR netmask is not valid for static IP.. Assigning /30 case for default\n", __FUNCTION__));
                 l_iCIDR = 30;
+                syscfg_set(NULL, "brlan_static_lan_netmask", "255.255.255.252");
             }
-            syscfg_set(NULL, "brlan_static_lan_netmask", buf);
-
+            else
+            {
+                syscfg_set(NULL, "brlan_static_lan_netmask", buf);
+            }
             total_hosts = 1 << (32 - l_iCIDR);
             _ansc_sprintf(buf, "%d.%d.%d.%d",
                     pEntry->IPAddress.Dot[0],pEntry->IPAddress.Dot[1],pEntry->IPAddress.Dot[2],pEntry->IPAddress.Dot[3]+total_hosts-3 ); // CIDR Usable Host Range Ends
