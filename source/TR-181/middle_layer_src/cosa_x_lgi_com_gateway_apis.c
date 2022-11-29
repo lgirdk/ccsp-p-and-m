@@ -238,6 +238,11 @@ static void updateErouterInitMode(ULONG initMode)
         CcspTraceError(("%s %d: setting router mode\n", __FUNCTION__, __LINE__));
         g_SetParamValueString(LANMODE, ROUTER_MODE);
     }
+    if (olderoutermode == 2) //This is case entering from IPv6 to other mode, disable dslite
+    {
+        g_SetParamValueBool("Device.DSLite.Enable", FALSE);
+        g_SetParamValueBool("Device.DSLite.InterfaceSetting.1.Enable", FALSE);
+    }
 
     if (syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_LastRebootReason", "Erouter Mode Change") != 0)
     {
