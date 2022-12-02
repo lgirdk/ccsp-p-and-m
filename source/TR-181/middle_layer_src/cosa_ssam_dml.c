@@ -193,8 +193,8 @@ BOOL X_LGI_COM_DigitalSecurity_GetParamBoolValue(ANSC_HANDLE hInsContext, char *
     }
 
     if (strcmp(ParamName, "UpdaterEnable") == 0) {
-        syscfg_get(NULL, "ssam_updaterenable", buf, sizeof(buf));
-        *pBool = (strcmp(buf, "1") == 0) ? TRUE : FALSE;
+        syscfg_get(NULL, "Customer_Index", buf, sizeof(buf));
+        *pBool = (strcmp(buf, "9") == 0) ? TRUE : FALSE;
         return TRUE;
     }
 
@@ -211,13 +211,6 @@ BOOL X_LGI_COM_DigitalSecurity_SetParamBoolValue(ANSC_HANDLE hInsContext, char *
             ssam_start();
         } else {
             ssam_stop();
-        }
-        return TRUE;
-    }
-
-    if (strcmp(ParamName, "UpdaterEnable") == 0) {
-        if (syscfg_set_commit(NULL, "ssam_updaterenable", bValue ? "1" : "0") != 0) {
-            AnscTraceWarning(("Error in syscfg_set for ssam_updaterenable\n"));
         }
         return TRUE;
     }
