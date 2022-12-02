@@ -249,6 +249,14 @@ void ssam_start (void)
         return;
     }
 
+    syscfg_get(NULL, "Customer_Index", buf, sizeof(buf));
+    if (buf[0] != 0) {
+        cid = atoi(buf);
+    }
+    else {
+        cid = 0;
+    }
+
     if (access("/var/sam", F_OK) != 0) {
         if (mkdir("/var/sam", 0777) != 0) {
             return;
@@ -266,14 +274,6 @@ void ssam_start (void)
     if (access("/var/sam_loader", F_OK) != 0) {
         if (mkdir("/var/sam_loader", 0777) != 0) {
             return;
-        }
-
-        syscfg_get(NULL, "Customer_Index", buf, sizeof(buf));
-        if (buf[0] != 0) {
-            cid = atoi(buf);
-        }
-        else {
-            cid = 0;
         }
 
         p = cmd;
@@ -312,8 +312,7 @@ void ssam_start (void)
     p = cmd;
     p += sprintf(p, "/usr/bin/sam");
 
-    syscfg_get(NULL, "ssam_updaterenable", buf, sizeof(buf));
-    if (strcmp(buf, "1") == 0) {
+    if (cid == 9) {
         p += sprintf(p, " -r");
     }
 
