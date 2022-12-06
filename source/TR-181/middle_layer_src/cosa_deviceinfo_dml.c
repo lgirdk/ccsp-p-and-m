@@ -13012,6 +13012,14 @@ WiFiInterworking_SetParamBoolValue
 	    CcspTraceError(("Set failed for WiFiInterworkingSupport \n"));
 	    return FALSE;
 	}
+	if(bValue == 0) {
+		retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.WiFi-Passpoint.Enable", ccsp_string, bValue ? "1" : "0");
+		if (retPsmGet != CCSP_SUCCESS) {
+			CcspTraceError(("Set failed for WiFiPasspointSupport \n"));
+			return FALSE;
+		}
+	}
+
 	CcspTraceInfo(("Successfully set WiFiInterworkingSupport \n"));
 	return TRUE;
     }
@@ -13118,17 +13126,31 @@ WiFiPasspoint_SetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-
+    int interworking = FALSE;
     if (strcmp(ParamName, "Enable") == 0)
     {
-	int retPsmGet = CCSP_SUCCESS;
+		int retPsmGet = CCSP_SUCCESS;
+		char *strValue = NULL;
 
-	retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.WiFi-Passpoint.Enable", ccsp_string, bValue ? "1" : "0");
-	if (retPsmGet != CCSP_SUCCESS) {
-	    CcspTraceError(("Set failed for WiFiPasspointSupport \n"));
-	    return FALSE;
-    }
-    CcspTraceInfo(("Successfully set WiFiPasspointSupport \n"));
+		retPsmGet = PSM_Get_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.WiFi-Interworking.Enable", NULL, &strValue);
+		if (retPsmGet == CCSP_SUCCESS) {
+			interworking = _ansc_atoi(strValue);
+			((CCSP_MESSAGE_BUS_INFO *)bus_handle)->freefunc(strValue);
+ 		}
+		else
+			interworking = FALSE;
+
+		if(interworking == FALSE) {
+ 			CcspTraceError(("Passpoint cannot be enabled when interworking is disabled.\n"));
+			return FALSE;
+		}
+
+		retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.WiFi-Passpoint.Enable", ccsp_string, bValue ? "1" : "0");
+		if (retPsmGet != CCSP_SUCCESS) {
+			CcspTraceError(("Set failed for WiFiPasspointSupport \n"));
+			return FALSE;
+    	}
+   	CcspTraceInfo(("Successfully set WiFiPasspointSupport \n"));
 #ifndef RDK_ONEWIFI
     if(bValue == FALSE){
         int ret = -1;
