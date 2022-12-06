@@ -43,8 +43,21 @@ BOOL LgiMulticast_GetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName, 
 
     if (strcmp(ParamName, "IGMPv3ProxyEnable") == 0)
     {
-        CosaDmlMulticastGetIGMPv3ProxyEnable(NULL, &pMyObject->Cfg.bIGMPv3ProxyEnable);
-        *pValue = pMyObject->Cfg.bIGMPv3ProxyEnable;
+        char erouter_mode[4];
+
+        syscfg_get(NULL, "last_erouter_mode", erouter_mode, sizeof(erouter_mode));
+
+        if (strcmp(erouter_mode, "2") == 0)
+        {
+            // IGMPv3ProxyEnable should be disabled in dslite.
+            *pValue = false;
+        }
+        else
+        {
+            CosaDmlMulticastGetIGMPv3ProxyEnable(NULL, &pMyObject->Cfg.bIGMPv3ProxyEnable);
+            *pValue = pMyObject->Cfg.bIGMPv3ProxyEnable;
+        }
+
         return TRUE;
     }
 
@@ -78,6 +91,15 @@ BOOL LgiMulticast_SetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName, 
 
     if (strcmp(ParamName, "IGMPv3ProxyEnable") == 0)
     {
+        char erouter_mode[4];
+
+        syscfg_get(NULL, "last_erouter_mode", erouter_mode, sizeof(erouter_mode));
+
+        if (strcmp(erouter_mode, "2") == 0)
+        {
+            return FALSE;
+        }
+
         pMyObject->Cfg.bIGMPv3ProxyEnable = bValue;
         return TRUE;
     }
