@@ -34,7 +34,6 @@
 
 static unsigned long logupdatetime;
 
-
 static int update_pValue (char *pValue, PULONG pulSize, char *str)
 {
     if (!str)
@@ -50,29 +49,6 @@ static int update_pValue (char *pValue, PULONG pulSize, char *str)
 
     *pulSize = len + 1;
     return 1;
-}
-
-static int getLogLines (char *filename)
-{
-    FILE *fp;
-    int lines = 0;
-
-    if ((fp = fopen(filename, "r")) == NULL)
-    {
-        return 0;
-    }
-
-    while (!feof(fp))
-    {
-        if (fgetc(fp) == '\n')
-        {
-            lines++;
-        }
-    }
-
-    fclose(fp);
-
-    return lines;
 }
 
 #if defined (_PUMA6_ARM_)
@@ -137,6 +113,29 @@ static ANSC_STATUS CosaDmlGetEventLog (PCOSA_DATAMODEL_LGI_EVENTLOGTABLE pMyObje
 }
 
 #else
+
+static int getLogLines (char *filename)
+{
+    FILE *fp;
+    int lines = 0;
+
+    if ((fp = fopen(filename, "r")) == NULL)
+    {
+        return 0;
+    }
+
+    while (!feof(fp))
+    {
+        if (fgetc(fp) == '\n')
+        {
+            lines++;
+        }
+    }
+
+    fclose(fp);
+
+    return lines;
+}
 
 static ANSC_STATUS CosaDmlGetEventLog (PCOSA_DATAMODEL_LGI_EVENTLOGTABLE pMyObject)
 {
