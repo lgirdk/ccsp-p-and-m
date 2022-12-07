@@ -1012,25 +1012,7 @@ Time_Commit
 {
     UNREFERENCED_PARAMETER(hInsContext);
     PCOSA_DATAMODEL_TIME            pMyObject = (PCOSA_DATAMODEL_TIME)g_pCosaBEManager->hTime;
-    BOOL rebootDevice = TRUE;
-    char buf[64] = {0};
-
-    if(0 == syscfg_get( NULL, "TZ", buf, sizeof(buf)))
-    {
-        if (0 == strcmp(pMyObject->TimeCfg.LocalTimeZone, buf))
-        {
-            rebootDevice = FALSE;
-        }
-    }
     CosaDmlTimeSetCfg(NULL, &pMyObject->TimeCfg);
-    if (rebootDevice)
-    {
-        // Reboot the device after timezone.
-        CcspTraceWarning(("Rebooting after changing timezone...\n"));
-        syscfg_set(NULL, "X_RDKCENTRAL-COM_LastRebootReason", "Reboot Timezone Change");
-        syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_LastRebootCounter", "1");
-        CosaDmlDcSetRebootDevice(NULL, "Device");
-    }
     
     return 0;
 }
