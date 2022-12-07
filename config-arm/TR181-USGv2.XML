@@ -4519,6 +4519,32 @@
 
           <writable>false</writable>
 
+       </parameter>
+
+       <parameter>
+
+          <name>MinPollInterval</name>
+
+          <type>unsignedInt[6:17]</type>
+
+          <syntax>uint32</syntax>
+
+          <writable>true</writable>
+
+        </parameter>
+
+
+
+       <parameter>
+
+          <name>MaxPollInterval</name>
+
+          <type>unsignedInt[6:17]</type>
+
+          <syntax>uint32</syntax>
+
+          <writable>true</writable>
+
         </parameter>
 
       </parameters>
