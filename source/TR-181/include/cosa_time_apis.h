@@ -103,6 +103,8 @@ _COSA_DML_TIME_CFG
     BOOLEAN                         bDaylightSaving;
     LONG                            DaylightSavingOffset;
     ULONG                           cityIndex;
+    ULONG                           MinPollInterval;
+    ULONG                           MaxPollInterval;
     BOOLEAN                         bUTCEnabled;
 }
 COSA_DML_TIME_CFG,  *PCOSA_DML_TIME_CFG;
