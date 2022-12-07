@@ -408,6 +408,18 @@ Time_GetParamUlongValue
         *puLong = pMyObject->TimeCfg.cityIndex;
         return TRUE;
     }
+    if (strcmp(ParamName, "MinPollInterval") == 0)
+    {
+        /* collect value */
+        *puLong = pMyObject->TimeCfg.MinPollInterval;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "MaxPollInterval") == 0)
+    {
+        /* collect value */
+        *puLong = pMyObject->TimeCfg.MaxPollInterval;
+        return TRUE;
+    }
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
@@ -731,6 +743,16 @@ Time_SetParamUlongValue
     {
         /* save update to backup */
         pMyObject->TimeCfg.cityIndex = uValue;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "MinPollInterval") == 0)
+    {
+        pMyObject->TimeCfg.MinPollInterval = uValue;
+        return TRUE;
+    }
+    if (strcmp(ParamName, "MaxPollInterval") == 0)
+    {
+        pMyObject->TimeCfg.MaxPollInterval = uValue;
         return TRUE;
     }
 
