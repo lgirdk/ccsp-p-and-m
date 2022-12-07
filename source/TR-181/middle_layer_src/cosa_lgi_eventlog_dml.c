@@ -34,7 +34,6 @@
 
 static unsigned long logupdatetime;
 
-
 static int update_pValue (char *pValue, PULONG pulSize, char *str)
 {
     if (!str)
@@ -51,6 +50,69 @@ static int update_pValue (char *pValue, PULONG pulSize, char *str)
     *pulSize = len + 1;
     return 1;
 }
+
+#if defined (_PUMA6_ARM_)
+
+static ANSC_STATUS CosaDmlGetEventLog (PCOSA_DATAMODEL_LGI_EVENTLOGTABLE pMyObject)
+{
+    char str[ LGI_EVENT_LOG_TIME_LEN + 32 + LGI_EVENT_LOG_TAG_LEN + LGI_EVENT_LOG_INFO_LEN + 32 ];
+    PCOSA_DATAMODEL_LGI_EVENTLOG pEVENTLog;
+    FILE *fp;
+    int log_max_num;
+    int i;
+
+    /*
+       Note that max RPC command output is 4k bytes (?) so limit to 30 lines
+       instead of 100 to try to avoid filling the RPC buffer.
+       Fixme: needs review.
+    */
+
+    log_max_num = 30;
+
+    pEVENTLog = AnscAllocateMemory(sizeof(COSA_DATAMODEL_LGI_EVENTLOG) * log_max_num);
+
+    if (pEVENTLog == NULL)
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    /* Read the last 30 lines (see above) from /tmp/channel_event_1.log from the Atom */
+
+    if ((fp = popen("rpcclient2 'tail -n 30 " LGI_EVENT_LOG_FILE "'", "r")) == NULL)
+    {
+        AnscFreeMemory(pEVENTLog);
+        return ANSC_STATUS_FAILURE;
+    }
+
+    i = 0;
+
+    while (fgets(str, sizeof(str), fp))
+    {
+        char time[20];
+        /*
+           Event Log format: <date> <time> <pri> <tag> <message>
+           Example: 2021-10-26 09:37:08 [4][WI] Radar signal detected, DFS sequence applied, channel changed from 100/80 to 36/80
+        */
+        if (sscanf(str, "%31s %19s [%lu][%127[^]]] %511[^\t\n]", pEVENTLog[i].Timestamp, time, &pEVENTLog[i].Pri, pEVENTLog[i].Tag, pEVENTLog[i].Message) != 5)
+        {
+            continue;
+        }
+
+        strcat(pEVENTLog[i].Timestamp, "T");
+        strcat(pEVENTLog[i].Timestamp, time);
+
+        i++;
+    }
+
+    pclose(fp);
+
+    pMyObject->pEventLogTable = pEVENTLog;
+    pMyObject->EventLogEntryCount = i;
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+#else
 
 static int getLogLines (char *filename)
 {
@@ -177,6 +239,8 @@ static ANSC_STATUS CosaDmlGetEventLog (PCOSA_DATAMODEL_LGI_EVENTLOGTABLE pMyObje
 
     return ANSC_STATUS_SUCCESS;
 }
+
+#endif
 
 /***********************************************************************
 
