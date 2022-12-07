@@ -657,6 +657,12 @@ CosaDmlTimeSetCfg
        /*Set NTP Enabled or not to SysCfg */
        rc = Utopia_Set_DeviceTime_Enable(&ctx,pTimeCfg->bEnabled);
 
+       /*Set MinPollInterval to SysCfg */
+       rc = Utopia_Set_DeviceTime_MinPollInterval(&ctx,pTimeCfg->MinPollInterval);
+
+       /*Set MinPollInterval to SysCfg */
+       rc = Utopia_Set_DeviceTime_MaxPollInterval(&ctx,pTimeCfg->MaxPollInterval);
+
        /* Free Utopia Context */
        Utopia_Free(&ctx,!rc);
      }
@@ -818,6 +824,12 @@ CosaDmlTimeGetCfg
 
        /* Fill NTP Enabled or not from syscfg */
        pTimeCfg->bEnabled = Utopia_Get_DeviceTime_Enable(&ctx);
+
+       /* Fill MinPollInterval from syscfg */
+       rc = Utopia_Get_DeviceTime_MinPollInterval(&ctx, &(pTimeCfg->MinPollInterval));
+
+       /* Fill MaxPollInterval from syscfg */
+       rc = Utopia_Get_DeviceTime_MaxPollInterval(&ctx, &(pTimeCfg->MaxPollInterval));
 
        /* Free Utopia Context */
        Utopia_Free(&ctx,0);
