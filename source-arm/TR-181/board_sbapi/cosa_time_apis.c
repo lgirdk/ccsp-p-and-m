@@ -598,6 +598,7 @@ CosaDmlTimeSetCfg
     char buf[128] = {0};
     int rc = 0;
     errno_t  safec_rc = -1;
+    BOOL rebootDevice = FALSE;
     UNREFERENCED_PARAMETER(hContext);
     if (!pTimeCfg)
         return ANSC_STATUS_FAILURE;
@@ -609,8 +610,14 @@ CosaDmlTimeSetCfg
        /* Initialize a Utopia Context */
        if(!Utopia_Init(&ctx))
           return ERR_UTCTX_INIT;
-       /* Set Local TZ to SysCfg */
-       rc = Utopia_Set_DeviceTime_LocalTZ(&ctx, (char*)&(pTimeCfg->LocalTimeZone));
+
+       Utopia_Get_DeviceTime_LocalTZ(&ctx,buf);
+       if(0 != strcmp(pTimeCfg->LocalTimeZone, buf))
+       {
+           /* Set Local TZ to SysCfg */
+           rc = Utopia_Set_DeviceTime_LocalTZ(&ctx, (char*)&(pTimeCfg->LocalTimeZone));
+           rebootDevice = TRUE;
+       }
 
 #ifdef _PUMA6_ARM_
        /* Add the new timezone to a file on atom side */
@@ -670,6 +677,13 @@ CosaDmlTimeSetCfg
         pthread_detach(ntp_thread);
 
 #endif
+     if(rebootDevice)
+     {
+       CcspTraceWarning(("Rebooting after changing timezone...\n"));
+       syscfg_set(NULL, "X_RDKCENTRAL-COM_LastRebootReason", "Reboot Timezone Change");
+       syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_LastRebootCounter", "1");
+       CosaDmlDcSetRebootDevice(NULL, "Device");
+     }
 
      if (rc != 0)
        return ERR_SYSCFG_FAILED;
