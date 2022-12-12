@@ -3517,18 +3517,17 @@ int _cosa_get_dhcps_client(ULONG instancenum, UCHAR *ifName, ULONG minAddress, U
 
 		/* for client */
 		pEntry = &pEntry2[size];
-		_ansc_snprintf(pEntry->Alias, 63, "Alias%lu", size);
-
+		snprintf(pEntry->Alias, sizeof(pEntry->Alias), "Alias%lu", size);
 
 		if(!find_arp_entry(pIP,(char*)ifName,macArray))
 			pEntry->Active = TRUE;
 		
-		_ansc_snprintf((char*)pEntry->Chaddr, 18, "%s", pMac);
+		snprintf((char*)pEntry->Chaddr, sizeof(pEntry->Chaddr), "%s", pMac);
 		if(pEntry->Active==TRUE)
 		{
 			usg_get_cpe_associate_interface(pMac, (char*)pEntry->X_CISCO_COM_Interface);
 		}
-		snprintf((char*)pEntry->X_CISCO_COM_HostName, 63, "%s", pHost);
+		snprintf((char*)pEntry->X_CISCO_COM_HostName, sizeof(pEntry->X_CISCO_COM_HostName), "%s", pHost);
 		mac_string_to_array(pMac,macArray);
 		if(Utopia_Init(&utctx)){
 			Utopia_get_lan_host_comments(&utctx,macArray,pEntry->X_CISCO_COM_Comment);
@@ -3537,8 +3536,7 @@ int _cosa_get_dhcps_client(ULONG instancenum, UCHAR *ifName, ULONG minAddress, U
 		// This check is to prevent P&M crash
 		if(pVClass != NULL)
                 {
-			rc = strcpy_s((char*)pEntry->ClassId, sizeof(pEntry->ClassId), pVClass);
-			ERR_CHK(rc);
+			snprintf((char*)pEntry->ClassId, sizeof(pEntry->ClassId), "%s", pVClass);
 		}
 
 		/* for client content */
