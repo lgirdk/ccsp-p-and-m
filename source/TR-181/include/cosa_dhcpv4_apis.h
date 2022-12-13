@@ -338,7 +338,7 @@ _COSA_DML_DHCPSV4_CLIENT
     UCHAR                           Chaddr[18];
     BOOLEAN                         Active;
     UCHAR                           X_CISCO_COM_HostName[64];
-    UCHAR                           ClassId[64];
+    UCHAR                           ClassId[256];
     UCHAR                           X_CISCO_COM_Interface[256];
     UCHAR                           X_CISCO_COM_Comment[256];
 };
