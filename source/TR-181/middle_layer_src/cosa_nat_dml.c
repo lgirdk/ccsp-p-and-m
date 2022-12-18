@@ -4254,6 +4254,16 @@ NATPassthrough_DelEntry
     PCOSA_CONTEXT_LINK_OBJECT      pLinkObj           = (PCOSA_CONTEXT_LINK_OBJECT)hInstance;
     COSA_DML_NATPASS          *pNATPassthrough        = (COSA_DML_NATPASS*)pLinkObj->hContext;
 
+    if (pNATPassthrough->Enable)
+    {
+        pNATPassthrough->Enable = false;
+        if (CosaDmlFW_NATPassthrough_SetConf(pNATPassthrough->InstanceNumber, pNATPassthrough) != ANSC_STATUS_SUCCESS)
+        {
+            CcspTraceError(("\nFailed to set the 'Enable' parameter to false. Couldn't delete entry!!!\n"));
+            return -1;
+        }
+    }
+
     AnscSListPopEntryByLink((PSLIST_HEADER)&pMyObject->NATPassthroughList, &pLinkObj->Linkage);
 
     if (pLinkObj->bNew)
