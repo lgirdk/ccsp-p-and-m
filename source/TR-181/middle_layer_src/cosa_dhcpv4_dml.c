@@ -11203,16 +11203,15 @@ LanAllowedSubnetTable_Validate
         }
         else
         {
-            /* 192.168.0.x/24 */
+            /* 192.168.x.x/16 - 192.168.x.x/24 */
 
             if ((pLanAllowedSubnet->SubnetMask[0] == 0) ||
                 (lanSubnetMaskBuf.Dot[0] != 255) ||
                 (lanSubnetMaskBuf.Dot[1] != 255) ||
-                (lanSubnetMaskBuf.Dot[2] != 255) ||
                 (lanSubnetMaskBuf.Dot[3] != 0))
             {
                 /* Setting default Subnet Mask for class C network */
-                strcpy (pLanAllowedSubnet->SubnetMask, "255.255.255.0");
+                strcpy (pLanAllowedSubnet->SubnetMask, "255.255.0.0");
             }
         }
     }
