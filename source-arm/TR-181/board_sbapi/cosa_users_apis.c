@@ -603,7 +603,32 @@ user_validatepwd
    hash_userPassword(pString, getHash, sizeof(getHash));
    CcspTraceWarning(("%s, Compare passwords\n",__FUNCTION__));
    
-    v = strcmp(getHash, pEntry->HashedPassword) ? "Invalid_PWD" : (isDefault == 1 ? "Default_PWD" : "Good_PWD");
+    if (strcmp(getHash, pEntry->HashedPassword))
+    {
+         v = "Invalid_PWD";
+#ifdef FEATURE_RDKB_WAN_MANAGER
+         openlog("Network", LOG_NDELAY, LOG_LOCAL0);
+         syslog(LOG_NOTICE, "GUI Login Status - Login Fail from LAN interface");
+         closelog();
+#endif
+    }
+    else
+    {
+         if (isDefault == 1)
+         {
+            v = "Default_PWD";
+         }
+         else
+         {
+            v = "Good_PWD";
+#ifdef FEATURE_RDKB_WAN_MANAGER
+            openlog("Network", LOG_NDELAY, LOG_LOCAL0);
+            syslog(LOG_NOTICE, "GUI Login Status - Login Success from LAN interface");
+            closelog();
+#endif
+         }
+    }
+
     safec_rc = strcpy_s(hashpassword, SIZE_OF_HASHPASSWORD, v);
     if(safec_rc != EOK)
     {
