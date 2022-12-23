@@ -595,7 +595,7 @@ CosaDmlTimeSetCfg
     )
 {
     UtopiaContext ctx;
-    char buf[128] = {0};
+    char buf[UTOPIA_TR181_PARAM_SIZE1];
     int rc = 0;
     errno_t  safec_rc = -1;
     BOOL rebootDevice = FALSE;
