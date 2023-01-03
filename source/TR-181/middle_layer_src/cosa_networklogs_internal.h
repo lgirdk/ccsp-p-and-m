@@ -32,7 +32,7 @@ typedef struct _COSA_DML_NETWORKLOGS_LOG
     ULONG                           EventID;
     ULONG                           EventLevel;
     CHAR                            Time[64];
-    CHAR                            Description[256];   
+    CHAR                            Description[512];
 }COSA_DML_NETWORKLOGS_LOG, *PCOSA_DML_NETWORKLOGS_LOG;
 
 
