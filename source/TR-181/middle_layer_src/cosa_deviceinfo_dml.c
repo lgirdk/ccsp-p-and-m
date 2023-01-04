@@ -19245,8 +19245,6 @@ PeriodicBeacon_GetParamUlongValue
 }
 
 
-
-
 BOOL
 PeriodicBeacon_SetParamUlongValue
 
@@ -19276,6 +19274,65 @@ PeriodicBeacon_SetParamUlongValue
 }
 
 
+BOOL 
+Broadcast_GetParamBoolValue(
+    ANSC_HANDLE hInsContext,
+    char *ParamName,
+    BOOL *pBool)
+{
+    CcspTraceInfo(("Broadcast_GetParamBoolValue \n"));
+    UNREFERENCED_PARAMETER(hInsContext);
+    char buf[8];
+    if (AnscEqualString(ParamName, "Enable", TRUE))
+    {
+        /* collect value */
+        syscfg_get(NULL, "BLEBroadcast", buf, sizeof(buf));
+
+        if (buf != NULL)
+        {
+            if (strcmp(buf, "true") == 0)
+                *pBool = TRUE;
+            else
+                *pBool = FALSE;
+        }
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+
+BOOL 
+Broadcast_SetParamBoolValue(
+    ANSC_HANDLE hInsContext,
+    char *ParamName,
+    BOOL bValue)
+{
+    CcspTraceInfo(("Broadcast_SetParamBoolValue \n"));
+    UNREFERENCED_PARAMETER(hInsContext);
+
+    if (IsBoolSame(hInsContext, ParamName, bValue, Broadcast_GetParamBoolValue))
+        return TRUE;
+
+    if (AnscEqualString(ParamName, "Enable", TRUE))
+    {
+        /* collect value */
+        if (bValue == TRUE)
+        {
+            syscfg_set(NULL, "BLEBroadcast", "true");
+            syscfg_commit();
+        }
+        else
+        {
+            syscfg_set(NULL, "BLEBroadcast", "false");
+            syscfg_commit();
+        }
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
 
 /**********************************************************************
 
