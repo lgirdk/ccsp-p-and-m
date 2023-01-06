@@ -572,35 +572,71 @@ CosaDmlGiSetUserBridgeModeAllowed
 
 ANSC_STATUS CosaDmlGiGetLedDSErrorTimer ( ANSC_HANDLE hContext, int *pValue )
 {
-    *pValue = platform_hal_GetLedDSErrorTimer();
+    char buf[12];
+
+    syscfg_get(NULL, "LedDSErrorTimer", buf, sizeof(buf));
+
+    *pValue = atoi(buf);
+
     return ANSC_STATUS_SUCCESS;
 }
 
 ANSC_STATUS CosaDmlGiSetLedDSErrorTimer ( ANSC_HANDLE hContext, int value )
 {
-    return platform_hal_SetLedDSErrorTimer(value);
+    if (platform_hal_SetLedDSErrorTimer(value) != RETURN_OK)
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    syscfg_set_u(NULL, "LedDSErrorTimer", (unsigned long) value);
+
+    return ANSC_STATUS_SUCCESS;
 }
 
 ANSC_STATUS CosaDmlGiGetLedUSErrorTimer ( ANSC_HANDLE hContext, int *pValue )
 {
-    *pValue = platform_hal_GetLedUSErrorTimer();
+    char buf[12];
+
+    syscfg_get(NULL, "LedUSErrorTimer", buf, sizeof(buf));
+
+    *pValue = atoi(buf);
+
     return ANSC_STATUS_SUCCESS;
 }
 
 ANSC_STATUS CosaDmlGiSetLedUSErrorTimer ( ANSC_HANDLE hContext, int value )
 {
-    return platform_hal_SetLedUSErrorTimer(value);
+    if (platform_hal_SetLedUSErrorTimer(value) != RETURN_OK)
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    syscfg_set_u(NULL, "LedUSErrorTimer", (unsigned long) value);
+
+    return ANSC_STATUS_SUCCESS;
 }
 
 ANSC_STATUS CosaDmlGiGetLedRegistrationErrorTimer ( ANSC_HANDLE hContext, int *pValue )
 {
-    *pValue = platform_hal_GetLedRegistrationErrorTimer();
+    char buf[12];
+
+    syscfg_get(NULL, "LedRegistrationErrorTimer", buf, sizeof(buf));
+
+    *pValue = atoi(buf);
+
     return ANSC_STATUS_SUCCESS;
 }
 
 ANSC_STATUS CosaDmlGiSetLedRegistrationErrorTimer ( ANSC_HANDLE hContext, int value )
 {
-    return platform_hal_SetLedRegistrationErrorTimer(value);
+    if (platform_hal_SetLedRegistrationErrorTimer(value) != RETURN_OK)
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    syscfg_set_u(NULL, "LedRegistrationErrorTimer", (unsigned long) value);
+
+    return ANSC_STATUS_SUCCESS;
 }
 
 ANSC_STATUS CosaDmlGiGetLedPONRegistrationErrorTimer ( ANSC_HANDLE hContext, int *pValue )
