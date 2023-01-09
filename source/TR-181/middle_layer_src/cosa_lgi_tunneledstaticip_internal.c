@@ -117,6 +117,7 @@ ANSC_STATUS CosaDmlTunneledStaticIPRestart (ANSC_HANDLE hThisObject)
     fprintf(fp, "radius_timeout  0\n");
     fprintf(fp, "radius_retries  5\n");
     fprintf(fp, "bindaddr *\n");
+    fprintf(fp, "bindiface erouter0\n");
     fclose(fp);
 
     system("vmbauth.sh");
