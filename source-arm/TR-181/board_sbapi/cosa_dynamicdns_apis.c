@@ -491,6 +491,25 @@ CosaDmlDynamicDns_Client_DelEntry
 }
 
 ANSC_STATUS
+CosaDmlDynamicDns_Client_DelAllEntry (void)
+{
+    int rc = -1;
+    UtopiaContext ctx;
+
+    if (!Utopia_Init(&ctx))
+        return ANSC_STATUS_FAILURE;
+
+    int nentries=CosaDmlDynamicDns_Client_GetNumberOfEntries();
+    for (int idx=0; idx<nentries; idx+=1) {
+        rc = Utopia_DelDynamicDnsClient(&ctx, idx);
+    }
+    Utopia_GetNumberOfDynamicDnsClient(&ctx, &g_NrDynamicDnsClient);
+    Utopia_Free(&ctx, !rc);
+
+    return (rc != 0) ? ANSC_STATUS_FAILURE : ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
 CosaDmlDynamicDns_Client_GetConf
     (
         ULONG ins,
