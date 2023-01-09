@@ -21,6 +21,8 @@
 #include "cosa_x_cisco_com_devicecontrol_internal.h"
 #include "cosa_x_lgi_com_gateway_apis.h"
 
+extern ANSC_STATUS CosaDmlDynamicDns_Client_DelAllEntry(void);
+
 ANSC_STATUS
 CosaDmlDsliteInit
     (
@@ -92,6 +94,10 @@ CosaDmlSetDsliteEnable
 
         rc = Utopia_SetDsliteEnable(&ctx, bEnabled);
         Utopia_Free(&ctx,!rc);
+
+        // disable dynamic dns in dslite mode and delete all client entries
+        syscfg_set_commit(NULL, "dynamic_dns_enable", "0");
+        CosaDmlDynamicDns_Client_DelAllEntry();
 
         // Check if ds-lite was already enabled in IPV6 mode before
         syscfg_get(NULL, "last_erouter_mode", erouter_mode, sizeof(erouter_mode));
