@@ -516,6 +516,13 @@ DeviceInfo_SetParamBoolValue_Custom
 	{
 		return TRUE;	
 	}
+#ifdef SKY_FEATURE_SELFHEAL
+        if (!bValue)
+        {
+            CcspTraceWarning(("%s : CAPTIVEPORTAL should be in enable mode for SKY_FEATURE_SELFHEAL\n", __FUNCTION__));
+            return FALSE;
+        }
+#endif
         if (CosaDmlSetCaptivePortalEnable(bValue) != ANSC_STATUS_SUCCESS)
             return FALSE;
      	pMyObject->bCaptivePortalEnable = bValue;

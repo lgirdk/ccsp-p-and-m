@@ -2926,6 +2926,7 @@ void FillPartnerIDValues(cJSON *json , char *partnerID , PCOSA_DATAMODEL_RDKB_UI
 							PUiBrand->WifiPersonal.Support = TRUE;
 							support = NULL;
 						}
+#ifndef SKY_FEATURE_SELFHEAL
 						else 
 						{
 							//to prevent traffic being redirected to lan ip
@@ -2933,6 +2934,7 @@ void FillPartnerIDValues(cJSON *json , char *partnerID , PCOSA_DATAMODEL_RDKB_UI
 							syscfg_commit();
 							CcspTraceWarning(("%s - CaptivePortal_Enable set to false %s\n", __FUNCTION__));
 						}
+#endif
 					}	
 					else
 					{
