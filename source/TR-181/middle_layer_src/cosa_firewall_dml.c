@@ -72,6 +72,7 @@
 #include "cosa_firewall_internal.h"
 #include "cosa_firewall_apis.h"
 #include "safec_lib_common.h"
+#include <utapi/utapi.h>
 
 /***********************************************************************
  IMPORTANT NOTE:
@@ -1173,6 +1174,38 @@ BOOL FW_V4_IpFilter_SetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName
     return FALSE;
 }
 
+BOOL is_allowed_dstaddr(char *daddr)
+{
+    int nlans=0;
+    UtopiaContext ctx;
+    lanAllowedSubnet_t allowed;
+    ULONG subip, submask;
+    ULONG dstip;
+
+    if (!Utopia_Init(&ctx))
+        return TRUE;
+
+    Utopia_GetNumberOfLanAllowedSubnet(&ctx,&nlans);
+
+    inet_pton(AF_INET,daddr,&dstip);
+    dstip=ntohl(dstip);
+
+    for (int idx=0; idx < nlans; idx++) {
+        Utopia_GetLanAllowedSubnetByIndex(&ctx,idx,&allowed);
+        inet_pton(AF_INET, allowed.SubnetIP, &subip);
+        inet_pton(AF_INET, allowed.SubnetMask, &submask);
+        subip=ntohl(subip);
+        submask=ntohl(submask);
+        CcspTraceWarning(("subip:0x%8x, submask:0x%08x, dstip:0x%08x\n", subip,submask,dstip)); 
+        if ((subip & submask) == (dstip & submask)) {
+            Utopia_Free(&ctx, 0);
+            return FALSE;
+        }
+    }
+    Utopia_Free(&ctx, 0);
+    return TRUE;
+}
+
 BOOL FW_V4_IpFilter_SetParamStringValue ( ANSC_HANDLE hInsContext, char* ParamName, char* strValue )
 {
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj            = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
@@ -1208,6 +1241,11 @@ BOOL FW_V4_IpFilter_SetParamStringValue ( ANSC_HANDLE hInsContext, char* ParamNa
         if (inet_pton(AF_INET, strValue, buf) != 1)
             return FALSE;
 
+        //validate if dst addr in allowed subnet range
+        if (!is_allowed_dstaddr(strValue)) {
+            return FALSE;
+        }
+
         snprintf(pFwIpFilter->DstStartIPAddress, sizeof(pFwIpFilter->DstStartIPAddress), "%s", strValue);
         return TRUE;
     }
@@ -1216,6 +1254,11 @@ BOOL FW_V4_IpFilter_SetParamStringValue ( ANSC_HANDLE hInsContext, char* ParamNa
     {
         if (inet_pton(AF_INET, strValue, buf) != 1)
             return FALSE;
+
+        //validate if dst addr in allowed subnet range
+        if (!is_allowed_dstaddr(strValue)) {
+            return FALSE;
+        }
 
         snprintf(pFwIpFilter->DstEndIPAddress, sizeof(pFwIpFilter->DstEndIPAddress), "%s", strValue);
         return TRUE;
