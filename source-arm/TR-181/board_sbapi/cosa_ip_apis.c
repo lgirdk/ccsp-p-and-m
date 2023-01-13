@@ -2639,6 +2639,12 @@ CosaDmlIpIfGetNumberOfV4Addrs
     int ret = 1;
     if(ulIpIfInstanceNumber == 1 )
     {
+        syscfg_get(NULL, "last_erouter_mode", output, sizeof(output));
+        if(atoi(output) == 2)
+        {
+            return 0;
+        }
+
         /* If erouter static ip is enabled then erouter interface should have two ipv4 entries */
         if(syscfg_get(NULL, "erouter_static_ip_enable", output, sizeof(output)) == 0)
         {
