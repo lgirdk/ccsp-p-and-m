@@ -4268,7 +4268,12 @@ NATPassthrough_DelEntry
 
     if (pLinkObj->bNew)
     {
+        pLinkObj->bNew = FALSE;
         CosaFwReg_NATPassthroughDelInfo((ANSC_HANDLE)pMyObject, (ANSC_HANDLE)pLinkObj);
+    }
+    else
+    {
+        CosaDmlFW_NATPassthrough_DelEntry(pLinkObj->InstanceNumber);
     }
     if (!pNATPassthrough)
     {
