@@ -1276,6 +1276,18 @@ BOOL FW_V4_IpFilter_SetParamStringValue ( ANSC_HANDLE hInsContext, char* ParamNa
     return FALSE;
 }
 
+static BOOL is_reserved_port (ULONG ulValue)
+{
+    if ((ulValue ==  53) || (ulValue == 135) ||
+        (ulValue == 137) || (ulValue == 139) ||
+        (ulValue == 161) || (ulValue == 162))
+    {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
 BOOL FW_V4_IpFilter_SetParamUlongValue ( ANSC_HANDLE hInsContext, char *ParamName, ULONG ulValue )
 {
     PCOSA_CONTEXT_LINK_OBJECT     pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
@@ -1287,6 +1299,9 @@ BOOL FW_V4_IpFilter_SetParamUlongValue ( ANSC_HANDLE hInsContext, char *ParamNam
         if (ret != TRUE)
             return FALSE;
 
+        if (is_reserved_port(ulValue))
+            return FALSE;
+
         pFwIpFilter->SrcStartPort = ulValue;
         return TRUE;
     }
@@ -1294,6 +1309,9 @@ BOOL FW_V4_IpFilter_SetParamUlongValue ( ANSC_HANDLE hInsContext, char *ParamNam
     {
         BOOL ret = Validate_IPFilterPorts(ParamName, ulValue);
         if (ret != TRUE)
+            return FALSE;
+
+        if (is_reserved_port(ulValue))
             return FALSE;
 
         pFwIpFilter->SrcEndPort = ulValue;
@@ -1305,6 +1323,9 @@ BOOL FW_V4_IpFilter_SetParamUlongValue ( ANSC_HANDLE hInsContext, char *ParamNam
         if (ret != TRUE)
             return FALSE;
 
+        if (is_reserved_port(ulValue))
+            return FALSE;
+
         pFwIpFilter->DstStartPort = ulValue;
         return TRUE;
     }
@@ -1312,6 +1333,9 @@ BOOL FW_V4_IpFilter_SetParamUlongValue ( ANSC_HANDLE hInsContext, char *ParamNam
     {
         BOOL ret = Validate_IPFilterPorts(ParamName, ulValue);
         if (ret != TRUE)
+            return FALSE;
+
+        if (is_reserved_port(ulValue))
             return FALSE;
 
         pFwIpFilter->DstEndPort = ulValue;
