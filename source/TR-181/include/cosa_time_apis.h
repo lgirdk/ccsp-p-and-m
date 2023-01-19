@@ -99,7 +99,7 @@ _COSA_DML_TIME_CFG
     COSA_BOOTSTRAP_STRING                            NTPServer3;     /* Either a host name of IP address */
     COSA_BOOTSTRAP_STRING                            NTPServer4;     /* Either a host name of IP address */
     COSA_BOOTSTRAP_STRING                            NTPServer5;     /* Either a host name of IP address */
-    char                            LocalTimeZone[256]; /* Local time zone definition, encoded in IEEE 1003.1 */
+    char                            LocalTimeZone[256+1]; /* Local time zone definition, encoded in IEEE 1003.1 */
     BOOLEAN                         bDaylightSaving;
     LONG                            DaylightSavingOffset;
     ULONG                           cityIndex;
