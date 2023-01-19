@@ -945,13 +945,73 @@ Time_SetParamStringValue
 
     if (strcmp(ParamName, "LocalTimeZone") == 0)
     {
-        /* save update to backup */
-        rc = strcpy_s(pMyObject->TimeCfg.LocalTimeZone,sizeof(pMyObject->TimeCfg.LocalTimeZone), pString);
-        if(rc != EOK)
-        {
-            ERR_CHK(rc);
+        FILE *fp;
+        char tz[257 * 2];           /* max size in data model is 256 + 1. In worse case length will double when escaped */
+        char cmd[(257 * 2) + 64];
+        char date[8];
+        char month[8];
+        int day;
+        int hour;
+        int minute;
+        int second;
+        int year;
+        char *ptz;
+        int len;
+        int i;
+
+        len = (int) strlen(pString);
+        if (len >= (sizeof(tz)/2))
             return FALSE;
-        }
+
+        ptz = tz;
+
+        /*
+           Escape every non-alphanumeric character before passing
+           TZ string to the shell.
+        */
+        for (i = 0; i < len; i++)
+        {
+            char strc = pString[i];
+
+            if (((strc >= 'a') && (strc <= 'z')) ||
+                ((strc >= 'A') && (strc <= 'Z')) ||
+                ((strc >= '0') && (strc <= '9')))
+            {
+                *ptz++ = strc;
+            }
+            else
+            {
+                *ptz++ = '\\';
+                *ptz++ = strc;
+            }
+        }        
+
+        *ptz = 0;
+
+        snprintf(cmd, sizeof(cmd), "export TZ=%s ; busybox date", tz);
+
+        fp = popen(cmd, "r");
+        if (fp == NULL)
+            return FALSE;
+
+        i = fscanf(fp, "%7s %7s %d %d:%d:%d %d", date, month, &day, &hour, &minute, &second, &year);
+
+        pclose(fp);
+
+        /*
+           If the localtimezone is valid. the date command will include it in it's output e.g. "Tue Jan 17 21:36:28 GMT 2023"
+           If the localtimezone is invalud, the date command will output e.g. "Jan 17 21:36:28  2023" (ie without the timezone string).
+           so if the fscanf() format string parses a year value, pString is NOT a valid timezone..
+        */
+        if (i == 7)
+            return FALSE;
+
+        /* sanity check... */
+        if (len >= sizeof(pMyObject->TimeCfg.LocalTimeZone))
+            return FALSE;
+
+        memcpy(pMyObject->TimeCfg.LocalTimeZone, pString, len + 1);
+
         return TRUE;
     }
 
