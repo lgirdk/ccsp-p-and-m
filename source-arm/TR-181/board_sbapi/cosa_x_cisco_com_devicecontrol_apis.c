@@ -2228,6 +2228,10 @@ CosaDmlDcSetFactoryReset
                                 fprintf(pdbFile,"%d\n",dbValue);
                                 fclose(pdbFile);
                         }
+#if defined (HUB4_SDK_L07)
+                    // set WAN Mode on Factory Reset
+                    v_secure_system("/usr/bin/imagetool -s option_b_sky_wan_mode -v 0");
+#endif
                 }
 #endif
 
