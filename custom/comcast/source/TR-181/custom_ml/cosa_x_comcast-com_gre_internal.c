@@ -55,7 +55,7 @@
 #include "cosa_x_comcast-com_gre_apis.h"
 #include "libHotspotApi.h"
 #include "cosa_deviceinfo_internal.h"
-#define SIZE_OF_IP 16
+#define SIZE_OF_IP 40
 #define POLL_CIRCUIT_ID_SLEEP 3
 
 int hotspot_update_circuit_ids(int,int);
