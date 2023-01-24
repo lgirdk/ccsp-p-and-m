@@ -5676,6 +5676,11 @@ IPv6Prefix_Validate
                 if(rc != EOK)
                 {
                   ERR_CHK(rc);
+		  // CID 175698 : Resource leak (RESOURCE_LEAK)
+		  AnscFreeMemory(dup);
+                  AnscFreeMemory(p);
+                  dup = NULL;
+                  p = NULL;
                   return FALSE;
                 }
                 *puLength = AnscSizeOfString("Prefix");

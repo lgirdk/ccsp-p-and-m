@@ -1349,6 +1349,8 @@ int _getMac(char* ifName, char* mac){
     rc = strcpy_s(ifr.ifr_name, sizeof(ifr.ifr_name), ifName);
     if(rc != EOK)
     {
+       // CID 162577 : Resource leak (RESOURCE_LEAK)
+       close(skfd);
        ERR_CHK(rc);
        return -1;
     }
@@ -1389,11 +1391,15 @@ COSA_DML_IF_STATUS getIfStatus(const PUCHAR name, struct ifreq *pIfr)
     rc = strcpy_s(ifr.ifr_name, sizeof(ifr.ifr_name), (char*)name);
     if(rc != EOK)
     {
+	// CID 162574 : Resource leak (RESOURCE_LEAK)
+	close(skfd);
         ERR_CHK(rc);
         return -1;
     }
 
     if (!isValid((char*)name)) {
+	// CID 162574 : Resource leak (RESOURCE_LEAK)
+	close(skfd);
         return -1;
     }
     
@@ -1468,10 +1474,14 @@ BOOLEAN getIfAvailability( const PUCHAR name )
     if(rc != EOK)
     {
        ERR_CHK(rc);
+       // CID 162578 : Resource leak (RESOURCE_LEAK)
+       close(skfd);
        return -1;
     }
 
     if (!isValid((char*)name)) {
+	// CID 162578 : Resource leak (RESOURCE_LEAK)
+        close(skfd);
         return -1;
     }
     

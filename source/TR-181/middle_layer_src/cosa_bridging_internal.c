@@ -476,7 +476,6 @@ CosaBridgingInitialize
 
                 if ( !pCosaContext2 )
                 {  
-                    AnscFreeMemory(pPort);
                     returnStatus = ANSC_STATUS_RESOURCES;
                     AnscTraceFlow(("<$HL> %s bridge instance:%lu cannot allocate any memory for pCosaContext2\n",__FUNCTION__,
                         pDmlBridge->Cfg.InstanceNumber));

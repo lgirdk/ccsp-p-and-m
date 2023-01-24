@@ -427,7 +427,8 @@ X_CISCO_COM_DeviceControl_GetParamUlongValue
     ULONG                           uSize    = 0;
     ANSC_STATUS                     retStatus= ANSC_STATUS_SUCCESS;
     COSA_DML_WanAddrMode            wanAddrMode;
-    ULONG                           ipAddr;
+    // CID 55685 : Uninitialized scalar variable 
+    ULONG                           ipAddr = 0;
 
     if (strcmp(ParamName, "MultiHomedHSDFlag") == 0)
     {

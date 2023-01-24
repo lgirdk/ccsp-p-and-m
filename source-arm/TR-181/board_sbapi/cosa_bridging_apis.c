@@ -3554,8 +3554,9 @@ ANSC_STATUS lanBrPCtlSetEnabled(PBRIDGE_PORT port, BOOLEAN enable) {
     }
 #endif
 
-    AnscCopyString(ifr.ifr_name, port->name);
-  
+    //CID 281798 : Destination buffer too small (STRING_OVERFLOW)
+    _ansc_strncpy(ifr.ifr_name, port->name,sizeof(ifr.ifr_name)-1); 
+     
     ioctl(fd, SIOCGIFFLAGS, &ifr);
 
     if(enable) {
@@ -3580,8 +3581,9 @@ ANSC_STATUS lanBrPCtlGetEnabled(PBRIDGE_PORT port, BOOLEAN* enabled) {
 
     CcspTraceInfo(("------lanBrPCtlGetEnabled, port:%s...\n", port->name));
 
-    AnscCopyString(ifr.ifr_name, port->name);
-  
+    //CID 281957 : Destination buffer too small (STRING_OVERFLOW)
+    _ansc_strncpy(ifr.ifr_name, port->name,sizeof(ifr.ifr_name)-1);
+
     ioctl(fd, SIOCGIFFLAGS, &ifr);
 
     *enabled = (ifr.ifr_flags & IFF_UP) && (ifr.ifr_flags & IFF_RUNNING);

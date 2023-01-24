@@ -14127,8 +14127,8 @@ IPv6onPOD_SetParamBoolValue
 								if(bFound == FALSE)
 								{
 								// interface is not present in the list, we need to add interface to enable IPv6 PD
-
-										strncpy(OutBuff, buf, sizeof(buf));
+                                                                                // CID 175253 : Buffer not null terminated (BUFFER_SIZE)
+										strncpy(OutBuff, buf, sizeof(buf)-1);
 										strcat(OutBuff,Inf_name);
 										strcat(OutBuff,",");
 										syscfg_set_commit(NULL, "IPv6_Interface",OutBuff);
@@ -21134,6 +21134,9 @@ HwHealthTestPTREnable_SetParamBoolValue
             //Remove all the hwselftest job from crontab
             v_secure_system("/usr/bin/hwselftest_cronjobscheduler.sh false &");
         }
+	// CID 163522 : Resource leak (RESOURCE_LEAK)
+	if(fp)
+            fclose(fp);
         return TRUE;
    }
     return FALSE;
@@ -22561,7 +22564,8 @@ NonRootSupport_GetParamStringValue
       fp=fopen(APPARMOR_BLOCKLIST_FILE,"r");
       if(fp != NULL) {
          while((read = getline(&buf, &len, fp)) != -1) {
-             strncpy(tmp,buf,sizeof(tmp));
+	     // CID 279876 : Buffer not null terminated (BUFFER_SIZE)
+             strncpy(tmp,buf,sizeof(tmp)-1);
              strtok_r(buf,":",&sptr);
              if(buf != NULL) {
                 if(strstr(files_name, buf) != NULL )  {
@@ -22591,6 +22595,8 @@ NonRootSupport_GetParamStringValue
              Replace_AllOccurrence( pValue, *pUlSize, '\n', ',');
              CcspTraceWarning(("Blocklist processes:%s\n", pValue));
          }
+	 //CID 279890 : Resource Leak
+	 fclose(fp);
          return 0;
       }
       else if((fp == NULL) || (isspace(buf[0])) || (buf == NULL)) {
@@ -22616,7 +22622,12 @@ static BOOL ValidateInput_Arguments(char *input, FILE *tmp_fptr)
   char tmp[BUF_SIZE]={0};
   char *arg=NULL;
   dir=opendir(APPARMOR_PROFILE_DIR);
+  // CID 180947 : Resource leak (RESOURCE_LEAK)
   if( (dir == NULL) || (tmp_fptr == NULL) ) {
+     if(tmp_fptr)
+         fclose(tmp_fptr);
+     if(dir)
+	 closedir(dir);
      CcspTraceError(("Failed to open the %s directory\n", APPARMOR_PROFILE_DIR));
      return FALSE;
   }
@@ -22645,7 +22656,8 @@ static BOOL ValidateInput_Arguments(char *input, FILE *tmp_fptr)
               CcspTraceWarning(("Invalid input arguments in the parser:%s\n", token));
               return FALSE;
         }
-        strncpy(tmp,token,sizeof(tmp));
+	// CID 180948 : Buffer not null terminated (BUFFER_SIZE)
+        strncpy(tmp,token,sizeof(tmp)-1);
         subtoken=strtok_r(tmp,":",&sptr);
         if(subtoken != NULL) {
            sub_string=strstr(files_name, subtoken);
@@ -22692,6 +22704,9 @@ NonRootSupport_SetParamStringValue
      }
      /* To ensure input arguments are valid or not */
      if (ValidateInput_Arguments(pValue, tmp_fptr) != TRUE) {
+	 // CID 180949 : Resource leak (RESOURCE_LEAK)
+	 if(fptr)
+            fclose(fptr);
          return FALSE;
      }
      /* Copying tmp file contents into main file by using rename() */

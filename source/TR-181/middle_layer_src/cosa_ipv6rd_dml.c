@@ -537,6 +537,12 @@ IPv6rdIF_GetParamStringValue(
            if(rc != EOK)
            {
              ERR_CHK(rc);
+	     // CID 178705 : Resource leak (RESOURCE_LEAK)
+	     if(path)
+             {
+                 AnscFreeMemory(path);
+                 path = NULL;
+             }
              return -1;
            }
         }

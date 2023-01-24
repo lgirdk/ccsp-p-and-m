@@ -741,9 +741,9 @@ int readFromFile(char *filename, char **data, int *len)
 	
 	fread(*data, 1, ch_count,fp);
         //fgets(*data,400,fp);
-        printf("........data is %s len%zu\n", *data, strlen(*data));
 	*len = ch_count;
 	(*data)[ch_count] ='\0';
+        //CID 143643 : String not null terminated (STRING_NULL)
         printf("character count is %d\n",ch_count);
         printf("data is %s len %zu\n", *data, strlen(*data));
 	fclose(fp);

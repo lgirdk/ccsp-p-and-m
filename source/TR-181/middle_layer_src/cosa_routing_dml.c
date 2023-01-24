@@ -6662,6 +6662,12 @@ InterfaceSetting3_Synchronize
     
         if( !pMyObject->RouteInfo.pInfo )
         {
+	    // CID 125174 : Resource leak (RESOURCE_LEAK)
+            if (pEntries != NULL)
+            {
+                AnscFreeMemory(pEntries);
+                pEntries = NULL;
+            }
             return ANSC_STATUS_RESOURCES;
         }
     

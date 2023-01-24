@@ -1466,8 +1466,8 @@ ULONG CosaUtilIoctlXXX(char * if_name, char * method, void * input)
     {
         return 0;
     }
-
-    strncpy(ifr.ifr_name, if_name, IF_NAMESIZE);
+    //CID 162999 : Buffer not null terminated 
+    strncpy(ifr.ifr_name, if_name, IF_NAMESIZE-1);
 
     if (!strcmp(method, "mtu"))
     {

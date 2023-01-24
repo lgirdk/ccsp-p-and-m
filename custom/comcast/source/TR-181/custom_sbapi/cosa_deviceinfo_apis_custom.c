@@ -580,8 +580,11 @@ CosaDmlDiSetXfinityWiFiEnable
     snprintf(rec, sizeof(rec), "%s",  WEB_CONF_ENABLE);
     if((PsmGet(rec, val, sizeof(val)) != 0)){
         AnscTraceError(("%s Failed to get psm value for Webconfig \n", __FUNCTION__));
-        if(fptr != NULL)
+	// CID 175442 : Resource leak (RESOURCE_LEAK)
+	if(fptr)
+        {
             fclose(fptr);
+        }
         return ANSC_STATUS_FAILURE;
     }
     if((strcmp(val, "true") == 0) && (NULL != fptr))
@@ -604,6 +607,11 @@ CosaDmlDiSetXfinityWiFiEnable
         rc = strcmp_s(temp, strlen(temp), "MAPT", &strcmp_ret);
         if ( (rc == EOK) && (strcmp_ret == 0) && (value != false) )
         {
+            // CID 175442 : Resource leak (RESOURCE_LEAK)
+	    if(fptr)
+            {
+                fclose(fptr);
+            }
             AnscTraceWarning(("%s: Disable Hotspot in MapT Mode\n",__FUNCTION__));
             return ANSC_STATUS_FAILURE;
         }

@@ -156,6 +156,12 @@ BOOL unpackAndProcessHotspotData(char* pString)
                     {
                         hotspotdoc_destroy(hd);
                     }
+		    // CID 173224: Resource leak (RESOURCE_LEAK)
+                    if(wifi_encoded_data)
+                    {
+		        free(wifi_encoded_data);
+                        wifi_encoded_data = NULL;
+                    }
                     return FALSE;
                 }
             }

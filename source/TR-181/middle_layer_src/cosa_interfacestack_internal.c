@@ -757,7 +757,9 @@ CosaIFStackCreateAll
                             
                             if ( _ansc_strcmp(pStringToken->Name + ulLength, ".") == 0 )
                             {
-                                AnscCopyMemory(sInterfaceStack.LowerLayer, pStringToken->Name, ulLength);
+                                // CID 277494 : Destination buffer too small
+                                if(ulLength < sizeof(sInterfaceStack.LowerLayer))
+                                    AnscCopyMemory(sInterfaceStack.LowerLayer, pStringToken->Name, ulLength);
                             } 
                             else
                             {
