@@ -4979,27 +4979,14 @@ Pool1_SetParamIntValue
 
     if (strcmp(ParamName, "LeaseTime") == 0)
     {
-        /*  enter only valid values 
-            UNITS
-            seconds=iValue;(min-120 max-999)
-            minutes=iValue/60;
-            hours=iValue/3600;
-            days=iValue/86400;
-            weeks=iValue/604800;
-            forever=-1;
-        */
         if((iValue>=0) && (iValue<MINSECS))
             return FALSE;
-        if((iValue%WEEKS==0)  ||
-            (iValue%DAYS==0)  ||
-            (iValue%HOURS==0) ||
-            (iValue%MIN==0)   ||
-            (iValue<=MAXSECS) ||
-            (iValue==-1)){
+        if(((iValue>=MINSECS) && (iValue<=WEEKS)) || (iValue==-1))
+        {
                 /* save update to backup */
                 pPool->Cfg.LeaseTime= iValue;
                 return TRUE;
-	}
+        }
     }
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
