@@ -1274,9 +1274,9 @@ BOOL is_reserved_port(ULONG ulValue)
 
     for(int i=0; i < NUM_OF_RESERVED_PORTS; i++) {
         if (ulValue == reserved_ports[i]) 
-            return FALSE;
+            return TRUE;
     }
-    return TRUE;
+    return FALSE;
 }
 
 BOOL FW_V4_IpFilter_SetParamUlongValue ( ANSC_HANDLE hInsContext, char *ParamName, ULONG ulValue )
