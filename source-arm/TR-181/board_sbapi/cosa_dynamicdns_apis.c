@@ -291,7 +291,13 @@ CosaDmlDynamicDns_SetEnable
            char buf[4];
            syscfg_get(NULL, "dslite_enable", buf, sizeof(buf));
            if (strcmp(buf, "1") == 0)
+           {
                return -1;
+           }
+           else if (CosaDmlDynamicDns_GetEnable())
+           {
+               return 0;
+           }
        }
 
        syscfg_set(NULL, "dynamic_dns_enable", (bValue == TRUE) ? "1" : "0");
