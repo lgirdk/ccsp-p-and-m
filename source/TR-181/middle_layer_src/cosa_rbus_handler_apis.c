@@ -27,6 +27,7 @@
 #include "ccsp_psm_helper.h"
 #include "safec_lib_common.h"
 #include "cosa_dhcpv6_apis.h"
+#include "syscfg/syscfg.h"
 
 rbusHandle_t handle;
 
@@ -62,52 +63,50 @@ pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
  ***********************************************************************/
 rbusError_t getUlongHandler(rbusHandle_t handle, rbusProperty_t property, rbusGetHandlerOptions_t *opts)
-{
-	pthread_mutex_lock(&mutex);
-	char const* name = rbusProperty_GetName(property);
-	(void)handle;
-	(void)opts;
-	rbusValue_t value;
-	rbusValue_Init(&value);
+{	
+    pthread_mutex_lock(&mutex);
+    char const* name = rbusProperty_GetName(property);
+    (void)handle;
+    (void)opts;
+    rbusValue_t value;
+    rbusValue_Init(&value);
 
-	if (strcmp(name, DEVCTRL_NET_MODE_TR181) == 0)
-	{
+    if (strcmp(name, DEVCTRL_NET_MODE_TR181) == 0)
+    {
 #if defined (RDKB_EXTENDER_ENABLED)
-		char *strValue = NULL;
-        int retPsmGet = CCSP_SUCCESS;
-
-        retPsmGet = PSM_Get_Record_Value2(g_MessageBusHandle, g_Subsystem, "dmsb.device.NetworkingMode", NULL, &strValue);
-        if (retPsmGet == CCSP_SUCCESS) {
-            deviceControl_Net_Mode.DevCtrlNetMode = _ansc_atoi(strValue);
-            ((CCSP_MESSAGE_BUS_INFO *)g_MessageBusHandle)->freefunc(strValue);
-			CcspTraceWarning(("Getting Device Networking Mode value, new value = '%lu'\n", deviceControl_Net_Mode.DevCtrlNetMode));
-			rbusValue_SetUInt32(value, deviceControl_Net_Mode.DevCtrlNetMode);
-        }
-		else {
-			CcspTraceError(("PSM get record failed for dmsb.device.NetworkingMode,ret value %d\n",retPsmGet));
-			deviceControl_Net_Mode.DevCtrlNetMode = 0;
-			CcspTraceWarning(("Returning '%lu' as NetworkingMode\n", deviceControl_Net_Mode.DevCtrlNetMode));
-			rbusValue_SetUInt32(value, deviceControl_Net_Mode.DevCtrlNetMode);
-		}
+    char buf[ 8 ] = { 0 };
+    if( 0 == syscfg_get( NULL, "Device_Mode", buf, sizeof( buf ) ) )
+    {
+        deviceControl_Net_Mode.DevCtrlNetMode = atoi(buf);
+        CcspTraceWarning(("Getting Device Networking Mode value, new value = '%lu'\n", deviceControl_Net_Mode.DevCtrlNetMode));
+        rbusValue_SetUInt32(value, deviceControl_Net_Mode.DevCtrlNetMode);
+    }
+    else
+    {
+        CcspTraceError(("syscfg_get failed to retrieve  device networking mode\n")); 
+        deviceControl_Net_Mode.DevCtrlNetMode = 0;
+        CcspTraceWarning(("Returning '%lu' as NetworkingMode\n", deviceControl_Net_Mode.DevCtrlNetMode));
+        rbusValue_SetUInt32(value, deviceControl_Net_Mode.DevCtrlNetMode);
+    }     
 #else
-		//setting value as router for non-xle devices
-		deviceControl_Net_Mode.DevCtrlNetMode = 0;
-		CcspTraceWarning(("Getting Device Networking Mode value for non-xle devices, new value = '%lu'\n", deviceControl_Net_Mode.DevCtrlNetMode));
-		rbusValue_SetUInt32(value, deviceControl_Net_Mode.DevCtrlNetMode);
+        //setting value as router for non-xle devices	
+        deviceControl_Net_Mode.DevCtrlNetMode = 0;
+        CcspTraceWarning(("Getting Device Networking Mode value for non-xle devices, new value = '%lu'\n", deviceControl_Net_Mode.DevCtrlNetMode));
+        rbusValue_SetUInt32(value, deviceControl_Net_Mode.DevCtrlNetMode);
 #endif
-	}
-	else
-	{
-		CcspTraceWarning(("Device Networking Mode rbus get handler invalid input\n"));
-		pthread_mutex_unlock(&mutex);
-		return RBUS_ERROR_INVALID_INPUT;
-	}
+    }
+    else
+    {	
+        CcspTraceWarning(("Device Networking Mode rbus get handler invalid input\n"));
+        pthread_mutex_unlock(&mutex);
+        return RBUS_ERROR_INVALID_INPUT;
+    }
 	
-	rbusProperty_SetValue(property, value);
-	rbusValue_Release(value);
+    rbusProperty_SetValue(property, value);
+    rbusValue_Release(value);
     pthread_mutex_unlock(&mutex);
 
-	return RBUS_ERROR_SUCCESS;
+    return RBUS_ERROR_SUCCESS;
 }
 
 /*************************Set hanlder for local data*****************************************/
@@ -120,10 +119,11 @@ rbusError_t setUlongHandler(rbusHandle_t handle, rbusProperty_t prop, rbusSetHan
     char const* name = rbusProperty_GetName(prop);
     rbusValue_t value = rbusProperty_GetValue(prop);
     rbusValueType_t type = rbusValue_GetType(value);
-	rbusError_t ret = RBUS_ERROR_SUCCESS;
-	char strValue[3] = {0};
-	errno_t  rc = -1;
-	uint32_t rVal = 0;
+    rbusError_t ret = RBUS_ERROR_SUCCESS;
+    char strValue[3] = {0};
+    errno_t  rc = -1;
+    uint32_t rVal = 0;
+    char buf[8] = {0};
    
     //Here deviceControl_Net_Mode is global
 
@@ -131,58 +131,77 @@ rbusError_t setUlongHandler(rbusHandle_t handle, rbusProperty_t prop, rbusSetHan
     {
         if (type != RBUS_UINT32)
         {
-			CcspTraceWarning(("Device Networking Mode input value is of invalid type\n"));
-			pthread_mutex_unlock(&mutex);
+            CcspTraceWarning(("Device Networking Mode input value is of invalid type\n"));
+            pthread_mutex_unlock(&mutex);
             return RBUS_ERROR_INVALID_INPUT;
         }
 
-	//Getting value from rbus set
+        //Getting value from rbus set
         rVal = rbusValue_GetUInt32(value);
         if (rVal > 1) {
-          CcspTraceError(("Invalid set value for the parameter '%s'\n", DEVCTRL_NET_MODE_TR181));
-          return RBUS_ERROR_INVALID_INPUT;
+            CcspTraceError(("Invalid set value for the parameter '%s'\n", DEVCTRL_NET_MODE_TR181));
+            return RBUS_ERROR_INVALID_INPUT;
         }
 
         /* Updating the Device Networking Mode in PSM database over sysevent */
         rc = sprintf_s(strValue, sizeof(strValue),"%lu", rVal);
         if(rc < EOK)
         {
-          ERR_CHK(rc);
+            ERR_CHK(rc);
         }
 
-		if (0 > sysevent_fd)
-		{
-			CcspTraceError(("Failed to execute sysevent_set. sysevent_fd have no value:'%d'\n", sysevent_fd));
-			return RBUS_ERROR_BUS_ERROR;
-		}
-		if(sysevent_set(sysevent_fd, sysevent_token, "DeviceMode", strValue, 0) != 0)
-		{
-			CcspTraceError(("Failed to execute sysevent_set from %s:%d\n", __FUNCTION__, __LINE__));
-			return RBUS_ERROR_BUS_ERROR;
-		}
-		CcspTraceInfo(("sysevent_set execution success.\n"));
-    }
-
-    // Fetch old value
-	uint32_t oldDevCtrlNetMode = deviceControl_Net_Mode.DevCtrlNetMode;
-	//update DevCtrlNetMode with new value and publish
-	if (oldDevCtrlNetMode != rVal) {
-		deviceControl_Net_Mode.DevCtrlNetMode = rVal;
-		ret = publishDevCtrlNetMode(rVal, oldDevCtrlNetMode);
-		if (ret != RBUS_ERROR_SUCCESS) {
-			CcspTraceError(("%s-%d: Failed to update and publish device mode value\n", __FUNCTION__, __LINE__));
-			return ret;
-		}
-		configureIpv6Route(rVal);
-	}
+        if (0 > sysevent_fd)
+        {
+            CcspTraceError(("Failed to execute sysevent_set. sysevent_fd have no value:'%d'\n", sysevent_fd));
+            return RBUS_ERROR_BUS_ERROR;
+        }
+		
+        // Fetch old value    
+        uint32_t oldDevCtrlNetMode = deviceControl_Net_Mode.DevCtrlNetMode;
+        //update DevCtrlNetMode with new value and publish
+        if (oldDevCtrlNetMode != rVal) 	
+        {
+            snprintf(buf,sizeof(buf),"%d",rVal);
+        
+            //Setting Device Mode
+            if (syscfg_set(NULL, "Device_Mode", buf) != 0)
+            {
+                CcspTraceInfo(("\n Device_Mode set syscfg failed\n"));       
+            }
+            else
+            {
+                if (syscfg_commit() != 0)
+                {
+                    CcspTraceInfo(("\nDevice_Mode syscfg_commit failed\n"));
+                }
+                else
+                {
+                    if(sysevent_set(sysevent_fd, sysevent_token, "DeviceMode", strValue, 0) != 0)
+                    {
+                        CcspTraceError(("Failed to execute sysevent_set from %s:%d\n", __FUNCTION__, __LINE__));
+                        return RBUS_ERROR_BUS_ERROR;
+                    }
+                    CcspTraceInfo(("sysevent_set execution success.\n"));
+                    deviceControl_Net_Mode.DevCtrlNetMode = rVal;
+                    ret = publishDevCtrlNetMode(rVal, oldDevCtrlNetMode);
+                    if (ret != RBUS_ERROR_SUCCESS)
+                    {
+                        CcspTraceError(("%s-%d: Failed to update and publish device mode value\n", __FUNCTION__, __LINE__));
+                        return ret;
+                    }
+                    configureIpv6Route(rVal);
+                }
+            }
+        }
+    }    
     pthread_mutex_unlock(&mutex);
     return RBUS_ERROR_SUCCESS;
-#else
-	(void)handle;
+#else	
+    (void)handle;
     (void)opts;
-	(void)prop;
-	CcspTraceError(("Set handler not supported for this device.\n"));
-	return RBUS_ERROR_BUS_ERROR;
+    (void)prop;
+    CcspTraceError(("Set handler not supported for this device.\n"));
+    return RBUS_ERROR_BUS_ERROR;
 #endif
 }
 
