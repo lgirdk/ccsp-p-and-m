@@ -127,6 +127,9 @@ CosaLgiGatewayInitialize
     pMyObject->dns_rebind_protection_enable = 0;
     CosaDmlDNS_Rebind_GetConf(&(pMyObject->dns_rebind_protection_enable));
 
+    CosaDmlLgiGwUpdateDnsIpset(pMyObject->dns_ipv4_preferred, pMyObject->dns_ipv4_alternate,
+                               pMyObject->dns_ipv6_preferred, pMyObject->dns_ipv6_alternate);
+
     if (pMyObject->dns_rebind_protection_enable)
     {
         system("/usr/bin/dns_filter &");
