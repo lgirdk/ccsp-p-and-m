@@ -376,6 +376,9 @@ LgiGateway_Commit
     PCOSA_DATAMODEL_LGI_GATEWAY  pMyObject = (PCOSA_DATAMODEL_LGI_GATEWAY)g_pCosaBEManager->hLgiGateway;
     CosaDmlLgiGwSetIpv6LanMode(NULL, pMyObject->ipv6LanMode);
 
+    CosaDmlLgiGwUpdateDnsIpset(pMyObject->dns_ipv4_preferred, pMyObject->dns_ipv4_alternate,
+                               pMyObject->dns_ipv6_preferred, pMyObject->dns_ipv6_alternate);
+
     syscfg_set(NULL, "dns_ipv4_preferred", pMyObject->dns_ipv4_preferred);
     syscfg_set(NULL, "dns_ipv4_alternate", pMyObject->dns_ipv4_alternate);
     syscfg_set(NULL, "dns_ipv6_preferred", pMyObject->dns_ipv6_preferred);
