@@ -179,6 +179,24 @@ int CosaDmlLgiGwGetDnsIpv6Alternate ( char *pValue, ULONG *pUlSize )
     return 0;
 }
 
+void CosaDmlLgiGwUpdateDnsIpset(char *ipv4_preferred, char *ipv4_alternate, char *ipv6_preferred, char *ipv6_alternate)
+{
+    v_secure_system("ipset create dns_v4_set hash:ip");
+    v_secure_system("ipset create dns_v6_set hash:ip family inet6");
+
+    v_secure_system("ipset flush dns_v4_set");
+    v_secure_system("ipset flush dns_v6_set");
+
+    if (strlen(ipv4_preferred))
+        v_secure_system("ipset add dns_v4_set %s", ipv4_preferred);
+    if (strlen(ipv4_alternate))
+        v_secure_system("ipset add dns_v4_set %s", ipv4_alternate);
+    if (strlen(ipv6_preferred))
+        v_secure_system("ipset add dns_v6_set %s", ipv6_preferred);
+    if (strlen(ipv6_alternate))
+        v_secure_system("ipset add dns_v6_set %s", ipv6_alternate);
+}
+
 #ifdef _LG_MV3_
 #define LANMODE     "Device.X_CISCO_COM_DeviceControl.LanManagementEntry.1.LanMode"
 #define ROUTER_MODE "router"
