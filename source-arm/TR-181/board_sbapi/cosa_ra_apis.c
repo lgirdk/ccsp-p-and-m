@@ -677,7 +677,8 @@ CosaDmlRaIfGetNumberOfOptions
 {
     UNREFERENCED_PARAMETER(hContext);
     UNREFERENCED_PARAMETER(ulRaIfInstanceNumber);
-    return 0;
+    /* fix me if more option support needs to be implemented */
+    return 1;
 }
 
 ANSC_STATUS
@@ -691,10 +692,65 @@ CosaDmlRaIfGetOption
 {
     UNREFERENCED_PARAMETER(hContext);
     UNREFERENCED_PARAMETER(ulRaIfInstanceNumber);
-    UNREFERENCED_PARAMETER(ulIndex);
-    UNREFERENCED_PARAMETER(pEntry);
-    fprintf(stderr, "%s: NOT SUPPORTED FOR NOW!!\n", __FUNCTION__);
-    return ANSC_STATUS_FAILURE;
+
+    pEntry->Value[0] = 0;
+
+    if (ulIndex == 1)
+    {
+        bool bDnsOverride;
+
+        CosaDmlLgiGwGetDnsOverride(&bDnsOverride);
+
+        /* if dns_override is false or undefined then append DNS server(s) from ipv6_nameserver */
+        if (!bDnsOverride)
+        {
+            char ipv6_nameserver[RA_OPTION_VALUE_SIZE];
+
+            commonSyseventGet("ipv6_nameserver", ipv6_nameserver, sizeof(ipv6_nameserver));
+
+            if (ipv6_nameserver[0] != 0)
+            {
+                int addcoma = 0;
+                char *token = strtok(ipv6_nameserver, " ");
+
+                while (token != NULL)
+                {
+                    if (addcoma)
+                    {
+                        strcat(pEntry->Value, ",");
+                    }
+                    addcoma = 1;
+                    strcat(pEntry->Value, token);
+                    token = strtok(NULL, " ");
+                }
+            }
+        }
+        else
+        {
+            // Collect from syscfg db
+	    size_t len, len2, optvalsz = sizeof(pEntry->Value) - 1;
+
+            syscfg_get(NULL, "dns_ipv6_preferred", pEntry->Value, optvalsz);
+            len = strlen(pEntry->Value);
+            if (len != 0)
+            {
+                pEntry->Value[len] = ',';
+                pEntry->Value[len + 1] = 0;
+                len += 1;
+                optvalsz -= len;
+            }
+
+            syscfg_get(NULL, "dns_ipv6_alternate", pEntry->Value + len, optvalsz);
+            len2 = strlen(pEntry->Value + len);
+            if ((len != 0) && (len2 == 0))
+            {
+                /* No second value, remove comma */
+                pEntry->Value[len - 1] = 0;
+            }
+        }
+    }
+
+    return ANSC_STATUS_SUCCESS;
 }
 
 ANSC_STATUS
