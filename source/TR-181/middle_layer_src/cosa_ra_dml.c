@@ -2393,7 +2393,7 @@ Option5_GetParamStringValue
     errno_t                         rc                      = -1;
 
     CosaDmlRaIfGetOption(hInsContext, pCosaContext->InstanceNumber, pOption->InstanceNumber, pOption);
-    
+
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "Alias") == 0)
     {

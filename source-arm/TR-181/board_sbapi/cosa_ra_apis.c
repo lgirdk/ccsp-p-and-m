@@ -692,73 +692,61 @@ CosaDmlRaIfGetOption
 {
     UNREFERENCED_PARAMETER(hContext);
     UNREFERENCED_PARAMETER(ulRaIfInstanceNumber);
-    UNREFERENCED_PARAMETER(ulIndex);
 
-    bool bDnsOverride;
-    int addcoma = 0, len, optvalsz;
-    char ipv6_nameserver[RA_OPTION_VALUE_SIZE];
+    pEntry->Value[0] = 0;
 
     if (ulIndex == 1)
     {
-        pEntry->Value[0] = 0;
-        ipv6_nameserver[0] = 0;
+        bool bDnsOverride;
 
         CosaDmlLgiGwGetDnsOverride(&bDnsOverride);
 
         /* if dns_override is false or undefined then append DNS server(s) from ipv6_nameserver */
         if (!bDnsOverride)
         {
-           commonSyseventGet("ipv6_nameserver", ipv6_nameserver, sizeof(ipv6_nameserver));
-           if (ipv6_nameserver[0] != 0)
-           {
-               len = strlen(ipv6_nameserver);
-               if (len && len < RA_OPTION_VALUE_SIZE )
-               {
-                   char *token = strtok(ipv6_nameserver, " ");
-                   while (token != NULL)
-                   {
-                       if (addcoma)
-                       {
-                          strcat(pEntry->Value, ",");
-                       }
-                       strcat(pEntry->Value, token);
-                       addcoma = 1;
-                       token = strtok(NULL, " ");
-                   }
-              }
-           } 
+            char ipv6_nameserver[RA_OPTION_VALUE_SIZE];
+
+            commonSyseventGet("ipv6_nameserver", ipv6_nameserver, sizeof(ipv6_nameserver));
+
+            if (ipv6_nameserver[0] != 0)
+            {
+                int addcoma = 0;
+                char *token = strtok(ipv6_nameserver, " ");
+
+                while (token != NULL)
+                {
+                    if (addcoma)
+                    {
+                        strcat(pEntry->Value, ",");
+                    }
+                    addcoma = 1;
+                    strcat(pEntry->Value, token);
+                    token = strtok(NULL, " ");
+                }
+            }
         }
         else
         {
             // Collect from syscfg db
-            optvalsz = RA_OPTION_VALUE_SIZE;
+	    size_t len, len2, optvalsz = sizeof(pEntry->Value) - 1;
 
-            syscfg_get(NULL,"dns_ipv6_preferred",ipv6_nameserver,sizeof(ipv6_nameserver));
-            if (ipv6_nameserver[0] != 0)
+            syscfg_get(NULL, "dns_ipv6_preferred", pEntry->Value, optvalsz);
+            len = strlen(pEntry->Value);
+            if (len != 0)
             {
-               len = strlen(ipv6_nameserver);
-               if (len && len < RA_OPTION_VALUE_SIZE)
-               {
-                   strcpy(pEntry->Value,ipv6_nameserver);
-                   optvalsz -= len;
-                   addcoma = 1;
-               }
-           }
+                pEntry->Value[len] = ',';
+                pEntry->Value[len + 1] = 0;
+                len += 1;
+                optvalsz -= len;
+            }
 
-           ipv6_nameserver[0] = 0;
-           syscfg_get(NULL,"dns_ipv6_alternate",ipv6_nameserver,sizeof(ipv6_nameserver));
-           if (ipv6_nameserver[0] != 0)
-           {
-               len = strlen(ipv6_nameserver);
-               if (len && len < optvalsz)
-               {
-                   if (addcoma)
-                   {
-                       strcat(pEntry->Value,",");
-                   }
-                   strcat(pEntry->Value,ipv6_nameserver);
-               }
-           }
+            syscfg_get(NULL, "dns_ipv6_alternate", pEntry->Value + len, optvalsz);
+            len2 = strlen(pEntry->Value + len);
+            if ((len != 0) && (len2 == 0))
+            {
+                /* No second value, remove comma */
+                pEntry->Value[len - 1] = 0;
+            }
         }
     }
 
