@@ -2221,7 +2221,11 @@ Option5_GetParamBoolValue
     if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
-        *pBool = pOption->bEnabled;
+        /* The instance 1 will always return TRUE for option 25 */
+        if (pOption->InstanceNumber == 1)
+        {
+            *pBool = TRUE;
+        }
         return TRUE;
     }
 
@@ -2323,7 +2327,11 @@ Option5_GetParamUlongValue
     if (strcmp(ParamName, "Tag") == 0)
     {
         /* collect value */
-        *puLong = pOption->Tag;        
+        /* The instance 1 will always return option 25 */
+        if (pCosaContext->InstanceNumber == 1)
+        {
+            *puLong = 25;
+        }
         return TRUE;
     }
 
@@ -2384,6 +2392,8 @@ Option5_GetParamStringValue
     PCOSA_DML_RA_OPTION             pOption      = (PCOSA_DML_RA_OPTION)pCosaContext->hContext;
     errno_t                         rc                      = -1;
 
+    CosaDmlRaIfGetOption(hInsContext, pCosaContext->InstanceNumber, pOption->InstanceNumber, pOption);
+    
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "Alias") == 0)
     {
