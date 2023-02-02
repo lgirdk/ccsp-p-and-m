@@ -224,7 +224,7 @@ ANSC_STATUS CosaDmlGiGetSKU (ANSC_HANDLE hContext, char *pValue, ULONG ulSize)
     }
     else if (customerId == 50)
     {
-        sku = "Home Cable Box 2";
+        sku = "yallo Home Cable Box 2";
     }
     else if (customerId == 51)
     {
