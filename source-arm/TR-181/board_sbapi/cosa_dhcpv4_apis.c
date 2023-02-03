@@ -2723,11 +2723,12 @@ CosaDmlDhcpsGetPoolInfo
         }
         else
         {
-            /* Get DHCP Server Status */             
-            sysevent_get(se_fd, se_token, "dhcp_server-status", dhcp_status, sizeof(dhcp_status));
+            /* Get DHCP Server Status */
+            char evtValue[40];
+            snprintf(evtValue, sizeof(evtValue), "dhcp_server_%d_status", ulInstanceNumber);
+            sysevent_get(se_fd, se_token, evtValue, dhcp_status, sizeof(dhcp_status));
 
             //AnscTraceFlow(("%s: dhcp_status = %s\n", __FUNCTION__, dhcp_status));
-             
         }
 
         if (0 == strcmp(dhcp_status, "started")) {
