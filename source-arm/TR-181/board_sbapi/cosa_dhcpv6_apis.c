@@ -2089,6 +2089,11 @@ CosaDmlDhcpv6Init
 
     /*register callback function to handle message from wan dchcp6 client */
     pEntry = (PDSLHDMAGNT_CALLBACK)AnscAllocateMemory(sizeof(*pEntry));
+    if(pEntry == NULL)
+    {
+	CcspTraceWarning(("%s -- %d pEntry memory allocation error \n", __FUNCTION__, __LINE__));
+        return ANSC_STATUS_FAILURE;
+    }
     pEntry->func = CosaDmlDhcpv6SMsgHandler;
     g_RegisterCallBackAfterInitDml(g_pDslhDmlAgent, pEntry);
 
@@ -3411,7 +3416,8 @@ CosaDmlDhcpv6cGetReceivedOptionCfg
         p_rcv = ACCESS_DHCPV6_RECV_LINK_OBJECT(pSLinkEntry);
         pSLinkEntry = AnscSListGetNextEntry(pSLinkEntry);
 
-        AnscCopyMemory( *ppEntry + ulIndex, p_rcv, sizeof(*p_rcv) );
+	/* CID 75064 fix */
+        AnscCopyMemory( *ppEntry + ulIndex, p_rcv, (sizeof(*p_rcv)-1) );
         AnscFreeMemory(p_rcv);
     }
 
@@ -5695,7 +5701,8 @@ CosaDmlDhcpv6sGetPool
     if ( ulIndex+1 > uDhcpv6ServerPoolNum )
         return ANSC_STATUS_FAILURE;
 
-    AnscCopyMemory(pEntry, &sDhcpv6ServerPool[ulIndex], sizeof(COSA_DML_DHCPSV6_POOL_FULL));
+    /* CID 72229 fix */
+    AnscCopyMemory(pEntry, &sDhcpv6ServerPool[ulIndex], sizeof(sDhcpv6ServerPool[ulIndex]));
     
     return ANSC_STATUS_SUCCESS;
 }
@@ -7455,13 +7462,14 @@ int remove_interface(char* Inf_name)
 
 int append_interface(char* Inf_name)
 {
-	char OutBuff[128],buf[128] ;
+	/* CID 174287 fix */
+	char OutBuff[129],buf[128] ;
 	
 	memset(OutBuff,0,sizeof(OutBuff));
 	
 	syscfg_get( NULL, "IPv6_Interface", buf, sizeof(buf));
 	
-	strncpy(OutBuff, buf, sizeof(buf));
+	strncpy(OutBuff, buf, (sizeof(OutBuff)-1));
 	strcat(OutBuff,Inf_name);
 	strcat(OutBuff,",");
 	syscfg_set_commit(NULL, "IPv6_Interface", OutBuff);
@@ -7697,7 +7705,11 @@ int handle_MocaIpv6(char *status)
                 enable_IPv6(Inf_name);
             }
 
-            Inf_name = NULL;
+	    /* CID 180991 fix */
+	   if(NULL != Inf_name){
+		((CCSP_MESSAGE_BUS_INFO *)bus_handle)->freefunc(Inf_name);
+		Inf_name = NULL;
+	   }
         }
 
     }

@@ -212,6 +212,8 @@ FileTransferTask
     if (pCfg->Server == COSA_DML_FILETRANSFER_SERVER_NONE)
     {
         AnscTraceWarning(("HTTPS Server not set!\n"));
+	/* CID 162712 fix */
+	curl_easy_cleanup(curl);
         return ANSC_STATUS_FAILURE;
     }
 

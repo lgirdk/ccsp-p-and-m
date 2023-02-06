@@ -2110,7 +2110,8 @@ CosaDmlDcSetFactoryReset
 	if (pValue == NULL || pValue[0] == '\0')
 		factory_reset_mask |= FR_NONE;
 	else {
-		strncpy(value, pValue, sizeof(value));
+		/* CID 163040 fix  */
+		strncpy(value, pValue, (sizeof(value)-1));
 		tok = strtok_r(value, ",", &sv);
 		while (tok) {
 			if (strcmp("Router", tok) == 0) {
@@ -4640,6 +4641,11 @@ static void configBridgeMode(int bEnable) {
         char brpdm[50];
         char brmode[5];
         PCOSA_NOTIFY_WIFI pnotifypara = (PCOSA_NOTIFY_WIFI)AnscAllocateMemory(sizeof(COSA_NOTIFY_WIFI)); /*RDKB-6845, CID-32969, free unused resource before return */
+	if(pnotifypara == NULL)
+	{
+	    CcspTraceWarning(("%s -- %d COSA_NOTIFY_WIFI memory allocation error \n", __FUNCTION__, __LINE__));
+	    return;
+	}
 
         commonSyseventGet("primary_lan_l2net", primaryl2inst, sizeof(primaryl2inst));
         commonSyseventGet("primary_lan_brport", primarybrp, sizeof(primaryl2inst));

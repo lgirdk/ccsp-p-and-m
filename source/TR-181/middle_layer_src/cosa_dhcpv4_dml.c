@@ -6756,7 +6756,15 @@ Pool_SetParamStringValue
     if (strcmp(ParamName, "DNSServers") == 0)
     {
         /* save update to backup */
-        return CosaDmlSetIpaddr((PULONG)&pPool->Cfg.DNSServers[0].Value, pString, COSA_DML_DHCP_MAX_ENTRIES);
+	/* CID 125079 fix */
+	BOOL ret = FALSE;
+	ULONG DNSServersIP[COSA_DML_DHCP_MAX_ENTRIES] = {0};
+	ret = CosaDmlSetIpaddr( DNSServersIP, pString, COSA_DML_DHCP_MAX_ENTRIES);
+	for(ULONG cnt=0;cnt < COSA_DML_DHCP_MAX_ENTRIES; cnt++)
+	{
+		pPool->Cfg.DNSServers[cnt].Value = (uint32_t)DNSServersIP[cnt];
+	}
+	return ret;
     }
 
     if (strcmp(ParamName, "DomainName") == 0)
@@ -6774,7 +6782,7 @@ Pool_SetParamStringValue
 
     if (strcmp(ParamName, "IPRouters") == 0)
     {
-        BOOL ret = FALSE;
+	BOOL ret = FALSE;
         if (Dhcpv4_Lan_MutexTryLock() != 0)
         {
             CcspTraceWarning(("%s not supported already macbinding blob update is inprogress \n",ParamName));
@@ -6782,7 +6790,13 @@ Pool_SetParamStringValue
         }
 
         /* save update to backup */
-        ret = CosaDmlSetIpaddr((PULONG)&pPool->Cfg.IPRouters[0].Value, pString, COSA_DML_DHCP_MAX_ENTRIES);
+	/* CID 125357 fix */
+	ULONG IPRoutersVal[COSA_DML_DHCP_MAX_ENTRIES] = {0};
+	ret = CosaDmlSetIpaddr(IPRoutersVal, pString, COSA_DML_DHCP_MAX_ENTRIES);
+	for(ULONG cnt=0;cnt < COSA_DML_DHCP_MAX_ENTRIES; cnt++)
+	{
+		pPool->Cfg.IPRouters[cnt].Value = (uint32_t)IPRoutersVal[cnt];
+	}
         Dhcpv4_Lan_MutexUnLock();
         return ret;
     }

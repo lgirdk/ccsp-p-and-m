@@ -1736,7 +1736,8 @@ ANSC_STATUS _AddPortMapping(
         rangeInfo.internal_port_range_size = 0;
         //AnscCopyString(rangeInfo.name, pEntry->Description);
         strncpy(rangeInfo.name, pEntry->Description, sizeof(rangeInfo.name));
-        strncpy(rangeInfo.dest_ipv6, pEntry->X_CISCO_COM_InternalClientV6, sizeof(rangeInfo.dest_ipv6));
+        /* CID 163037 fix */
+	strncpy(rangeInfo.dest_ipv6, pEntry->X_CISCO_COM_InternalClientV6, (sizeof(rangeInfo.dest_ipv6)-1));
 
         rc = Utopia_AddPortForwardingRange(pCtx, &rangeInfo);
         if ( rc != SUCCESS )
@@ -4069,8 +4070,9 @@ CosaDmlNatGetPortTriggers
         pNatPTrigger[ulIndex].InstanceNumber    = porttrigger[ulIndex].rule_id;
 //        AnscCopyString(pNatPTrigger[ulIndex].Alias, porttrigger[ulIndex].name);
 //        AnscCopyString(pNatPTrigger[ulIndex].Description, porttrigger[ulIndex].name);
-        strncpy(pNatPTrigger[ulIndex].Alias, porttrigger[ulIndex].name, sizeof(pNatPTrigger[ulIndex].Alias));
-        strncpy(pNatPTrigger[ulIndex].Description, porttrigger[ulIndex].name,sizeof(pNatPTrigger[ulIndex].Description));
+        /* CID 185685 fix */
+	strncpy(pNatPTrigger[ulIndex].Alias, porttrigger[ulIndex].name, (sizeof(pNatPTrigger[ulIndex].Alias)-1));
+        strncpy(pNatPTrigger[ulIndex].Description, porttrigger[ulIndex].name,(sizeof(pNatPTrigger[ulIndex].Description)-1));
     }
 
 

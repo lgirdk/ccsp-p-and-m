@@ -5819,7 +5819,8 @@ static int ssmtp_send(const char *msgFilePath, const char *subject, const char *
     fclose(fp);
     strncpy(recipient, buf + strlen("To: "), sizeof(recipient));
 
-    strncpy(attachmentPathCopy, attachmentPath, sizeof(attachmentPathCopy));
+    /* CID 162725 fix */
+    strncpy(attachmentPathCopy, attachmentPath, (sizeof(attachmentPathCopy)-1));
 
     v_secure_system( "(((cat %s; echo 'Subject: %s'; echo; echo; uuencode %s %s) | ssmtp %s) && rm %s) &", msgFilePath, subject, attachmentPath, basename(attachmentPathCopy), recipient, attachmentPath);
 

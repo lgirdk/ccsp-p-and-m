@@ -70,7 +70,7 @@ _COSA_DML_LANMANAGEMENT_CFG
 {
     BOOLEAN                         LanIpv6Enable;
 	BOOLEAN                         LanIpv6UlaEnable;
-    char                            LanIpv6Ula[64];
+    char                            LanIpv6Ula[65]; /* CID 163210 fix */
     char                            LanIpv6UlaPrefix[64];
 }
 COSA_DML_LANMANAGEMENT_CFG,  *PCOSA_DML_LANMANAGEMENT_CFG;

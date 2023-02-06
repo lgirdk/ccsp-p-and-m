@@ -1633,7 +1633,8 @@ CosaDmlBlkURL_AddEntry(COSA_DML_BLOCKEDURL *pEntry)
         }
     }
 
-    _ansc_strncpy(blkurl.alias, pEntry->Alias, sizeof(blkurl.alias));
+    /* CID 185693 fix */
+    _ansc_strncpy(blkurl.alias, pEntry->Alias, (sizeof(blkurl.alias)-1));
     _ansc_strncpy(blkurl.site, pEntry->Site, sizeof(blkurl.site));
 
     _ansc_strncpy(blkurl.start_time, pEntry->StartTime, sizeof(blkurl.start_time));
@@ -1876,7 +1877,8 @@ CosaDmlTrustedUser_AddEntry(COSA_DML_TRUSTEDUSER *pEntry)
     trusted_user.trusted = pEntry->Trusted;
     trusted_user.ipaddrtype = pEntry->IPAddressType == IPADDR_IPV4 ? 4 : 6;
     _ansc_strncpy(trusted_user.alias, pEntry->Alias, sizeof(trusted_user.alias));
-    _ansc_strncpy(trusted_user.host_descp, pEntry->HostDescription, sizeof(trusted_user.host_descp));
+    /* CID 185687 fix  */
+    _ansc_strncpy(trusted_user.host_descp, pEntry->HostDescription, (sizeof(trusted_user.host_descp)-1));
     _ansc_strncpy(trusted_user.ipaddr, pEntry->IPAddress, sizeof(trusted_user.ipaddr));
 
     rc = Utopia_AddTrustedUser(&ctx, &trusted_user);
@@ -2393,7 +2395,8 @@ CosaDmlMSServ_AddEntry(COSA_DML_MS_SERV *pEntry)
 
     _ansc_strncpy(ms_serv.start_time, pEntry->StartTime, sizeof(ms_serv.start_time));
     _ansc_strncpy(ms_serv.end_time, pEntry->EndTime, sizeof(ms_serv.end_time));
-    _ansc_strncpy(ms_serv.block_days, pEntry->BlockDays, sizeof(ms_serv.block_days));
+    /* CID 185686 fix */
+    _ansc_strncpy(ms_serv.block_days, pEntry->BlockDays, (sizeof(ms_serv.block_days)-1));
 
     switch(pEntry->Protocol)
     {
@@ -2635,7 +2638,8 @@ CosaDmlMSTrustedUser_AddEntry(COSA_DML_MS_TRUSTEDUSER *pEntry)
     ms_trusteduser.ins_num = pEntry->InstanceNumber;
     ms_trusteduser.trusted = pEntry->Trusted;
     ms_trusteduser.ipaddrtype = pEntry->IPAddressType == IPADDR_IPV4 ? 4 : 6;
-    _ansc_strncpy(ms_trusteduser.alias, pEntry->Alias, sizeof(ms_trusteduser.alias));
+    /* CID 185691 fix  */
+    _ansc_strncpy(ms_trusteduser.alias, pEntry->Alias, (sizeof(ms_trusteduser.alias)-1));
     _ansc_strncpy(ms_trusteduser.host_descp, pEntry->HostDescription, sizeof(ms_trusteduser.host_descp));
     _ansc_strncpy(ms_trusteduser.ipaddr, pEntry->IPAddress, sizeof(ms_trusteduser.ipaddr));
 
@@ -3152,7 +3156,8 @@ CosaDmlMDDev_AddEntry(COSA_DML_MD_DEV *pEntry)
     _ansc_strncpy(md_dev.start_time, pEntry->StartTime, sizeof(md_dev.start_time));
     _ansc_strncpy(md_dev.end_time, pEntry->EndTime, sizeof(md_dev.end_time));
     _ansc_strncpy(md_dev.block_days, pEntry->BlockDays, sizeof(md_dev.block_days));
-    _ansc_strncpy(md_dev.macaddr, pEntry->MACAddress, sizeof(md_dev.macaddr));
+    /* CID 185690 fix  */
+    _ansc_strncpy(md_dev.macaddr, pEntry->MACAddress, (sizeof(md_dev.macaddr)-1));
 
     rc = Utopia_AddMDDev(&ctx, &md_dev);
     Utopia_GetNumberOfMDDev(&ctx, &g_NrMDDevs);

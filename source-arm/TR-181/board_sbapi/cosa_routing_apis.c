@@ -3492,8 +3492,16 @@ CosaDmlRoutingInit
 
     g_RoutingEntryInMiddleLayer = hDml;
     pEntry = (PDSLHDMAGNT_CALLBACK)AnscAllocateMemory(sizeof(*pEntry));
-    pEntry->func = CosaDmlRipCallBack;
-    g_RegisterCallBackAfterInitDml(g_pDslhDmlAgent, pEntry);
+    /* CID 72401 fix */
+    if(pEntry != NULL)
+    {
+	pEntry->func = CosaDmlRipCallBack;
+	g_RegisterCallBackAfterInitDml(g_pDslhDmlAgent, pEntry);
+    }
+    else
+    {
+	returnStatus = ANSC_STATUS_FAILURE;
+    }
 
     return returnStatus;
 }
@@ -5855,7 +5863,8 @@ static int _routeinfo_get_prefix(char * in, int pref_len, char * out, unsigned i
     char * p_token = NULL;
     char * saveptr = NULL;
     int    val = 0;
-    struct in6_addr addr6;
+    /* CID 163589 fix  */ 
+    struct in6_addr addr6 = {0};
     int    i = 0;
     int    num = 0;
     char   addr_str[64] = {0};

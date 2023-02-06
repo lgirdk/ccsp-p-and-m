@@ -4214,6 +4214,9 @@ ANSC_STATUS UpdateJsonParam
 	  else
 	  {
 		CcspTraceWarning(("BOOTSTRAP_INFO_FILE %s is empty\n", BOOTSTRAP_INFO_FILE));
+		/* CID 72622 fix */
+		free(data);
+		data = NULL;
 		return ANSC_STATUS_FAILURE;
 	  }
 

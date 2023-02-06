@@ -447,10 +447,17 @@ CosaDmlMaptFlushDNSv4Entries
        CHAR   dnsIP[BUFLEN_64]    = {0};
        CHAR   leftOut[BUFLEN_128] = {0};
 
-       if ( !(fp = fopen(RESOLV_CONF_FILE, "r"))  ||
-            !(tp = fopen(RESOLV_CONF_FILE_BK, "w")) )
+       if ( !(fp = fopen(RESOLV_CONF_FILE, "r")) )
        {
-            MAPT_LOG_ERROR("Error opening %s or %s", RESOLV_CONF_FILE, RESOLV_CONF_FILE_BK);
+            MAPT_LOG_ERROR("Error opening %s ", RESOLV_CONF_FILE);
+            return STATUS_FAILURE;
+       }
+
+       if ( !(tp = fopen(RESOLV_CONF_FILE_BK, "w")) )
+       {
+            MAPT_LOG_ERROR("Error opening %s", RESOLV_CONF_FILE_BK);
+            /* CID 277328 fix */
+            fclose(fp);
             return STATUS_FAILURE;
        }
 
