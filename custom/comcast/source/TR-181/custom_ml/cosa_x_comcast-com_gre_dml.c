@@ -269,11 +269,6 @@ BOOL GreTunnel_GetParamUlongValue ( ANSC_HANDLE hInsContext, char* ParamName, UL
     COSA_DML_GRE_TUNNEL                 *pGreTu      = (COSA_DML_GRE_TUNNEL *)hInsContext;
     ULONG                           ins = pGreTu->InstanceNumber;
 
-    if (strcmp(ParamName, "DSCPMarkPolicy") == 0)
-    {
-        *pUlong = pGreTu->DSCPMarkPolicy;
-        return TRUE;
-    }
     if (strcmp(ParamName, "Status") == 0)
     {
         if (CosaDml_GreTunnelGetStatus(ins, (COSA_DML_GRE_STATUS *)pUlong) != ANSC_STATUS_SUCCESS)
@@ -459,6 +454,12 @@ BOOL GreTunnel_GetParamIntValue ( ANSC_HANDLE hInsContext, char* ParamName, int*
     COSA_DML_GRE_TUNNEL                 *pGreTu      = (COSA_DML_GRE_TUNNEL *)hInsContext;
     //ULONG                           ins = pGreTu->InstanceNumber;
 
+    if (strcmp(ParamName, "DSCPMarkPolicy") == 0)
+    {
+        *pInt = pGreTu->DSCPMarkPolicy;
+        return TRUE;
+    }   
+
     return FALSE;
 }
 
@@ -549,15 +550,6 @@ BOOL GreTunnelIf_SetParamBoolValue ( ANSC_HANDLE hInsContext, char* ParamName, B
 BOOL GreTunnel_SetParamUlongValue ( ANSC_HANDLE  hInsContext, char* ParamName, ULONG  uValue) {
 	COSA_DML_GRE_TUNNEL                 *pGreTu      = (COSA_DML_GRE_TUNNEL *)hInsContext;
 
-    if (strcmp(ParamName, "DSCPMarkPolicy") == 0)
-    {
-        if(pGreTu->DSCPMarkPolicy == uValue)
-            return TRUE;
-
-        pGreTu->DSCPMarkPolicy = uValue;
-        pGreTu->ChangeFlag |= GRETU_CF_DSCP;
-        return TRUE;
-    }
     if (strcmp(ParamName, "KeyIdentifierGenerationPolicy") == 0)
     {
         pGreTu->KeyIdentifierGenerationPolicy = uValue;
@@ -747,6 +739,16 @@ BOOL GreTunnelIf_SetParamStringValue ( ANSC_HANDLE hInsContext, char*  ParamName
 BOOL GreTunnel_SetParamIntValue ( ANSC_HANDLE hInsContext, char* ParamName, int value ) {
 	COSA_DML_GRE_TUNNEL                 *pGreTu      = (COSA_DML_GRE_TUNNEL *)hInsContext;
 
+    if (strcmp(ParamName, "DSCPMarkPolicy") == 0)
+    {
+        if(pGreTu->DSCPMarkPolicy == value)
+            return TRUE;
+
+        pGreTu->DSCPMarkPolicy = value;
+        pGreTu->ChangeFlag |= GRETU_CF_DSCP;
+        return TRUE;
+    }
+    
     return FALSE;
 }
 
