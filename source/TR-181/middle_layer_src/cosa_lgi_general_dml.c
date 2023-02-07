@@ -253,6 +253,15 @@ LgiGeneral_GetParamStringValue
 
     PCOSA_DATAMODEL_LGI_GENERAL  pMyObject = (PCOSA_DATAMODEL_LGI_GENERAL)g_pCosaBEManager->hLgiGeneral;
 
+    if (strcmp(ParamName, "RIPIPAddress") == 0)
+    {
+        return CosaDmlGiGetRipIpAddress(NULL, pValue, pulSize);
+    }
+    if (strcmp(ParamName, "RIPSubnetMask") == 0)
+    {
+        return CosaDmlGiGetRipSubnetMask(NULL, pValue, pulSize);
+    }
+
     if (strcmp(ParamName, "AvailableLanguages") == 0)
     {
         return CosaDmlGiGetAvailableLanguages(NULL, pValue, pulSize);
