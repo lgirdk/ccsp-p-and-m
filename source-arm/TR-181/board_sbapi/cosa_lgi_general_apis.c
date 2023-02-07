@@ -399,6 +399,87 @@ CosaDmlGiSetTroubleshootWizardEnable
 }
 
 ANSC_STATUS
+CosaDmlGiGetRipIpAddress
+    (
+        ANSC_HANDLE                 hContext,
+        char                        *pValue,
+        ULONG                       *pUlSize
+    )
+{
+    char rip_status[8];
+    char staticErouterEnable[8];
+    char staticBrlanEnable[8];
+    char rip_static_ip[20];
+
+    rip_static_ip[0] = 0;
+    syscfg_get(NULL, "rip_enabled", rip_status, sizeof(rip_status));
+
+    if (strcmp(rip_status, "1") == 0)
+    {
+        syscfg_get(NULL, "erouter_static_ip_enable", staticErouterEnable, sizeof(staticErouterEnable));
+        syscfg_get(NULL, "brlan_static_ip_enable", staticBrlanEnable, sizeof(staticBrlanEnable));
+
+        if (strcmp(staticErouterEnable, "true") == 0)
+        {
+            syscfg_get( NULL, "erouter_static_ip_address",rip_static_ip, sizeof(rip_static_ip));
+        }
+        else if (strcmp(staticBrlanEnable, "true") == 0)
+        {
+            syscfg_get( NULL, "brlan_static_lan_ipaddr",rip_static_ip, sizeof(rip_static_ip));
+        }
+
+        if (AnscSizeOfString(rip_static_ip) >= *pUlSize)
+        {
+            return ANSC_STATUS_FAILURE;
+        }
+    }
+
+    AnscCopyString(pValue, rip_static_ip);
+    return ANSC_STATUS_SUCCESS;
+
+}
+
+ANSC_STATUS
+CosaDmlGiGetRipSubnetMask
+    (
+        ANSC_HANDLE                 hContext,
+        char                        *pValue,
+        ULONG                       *pUlSize
+    )
+{
+    char rip_status[8];
+    char staticErouterEnable[8];
+    char staticBrlanEnable[8];
+    char rip_static_mask[20];
+
+    rip_static_mask[0] = 0;
+    syscfg_get(NULL, "rip_enabled", rip_status, sizeof(rip_status));
+
+    if (strcmp(rip_status, "1") == 0)
+    {
+        syscfg_get(NULL, "erouter_static_ip_enable", staticErouterEnable, sizeof(staticErouterEnable));
+        syscfg_get(NULL, "brlan_static_ip_enable", staticBrlanEnable, sizeof(staticBrlanEnable));
+
+        if (strcmp(staticErouterEnable, "true") == 0)
+        {
+            syscfg_get( NULL, "erouter_static_ip_mask",rip_static_mask, sizeof(rip_static_mask));
+        }
+        else if (strcmp(staticBrlanEnable, "true") == 0)
+        {
+            syscfg_get( NULL, "brlan_static_lan_netmask",rip_static_mask, sizeof(rip_static_mask));
+        }
+
+        if (AnscSizeOfString(rip_static_mask) >= *pUlSize)
+        {
+            return ANSC_STATUS_FAILURE;
+        }
+    }
+
+    AnscCopyString(pValue, rip_static_mask);
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
 CosaDmlGiGetCurrentLanguage
     (
         ANSC_HANDLE                 hContext,
