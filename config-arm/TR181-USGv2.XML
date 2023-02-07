@@ -17596,7 +17596,7 @@
                     </parameter>
 					<parameter>
                         <name>DSCPMarkPolicy</name>
-                        <type>int[-2:63]</type>
+                        <type>int[-1:63]</type>
                         <syntax>int</syntax>
                         <writable>true</writable>
                     </parameter>
