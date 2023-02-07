@@ -1734,11 +1734,6 @@ CosaDml_GreTunnelSetDSCPMarkPolicy(ULONG tuIns, INT dscp)
             AnscTraceError(("Fail to set Cisco GRE DM\n"));
             return ANSC_STATUS_FAILURE;
         }
-    } else if (dscp == -2) {
-        if (g_SetParamValueString(tmpPath, "AutoMapped") != ANSC_STATUS_SUCCESS) {
-            AnscTraceError(("Fail to set Cisco GRE DM\n"));
-            return ANSC_STATUS_FAILURE;
-        }
     } else {
         AnscTraceError(("Bad DSCP value\n"));
         return ANSC_STATUS_FAILURE;
