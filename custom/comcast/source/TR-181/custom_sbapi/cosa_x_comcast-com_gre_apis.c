@@ -1659,12 +1659,12 @@ CosaDml_GreTunnelSetUseChecksum(ULONG tuIns, BOOL enable)
 }
 
 ANSC_STATUS
-CosaDml_GreTunnelGetDSCPMarkPolicy(ULONG tuIns, ULONG *dscp)
+CosaDml_GreTunnelGetDSCPMarkPolicy(ULONG tuIns, INT *dscp)
 {
     if (!dscp)
         return ANSC_STATUS_FAILURE;
 
-    if (GrePsmGetUlong(GRETU_PARAM_DSCPPOL, tuIns, dscp) != 0)
+    if (GrePsmGetInt(GRETU_PARAM_DSCPPOL, tuIns, dscp) != 0)
         return ANSC_STATUS_FAILURE;
 
     return ANSC_STATUS_SUCCESS;
@@ -1701,7 +1701,7 @@ CosaDml_GreTunnelSetGreTransportInterface(ULONG tuIns, INT ifId)
 }
 
 ANSC_STATUS
-CosaDml_GreTunnelSetDSCPMarkPolicy(ULONG tuIns, ULONG dscp)
+CosaDml_GreTunnelSetDSCPMarkPolicy(ULONG tuIns, INT dscp)
 {
     char psmRec[MAX_GRE_PSM_REC + 1];
     char psmVal[16];
@@ -1715,9 +1715,6 @@ CosaDml_GreTunnelSetDSCPMarkPolicy(ULONG tuIns, ULONG dscp)
 
     if (GrePsmGetStr(GRETU_PARAM_GRETU, tuIns, greNetworkTunnel, sizeof(greNetworkTunnel)) != 0)
         return ANSC_STATUS_FAILURE;
-
-#if 0 /*to do : Fixme */
-
     rc = sprintf_s(tmpPath, sizeof(tmpPath), "%sTOSMode", greNetworkTunnel);
     if(rc < EOK) {
        ERR_CHK(rc);
@@ -1747,11 +1744,9 @@ CosaDml_GreTunnelSetDSCPMarkPolicy(ULONG tuIns, ULONG dscp)
         return ANSC_STATUS_FAILURE;
     }
 
-#endif
-
     /* save to PSM */
     snprintf(psmRec, sizeof(psmRec), GRETU_PARAM_DSCPPOL, tuIns);
-    snprintf(psmVal, sizeof(psmVal), "%lu", dscp);
+    snprintf(psmVal, sizeof(psmVal), "%d", dscp);
     if (GrePsmSet(psmRec, psmVal) != 0)
         return ANSC_STATUS_FAILURE;
 
