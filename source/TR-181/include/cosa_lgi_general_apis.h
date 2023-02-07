@@ -153,6 +153,22 @@ CosaDmlLGiSetUiHashPassword
     char                        *pValue
 );
 
+ANSC_STATUS
+CosaDmlGiGetRipIpAddress
+(
+    ANSC_HANDLE                 hContext,
+    char                        *pValue,
+    ULONG                       *pUlSize
+);
+
+ANSC_STATUS
+CosaDmlGiGetRipSubnetMask
+(
+    ANSC_HANDLE                 hContext,
+    char                        *pValue,
+    ULONG                       *pUlSize
+);
+
 ULONG
 CosaDmlGiGetAvailableLanguages
 (
