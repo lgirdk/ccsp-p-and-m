@@ -4010,7 +4010,7 @@ KickstartTable_GetParamStringValue
     }
     else if( lRet == 0 && pValue != NULL && ParamName != NULL )
     {
-        CcspTraceError(("KickstartTable_GetParamStringValue: %s = %s\n", ParamName, pValue));
+        CcspTraceInfo(("KickstartTable_GetParamStringValue: %s = %s\n", ParamName, pValue));
     }
     else
     {
@@ -19597,7 +19597,7 @@ BOOL TileMac_GetParamStringValue
             }
             fclose(fp);
     } else {
-            CcspTraceError(("BLE: Cannot open /tmp/tiles.inf file. \n"));
+            CcspTraceWarning(("BLE: Cannot open /tmp/tiles.inf file. \n"));
             rc = strcpy_s(pValue, *pUlSize, "Cannot Open File");
             if(rc != EOK)
             {
