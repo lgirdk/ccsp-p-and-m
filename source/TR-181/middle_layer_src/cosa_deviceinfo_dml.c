@@ -22475,8 +22475,13 @@ static BOOL ValidateInput_Arguments(char *input, FILE *tmp_fptr)
   token=strtok_r( input,",", &sp);
   while(token != NULL) {
         arg=strchr(token,':');
-        if ( ( (strcmp(arg+1,"disable") != 0) && (strcmp(arg+1,"complain") != 0) && (strcmp(arg+1,"enforce") != 0) ) ) {
-              CcspTraceWarning(("Invalid arguments in the parser:%s\n", token));
+        if(!arg)
+        {
+            CcspTraceWarning(("argument is  null in the parser:%s\n", token));
+            return FALSE;
+        }
+        if ( (arg[0] != ':') || ((strcmp(arg+1,"disable") != 0) && (strcmp(arg+1,"complain") != 0) && (strcmp(arg+1,"enforce") != 0) ) ) {
+              CcspTraceWarning(("Invalid input arguments in the parser:%s\n", token));
               return FALSE;
         }
         strncpy(tmp,token,sizeof(tmp));
