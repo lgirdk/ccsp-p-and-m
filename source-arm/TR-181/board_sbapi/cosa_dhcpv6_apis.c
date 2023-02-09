@@ -9432,7 +9432,13 @@ void Switch_ipv6_mode(char *ifname, int length)
     commonSyseventGet("wan_ifname", default_wan_ifname, sizeof(default_wan_ifname));
     if (ifname)
     {
+#ifdef FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE
+        char mesh_wan_ifname[32] = {0};
+        getMeshWanIfName(mesh_wan_ifname,sizeof(mesh_wan_ifname));
+        if(strncmp(ifname, mesh_wan_ifname,length ) == 0)
+#else
         if(strncmp(ifname,default_wan_ifname,length) != 0)
+#endif
         {
             SwitchToULAIpv6(); //Secondary Wan
         }
