@@ -275,13 +275,9 @@ CosaDmlMaptApplyConfig
   if ( access("/proc/sys/net/flowmgr/disable_mapt_accel", F_OK) )
   {
        MAPT_LOG_ERROR("Mapt packet acceleration not supported!");
-       return STATUS_FAILURE;
-  }
-
-  if ( v_secure_system("echo 0 > /proc/sys/net/flowmgr/disable_mapt_accel") )
+  } else if ( v_secure_system("echo 0 > /proc/sys/net/flowmgr/disable_mapt_accel") )
   {
        MAPT_LOG_ERROR("Failed to enable mapt packet acceleration!");
-       return STATUS_FAILURE;
   }
 #endif
 
@@ -1190,7 +1186,6 @@ CosaDmlMaptResetConfig
        if ( v_secure_system("echo 3 > /proc/sys/net/flowmgr/disable_mapt_accel") )
        {
             MAPT_LOG_ERROR("Failed to disable mapt packet acceleration!");
-            ret = STATUS_FAILURE;
        }
   }
   else
