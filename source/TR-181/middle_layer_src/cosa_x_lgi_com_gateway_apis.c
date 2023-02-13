@@ -246,7 +246,7 @@ static void updateErouterInitMode(ULONG initMode)
         g_SetParamValueString(LANMODE, BRIDGE_MODE);
     }
 
-    if (syscfg_set_u_commit(NULL, "last_erouter_mode", neweroutermode) != 0)
+    if (syscfg_set_u(NULL, "last_erouter_mode", neweroutermode) != 0)
     {
         CcspTraceError(("%s %d: syscfg_set last_erouter_mode failed\n", __FUNCTION__, __LINE__));
         return;
@@ -262,10 +262,16 @@ static void updateErouterInitMode(ULONG initMode)
         g_SetParamValueBool("Device.DSLite.InterfaceSetting.1.Enable", FALSE);
     }
 
-    if (syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_LastRebootReason", "Erouter Mode Change") != 0)
+    if (syscfg_set(NULL, "X_RDKCENTRAL-COM_LastRebootReason", "Erouter Mode Change") != 0)
     {
         CcspTraceError(("RDKB_REBOOT : RebootDevice syscfg_set failed erouter mode change\n"));
     }
+
+    if (syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_LastRebootCounter", "1") != 0)
+    {
+        CcspTraceError(("RDKB_REBOOT : RebootDevice syscfg_set failed X_RDKCENTRAL-COM_LastRebootCounter\n"));
+    }
+
     system("reboot");
 }
 
