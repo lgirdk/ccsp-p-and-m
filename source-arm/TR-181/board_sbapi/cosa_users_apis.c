@@ -608,7 +608,7 @@ user_validatepwd
          v = "Invalid_PWD";
 #ifdef FEATURE_RDKB_WAN_MANAGER
          openlog("Network", LOG_NDELAY, LOG_LOCAL0);
-         syslog(LOG_NOTICE, "GUI Login Status - Login Fail from LAN interface");
+         syslog(LOG_LOCAL0|LOG_NOTICE, "GUI Login Status - Login Fail from LAN interface");
          closelog();
 #endif
     }
@@ -623,7 +623,7 @@ user_validatepwd
             v = "Good_PWD";
 #ifdef FEATURE_RDKB_WAN_MANAGER
             openlog("Network", LOG_NDELAY, LOG_LOCAL0);
-            syslog(LOG_NOTICE, "GUI Login Status - Login Success from LAN interface");
+            syslog(LOG_LOCAL0|LOG_NOTICE, "GUI Login Status - Login Success from LAN interface");
             closelog();
 #endif
          }
