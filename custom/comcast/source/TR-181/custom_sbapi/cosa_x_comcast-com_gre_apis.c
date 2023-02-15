@@ -491,10 +491,10 @@ CosaDml_GreTunnelGetNumberOfEntries(void)
 ULONG 
 CosaDml_GreTunnelIfGetNumberOfEntries(ULONG tuIns)
 {
-    /* support 2 GRE interface for Comcast Hotspot */
-	if(tuIns==1)
-		return 2;
-	return 0;
+    /* support 4 GRE interface for Comcast Hotspot */
+    if(tuIns==1)
+        return 4;
+    return 0;
 }
 
 #define kHotspotfd_tunnelEP                 "hotspotfd-tunnelEP" 

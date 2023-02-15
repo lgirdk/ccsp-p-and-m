@@ -48,7 +48,7 @@
 #define _COSA_X_COMCAST__COM_GRE_APIS_H
 
 #define MAX_GRE_TU              1
-#define MAX_GRE_TUIF              2
+#define MAX_GRE_TUIF            4
 
 typedef enum
 _COSA_DML_GRE_STATUS 
