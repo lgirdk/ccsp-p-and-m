@@ -9057,7 +9057,7 @@ dhcpv6c_dbg_thrd(void * in)
 			#ifdef _COSA_INTEL_XB3_ARM_
                         v_secure_system("ip -6 route add %s dev %s table erouter", v6pref, COSA_DML_DHCPV6_SERVER_IFNAME);
 			#endif
-                        /* we need save this for zebra to send RA 
+                        /* we need save this for zebra to send RA
                            ipv6_prefix           // xx:xx::/yy
                          */
 #ifndef _HUB4_PRODUCT_REQ_
@@ -9067,8 +9067,10 @@ dhcpv6c_dbg_thrd(void * in)
 #endif
                         g_dhcpv6_server_prefix_ready = TRUE;
 
+#if !defined (_SKY_HUB_COMMON_PRODUCT_REQ_)
                         CosaDmlDHCPv6sTriggerRestart(FALSE);
-                        
+#endif /* _SKY_HUB_COMMON_PRODUCT_REQ_ */
+
                         /*We need get a global ip addres */
 #if defined(_COSA_BCM_ARM_) || defined(INTEL_PUMA7)
 #ifndef _HUB4_PRODUCT_REQ_
@@ -9133,9 +9135,12 @@ dhcpv6c_dbg_thrd(void * in)
                                 ERR_CHK(rc);
                             }
                             commonSyseventSet("lan_prefix_v6", cmd);
- 
+
                             CcspTraceWarning(("%s: setting lan-restart\n", __FUNCTION__));
                             commonSyseventSet("lan-restart", "1");
+#if defined (_SKY_HUB_COMMON_PRODUCT_REQ_)
+                            CosaDmlDHCPv6sTriggerRestart(FALSE);
+#endif /* _SKY_HUB_COMMON_PRODUCT_REQ_ */
                         }
 #endif
 
