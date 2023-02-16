@@ -220,6 +220,17 @@ CosaDmlGiSetUserBridgeModeAllowed
     BOOL                        bValue
 );
 
+ULONG
+CosaDmlGiGetLocalUIonStaticIPEnabled(
+    ANSC_HANDLE hContext,
+    BOOL *pValue);
+
+ULONG
+CosaDmlGiSetLocalUIonStaticIPEnabled(
+    ANSC_HANDLE hContext,
+    BOOL bValue);
+
+
 ANSC_STATUS CosaDmlGiGetSKU (ANSC_HANDLE hContext, char *pValue, ULONG ulSize);
 
 ANSC_STATUS CosaDmlGiGetLedDSErrorTimer (ANSC_HANDLE hContext, int *pValue);
