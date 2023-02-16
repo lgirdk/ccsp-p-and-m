@@ -752,3 +752,18 @@ ANSC_STATUS CosaDmlGiSetLedWanDhcpErrorTimer ( ANSC_HANDLE hContext, int value )
 {
     return platform_hal_SetLedWanDhcpErrorTimer(value);
 }
+
+ULONG CosaDmlGiGetLocalUIonStaticIPEnabled ( ANSC_HANDLE hContext, BOOL *pValue )
+{
+    char buf[8];
+    syscfg_get(NULL, "static_ui_enable", buf, sizeof(buf));
+    *pValue = (strcmp(buf, "true") == 0);
+    return ANSC_STATUS_SUCCESS;
+}
+
+ULONG CosaDmlGiSetLocalUIonStaticIPEnabled ( ANSC_HANDLE hContext, BOOL bValue )
+{
+    syscfg_set(NULL, "static_ui_enable", bValue ? "true" : "false");
+    v_secure_system("sysevent set firewall-restart");
+    return ANSC_STATUS_SUCCESS;
+}
