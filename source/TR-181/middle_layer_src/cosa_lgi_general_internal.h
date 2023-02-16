@@ -51,6 +51,7 @@ _COSA_DATAMODEL_LGI_GENERAL_CLASS_CONTENT
     int                             PONRegistrationErrorTimer;
     int                             OLTProvisioningErrorTimer;
     int                             WanDhcpErrorTimer;
+    BOOL                            LocalUIonStaticIPEnable;
 }
 COSA_DATAMODEL_LGI_GENERAL, *PCOSA_DATAMODEL_LGI_GENERAL;
 
