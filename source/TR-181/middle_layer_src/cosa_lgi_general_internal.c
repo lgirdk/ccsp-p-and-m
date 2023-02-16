@@ -138,6 +138,7 @@ CosaLgiGeneralInitialize
     CosaDmlGiGetLedPONRegistrationErrorTimer(NULL, &pMyObject->PONRegistrationErrorTimer);
     CosaDmlGiGetLedOLTProvisioningErrorTimer(NULL, &pMyObject->OLTProvisioningErrorTimer);
     CosaDmlGiGetLedWanDhcpErrorTimer(NULL, &pMyObject->WanDhcpErrorTimer);
+    CosaDmlGiGetLocalUIonStaticIPEnabled(NULL, &pMyObject->LocalUIonStaticIPEnable);
 
 
     /* Further implementation of this parameter is still under design discussion*/
