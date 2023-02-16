@@ -145,6 +145,12 @@ LgiGeneral_GetParamBoolValue
         return TRUE;
     }
 
+    if (strcmp(ParamName, "LocalUIonStaticIPEnable") == 0)
+    {
+        *pBool = pMyObject->LocalUIonStaticIPEnable;
+        return TRUE;
+    }
+
     // LGI ADD END
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
@@ -473,6 +479,11 @@ LgiGeneral_SetParamBoolValue
         pMyObject->STPEnable = bValue;
         return TRUE;
     }
+    if (strcmp(ParamName, "LocalUIonStaticIPEnable") == 0)
+    {
+        pMyObject->LocalUIonStaticIPEnable = bValue;
+        return TRUE;
+    }
 
     return FALSE;
 }
@@ -665,6 +676,8 @@ LgiGeneral_Commit
     CosaDmlGiSetLedWanDhcpErrorTimer(NULL, pMyObject->WanDhcpErrorTimer);
 
     CosaDmlGiSetSTPEnable(NULL, pMyObject->STPEnable);
+    CosaDmlGiSetLocalUIonStaticIPEnabled(NULL, pMyObject->LocalUIonStaticIPEnable);
+
     /*
        The above call to CosaDmlGiSetSTPEnable() includes an unconditional call
        to syscfg_set_commit(), so we don't need another call to syscfg_commit()
