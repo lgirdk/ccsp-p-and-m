@@ -726,6 +726,17 @@
                 <writable>true</writable>
 
             </parameter>
+            <parameter>
+
+                <name>LocalUIonStaticIPEnable</name>
+
+                <type>boolean</type>
+
+                <syntax>bool</syntax>
+
+                <writable>true</writable>
+
+            </parameter>
 
 
              <parameter>
