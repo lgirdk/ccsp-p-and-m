@@ -9356,8 +9356,13 @@ void *Ipv6ModeHandler_thrd(void *data)
             else if(!strcmp(name, "current_wan_ifname"))
             {
                 memset(tmpBuf,0,sizeof(tmpBuf));
+#ifdef FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE
+                getMeshWanIfName(tmpBuf,sizeof(tmpBuf));
+                if (strcmp(val,tmpBuf) == 0 )
+#else
                 sysevent_get(sysevent_fd, sysevent_token, "wan_ifname", tmpBuf, sizeof(tmpBuf));
                 if (strcmp(val,tmpBuf) != 0 )
+#endif
                 {
                     _dibbler_server_operation("stop");
                     addRemoteWanIpv6Route();
