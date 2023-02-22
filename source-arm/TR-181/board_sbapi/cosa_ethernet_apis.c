@@ -774,26 +774,26 @@ CosaDmlEthPortGetStats
 
 ANSC_STATUS CosaDmlEEEPortGetCfg (ULONG ulInstanceNumber, PCOSA_DML_ETH_PORT_CFG pCfg)
 {
-    ANSC_STATUS returnStatus = ANSC_STATUS_FAILURE;
-    BOOLEAN enable = FALSE;
-    int portIdx;
-
-    portIdx = getPortID(ulInstanceNumber);
+    int portIdx = getPortID(ulInstanceNumber);
 
     if ((portIdx == CCSP_HAL_ETHSW_EthPort1) ||
         (portIdx == CCSP_HAL_ETHSW_EthPort2) ||
         (portIdx == CCSP_HAL_ETHSW_EthPort3) ||
         (portIdx == CCSP_HAL_ETHSW_EthPort4))
     {
+        BOOLEAN enable = FALSE;
+
         if (CcspHalEthSwGetEEEPortEnable(portIdx, &enable) == RETURN_OK)
         {
-            returnStatus = ANSC_STATUS_SUCCESS;
+            pCfg->bEEEEnabled = enable;
+
+            return ANSC_STATUS_SUCCESS;
         }
     }
 
-    pCfg->bEEEEnabled = enable;
+    pCfg->bEEEEnabled = FALSE;
 
-    return returnStatus;
+    return ANSC_STATUS_FAILURE;
 }
 
 ANSC_STATUS CosaDmlEEEPortSetCfg (ULONG ulInstanceNumber, PCOSA_DML_ETH_PORT_CFG pCfg)
@@ -1764,8 +1764,10 @@ int puma6_getEntry(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_FULL pEntry)
         }
 
         /* Get value from PSM and set in HAL */
-        CosaDmlEEEPortGetPsmCfg(port,pcfg);
-        CosaDmlEEEPortSetCfg(port,pcfg);
+        if (CosaDmlEEEPortGetPsmCfg(port,pcfg) == CCSP_SUCCESS)
+        {
+            CosaDmlEEEPortSetCfg(port,pcfg);
+        }
     }
     else
     {
