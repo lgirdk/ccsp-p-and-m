@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="utf-8" ?>
-
 <!--
  If not stated otherwise in this file or this component's Licenses.txt file the
  following copyright and licenses apply:
@@ -3510,7 +3508,42 @@
 
                         </parameters>
 
-                </object>
+		</object>
+		<object>
+			<name>LatencyMeasureTcpSetupIPv4</name>
+			<objectType>object</objectType>
+			<functions>
+				<func_GetParamBoolValue>LatencyMeasureTcpSetupIPv4_GetParamBoolValue</func_GetParamBoolValue>
+				<func_SetParamBoolValue>LatencyMeasureTcpSetupIPv4_SetParamBoolValue</func_SetParamBoolValue>
+			</functions>
+			<parameters>
+				<parameter>
+					<name>Enable</name>
+					<type>boolean</type>
+					<syntax>bool</syntax>
+					<writable>true</writable>
+				</parameter>
+			</parameters>
+		</object>
+
+		<object>
+   			<name>LatencyMeasureTcpSetupIPv6</name>
+			<objectType>object</objectType>
+			<functions>
+				<func_GetParamBoolValue>LatencyMeasureTcpSetupIPv6_GetParamBoolValue</func_GetParamBoolValue>
+				<func_SetParamBoolValue>LatencyMeasureTcpSetupIPv6_SetParamBoolValue</func_SetParamBoolValue>
+			</functions>
+			<parameters>
+				<parameter>
+					<name>Enable</name>
+					<type>boolean</type>
+					<syntax>bool</syntax>
+					<writable>true</writable>
+				</parameter>
+			</parameters>
+		</object>
+
+
 		<object>
 		        <name>ManageableNotification</name>
 		        <objectType>object</objectType>

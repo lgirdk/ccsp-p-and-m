@@ -71,6 +71,13 @@
 #include "cosa_deviceinfo_apis.h"
 #include "cosa_deviceinfo_dml_custom.h"
 #define  PARTNER_ID_LEN  64 
+#define PARAM_TCP_IPV4_ENABLE "Device.QOS.X_RDK_LatencyMeasure_IPv4Enable"
+#define COMP_TCP_IPV4_ENABLE "com.cisco.spvtg.ccsp.tdm"
+#define DBUSPATH_TCP_IPV4_ENABLE "/com/cisco/spvtg/ccsp/tdm"
+
+#define PARAM_TCP_IPV6_ENABLE "Device.QOS.X_RDK_LatencyMeasure_IPv6Enable"
+#define COMP_TCP_IPV6_ENABLE "com.cisco.spvtg.ccsp.tdm"
+#define DBUSPATH_TCP_IPV6_ENABLE "/com/cisco/spvtg/ccsp/tdm"
 
 #ifdef FEATURE_SUPPORT_ONBOARD_LOGGING
 
@@ -2270,4 +2277,36 @@ MAPT_DeviceInfo_SetParamBoolValue
     );
 
 #endif
+
+BOOL
+LatencyMeasureTcpSetupIPv4_GetParamBoolValue
+	(
+		ANSC_HANDLE 				hInsContext,
+		char*						ParamName,
+		BOOL*						pBool
+	);
+
+BOOL
+LatencyMeasureTcpSetupIPv4_SetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL                        bValue
+    );
+	
+BOOL
+LatencyMeasureTcpSetupIPv6_GetParamBoolValue
+	(
+		ANSC_HANDLE 				hInsContext,
+		char*						ParamName,
+		BOOL*						pBool
+	);
+
+BOOL
+LatencyMeasureTcpSetupIPv6_SetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL                        bValue
+    );
 #endif

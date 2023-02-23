@@ -2074,6 +2074,8 @@ LanMngm_SetParamIntValue
     return FALSE;
 }
 
+static bool lan_ip_config_modified=false;
+
 BOOL
 LanMngm_SetParamUlongValue
     (
@@ -2157,6 +2159,7 @@ LanMngm_SetParamUlongValue
 
 		CcspTraceWarning(("RDKB_LAN_CONFIG_CHANGED: Setting new LanSubnetMask value  ...\n"));
         pLanMngm->LanSubnetMask.Value = uValuepUlong;
+        lan_ip_config_modified=true;
         Dhcpv4_Lan_MutexUnLock();
         return TRUE;
     }
@@ -2170,6 +2173,7 @@ LanMngm_SetParamUlongValue
 
 		CcspTraceWarning(("RDKB_LAN_CONFIG_CHANGED: Setting new LanIPAddress value  ...\n"));
         pLanMngm->LanIPAddress.Value = uValuepUlong;
+        lan_ip_config_modified=true;
         Dhcpv4_Lan_MutexUnLock();
         return TRUE;
     }
@@ -2396,6 +2400,12 @@ CcspTraceWarning( ("--------- LanMngm_Commit CosaDmlDcResetBr0 <<\n"));
 		}
 #endif
     }
+    if (lan_ip_config_modified == true)
+    {
+        commonSyseventSet("lan_ip_config_modified","");
+        lan_ip_config_modified=false;
+    }
+
     Dhcpv4_Lan_MutexUnLock();
     return 0;
 }

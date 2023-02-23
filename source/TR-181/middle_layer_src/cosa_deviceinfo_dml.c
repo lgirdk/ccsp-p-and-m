@@ -23829,3 +23829,311 @@ BOOL                        bValue
     return FALSE;
 }
 #endif //FEATURE_RDKB_NFC_MANAGER
+
+/***********************************************************************
+
+ APIs for Object:
+
+	DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.LatencyMeasureTcpSetupIPv4.
+
+    *  LatencyMeasureTcpSetupIPv4_GetParamBoolValue
+	*  LatencyMeasureTcpSetupIPv4_SetParamBoolValue
+***********************************************************************/
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        LatencyMeasureTcpSetupIPv4_GetParamBoolValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                BOOL*                       pBool
+            );
+
+    description:
+
+        This function is called to retrieve Boolean parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                BOOL*                       pBool
+                The buffer of returned boolean value;
+
+    return:     TRUE if succeeded.
+
+**********************************************************************/
+
+BOOL
+LatencyMeasureTcpSetupIPv4_GetParamBoolValue
+	(
+		ANSC_HANDLE 				hInsContext,
+		char*						ParamName,
+		BOOL*						pBool
+	)
+{
+    UNREFERENCED_PARAMETER(hInsContext);
+
+    /* check the parameter name and return the corresponding value */
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+        /* collect value */
+        char buf[8];
+        if( syscfg_get( NULL, "LatencyMeasure_IPv4Enable", buf, sizeof(buf))==0)
+        {
+            if (strcmp(buf, "true") == 0)
+            {
+                *pBool = TRUE;
+            }
+            else
+            {
+                *pBool = FALSE;
+            }
+        }
+        else
+        {
+            CcspTraceWarning(("%s syscfg_get failed  for TcpIpv4Enable\n",__FUNCTION__));
+            *pBool = FALSE;
+		}
+        return TRUE;
+	}
+    return FALSE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        LatencyMeasureTcpSetupIPv4_SetParamBoolValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                BOOL                        bValue
+            );
+
+    description:
+
+        This function is called to set BOOL parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                BOOL                        bValue
+                The updated BOOL value;
+
+    return:     TRUE if succeeded.
+
+**********************************************************************/
+
+BOOL
+LatencyMeasureTcpSetupIPv4_SetParamBoolValue
+	(
+		ANSC_HANDLE 				hInsContext,
+		char*						ParamName,
+		BOOL						bValue
+	)
+{
+    UNREFERENCED_PARAMETER(hInsContext);
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+    	parameterValStruct_t pVal[1];
+    	char*                faultParam     = NULL;
+	int                  ret            = 0;
+	CCSP_MESSAGE_BUS_INFO *bus_info               = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
+	pVal[0].parameterName  = PARAM_TCP_IPV4_ENABLE;
+	pVal[0].parameterValue = bValue ? "true" : "false";
+	pVal[0].type           = ccsp_boolean;
+
+	ret = CcspBaseIf_setParameterValues(
+		 bus_handle,
+		 COMP_TCP_IPV4_ENABLE,
+		 DBUSPATH_TCP_IPV4_ENABLE,
+		 0,
+		 0,
+		 pVal,
+		 1,
+		 TRUE,
+		 &faultParam
+		);
+
+	if (ret != CCSP_SUCCESS)
+		{
+			CcspTraceError(("%s - %d - Failed to set value to PAM TcpIpv4- Error [%s]\n", __FUNCTION__, __LINE__, faultParam));
+			bus_info->freefunc(faultParam);
+            faultParam=NULL;
+			return FALSE;
+		}
+        return TRUE;
+    }
+
+    return FALSE;
+
+}
+
+/***********************************************************************
+
+ APIs for Object:
+
+	DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.LatencyMeasureTcpSetupIPv6.
+
+    *  LatencyMeasureTcpSetupIPv6_GetParamBoolValue
+	*  LatencyMeasureTcpSetupIPv6_SetParamBoolValue
+***********************************************************************/
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        LatencyMeasureTcpSetupIPv6_GetParamBoolValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                BOOL*                       pBool
+            );
+
+    description:
+
+        This function is called to retrieve Boolean parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                BOOL*                       pBool
+                The buffer of returned boolean value;
+
+    return:     TRUE if succeeded.
+
+**********************************************************************/
+
+BOOL
+LatencyMeasureTcpSetupIPv6_GetParamBoolValue
+	(
+		ANSC_HANDLE 				hInsContext,
+		char*						ParamName,
+		BOOL*						pBool
+	)
+{
+    UNREFERENCED_PARAMETER(hInsContext);
+    /* check the parameter name and return the corresponding value */
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+        /* collect value */
+        char buf[8];
+        if( syscfg_get( NULL, "LatencyMeasure_IPv6Enable", buf, sizeof(buf))==0)
+        {
+            if (strcmp(buf, "true") == 0)
+            {
+                *pBool = TRUE;
+            }
+            else
+            {
+                *pBool = FALSE;
+            }
+        }
+        else
+        {
+            CcspTraceWarning(("%s syscfg_get failed  for TcpIpv6Enable\n",__FUNCTION__));
+            *pBool = FALSE;
+        }
+        return TRUE;
+	}
+
+    return FALSE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        LatencyMeasureTcpSetupIPv6_SetParamBoolValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                BOOL                        bValue
+            );
+
+    description:
+
+        This function is called to set BOOL parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                BOOL                        bValue
+                The updated BOOL value;
+
+    return:     TRUE if succeeded.
+
+**********************************************************************/
+
+BOOL
+LatencyMeasureTcpSetupIPv6_SetParamBoolValue
+	(
+		ANSC_HANDLE 				hInsContext,
+		char*						ParamName,
+		BOOL						bValue
+	)
+
+{
+	UNREFERENCED_PARAMETER(hInsContext);
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+        parameterValStruct_t pVal[1];
+        char*                faultParam     = NULL;
+        int                  ret            = 0;
+        CCSP_MESSAGE_BUS_INFO *bus_info               = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
+        pVal[0].parameterName  = PARAM_TCP_IPV6_ENABLE;
+        pVal[0].parameterValue = bValue ? "true" : "false";
+        pVal[0].type           = ccsp_boolean;
+
+        ret = CcspBaseIf_setParameterValues(
+                 bus_handle,
+                 COMP_TCP_IPV6_ENABLE,
+                 DBUSPATH_TCP_IPV6_ENABLE,
+                 0,
+                 0,
+                 pVal,
+                 1,
+                 TRUE,
+                 &faultParam
+                );
+
+        if (ret != CCSP_SUCCESS)
+                {
+                        CcspTraceError(("%s - %d - Failed to set value to PAM TcpIpv4- Error [%s]\n", __FUNCTION__, __LINE__, faultParam));
+                        bus_info->freefunc(faultParam);
+                        faultParam = NULL;
+                        return FALSE;
+                }
+        return TRUE;
+    }
+
+    return FALSE;
+
+}
+
