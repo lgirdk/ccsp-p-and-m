@@ -2256,6 +2256,18 @@ CosaDmlDcSetFactoryReset
         resetCellular();
     }
 #endif //FEATURE_RDKB_CELLULAR_MANAGER
+   
+#if defined(FEATURE_MAPT) && defined (_SKY_HUB_COMMON_PRODUCT_REQ_) 
+    /* As for sky platforms, we need to make sure to send V6 release packet to BNG when 
+     * map-t disabled during FR use case. Because of after FR map-t will be enabled by default in 
+     * that case BNG is not replying map-t container in response packet. 
+     * so we are raising event here and processing in WANManager sysevent handling. 
+     */
+    if(factory_reset_mask & FR_ROUTER)
+    {
+        v_secure_system("sysevent set factory_reset-status started"); 
+    }
+#endif //FEATURE_MAPT & _SKY_HUB_COMMON_PRODUCT_REQ_
 
     if (factory_reset_mask & FR_FW) {
         int rc = -1;
