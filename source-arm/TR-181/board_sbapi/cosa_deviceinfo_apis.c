@@ -213,20 +213,14 @@ CosaDmlDiSetEnableMoCAforXi5Flag
    )
 {
        UNREFERENCED_PARAMETER(hContext);
-       if ( syscfg_set( NULL,
-                                         "X_RDKCENTRAL-COM_EnableMoCAforXi5",
-                                         ((*pValue == 1 ) ? "true" : "false") )!= 0 )
+
+       if (syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_EnableMoCAforXi5", (*pValue == 1) ? "true" : "false") != 0)
        {
                CcspTraceWarning(("syscfg_set failed\n"));
                return ANSC_STATUS_FAILURE;
        }
        else
        {
-               if ( syscfg_commit( ) != 0 )
-               {
-                       CcspTraceWarning(("syscfg_commit failed\n"));
-                       return ANSC_STATUS_FAILURE;
-               }
                *pEnableMoCAforXi5Flag = *pValue;
 
                /*
@@ -3204,17 +3198,11 @@ CosaDmlDiUiBrandingInit
                         memset(PartnerID, 0 ,PARTNER_ID_LEN);
                         strcpy(PartnerID, "sky-italia");
 
-                        if ((syscfg_set(NULL, "PartnerID", PartnerID) != 0))
+                        if ((syscfg_set_commit(NULL, "PartnerID", PartnerID) != 0))
                         {
                                  CcspTraceWarning(("%s: syscfg_set failed\n", __FUNCTION__));
                         }
-                        else
-                        {
-                                if (syscfg_commit() != 0)
-                                {
-                                        CcspTraceWarning(("%s: syscfg_commit failed\n", __FUNCTION__));
-                                }
-                        }
+
                         CcspTraceWarning(("%s : Partner is changed to  = %s\n", __FUNCTION__, PartnerID));
                 }
         }

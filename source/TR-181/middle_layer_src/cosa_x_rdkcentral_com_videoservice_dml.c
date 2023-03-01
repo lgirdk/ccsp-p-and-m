@@ -369,7 +369,7 @@ WMMdownstreamMap_SetParamBoolValue
         /* collect value */
         if( bValue == TRUE)
         {
-           if (syscfg_set(NULL, "WMMdownstreamMap_enable", "true") != 0)
+           if (syscfg_set_commit(NULL, "WMMdownstreamMap_enable", "true") != 0)
 		   {
 			   AnscTraceWarning(("syscfg_set WMMdownstreamMap_enable:true failed\n"));
 		   }
@@ -381,7 +381,7 @@ WMMdownstreamMap_SetParamBoolValue
         }
         else
         {
-            if (syscfg_set(NULL, "WMMdownstreamMap_enable", "false") != 0)
+            if (syscfg_set_commit(NULL, "WMMdownstreamMap_enable", "false") != 0)
 			{
 				AnscTraceWarning(("syscfg_set WMMdownstreamMap_enable:false failed\n"));
 			}
@@ -391,15 +391,8 @@ WMMdownstreamMap_SetParamBoolValue
 				AnscTraceWarning(("syscfg_set WMMdownstreamMap_enable:false \n"));
 			}
         }
-		
-        if (syscfg_commit() != 0)
-         {
-            AnscTraceWarning(("syscfg_commit WMMdownstreamMap_enable failed\n"));
-         }
-        else
-         {
-            return TRUE;
-         }
+
+        return TRUE;
     }
 
     return FALSE;
