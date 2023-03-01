@@ -933,48 +933,20 @@ XfinityHealthCheck_SetParamIntValue
         int                         value
     )
 {
-    char buf1[16]={0};
-    char buf2[16]={0};
-    errno_t rc1 = -1;
-    errno_t rc2 = -1;
     UNREFERENCED_PARAMETER(hInsContext);
 
     if (strcmp(ParamName, "Cadence") == 0)
     {
-        if(value<1 || value>1000)
+        if ((value < 1) || (value > 1000))
         {
             AnscTraceWarning(("Cadence must be between 1 and 1000\n"));
             return FALSE;
         }
-        rc1 = sprintf_s(buf1, sizeof(buf1), "%d", value);
-        if(rc1 < EOK)
-        {
-            ERR_CHK(rc1);
-            return FALSE;
-        }
-        rc2 = sprintf_s(buf2, sizeof(buf2), "%d", value-1);
-        if(rc2 < EOK)
-        {
-            ERR_CHK(rc2);
-            return FALSE;
-        }
 
-        if (syscfg_set(NULL, "XfinityHealthCheckCadence", buf1) != 0 ||
-            syscfg_set(NULL, "XfinityHealthCheckRemDays", buf2) != 0 )
+        if ((syscfg_set_u(NULL, "XfinityHealthCheckCadence", value) != 0) ||
+            (syscfg_set_u_commit(NULL, "XfinityHealthCheckRemDays", value - 1) != 0))
         {
             AnscTraceWarning(("syscfg_set failed\n"));
-        }
-        else
-        {
-            if (syscfg_commit() != 0)
-            {
-                AnscTraceWarning(("syscfg_commit failed\n"));
-                return FALSE;
-            }
-            else
-            {
-                AnscTraceWarning(("syscfg_commit success\n"));
-            }
         }
 
         return TRUE;

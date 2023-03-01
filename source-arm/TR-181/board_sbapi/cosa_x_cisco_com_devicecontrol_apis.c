@@ -2790,8 +2790,7 @@ ANSC_STATUS CosaDmlDcSetDeviceMode
         return(ANSC_STATUS_SUCCESS);
     value--;
     snprintf(buf,sizeof(buf),"%lu",value);
-//     syscfg_set(NULL, "last_erouter_mode", buf);
-//     syscfg_commit();
+//  syscfg_set_commit(NULL, "last_erouter_mode", buf);
     commonSyseventSet("erouter_mode", buf);
     /*Need to reboot device according to SNMP definition*/
 //     printf("<<< Reboot device because of the change of rgDevieMode >>>\n");
