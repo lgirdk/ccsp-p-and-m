@@ -2806,6 +2806,10 @@ CosaDmlDcSetSSHEnable
     UNREFERENCED_PARAMETER(hContext);
     BOOLEAN bSSHEnable;
 
+    //Check current status
+    if (access("/var/tmp/rsshd.pid", F_OK) == 0)
+        return ANSC_STATUS_FAILURE;
+
     if (CosaDmlDcGetSSHEnable(NULL, &bSSHEnable) == ANSC_STATUS_FAILURE)
             return ANSC_STATUS_FAILURE;
 
