@@ -251,7 +251,7 @@ ANSC_STATUS CosaDmlGiGetSKU (ANSC_HANDLE hContext, char *pValue, ULONG ulSize)
     }
     else if (customerId == 50)
     {
-        sku = "Home Fiber Box 2";
+        sku = "yallo Home Fiber Box 2";
     }
     else if (customerId == 51)
     {
