@@ -501,15 +501,28 @@ void *XfinityWifiThread
         if (DmSetBool("Device.WiFi.SSID.10.Enable", value) != ANSC_STATUS_SUCCESS) {
             fprintf(stderr, "%s: set WiFi.SSID.10 Disable error\n", __FUNCTION__);
         } else {
-            fprintf(stderr, "%s: set WiFi.SSID.10 Diable OK\n", __FUNCTION__);
+            fprintf(stderr, "%s: set WiFi.SSID.10 Disable OK\n", __FUNCTION__);
         }
 
         
         if (DmSetBool("Device.WiFi.SSID.16.Enable", value) != ANSC_STATUS_SUCCESS) {
             fprintf(stderr, "%s: set WiFi.SSID.16 Disable error\n", __FUNCTION__);
         } else {
-            fprintf(stderr, "%s: set WiFi.SSID.16 Diable OK\n", __FUNCTION__);
+            fprintf(stderr, "%s: set WiFi.SSID.16 Disable OK\n", __FUNCTION__);
         }
+#if defined (_XB8_PRODUCT_REQ_) && defined(RDK_ONEWIFI)
+        if (DmSetBool("Device.WiFi.SSID.19.Enable", value) != ANSC_STATUS_SUCCESS) {
+            fprintf(stderr, "%s: set WiFi.SSID.19 Disable error\n", __FUNCTION__);
+        } else {
+            fprintf(stderr, "%s: set WiFi.SSID.19 Disable OK\n", __FUNCTION__);
+        }
+
+        if (DmSetBool("Device.WiFi.SSID.21.Enable", value) != ANSC_STATUS_SUCCESS) {
+            fprintf(stderr, "%s: set WiFi.SSID.21 Disable error\n", __FUNCTION__);
+        } else {
+            fprintf(stderr, "%s: set WiFi.SSID.21 Disable OK\n", __FUNCTION__);
+        }
+#endif
     }
     else
     {

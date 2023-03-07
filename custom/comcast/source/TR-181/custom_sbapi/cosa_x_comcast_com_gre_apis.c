@@ -386,10 +386,10 @@ int hotspot_update_circuit_ids(int greinst, int queuestart) {
             pthread_mutex_unlock(&circuitid_lock);
             return -1;
         }
-        if(strcmp("None", varStruct.parameterValue)) {
-            snprintf(circuitid + circuitSave, sizeof(circuitid) - circuitSave, "s");
-        } else {
+        if((strcmp("None", varStruct.parameterValue) == 0) || (strcmp("Enhanced-Open", varStruct.parameterValue) == 0)) {
             snprintf(circuitid + circuitSave, sizeof(circuitid) - circuitSave, "o");
+        } else {
+            snprintf(circuitid + circuitSave, sizeof(circuitid) - circuitSave, "s");
         }
         
         snprintf(paramname, sizeof(paramname), "snooper-queue%d-circuitID", queuestart);
