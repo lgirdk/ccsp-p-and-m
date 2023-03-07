@@ -1904,6 +1904,11 @@ void* restoreAllDBs(void* arg)
 	v_secure_system( "arris_rpc_client arm nvm_reset" ); //ARRISXB6-7323
 #elif defined(_COSA_BCM_MIPS_)
         v_secure_system("xf3_erase_nvram");
+#elif defined(_SR213_PRODUCT_REQ_)
+    /* Wipe out all user data. */
+    v_secure_system("sync; find /nvram /nvram2 /data -mindepth 1 | grep -vE \"Q[[:xdigit:]]{8}$\" | xargs rm -rf; sync");
+    //set flags for all necessary modules.voice module will use HFRES_TELCOVOIP and HFRES_TELCOVOICE
+    v_secure_system("echo 1 > /data/HARD_FACTORY;echo 1 > /data/HFRES_UTOPIA;echo 1 > /data/HFRES_TELCOVOIP;echo 1 > /data/HFRES_TELCOVOICE;sync");
 #elif defined(_HUB4_PRODUCT_REQ_)
 	v_secure_system("rm -f /nvram/ETH_WAN_PORT_RECLAIMED");
 	v_secure_system("rm -rf /nvram/lxy");
