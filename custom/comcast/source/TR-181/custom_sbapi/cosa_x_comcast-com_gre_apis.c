@@ -504,27 +504,15 @@ ANSC_STATUS
 CosaDml_GreTunnelGetConnectedRemoteEndpoint(ULONG tuIdx, COSA_DML_GRE_TUNNEL *greTu)
 {
     UNREFERENCED_PARAMETER(tuIdx);
-	char cmd[126] = {0};
-	char line_buf[126] = {0};
-	FILE *fp = NULL;
-	errno_t rc = -1;
 
 	if(!greTu)
 			return ANSC_STATUS_FAILURE;
 
-	snprintf(cmd, sizeof(cmd), "sysevent get %s",kHotspotfd_tunnelEP);       
 	
-    if (((fp = popen(cmd,"r")) != NULL) && (fgets(line_buf, sizeof(line_buf), fp)))
-    {
-        rc = strcpy_s(greTu->ConnectedRemoteEndpoint, sizeof(greTu->ConnectedRemoteEndpoint), line_buf);
-        ERR_CHK(rc);
-    }
-	if(fp)
-		pclose(fp);
-
-	return ANSC_STATUS_SUCCESS;     
+	sysevent_get(sysevent_fd, sysevent_token,kHotspotfd_tunnelEP,greTu->ConnectedRemoteEndpoint, sizeof(greTu->ConnectedRemoteEndpoint));
+    
+	return ANSC_STATUS_SUCCESS; 
 }
-
 
 ANSC_STATUS
 CosaDml_GreTunnelGetEntryByIndex(ULONG ins, COSA_DML_GRE_TUNNEL *greTu)
