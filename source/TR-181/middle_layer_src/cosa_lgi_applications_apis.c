@@ -52,17 +52,11 @@ ULONG CosaDmlApplicationsSamKnowsSetEnabled ( ANSC_HANDLE hContext, BOOL bValue 
     } else {
         system ("rpcclient2 'sh /etc/init.d/skclient.sh stop >/dev/null &'");
     }
-#elif defined (_LG_MV2_PLUS_)
+#else
     if (bValue == TRUE) {
         system ("/etc/init.d/samknows_ispmon start &");
     } else {
         system ("/etc/init.d/samknows_ispmon stop &");
-    }
-#else
-    if (bValue == TRUE) {
-        system ("/opt/samknows/router_agent/bin/task_runner &");
-    } else {
-        system ("/opt/samknows/router_agent/bin/task_runner --kill &");
     }
 #endif
 
