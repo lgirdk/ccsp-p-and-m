@@ -1095,7 +1095,7 @@ void CosaDmlGenerateRipdConfigFile(ANSC_HANDLE  hContext )
         /* If updatetime is zero then don't send periodic route update */
         if ( pConf->Enable && pConf->If1Enable && (!pConf->If1SendEnable || pConf->UpdateTime == 0) && (_ansc_strlen(pConf->If1Name) > 0) )
         {
-            fprintf(fp, " distribute-list 1 out %s\n", pConf->If1Name );
+            fprintf(fp, " distribute-list 1 out %s\n", "erouter0" /*pConf->If1Name*/ );
         }
         if ( pConf->Enable && pConf->If1Enable && !pConf->If1ReceiveEnable && (_ansc_strlen(pConf->If1Name) > 0) )
             fprintf(fp, " distribute-list 1 in %s\n", pConf->If1Name );
