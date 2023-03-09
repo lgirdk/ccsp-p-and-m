@@ -241,7 +241,7 @@ void ssam_start (void)
     }
 
     syscfg_get(NULL, "bridge_mode", buf, sizeof(buf));
-    if (strcmp(buf, "1") == 0) {
+    if (strcmp(buf, "0") != 0) {
         return;
     }
 
