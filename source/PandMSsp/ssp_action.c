@@ -184,11 +184,9 @@ ssp_engage_pnm
 {
     ANSC_STATUS                     returnStatus    = ANSC_STATUS_SUCCESS;
     char                            CrName[256]     = {0};
-    PCCSP_DM_XML_CFG_LIST           pXmlCfgList     = NULL;
     errno_t                         rc        = -1;
 
     g_pComponent_Common_Dm->Health = CCSP_COMMON_COMPONENT_HEALTH_Yellow;
-
 
     if ( pPnmCcdIf )
     {
@@ -208,13 +206,6 @@ ssp_engage_pnm
     {
        ERR_CHK(rc);
        return ANSC_STATUS_FAILURE;
-    }
-
-    returnStatus = CcspComponentLoadDmXmlList(pStartCfg->DmXmlCfgFileName, &pXmlCfgList);
-
-    if ( returnStatus != ANSC_STATUS_SUCCESS )
-    {
-        return  returnStatus;
     }
 
     returnStatus =
@@ -239,8 +230,6 @@ ssp_engage_pnm
     {
 	CcspTraceWarning(("PandMInit:%s PandM's registartion with CR fails...\n",__FUNCTION__));
     }
-
-    AnscFreeMemory(pXmlCfgList);
 
     return ANSC_STATUS_SUCCESS;
 }
