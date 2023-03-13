@@ -68,6 +68,8 @@
 #include <utapi.h>
 #include "dml_tr181_custom_cfg.h" 
 #include "safec_lib_common.h"
+#include "secure_wrapper.h"
+
 COSA_DML_DDNS_SERVICE g_DdnsService[10] = 
 {
     {FALSE, 1, "DdnsService1", "dyndns", "admin1", "admin1", "cisco.com", "", COSA_DML_DDNS_STATE_Idle, "", FALSE, FALSE},
@@ -786,7 +788,7 @@ DdnsRestart(void)
     char    cmd[512] = {0};
     ULONG   n = 0;
     
-    if (vsystem("killall -9 ez-ipupdate") != 0)
+    if (v_secure_system("killall -9 ez-ipupdate") != 0)
     {
         fprintf(stderr, "%s: fail to killall ez-ipupdate\n", __FUNCTION__);
     }
@@ -1233,7 +1235,7 @@ CosaDmlDdnsSetConfig
 
     if (g_bEnabled == FALSE)
     {
-        if (vsystem("killall -9 ez-ipupdate") != 0)
+        if (v_secure_system("killall -9 ez-ipupdate") != 0)
         {
             fprintf(stderr, "%s: fail to killall ez-ipupdate\n", __FUNCTION__);
         }
