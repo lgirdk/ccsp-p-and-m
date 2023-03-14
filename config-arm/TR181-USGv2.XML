@@ -16187,7 +16187,7 @@
           </parameter>
           <parameter>
             <name>AdvDefaultLifetime</name>
-            <type>unsignedInt[1:65535]</type>
+            <type>unsignedInt[180:9000]</type>
             <syntax>uint32</syntax>
             <writable>true</writable>
           </parameter>
