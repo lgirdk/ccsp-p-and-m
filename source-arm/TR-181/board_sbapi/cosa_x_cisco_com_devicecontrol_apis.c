@@ -1892,6 +1892,11 @@ void* restoreAllDBs(void* arg)
 #if defined (_WNXL11BWL_PRODUCT_REQ_) || defined (_SE501_PRODUCT_REQ_)
   /* wipe out all user data including any debug flags which could produce lot of data.  without invalidate flash memory, /nvram/secure end up corrupting if using rm -rf *. */
         v_secure_system("sync; find /nvram /nvram2 /data -mindepth 1 | grep -vE \"Q[[:xdigit:]]{8}$\" | xargs rm -r; sync");  /* remove all files from user directory */
+        // set lastreboot reason directly into db
+        v_secure_system("mkdir -p /nvram/secure/data/ && touch $_/syscfg.db");
+        v_secure_system("echo \"X_RDKCENTRAL-COM_LastRebootReason=factory-reset\" > /nvram/secure/data/syscfg.db");
+        v_secure_system("echo \"X_RDKCENTRAL-COM_LastRebootCounter=1\" >> /nvram/secure/data/syscfg.db");
+        v_secure_system("sync");
         /* run addition clean up to fix /nvram/secure corruption issue where encryption key didn't get clean up */
         // v_secure_system("/bin/dd if=/dev/zero of=/dev/mmcblk0p7 count=32768");  /* wipe out /nvram mount partition */
 #endif
