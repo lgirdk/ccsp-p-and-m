@@ -7993,6 +7993,7 @@ void addRemoteWanIpv6Route()
                     commonSyseventGet(MESH_WAN_WAN_IPV6ADDR, ipv6_address, sizeof(ipv6_address));
                     if( '\0' != ipv6_address[0] ) 
                     {
+                        v_secure_system("ip -6 route del default");
                         SetV6Route(mesh_wan_ifname,strtok(ipv6_address,"/"),1025);
                         commonSyseventSet("remotewan_routeset", "true");
                     }
