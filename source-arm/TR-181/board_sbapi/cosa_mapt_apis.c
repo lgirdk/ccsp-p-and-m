@@ -107,6 +107,8 @@
                                             >> (64-maskBits-shiftBits)                         \
                                           )
 
+#define SET_RSHIFT_MASK(maskBits) ((ULONGLONG)(0xFFFFFFFFFFFFFFFF >> (64-maskBits)))
+
 #define STRING_TO_HEX(pStr) ( (pStr-'a'<0)? (pStr-'A'<0)? pStr-'0' : pStr-'A'+10 : pStr-'a'+10 )
 
 /*
@@ -642,6 +644,28 @@ CosaDmlMaptSetEvents
   return ret? STATUS_FAILURE : STATUS_SUCCESS;
 }
 
+/*
+                :           :           ___/       :
+                |  p bits   |          /  q bits   :
+                +-----------+         +------------+
+                |IPv4 suffix|         |Port Set ID |
+                +-----------+         +------------+
+                 \          /    ____/    ________/
+                   \       :  __/   _____/
+                     \     : /     /
+ |     n bits         |  o bits   | s bits  |   128-n-o-s bits      |
+ +--------------------+-----------+---------+------------+----------+
+ |  Rule IPv6 prefix  |  EA bits  |subnet ID|     interface ID      |
+ +--------------------+-----------+---------+-----------------------+
+ |<---  End-user IPv6 prefix  --->|
+
+EA-bits:
++-------------------+---------+
+|IPV4 Address Suffix|   PSID  |
++-------------------+---------+
+|--------p----------|----q----+
+|--------------o--------------|
+*/
 
 static RETURN_STATUS
 CosaDmlMaptComputePsidAndIPv4Suffix
@@ -662,17 +686,29 @@ CosaDmlMaptComputePsidAndIPv4Suffix
 
   MAPT_LOG_INFO("Entry");
 
-  ui8v4BitIdxLen   = BUFLEN_32 - ui16v4PrefixLen;
-  ui8EaLen         = ui16PdPrefixLen - ui16v6PrefixLen;
+  // V4 suffix bits length
+  ui8v4BitIdxLen = BUFLEN_32 - ui16v4PrefixLen;
+
+  // EA bits length
+  ui8EaLen = ui16PdPrefixLen - ui16v6PrefixLen;
+
+  // PSID length
   ui8PsidBitIdxLen = ui8EaLen - ui8v4BitIdxLen;
-MAPT_LOG_INFO("<<<Trace>>> ui8v4BitIdxLen   : %u", ui8v4BitIdxLen);
-MAPT_LOG_INFO("<<<Trace>>> ui8EaLen         : %u", ui8EaLen);
-MAPT_LOG_INFO("<<<Trace>>> ui8PsidBitIdxLen : %u", ui8PsidBitIdxLen);
+
+  MAPT_LOG_INFO("<<<Trace>>> ui8v4BitIdxLen(IPV4 Suffix Bits): %u", ui8v4BitIdxLen);
+  MAPT_LOG_INFO("<<<Trace>>> ui8EaLen (EA bits)                    : %u", ui8EaLen);
+  MAPT_LOG_INFO("<<<Trace>>> ui8PsidBitIdxLen(PSID length)         : %u", ui8PsidBitIdxLen);
+
+  if (ui8EaLen != g_stMaptData.EaLen)
+  {
+       MAPT_LOG_INFO("Calculated EA-bits and received MAP EA-bits does not match!");
+       return STATUS_FAILURE;
+  }
 
   if ( ui16PdPrefixLen < ui16v6PrefixLen )
   {
-       MAPT_LOG_ERROR("Invalid MAPT option, ui16PdPrefixLen(%d) < ui16v6PrefixLen(%d)"
-                     , ui16PdPrefixLen, ui16v6PrefixLen);
+       MAPT_LOG_ERROR("Invalid MAPT option, ui16PdPrefixLen(%d) < ui16v6PrefixLen(%d)",
+		       ui16PdPrefixLen, ui16v6PrefixLen);
        return STATUS_FAILURE;
   }
 
@@ -688,36 +724,49 @@ MAPT_LOG_INFO("<<<Trace>>> ui8PsidBitIdxLen : %u", ui8PsidBitIdxLen);
        ui8EaStartByte        = ui16v6PrefixLen / 8;
        ui8EaLastByte         = ui8EaStartByte + ui8EaLen/8 + ((ui8EaLen % 8)?1:0);
        ui8EaStartByteSetBits = ui16v6PrefixLen % 8;
-MAPT_LOG_INFO("<<<Trace>>> ui8EaStartByte       : %u", ui8EaStartByte);
-MAPT_LOG_INFO("<<<Trace>>> ui8EaLastByte        : %u", ui8EaLastByte);
-MAPT_LOG_INFO("<<<Trace>>> ui8EaStartByteSetBits : %u", ui8EaStartByteSetBits);
 
-       /* Extracting ui8EaLen/8 bytes of EA value from Pd IPv6 prefix */
+       MAPT_LOG_INFO("<<<Trace>>> ui8EaStartByte       : %u", ui8EaStartByte);
+       MAPT_LOG_INFO("<<<Trace>>> ui8EaLastByte        : %u", ui8EaLastByte);
+       MAPT_LOG_INFO("<<<Trace>>> ui8EaStartByteSetBits : %u", ui8EaStartByteSetBits);
+
+       /* Extracting ui8EaLen/8 bytes of EA bits from Pd IPv6 prefix */
        do
        {
             ulEaBytes = ulEaBytes << 8 | ipv6Addr.s6_addr[ui8EaStartByte + idx];
        } while (idx++, (idx < (ui8EaLastByte - ui8EaStartByte)));
-MAPT_LOG_INFO("<<<Trace>>> ulEaBytes: %lu", ulEaBytes);
 
-       if ( ui8EaStartByteSetBits ) //revisit
+       MAPT_LOG_INFO("<<<Trace>>> No.of bytes extracted: %d, ulEaBytes: 0x%lX", idx, ulEaBytes);
+
+       // If prefix is not aa multiple of 8, get the extra byte and extract the bits
+       if ( ui8EaStartByteSetBits )
        {
-            ulEaBytes <<= 8;
-            ulEaBytes  |= (ipv6Addr.s6_addr[ui8EaLastByte]);
-            ulEaBytes >>= (((ui8EaLastByte-ui8EaStartByte)*8-ui8EaLen) +(8-ui8EaStartByteSetBits));
+          MAPT_LOG_INFO("MAP V6 Prefix not in multiples of 8, Prefix = %d", ui16v6PrefixLen);
+          ulEaBytes <<= 8;
+          ulEaBytes  |= (ipv6Addr.s6_addr[ui8EaLastByte]);
+
+          // push the extra bits out from the last byte
+          ulEaBytes >>= (((ui8EaLastByte - ui8EaStartByte) * 8 - ui8EaLen) + (8-ui8EaStartByteSetBits));
+
+          // clear the extra bits from the first EA byte
+          ulEaBytes = (ulEaBytes & SET_RSHIFT_MASK(ui8EaLen));
+
+          MAPT_LOG_INFO("<<<Trace>>> ulEaBytes: 0x%lX", ulEaBytes);
        }
-       /* If end user ipv6 prefix len is not a multiple of 8
-       else if (ui8EaLen%8)
+       else
        {
-            ulEaBytes >>= (8-ui8EaLen);
-       }*/
+          // push the extra bits out from the last byte
+          ulEaBytes = (ulEaBytes >> (((ui8EaLastByte-ui8EaStartByte)*8) - ui8EaLen));
+          MAPT_LOG_INFO("<<<Trace>>> ulEaBytes: 0x%lX\n", ulEaBytes);
+       }
 
+       // p-bits
+       *pIPv4Suffix = (ulEaBytes >> ui8PsidBitIdxLen) & SET_RSHIFT_MASK(ui8v4BitIdxLen);
 
-  *pIPv4Suffix = (ulEaBytes & SET_BIT_MASK(ui8v4BitIdxLen, ui8PsidBitIdxLen)) >> ui8PsidBitIdxLen;
-  *pPsid       =  ui8PsidBitIdxLen? (ulEaBytes & SET_BIT_MASK(ui8PsidBitIdxLen, 0)): 0;
-  *pPsidLen    =  ui8PsidBitIdxLen;
+       // q-bits
+       *pPsid = (ulEaBytes & (SET_RSHIFT_MASK(ui8PsidBitIdxLen)));
+       *pPsidLen = ui8PsidBitIdxLen;
   }
 
-MAPT_LOG_INFO("<<<Trace>>> ulEaBytes: %lu", ulEaBytes);
   MAPT_LOG_INFO("IPv4Suffix: %u | Psid: %u | Psidlen: %u",*pIPv4Suffix, *pPsid, *pPsidLen);
 
   return STATUS_SUCCESS;
