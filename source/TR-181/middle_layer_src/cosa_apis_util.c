@@ -1347,6 +1347,14 @@ CosaUtilGetFullPathNameByKeyword
         AnscFreeMemory(pTableStringToken);
     }
 
+    // Free remaining tokens in the token chain
+    pTableStringToken = AnscTcUnlinkToken(pTableListTokenChain);
+    while (pTableStringToken)
+    {
+        AnscFreeMemory(pTableStringToken);
+        pTableStringToken = AnscTcUnlinkToken(pTableListTokenChain);
+    }
+
     if ( pTableListTokenChain )
     {
         AnscTcFree((ANSC_HANDLE)pTableListTokenChain);
