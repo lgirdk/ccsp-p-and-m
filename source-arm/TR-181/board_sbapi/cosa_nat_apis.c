@@ -81,7 +81,6 @@
 #include "dml_tr181_custom_cfg.h"
 #include "safec_lib_common.h"
 #include "secure_wrapper.h"
-#include "ansc_platform.h"
 
 #ifdef _BWG_PRODUCT_REQ_
 //CGWTDETS-8800 : Usable Statics will no longer support 1-1 NAT :: START
@@ -1675,13 +1674,12 @@ ANSC_STATUS _AddPortMapping(
     int                             rc;
     errno_t                 safec_rc = -1;
 
-    if ( pEntry->ExternalPortEndRange == pEntry->ExternalPort)
+    if ( pEntry->ExternalPortEndRange == pEntry->ExternalPort && pEntry->PublicIP.Value == 0 )
     {
-        strncpy(singleInfo.dest_ip, pEntry->InternalClient, sizeof(singleInfo.dest_ip));
-        safec_rc = sprintf_s(singleInfo.remotehost, sizeof(singleInfo.remotehost), "%d.%d.%d.%d", pEntry->RemoteHost.Dot[0],\
-              pEntry->RemoteHost.Dot[1],\
-              pEntry->RemoteHost.Dot[2],\
-              pEntry->RemoteHost.Dot[3]);
+        safec_rc = sprintf_s(singleInfo.dest_ip, sizeof(singleInfo.dest_ip), "%d.%d.%d.%d", pEntry->InternalClient.Dot[0],\
+              pEntry->InternalClient.Dot[1],\
+              pEntry->InternalClient.Dot[2],\
+              pEntry->InternalClient.Dot[3]);
         if(safec_rc < EOK)
         {
            ERR_CHK(safec_rc);
@@ -1707,16 +1705,15 @@ ANSC_STATUS _AddPortMapping(
     }
     else
     {
-        safec_rc = sprintf_s(rangeInfo.remotehost, sizeof(rangeInfo.remotehost), "%d.%d.%d.%d", pEntry->RemoteHost.Dot[0],\
-              pEntry->RemoteHost.Dot[1],\
-              pEntry->RemoteHost.Dot[2],\
-              pEntry->RemoteHost.Dot[3]);
+        safec_rc = sprintf_s(rangeInfo.dest_ip, sizeof(rangeInfo.dest_ip), "%d.%d.%d.%d", pEntry->InternalClient.Dot[0],\
+              pEntry->InternalClient.Dot[1],\
+              pEntry->InternalClient.Dot[2],\
+              pEntry->InternalClient.Dot[3]);
         if(safec_rc < EOK)
         {
            ERR_CHK(safec_rc);
            return ANSC_STATUS_FAILURE;
         }
-        strncpy(rangeInfo.dest_ip, pEntry->InternalClient, sizeof(rangeInfo.dest_ip));
         safec_rc = sprintf_s(rangeInfo.public_ip, sizeof(rangeInfo.public_ip), "%d.%d.%d.%d", pEntry->PublicIP.Dot[0],\
               pEntry->PublicIP.Dot[1],\
               pEntry->PublicIP.Dot[2],\
@@ -1772,48 +1769,28 @@ ANSC_STATUS _Update_TriggerEnable(UtopiaContext   *pCtx, boolean_t enabled){
 }
 
 int _Check_PF_parameter(PCOSA_DML_NAT_PMAPPING pPortMapping)
-{
-    ULONG client = 0xffffffff;
-    if((pPortMapping->ExternalPortEndRange != 0 && (pPortMapping->ExternalPortEndRange < pPortMapping->ExternalPort)) || 
+{      
+    if( pPortMapping->PublicIP.Value == 0 &&
+        ((pPortMapping->ExternalPort == 0) || 
+         (pPortMapping->ExternalPortEndRange < pPortMapping->ExternalPort) ||
          (pPortMapping->Protocol > 3 || pPortMapping->Protocol < 1) ||
           FALSE == CosaDmlNatChkPortRange(pPortMapping->InstanceNumber, pPortMapping->bEnabled, \
                 pPortMapping->ExternalPort, pPortMapping->ExternalPortEndRange, pPortMapping->Protocol , 0)) 
+        )
     {
-        CcspTraceWarning(("Wrong Port Mapping parameter external Port %d ~ %d, protocol %d, InternalPort %d,InternalClient %s PublicIP %x\n", \
+        CcspTraceWarning(("Wrong Port Mapping parameter external Port %d ~ %d, protocol %d, InternalPort %d,InternalClient %x PublicIP %x\n", \
                    pPortMapping->ExternalPort, pPortMapping->ExternalPortEndRange, \
-                   pPortMapping->Protocol,pPortMapping->InternalPort, pPortMapping->InternalClient,\
+                   pPortMapping->Protocol,pPortMapping->InternalPort, pPortMapping->InternalClient.Value,\
                    pPortMapping->PublicIP.Value ));
         return FALSE;
     }
-
-    if( pPortMapping->InternalClient[0] == '\0' ||
-        pPortMapping->InternalClient[0] == ' ' )
-    {
-        CcspTraceWarning(("Wrong InternalClient value %s\n",pPortMapping->InternalClient ));
+    
+    if( pPortMapping->InternalClient.Value == 0 || 
+        FALSE == CosaDmlNatChkPortMappingClient(pPortMapping->InternalClient.Value)){
+        CcspTraceWarning(("Wrong InternalClient value %x\n",pPortMapping->InternalClient.Value ));
         return FALSE;
     }
-
-    if ( 1 == inet_pton(AF_INET, pPortMapping->InternalClient, &client))
-    {
-        if ( FALSE == CosaDmlNatChkPortMappingClient(client))
-        {
-            CcspTraceWarning(("Wrong InternalClient IP %s\n",pPortMapping->InternalClient ));
-            return FALSE;
-        }
-        else
-	        return TRUE;
-    }
-    else if ( FALSE == Check_IP(pPortMapping->InternalClient))
-        return FALSE;
-    else if ( TRUE == Check_MAC(pPortMapping->InternalClient))
-        return TRUE;
-    else if (TRUE == Check_hostname(pPortMapping->InternalClient))
-        return TRUE;
-    else
-    {
-        CcspTraceWarning(("Wrong InternalClient %s\n",pPortMapping->InternalClient ));
-        return FALSE;
-    }
+    return TRUE;
 }
 
 
@@ -1841,7 +1818,7 @@ int _Check_PT_parameter(PCOSA_DML_NAT_PTRIGGER pPortTrigger)
 }
 
 /* IP is type of ANSC_IPV4_ADDRESS, but ANSC_IPV4_ADDRESS is defind as union <anonymous> we cannot use it as parameter */  
-static inline void _sent_syslog_pm_sb(char *opt, UCHAR protocol, USHORT external, USHORT external_end, USHORT internal, char *ip, BOOLEAN active)
+static inline void _sent_syslog_pm_sb(char *opt, UCHAR protocol, USHORT external, USHORT external_end, USHORT internal, UCHAR ip[4], BOOLEAN active)
 {
     char extPort[30], intPort[20];
     errno_t safec_rc = -1;
@@ -2230,10 +2207,10 @@ CosaDmlNatGetPortMapping
         pNatPMapping->InternalPort = rangeInfo.internal_port;
         pNatPMapping->LeaseDuration = 0;
         pNatPMapping->Protocol = U_2_SB_PF_PROTOCOL(rangeInfo.protocol);
-        pNatPMapping->RemoteHost.Value = inet_addr(rangeInfo.remotehost);;
+        pNatPMapping->RemoteHost.Value = 0;
         pNatPMapping->PublicIP.Value = inet_addr(rangeInfo.public_ip);
         pNatPMapping->Status = (rangeInfo.enabled ? COSA_DML_NAT_STATUS_Enabled : COSA_DML_NAT_STATUS_Disabled);
-        AnscCopyString(pNatPMapping->InternalClient, rangeInfo.dest_ip);
+        pNatPMapping->InternalClient.Value = inet_addr(rangeInfo.dest_ip);
         pNatPMapping->InstanceNumber = rangeInfo.rule_id;
         safec_rc = strcpy_s(pNatPMapping->Description,sizeof(pNatPMapping->Description), rangeInfo.name);
         ERR_CHK(safec_rc);
@@ -2253,10 +2230,10 @@ CosaDmlNatGetPortMapping
         pNatPMapping->InternalPort = singleInfo.internal_port;
         pNatPMapping->LeaseDuration = 0;
         pNatPMapping->Protocol = U_2_SB_PF_PROTOCOL(singleInfo.protocol);
-        pNatPMapping->RemoteHost.Value = inet_addr(singleInfo.remotehost);
+        pNatPMapping->RemoteHost.Value = 0;
         pNatPMapping->PublicIP.Value = 0; 
         pNatPMapping->Status = (singleInfo.enabled ? COSA_DML_NAT_STATUS_Enabled : COSA_DML_NAT_STATUS_Disabled);
-        AnscCopyString(pNatPMapping->InternalClient, singleInfo.dest_ip);
+        pNatPMapping->InternalClient.Value = inet_addr(singleInfo.dest_ip);
         pNatPMapping->InstanceNumber = singleInfo.rule_id;
         safec_rc = strcpy_s(pNatPMapping->Description,sizeof(pNatPMapping->Description), singleInfo.name);
         ERR_CHK(safec_rc);
@@ -2510,10 +2487,10 @@ CosaDmlNatGetPortMappings
             pNatPMapping[ulIndex].InternalPort = singleInfo[i].internal_port;
             pNatPMapping[ulIndex].LeaseDuration = 0;
             pNatPMapping[ulIndex].Protocol = U_2_SB_PF_PROTOCOL(singleInfo[i].protocol);
-            pNatPMapping[ulIndex].RemoteHost.Value = inet_addr(singleInfo[i].remotehost);;
+            pNatPMapping[ulIndex].RemoteHost.Value = 0;
             pNatPMapping[ulIndex].PublicIP.Value = 0; 
             pNatPMapping[ulIndex].Status = (singleInfo[i].enabled ? COSA_DML_NAT_STATUS_Enabled : COSA_DML_NAT_STATUS_Disabled);
-            AnscCopyString(pNatPMapping[ulIndex].InternalClient, singleInfo[i].dest_ip);
+            pNatPMapping[ulIndex].InternalClient.Value = inet_addr(singleInfo[i].dest_ip);
             pNatPMapping[ulIndex].InstanceNumber = singleInfo[i].rule_id;
             pNatPMapping[ulIndex].X_CISCO_COM_Origin = COSA_DML_NAT_PMAPPING_Origin_Static;
             safec_rc = strcpy_s(pNatPMapping[ulIndex].Description,sizeof(pNatPMapping[ulIndex].Description), singleInfo[i].name);
@@ -2536,10 +2513,10 @@ CosaDmlNatGetPortMappings
             pNatPMapping[ulIndex].InternalPort = rangeInfo[i].internal_port;
             pNatPMapping[ulIndex].LeaseDuration = 0;
             pNatPMapping[ulIndex].Protocol = U_2_SB_PF_PROTOCOL(rangeInfo[i].protocol);
-            pNatPMapping[ulIndex].RemoteHost.Value = inet_addr(rangeInfo[i].remotehost);
+            pNatPMapping[ulIndex].RemoteHost.Value = 0;
             pNatPMapping[ulIndex].PublicIP.Value = inet_addr(rangeInfo[i].public_ip);
             pNatPMapping[ulIndex].Status = (rangeInfo[i].enabled ? COSA_DML_NAT_STATUS_Enabled : COSA_DML_NAT_STATUS_Disabled);
-            AnscCopyString(pNatPMapping[ulIndex].InternalClient, rangeInfo[i].dest_ip);
+            pNatPMapping[ulIndex].InternalClient.Value = inet_addr(rangeInfo[i].dest_ip);
             pNatPMapping[ulIndex].InstanceNumber = rangeInfo[i].rule_id;
             pNatPMapping[ulIndex].X_CISCO_COM_Origin = COSA_DML_NAT_PMAPPING_Origin_Static;
             safec_rc = strcpy_s(pNatPMapping[ulIndex].Description,sizeof(pNatPMapping[ulIndex].Description), rangeInfo[i].name);
@@ -2738,7 +2715,7 @@ CosaDmlNatAddPortMapping
 #endif        
 #endif        
 #endif        
-        _sent_syslog_pm_sb("ADD", pEntry->Protocol, pEntry->ExternalPort, pEntry->ExternalPortEndRange, pEntry->InternalPort, pEntry->InternalClient,pEntry->bEnabled);
+        _sent_syslog_pm_sb("ADD", pEntry->Protocol, pEntry->ExternalPort, pEntry->ExternalPortEndRange, pEntry->InternalPort, pEntry->InternalClient.Dot,pEntry->bEnabled);
 
 #ifdef _BWG_PRODUCT_REQ_
         //CGWTDETS-8737 : Usable Statics will no longer support 1-1 NAT :: START
@@ -2765,7 +2742,7 @@ CosaDmlNatAddPortMapping
     }
     else
     {
-        _sent_syslog_pm_sb("ADD FAILED", pEntry->Protocol, pEntry->ExternalPort, pEntry->ExternalPortEndRange, pEntry->InternalPort, pEntry->InternalClient,pEntry->bEnabled);
+        _sent_syslog_pm_sb("ADD FAILED", pEntry->Protocol, pEntry->ExternalPort, pEntry->ExternalPortEndRange, pEntry->InternalPort, pEntry->InternalClient.Dot,pEntry->bEnabled);
         Utopia_Free(&Ctx, 0);
         return ANSC_STATUS_FAILURE;
     }
@@ -3363,7 +3340,7 @@ CosaDmlNatSetPortMapping
         rc = Utopia_DelPortForwardingRangeByRuleId(&Ctx, pEntry->InstanceNumber);
         if(rc != SUCCESS){ 
             CcspTraceWarning((" Utopia_DelPortForwardingRangeByRuleId failed rc %lu in %s\n", rc, __FUNCTION__));
-            _sent_syslog_pm_sb("EDIT FAILED", pEntry->Protocol, pEntry->ExternalPort, pEntry->ExternalPortEndRange, pEntry->InternalPort, pEntry->InternalClient,pEntry->bEnabled);
+            _sent_syslog_pm_sb("EDIT FAILED", pEntry->Protocol, pEntry->ExternalPort, pEntry->ExternalPortEndRange, pEntry->InternalPort, pEntry->InternalClient.Dot,pEntry->bEnabled);
             Utopia_Free(&Ctx, 0);
             return ANSC_STATUS_FAILURE;
         }
@@ -3396,7 +3373,7 @@ CosaDmlNatSetPortMapping
        rc = Utopia_DelPortForwardingByRuleId(&Ctx, pEntry->InstanceNumber);
        if(rc != SUCCESS){
             CcspTraceWarning((" Utopia_DelPortForwardingByRuleId failed rc %lu in %s\n", rc, __FUNCTION__));
-            _sent_syslog_pm_sb("EDIT FAILED", pEntry->Protocol, pEntry->ExternalPort, pEntry->ExternalPortEndRange, pEntry->InternalPort, pEntry->InternalClient,pEntry->bEnabled);
+            _sent_syslog_pm_sb("EDIT FAILED", pEntry->Protocol, pEntry->ExternalPort, pEntry->ExternalPortEndRange, pEntry->InternalPort, pEntry->InternalClient.Dot,pEntry->bEnabled);
             Utopia_Free(&Ctx, 0);
             return ANSC_STATUS_FAILURE;
        }
@@ -3436,13 +3413,13 @@ CosaDmlNatSetPortMapping
 #endif
 #endif
 
-        _sent_syslog_pm_sb("ADD", pEntry->Protocol, pEntry->ExternalPort, pEntry->ExternalPortEndRange, pEntry->InternalPort, pEntry->InternalClient,pEntry->bEnabled);
+        _sent_syslog_pm_sb("ADD", pEntry->Protocol, pEntry->ExternalPort, pEntry->ExternalPortEndRange, pEntry->InternalPort, pEntry->InternalClient.Dot,pEntry->bEnabled);
         return ANSC_STATUS_SUCCESS;
     }
     else
     {
         Utopia_Free(&Ctx, 1);
-        _sent_syslog_pm_sb("ADD FAILED", pEntry->Protocol, pEntry->ExternalPort, pEntry->ExternalPortEndRange, pEntry->InternalPort, pEntry->InternalClient,pEntry->bEnabled);
+        _sent_syslog_pm_sb("ADD FAILED", pEntry->Protocol, pEntry->ExternalPort, pEntry->ExternalPortEndRange, pEntry->InternalPort, pEntry->InternalClient.Dot,pEntry->bEnabled);
         return ANSC_STATUS_FAILURE;
     }
 

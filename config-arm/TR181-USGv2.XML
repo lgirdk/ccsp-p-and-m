@@ -9824,9 +9824,9 @@
 
             <name>InternalClient</name>
 
-            <type>string(256)</type>
+            <type>string</type>
 
-            <syntax>string</syntax>
+            <syntax>uint32/ip4_addr</syntax>
 
             <writable>true</writable>
 

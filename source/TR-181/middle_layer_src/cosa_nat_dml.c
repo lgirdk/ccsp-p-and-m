@@ -1992,6 +1992,13 @@ PortMapping_GetParamUlongValue
         return TRUE;
     }
 
+    if (strcmp(ParamName, "InternalClient") == 0)
+    {
+        /* collect value */
+        *puLong = pNatPMapping->InternalClient.Value;
+
+        return TRUE;
+    }
 
     if (strcmp(ParamName, "RemoteHost") == 0)
     {
@@ -2168,25 +2175,6 @@ PortMapping_GetParamStringValue
         else
         {
             *pUlSize = AnscSizeOfString(pNatPMapping->X_CISCO_COM_InternalClientV6)+1;
-            return 1;
-        }
-    }
-
-    if(strcmp(ParamName, "InternalClient") == 0)
-    {
-        if( AnscSizeOfString(pNatPMapping->InternalClient) < *pUlSize)
-        {
-            rc = strcpy_s(pValue, *pUlSize, pNatPMapping->InternalClient);
-            if (rc != EOK)
-            {
-                ERR_CHK(rc);
-                return -1;
-            }
-            return 0;
-        }
-        else
-        {
-            *pUlSize = AnscSizeOfString(pNatPMapping->InternalClient)+1;
             return 1;
         }
     }
@@ -2419,6 +2407,14 @@ PortMapping_SetParamUlongValue
         return TRUE;
     }
 
+    if (strcmp(ParamName, "InternalClient") == 0)
+    {
+        /* save update to backup */
+        pNatPMapping->InternalClient.Value = uValue;
+
+        return TRUE;
+    }
+
     if (strcmp(ParamName, "RemoteHost") == 0)
     {
         /* save update to backup */
@@ -2535,18 +2531,6 @@ PortMapping_SetParamStringValue
     {
         /* save update to backup */
         rc = STRCPY_S_NOCLOBBER( pNatPMapping->X_CISCO_COM_InternalClientV6, sizeof(pNatPMapping->X_CISCO_COM_InternalClientV6), pString );
-        if (rc != EOK)
-        {
-            ERR_CHK(rc);
-            return FALSE;
-        }
-        return TRUE;
-    }
-
-
-    if( strcmp(ParamName, "InternalClient") == 0)
-    {
-        rc = STRCPY_S_NOCLOBBER( pNatPMapping->InternalClient, sizeof(pNatPMapping->InternalClient), pString );
         if (rc != EOK)
         {
             ERR_CHK(rc);
