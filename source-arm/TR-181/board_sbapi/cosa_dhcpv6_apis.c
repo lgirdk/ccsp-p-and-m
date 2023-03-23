@@ -6908,14 +6908,14 @@ int cosa_dhcpv6_client_info(char *pInterface)
                 fprintf(serverclient, "ClientNum:%d", client_num);
                 fseek(serverclient, 0, SEEK_END);
             }
-	    counter++;
-            
+            counter++;
+
+            buffer = start_buf; //Moving the buffer to the starting address
+            if (buffer != NULL)
+            {
+                free(buffer);
+            }
         }
-        buffer = start_buf; //Moving the buffer to the starting address
-        if (buffer != NULL)
-        {
-            free(buffer);
-        }        
         fclose(serverclient);
     }
     return 0;
