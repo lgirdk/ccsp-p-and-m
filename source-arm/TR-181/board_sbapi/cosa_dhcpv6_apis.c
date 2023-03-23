@@ -8181,93 +8181,6 @@ EXIT:
     return NULL;
 }
 
-/*******************************************************
-* Function Name : isDropbearRunningWithIpv6 (char *pIpv6Addr)
-*      It will verify, dropbear process is running with provided IPv6 address or not
-*      if dropbear process itself not running then it will restart the sshd-service
-*      if dropbear process is running with different IPv6 address other than provided
-*      pIpv6Addr then it will restart the sshd-service
-*
-* Parameter[in] : pIpv6Addr
-*      New IPv6Address of erouter0 interface
-*
-* @retval : void
-*
-*******************************************************/
-static void isDropbearRunningWithIpv6(char * pIpv6Addr)
-{
-#define LINE_LENGTH 1024
-#define DROPBEAR_PIDS 3
-    char extractDropbearPids[LINE_LENGTH] = {0};
-    char pathToCmdline[LINE_LENGTH] = {0};
-    char cmdLineArguments[LINE_LENGTH] = {0};
-    char *pDropbearPid = NULL;
-    int dropbearPidIndex=0, indexOfCmdLineArgument=0, indexOfeRouterIpv6String = 0, noOfDropbearPidsWithIpv6 = 0;
-    int dropbearPidNo[DROPBEAR_PIDS] = {0};
-
-    FILE *filePointerToDropbearPids = popen("pidof dropbear","r");
-
-    if (NULL == filePointerToDropbearPids)
-    {
-        CcspTraceWarning(("%s -- Failed to open the pipe of 'pidof dropbear' file: %s", __FUNCTION__, strerror(errno)));
-        return;
-    }
-
-    if (NULL != fgets(extractDropbearPids,LINE_LENGTH,filePointerToDropbearPids))
-    {
-        pDropbearPid = strtok (extractDropbearPids," ");
-
-        while(pDropbearPid != NULL)
-        {
-            dropbearPidNo[dropbearPidIndex] = atoi(pDropbearPid);
-            sprintf(pathToCmdline,"/proc/%d/cmdline",dropbearPidNo[dropbearPidIndex]);
-            int fileDescriptor = open (pathToCmdline, O_RDONLY);
-            if (-1 != fileDescriptor)
-            {
-                int noOfBytesRead = read(fileDescriptor, cmdLineArguments, LINE_LENGTH);
-                close(fileDescriptor);
-                for (indexOfCmdLineArgument = 0, indexOfeRouterIpv6String = 0; indexOfCmdLineArgument < noOfBytesRead; indexOfCmdLineArgument++)
-                {
-                    if (pIpv6Addr[indexOfeRouterIpv6String] == cmdLineArguments[indexOfCmdLineArgument])
-                    {
-                        indexOfeRouterIpv6String++;
-                        if (pIpv6Addr[indexOfeRouterIpv6String] == '\0')
-                        {
-                            noOfDropbearPidsWithIpv6++;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        indexOfeRouterIpv6String=0;
-                    }
-
-                }
-            }
-            memset(pathToCmdline, 0, LINE_LENGTH);
-            memset(cmdLineArguments,0, LINE_LENGTH);
-            pDropbearPid = strtok (NULL , " ");
-            dropbearPidIndex++;
-        }
-        if (1 > noOfDropbearPidsWithIpv6)
-        {
-            CcspTraceInfo(("%s --one or zero Dropbear(%d) process is running with sshd , Hence restart the dropbear process\n",__FUNCTION__, noOfDropbearPidsWithIpv6));
-            v_secure_system("/etc/utopia/service.d/service_sshd.sh sshd-restart");
-        }
-        else
-        {
-            CcspTraceInfo (("%s - %d Dropbear process is running with eRouter0Ipv6\n", __FUNCTION__,noOfDropbearPidsWithIpv6));
-        }
-
-    }
-    else
-    {
-        CcspTraceInfo(("%s --Dropbear process is NOT running, restart the dropbear process\n",__FUNCTION__));
-        v_secure_system("/etc/utopia/service.d/service_sshd.sh sshd-restart");
-    }
-    pclose(filePointerToDropbearPids);
-}
-
 static void * 
 dhcpv6c_dbg_thrd(void * in)
 {
@@ -8505,8 +8418,6 @@ dhcpv6c_dbg_thrd(void * in)
 
                             remove_single_quote(v6addr);
 			    commonSyseventSet(COSA_DML_DHCPV6C_ADDR_SYSEVENT_NAME,v6addr);
-
-                            isDropbearRunningWithIpv6(v6addr);
 
                              #ifdef RDKB_EXTENDER_ENABLED
 
