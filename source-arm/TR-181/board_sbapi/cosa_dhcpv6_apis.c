@@ -2443,7 +2443,7 @@ static int _dibbler_client_operation(char * arg)
         v_secure_system("/usr/bin/service_dhcpv6_client dhcpv6_client_service_disable");
         CcspTraceInfo(("%s  Calling service_dhcpv6_client.c with dhcpv6_client_service_disable from cosa_dhcpv6_apis.c\n", __func__));
 #else
-        commonSyseventSet("dhcpv6_client-stop", "");
+        v_secure_system("/etc/utopia/service.d/service_dhcpv6_client.sh disable");
 #endif
       
 #ifdef _COSA_BCM_ARM_
@@ -2501,7 +2501,7 @@ static int _dibbler_client_operation(char * arg)
     v_secure_system("/usr/bin/service_dhcpv6_client dhcpv6_client_service_enable");
     CcspTraceInfo(("%s  Calling service_dhcpv6_client.c with dhcpv6_client_service_enable from cosa_dhcpv6_apis.c\n", __func__));
 #else
-    commonSyseventSet("dhcpv6_client-start", "");
+    v_secure_system("/etc/utopia/service.d/service_dhcpv6_client.sh enable");
 #endif
 #ifdef _COSA_BCM_ARM_
         /* Dibbler-init is called to set the pre-configuration for dibbler */            
