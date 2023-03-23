@@ -12233,7 +12233,7 @@
 <?else?>
                   <objectType>writableTable</objectType>
 <?endif?>
-                  <maxInstance>128</maxInstance>
+                  <maxInstance>32</maxInstance>
 
                   <functions>
 
