@@ -13412,6 +13412,38 @@ off_channel_scan_SetParamBoolValue
 
         v_secure_system("sysevent set wifi_OffChannelScanEnable %s", bValue ? "true" : "false");
 
+#ifdef RDK_ONEWIFI
+        parameterValStruct_t pVal[1];
+        char                 paramName[256] = "Device.WiFi.WiFi-OffChannelScan";
+        char                 compName[256]  = "eRT.com.cisco.spvtg.ccsp.wifi";
+        char                 dbusPath[256]  = "/com/cisco/spvtg/ccsp/wifi";
+        char*                faultParam     = NULL;
+        int                  ret            = 0;
+        CCSP_MESSAGE_BUS_INFO *bus_info               = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
+           pVal[0].parameterName  = paramName;
+           pVal[0].parameterValue = bValue ? "true" : "false";
+           pVal[0].type           = ccsp_boolean;
+
+           ret = CcspBaseIf_setParameterValues(
+                     bus_handle,
+                     compName,
+                     dbusPath,
+                     0,
+                     0,
+                     pVal,
+                     1,
+                     TRUE,
+                     &faultParam
+                 );
+
+           if (ret != CCSP_SUCCESS)
+           {
+               CcspTraceError(("%s - %d - Failed to notify WiFi component - Error [%s]\n", __FUNCTION__, __LINE__, faultParam));
+               bus_info->freefunc(faultParam);
+               return FALSE;
+           }
+#endif
+
         return TRUE;
     }
     return FALSE;
