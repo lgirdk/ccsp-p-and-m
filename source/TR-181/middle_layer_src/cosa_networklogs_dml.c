@@ -14,7 +14,7 @@
  * limitations under the License.
  ****************************************************************************/
 
-#ifdef FEATURE_RDKB_WAN_MANAGER
+#ifdef FEATURE_NETWORK_LOGS
 
 #include "ansc_platform.h"
 #include "plugin_main_apis.h"
