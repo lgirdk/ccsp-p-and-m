@@ -18689,7 +18689,7 @@
       </parameters>
     </object>
 
-<?ifdef FEATURE_RDKB_WAN_MANAGER?>
+<?ifdef FEATURE_NETWORK_LOGS?>
 
     <object>
 
