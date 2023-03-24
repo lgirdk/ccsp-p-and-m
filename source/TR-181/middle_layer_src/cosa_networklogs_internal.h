@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ****************************************************************************/
-#ifdef FEATURE_RDKB_WAN_MANAGER
+#ifdef FEATURE_NETWORK_LOGS
 
 #ifndef _COSA_NETWORKLOGS_INTERNAL_H_
 #define _COSA_NETWORKLOGS_INTERNAL_H_
