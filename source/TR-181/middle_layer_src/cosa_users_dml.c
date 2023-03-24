@@ -1402,14 +1402,46 @@ User_SetParamStringValue
         if( AnscEqualString(pUser->Username, csr_user_name, TRUE))
         {
             if( AnscEqualString(pUser->HashedPassword, pString, TRUE))
+            {
                 AnscCopyString(pUser->X_RDKCENTRAL_COM_ComparePassword,"Good_PWD");
+#ifdef FEATURE_NETWORK_LOGS
+                openlog("Network", LOG_NDELAY, LOG_LOCAL0);
+                syslog(LOG_LOCAL0|LOG_NOTICE, "GUI Login Status - Login Success from WAN interface");
+                closelog();
+#endif
+            }
             else
+            {
                 AnscCopyString(pUser->X_RDKCENTRAL_COM_ComparePassword,"Invalid_PWD");
+#ifdef FEATURE_NETWORK_LOGS
+                openlog("Network", LOG_NDELAY, LOG_LOCAL0);
+                syslog(LOG_LOCAL0|LOG_NOTICE, "GUI Login Status - Login Fail from WAN interface");
+                closelog();
+#endif
+            }
         }
         else
         {
             char resultBuffer[32]= {'\0'};
             user_validatepwd(NULL,pString,pUser,resultBuffer);
+
+            if (strcmp("Invalid_PWD", resultBuffer) == 0)
+            {
+#ifdef FEATURE_NETWORK_LOGS
+                openlog("Network", LOG_NDELAY, LOG_LOCAL0);
+                syslog(LOG_LOCAL0|LOG_NOTICE, "GUI Login Status - Login Fail from LAN interface");
+                closelog();
+#endif
+            }
+            else
+            {
+#ifdef FEATURE_NETWORK_LOGS
+               openlog("Network", LOG_NDELAY, LOG_LOCAL0);
+               syslog(LOG_LOCAL0|LOG_NOTICE, "GUI Login Status - Login Success from LAN interface");
+               closelog();
+#endif
+            }
+
             rc = strcpy_s(pUser->X_RDKCENTRAL_COM_ComparePassword,sizeof(pUser->X_RDKCENTRAL_COM_ComparePassword), resultBuffer);
             if(rc != EOK)
             {
