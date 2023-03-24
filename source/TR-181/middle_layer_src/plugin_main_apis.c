@@ -162,7 +162,7 @@
 #include "cosa_ssam_apis.h"
 // LGI ADD END
 
-#ifdef FEATURE_RDKB_WAN_MANAGER
+#ifdef FEATURE_NETWORK_LOGS
 #include "cosa_networklogs_internal.h"
 #endif
 
@@ -527,7 +527,7 @@ if(id != 0)
     pMyObject->hLgiEventlog = (ANSC_HANDLE)CosaLgiEventLogCreate();
     AnscTraceWarning(("  CosaLgiEventLogCreate done !\n"));
 
-#ifdef FEATURE_RDKB_WAN_MANAGER
+#ifdef FEATURE_NETWORK_LOGS
     pMyObject->hNetworkLogs = (ANSC_HANDLE)CosaNetworkLogsCreate();
     AnscTraceWarning((" CosaNetworkLogsCreate done !\n"));
 #endif
@@ -848,7 +848,7 @@ CosaBackEndManagerRemove
         CosaLgiIperfRemove((ANSC_HANDLE)pMyObject->hLgiIperf);
     }
 
-#ifdef FEATURE_RDKB_WAN_MANAGER
+#ifdef FEATURE_NETWORK_LOGS
     if(pMyObject->hNetworkLogs)
     {
         CosaNetworkLogsRemove((ANSC_HANDLE)pMyObject->hNetworkLogs);
