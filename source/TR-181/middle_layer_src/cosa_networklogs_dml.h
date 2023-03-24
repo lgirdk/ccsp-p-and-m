@@ -14,7 +14,7 @@
  * limitations under the License.
  ****************************************************************************/
 
-#ifdef FEATURE_RDKB_WAN_MANAGER
+#ifdef FEATURE_NETWORK_LOGS
 
 #ifndef _COSA_NETWORKLOGS_DML_H_
 #define _COSA_NETWORKLOGS_DML_H_
