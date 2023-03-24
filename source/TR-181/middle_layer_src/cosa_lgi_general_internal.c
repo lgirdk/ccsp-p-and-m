@@ -142,8 +142,8 @@ CosaLgiGeneralInitialize
 
 
     /* Further implementation of this parameter is still under design discussion*/
-    AnscCopyString(pMyObject->DataModelVersion, "10.0.9");
-    AnscCopyString(pMyObject->DataModelSpecification, "10.0.9");
+    AnscCopyString(pMyObject->DataModelVersion, "11.0.0");
+    AnscCopyString(pMyObject->DataModelSpecification, "11.0.0");
 
     return returnStatus;
 }
