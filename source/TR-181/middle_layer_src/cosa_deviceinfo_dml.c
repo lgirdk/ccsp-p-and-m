@@ -9422,14 +9422,21 @@ WPA3_Personal_Transition_RFC_SetParamBoolValue
 
     if (strcmp(ParamName, "Enable") == 0)
     {
-        char *secMode;
         int retPsmGet = CCSP_SUCCESS;
-        errno_t rc  = -1;
         int ret = -1;
-        int size = 0;
-        componentStruct_t ** ppComponents = NULL;
         char* faultParam = NULL;
+#ifndef RDK_ONEWIFI
+        componentStruct_t ** ppComponents = NULL;
         char dst_pathname_cr[64];
+        int size = 0;
+        char *secMode;
+        errno_t rc  = -1;
+#else
+        char                 paramName[256] = "Device.WiFi.WPA3_Personal_Transition";
+        char                 compName[256]  = "eRT.com.cisco.spvtg.ccsp.wifi";
+        char                 dbusPath[256]  = "/com/cisco/spvtg/ccsp/wifi";
+        parameterValStruct_t pVal[1];
+#endif
 
         CCSP_MESSAGE_BUS_INFO *bus_info = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
 
@@ -9440,6 +9447,7 @@ WPA3_Personal_Transition_RFC_SetParamBoolValue
         }
         CcspTraceInfo(("Successfully set WPA3 Transition RFC Enable \n"));
 
+#ifndef RDK_ONEWIFI
         secMode = bValue ? "WPA3-Personal-Transition" : "WPA2-Personal";
 
        /* calling the DML code to set the security modes accordingly */
@@ -9499,6 +9507,35 @@ WPA3_Personal_Transition_RFC_SetParamBoolValue
             }
             free_componentStruct_t(bus_handle, size, ppComponents);
         }
+#else
+        pVal[0].parameterName  = paramName;
+        pVal[0].parameterValue = bValue ? "true" : "false";
+        pVal[0].type           = ccsp_boolean;
+        ret = CcspBaseIf_setParameterValues(
+                 bus_handle,
+                 compName,
+                 dbusPath,
+                 0,
+                 0,
+                 pVal,
+                 1,
+                 TRUE,
+                 &faultParam
+             );
+
+        if (ret != CCSP_SUCCESS)
+        {
+            CcspTraceError(("%s - %d - Failed to notify WiFi component - Error [%s]\n", __FUNCTION__, __LINE__, faultParam));
+            bus_info->freefunc(faultParam);
+
+            //Restore the value in PSM
+            char *previous = bValue ? "0" : "1";
+            PSM_Set_Record_Value2(bus_handle,g_Subsystem,
+                               "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.WPA3_Personal_Transition.Enable",
+                               ccsp_string, previous);
+            return FALSE;
+        }
+#endif
         return TRUE;
     }
     return FALSE;
