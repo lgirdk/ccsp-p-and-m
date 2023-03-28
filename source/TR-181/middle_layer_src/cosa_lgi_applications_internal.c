@@ -66,6 +66,7 @@ ANSC_STATUS CosaLgiApplicationsInitialize ( ANSC_HANDLE hThisObject )
         (access("/tmp/samknows/unitid", F_OK) != 0) /* &&
         (access("/var/run/opt/samknows/router_agent/unitid", F_OK) != 0) */ )
     {
+        CcspTraceInfo(("%s : Starting Samknows\n", __FUNCTION__));	    
         system("/etc/init.d/samknows_ispmon start &");
     }
 #endif

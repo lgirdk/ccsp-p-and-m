@@ -54,6 +54,7 @@ ULONG CosaDmlApplicationsSamKnowsSetEnabled ( ANSC_HANDLE hContext, BOOL bValue 
     }
 #else
     if (bValue == TRUE) {
+        CcspTraceInfo(("%s : Starting Samknows\n", __FUNCTION__));    
         system ("/etc/init.d/samknows_ispmon start &");
     } else {
         system ("/etc/init.d/samknows_ispmon stop &");
