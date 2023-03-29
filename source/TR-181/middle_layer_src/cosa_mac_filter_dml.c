@@ -16,6 +16,7 @@
 
 #include <ctype.h>
 #include "ansc_platform.h"
+#include "cosa_lgi_wol_apis.h"
 #include "cosa_mac_filter_apis.h"
 #include "cosa_mac_filter_dml.h"
 #include "cosa_mac_filter_internal.h"
@@ -249,8 +250,11 @@ MACFilter_SetParamStringValue
     }
     if (strcmp(ParamName, "MACAddress") == 0)
     {
-        _ansc_snprintf(pFwMACFilter->MACAddress, sizeof(pFwMACFilter->MACAddress), "%s", strValue);
-        return TRUE;
+        if (isMacValid(strValue) == ANSC_STATUS_SUCCESS)
+        {
+            _ansc_snprintf(pFwMACFilter->MACAddress, sizeof(pFwMACFilter->MACAddress), "%s", strValue);
+            return TRUE;
+        }
     }
     if (strcmp(ParamName, "Description") == 0)
     {
