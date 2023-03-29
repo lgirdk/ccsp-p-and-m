@@ -517,7 +517,7 @@ CosaDmlDiSetAndProcessDhcpServDetectionFlag
    );
 
 int setXOpsReverseSshTrigger(char *input); 
-int setXOpsReverseSshArgs(char* pString);
+ANSC_STATUS setXOpsReverseSshArgs(char* pString);
 ANSC_STATUS getXOpsReverseSshArgs
     (
         ANSC_HANDLE                 hContext,
