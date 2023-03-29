@@ -428,88 +428,23 @@ static int getHostIpVersion(const char *ip)
     return AF_UNSPEC;
 }
 
-static ANSC_STATUS getBindAddress(char *addr, const size_t addrSize)
-{
-    struct ifaddrs *ifap, *ifa;
-    ULONG len = IF_NAMESIZE;
-
-    memset(addr, 0, addrSize);
-
-    if (strlen(reverseSSHIface) == 0)
-    {
-        return ANSC_STATUS_SUCCESS;
-    }
-    if (getifaddrs(&ifap))
-    {
-        CcspTraceError(("getifaddrs failed: %s\n", strerror(errno)));
-        return ANSC_STATUS_FAILURE;
-    }
-    for (ifa = ifap; ifa; ifa = ifa->ifa_next)
-    {
-        if ((ifa->ifa_addr == NULL) ||
-            (ifa->ifa_addr->sa_family != reverseSSHHostIpVersion) ||
-            (strcmp(ifa->ifa_name, reverseSSHIface)))
-        {
-            continue;
-        }
-
-        if (ifa->ifa_addr->sa_family == AF_INET6)
-        {
-            struct sockaddr_in6 *in6 = (struct sockaddr_in6*) ifa->ifa_addr;
-            if (IN6_IS_ADDR_LINKLOCAL(&in6->sin6_addr))
-            {
-                continue;
-            }
-            /* Dbclient interprets the string after the last colon as the port number. To tackle
-             * this assumption, workaround is to add port 0 and let OS find out n unused port
-             * for dropbear to bind
-             */
-            if (!inet_ntop(AF_INET6, &in6->sin6_addr, addr, addrSize))
-            {
-                CcspTraceError(("inet_ntop failed: %s\n", strerror(errno)));
-                return ANSC_STATUS_FAILURE;
-            }
-            strcat(addr, ":0");
-            break;
-        }
-        if (ifa->ifa_addr->sa_family == AF_INET) {
-            struct sockaddr_in *in = (struct sockaddr_in *) ifa->ifa_addr;
-
-            if (!inet_ntop(AF_INET, &in->sin_addr, addr, addrSize))
-            {
-                CcspTraceError(("inet_ntop failed: %s\n", strerror(errno)));
-                return ANSC_STATUS_FAILURE;
-            }
-            break;
-        }
-    }
-    return ANSC_STATUS_SUCCESS;
-}
-
 static ANSC_STATUS getExtraArgs(char *args, const size_t argsSize)
 {
-    char bindAddr[INET6_ADDRSTRLEN + 2];
     char idleTimeout[8];
     ULONG argsLen = 0;
     ULONG needed;
 
     args[0] = '\0';
 
-    if (getBindAddress(bindAddr, sizeof(bindAddr)) != ANSC_STATUS_SUCCESS)
+    if (reverseSSHIface[0] != '\0')
     {
-        CcspTraceError(("getBindAddress failed\n"));
-        return ANSC_STATUS_FAILURE;
-    }
-
-    if (bindAddr[0] != '\0')
-    {
-        needed = strlen(" -b ") + strlen(bindAddr) + 1;
+        needed = strlen(" -x ") + strlen(reverseSSHIface) + 1;
         if (argsSize < needed)
         {
             CcspTraceError(("Resulting buffer len(%lu) > extra args len(%zu)\n", needed, argsSize));
             return ANSC_STATUS_BAD_SIZE;
         }
-        argsLen += snprintf(args, argsSize, " -b %s", bindAddr);
+        argsLen += snprintf(args, argsSize, " -x %s", reverseSSHIface);
     }
 
     if (getxOpsReverseSshIdleTimeout(NULL, idleTimeout, sizeof(idleTimeout)) != ANSC_STATUS_SUCCESS)
@@ -620,22 +555,20 @@ static char *findUntilFirstDelimiter(char *input)
     return option;
 }
 
-static void getBindInterface(char *tempStr)
+static ANSC_STATUS getBindInterface(char *tempStr)
 {
     char *value = NULL;
-    char *temp = NULL;
     char *interface = NULL;
     char tempCopy[512];
-    errno_t rc = -1;
     unsigned int tempStrSize = 0;
 
     if (!tempStr)
-        return NULL;
-   
+        return ANSC_STATUS_FAILURE;
+
     tempStrSize = strlen(tempStr);
 
     if (sizeof(tempCopy) <= tempStrSize)
-        return;
+        return ANSC_STATUS_FAILURE;
 
     strncpy(tempCopy, tempStr, tempStrSize);
     if ((value = strstr(tempCopy, "interface=")))
@@ -649,6 +582,32 @@ static void getBindInterface(char *tempStr)
             interface = NULL;
         }
     }
+    else
+    {
+#if defined (_PUMA6_ARM_)
+        interface = "wan0";
+#elif defined (_LG_MV2_PLUS_)
+        interface = "privbr";
+#elif defined (_LG_MV3_)
+        char mgmt_enabled[8];
+
+        syscfg_get(NULL, "management_wan_enabled", mgmt_enabled, sizeof(mgmt_enabled));
+        if (strcmp(mgmt_enabled, "1") == 0)
+        {
+            interface = "mg0";
+        }
+        else
+        {
+            interface = "erouter0";
+        }
+#else
+        interface = "erouter0";
+#endif
+        CcspTraceInfo(("%s Using default management interface: %s\n", __FUNCTION__, interface));
+        strcpy(reverseSSHIface, interface);
+    }
+
+    return ANSC_STATUS_SUCCESS;
 }
 
 /**
@@ -2802,7 +2761,7 @@ bool isStunnelPortEnabled(char *pString)
     return FALSE;
 }
 
-int setXOpsReverseSshArgs(char *pString)
+ANSC_STATUS setXOpsReverseSshArgs(char *pString)
 {
     char tempCopy[512] = {"\0"};
     char *tempStr = NULL;
@@ -2832,11 +2791,15 @@ int setXOpsReverseSshArgs(char *pString)
     memset(reverseSSHArgs, 0, sizeof(reverseSSHArgs));
     if (!pString)
     {
-        return 1;
+        return ANSC_STATUS_FAILURE;
     }
 
     /* Extract bind interface argument if present */
-    getBindInterface(pString);
+    if (getBindInterface(pString) != ANSC_STATUS_SUCCESS)
+    {
+        CcspTraceError(("[%s] Failed to get bind interface... \n", __FUNCTION__));
+        return ANSC_STATUS_FAILURE;
+    }
 
     inputMsgSize = strlen(pString);
     hostLogin = getHostLogin(pString, shortsFlag);
@@ -2845,15 +2808,24 @@ int setXOpsReverseSshArgs(char *pString)
         AnscTraceWarning(("Warning !!! Target host for establishing reverse SSH tunnel is missing !!!\n"));
         rc = strcpy_s(reverseSSHArgs, sizeof(reverseSSHArgs), "");
         ERR_CHK(rc);
-        return 1;
+        return ANSC_STATUS_FAILURE;
     }
+
+    hostloglen = strlen(hostLogin);
+    if (sizeof(reverseSSHArgs) > (strlen(reverseSSHArgs) + hostloglen))
+    {
+        strcat(reverseSSHArgs, hostLogin);
+    }
+
+    free(hostLogin);
+
     if (shortsFlag)
     {
         stunnelsshargs.localport = findLocalPortAvailable();
         if (stunnelsshargs.localport == -1)
         {
             CcspTraceInfo(("[%s] Reserved ports are not availale... \n", __FUNCTION__));
-            return NOK;
+            return ANSC_STATUS_FAILURE;
         }
         CcspTraceInfo(("[%s] Stunnel Args = %d %s %s %d \n", __FUNCTION__, stunnelsshargs.localport, stunnelsshargs.hostIp, stunnelsshargs.host, stunnelsshargs.stunnelport));
     }
@@ -2863,9 +2835,7 @@ int setXOpsReverseSshArgs(char *pString)
     }
     else
     {
-        if (hostLogin)
-            free(hostLogin);
-        return 1;
+        return ANSC_STATUS_FAILURE;
     }
     tempStr = (char *)strtok_r(tempCopy, ";", &st);
     if (NULL != tempStr)
@@ -2885,10 +2855,7 @@ int setXOpsReverseSshArgs(char *pString)
         AnscTraceWarning(("No Match Found !!!!\n"));
         printf("No Match Found !!!!\n");
     }
-    if (option)
-    {
-        free(option);
-    }
+    free(option);
 
     while ((tempStr = strtok_r(NULL, ";", &st)) != NULL)
     {
@@ -2903,13 +2870,7 @@ int setXOpsReverseSshArgs(char *pString)
             free(option);
         }
     }
-    hostloglen = strlen(hostLogin);
-    if (sizeof(reverseSSHArgs) > (strlen(reverseSSHArgs) + hostloglen))
-    {
-        strncat(reverseSSHArgs, hostLogin, hostloglen);
-    }
-    if (hostLogin)
-        free(hostLogin);
+
     if (sizeof(reverseSSHArgs) > (strlen(reverseSSHArgs) + strlen(extraArgs)))
         strncat(reverseSSHArgs, extraArgs, strlen(extraArgs));
 

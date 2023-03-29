@@ -11744,7 +11744,10 @@ ReverseSSH_SetParamStringValue
     /* check the parameter name and set the corresponding value */
     if (strcmp(ParamName, "xOpsReverseSshArgs") == 0)
     {
-        setXOpsReverseSshArgs(pString);
+        if (setXOpsReverseSshArgs(pString) != ANSC_STATUS_SUCCESS)
+        {
+            return FALSE;
+        }
         return TRUE;
     }
 
