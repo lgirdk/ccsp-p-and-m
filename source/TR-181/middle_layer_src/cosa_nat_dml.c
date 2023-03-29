@@ -69,6 +69,7 @@
 #include "ansc_platform.h"
 #include "cosa_nat_dml.h"
 #include "cosa_nat_dml_custom.h"
+#include "cosa_lgi_wol_apis.h"
 #include "plugin_main_apis.h"
 #include "cosa_nat_internal.h"
 #include "msgpack.h"
@@ -4368,8 +4369,11 @@ NATPassthrough_SetParamStringValue
 
     if (strcmp(ParamName, "MACAddr") == 0)
     {
-        _ansc_snprintf(pNATPassthrough->MACAddress, sizeof(pNATPassthrough->MACAddress), "%s", strValue);
-        return TRUE;
+        if (isMacValid(strValue) == ANSC_STATUS_SUCCESS)
+        {
+            _ansc_snprintf(pNATPassthrough->MACAddress, sizeof(pNATPassthrough->MACAddress), "%s", strValue);
+            return TRUE;
+        }
     }
     if (strcmp(ParamName, "MACMask") == 0)
     {
