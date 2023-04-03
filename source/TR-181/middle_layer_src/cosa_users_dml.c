@@ -1231,6 +1231,9 @@ User_SetParamStringValue
     char csr_user_name[16];
     char csr_user_timeout[12];
     int csr_timeout = 0;
+#ifndef FEATURE_NETWORK_LOGS
+    static bool log_to_docsis = false;
+#endif
 
     /* check the parameter name and set the corresponding value */
     if (strcmp(ParamName, "Username") == 0)
@@ -1398,6 +1401,15 @@ User_SetParamStringValue
 
     if (strcmp(ParamName, "X_RDKCENTRAL-COM_ComparePassword") == 0)
     {
+#ifndef FEATURE_NETWORK_LOGS
+        if (log_to_docsis == false)
+        {
+            if (access("/usr/sbin/cbn_eventlog", F_OK) == 0)
+            {
+                log_to_docsis = true;
+            }
+        }
+#endif
         syscfg_get(NULL, "user_name_1", csr_user_name, sizeof(csr_user_name));
         if( AnscEqualString(pUser->Username, csr_user_name, TRUE))
         {
@@ -1408,6 +1420,11 @@ User_SetParamStringValue
                 openlog("Network", LOG_NDELAY, LOG_LOCAL0);
                 syslog(LOG_LOCAL0|LOG_NOTICE, "GUI Login Status - Login Success from WAN interface");
                 closelog();
+#else
+                if (log_to_docsis)
+                {
+                    system("cbn_eventlog WEBUI LOGIN_WAN_OK &");
+                }
 #endif
             }
             else
@@ -1417,6 +1434,11 @@ User_SetParamStringValue
                 openlog("Network", LOG_NDELAY, LOG_LOCAL0);
                 syslog(LOG_LOCAL0|LOG_NOTICE, "GUI Login Status - Login Fail from WAN interface");
                 closelog();
+#else
+                if (log_to_docsis)
+                {
+                    system("cbn_eventlog WEBUI LOGIN_WAN_NOK &");
+                }
 #endif
             }
         }
@@ -1431,6 +1453,11 @@ User_SetParamStringValue
                 openlog("Network", LOG_NDELAY, LOG_LOCAL0);
                 syslog(LOG_LOCAL0|LOG_NOTICE, "GUI Login Status - Login Fail from LAN interface");
                 closelog();
+#else
+                if (log_to_docsis)
+                {
+                    system("cbn_eventlog WEBUI LOGIN_LAN_NOK &");
+                }
 #endif
             }
             else
@@ -1439,6 +1466,11 @@ User_SetParamStringValue
                openlog("Network", LOG_NDELAY, LOG_LOCAL0);
                syslog(LOG_LOCAL0|LOG_NOTICE, "GUI Login Status - Login Success from LAN interface");
                closelog();
+#else
+               if (log_to_docsis)
+               {
+                   system("cbn_eventlog WEBUI LOGIN_LAN_OK &");
+               }
 #endif
             }
 
