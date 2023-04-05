@@ -141,6 +141,7 @@ COSA_CONTEXT_PMAPPING_LINK_OBJECT,  *PCOSA_CONTEXT_PMAPPING_LINK_OBJECT;
     (pPortMapping)->ExternalPort             = 0;                                           \
     (pPortMapping)->ExternalPortEndRange     = 0;                                           \
     (pPortMapping)->InternalPort             = 0;                                           \
+    (pPortMapping)->InternalPortEndRange     = 0;                                           \
     (pPortMapping)->Protocol                 = 0;                                           \
     (pPortMapping)->InternalClient.Value     = 0x00000000;                                  \
     /*AnscZeroMemory( (pPortMapping)->Description, sizeof( (pPortMapping)->Description ) );   \
