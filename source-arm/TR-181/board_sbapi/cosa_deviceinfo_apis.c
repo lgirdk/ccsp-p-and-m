@@ -388,6 +388,7 @@ static ANSC_STATUS validateReverseSshArgs(const char *args)
 {
     char tmpArgs[MAX_RSSH_ARGS_LEN] = {"\0"};
     char *arg, *rest;
+    int revSshPort = 0;
 
     if (MAX_RSSH_ARGS_LEN <= strlen(args))
     {
@@ -411,9 +412,29 @@ static ANSC_STATUS validateReverseSshArgs(const char *args)
             }
             i++;
         }
+
+        // Verify the revSsh port is valid tcp port number, i.e. 1 - 65535
+        char *ptr = strstr(arg, "revsshport=");
+        if (ptr)
+        {
+            ptr += strlen("revsshport=");
+            if (strlen(ptr) > 0 && strlen(ptr) <= 5)
+            {
+                while (*ptr != '\0')
+                {
+                    if (!isdigit(*ptr))
+                    {
+                        revSshPort = 0;
+                        break;
+                    }
+                    revSshPort = revSshPort * 10 + ((*ptr) - '0');
+                    ptr++;
+                }
+            }
+        }
     }
 
-    return ANSC_STATUS_SUCCESS;
+    return (revSshPort > 0 && revSshPort < 65536) ? ANSC_STATUS_SUCCESS : ANSC_STATUS_BAD_PARAMETER;
 }
 
 static int getHostIpVersion(const char *ip)
