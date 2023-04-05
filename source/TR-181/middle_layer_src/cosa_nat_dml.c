@@ -2660,16 +2660,10 @@ PortMapping_Validate
     PCOSA_DML_NAT_PMAPPING                   pPortMapping2     = NULL;
     BOOL                                     bFound            = FALSE;
     errno_t                                  rc                = -1;
-#if defined (MULTILAN_FEATURE)
-    if( pPortMapping->bEnabled && (
-        !_Check_PF_parameter(pPortMapping) ||
-        !CosaDmlNatChkPortMappingMaxRuleNum(pPortMapping) ||
-        !CosaDmlNatChkEnableFlg(pPortMapping)))
-#else
+
     if( !_Check_PF_parameter(pPortMapping) ||
         !CosaDmlNatChkPortMappingMaxRuleNum(pPortMapping) ||
         !CosaDmlNatChkEnableFlg(pPortMapping))
-#endif
     {
         CcspTraceWarning(("Parameter Error in %s \n", __FUNCTION__));
 

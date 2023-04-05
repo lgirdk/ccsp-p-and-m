@@ -4575,8 +4575,6 @@ int CosaDmlNatChkPortRange(ULONG InstanceNumber, BOOLEAN enabled, int start, int
 {
     UtopiaContext Ctx;
     int ret;
-    if(enabled == FALSE)
-        return TRUE;
 
     if (!Utopia_Init(&Ctx))
     {
