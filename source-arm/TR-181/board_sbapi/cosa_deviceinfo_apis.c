@@ -2991,9 +2991,14 @@ int setXOpsReverseSshTrigger(char *input)
     trigger = strstr(input, "start");
     if (trigger)
     {
+        if (reverseSSHArgs[0] == '\0')
+        {
+            CcspTraceError(("%s-%d : Error! Reverse SSH arguments!\n", __FUNCTION__, __LINE__ ));
+            return NOK;
+        }
         if (getExtraArgs(extraArgs, sizeof(extraArgs)) != ANSC_STATUS_SUCCESS)
         {
-            CcspTraceError(("getExtraArgs failed! Returning"));
+            CcspTraceError(("getExtraArgs failed! Returning\n"));
             return NOK;
         }
 #ifdef ENABLE_SHORTS
@@ -3024,6 +3029,8 @@ int setXOpsReverseSshTrigger(char *input)
 #ifdef ENABLE_SHORTS
         }
 #endif
+        /* Clear the arguments once reverse SSH is enabled */
+        memset(reverseSSHArgs, 0, sizeof(reverseSSHArgs));
     }
     else
     {
