@@ -185,10 +185,10 @@ CosaDmlUpnpDevGetArchVer
 }
 
 #elif (defined _COSA_INTEL_USG_ARM_) || (defined  _COSA_BCM_MIPS_)
-#include <utctx_api.h>
+#include <utctx/utctx_api.h>
 #include <utapi.h>
 #include <utapi_util.h>
-#include <ulog.h>
+#include <ulog/ulog.h>
 #include <ccsp_syslog.h>
 
 BOOLEAN         g_UpnpDevEnable             = TRUE;
