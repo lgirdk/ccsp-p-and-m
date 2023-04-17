@@ -4210,6 +4210,14 @@ void __cosa_dhcpsv6_refresh_config()
 
     /*Begin write configuration */
     fprintf(fp, "log-level 4\n");
+
+    /*
+       Enable inactive mode: When server begins operation and it detects that
+       required interfaces are not ready, error message is printed and server
+       exits. However, if inactive mode is enabled, server sleeps instead and
+       wait for required interfaces to become operational.
+    */
+    fprintf(fp, "inactive-mode\n");
 	
     //Intel Proposed RDKB Generic Bug Fix from XB6 SDK
     fprintf(fp, "reconfigure-enabled 1\n");
