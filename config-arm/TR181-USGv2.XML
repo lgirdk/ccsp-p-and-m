@@ -18646,7 +18646,7 @@
         </parameter>
         <parameter>
           <name>SigningKeyId</name>
-          <type>unsignedInt</type>
+          <type>unsignedInt[0:4]</type>
           <syntax>uint32</syntax>
           <writable>true</writable>
         </parameter>
@@ -18676,7 +18676,7 @@
         </parameter>
         <parameter>
           <name>ProvisioningModel</name>
-          <type>unsignedInt</type>
+          <type>unsignedInt[1:2]</type>
           <syntax>uint32</syntax>
           <writable>true</writable>
         </parameter>
