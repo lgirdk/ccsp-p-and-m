@@ -840,100 +840,85 @@ DeviceInfo_GetParamStringValue
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "Manufacturer") == 0)
     {
-        /* collect value */
-        CosaDmlDiGetManufacturer(NULL,pValue,pulSize);
+        CosaDmlDiGetManufacturer(NULL, pValue, pulSize);
         return 0;
     }
 
     if (strcmp(ParamName, "ManufacturerOUI") == 0)
     {
-        /* collect value */
-        CosaDmlDiGetManufacturerOUI(NULL,pValue,pulSize);
+        CosaDmlDiGetManufacturerOUI(NULL, pValue, pulSize);
         return 0;
     }
 
     if (strcmp(ParamName, "ModelName") == 0)
     {
-        /* collect value */
-        CosaDmlDiGetModelName(NULL,pValue,pulSize);
+        CosaDmlDiGetModelName(NULL, pValue, pulSize);
         return 0;
     }
 
     if (strcmp(ParamName, "Description") == 0)
     {
-        /* collect value */
-        CosaDmlDiGetDescription(NULL,pValue, pulSize);
+        CosaDmlDiGetDescription(NULL, pValue, pulSize);
         return 0;
     }
 
     if (strcmp(ParamName, "ProductClass") == 0)
     {
-        /* collect value */
-        CosaDmlDiGetProductClass(NULL, pValue,pulSize);
+        CosaDmlDiGetProductClass(NULL, pValue, pulSize);
         return 0;
     }
 
     if (strcmp(ParamName, "SerialNumber") == 0)
     {
-        /* collect value */
-        CosaDmlDiGetSerialNumber(NULL,pValue,pulSize);
+        CosaDmlDiGetSerialNumber(NULL, pValue, pulSize);
         return 0;
     }
 
     if (strcmp(ParamName, "HardwareVersion") == 0)
     {
-        /* collect value */
-       CosaDmlDiGetHardwareVersion(NULL,pValue,pulSize);
+        CosaDmlDiGetHardwareVersion(NULL, pValue, pulSize);
         return 0;
     }
 
     if (strcmp(ParamName, "SoftwareVersion") == 0)
     {
-        /* collect value */
-        CosaDmlDiGetFirmwareName(NULL, pValue,pulSize);
+        CosaDmlDiGetFirmwareName(NULL, pValue, pulSize);
         return 0;
     }
 
     if (strcmp(ParamName, "AdditionalHardwareVersion") == 0)
     {
-        /* collect value */
-         CosaDmlDiGetAdditionalHardwareVersion(NULL,pValue,pulSize);
+        CosaDmlDiGetAdditionalHardwareVersion(NULL, pValue, pulSize);
         return 0;
     }
 
     if (strcmp(ParamName, "AdditionalSoftwareVersion") == 0)
     {
-        /* collect value */
-        CosaDmlDiGetAdditionalSoftwareVersion(NULL,pValue,pulSize);
+        CosaDmlDiGetAdditionalSoftwareVersion(NULL, pValue, pulSize);
         return 0;
     }
 
     if (strcmp(ParamName, "ProvisioningCode") == 0)
     {
-        /* collect value */
-        CosaDmlDiGetProvisioningCode(NULL,pValue,pulSize);
-       // AnscCopyString(pValue,  pMyObject->ProvisioningCode);
+        CosaDmlDiGetProvisioningCode(NULL, pValue, pulSize);
         return 0;
     }
 
     if (strcmp(ParamName, "FirstUseDate") == 0)
     {
-
-	CosaDmlDiGetFirstUseDate(NULL, pValue,pulSize);
+        CosaDmlDiGetFirstUseDate(NULL, pValue, pulSize);
         return 0;
     }
 
     if (strcmp(ParamName, "X_CISCO_COM_BootloaderVersion") == 0)
     {
-
-	    CosaDmlDiGetBootloaderVersion(NULL, pValue,pulSize);
+        CosaDmlDiGetBootloaderVersion(NULL, pValue, pulSize);
         return 0;
     }
 
     if (strcmp(ParamName, "X_CISCO_COM_FirmwareName") == 0)
     {
-
-	    CosaDmlDiGetFirmwareName(NULL, pValue,pulSize);
+        CosaDmlDiGetFirmwareName(NULL, pValue, pulSize);
         return 0;
     }
     
@@ -946,47 +931,43 @@ DeviceInfo_GetParamStringValue
 
     if (strcmp(ParamName, "X_CISCO_COM_FirmwareBuildTime") == 0)
     {
-
-	    CosaDmlDiGetFirmwareBuildTime(NULL, pValue,pulSize);
+        CosaDmlDiGetFirmwareBuildTime(NULL, pValue, pulSize);
         return 0;
     }
 
     if (strcmp(ParamName, "X_CISCO_COM_BaseMacAddress") == 0)
     {
-
-	    CosaDmlDiGetBaseMacAddress(NULL, pValue,pulSize);
+        CosaDmlDiGetBaseMacAddress(NULL, pValue, pulSize);
         return 0;
     }
 
     if (strcmp(ParamName, "Hardware") == 0)
     {
-        CosaDmlDiGetHardware(NULL, pValue,pulSize);
+        CosaDmlDiGetHardware(NULL, pValue, pulSize);
         return 0;
     }
 
     if (strcmp(ParamName, "Hardware_MemUsed") == 0)
     {
-        CosaDmlDiGetHardware_MemUsed(NULL, pValue,pulSize);
+        CosaDmlDiGetHardware_MemUsed(NULL, pValue, pulSize);
         return 0;
     }
 
     if (strcmp(ParamName, "Hardware_MemFree") == 0)
     {
-        CosaDmlDiGetHardware_MemFree(NULL, pValue,pulSize);
+        CosaDmlDiGetHardware_MemFree(NULL, pValue, pulSize);
         return 0;
     }
 
     if (strcmp(ParamName, "X_CISCO_COM_AdvancedServices") == 0)
     {
-
-    	CosaDmlDiGetAdvancedServices(NULL, pValue,pulSize);
+        CosaDmlDiGetAdvancedServices(NULL, pValue, pulSize);
         return 0;
     }
 
     if (strcmp(ParamName, "X_CISCO_COM_ProcessorSpeed") == 0)
     {
-
-    	CosaDmlDiGetProcessorSpeed(NULL, pValue,pulSize);
+        CosaDmlDiGetProcessorSpeed(NULL, pValue, pulSize);
         return 0;
     }
 
@@ -1034,138 +1015,71 @@ DeviceInfo_GetParamStringValue
         }
         return 0;
     }
-        
-     if (strcmp(ParamName, "X_RDKCENTRAL-COM_LastRebootReason") == 0)
+
+    if (strcmp(ParamName, "X_RDKCENTRAL-COM_LastRebootReason") == 0)
     {
-        char buf[64] = {'\0'};
-        /* CID: 57845 Array compared against 0*/
-        if(!syscfg_get( NULL, "X_RDKCENTRAL-COM_LastRebootReason", buf, sizeof(buf)))
-    	{
-    	     rc = strcpy_s(pValue, *pulSize, buf);
-    	     if(rc != EOK)
-    	     {
-    	         ERR_CHK(rc);
-    	         return -1;
-    	     }
-    	}
-	else
-	{
-	     AnscTraceWarning(("Error in syscfg_get for RebootReason\n"));
-	}
-		return 0;
-        
+        syscfg_get(NULL, "X_RDKCENTRAL-COM_LastRebootReason", pValue, *pulSize);
+        return 0;
     }
 
     if (strcmp(ParamName, "X_RDK_RDKProfileName") == 0)
     {
-            rc = strcpy_s(pValue, *pulSize, "RDKB");
-            if(rc != EOK)
-            {
-               ERR_CHK(rc);
-               return -1;
-            }
-            return 0;
-    }
-	
-	/* Changes for EMS begins here */
-	
-	if (strcmp(ParamName, "X_COMCAST-COM_EMS_MobileNumber") == 0)
-    {
-        rc = strcpy_s(pValue, *pulSize,  pMyObject->EMS_MobileNo);
-        if(rc != EOK)
-        {
-           ERR_CHK(rc);
-           return -1;
-        }
-        return 0;
-    }
-	
-	if (strcmp(ParamName, "X_COMCAST-COM_EMS_ServerURL") == 0)
-    {
-       //pMyObject->EMS_ServerURL;
-		char buf[60];
-        memset(buf, 0 ,sizeof(buf));
-        /* CID: 57845 Array compared against 0*/
-        if(!syscfg_get( NULL, "ems_server_url", buf, sizeof(buf)))
-    	{
-    		rc = strcpy_s(pValue, *pulSize,  buf);
-	    	if(rc != EOK)
-	    	{
-	    	    ERR_CHK(rc);
-	    	    return -1;
-	    	}
-        }
-        else
-        {
-               AnscTraceWarning(("Error in syscfg_get for ems_server_url\n"));
-	}
-	return 0;
+        return update_pValue(pValue, pulSize, "RDKB");
     }
 
-	if (strcmp(ParamName, "RouterName") == 0)
+    /* Changes for EMS begins here */
+
+    if (strcmp(ParamName, "X_COMCAST-COM_EMS_MobileNumber") == 0)
     {
-        char buf[16] = {'\0'};
-               /* CID: 57845 Array compared against 0*/
-               if(!syscfg_get( NULL, "router_name", buf, sizeof(buf)))
-    		{
-    		    rc = strcpy_s(pValue, *pulSize,  buf);
-    		    if(rc != EOK)
-    		    {
-    		        ERR_CHK(rc);
-    		        return -1;
-    		    }
-    		}
-		else
-		{
-			AnscTraceWarning(("Error in syscfg_get for RouterName\n"));
-		}
-		return 0;
+        return update_pValue(pValue, pulSize, pMyObject->EMS_MobileNo);
     }
+
+    if (strcmp(ParamName, "X_COMCAST-COM_EMS_ServerURL") == 0)
+    {
+        syscfg_get(NULL, "ems_server_url", pValue, *pulSize);
+        return 0;
+    }
+
+    if (strcmp(ParamName, "RouterName") == 0)
+    {
+        syscfg_get(NULL, "router_name", pValue, *pulSize);
+        return 0;
+    }
+
+    /* Changes for EMS end here */
+
 #if !defined(_COSA_BCM_MIPS_) && !defined(_ENABLE_DSL_SUPPORT_)
-	/* Changes for EMS end here */
-	/*Changes for RDKB-6560*/
-   	if (strcmp(ParamName, "X_RDKCENTRAL-COM_CMTS_MAC") == 0)
-    		{
-		    CosaDmlDiGetCMTSMac(NULL, pValue,pulSize);
-        	    return 0;
-    		}
-	/*Changes for RDKB-6560 end*/
+
+    /* Changes for RDKB-6560 */
+
+    if (strcmp(ParamName, "X_RDKCENTRAL-COM_CMTS_MAC") == 0)
+    {
+        CosaDmlDiGetCMTSMac(NULL, pValue, pulSize);
+        return 0;
+    }
+
+    /* Changes for RDKB-6560 end */
+
 #endif
-	/*Changes for RDKB-5878*/
-	if (strcmp(ParamName, "X_RDKCENTRAL-COM_CloudPersonalizationURL") == 0)
-	{
-	   syscfg_get(NULL, "CloudPersonalizationURL", pMyObject->CloudPersonalizationURL, sizeof(pMyObject->CloudPersonalizationURL));
-	   rc = strcpy_s(pValue, *pulSize, pMyObject->CloudPersonalizationURL);
-	   if(rc != EOK)
-	   {
-	      ERR_CHK(rc);
-	      return -1;
-	   }
-	   return 0;
-	}
-	/*Changes for RDKB-5878 end*/
+
+    /* Changes for RDKB-5878 */
+
+    if (strcmp(ParamName, "X_RDKCENTRAL-COM_CloudPersonalizationURL") == 0)
+    {
+        syscfg_get(NULL, "CloudPersonalizationURL", pMyObject->CloudPersonalizationURL, sizeof(pMyObject->CloudPersonalizationURL));
+        return update_pValue(pValue, pulSize, pMyObject->CloudPersonalizationURL);
+    }
+
+    /* Changes for RDKB-5878 end */
 
     if (strcmp(ParamName, "X_RDKCENTRAL-COM_OnBoarding_State") == 0)
     {
-        if(access("/nvram/.device_onboarded", F_OK) != -1)
+        if (access("/nvram/.device_onboarded", F_OK) == 0)
         {
-            rc = strcpy_s(pValue, *pulSize, "OnBoarded");
-            if(rc != EOK)
-            {
-               ERR_CHK(rc);
-               return -1;
-            }
+            return update_pValue(pValue, pulSize, "OnBoarded");
         }
-        else
-        {
-            rc = strcpy_s(pValue, *pulSize, "NONE");
-            if(rc != EOK)
-            {
-               ERR_CHK(rc);
-               return -1;
-            }
-        }
-        return 0;
+
+        return update_pValue(pValue, pulSize, "NONE");
     }
 
     ReturnValue =
@@ -1242,12 +1156,7 @@ DeviceInfo_SetParamBoolValue
 
     if (strcmp(ParamName, "X_RDKCENTRAL-COM_AkerEnable") == 0)
     {
-        /* collect value */
-        char buf[8];
-        memset(buf, 0, sizeof(buf));
-        snprintf(buf, sizeof(buf), "%s", bValue ? "true" : "false");
-
-        if (syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_AkerEnable", buf) != 0)
+        if (syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_AkerEnable", bValue ? "true" : "false") != 0)
         {
             AnscTraceWarning(("syscfg_set failed for AkerEnable\n"));
         }
