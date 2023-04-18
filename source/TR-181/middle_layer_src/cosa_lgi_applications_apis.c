@@ -86,6 +86,10 @@ ULONG CosaDmlApplicationsSamKnowsGetProperty ( ANSC_HANDLE hContext, char *pValu
 ULONG CosaDmlApplicationsSamKnowsSetProperty ( ANSC_HANDLE hContext, char *pValue )
 {
     syscfg_set_commit(NULL, "skproperty", pValue);
+#ifdef _PUMA6_ARM_
+    v_secure_system("rpcclient2 'echo \"%s\" > /tmp/sk_property.txt &'", pValue);
+#endif
+
     return ANSC_STATUS_SUCCESS;
 }
 
