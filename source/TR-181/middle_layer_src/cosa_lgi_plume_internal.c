@@ -137,7 +137,7 @@ CosaLgiPlumeInitialize
         if (pMyObject->plumeLogpullEnable)
         {
             // Start icu if not already running
-            system("pidof -x /usr/sbin/icu > /dev/null || /usr/sbin/icu -R -B -p 192.168.254.253:2222");
+            system("pidof -x /usr/sbin/icu > /dev/null || nice -n 10 /usr/sbin/icu -R -B -p 192.168.254.253:2222");
         }
     }
 #endif
