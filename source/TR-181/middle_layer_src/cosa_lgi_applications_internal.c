@@ -54,6 +54,9 @@ ANSC_STATUS CosaLgiApplicationsInitialize ( ANSC_HANDLE hThisObject )
 
     ULONG propertyStrLen = SAMKNOWS_PROPERTY_STRING_LEN;
     CosaDmlApplicationsSamKnowsGetProperty(NULL, pMyObject->SamKnowsProperty, &propertyStrLen);
+#ifdef _PUMA6_ARM_
+    v_secure_system("rpcclient2 'echo \"%s\" > /tmp/sk_property.txt &'", pMyObject->SamKnowsProperty);
+#endif
 
 #if !defined (FEATURE_GPON)
     /*
