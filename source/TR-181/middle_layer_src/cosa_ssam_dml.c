@@ -185,10 +185,12 @@ BOOL X_LGI_COM_DigitalSecurity_SetParamStringValue(ANSC_HANDLE hInsContext, char
 BOOL X_LGI_COM_DigitalSecurity_GetParamBoolValue(ANSC_HANDLE hInsContext, char *ParamName, BOOL *pBool)
 {
     char buf[8];
+    char bridge_mode[8];
 
     if (strcmp(ParamName, "Enable") == 0) {
         syscfg_get(NULL, "ssam_enable", buf, sizeof(buf));
-        *pBool = (strcmp(buf, "1") == 0) ? TRUE : FALSE;
+        syscfg_get(NULL, "bridge_mode", bridge_mode, sizeof(bridge_mode));
+        *pBool = (strcmp(bridge_mode, "0") == 0 && strcmp(buf, "1") == 0) ? TRUE : FALSE;
         return TRUE;
     }
 
