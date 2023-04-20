@@ -1306,14 +1306,21 @@ static void RestartRIPInterfaces(int ripEnable)
     syscfg_get(NULL, "erouter_static_ip_enable", staticErouterEnable, sizeof(staticErouterEnable));
     syscfg_get(NULL, "brlan_static_ip_enable", staticBrlanEnable, sizeof(staticBrlanEnable));
 
-    if(strcmp(staticErouterEnable, "true") == 0 && ripEnable)
+    if(strcmp(staticErouterEnable, "true") == 0)
     {
         if(syscfg_get(NULL, "erouter_static_ip_address", erouter_static_ip, sizeof(erouter_static_ip)) == 0)
         {
-            v_secure_system("ip addr add %s/32 brd 255.255.255.255 dev erouter0 label erouter0:0", erouter_static_ip);
+            if (ripEnable)
+            {
+                v_secure_system("ip addr add %s/32 brd 255.255.255.255 dev erouter0 label erouter0:0", erouter_static_ip);
+            }
+            else
+            {
+                v_secure_system("ip addr del %s/32 brd 255.255.255.255 dev erouter0", erouter_static_ip);
+            }
         }
 
-        if(syscfg_get(NULL, "brlan_lan_ipaddr", brlan_ip, sizeof(brlan_ip)) == 0)
+        if(ripEnable && syscfg_get(NULL, "brlan_lan_ipaddr", brlan_ip, sizeof(brlan_ip)) == 0)
         {
             if(syscfg_get(NULL, "brlan_lan_netmask", brlan_mask, sizeof(brlan_mask)) == 0)
             {
