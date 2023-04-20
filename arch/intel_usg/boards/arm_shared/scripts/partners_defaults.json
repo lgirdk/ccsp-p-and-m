@@ -2,7 +2,7 @@
    "properties" : {
 
       "comments" : "MANDATORY: !!! Please increment below version value for any new parameter added in this partners_defaults.json !!!",
-      "version" : "8.13"
+      "version" : "8.14"
    },
 
    "comcast" : {
@@ -77,7 +77,10 @@
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.CrashPortal" : "https://ssr.ccp.xcal.tv/cgi-bin/upload_dump.cgi",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.Telemetry" : "https://stbrtl.stb.r53.xcal.tv",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CDLDM.CDLModuleUrl" : "https://ssr.ccp.xcal.tv/cgi-bin/x1-sign-redirect.pl?K=10&F=stb_cdl",
-      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.ImageHealthChecker.OperatingMode" : "Monitor"
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.ImageHealthChecker.OperatingMode" : "Monitor",
+      "Device.X_RDK_MQTT.BrokerURL" : "hcbroker-chi-02-pub.staging.us-west-2.plume.comcast.net",
+      "Device.X_RDK_MQTT.LocationID" : "na",
+      "Device.X_RDK_MQTT.Port" : "443"
 },
 
  "RDKM" : {
