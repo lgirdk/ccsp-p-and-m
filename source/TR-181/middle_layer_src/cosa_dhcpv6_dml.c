@@ -5141,9 +5141,6 @@ Pool1_SetParamStringValue
     ERR_CHK(rc);
     if((!ind) && (rc == EOK))
     {
-        strcmp_s(pString, strlen(pString),(const char *)pPool->Cfg.PrefixRangeEnd, &ind);
-        if(ind>0)
-            return FALSE;
         if( sscanf(pString, "%x:%x:%x:%x %c", &a[0], &a[1], &a[2], &a[3], &dump) == 4
             && a[0] <= 0xFFFF
             && a[1] <= 0xFFFF
@@ -5166,9 +5163,6 @@ Pool1_SetParamStringValue
     ERR_CHK(rc);
     if((!ind) && (rc == EOK))
     {
-        strcmp_s((const char *)pPool->Cfg.PrefixRangeBegin, strlen((const char *)pPool->Cfg.PrefixRangeBegin),pString, &ind);
-        if(ind>0)
-            return FALSE;
         if( sscanf(pString, "%x:%x:%x:%x %c", &a[0], &a[1], &a[2], &a[3], &dump) == 4
             && a[0] <= 0xFFFF
             && a[1] <= 0xFFFF
@@ -5309,7 +5303,6 @@ Pool1_Validate
         }
     
         /* some other checking */
-    
         return TRUE;
 }
 
@@ -5346,6 +5339,16 @@ Pool1_Commit
     PCOSA_DML_DHCPSV6_POOL_FULL       pPool             = (PCOSA_DML_DHCPSV6_POOL_FULL)pCxtLink->hContext;
     PCOSA_DATAMODEL_DHCPV6            pDhcpv6           = (PCOSA_DATAMODEL_DHCPV6)g_pCosaBEManager->hDhcpv6;
     errno_t   rc = -1;
+    int       ind = -1;
+
+    rc = strcmp_s((const char *)pPool->Cfg.PrefixRangeBegin, strlen((const char *)pPool->Cfg.PrefixRangeBegin),
+                  (const char *)pPool->Cfg.PrefixRangeEnd, &ind);
+    ERR_CHK(rc);
+    if(ind>0 || rc != EOK)
+    {
+        Pool1_Rollback(hInsContext);
+        return ANSC_STATUS_FAILURE;
+    }    
 
     if ( pCxtLink->bNew )
     {
