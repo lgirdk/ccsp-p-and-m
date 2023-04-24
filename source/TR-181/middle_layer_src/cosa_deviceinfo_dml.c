@@ -16043,7 +16043,7 @@ SwitchToDibbler_GetParamBoolValue
     {
         /* collect value */
         char buf[8];
-        if( syscfg_get( NULL, "dibbler_client_enable", buf, sizeof(buf))==0)
+        if( syscfg_get( NULL, "dibbler_client_enable_v2", buf, sizeof(buf))==0)
         {
             if (strcmp(buf, "true") == 0)
             {
@@ -16056,7 +16056,7 @@ SwitchToDibbler_GetParamBoolValue
         }
         else
         {
-            CcspTraceWarning(("%s syscfg_get failed  for dibbler_client_enable\n",__FUNCTION__));
+            CcspTraceWarning(("%s syscfg_get failed  for dibbler_client_enable_v2\n",__FUNCTION__));
             *pBool = FALSE;
         }
 
@@ -16122,7 +16122,7 @@ SwitchToDibbler_SetParamBoolValue
         int val;
 
         /* collect previous flag value */
-       if( syscfg_get( NULL, "dibbler_client_enable", buf, sizeof(buf)) == 0)
+       if( syscfg_get( NULL, "dibbler_client_enable_v2", buf, sizeof(buf)) == 0)
         {
                 val = strcmp(buf,"true")?0:1;
                 if (val != bValue)
@@ -16172,12 +16172,12 @@ SwitchToDibbler_SetParamBoolValue
                         }
                         else
                         {
-                                AnscTraceWarning(("No set operation done since dibbler_client_enable flag already set to %d\n", bValue));
+                                AnscTraceWarning(("No set operation done since dibbler_client_enable_v2 flag already set to %d\n", bValue));
                         }
                 }
                 else
                 {
-                        AnscTraceWarning(("No set operation done since dibbler_client_enable flag already set to %d\n", bValue));
+                        AnscTraceWarning(("No set operation done since dibbler_client_enable_v2 flag already set to %d\n", bValue));
                 }
         }
         else
@@ -16925,7 +16925,7 @@ SwitchToUDHCPC_GetParamBoolValue
     {
         /* collect value */
         char buf[8];
-        if( syscfg_get( NULL, "UDHCPEnable", buf, sizeof(buf))==0)
+        if( syscfg_get( NULL, "UDHCPEnable_v2", buf, sizeof(buf))==0)
         {
             if (strcmp(buf, "true") == 0)
             {
@@ -16938,7 +16938,7 @@ SwitchToUDHCPC_GetParamBoolValue
         }
         else
         {
-            CcspTraceWarning(("%s syscfg_get failed  for UDHCPEnable\n",__FUNCTION__));
+            CcspTraceWarning(("%s syscfg_get failed  for UDHCPEnable_v2\n",__FUNCTION__));
             *pBool = FALSE;
         }
 
@@ -16995,7 +16995,7 @@ SwitchToUDHCPC_SetParamBoolValue
         int val;
 
         /* collect previous flag value */
-       if( syscfg_get( NULL, "UDHCPEnable", buf, sizeof(buf)) == 0)
+       if( syscfg_get( NULL, "UDHCPEnable_v2", buf, sizeof(buf)) == 0)
         {
         	val = strcmp(buf,"true")?0:1;
                 if (val != bValue)
@@ -17044,17 +17044,17 @@ SwitchToUDHCPC_SetParamBoolValue
                         }
                         else
                         {
-                                AnscTraceWarning(("No set operation done since UDHCPEnable flag already set to %d\n", bValue));
+                                AnscTraceWarning(("No set operation done since UDHCPEnable_v2 flag already set to %d\n", bValue));
                         }
                 }
                 else
                 {
-                        AnscTraceWarning(("No set operation done since UDHCPEnable flag already set to %d\n", bValue));
+                        AnscTraceWarning(("No set operation done since UDHCPEnable_v2 flag already set to %d\n", bValue));
                 }
         }
         else
         {
-                AnscTraceWarning(("syscfg_get failed for UDHCPEnable\n"));
+                AnscTraceWarning(("syscfg_get failed for UDHCPEnable_v2\n"));
                 return FALSE;
         }
 
