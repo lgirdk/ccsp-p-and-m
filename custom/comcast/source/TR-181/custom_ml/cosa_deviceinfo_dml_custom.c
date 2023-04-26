@@ -575,6 +575,7 @@ DeviceInfo_SetParamBoolValue_Custom
 		printf("First enable cloud capable to modify this parameter\n");
 		return FALSE;
 	}
+	system("sysevent set firewall-restart");
 	return TRUE;
     }
 #endif
