@@ -710,6 +710,7 @@ PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaB
 		printf("First enable cloud capable to modify this parameter\n");
 		return FALSE;
 	}
+	system("sysevent set firewall-restart");
 	return TRUE;
     }
 #endif
