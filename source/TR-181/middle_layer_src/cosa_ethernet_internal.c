@@ -1294,10 +1294,14 @@ void * EthWan_TelementryLogger_Thread(void *data)
 {
     UNREFERENCED_PARAMETER(data);
     pthread_detach(pthread_self());
-
+    //rdkb-48735
+    char isEthEnabled[64]={'\0'};
     while (1)
     {
-        CcspTraceInfo(("RDK_LOG_INFO , Ethernet WAN is enabled\n"));
+        if( 0 == syscfg_get( NULL, "eth_wan_enabled", isEthEnabled, sizeof(isEthEnabled)) && (isEthEnabled[0] != '\0' && strncmp(isEthEnabled, "true", strlen("true")) == 0))
+        {
+            CcspTraceInfo(("RDK_LOG_INFO , Ethernet WAN is enabled\n"));
+        }
         sleep(ONE_HR);
     }
 }
@@ -1306,20 +1310,16 @@ void * EthWan_TelementryLogger_Thread(void *data)
 static void CosaEthWanTelementryLogger(void)
 {
     pthread_t ethwantelementrylogger_tid;
-    char isEthEnabled[64]={'\0'};
     int res;
 
-        if( 0 == syscfg_get( NULL, "eth_wan_enabled", isEthEnabled, sizeof(isEthEnabled)) && (isEthEnabled[0] != '\0' && strncmp(isEthEnabled, "true", strlen("true")) == 0))
-        {
-            res = pthread_create(&ethwantelementrylogger_tid, NULL, EthWan_TelementryLogger_Thread, NULL);
-            if (res != 0)
-            {
-                AnscTraceWarning(("CosaEthWanTelementryLogger Create EthWan_TelementryLogger_Thread error %d\n", res));
-            }
-            else
-            {
-                AnscTraceWarning(("CosaEthWanTelementryLogger EthWan_TelementryLogger_Thread Created\n"));
-            }
-        }
+    res = pthread_create(&ethwantelementrylogger_tid, NULL, EthWan_TelementryLogger_Thread, NULL);
+    if (res != 0)
+    {
+        AnscTraceWarning(("CosaEthWanTelementryLogger Create EthWan_TelementryLogger_Thread error %d\n", res));
+    }
+    else
+    {
+        AnscTraceWarning(("CosaEthWanTelementryLogger EthWan_TelementryLogger_Thread Created\n"));
+    }
 
 }
