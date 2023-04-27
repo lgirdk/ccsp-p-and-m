@@ -4253,6 +4253,9 @@ void __cosa_dhcpsv6_refresh_config()
     */
     fprintf(fp, "inactive-mode\n");
 
+    //strict RFC compliance rfc3315 Section 13
+    fprintf(fp, "drop-unicast\n");
+
     //Intel Proposed RDKB Generic Bug Fix from XB6 SDK
     fprintf(fp, "reconfigure-enabled 1\n");
 
