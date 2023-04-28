@@ -126,7 +126,7 @@
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.RDKB_UIBranding.CloudUI.link" : "",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.HomeSec.SSIDprefix" : "XHS",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.TR104.Enable" : "false",
-      "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.MeshRedirectorURL" : "ssl:yellowstone.plume.comcast.net:443",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.MeshRedirectorURL" : "ssl:wildfire.plume.tech:443",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.AdvsecRedirectorURL" : "https://agent.xais.apg.comcast.net:9443",
       "Device.ManagementServer.EnableCWMP" : "false",
       "Device.X_RDKCENTRAL-COM_EthernetWAN_MTA.StartupIPMode" : "0",
