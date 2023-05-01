@@ -4649,6 +4649,7 @@ CosaDmlLAN_Validate_ModifyLanIP(COSA_DML_LAN_Allowed_Subnet *pLanAllowedSubnet, 
     if (iMatchFound)
     {
         char tmpbuff[17];
+        char lanIPStr[IPADDR_SZ];
         lanSetting_t lanInfo;
 
         memset(&lanInfo, 0 ,sizeof(lanInfo));
@@ -4660,6 +4661,9 @@ CosaDmlLAN_Validate_ModifyLanIP(COSA_DML_LAN_Allowed_Subnet *pLanAllowedSubnet, 
         sprintf(tmpbuff, "%d.%d.%d.%d", temp[0], temp[1], temp[2], 1);
         PSM_Set_Record_Value2(bus_handle, g_Subsystem, "dmsb.l3net.4.V4Addr", ccsp_string, tmpbuff);
         syscfg_set(NULL, "lan_ipaddr", tmpbuff);
+
+        //update lanInfo.ipaddr with  default IPv4 address
+        strncpy(lanIPStr,tmpbuff,IPADDR_SZ);
 
         // update default IPv4 subnet
         snprintf(lanInfo.netmask, sizeof(lanInfo.netmask), "255.255.255.0");
@@ -4677,6 +4681,10 @@ CosaDmlLAN_Validate_ModifyLanIP(COSA_DML_LAN_Allowed_Subnet *pLanAllowedSubnet, 
 
         // delete port filtering, port forwarding, dmz, ip reservation rules not within the current active subnet ( when the active subnet table is deleted from ACS )
         clear_rules_out_of_range(lanInfo);
+
+        //refresh LanMgmt table entry.
+        strncpy(lanInfo.ipaddr,lanIPStr,sizeof(lanInfo.ipaddr));
+        refreshDefaultLanMgmt(lanInfo);
     }
     return ANSC_STATUS_SUCCESS;
 }
