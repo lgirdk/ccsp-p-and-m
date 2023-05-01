@@ -772,4 +772,5 @@ validateIPRangeWithSubnetTable
     );
 
 void clear_rules_out_of_range(lanSetting_t lan_info);
+void refreshDefaultLanMgmt(lanSetting_t lan_info);
 #endif
