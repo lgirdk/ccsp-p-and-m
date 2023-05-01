@@ -190,7 +190,7 @@ int fwSync = 0;
 #define RM_L2_PATH "rm -rf /nvram/dl"
 #define Device_Config_Ignore_size 1024
 
-
+#define DEFAULT_LAN_SUBNET_INST 1
 static void configBridgeMode(int bEnable);
 static int curticket   = 1; /*The thread should be run with the ticket*/
 static int totalticket = 0;
@@ -5096,4 +5096,63 @@ BOOL validateIPRangeWithSubnetTable(const PCOSA_DML_LAN_MANAGEMENT pLanMngm)
             return FALSE;
         }
     return TRUE;
+}
+
+
+static void  CosaDmlLanMngm_SetDefaultLanAllowedSubnet(ULONG ins, lanSetting_t* lan)
+{
+    UtopiaContext utctx = {0};
+    if (Utopia_Init(&utctx))
+    {
+        lanSetting_t orgLan;
+        Utopia_GetLanSettings(&utctx, &orgLan);
+        strncpy(orgLan.ipaddr,lan->ipaddr,sizeof(orgLan.ipaddr));
+        strncpy(orgLan.netmask,lan->netmask,sizeof(orgLan.netmask));
+        Utopia_SetLanSettings(&utctx, &orgLan);
+        Utopia_Free(&utctx, 1);
+     }
+}
+
+static void* updateLanMgmtEntry(void* arg)
+{
+   if(arg)
+   {
+       lanSetting_t *lanInfo = ( lanSetting_t *)arg;
+       PCOSA_CONTEXT_LINK_OBJECT pCxtLink = NULL;
+       PCOSA_DATAMODEL_DEVICECONTROL   pDevCtrl = (PCOSA_DATAMODEL_DEVICECONTROL)g_pCosaBEManager->hDeviceControl;
+       if (pDevCtrl)
+       {
+           pCxtLink  = (PCOSA_CONTEXT_LINK_OBJECT) CosaSListGetEntryByInsNum(&pDevCtrl->LanMngmList, DEFAULT_LAN_SUBNET_INST); // instance 1 is Lan.
+           if (pCxtLink)
+           {
+               PCOSA_DML_LAN_MANAGEMENT        pLanMngm    = (PCOSA_DML_LAN_MANAGEMENT)pCxtLink->hContext;
+
+               ANSC_IPV4_ADDRESS network, netmask, ipAddrLan;
+               inet_pton(AF_INET, lanInfo->ipaddr, &ipAddrLan);
+               memcpy(&(pLanMngm->LanIPAddress), &(ipAddrLan), sizeof(ANSC_IPV4_ADDRESS));
+
+               inet_pton(AF_INET, lanInfo->netmask, &netmask);
+               memcpy(&(pLanMngm->LanSubnetMask), &(netmask), sizeof(ANSC_IPV4_ADDRESS));
+
+               network.Value = _CALC_NETWORK(ipAddrLan.Value, netmask.Value);
+               memcpy(&(pLanMngm->LanNetwork), &(network), sizeof(ANSC_IPV4_ADDRESS));
+           }
+           //Update utopia LANMgmt settings.
+           CosaDmlLanMngm_SetDefaultLanAllowedSubnet(DEFAULT_LAN_SUBNET_INST,lanInfo);
+       }
+       AnscFreeMemory(lanInfo);
+   }
+   return NULL;
+}
+
+void refreshDefaultLanMgmt(lanSetting_t lan_info)
+{
+    void *tid = NULL;
+    lanSetting_t*  lanInfo = AnscAllocateMemory(sizeof(lanSetting_t));
+    memcpy(lanInfo,&lan_info,sizeof(lanSetting_t));
+    tid = AnscCreateTask(updateLanMgmtEntry, USER_DEFAULT_TASK_STACK_SIZE, USER_DEFAULT_TASK_PRIORITY, (void *)lanInfo, "updateLanMgmtEntry");
+    if(tid != NULL)
+    {
+        pthread_detach((pthread_t)tid);
+    }
 }
