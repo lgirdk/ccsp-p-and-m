@@ -724,7 +724,7 @@ CosaDmlDiGetProductClass
 	}
 #elif defined( _SR213_PRODUCT_REQ_)
         {
-                rc = strcpy_s(pValue, *pulSize, "Max Hub");
+                rc = strcpy_s(pValue, *pulSize, "HOMEHUB6");
                 if ( rc != EOK) {
                     ERR_CHK(rc);
                     return ANSC_STATUS_FAILURE;
