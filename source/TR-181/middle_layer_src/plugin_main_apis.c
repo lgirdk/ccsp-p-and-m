@@ -117,7 +117,9 @@
 #include "cosa_x_comcast_com_parentalcontrol_internal.h"
 #include "cosa_x_cisco_com_rlog_internal.h"
 #include "cosa_x_cisco_com_hotspot_internal.h"
+#ifndef NO_WIFI_FEATURE_SUPPORT
 #include "libHotspotApi.h"
+#endif
 #include <telemetry_busmessage_sender.h>
 
 #ifdef DSLITE_FEATURE_SUPPORT

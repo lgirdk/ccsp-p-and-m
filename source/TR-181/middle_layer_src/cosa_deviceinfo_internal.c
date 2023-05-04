@@ -163,11 +163,12 @@ CosaDeviceInfoInitialize
     _ansc_memset(pMyObject->ProvisioningCode, 0, 64);
     CosaDmlDiGetEnableMoCAforXi5Flag( pMyObject , &pMyObject->bEnableMoCAforXi5 );
     CosaDmlDiInit(NULL, NULL);
+#ifndef NO_WIFI_FEATURE_SUPPORT
     CosaDmlDiGetXfinityWiFiEnable(&pMyObject->bxfinitywifiEnable);
 	CosaDmlDiGetCloudCapable(&pMyObject->bCloudCapable);
 	syscfg_get(NULL, "CloudPersonalizationURL", pMyObject->CloudPersonalizationURL, sizeof(pMyObject->CloudPersonalizationURL));
     printf("%s : bxfinitywifiEnable value is : %d\n",__FUNCTION__,pMyObject->bxfinitywifiEnable);
-
+#endif
 	CosaDmlDiGetAndProcessDhcpServDetectionFlag( pMyObject, &pMyObject->bDhcpServDetectEnable );
 	pMyObject->bMultipleGW	= FALSE;
 #ifndef _COSA_FOR_BCI_

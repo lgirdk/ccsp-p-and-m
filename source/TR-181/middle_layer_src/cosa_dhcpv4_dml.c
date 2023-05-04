@@ -66,6 +66,9 @@
 
 **************************************************************************/
 
+#ifdef NO_WIFI_FEATURE_SUPPORT
+#include <syscfg/syscfg.h>
+#endif
 #include "ansc_platform.h"
 #include "cosa_dhcpv4_dml.h"
 #include "cosa_dhcpv4_apis.h"

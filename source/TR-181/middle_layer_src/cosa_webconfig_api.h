@@ -34,7 +34,9 @@
 #include "cosa_nat_apis.h"
 #include "msgpack.h"
 #include "webconfig_framework.h"
+#ifndef NO_WIFI_FEATURE_SUPPORT
 #include "cosa_GRE_webconfig_apis.h"
+#endif
 #if defined (WIFI_MANAGE_SUPPORTED)
 #include "cosa_managedwifi_webconfig_apis.h"
 #endif /*WIFI_MANAGE_SUPPORTED*/

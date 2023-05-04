@@ -236,9 +236,10 @@ void webConfigFrameworkInit()
 
     	register_sub_docs(blobData,SUBDOC_COUNT,versionGet,versionSet);
 	initMultiCompMaster(); 
-
+#ifndef NO_WIFI_FEATURE_SUPPORT
         //Multi Comp
         wbInitializeHotspot();
+#endif
 }
 
 /* API to clear the buffer */

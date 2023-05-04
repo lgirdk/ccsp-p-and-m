@@ -93,6 +93,7 @@
 
 extern void* g_pDslhDmlAgent;
 
+#ifndef NO_WIFI_FEATURE_SUPPORT
 static int
 PsmGet(const char *param, char *value, int size)
 {
@@ -110,6 +111,7 @@ PsmGet(const char *param, char *value, int size)
 
     return 0;
 }
+#endif
 
 #ifdef CONFIG_VENDOR_CUSTOMER_COMCAST
 
