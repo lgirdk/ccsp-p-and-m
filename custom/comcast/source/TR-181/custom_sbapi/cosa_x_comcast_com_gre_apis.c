@@ -419,6 +419,8 @@ int hotspot_update_circuit_ids(int greinst, int queuestart) {
 #define INITIAL_CIRCUIT_ID_SLEEP 5
 #define POLL_CIRCUIT_ID_SLEEP 3
 #define INITIAL_SNOOPER_QUEUE 1
+
+#if !defined (_SR213_PRODUCT_REQ_) || (defined (_SR213_PRODUCT_REQ_) && !defined(RDK_ONEWIFI)) //SHARMAN-1054
 static void* circuit_id_init_thread(void* arg) {
     UNREFERENCED_PARAMETER(arg);
     int ret = -1;
@@ -434,13 +436,15 @@ static void* circuit_id_init_thread(void* arg) {
     
     return NULL;
 }
+#endif
 
 ANSC_STATUS 
 CosaDml_GreInit(void)
 {
     int shmid;
+#if !defined (_SR213_PRODUCT_REQ_) || (defined (_SR213_PRODUCT_REQ_) && !defined(RDK_ONEWIFI)) //SHARMAN-1054
     void *params = NULL;
-
+#endif
 	CcspTraceInfo(( "%s %d - Entry\n", __FUNCTION__, __LINE__ ));
 
     sysevent_fd = sysevent_open(
@@ -470,13 +474,13 @@ CosaDml_GreInit(void)
         g_hsfdStat = NULL;
         return ANSC_STATUS_FAILURE;
     }
-    
+#if !defined (_SR213_PRODUCT_REQ_) || (defined (_SR213_PRODUCT_REQ_) && !defined(RDK_ONEWIFI)) //SHARMAN-1054
 	CcspTraceInfo(( "%s %d - Creating circuit_id_init_thread thread\n", __FUNCTION__, __LINE__ ));
 
     AnscCreateTask(circuit_id_init_thread, USER_DEFAULT_TASK_STACK_SIZE, USER_DEFAULT_TASK_PRIORITY, params, "CircuitIDInitThread");
 
 	CcspTraceInfo(( "%s %d - Init Hotspot GRE Done\n", __FUNCTION__, __LINE__ ));
-
+#endif
     return ANSC_STATUS_SUCCESS;
 }
 
