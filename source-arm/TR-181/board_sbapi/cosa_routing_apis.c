@@ -608,7 +608,8 @@ COSA_DML_RIPD_CONF CosaDmlRIPDefaultConfig =
 };
 
 COSA_DML_RIPD_CONF CosaDmlRIPCurrentConfig = {0};
-
+static componentStruct_t **ppComponents = NULL;
+extern char g_Subsystem[32];
 
 void _get_shell_output3 (FILE *fp, char *buf, size_t len)
 {
@@ -707,7 +708,22 @@ static int CosaRipdOperation(char * arg)
 
     return 0;
 }
+static int initWifiComp (void)
+{
+    int size = 0, ret;
+    char dst_pathname_cr[64];
 
+    snprintf(dst_pathname_cr, sizeof(dst_pathname_cr), "%s%s", g_Subsystem, CCSP_DBUS_INTERFACE_CR);
+
+    ret = CcspBaseIf_discComponentSupportingNamespace(bus_handle,
+                dst_pathname_cr,
+                "Device.WiFi.",
+                g_Subsystem,/* prefix */
+                &ppComponents,
+                &size);
+
+    return (ret == CCSP_SUCCESS) ? 0 : ret;
+}
 
 /* set a ulong type value into utopia */
 void CosaDmlSetRipd_into_utopia( PCHAR uniqueName, PCHAR table1Name, ULONG table1Index, PCOSA_DML_RIPD_CONF pEntry )
@@ -1220,6 +1236,11 @@ static void* updateWIFIStatus(void *arg)
                                           { "Device.WiFi.Radio.2.X_CISCO_COM_ApplySetting", "true", ccsp_boolean} };
     if (enable) {
         param_val[0].parameterValue = "true";
+    }
+    while (ppComponents == NULL && initWifiComp())
+    {
+        CcspTraceInfo(("Waiting for WiFi Componenet to come up \n"));
+        sleep(1);
     }
     ret = CcspBaseIf_setParameterValues(bus_handle,
                                         "eRT.com.cisco.spvtg.ccsp.wifi",
