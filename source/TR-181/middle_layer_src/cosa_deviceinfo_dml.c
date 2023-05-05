@@ -10239,13 +10239,18 @@ Feature_SetParamBoolValue
             }
             if(days == 0)
             {
-                char buf1[2] = {'7','\0'};
-                char buf2[2] = {'6','\0'};
-                if (syscfg_set(NULL, "XfinityHealthCheckCadence", buf1) != 0 || syscfg_set(NULL, "XfinityHealthCheckRemDays", buf2) != 0 )
+                if (syscfg_set(NULL, "XfinityHealthCheckCadence", "7") != 0)
                 {
                     AnscTraceWarning(("syscfg_set failed\n"));
                     return FALSE;
                 }
+            }
+            if(syscfg_set(NULL, "XfinityHealthCheckReset", "0") != 0 ||
+               syscfg_set(NULL, "XfinityHealthCheckRemDays", "-1") != 0 )
+            {
+                AnscTraceWarning(("syscfg_set failed while resetting\n"));
+                return FALSE;
+
             }
             if( syscfg_commit() == 0 )
             {

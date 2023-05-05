@@ -934,9 +934,7 @@ XfinityHealthCheck_SetParamIntValue
     )
 {
     char buf1[16]={0};
-    char buf2[16]={0};
     errno_t rc1 = -1;
-    errno_t rc2 = -1;
     UNREFERENCED_PARAMETER(hInsContext);
 
     if (strcmp(ParamName, "Cadence") == 0)
@@ -952,15 +950,10 @@ XfinityHealthCheck_SetParamIntValue
             ERR_CHK(rc1);
             return FALSE;
         }
-        rc2 = sprintf_s(buf2, sizeof(buf2), "%d", value-1);
-        if(rc2 < EOK)
-        {
-            ERR_CHK(rc2);
-            return FALSE;
-        }
 
         if (syscfg_set(NULL, "XfinityHealthCheckCadence", buf1) != 0 ||
-            syscfg_set(NULL, "XfinityHealthCheckRemDays", buf2) != 0 )
+            syscfg_set(NULL, "XfinityHealthCheckReset", "0") != 0 ||
+            syscfg_set(NULL, "XfinityHealthCheckRemDays", "-1") != 0 )
         {
             AnscTraceWarning(("syscfg_set failed\n"));
         }
