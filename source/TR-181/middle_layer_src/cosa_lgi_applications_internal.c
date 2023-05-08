@@ -58,22 +58,6 @@ ANSC_STATUS CosaLgiApplicationsInitialize ( ANSC_HANDLE hThisObject )
     v_secure_system("rpcclient2 'echo \"%s\" > /tmp/sk_property.txt &'", pMyObject->SamKnowsProperty);
 #endif
 
-#if !defined (FEATURE_GPON)
-    /*
-       Start SK here for DOCSIS platforms only (it's too early for non-DOCSIS).
-       Note also that unitid path may change depending on SK release. Here we only
-       support the older path, needed for the older SK releases which are used
-       on DOCSIS platforms. The newer path added for reference but commented out.
-    */
-    if ((pMyObject->SamKnowsEnable == TRUE) &&
-        (access("/tmp/samknows/unitid", F_OK) != 0) /* &&
-        (access("/var/run/opt/samknows/router_agent/unitid", F_OK) != 0) */ )
-    {
-        CcspTraceInfo(("%s : Starting Samknows\n", __FUNCTION__));	    
-        system("/etc/init.d/samknows_ispmon start &");
-    }
-#endif
-
     return returnStatus;
 }
 
