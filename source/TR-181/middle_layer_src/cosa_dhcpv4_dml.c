@@ -11195,7 +11195,13 @@ LanAllowedSubnetTable_Validate
                 (lanSubnetMaskBuf.Dot[3] != 0))
             {
                 /* Setting default Subnet Mask for class C network */
+#ifdef _PUMA6_ARM_
+                /* Default value for Legacy platform is 255.255.0.0 */
                 strcpy (pLanAllowedSubnet->SubnetMask, "255.255.0.0");
+#else
+                /* Default value for Non Legacy platform is 255.255.255.0 */
+                strcpy (pLanAllowedSubnet->SubnetMask, "255.255.255.0");
+#endif
             }
         }
     }
