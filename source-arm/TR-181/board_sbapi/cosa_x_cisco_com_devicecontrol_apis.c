@@ -1551,7 +1551,7 @@ void* CosaDmlDcRestartRouter(void* arg)
 #else
     sleep(3);
 #endif
-    v_secure_system("sysevent set lan_restarted true");
+    v_secure_system("sysevent set lan_restart_required true");
     v_secure_system("sysevent set forwarding-restart");
 #if 0
     int count = 0;
