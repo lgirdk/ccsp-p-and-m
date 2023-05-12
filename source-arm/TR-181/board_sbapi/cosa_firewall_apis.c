@@ -910,6 +910,89 @@ CosaDmlFW_V4_IPFilter_DelEntry
 }
 
 ANSC_STATUS
+CosaDmlFW_V4_IPFilter_Validate
+    (
+        ULONG                        ins,
+        COSA_DML_FW_IPFILTER         *pEntry
+    )
+{
+    int index;
+    UtopiaContext ctx;
+    fwipfilter_t IpFilter;
+    int rc = -1;
+
+    int i;
+    fwipfilter_t IpFilter_exist;
+
+    index = FW_V4_IPFilter_InsGetIndex(ins);
+
+    if((g_NrFwV4IpFilter == 0) || ((g_NrFwV4IpFilter == 1)&&(index != -1)))
+        return ANSC_STATUS_SUCCESS;
+
+    IpFilter.InstanceNumber = pEntry->InstanceNumber;
+    IpFilter.Enable = pEntry->Enable;
+    IpFilter.SrcStartPort = pEntry->SrcStartPort;
+    IpFilter.SrcEndPort = pEntry->SrcEndPort;
+    IpFilter.DstStartPort = pEntry->DstStartPort;
+    IpFilter.DstEndPort = pEntry->DstEndPort;
+
+    _ansc_strncpy(IpFilter.Alias, pEntry->Alias, sizeof(IpFilter.Alias));
+    _ansc_strncpy(IpFilter.Description, pEntry->Description, sizeof(IpFilter.Description));
+
+    _ansc_strncpy(IpFilter.SrcStartIPAddress, pEntry->SrcStartIPAddress, sizeof(IpFilter.SrcStartIPAddress));
+    _ansc_strncpy(IpFilter.SrcEndIPAddress, pEntry->SrcEndIPAddress, sizeof(IpFilter.SrcEndIPAddress));
+    _ansc_strncpy(IpFilter.DstStartIPAddress, pEntry->DstStartIPAddress, sizeof(IpFilter.DstStartIPAddress));
+    _ansc_strncpy(IpFilter.DstEndIPAddress, pEntry->DstEndIPAddress, sizeof(IpFilter.DstEndIPAddress));
+
+    if(pEntry->FilterAction == ACTION_ALLOW)
+        _ansc_strcpy(IpFilter.FilterAction, "ALLOW");
+    else
+        _ansc_strcpy(IpFilter.FilterAction, "DENY");
+
+    if(pEntry->FilterDirec == DIRECTION_INCOMING)
+        _ansc_strcpy(IpFilter.FilterDirec, "INCOMING");
+    else
+        _ansc_strcpy(IpFilter.FilterDirec, "OUTGOING");
+
+    if(pEntry->ProtocolType == PROTO_TCP)
+        _ansc_strcpy(IpFilter.ProtocolType, "TCP");
+    else if(pEntry->ProtocolType == PROTO_UDP)
+        _ansc_strcpy(IpFilter.ProtocolType, "UDP");
+    else if(pEntry->ProtocolType == PROTO_BOTH)
+        _ansc_strcpy(IpFilter.ProtocolType, "BOTH");
+    else if(pEntry->ProtocolType == PROTO_ALL)
+        _ansc_strcpy(IpFilter.ProtocolType, "All");
+    else
+        _ansc_strcpy(IpFilter.ProtocolType, "");
+
+    if(!Utopia_Init(&ctx)){
+        return ANSC_STATUS_FAILURE;
+    }
+
+    for(i=0;i<g_NrFwV4IpFilter;i++) {
+
+        Utopia_GetV4IpFilterByIndex(&ctx, i, &IpFilter_exist);
+
+        if(((index == -1) || (i != index))
+        && (!strcmp(IpFilter_exist.SrcStartIPAddress, IpFilter.SrcStartIPAddress))
+        && (!strcmp(IpFilter_exist.SrcEndIPAddress, IpFilter.SrcEndIPAddress))
+        && (!strcmp(IpFilter_exist.DstStartIPAddress, IpFilter.DstStartIPAddress))
+        && (!strcmp(IpFilter_exist.DstEndIPAddress, IpFilter.DstEndIPAddress))
+        && (!strcmp(IpFilter_exist.FilterDirec, IpFilter.FilterDirec))
+        && (IpFilter_exist.SrcStartPort == IpFilter.SrcStartPort)
+        && (IpFilter_exist.SrcEndPort == IpFilter.SrcEndPort)
+        && (IpFilter_exist.DstStartPort == IpFilter.DstStartPort)
+        && (IpFilter_exist.DstEndPort == IpFilter.DstEndPort)) {
+           Utopia_Free(&ctx, 0);
+           return ANSC_STATUS_FAILURE;
+        }
+    }
+    Utopia_Free(&ctx, 0);
+    return ANSC_STATUS_SUCCESS;
+
+}
+
+ANSC_STATUS
 CosaDmlFW_V4_IPFilter_GetConf
     (
         ULONG                       ins,
@@ -1901,6 +1984,109 @@ CosaDmlFW_V6_IPFilter_GetConf
     Return:       The status of the operation.
 
 **********************************************************************/
+ANSC_STATUS
+CosaDmlFW_V6_IPFilter_Validate
+    (
+        ULONG                        ins,
+        COSA_DML_FW_IPFILTER         *pEntry
+    )
+{
+    int index;
+    UtopiaContext ctx;
+    fwipfilter_t IpFilter;
+    int rc = -1;
+    int i;
+    fwipfilter_t IpFilter_exist;
+
+    index = FW_V6_IPFilter_InsGetIndex(ins);
+
+    if((g_NrFwV6IpFilter == 0) || ((g_NrFwV6IpFilter == 1)&&(index != -1)))
+        return ANSC_STATUS_SUCCESS;
+
+    IpFilter.InstanceNumber = pEntry->InstanceNumber;
+    IpFilter.SrcStartPort = pEntry->SrcStartPort;
+    IpFilter.SrcEndPort = pEntry->SrcEndPort;
+    IpFilter.DstStartPort = pEntry->DstStartPort;
+    IpFilter.DstEndPort = pEntry->DstEndPort;
+    IpFilter.IPv6SrcPrefixLen = pEntry->IPv6SrcPrefixLen;
+    IpFilter.IPv6DstPrefixLen = pEntry->IPv6DstPrefixLen ;
+    IpFilter.Enable = pEntry->Enable;
+
+    _ansc_strncpy(IpFilter.Alias, pEntry->Alias, sizeof(IpFilter.Alias));
+    _ansc_strncpy(IpFilter.Description, pEntry->Description, sizeof(IpFilter.Description));
+
+    _ansc_strncpy(IpFilter.SrcStartIPAddress, pEntry->SrcStartIPAddress, sizeof(IpFilter.SrcStartIPAddress));
+    _ansc_strncpy(IpFilter.DstStartIPAddress, pEntry->DstStartIPAddress, sizeof(IpFilter.DstStartIPAddress));
+
+    if(pEntry->ProtocolType == PROTO_TCP)
+        _ansc_strcpy(IpFilter.ProtocolType, "TCP");
+    else if(pEntry->ProtocolType == PROTO_UDP)
+        _ansc_strcpy(IpFilter.ProtocolType, "UDP");
+    else if(pEntry->ProtocolType == PROTO_BOTH)
+        _ansc_strcpy(IpFilter.ProtocolType, "BOTH");
+    else if(pEntry->ProtocolType == PROTO_ALL)
+        _ansc_strcpy(IpFilter.ProtocolType, "All");
+    else if(pEntry->ProtocolType == PROTO_ICMPV6)
+        _ansc_strcpy(IpFilter.ProtocolType, "ICMPv6");
+    else if(pEntry->ProtocolType == PROTO_ESP)
+        _ansc_strcpy(IpFilter.ProtocolType, "ESP");
+    else if(pEntry->ProtocolType == PROTO_AH)
+        _ansc_strcpy(IpFilter.ProtocolType, "AH");
+    else if(pEntry->ProtocolType == PROTO_GRE)
+        _ansc_strcpy(IpFilter.ProtocolType, "GRE");
+    else if(pEntry->ProtocolType == PROTO_IPV6ENCAP)
+        _ansc_strcpy(IpFilter.ProtocolType, "IPv6Encap");
+    else if(pEntry->ProtocolType == PROTO_IPV4ENCAP)
+        _ansc_strcpy(IpFilter.ProtocolType, "IPv4Encap");
+    else if(pEntry->ProtocolType == PROTO_IPV6FRAGMENT)
+        _ansc_strcpy(IpFilter.ProtocolType, "IPv6Fragment");
+    else if(pEntry->ProtocolType == PROTO_L2TP)
+        _ansc_strcpy(IpFilter.ProtocolType, "L2TP");
+    else
+        _ansc_strcpy(IpFilter.ProtocolType, "");
+
+    if(pEntry->FilterAction == ACTION_ALLOW)
+        _ansc_strcpy(IpFilter.FilterAction, "ALLOW");
+    else if(pEntry->FilterAction == ACTION_DENY)
+        _ansc_strcpy(IpFilter.FilterAction, "DENY");
+    else
+        _ansc_strcpy(IpFilter.FilterAction, "");
+
+    if(pEntry->FilterDirec == DIRECTION_INCOMING)
+        _ansc_strcpy(IpFilter.FilterDirec, "INCOMING");
+    else if(pEntry->FilterDirec == DIRECTION_OUTGOING)
+        _ansc_strcpy(IpFilter.FilterDirec, "OUTGOING");
+    else
+        _ansc_strcpy(IpFilter.FilterDirec, "");
+
+    if(!Utopia_Init(&ctx)){
+        return ANSC_STATUS_FAILURE;
+    }
+
+    for(i=0;i<g_NrFwV6IpFilter;i++) {
+
+        Utopia_GetV6IpFilterByIndex(&ctx, i, &IpFilter_exist);
+
+        if(((index == -1) || (i != index))
+        && (!strcmp(IpFilter_exist.SrcStartIPAddress, IpFilter.SrcStartIPAddress))
+        && (!strcmp(IpFilter_exist.DstStartIPAddress, IpFilter.DstStartIPAddress))
+        && (!strcmp(IpFilter_exist.FilterDirec, IpFilter.FilterDirec))
+        && (IpFilter_exist.IPv6SrcPrefixLen == IpFilter.IPv6SrcPrefixLen)
+        && (IpFilter_exist.IPv6DstPrefixLen == IpFilter.IPv6DstPrefixLen)
+        && (IpFilter_exist.SrcStartPort == IpFilter.SrcStartPort)
+        && (IpFilter_exist.SrcEndPort == IpFilter.SrcEndPort)
+        && (IpFilter_exist.DstStartPort == IpFilter.DstStartPort)
+        && (IpFilter_exist.DstEndPort == IpFilter.DstEndPort)) {
+           Utopia_Free(&ctx, 0);
+           return ANSC_STATUS_FAILURE;
+        }
+    }
+    Utopia_Free(&ctx, 0);
+    return ANSC_STATUS_SUCCESS;
+
+}
+
+
 ANSC_STATUS
 CosaDmlFW_V6_IPFilter_SetConf
     (
