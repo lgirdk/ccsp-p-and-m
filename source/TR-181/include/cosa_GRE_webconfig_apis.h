@@ -26,7 +26,6 @@
 #include "hotspot_helpers.h"
 #include "hotspotdoc.h"
 #include "ccsp_trace.h"
-#include "base64.h"
 #include "cosa_webconfig_api.h"
 #include "libHotspotApi.h"
 #include <syscfg/syscfg.h>
