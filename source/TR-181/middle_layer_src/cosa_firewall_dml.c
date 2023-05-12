@@ -1353,6 +1353,14 @@ BOOL FW_V4_IpFilter_SetParamUlongValue ( ANSC_HANDLE hInsContext, char *ParamNam
 
 BOOL FW_V4_IpFilter_Validate ( ANSC_HANDLE hInsContext, char* pReturnParamName, ULONG* puLength )
 {
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj     = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER           *pFwIpFilter  = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+
+    if (CosaDmlFW_V4_IPFilter_Validate(pFwIpFilter->InstanceNumber, pFwIpFilter) != ANSC_STATUS_SUCCESS)
+    {
+        printf("OFW-4540: CosaDmlFW_V4_IPFilter_Validate return FALSE\n");
+        return FALSE;
+    }
     return TRUE;
 }
 
@@ -2076,6 +2084,14 @@ BOOL FW_V6_IpFilter_SetParamUlongValue ( ANSC_HANDLE hInsContext, char *ParamNam
 
 BOOL FW_V6_IpFilter_Validate ( ANSC_HANDLE hInsContext, char* pReturnParamName, ULONG* puLength )
 {
+    PCOSA_CONTEXT_LINK_OBJECT       pLinkObj     = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
+    COSA_DML_FW_IPFILTER           *pFwIpFilter  = (COSA_DML_FW_IPFILTER*)pLinkObj->hContext;
+
+    if (CosaDmlFW_V6_IPFilter_Validate(pFwIpFilter->InstanceNumber, pFwIpFilter) != ANSC_STATUS_SUCCESS)
+    {
+        printf("OFW-4540: CosaDmlFW_V6_IPFilter_Validate return FALSE\n");
+        return FALSE;
+    }
     return TRUE;
 }
 
