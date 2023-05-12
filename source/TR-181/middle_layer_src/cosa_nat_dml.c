@@ -79,7 +79,7 @@
 #include "dml_tr181_custom_cfg.h"
 #include "safec_lib_common.h"
 #include "cosa_nat_apis.h"
-#include "base64.h"
+#include <trower-base64/base64.h>
 #include "cosa_x_comcast_com_parentalcontrol_apis.h"
 
 #if     CFG_USE_CCSP_SYSLOG
