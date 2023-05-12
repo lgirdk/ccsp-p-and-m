@@ -19,6 +19,7 @@
 #include <errno.h>
 #include <string.h>
 #include <msgpack.h>
+#include <trower-base64/base64.h>
 #include "ccsp_trace.h"
 #include "hotspot_helpers.h"
 #include "hotspotdoc.h"
