@@ -15851,25 +15851,7 @@ SwitchToDibbler_GetParamBoolValue
 	/* This Get API is only for XB3,AXB6 devices */
     if (strcmp(ParamName, "Enable") == 0)
     {
-        /* collect value */
-        char buf[8];
-        if( syscfg_get( NULL, "dibbler_client_enable_v2", buf, sizeof(buf))==0)
-        {
-            if (strcmp(buf, "true") == 0)
-            {
-                *pBool = TRUE;
-            }
-            else
-            {
-                *pBool = FALSE;
-            }
-        }
-        else
-        {
-            CcspTraceWarning(("%s syscfg_get failed  for dibbler_client_enable_v2\n",__FUNCTION__));
-            *pBool = FALSE;
-        }
-
+        *pBool = TRUE;
         return TRUE;
     }
     return FALSE;
@@ -15925,78 +15907,6 @@ SwitchToDibbler_SetParamBoolValue
 
     if (strcmp(ParamName, "Enable") == 0)
     {
-        char buf[8];
-        char event[8];
-        pthread_t tid;
-        char* operation = NULL;
-        int val;
-
-        /* collect previous flag value */
-       if( syscfg_get( NULL, "dibbler_client_enable_v2", buf, sizeof(buf)) == 0)
-        {
-                val = strcmp(buf,"true")?0:1;
-                if (val != bValue)
-                {
-                        if (bValue)
-                        {
-                                commonSyseventGet("dhcpclient_v4", event, sizeof(event));
-                                if (atoi(event) == 1)
-                                {
-                                        commonSyseventSet("dhcpclient_v6", "1");
-                                        AnscTraceWarning(("dhcpclient_v4 event is enabled. So enabling dhcpclient_v6 event \n"));
-                                }
-                                else
-                                {
-                                        operation = "schedule_v6_cron";
-                                        AnscTraceWarning(("dhcpclient_v4 event is not enabled.scheduling cron \n"));
-                                        pthread_create(&tid, NULL, &dhcpSwitchThread, (void *)operation);
-                                }
-                        }
-                        else
-                        {
-                                operation = "clear_v6_cron";
-                                AnscTraceWarning(("dhcp client switching back to default \n"));
-                                pthread_create(&tid, NULL, &dhcpSwitchThread, (void *)operation);
-                        }
-                }
-                else if(!bValue)
-                {
-                        char v6event[8];
-                        commonSyseventGet("dhcpclient_v6", v6event, sizeof(v6event));
-                        if (atoi(v6event) == 1)
-                        {
-                                char v4event[8];
-                                commonSyseventGet("dhcpclient_v4", v4event, sizeof(v4event));
-                                if (atoi(v4event) ==1)
-                                {
-                                        commonSyseventSet("dhcpclient_v6", "0");
-                                        AnscTraceWarning(("dhcpclient_v6 is disabled\n"));
-                                }
-                                else
-                                {
-                                        commonSyseventSet("dhcpclient_v6", "0");
-                                        v_secure_system("sed -i '/dhcpswitch.sh/d' /var/spool/cron/crontabs/root &");
-                                        AnscTraceWarning(("dhcpclient_v6 is disabled and scheduled cron removed\n"));
-                                }
-
-                        }
-                        else
-                        {
-                                AnscTraceWarning(("No set operation done since dibbler_client_enable_v2 flag already set to %d\n", bValue));
-                        }
-                }
-                else
-                {
-                        AnscTraceWarning(("No set operation done since dibbler_client_enable_v2 flag already set to %d\n", bValue));
-                }
-        }
-        else
-        {
-                AnscTraceWarning(("syscfg_get failed for diibler_client_enable\n"));
-                return FALSE;
-        }
-
-
         return TRUE;
     }
    return FALSE;
