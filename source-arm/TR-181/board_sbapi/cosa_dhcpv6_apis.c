@@ -2706,20 +2706,6 @@ CosaDmlDhcpv6cGetEnabled
     FILE *fp = popen("busybox ps |grep -i dibbler-client | grep -v grep", "r");
 #elif defined (_XF3_PRODUCT_REQ_)
     FILE *fp = popen("/usr/sbin/dibbler-client status | grep client", "r");
-#elif defined(_COSA_INTEL_XB3_ARM_) || defined(INTEL_PUMA7)
-    FILE *fp;
-    char buf[8];
-    BOOL dibblerEnabled = FALSE;
-    // For XB3, AXB6 if dibbler flag enabled, check dibbler-client process status
-    if ((syscfg_get(NULL, "dibbler_client_enable_v2", buf, sizeof(buf)) == 0) && (strcmp(buf, "true") == 0))
-    {
-        dibblerEnabled = TRUE;
-    }
-    CcspTraceWarning(("dibbler_client_enable_v2 %d\n", dibblerEnabled));
-    if (dibblerEnabled)
-        fp = popen("busybox ps |grep -i dibbler-client | grep -v grep", "r");
-    else
-        fp = popen("busybox ps |grep -i ti_dhcp6c | grep erouter0 | grep -v grep", "r");
 #else
     FILE *fp = popen("busybox ps |grep -i dibbler-client | grep -v grep", "r");
 #endif
@@ -2737,12 +2723,6 @@ CosaDmlDhcpv6cGetEnabled
                 bEnabled = TRUE;
 #elif defined (_XF3_PRODUCT_REQ_)
             if (strstr(out, "RUNNING,"))
-                bEnabled = TRUE;
-#elif defined(_COSA_INTEL_XB3_ARM_) || defined(INTEL_PUMA7)
-            // For XB3, AXB6 if dibbler flag enabled, check dibbler-client process status
-            if (dibblerEnabled && strstr(out, "dibbler-client"))
-                bEnabled = TRUE;
-            if (strstr(out, "erouter_dhcp6c"))
                 bEnabled = TRUE;
 #else
             if (strstr(out, "dibbler-client"))
