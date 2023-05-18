@@ -1774,7 +1774,11 @@ CosaDmlDcSetRebootDevice
     }
 
 #if defined(_SR213_PRODUCT_REQ_)
-    v_secure_system("/etc/sky/power_off_led.sh");
+    /* LED needs to be turned off only incase of a full router reset with reboot. */	
+    if (all) {
+        CcspTraceInfo(("Invoking /etc/sky/power_off_led.sh to turn of LED state for reset \n"));
+        v_secure_system("/etc/sky/power_off_led.sh");
+    }
 #endif
    
     return ANSC_STATUS_SUCCESS;
