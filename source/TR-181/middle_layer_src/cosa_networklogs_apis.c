@@ -66,13 +66,10 @@ CosaDmlGetNetworkLogs
 
     char str[1024];
     char cmd[128];
-    char tmp[128];
 
     /* The below arguments are to be initialised using sscanf */
     char evt[16] = {0};
-    char date[16] = {0};
-    char time[16] = {0};
-    char month[16] = {0};
+    char tmp[32] = {0};
     char desc[512] = {0};
 
     if (access(NETWORK_EVENT_LOG_FILE, F_OK) == 0)
@@ -126,9 +123,8 @@ CosaDmlGetNetworkLogs
                 break;
             }
             /* Event Log format: <month> <date> <time> <local0.event level> <message> , sscanf is expected to return exact 5 parameter values */
-            param_num = sscanf(str,"%15s %15s %15s %*s local0.%15s %*s %511[^\t\n]", month, date, time, evt, desc);
-
-            if (param_num != 5)
+            param_num = sscanf(str,"%*15c %*s local0.%15s %*s %24c %511[^\t\n]", evt, tmp, desc);
+            if (param_num != 3)
             {
                 //ignore this line if the format is not correct
                 continue;
@@ -137,7 +133,6 @@ CosaDmlGetNetworkLogs
             //TODO Will fix this EventID once we get clarity on event ID requirement
             pEVENTLog[i].EventID = 0;
 
-            snprintf(tmp,sizeof(pEVENTLog[i].Time),"%s %s %s", date, month, time);
             strcpy(pEVENTLog[i].Time,tmp);
 
             if(!strcmp(evt, "unknown"))
