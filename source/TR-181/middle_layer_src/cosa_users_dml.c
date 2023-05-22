@@ -1417,9 +1417,7 @@ User_SetParamStringValue
             {
                 AnscCopyString(pUser->X_RDKCENTRAL_COM_ComparePassword,"Good_PWD");
 #ifdef FEATURE_NETWORK_LOGS
-                openlog("Network", LOG_NDELAY, LOG_LOCAL0);
-                syslog(LOG_LOCAL0|LOG_NOTICE, "GUI Login Status - Login Success from WAN interface");
-                closelog();
+                syslog_networklog("Network",LOG_NOTICE,"%s","GUI Login Status - Login Success from WAN interface");
 #else
                 if (log_to_docsis)
                 {
@@ -1431,9 +1429,7 @@ User_SetParamStringValue
             {
                 AnscCopyString(pUser->X_RDKCENTRAL_COM_ComparePassword,"Invalid_PWD");
 #ifdef FEATURE_NETWORK_LOGS
-                openlog("Network", LOG_NDELAY, LOG_LOCAL0);
-                syslog(LOG_LOCAL0|LOG_NOTICE, "GUI Login Status - Login Fail from WAN interface");
-                closelog();
+                syslog_networklog("Network",LOG_NOTICE,"%s","GUI Login Status - Login Fail from WAN interface");
 #else
                 if (log_to_docsis)
                 {
@@ -1450,9 +1446,7 @@ User_SetParamStringValue
             if (strcmp("Invalid_PWD", resultBuffer) == 0)
             {
 #ifdef FEATURE_NETWORK_LOGS
-                openlog("Network", LOG_NDELAY, LOG_LOCAL0);
-                syslog(LOG_LOCAL0|LOG_NOTICE, "GUI Login Status - Login Fail from LAN interface");
-                closelog();
+                syslog_networklog("Network",LOG_NOTICE,"%s","GUI Login Status - Login Fail from LAN interface");
 #else
                 if (log_to_docsis)
                 {
@@ -1463,9 +1457,7 @@ User_SetParamStringValue
             else
             {
 #ifdef FEATURE_NETWORK_LOGS
-               openlog("Network", LOG_NDELAY, LOG_LOCAL0);
-               syslog(LOG_LOCAL0|LOG_NOTICE, "GUI Login Status - Login Success from LAN interface");
-               closelog();
+               syslog_networklog("Network",LOG_NOTICE,"%s","GUI Login Status - Login Success from LAN interface");
 #else
                if (log_to_docsis)
                {
