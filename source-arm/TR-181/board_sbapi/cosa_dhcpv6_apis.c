@@ -70,6 +70,7 @@
 #include "cosa_apis.h"
 #include "cosa_dhcpv6_apis.h"
 #include "cosa_dhcpv6_internal.h"
+#include "cosa_x_cisco_com_devicecontrol_apis.h"
 #include "plugin_main_apis.h"
 #include "autoconf.h"
 #include "secure_wrapper.h"
@@ -8270,6 +8271,93 @@ EXIT:
     return NULL;
 }
 
+/*******************************************************
+* Function Name : isDropbearRunningWithIpv6 (char *pIpv6Addr)
+*      It will verify, dropbear process is running with provided IPv6 address or not
+*      if dropbear process is running with different IPv6 address other than provided
+*      pIpv6Addr then it will restart the sshd-service
+*
+* Parameter[in] : pIpv6Addr
+*      New IPv6Address of erouter0 interface
+*
+* @retval : void
+*
+*******************************************************/
+static void isDropbearRunningWithIpv6(char * pIpv6Addr)
+{
+#define LINE_LENGTH 1024
+    char arryOfDropbearPids[LINE_LENGTH] = {0};
+    char pathToCmdline[LINE_LENGTH] = {0};
+    char cmdLineArgs[LINE_LENGTH] = {0};
+    char *pDropbearPid = NULL;
+    int indexOfCmdLineArg=0, indexOfeRouterIpv6Str = 0;
+    bool DropbearPidWithIpv6 = false;
+    int dropbearPidNo = 0;
+    FILE *fpToDropbearPids = NULL;
+
+    if (NULL == pIpv6Addr)
+    {
+        CcspTraceWarning(("%s -- NULL parameter passed", __FUNCTION__));
+        return;
+    }
+
+    fpToDropbearPids = v_secure_popen("r", "ps ww | grep 'dropbear -E -s -b /etc/sshbanner.txt' | grep -v grep");
+
+    if (NULL == fpToDropbearPids)
+    {
+        CcspTraceWarning(("%s -- Failed to open the pipe for dropbear pids: %s", __FUNCTION__, strerror(errno)));
+        return;
+    }
+
+    if (NULL != fgets(arryOfDropbearPids,LINE_LENGTH,fpToDropbearPids))
+    {
+        pDropbearPid = strtok(arryOfDropbearPids," ");
+
+        while((NULL != pDropbearPid) && (true != DropbearPidWithIpv6))
+        {
+            dropbearPidNo = atoi(pDropbearPid);
+            sprintf(pathToCmdline,"/proc/%d/cmdline",dropbearPidNo);
+            int fileDescriptor = open (pathToCmdline, O_RDONLY);
+            if (-1 != fileDescriptor)
+            {
+                int noOfBytesRead = read(fileDescriptor, cmdLineArgs, LINE_LENGTH);
+                close(fileDescriptor);
+                for (indexOfCmdLineArg = 0, indexOfeRouterIpv6Str = 0; indexOfCmdLineArg < noOfBytesRead; indexOfCmdLineArg++)
+                {
+                    if (pIpv6Addr[indexOfeRouterIpv6Str] == cmdLineArgs[indexOfCmdLineArg])
+                    {
+                        indexOfeRouterIpv6Str++;
+                        if (pIpv6Addr[indexOfeRouterIpv6Str] == '\0')
+                        {
+                            DropbearPidWithIpv6 = true;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        indexOfeRouterIpv6Str=0;
+                    }
+                }
+            }
+            memset(pathToCmdline, 0, LINE_LENGTH);
+            memset(cmdLineArgs,0, LINE_LENGTH);
+            pDropbearPid = strtok (NULL , " ");
+        }
+
+        if (true != DropbearPidWithIpv6)
+        {
+            CcspTraceInfo(("%s --Dropbear process is NOT running with %s, sshd , Hence restart the dropbear process\n",__FUNCTION__, pIpv6Addr));
+            v_secure_system("sh /etc/utopia/service.d/service_sshd.sh sshd-restart");
+        }
+        else
+        {
+                CcspTraceInfo (("%s - Dropbear process is running with eRouter0Ipv6:%s\n", __FUNCTION__, pIpv6Addr));
+        }
+    }
+    v_secure_pclose(fpToDropbearPids);
+    fpToDropbearPids = NULL;
+}
+
 static void * 
 dhcpv6c_dbg_thrd(void * in)
 {
@@ -8677,10 +8765,23 @@ dhcpv6c_dbg_thrd(void * in)
                         }
                         else
                         {
+                            #define STRING_LENGTH 64
+                            char dropbearInterface[STRING_LENGTH] = {0};
+
                             CcspTraceInfo(("%s: v6addr is %s ,pref_len is %d\n", __func__,v6addr,pref_len));
 
                             remove_single_quote(v6addr);
 			    commonSyseventSet(COSA_DML_DHCPV6C_ADDR_SYSEVENT_NAME,v6addr);
+
+                            if ((0 == CheckAndGetDevicePropertiesEntry(dropbearInterface, STRING_LENGTH, "DROPBEAR_INTERFACE")) && (0 == strncmp(dropbearInterface, "erouter0", strlen(dropbearInterface))))
+                            {
+                                CcspTraceInfo(("%s: Dropbear interface is erouter0 \n", __func__));
+                                isDropbearRunningWithIpv6(v6addr);
+                            }
+                            else
+                            {
+                                CcspTraceInfo(("%s: Dropbear interface is NOT eRouter0\n", __func__));
+                            }
 
                              #ifdef RDKB_EXTENDER_ENABLED
 
