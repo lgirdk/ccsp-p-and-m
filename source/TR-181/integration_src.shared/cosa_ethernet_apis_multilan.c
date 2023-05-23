@@ -451,6 +451,48 @@ CosaDmlEthLinkLoadPsm
                     AnscTraceWarning(("%s -- failed to retrieve LowerLayer name parameter, error code %lu\n", __FUNCTION__, returnStatus));
                 }
             }
+
+            if ( TRUE )     /* Name */
+            {
+                SlapInitVariable(&SlapValue);
+
+                rc = sprintf_s
+                    (
+                        pParamPath,
+                        sizeof(pParamPath),
+                        DMSB_TR181_PSM_EthLink_Root DMSB_TR181_PSM_EthLink_i DMSB_TR181_PSM_EthLink_Name,
+                        pInstArray[ulIndex]
+                    );
+                if(rc < EOK)
+                {
+                   ERR_CHK(rc);
+                }
+
+                iReturnValue =
+                    PSM_Get_Record_Value
+                        (
+                            g_MessageBusHandle,
+                            g_SubsystemPrefix,
+                            pParamPath,
+                            &RecordType,
+                            &SlapValue
+                        );
+
+                if ( (iReturnValue != CCSP_SUCCESS) || (RecordType != ccsp_string))
+                {
+                    AnscTraceWarning(("%s -- failed to retrieve 'Name' parameter, error code %d, type %d\n", __FUNCTION__, iReturnValue, RecordType));
+                }
+                else
+                {
+                    rc = strcpy_s(pEthLink->StaticInfo.Name, sizeof(pEthLink->StaticInfo.Name), SlapValue.Variant.varString);
+                    if(rc != EOK)
+                    {
+                       ERR_CHK(rc);
+                    }
+                }
+
+                SlapCleanVariable(&SlapValue);
+            }
         }
         else /* LowerLayerType not configured, go with l2net/l2netType */
         {
@@ -568,6 +610,48 @@ CosaDmlEthLinkLoadPsm
                 if ( (iReturnValue != CCSP_SUCCESS) || (RecordType != ccsp_string))
                 {
                     AnscTraceWarning(("%s -- failed to retrieve 'l2net.name' parameter, error code %d, type %d\n", __FUNCTION__, iReturnValue, RecordType));
+                }
+                else
+                {
+                    rc = strcpy_s(pEthLink->StaticInfo.Name, sizeof(pEthLink->StaticInfo.Name), SlapValue.Variant.varString);
+                    if(rc != EOK)
+                    {
+                       ERR_CHK(rc);
+                    }
+                }
+
+                SlapCleanVariable(&SlapValue);
+            }
+
+            if ( TRUE )     /* Name */
+            {
+                SlapInitVariable(&SlapValue);
+
+                rc = sprintf_s
+                    (
+                        pParamPath,
+                        sizeof(pParamPath),
+                        DMSB_TR181_PSM_EthLink_Root DMSB_TR181_PSM_EthLink_i DMSB_TR181_PSM_EthLink_Name,
+                        pInstArray[ulIndex]
+                    );
+                if(rc < EOK)
+                {
+                   ERR_CHK(rc);
+                }
+
+                iReturnValue =
+                    PSM_Get_Record_Value
+                        (
+                            g_MessageBusHandle,
+                            g_SubsystemPrefix,
+                            pParamPath,
+                            &RecordType,
+                            &SlapValue
+                        );
+
+                if ( (iReturnValue != CCSP_SUCCESS) || (RecordType != ccsp_string))
+                {
+                    AnscTraceWarning(("%s -- failed to retrieve 'Name' parameter, error code %d, type %d\n", __FUNCTION__, iReturnValue, RecordType));
                 }
                 else
                 {

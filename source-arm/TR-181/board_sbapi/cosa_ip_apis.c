@@ -84,6 +84,7 @@ extern void* g_pDslhDmlAgent;
 #include "cosa_dhcpv6_apis.h"
 #include "cosa_ip_internal.h"
 #include "cosa_drg_common.h"
+#include "ccsp_psm_helper.h"
 
 #if defined(_COSA_BCM_MIPS_) || defined(_ENABLE_DSL_SUPPORT_)
 #define INTERFACE "erouter0"
@@ -2017,6 +2018,9 @@ CosaDmlIpIfGetEntry
     ULONG i;
     long uptime2 = 0;
     errno_t safec_rc = -1;
+    char acPSMQuery[128] = {0};
+    char *strValue = NULL;
+    int retPsmGet = CCSP_FAILURE;
     AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     if ( ulIndex >= (COSA_USG_IF_NUM - 1) )
@@ -2140,6 +2144,24 @@ CosaDmlIpIfGetEntry
     /*copy middle layer pEntry to backend buffer*/
     AnscCopyMemory(&g_ipif_be_bufs[ulIndex].Cfg, &pEntry->Cfg, sizeof(pEntry->Cfg));
     AnscCopyMemory(&g_ipif_be_bufs[ulIndex].Info, &pEntry->Info, sizeof(pEntry->Info));
+
+    if (pEntry->Cfg.IfType != COSA_DML_IP_IF_TYPE_Normal)
+    {
+        return ANSC_STATUS_SUCCESS;
+    }
+
+    /* Read from PSM */
+    snprintf(acPSMQuery, sizeof(acPSMQuery), DMSB_TR181_PSM_l3net_Root "%ld." DMSB_TR181_PSM_l3net_EthLink, pEntry->Cfg.InstanceNumber);
+    retPsmGet = PSM_Get_Record_Value2(g_MessageBusHandle, g_SubsystemPrefix, acPSMQuery, NULL, &strValue);
+    if (retPsmGet == CCSP_SUCCESS)
+    {
+        pEntry->Cfg.LinkInstNum = atoi(strValue);
+
+        if (g_MessageBusHandle)
+        {
+            ((CCSP_MESSAGE_BUS_INFO *)bus_handle)->freefunc(strValue);
+        }
+    }
 
     return ANSC_STATUS_SUCCESS;
 }

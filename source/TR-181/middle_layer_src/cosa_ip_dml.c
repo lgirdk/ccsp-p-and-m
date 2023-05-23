@@ -1886,6 +1886,13 @@ Interface2_SetParamStringValue
                                return FALSE;
                            }
                        }
+#else
+                       rc = STRCPY_S_NOCLOBBER(pIPInterface->Cfg.LowerLayers, sizeof(pIPInterface->Cfg.LowerLayers), pString);
+                       if(rc != EOK)
+                       {
+                           ERR_CHK(rc);
+                           return FALSE;
+                       }
 #endif
                     }
                 }

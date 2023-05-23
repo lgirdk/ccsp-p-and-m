@@ -123,6 +123,7 @@
 #define  DMSB_TR181_PSM_EthLink_i                   "%d."
 #define  DMSB_TR181_PSM_EthLink_Enable              "Enable"
 #define  DMSB_TR181_PSM_EthLink_Alias               "Alias"
+#define  DMSB_TR181_PSM_EthLink_Name                "Name"
 #define  DMSB_TR181_PSM_EthLink_PriorityTagging     "PriorityTagging"
 #define  DMSB_TR181_PSM_EthLink_l2net               "l2net"
 #define  DMSB_TR181_PSM_EthLink_l2netType           "l2netType"

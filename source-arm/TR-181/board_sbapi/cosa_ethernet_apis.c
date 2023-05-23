@@ -1776,6 +1776,10 @@ PCOSA_DML_ETH_VLAN_TERMINATION_FULL getVlanTermination(const ULONG ulInstanceNum
     return g_EthernetVlanTermination + i;
 }
 static int saveID(char* ifName, char* pAlias, ULONG ulInstanceNumber) {
+#ifdef FEATURE_RDKB_WAN_MANAGER
+    CcspTraceInfo(("Ignoring saveID for ifName: %s, pAlias: %s, ulInstanceNumber: %lu\n", ifName, pAlias, ulInstanceNumber));
+    return -1;
+#else
     UtopiaContext utctx;
     char idStr[COSA_DML_IF_NAME_LENGTH+10] = {0};
     errno_t rc = -1;
@@ -1793,6 +1797,7 @@ static int saveID(char* ifName, char* pAlias, ULONG ulInstanceNumber) {
     Utopia_Free(&utctx,TRUE);
 
     return 0;
+#endif
 }
 
 /*static int saveLinkID(char* ifName, char* pAlias, ULONG ulInstanceNumber) {
