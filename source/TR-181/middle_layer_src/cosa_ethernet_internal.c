@@ -71,6 +71,7 @@
 #include "cosa_ethernet_internal.h"
 #include <syscfg/syscfg.h>
 #include "safec_lib_common.h"
+#include <unistd.h>
 
 #define ONE_HR 60*60
 
@@ -1298,7 +1299,7 @@ void * EthWan_TelementryLogger_Thread(void *data)
     char isEthEnabled[64]={'\0'};
     while (1)
     {
-        if( 0 == syscfg_get( NULL, "eth_wan_enabled", isEthEnabled, sizeof(isEthEnabled)) && (isEthEnabled[0] != '\0' && strncmp(isEthEnabled, "true", strlen("true")) == 0))
+        if((0 == access("/nvram/ETHWAN_ENABLE", F_OK)) && (0 == syscfg_get( NULL, "eth_wan_enabled", isEthEnabled, sizeof(isEthEnabled)) && (isEthEnabled[0] != '\0' && strncmp(isEthEnabled, "true", strlen("true")) == 0)))
         {
             CcspTraceInfo(("RDK_LOG_INFO , Ethernet WAN is enabled\n"));
         }
