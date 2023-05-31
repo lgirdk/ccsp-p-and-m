@@ -1929,6 +1929,11 @@ void* restoreAllDBs(void* arg)
 	v_secure_system("rm -rf /nvram/lxy");
         v_secure_system("rm -rf /nvram/certs");
         v_secure_system("/bin/sh /etc/sky/restore_settings.sh factory_reset");
+#elif defined (_XB6_PRODUCT_REQ_) || defined(INTEL_PUMA7) || defined (_CBR_PRODUCT_REQ_) || defined (_SR213_PRODUCT_REQ_) || defined (_CBR2_PRODUCT_REQ_)
+	/* Remove LXY database and certs from nvram during Factory-Reset */
+	v_secure_system("rm -rf /nvram/lxy");
+	v_secure_system("rm -rf /nvram/certs");
+	v_secure_system("rm -rf /nvram/dl");
 #else
 	v_secure_system("restoreAllDBs"); //Perform factory reset on other components
 #endif

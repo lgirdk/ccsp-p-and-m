@@ -575,7 +575,7 @@ user_validatepwd
      #else
          FILE *ptr;
          char buff[10];
-         if ((ptr=v_secure_popen("r", "/usr/bin/configparamgen jx lkiprgpkmqfk:3"))!=NULL)
+         if ((ptr=v_secure_popen("r", "/usr/bin/configparamgen jx lkiprgpkmqfk"))!=NULL)
          if (NULL == ptr) {
              return ANSC_STATUS_FAILURE;
          }
@@ -614,7 +614,7 @@ user_validatepwd
    {
          FILE *fptr;
          char outbuff[10];
-         if ((fptr=v_secure_popen("r", "/usr/bin/configparamgen jx jtxpybrepjab:3"))!=NULL)
+         if ((fptr=v_secure_popen("r", "/usr/bin/configparamgen jx jtxpybrepjab"))!=NULL)
          if (NULL == fptr) {
              return ANSC_STATUS_FAILURE;
          }
@@ -727,7 +727,7 @@ CosaDmlUserResetPassword
          }
      #else
          FILE *ptr;
-         if ((ptr=v_secure_popen("r", "/usr/bin/configparamgen jx lkiprgpkmqfk:3"))!=NULL)
+         if ((ptr=v_secure_popen("r", "/usr/bin/configparamgen jx lkiprgpkmqfk"))!=NULL)
          if (NULL == ptr) {
              return ANSC_STATUS_FAILURE;
          }
@@ -742,7 +742,7 @@ CosaDmlUserResetPassword
    else if(!strcmp(pEntry->Username,"cusadmin"))
    {
          FILE *fptr;
-         if ((fptr=v_secure_popen("r", "/usr/bin/configparamgen jx jtxpybrepjab:3"))!=NULL)
+         if ((fptr=v_secure_popen("r", "/usr/bin/configparamgen jx jtxpybrepjab"))!=NULL)
          if (NULL == fptr) {
              return ANSC_STATUS_FAILURE;
          }
