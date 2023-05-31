@@ -78,7 +78,6 @@ rbusError_t getUlongHandler(rbusHandle_t handle, rbusProperty_t property, rbusGe
     if( 0 == syscfg_get( NULL, "Device_Mode", buf, sizeof( buf ) ) )
     {
         deviceControl_Net_Mode.DevCtrlNetMode = atoi(buf);
-        CcspTraceWarning(("Getting Device Networking Mode value, new value = '%lu'\n", deviceControl_Net_Mode.DevCtrlNetMode));
         rbusValue_SetUInt32(value, deviceControl_Net_Mode.DevCtrlNetMode);
     }
     else
