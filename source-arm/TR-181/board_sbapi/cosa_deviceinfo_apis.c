@@ -2984,6 +2984,29 @@ int setXOpsReverseSshTrigger(char *input)
     return OK;
 }
 
+static int isTunnelEstablished (int pid)
+{
+    int status = NOK;
+    FILE *fp;
+    char *cmdL = "netstat -tn | grep $(ps -p %d -o args= | awk '{print $2}' | awk -F'@' '{print $2}'):22 | awk '{print $NF}'";
+    char cmdbuf[256]={0};
+    char buf[16]={0};
+
+    sprintf(cmdbuf,cmdL,pid);
+    fp = popen(cmdbuf,"r");
+    if (fp == NULL) {
+        return status;
+    }
+    if (fgets(buf, sizeof(buf), fp) != NULL) {
+        CcspTraceWarning(("%s Tunnel Status: %s",__FUNCTION__, buf));
+        if ((strncasecmp(buf,"ESTABLISHED",11)==0))
+            status = OK;
+    }
+    pclose(fp);
+
+    return status;
+}
+
 int isRevSshActive(void)
 {
     int status = NOK;
@@ -2998,7 +3021,7 @@ int isRevSshActive(void)
         {
             if (-1 != getpgid(pid))
             {
-                status = OK;
+                status = isTunnelEstablished(pid);
             }
             else
             {
