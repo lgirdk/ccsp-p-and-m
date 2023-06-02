@@ -383,7 +383,7 @@
                     </parameter>
                     <parameter>
                         <name>X_RDKCENTRAL-COM_Tcpmss</name>
-                        <type>unsignedInt</type>
+                        <type>unsignedInt[1:1420]</type>
                         <syntax>uint32</syntax>
                         <writable>true</writable>
                     </parameter>
