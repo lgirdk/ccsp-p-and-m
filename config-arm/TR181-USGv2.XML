@@ -294,7 +294,7 @@
             <object>
                 <name>InterfaceSetting</name>
                 <objectType>writableTable</objectType>
-                <maxInstance>128</maxInstance>
+                <maxInstance>1</maxInstance>
 
                 <functions>
                     <func_GetEntryCount>InterfaceSetting4_GetEntryCount</func_GetEntryCount>
