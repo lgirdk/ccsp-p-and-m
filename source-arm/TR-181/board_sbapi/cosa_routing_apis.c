@@ -135,6 +135,10 @@ COSA_DML_RIP_IF_CFG g_RipIfFull[10] =
 #define _ansc_snprintf snprintf
 #define TRUE           1
 #define FALSE          0
+
+//Enable SYSCFG_WRITE macro to write route details to sysconfig
+//#define SYSCFG_WRITE 
+
 //static  USER_LOCK                   gPsmLock;
 
 #define CONFIGFILENAMEYAN "./config_tmp_utopia.txt"
@@ -3254,10 +3258,13 @@ static int
 Route6_LoadRouteInfo(void)
 {
     int i, ifnum, rtcnt;
+
+#if defined (SYSCFG_WRITE)
     char key[256], val[256];
     RouteInfo6_t *info6;
     RouteAlias6_t *alias6;
 	UtopiaContext ctx;
+#endif
     char iflist[MAX_RT6IF][IFNAME_SIZ] ={{0}};
 
     /* get interface list */
@@ -3280,7 +3287,7 @@ Route6_LoadRouteInfo(void)
         }
         g_numRtInfo6 = rtcnt;
     }
-
+#if defined (SYSCFG_WRITE)
 	if (!Utopia_Init(&ctx))
 		return -1;
 
@@ -3325,7 +3332,7 @@ Route6_LoadRouteInfo(void)
     }
 
 	Utopia_Free(&ctx, 1);
-
+#endif
     return 0;
 }
 
@@ -3389,12 +3396,16 @@ Route6_GetInfoByInsNum(int insNum, int *index)
 static int
 Route6_SaveParams(const RouteAlias6_t *alias6)
 {
+
+#if defined (SYSCFG_WRITE)
 	char key[256], val[256];
 	UtopiaContext ctx;
 	errno_t rc = -1;
-
+#endif
 	if (!alias6)
 		return -1;
+
+#if defined (SYSCFG_WRITE)
 
 	if (!Utopia_Init(&ctx))
 		return -1;
@@ -3425,7 +3436,7 @@ Route6_SaveParams(const RouteAlias6_t *alias6)
     }
 
 	Utopia_Free(&ctx, 1);
-
+#endif
 	return 0;
 }
 
