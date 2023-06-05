@@ -2219,10 +2219,15 @@ CosaDmlDcSetFactoryReset
 
 #if (_LG_MV2_PLUS_)
 
-		syscfg_get(NULL, "X_RDKCENTRAL-COM_LastRebootReason", value, sizeof(value));
-		FILE *fp = fopen("/nvram/reboot_reason", "w+");
-		fprintf(fp, "%s", value);
-		fclose(fp);
+        syscfg_get(NULL, "X_RDKCENTRAL-COM_LastRebootReason", value, sizeof(value));
+        FILE *fp = fopen("/nvram/reboot_reason", "w+");
+        if(!fp)
+        {
+            CcspTraceWarning(("%s failed to open /nvram/reboot_reason file \n",__FUNCTION__));
+            return ANSC_STATUS_FAILURE;
+        }
+        fprintf(fp, "%s", value);
+        fclose(fp);
 
 #endif
 
