@@ -1720,6 +1720,9 @@ void* restoreAllDBs(void* arg)
 	v_secure_system("touch /nvram/apparmor_factory_reset");
 #endif
 
+#if (_LG_MV2_PLUS_)
+	v_secure_system("rm -f /nvram/ETHWAN_ENABLE"); // remove Eth WAN enabled flag
+#endif
 	sync();
 
 	return NULL;
