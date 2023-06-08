@@ -824,6 +824,12 @@ LINKTYPE_MAP_T g_linktype_map[COSA_DML_LINK_TYPE_TOTAL] = {
         COSA_DML_LINK_TYPE_PPP
     },
 #if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
+#if defined(WAN_MANAGER_UNIFICATION_ENABLED)
+    {   "Device.X_RDK_Ethernet.VLANTermination.",
+        "VlanLink",
+        COSA_DML_LINK_TYPE_VlanLink
+    },
+#endif
     {   "Device.X_RDK_Ethernet.Link.",
         "VlanLink",
         COSA_DML_LINK_TYPE_VlanLink
