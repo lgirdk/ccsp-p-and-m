@@ -129,7 +129,8 @@ printf a;            \
 #define GRE_PARAM_ASSOBRSWFP    GRE_OBJ_GREIF "%lu.AssociatedBridgesWiFiPort"
 #define GRE_PARAM_GREIF         GRE_OBJ_GREIF "%lu.GRENetworkInterface"
 #define LOCALINTERFACES_PRE_SECURE_SSID		"Device.WiFi.SSID.5.,Device.WiFi.SSID.6."
-
+#define WIFI_FILE "/tmp/wifi_initialized"
+#define CIRCUIT_ID_TIMEOUT 30
 /* when secure ssid is supported in mips products, use below flag instaed of above flag for handling race condition in bbhm readiness 
 replace LOCALINTERFACES_PRE_SECURE_SSID with LOCALINTERFACES_POST_SECURE_SSID in function hotspot_update_circuit_ids() */
 
@@ -424,8 +425,16 @@ int hotspot_update_circuit_ids(int greinst, int queuestart) {
 static void* circuit_id_init_thread(void* arg) {
     UNREFERENCED_PARAMETER(arg);
     int ret = -1;
+    int counter = 0;
     sleep(INITIAL_CIRCUIT_ID_SLEEP);
-
+    while ( (access (WIFI_FILE, F_OK) != 0 ) && (counter < CIRCUIT_ID_TIMEOUT) ) {
+        sleep(INITIAL_CIRCUIT_ID_SLEEP);
+        CcspTraceInfo(("%s : Waiting for WiFi to be initialized...\n", __FUNCTION__));
+        counter++;
+    }
+    if (counter == CIRCUIT_ID_TIMEOUT){
+        CcspTraceError(("%s : Waiting for WiFi timed out...\n", __FUNCTION__));
+    }
     ret = hotspot_update_circuit_ids(1, INITIAL_SNOOPER_QUEUE);
     
     
