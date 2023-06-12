@@ -302,9 +302,10 @@ static BOOL isValidIPv6DNS (char *dnsAddr)
             return FALSE;
     }
 
-    /* check for Multicast and Link-local unicast address */
+    /* check for Multicast, Link-local unicast address and site local address */
     if ((buf[0] == 0xFF && buf[1] == 0x00) ||
-        (buf[0] == 0xFE && buf[1] == 0x80))
+        (buf[0] == 0xFE && buf[1] == 0x80) ||
+        (buf[0] == 0xFE && buf[1] == 0xC0))
         return FALSE;
 
     /* check for loopback address */
