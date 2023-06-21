@@ -1566,12 +1566,6 @@
         </parameter>
 <?endif?>
 <?ifndef BCI?>
-        <parameter>
-          <name>X_RDKCENTRAL-COM_AkerEnable</name>
-          <type>boolean</type>
-          <syntax>bool</syntax>
-          <writable>true</writable>
-        </parameter>
 	<!-- placeholder for Xi5 parameter start -->
         <parameter>
             <name>X_RDKCENTRAL-COM_EnableMoCAforXi5</name>
