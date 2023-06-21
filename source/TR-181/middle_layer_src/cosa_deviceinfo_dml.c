@@ -487,30 +487,6 @@ DeviceInfo_GetParamBoolValue
         return TRUE;
     }
 
-    if (strcmp(ParamName, "X_RDKCENTRAL-COM_AkerEnable") == 0)
-    {
-        /* collect value */
-        char buf[8];
-        if( syscfg_get( NULL, "X_RDKCENTRAL-COM_AkerEnable", buf, sizeof(buf))==0)
-        {
-            if (strcmp(buf, "true") == 0)
-            {
-                *pBool = TRUE;
-            }
-            else
-            {
-                *pBool = FALSE;
-            }
-        }
-        else
-        {
-            CcspTraceWarning(("%s syscfg_get failed  for AkerEnable\n",__FUNCTION__));
-            *pBool = FALSE;
-        }
-
-        return TRUE;
-    }
-
   bReturnValue =
         DeviceInfo_GetParamBoolValue_Custom
             (
@@ -1085,37 +1061,12 @@ DeviceInfo_SetParamBoolValue
     )
 {
     BOOL                            bReturnValue;
-#if defined(_PLATFORM_RASPBERRYPI_)
-    id =getuid();    
-#endif
     
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "ClearResetCount") == 0)
     {
         /* collect value */
         CosaDmlDiClearResetCount(NULL,bValue);
-        return TRUE;
-    }
-
-    if (strcmp(ParamName, "X_RDKCENTRAL-COM_AkerEnable") == 0)
-    {
-        if (syscfg_set_commit(NULL, "X_RDKCENTRAL-COM_AkerEnable", bValue ? "true" : "false") != 0)
-        {
-            AnscTraceWarning(("syscfg_set failed for AkerEnable\n"));
-        }
-        else
-        {
-		/* Restart Firewall */
-		v_secure_system("sysevent set firewall-restart");
-#if defined(_PLATFORM_RASPBERRYPI_)
-               if(id!=0)
-               {
-                       char *lxcevt = "sysevent set firewall-restart";
-                       send(sock , lxcevt , strlen(lxcevt) , 0 );
-               }
-#endif
-        }
-
         return TRUE;
     }
 
