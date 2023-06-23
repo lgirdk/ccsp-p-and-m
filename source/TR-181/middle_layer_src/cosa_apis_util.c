@@ -78,7 +78,9 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <arpa/inet.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
@@ -2161,16 +2163,26 @@ int CosaDmlV6PrefIsEqual(char * p_pref1, char * p_pref2)
     return !__v6pref_mismatches(p_pref1, p_pref2);
 }
 
-int _write_sysctl_file(char * fn, int val)
+int _write_sysctl_file(const char *filename, int value)
 {
-    FILE * fp = fopen(fn, "w+");
+    char buf[12];
+    size_t len;
+    int fd;
 
-    if (fp)
-    {
-        fprintf(fp, "%d", val);
-        fclose(fp);
+    if ((fd = open(filename, O_WRONLY)) < 0) {
+        perror("Failed to open file");
+        return -1;
     }
-    
+
+    len = sprintf(buf, "%d", value);
+    if (write(fd, buf, len) != (ssize_t) len) {
+        perror("Failed to write to file");
+        close(fd);
+        return -1;
+    }
+
+    close(fd);
+
     return 0;
 }
 
