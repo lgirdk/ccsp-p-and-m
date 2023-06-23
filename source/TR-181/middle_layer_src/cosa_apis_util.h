@@ -193,7 +193,7 @@ int  __v6addr_mismatches_v6pre(char * v6addr,char * v6pre);
 int  __v6pref_mismatches(char * v6pref1,char * v6pref2);
 int CosaDmlV6AddrIsEqual(char * p_addr1, char * p_addr2);
 int CosaDmlV6PrefIsEqual(char * p_pref1, char * p_pref2);
-int _write_sysctl_file(char * fn, int val);
+int _write_sysctl_file(const char *filename, int value);
 
 /*utility functions for linktype and lowerlayer*/
 char*               CosaUtilGetLinkTypePath(COSA_DML_LINK_TYPE LinkType);
