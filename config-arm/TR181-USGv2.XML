@@ -5466,9 +5466,9 @@
 
               <name>BytesSent</name>
 
-              <type>unsignedInt</type>
+              <type>string</type>
 
-              <syntax>uint32</syntax>
+              <syntax>string</syntax>
 
               <notify>off</notify>
 
@@ -5478,9 +5478,9 @@
 
               <name>BytesReceived</name>
 
-              <type>unsignedInt</type>
+              <type>string</type>
 
-              <syntax>uint32</syntax>
+              <syntax>string</syntax>
 
               <notify>off</notify>
 
@@ -7727,9 +7727,9 @@
 
               <name>BytesSent</name>
 
-              <type>unsignedInt</type>
+              <type>string</type>
 
-              <syntax>uint32</syntax>
+              <syntax>string</syntax>
 
               <notify>off</notify>
 
@@ -7739,9 +7739,9 @@
 
               <name>BytesReceived</name>
 
-              <type>unsignedInt</type>
+              <type>string</type>
 
-              <syntax>uint32</syntax>
+              <syntax>string</syntax>
 
               <notify>off</notify>
 
