@@ -64,6 +64,8 @@
 #ifndef  _COSA_ETHERNET_API_H
 #define  _COSA_ETHERNET_API_H
 
+#include <stdint.h>
+
 #include "cosa_apis.h"
 #include "plugin_main_apis.h"
 
@@ -89,8 +91,8 @@ COSA_DML_ETH_DUPLEX_MODE, *PCOSA_DML_ETH_DUPLEX_MODE;
 typedef  struct
 _COSA_DML_ETH_STATS
 {
-    ULONG                           BytesSent;
-    ULONG                           BytesReceived;
+    uint64_t                        BytesSent;
+    uint64_t                        BytesReceived;
     ULONG                           PacketsSent;
     ULONG                           PacketsReceived;
     ULONG                           ErrorsSent;
