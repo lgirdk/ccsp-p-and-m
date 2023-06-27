@@ -282,10 +282,10 @@ COSA_DML_IP_V4ADDR,  *PCOSA_DML_IP_V4ADDR;
 typedef  struct
 _COSA_DML_IP_STATS
 {
-    ULONG                           BytesSent;
-    ULONG                           BytesReceived;
-    ULONG                           PacketsSent;
-    ULONG                           PacketsReceived;
+    uint64_t                        BytesSent;
+    uint64_t                        BytesReceived;
+    uint64_t                        PacketsSent;
+    uint64_t                        PacketsReceived;
     ULONG                           ErrorsSent;
     ULONG                           ErrorsReceived;
     ULONG                           UnicastPacketsSent;
