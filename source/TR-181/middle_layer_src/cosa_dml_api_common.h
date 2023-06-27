@@ -124,10 +124,10 @@ COSA_DML_IF_STATUS, *PCOSA_DML_IF_STATUS;
 typedef  struct
 _COSA_DML_IF_STATS
 {
-    ULONG                           BytesSent;
-    ULONG                           BytesReceived;
-    ULONG                           PacketsSent;
-    ULONG                           PacketsReceived;
+    uint64_t                        BytesSent;
+    uint64_t                        BytesReceived;
+    uint64_t                        PacketsSent;
+    uint64_t                        PacketsReceived;
     ULONG                           ErrorsSent;
     ULONG                           ErrorsReceived;
     ULONG                           UnicastPacketsSent;
