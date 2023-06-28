@@ -14,6 +14,7 @@
 * limitations under the License.
 *********************************************************************************/
 
+#include "cosa_apis.h"
 #include "cosa_lgi_multicast_internal.h"
 #include "cosa_lgi_multicast_apis.h"
 #include <syscfg/syscfg.h>
@@ -119,18 +120,12 @@ ULONG CosaDmlMulticastGetMaxSSMSessions ( ANSC_HANDLE hContext, ULONG* puLong )
 
 ULONG CosaDmlMulticastSetMaxSSMSessions ( ANSC_HANDLE hContext, ULONG uValue )
 {
-    char cmd[256];
-
     if (syscfg_set_u (NULL, "multicast_max_ssm_sessions", uValue) != 0)
         return ANSC_STATUS_FAILURE;
 
-    snprintf(cmd, sizeof(cmd), "echo %lu > /proc/sys/net/ipv4/igmp_max_msf ; "
-                               "echo %lu > /proc/sys/net/ipv6/mld_max_msf ; "
-                               "echo %lu > /proc/sys/net/ipv4/igmp_max_memberships",
-                               uValue,
-                               uValue,
-                               uValue + 10);
-    system(cmd);
+    _write_sysctl_file("/proc/sys/net/ipv4/igmp_max_msf", uValue);
+    _write_sysctl_file("/proc/sys/net/ipv6/mld_max_msf", uValue);
+    _write_sysctl_file("/proc/sys/net/ipv4/igmp_max_memberships", uValue + 10);
 
     return ANSC_STATUS_SUCCESS;
 }
