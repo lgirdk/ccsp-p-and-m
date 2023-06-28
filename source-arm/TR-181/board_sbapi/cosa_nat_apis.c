@@ -1255,27 +1255,21 @@ CosaDmlNatSet
     snprintf(idStr, sizeof(idStr), "%u", pDmlNat->X_CISCO_COM_TCPTimeout);
     if (Utopia_RawSet(&Ctx, NULL, "nat_tcp_timeout", idStr))
     {
-        char cmd[128];
-        sprintf(cmd, "echo %s > /proc/sys/net/netfilter/nf_conntrack_tcp_timeout_established", idStr);
-        system(cmd);
+        _write_sysctl_file("/proc/sys/net/netfilter/nf_conntrack_tcp_timeout_established", pDmlNat->X_CISCO_COM_TCPTimeout);
         bCommit = 1;
     }
 
     snprintf(idStr, sizeof(idStr), "%u", pDmlNat->X_CISCO_COM_UDPTimeout);
     if (Utopia_RawSet(&Ctx, NULL, "nat_udp_timeout", idStr))
     {
-        char cmd[128];
-        sprintf(cmd, "echo %s > /proc/sys/net/netfilter/nf_conntrack_udp_timeout", idStr);
-        system(cmd);
+        _write_sysctl_file("/proc/sys/net/netfilter/nf_conntrack_udp_timeout", pDmlNat->X_CISCO_COM_UDPTimeout);
         bCommit = 1;
     }
 
     snprintf(idStr, sizeof(idStr), "%u", pDmlNat->X_CISCO_COM_ICMPTimeout);
     if (Utopia_RawSet(&Ctx, NULL, "nat_icmp_timeout", idStr))
     {
-        char cmd[128];
-        sprintf(cmd, "echo %s > /proc/sys/net/netfilter/nf_conntrack_icmp_timeout", idStr);
-        system(cmd);
+        _write_sysctl_file("/proc/sys/net/netfilter/nf_conntrack_icmp_timeout", pDmlNat->X_CISCO_COM_ICMPTimeout);
         bCommit = 1;
     }
 
