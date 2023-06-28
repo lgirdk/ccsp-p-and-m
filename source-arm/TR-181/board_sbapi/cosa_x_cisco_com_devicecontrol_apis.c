@@ -1405,12 +1405,11 @@ CosaDmlDcSetRebootDevice
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-    int router, wifi, voip, dect, moca, all, delay;
-    int delay_time = 0;
+    int router, wifi, voip, dect, moca, all;
     char value[50];
     char temp[50]; 
 
-    router = wifi = voip = dect = moca = all = delay = 0;
+    router = wifi = voip = dect = moca = all = 0;
     if (strstr(pValue, "Router") != NULL) {
         router = 1;
     }
@@ -1428,12 +1427,6 @@ CosaDmlDcSetRebootDevice
     }
     if (strstr(pValue, "Device") != NULL) {
         all = 1;
-    }
-    if (strstr(pValue, "delay") != NULL) {
-        delay = 1;
-    }
-    if (strstr(pValue, "delay=") != NULL) {
-        delay_time = atoi(strstr(pValue, "delay=") + strlen("delay="));
     }
 
     if (router && wifi && voip && dect && moca) {
@@ -1531,34 +1524,10 @@ CosaDmlDcSetRebootDevice
 		
 		CcspTraceWarning(("REBOOT_COUNT : %d Time : %s  \n",rebootcount,buffer));
 
-        if(delay) {
-            if(delay_time)
-            {
-            	fprintf(stderr, "Device is going to reboot in %d seconds\n", delay_time);
-		CcspTraceWarning(("RebootDevice:Device is going to reboot\n"));
-            	//system("(sleep 5 && reboot) &");
-            	CosaDmlDcSaveWiFiHealthStatusintoNVRAM( );
-            	sleep (delay_time);
-            	v_secure_system("(sleep 5 && reboot) &");  /* Workaround to try to ensure we really reboot - to be reviewed */
-        	}
-        	else
-            {
                 fprintf(stderr, "Device is going to reboot in 5 seconds\n");
 		CcspTraceWarning(("RebootDevice:Device is going to reboot\n"));
-                //system("(sleep 5 && reboot) &");
-				CosaDmlDcSaveWiFiHealthStatusintoNVRAM( );
-				sleep(5);
-				v_secure_system("(sleep 5 && reboot) &");  /* Workaround to try to ensure we really reboot - to be reviewed */
-            }
-		}
-		else {
-	        fprintf(stderr, "Device is going to reboot now\n");
-			CcspTraceWarning(("RebootDevice:Device is going to reboot\n"));
-	         //system("reboot");
- 			 CosaDmlDcSaveWiFiHealthStatusintoNVRAM( );
- 			 sleep(5);
-	         v_secure_system("(sleep 5 && reboot) &");  /* Workaround to try to ensure we really reboot - to be reviewed */
-	    }
+		CosaDmlDcSaveWiFiHealthStatusintoNVRAM( );
+		v_secure_system("(sleep 10 && reboot) &");  /* Workaround to try to ensure we really reboot - to be reviewed */
     }
 
     if (router) {
@@ -1942,10 +1911,7 @@ CosaDmlDcSetFactoryReset
 	UtopiaContext utctx = {0};
 	static pthread_t wifiThread;
 	int wifiThreadStarted=0;
-#if defined (_XB6_PRODUCT_REQ_)
-	int delay_time = 0;
-	int delay = 0;
-#endif
+
 	if (pValue == NULL || pValue[0] == '\0')
 		factory_reset_mask |= FR_NONE;
 	else {
@@ -2002,29 +1968,10 @@ CosaDmlDcSetFactoryReset
 
 #if defined (_XB6_PRODUCT_REQ_)
 		//XB6 Needs Time for SNMP packet to get out of device from Atom 
-		if (strstr(pValue, "delay") != NULL) {
-			delay = 1;
-		}
-		if (strstr(pValue, "delay=") != NULL) {
-			delay_time = atoi(strstr(pValue, "delay=") + strlen("delay="));
-		}
-		
-		if(delay) {
-			if(delay_time)
-			{
-				fprintf(stderr, "CosaDmlDcSetFactoryReset: is going to wait for %d seconds\n", delay_time);
-				CcspTraceWarning(("CosaDmlDcSetFactoryReset: is going to wait for %d seconds\n", delay_time));
-            	sleep (delay_time);
-			}
-			else
-			{
-				fprintf(stderr, "CosaDmlDcSetFactoryReset: is going to wait for 5 seconds\n");
-				CcspTraceWarning(("CosaDmlDcSetFactoryReset: is going to wait for 5 seconds\n"));
-				sleep(5);
-			}
-		}
+		fprintf(stderr, "CosaDmlDcSetFactoryReset: is going to wait for 5 seconds\n");
+		CcspTraceWarning(("CosaDmlDcSetFactoryReset: is going to wait for 5 seconds\n"));
+		sleep(5);
 #endif
-		
 	}
 	if (!factory_reset_mask)
 	    {
