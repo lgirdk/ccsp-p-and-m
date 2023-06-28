@@ -1556,6 +1556,7 @@ CosaDmlDcSetRebootDevice
 			CcspTraceWarning(("RebootDevice:Device is going to reboot\n"));
 	         //system("reboot");
  			 CosaDmlDcSaveWiFiHealthStatusintoNVRAM( );
+ 			 sleep(5);
 	         v_secure_system("(sleep 5 && reboot) &");  /* Workaround to try to ensure we really reboot - to be reviewed */
 	    }
     }
