@@ -5874,7 +5874,7 @@
 
             <syntax>int</syntax>
 
-            <writable>true</writable>
+            <writable>false</writable>
 
           </parameter>
 
