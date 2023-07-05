@@ -8257,6 +8257,76 @@ dhcpv6s_dbg_thrd(void * in)
             sleep(3);
             memset(msg, 0, sizeof(msg));
             read(v6_srvr_fifo_file_dscrptr, msg, sizeof(msg));
+#if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
+#if !(defined(CISCO_CONFIG_DHCPV6_PREFIX_DELEGATION) && defined(_CBR_PRODUCT_REQ_))
+            CcspTraceInfo(("%s %d check IPv6subPrefix  \n", __FUNCTION__, __LINE__));
+            char IPv6pref[256] = {0};
+            char InterfaceList[128] = {0};
+            char interface_name[32] = {0};
+            char sysEventOut[64] = {0};
+            char *token = NULL ,*pt = NULL;
+            FILE *fp = NULL;
+            int pref_len = 0;
+            static bool InterfaceEventHandleStarted = false;
+            errno_t rc = -1;
+
+            commonSyseventGet("ipv6_prefix", IPv6pref, sizeof(IPv6pref));
+            /* Remove Prefix length from IPv6pref */
+            char *ptr = strchr(IPv6pref, '/');
+            if (ptr != NULL) {
+                *ptr = '\0';
+            }
+
+            commonSyseventGet("lan_prefix_v6", sysEventOut, sizeof(sysEventOut));
+            pref_len = atoi(sysEventOut);
+
+            if(pref_len < 64)
+            {
+                fp = v_secure_popen("r","syscfg get IPv6subPrefix");
+                _get_shell_output(fp, sysEventOut, sizeof(sysEventOut));
+                if(!strcmp(sysEventOut,"true"))
+                {
+                    fp = v_secure_popen("r","syscfg get IPv6_Interface");
+                    _get_shell_output(fp, InterfaceList, sizeof(InterfaceList));
+                    pt = InterfaceList;
+
+                    while((token = strtok_r(pt, ",", &pt)))
+                    {
+                        char InterfacePrefix[256] ={0};
+                        if(GenIPv6Prefix(token,IPv6pref,InterfacePrefix))
+                        {
+                            memset(interface_name,0,sizeof(interface_name));
+                            strncpy(interface_name,token,sizeof(interface_name)-1);
+#ifdef _COSA_INTEL_XB3_ARM_
+                            char LnFIfName[32] = {0} , LnFBrName[32] = {0} ;
+                            syscfg_get( NULL, "iot_ifname", LnFIfName, sizeof(LnFIfName));
+                            syscfg_get( NULL, "iot_brname", LnFBrName, sizeof(LnFBrName));
+                            if (strcmp((const char*)token,LnFIfName) == 0 && (LnFBrName[0] != '\0' ) && ( strlen(LnFBrName) != 0 ))
+                            {
+                                memset(interface_name,0,sizeof(interface_name));
+                                strncpy(interface_name,LnFBrName,sizeof(interface_name)-1);
+                            }
+#endif
+                            memset(sysEventOut,0,sizeof(sysEventOut));
+                            rc = sprintf_s(sysEventOut, sizeof(sysEventOut), "%s_ipaddr_v6", interface_name);
+                            if(rc < EOK)
+                            {
+                                ERR_CHK(rc);
+                            }
+                            commonSyseventSet(sysEventOut, InterfacePrefix);
+                            enable_IPv6(interface_name);
+                            commonSyseventSet("zebra-restart","");
+                        }
+                    }
+                    if(!InterfaceEventHandleStarted)
+                    {
+                        InterfaceEventHandleStarted = true;
+                        pthread_create(&InfEvtHandle_tid, NULL, InterfaceEventHandler_thrd, NULL);
+                    }
+                }
+            }
+#endif
+#endif /* FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE */
 
             CosaDmlDhcpv6sRebootServer();
             continue;
@@ -8751,11 +8821,11 @@ dhcpv6c_dbg_thrd(void * in)
 
             continue;  
             /* 
-             * Sysevent and Interface configuration will be done by WanManager. 
+             * Sysevent and Interface configuration will be done by WanManager for FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE builds.
              * Skiping below code. 
              */
 #endif
-#endif		     	
+#endif /* FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE */
                     /*for now we only support one address, one prefix notify, if need multiple addr/prefix, must modify dibbler-client code*/
                     if (strncmp(v6addr, "::", 2) != 0) 
                     {
