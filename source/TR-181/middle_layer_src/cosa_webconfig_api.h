@@ -34,12 +34,14 @@
 #include "cosa_nat_apis.h"
 #include "msgpack.h"
 #include "webconfig_framework.h"
-
 #include "cosa_GRE_webconfig_apis.h"
+#if defined (WIFI_MANAGE_SUPPORTED)
+#include "cosa_managedwifi_webconfig_apis.h"
+#endif /*WIFI_MANAGE_SUPPORTED*/
 #if defined (FEATURE_RDKB_DHCP_MANAGER)
-#define SUBDOC_COUNT 3
+#define SUBDOC_COUNT 4
 #else
-#define SUBDOC_COUNT 5
+#define SUBDOC_COUNT 6
 #endif
 
 #define PORTMAP_CACHE_SIZE 1024

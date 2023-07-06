@@ -79,6 +79,18 @@ AC_ARG_ENABLE([notify],
            ],
 	 [echo "headless build is enable"])
 
+AC_ARG_ENABLE([wifimanagesupport],
+             AS_HELP_STRING([--enable-wifimanagesupport],[enable wifi manage support (default is no)]),
+             [
+              case "${enableval}" in
+               yes) WIFI_MANAGE_SUPPORT_ENABLED=true;;
+               no)  WIFI_MANAGE_SUPPORT_ENABLED=false;;
+               *) AC_MSG_ERROR([bad value ${enableval} for --enable-wifimanagesupport ]);;
+              esac
+             ],
+             [echo "wifimanage is disabled"])
+AM_CONDITIONAL(FEATURE_SUPPORT_MANAGE_WIFI, test "x$WIFI_MANAGE_SUPPORT_ENABLED" = xtrue)
+
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h string.h unistd.h])
 

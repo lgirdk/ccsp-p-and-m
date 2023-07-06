@@ -137,6 +137,9 @@
 #if  defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED) ||  defined(RBUS_BUILD_FLAG_ENABLE) || defined (_HUB4_PRODUCT_REQ_) || defined (_PLATFORM_RASPBERRYPI_)
 #include "cosa_rbus_handler_apis.h"
 #endif
+#if defined (WIFI_MANAGE_SUPPORTED)
+#include "cosa_managedwifi_webconfig_apis.h"
+#endif /*WIFI_MANAGE_SUPPORTED*/
 
 static void CheckAndSetRebootReason();
 
@@ -470,6 +473,9 @@ if(id != 0)
     CcspTraceWarning(("RDKB_SYSTEM_BOOT_UP_LOG : PARODUS call!\n")); 
     initparodusTask();
     SetAutoreboot((ANSC_HANDLE)pMyObject->hDeviceInfo);
+#if defined (WIFI_MANAGE_SUPPORTED)
+    initManageWiFiBacupStruct();
+#endif /*WIFI_MANAGE_SUPPORTED*/
     return returnStatus;
 }
 

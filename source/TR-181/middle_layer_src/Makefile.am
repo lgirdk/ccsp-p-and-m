@@ -118,4 +118,9 @@ libCcspPandM_middle_layer_src_la_SOURCES = \
     portmappingdoc.c \
     webcfgparam.c
 
+if FEATURE_SUPPORT_MANAGE_WIFI
+libCcspPandM_middle_layer_src_la_SOURCES += cosa_managedwifi_dml.c \
+    managedwifidoc.c \
+    managedwifi_helpers.c
+endif
 libCcspPandM_middle_layer_src_la_LDFLAGS = -lccsp_common -lmsgpackc -lwebconfig_framework

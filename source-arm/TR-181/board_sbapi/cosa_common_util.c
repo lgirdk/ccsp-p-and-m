@@ -65,11 +65,13 @@
 #include <utapi.h>
 #include "cosa_common_util.h"
 #include "cosa_apis_util.h"
-
-#ifdef _HUB4_PRODUCT_REQ_
+#if defined (WIFI_MANAGE_SUPPORTED)
+#include "ccsp_message_bus.h"
+#include "ccsp_base_api.h"
+#endif /*WIFI_MANAGE_SUPPORTED*/
 #include "ccsp_psm_helper.h"
 
-extern ANSC_HANDLE bus_handle;
+#ifdef _HUB4_PRODUCT_REQ_
 
 #include "cosa_lanmanagement_apis.h"
 
@@ -83,6 +85,41 @@ extern void* g_pDslhDmlAgent;
 void ValidUlaHandleEventAsync(void);
 #endif
 
+extern ANSC_HANDLE bus_handle;
+#if defined (WIFI_MANAGE_SUPPORTED)
+extern  char   g_Subsystem[32];
+
+int psmGet(char * pParamName, char *pParamValue, int iParamValLen)
+{
+    char *pVal = NULL;
+    if ((NULL == pParamValue) || (NULL == pParamName))
+        return -1;
+    if ((PSM_Get_Record_Value2(bus_handle, g_Subsystem,pParamName, NULL, &pVal) == CCSP_SUCCESS) && (NULL != pVal))
+    {
+        strncpy(pParamValue, pVal, (iParamValLen-1));
+        ((CCSP_MESSAGE_BUS_INFO *)bus_handle)->freefunc(pVal);
+        pVal = NULL;
+        return 0;
+    }
+    else
+        return -1;
+}
+
+int psmSet(char *pParamName, char *pParamValue)
+{
+    if ((NULL == pParamValue) || (NULL == pParamName))
+    {
+        CcspTraceError(("%s:%d, NULL parameter Passed\n",__FUNCTION__,__LINE__));
+        return -1;
+    }
+    if (PSM_Set_Record_Value2(bus_handle, g_Subsystem,(char *)pParamName, ccsp_string, (char *)pParamValue) != CCSP_SUCCESS){
+        CcspTraceError(("%s:%d, PSM set is unsuccessful \n",__FUNCTION__,__LINE__));
+        return -1;
+    }
+    CcspTraceInfo(("%s:%d,PSM Set for %s with value %s is successful \n", __FUNCTION__,__LINE__,pParamName, pParamValue));
+    return 0;
+}
+#endif /*WIFI_MANAGE_SUPPORTED*/
 /**
  * common callback function dispatcher for event
  */

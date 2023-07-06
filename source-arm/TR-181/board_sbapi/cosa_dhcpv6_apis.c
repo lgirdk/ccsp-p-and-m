@@ -1050,6 +1050,9 @@ BOOL tagPermitted(int tag)
 #include "cosa_drg_common.h"
 #include "cosa_ip_apis.h"
 #include "cosa_common_util.h"
+#if defined (WIFI_MANAGE_SUPPORTED)
+#include "cosa_managedwifi_webconfig_apis.h"
+#endif /*WIFI_MANAGE_SUPPORTED*/
 
 #if defined(CISCO_CONFIG_DHCPV6_PREFIX_DELEGATION) && defined(_COSA_BCM_MIPS_)
 #include <netinet/in.h>
@@ -7810,6 +7813,7 @@ int handle_MocaIpv6(char *status)
 
 }
 
+
 static void *InterfaceEventHandler_thrd(void *data)
 {
     UNREFERENCED_PARAMETER(data);
@@ -7817,7 +7821,11 @@ static void *InterfaceEventHandler_thrd(void *data)
     async_id_t interface_XHS_asyncid;
     async_id_t interface_POD_asyncid;
     async_id_t interface_MoCA_asyncid;
-
+#if defined (WIFI_MANAGE_SUPPORTED)
+    async_id_t interface_WiFi_asyncid;
+    char aMultiNetStatus[BUFF_LEN_64] = {0};
+    char index[BUFF_LEN_8] = {0};
+#endif /*WIFI_MANAGE_SUPPORTED*/
     CcspTraceWarning(("%s started\n",__FUNCTION__));
     sysevent_fd_1 = sysevent_open("127.0.0.1", SE_SERVER_WELL_KNOWN_PORT, SE_VERSION, "Interface_evt_handler", &sysevent_token_1);
 
@@ -7829,6 +7837,17 @@ static void *InterfaceEventHandler_thrd(void *data)
     sysevent_setnotification(sysevent_fd_1, sysevent_token_1, "multinet_10-status",  &interface_POD_asyncid);
     sysevent_set_options(sysevent_fd_1, sysevent_token_1, "multinet_9-status", TUPLE_FLAG_EVENT);
     sysevent_setnotification(sysevent_fd_1, sysevent_token_1, "multinet_9-status",  &interface_MoCA_asyncid);
+
+#if defined (WIFI_MANAGE_SUPPORTED)
+    psmGet(MANAGE_WIFI_BRIDGE_INDEX, index, BUFF_LEN_8);
+    if ('\0' != index[0])
+    {
+        snprintf (aMultiNetStatus,BUFF_LEN_64,"multinet_%s-status",index);
+        CcspTraceInfo(("%s:%d,aMultiNetStatus:%s\n",__FUNCTION__,__LINE__, aMultiNetStatus));
+        sysevent_set_options(sysevent_fd_1, sysevent_token_1, aMultiNetStatus, TUPLE_FLAG_EVENT);
+        sysevent_setnotification(sysevent_fd_1, sysevent_token_1,aMultiNetStatus,  &interface_WiFi_asyncid);
+    }
+#endif /*WIFI_MANAGE_SUPPORTED*/
 
     FILE *fp = NULL;
     char *Inf_name = NULL;
@@ -8008,7 +8027,34 @@ static void *InterfaceEventHandler_thrd(void *data)
                 handle_MocaIpv6(val);
 
             }
-
+#if defined (WIFI_MANAGE_SUPPORTED)
+            if((0 == strcmp((const char*)name, aMultiNetStatus)) && (0 == strcmp((const char*)val, "ready")))
+            {
+                char aParamName[BUFF_LEN_64] = {0};
+                char aParamVal[BUFF_LEN_64] = {0};
+                char aBridgeName[BUFF_LEN_64] = {0};
+                snprintf(aParamName, BUFF_LEN_64, "dmsb.l2net.%s.Name", index);
+                psmGet(aParamName, aParamVal, BUFF_LEN_64);
+                CcspTraceInfo(("BridgeName:%s\n", aParamVal));
+                if ('\0' != aParamVal[0])
+                {
+                    strcpy(aBridgeName,aParamVal);
+                }
+                else
+                {
+                    strcpy(aBridgeName,"brlan15");
+                }
+                snprintf(aParamName, BUFF_LEN_64, "dmsb.l3net.%s.IPv6Enable", index);
+                psmGet(aParamName, aParamVal, BUFF_LEN_64);
+                if (('\0' != aParamVal[0]) && (!strncmp(aParamVal, "true", 4)))
+                {
+                    if (!GenAndUpdateIpv6PrefixIntoSysevent(aBridgeName))
+                    {
+                        enable_IPv6(aBridgeName);
+                    }
+                }
+            }
+#endif /*WIFI_MANAGE_SUPPORTED*/
         }
     }
     return NULL;

@@ -89,7 +89,10 @@ typedef struct cbListEntry{
     PEVT_DISPTER_CB_LIST_ENTRY    Next;
 } EVT_DISPTER_CB_LIST_ENTRY,*EVT_DISPTER_CB_LIST;
 
-
+#if defined (WIFI_MANAGE_SUPPORTED)
+int psmGet(char * pParamName, char *pParamValue, int iParamValLen);
+int psmSet(char *pParamName, char *pParamValue);
+#endif /*WIFI_MANAGE_SUPPORTED*/
 /**************************event dispatcher functions****************************/
 
 /*Initialize the event dispatcher callback list */

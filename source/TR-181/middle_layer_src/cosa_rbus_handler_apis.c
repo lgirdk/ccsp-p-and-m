@@ -28,8 +28,16 @@
 #include "safec_lib_common.h"
 #include "cosa_dhcpv6_apis.h"
 #include "syscfg/syscfg.h"
+#if defined (WIFI_MANAGE_SUPPORTED)
+#include "cosa_managedwifi_webconfig_apis.h"
+unsigned int gManageWiFiBridgeSubscribersCount = 0;
+unsigned int gManageWiFiEnableSubscribersCount = 0;
+unsigned int gManageWiFiInterfaceSubscribersCount = 0;
+#endif /*WIFI_MANAGE_SUPPORTED*/
 
 rbusHandle_t handle;
+
+#define NUM_OF_RBUS_PARAMS sizeof(devCtrlRbusDataElements)/sizeof(devCtrlRbusDataElements[0])
 
 #if  defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED)
 DeviceControl_Net_Mode deviceControl_Net_Mode;
@@ -44,18 +52,26 @@ unsigned int gSubscribersCount = 0;
 
 static int sysevent_fd 	  = -1;
 static token_t sysevent_token = 0;
+#endif
 /***********************************************************************
 
   Data Elements declaration:
 
  ***********************************************************************/
-rbusDataElement_t devCtrlRbusDataElements[NUM_OF_RBUS_PARAMS] = {
+rbusDataElement_t devCtrlRbusDataElements[] = {
 
+#if  defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED)
 	{DEVCTRL_NET_MODE_TR181, RBUS_ELEMENT_TYPE_EVENT, {getUlongHandler, setUlongHandler, NULL, NULL, eventDevctrlSubHandler, NULL}},
-
+#endif
+#if defined (WIFI_MANAGE_SUPPORTED)
+    {MANAGE_WIFI_LAN_BRIDGE, RBUS_ELEMENT_TYPE_EVENT, {getStringHandler, setStringHandler, NULL, NULL, eventManageWiFiBridgeSubHandler,NULL}},
+    {MANAGE_WIFI_ENABLE, RBUS_ELEMENT_TYPE_EVENT, {getBoolHandler, NULL, NULL, NULL, eventManageWiFiEnableSubHander, NULL}},
+    {MANAGE_WIFI_INTERFACES, RBUS_ELEMENT_TYPE_EVENT, {getStringHandler, setStringHandler, NULL, NULL, eventManageWiFiInterfaceSubHandler,NULL}},
+#endif
 };
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+#if  defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED)
 
 /***********************************************************************
 
@@ -455,7 +471,235 @@ static void waitUntilSystemReady()
     }
 }
 #endif
-#if  defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED) ||  defined(RBUS_BUILD_FLAG_ENABLE) ||  defined(_HUB4_PRODUCT_REQ_) || defined (_PLATFORM_RASPBERRYPI_)
+
+#if defined (WIFI_MANAGE_SUPPORTED)
+rbusError_t getStringHandler(rbusHandle_t handle, rbusProperty_t property, rbusGetHandlerOptions_t *opts)
+{
+    pthread_mutex_lock(&mutex);
+    (void)handle;
+    (void)opts;
+    char const* name = rbusProperty_GetName(property);
+    rbusValue_t value;
+    rbusValue_Init(&value);
+    ManageWiFiInfo_t sManageWifiDetails = {0};
+    char aParamVal[BUFF_LEN_64] = {0};
+
+    getManageWiFiDetails(&sManageWifiDetails);
+    if (0 == strcmp(name,MANAGE_WIFI_LAN_BRIDGE))
+    {
+        snprintf(aParamVal, BUFF_LEN_64, "%s%s",sManageWifiDetails.aKey,sManageWifiDetails.aBridgeName);
+    }
+    else if (0 == strcmp(name, MANAGE_WIFI_INTERFACES))
+    {
+        snprintf(aParamVal, BUFF_LEN_64, "%s%s",sManageWifiDetails.aKey,sManageWifiDetails.aWiFiInterfaces);
+    }
+    else
+    {
+        CcspTraceWarning(("Device Managed WiFi Bridge rbus get handler invalid input\n"));
+        pthread_mutex_unlock(&mutex);
+        return RBUS_ERROR_INVALID_INPUT;
+    }
+    rbusValue_SetString(value,aParamVal);
+
+    rbusProperty_SetValue(property, value);
+    rbusValue_Release(value);
+    pthread_mutex_unlock(&mutex);
+
+    return RBUS_ERROR_SUCCESS;
+}
+rbusError_t setStringHandler(rbusHandle_t handle, rbusProperty_t prop, rbusSetHandlerOptions_t* opts)
+{
+    (void)handle;
+    (void)opts;
+    char const* name = rbusProperty_GetName(prop);
+    rbusValue_t value = rbusProperty_GetValue(prop);
+    rbusValueType_t type = rbusValue_GetType(value);
+    const char *strVal = NULL;
+    char aString[BUFF_LEN_128] = {'\0'};
+    char *pKeyVal = aString;
+    ManageWiFiInfo_t sManageWifiDetails = {0};
+    int len = 0;
+
+    if (type != RBUS_STRING)
+    {
+        CcspTraceWarning(("input value is of invalid type\n"));
+        return RBUS_ERROR_INVALID_INPUT;
+    }
+
+    strVal = rbusValue_GetString(value, &len);
+    if (NULL == strVal)
+    {
+        CcspTraceError(("Invalid set value for the parameter '%s'\n", MANAGE_WIFI_LAN_BRIDGE));
+        return RBUS_ERROR_INVALID_INPUT;
+    }
+
+    CcspTraceInfo(("%s:%d, StrVal:%s, len:%d\n",__FUNCTION__,__LINE__,strVal, len));
+    snprintf(aString, BUFF_LEN_128,strVal);
+    CcspTraceInfo(("%s:%d, aString:%s\n",__FUNCTION__,__LINE__,aString));
+    pKeyVal = strtok(pKeyVal, ":");
+    if (NULL != pKeyVal)
+    {
+        CcspTraceInfo(("%s:%d, pKeyVal:%s\n",__FUNCTION__,__LINE__,pKeyVal));
+        strcpy(sManageWifiDetails.aKey,pKeyVal);
+        CcspTraceInfo(("%s:%d, sManageWifiDetails.aKey:%s\n",__FUNCTION__,__LINE__,sManageWifiDetails.aKey));
+    }
+    pKeyVal = strtok(NULL, ":");
+
+    if (NULL == pKeyVal)
+    {
+        CcspTraceWarning(("%s:%d, Value is NULL in the Key:Value pair\n",__FUNCTION__,__LINE__));
+        return RBUS_ERROR_INVALID_INPUT;
+    }
+
+    if (0 == strcmp(name,MANAGE_WIFI_LAN_BRIDGE))
+    {
+	sManageWifiDetails.eUpdateType = BRIDGE_NAME;
+        CcspTraceInfo(("%s:%d, pKeyVal:%s\n",__FUNCTION__,__LINE__,pKeyVal));
+        strcpy(sManageWifiDetails.aBridgeName,pKeyVal);
+        CcspTraceInfo(("%s:%d, sManageWifiDetails.aBridgeName:%s\n",__FUNCTION__,__LINE__,sManageWifiDetails.aBridgeName));
+        setManageWiFiDetails (&sManageWifiDetails);
+    }
+    else if (0 == strcmp(name, MANAGE_WIFI_INTERFACES))
+    {
+	sManageWifiDetails.eUpdateType = WIFI_INTERFACES;
+        CcspTraceInfo(("%s:%d, pKeyVal:%s\n",__FUNCTION__,__LINE__,pKeyVal));
+        strcpy(sManageWifiDetails.aWiFiInterfaces,pKeyVal);
+        CcspTraceInfo(("%s:%d, sManageWifiDetails.aWiFiInterfaces:%s\n",__FUNCTION__,__LINE__,sManageWifiDetails.aWiFiInterfaces));
+        setManageWiFiDetails (&sManageWifiDetails);
+    }
+    else
+    {
+        CcspTraceWarning(("Device Managed WiFi rbus set handler invalid input\n"));
+        return RBUS_ERROR_INVALID_INPUT;
+    }
+    return RBUS_ERROR_SUCCESS;
+}
+
+rbusError_t getBoolHandler(rbusHandle_t handle, rbusProperty_t property, rbusGetHandlerOptions_t *opts)
+{
+    pthread_mutex_lock(&mutex);
+    char const* name = rbusProperty_GetName(property);
+    (void)handle;
+    (void)opts;
+    rbusValue_t value;
+    rbusValue_Init(&value);
+    BOOL bEnable = false;
+
+    if (0 == strcmp(name,MANAGE_WIFI_ENABLE))
+    {
+        getManageWiFiEnable(&bEnable);
+        CcspTraceInfo(("%s:%d, bEnable:%d\n",__FUNCTION__,__LINE__,bEnable));
+        rbusValue_SetBoolean(value,bEnable);
+    }
+    else
+    {
+        CcspTraceWarning(("Device Managed WiFi rbus Enable get handler invalid input\n"));
+        pthread_mutex_unlock(&mutex);
+        return RBUS_ERROR_INVALID_INPUT;
+    }
+
+    rbusProperty_SetValue(property, value);
+    rbusValue_Release(value);
+    pthread_mutex_unlock(&mutex);
+
+    return RBUS_ERROR_SUCCESS;
+}
+rbusError_t eventManageWiFiBridgeSubHandler(rbusHandle_t handle, rbusEventSubAction_t action, const char *eventName, rbusFilter_t filter, int32_t interval, bool *autoPublish)
+{
+    (void)handle;
+    (void)filter;
+    (void)interval;
+
+    *autoPublish = false;
+
+    CcspTraceWarning(("Event WiFiManage Bridge sub handler called.\n"));
+
+    if (strcmp(eventName, MANAGE_WIFI_LAN_BRIDGE) == 0)
+    {
+        if (action == RBUS_EVENT_ACTION_SUBSCRIBE)
+        {
+            gManageWiFiBridgeSubscribersCount += 1;
+        }
+        else
+        {
+            if (gManageWiFiBridgeSubscribersCount > 0)
+            {
+                gManageWiFiBridgeSubscribersCount -= 1;
+            }
+        }
+        CcspTraceWarning(("WiFi Manage Bridge Subscribers count changed, new value=%d\n", gManageWiFiBridgeSubscribersCount));
+    }
+    else
+    {
+        CcspTraceWarning(("provider: eventSubHandler unexpected eventName %s\n", eventName));
+    }
+    return RBUS_ERROR_SUCCESS;
+}
+rbusError_t eventManageWiFiEnableSubHander(rbusHandle_t handle, rbusEventSubAction_t action, const char *eventName, rbusFilter_t filter, int32_t interval, bool *autoPublish)
+{
+    (void)handle;
+    (void)filter;
+    (void)interval;
+
+    *autoPublish = false;
+
+    CcspTraceWarning(("Event Manage WiFi Enable sub handler called.\n"));
+
+    if (strcmp(eventName, MANAGE_WIFI_ENABLE) == 0)
+    {
+        if (action == RBUS_EVENT_ACTION_SUBSCRIBE)
+        {
+            gManageWiFiEnableSubscribersCount+= 1;
+        }
+        else
+        {
+            if (gManageWiFiEnableSubscribersCount> 0)
+            {
+                gManageWiFiEnableSubscribersCount -= 1;
+            }
+        }
+        CcspTraceWarning(("Manage WiFi Enable Subscribers count changed, new value=%d\n", gManageWiFiEnableSubscribersCount));
+    }
+    else
+    {
+        CcspTraceWarning(("provider: eventSubHandler unexpected eventName %s\n", eventName));
+    }
+    return RBUS_ERROR_SUCCESS;
+}
+
+rbusError_t eventManageWiFiInterfaceSubHandler(rbusHandle_t handle, rbusEventSubAction_t action, const char *eventName, rbusFilter_t filter, int32_t interval, bool *autoPublish)
+{
+    (void)handle;
+    (void)filter;
+    (void)interval;
+
+    *autoPublish = false;
+
+    CcspTraceWarning(("Event Manage WiFi Interface sub handler called.\n"));
+
+    if (strcmp(eventName, MANAGE_WIFI_INTERFACES) == 0)
+    {
+        if (action == RBUS_EVENT_ACTION_SUBSCRIBE)
+        {
+            gManageWiFiInterfaceSubscribersCount += 1;
+        }
+        else
+        {
+            if (gManageWiFiInterfaceSubscribersCount > 0)
+            {
+                gManageWiFiInterfaceSubscribersCount -= 1;
+            }
+        }
+        CcspTraceWarning(("Manage WiFi Interface Subscribers count changed, new value=%d\n", gManageWiFiInterfaceSubscribersCount));
+    }
+    else
+    {
+        CcspTraceWarning(("provider: eventSubHandler unexpected eventName %s\n", eventName));
+    }
+    return RBUS_ERROR_SUCCESS;
+}
+#endif /*WIFI_MANAGE_SUPPORTED*/
+#if  defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED) ||  defined(RBUS_BUILD_FLAG_ENABLE) ||  defined(_HUB4_PRODUCT_REQ_) || defined (_PLATFORM_RASPBERRYPI_) || defined (WIFI_MANAGE_SUPPORTED)
 /***********************************************************************
 
   devCtrlRbusInit(): Initialize Rbus and data elements
@@ -478,7 +722,7 @@ rbusError_t devCtrlRbusInit()
 		rc = RBUS_ERROR_NOT_INITIALIZED;
 		return rc;
 	}
-#if  defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED)
+#if  defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED) || defined (WIFI_MANAGE_SUPPORTED)
 	// Register data elements
 	rc = rbus_regDataElements(handle, NUM_OF_RBUS_PARAMS, devCtrlRbusDataElements);
 #endif

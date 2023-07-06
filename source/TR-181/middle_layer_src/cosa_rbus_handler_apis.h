@@ -26,11 +26,13 @@
 #include <rbus/rbus.h>
 #include <pthread.h>
 
-#define NUM_OF_RBUS_PARAMS	1
 //#define RBUS_COMPONENT_NAME	"RbusPandMSsp"
 #define RBUS_COMPONENT_NAME	"CcspPandMSsp"
 
 #define DEVCTRL_NET_MODE_TR181	"Device.X_RDKCENTRAL-COM_DeviceControl.DeviceNetworkingMode"
+
+
+
 #define  ARRAY_SZ(x) (sizeof(x) / sizeof((x)[0]))
 #if defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED)
 typedef struct 
@@ -53,6 +55,14 @@ rbusError_t publishDevCtrlNetMode(uint32_t new_val, uint32_t old_val);
 
 bool PAM_Rbus_SyseventInit();
 
+#endif
+#if defined (WIFI_MANAGE_SUPPORTED)
+rbusError_t getStringHandler(rbusHandle_t handle, rbusProperty_t property, rbusGetHandlerOptions_t *opts);
+rbusError_t setStringHandler(rbusHandle_t handle, rbusProperty_t prop, rbusSetHandlerOptions_t* opts);
+rbusError_t eventManageWiFiBridgeSubHandler(rbusHandle_t handle, rbusEventSubAction_t action, const char *eventName, rbusFilter_t filter, int32_t interval, bool *autoPublish);
+rbusError_t getBoolHandler(rbusHandle_t handle, rbusProperty_t property, rbusGetHandlerOptions_t *opts);
+rbusError_t eventManageWiFiEnableSubHander(rbusHandle_t handle, rbusEventSubAction_t action, const char *eventName, rbusFilter_t filter, int32_t interval, bool *autoPublish);
+rbusError_t eventManageWiFiInterfaceSubHandler(rbusHandle_t handle, rbusEventSubAction_t action, const char *eventName, rbusFilter_t filter, int32_t interval, bool *autoPublish);
 #endif
 #if defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED) ||  defined(RBUS_BUILD_FLAG_ENABLE) || defined (_HUB4_PRODUCT_REQ_) || defined (_PLATFORM_RASPBERRYPI_)
 rbusError_t devCtrlRbusInit();
