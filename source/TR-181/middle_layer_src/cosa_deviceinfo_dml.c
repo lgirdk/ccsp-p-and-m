@@ -21931,6 +21931,10 @@ SecureWebUI_SetParamBoolValue
         {
             AnscTraceWarning(("syscfg_set failed\n"));
         }
+        else
+        {
+            v_secure_system("sysevent set dhcp_server-restart");
+        }
         return TRUE;
     }
 
