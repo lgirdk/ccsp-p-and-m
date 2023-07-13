@@ -7006,11 +7006,21 @@ Pool_Commit
     errno_t   rc = -1;
     char                            rip_status[12];
     char                            staticRipBrlanEnable[8];
+#ifdef FEATURE_STATIC_IPV4    
+    char                            staticIpAdministrativeStatus[8];
+    int                             staticIpStatus;
+#endif    
 
     syscfg_get(NULL, "brlan_static_ip_enable", staticRipBrlanEnable, sizeof(staticRipBrlanEnable));
     syscfg_get(NULL, "rip_enabled", rip_status, sizeof(rip_status));
     // only validate it for first pool, should changed to better validation for second pool
+#ifdef FEATURE_STATIC_IPV4
+    syscfg_get(NULL, "staticipadminstatus", staticIpAdministrativeStatus, sizeof(staticIpAdministrativeStatus));
+    staticIpStatus = (0 == (strcmp("3", staticIpAdministrativeStatus))) ? 1 : 0;
+    if (!(staticRipBrlanEnable && staticIpStatus))
+#else	    
     if (!(staticRipBrlanEnable && rip_status))
+#endif	    
     {
         if(pPool->Cfg.InstanceNumber == 1 && is_pool_invalid(hInsContext))
         {
