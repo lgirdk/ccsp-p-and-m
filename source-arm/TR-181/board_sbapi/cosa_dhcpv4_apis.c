@@ -2522,6 +2522,11 @@ CosaDmlDhcpsSetPoolCfg
 
     char staticRipBrlanEnable[8];
     char rip_status[12];
+#ifdef FEATURE_STATIC_IPV4    
+    char staticIpAdministrativeStatus[8];
+    int staticIpStatus;
+#endif    
+
 
     UNREFERENCED_PARAMETER(hContext);
     //AnscTraceFlow(("%s: pCfg->InstanceNumber =%lu\n", __FUNCTION__, pCfg->InstanceNumber));
@@ -2539,7 +2544,15 @@ CosaDmlDhcpsSetPoolCfg
         syscfg_get(NULL, "brlan_static_ip_enable", staticRipBrlanEnable, sizeof(staticRipBrlanEnable));
         syscfg_get(NULL, "rip_enabled", rip_status, sizeof(rip_status));
 
-        if(!(rip_status && staticRipBrlanEnable)){
+#ifdef FEATURE_STATIC_IPV4
+        syscfg_get(NULL, "staticipadminstatus", staticIpAdministrativeStatus, sizeof(staticIpAdministrativeStatus));
+        staticIpStatus = (0 == (strcmp("3", staticIpAdministrativeStatus))) ? 1 : 0;
+
+        if(!(staticRipBrlanEnable && staticIpStatus))
+#else
+        if(!(rip_status && staticRipBrlanEnable))
+#endif
+        {
             if(is_a_public_addr(ntohl(pCfg->MinAddress.Value)) ||
                 is_a_public_addr(ntohl(pCfg->MaxAddress.Value)))
                     return ANSC_STATUS_FAILURE;
