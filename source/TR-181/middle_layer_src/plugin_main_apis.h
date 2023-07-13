@@ -179,6 +179,7 @@ extern COSARegisterCallBackAfterInitDmlProc  g_RegisterCallBackAfterInitDml;
 #define COSA_DATAMODEL_LGI_EVENTLOG_OID                        150
 #define COSA_DATAMODEL_LGI_NETWORKLOGS_OID                     152
 #define COSA_DATAMODEL_LGI_TUNNELEDSTATICIP_OID                155
+#define COSA_DATAMODEL_LGI_STATICIP_OID                        160
 
 /*
  * This is the cosa datamodel backend manager which is used to manager all backend object
@@ -243,6 +244,7 @@ extern COSARegisterCallBackAfterInitDmlProc  g_RegisterCallBackAfterInitDml;
     ANSC_HANDLE                  hLgiEventlog;                                              \
     ANSC_HANDLE                  hNetworkLogs;                                              \
     ANSC_HANDLE                  hLgiTunneledStaticIP;                                      \
+    ANSC_HANDLE                  hLgiStaticIP;                                              \
     PCOSA_PLUGIN_INFO            hCosaPluginInfo;								   		
 
 typedef  struct
