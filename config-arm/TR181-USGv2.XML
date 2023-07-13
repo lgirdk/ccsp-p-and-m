@@ -18902,6 +18902,33 @@
       </parameters> 
     </object>
 
+<?ifdef FEATURE_STATIC_IPV4?>
+    <object>
+      <name>X_LGI-COM_StaticIPv4Address</name>
+      <objectType>object</objectType>
+      <functions>
+        <func_GetParamUlongValue>X_LGI_COM_StaticIPv4Address_GetParamUlongValue</func_GetParamUlongValue>
+        <func_SetParamUlongValue>X_LGI_COM_StaticIPv4Address_SetParamUlongValue</func_SetParamUlongValue>
+        <func_Validate>X_LGI_COM_StaticIPv4Address_Validate</func_Validate>
+        <func_Commit>X_LGI_COM_StaticIPv4Address_Commit</func_Commit>
+        <func_Rollback>X_LGI_COM_StaticIPv4Address_Rollback</func_Rollback>
+      </functions>
+      <parameters>
+        <parameter>
+          <name>AdministrativeStatus</name>
+          <type>string: Disabled(1),Single-static(2),Multi-static(3)</type>
+          <syntax>uint32/mapped</syntax>
+          <writable>true</writable>
+        </parameter>
+        <parameter>
+          <name>OperationalStatus</name>
+          <type>string: Down(1),Up(2),Error(3)</type>
+          <syntax>uint32/mapped</syntax>
+        </parameter>
+      </parameters>
+    </object>
+<?endif?>
+
 	  </objects>
 
 </dataModelInfo>
