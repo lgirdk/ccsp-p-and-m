@@ -176,6 +176,11 @@
 #include "cosa_lgi_tunneledstaticip_apis.h"
 #include "cosa_lgi_tunneledstaticip_internal.h"
 
+#ifdef FEATURE_STATIC_IPV4
+#include "cosa_lgi_staticip_apis.h"
+#include "cosa_lgi_staticip_internal.h"
+#endif
+
 static void CheckAndSetRebootReason();
 
 #if defined(_PLATFORM_RASPBERRYPI_)
@@ -535,6 +540,10 @@ if(id != 0)
     pMyObject->hLgiTunneledStaticIP = (ANSC_HANDLE)CosaLgiTunneledStaticIPCreate();
     AnscTraceWarning(("  CosaLgiTunneledStaticIPCreate done !\n"));
 
+#ifdef FEATURE_STATIC_IPV4    
+    pMyObject->hLgiStaticIP = (ANSC_HANDLE)CosaLgiStaticIPCreate();
+    AnscTraceWarning(("  CosaLgiStaticIPCreate done !\n"));
+#endif
 
     printf("PandM DM initialization done!\n");
     CcspTraceWarning(("RDKB_SYSTEM_BOOT_UP_LOG : PandM DM initialization done!\n"));
@@ -842,6 +851,12 @@ CosaBackEndManagerRemove
         CosaLgiTunneledStaticIPRemove((ANSC_HANDLE)pMyObject->hLgiTunneledStaticIP);
     }
 
+#ifdef FEATURE_STATIC_IPV4    
+    if (pMyObject->hLgiStaticIP)
+    {
+        CosaLgiStaticIPRemove((ANSC_HANDLE)pMyObject->hLgiStaticIP);
+    }
+#endif    
 
     if (pMyObject->hLgiIperf)
     {

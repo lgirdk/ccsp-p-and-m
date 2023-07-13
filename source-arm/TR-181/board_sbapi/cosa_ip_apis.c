@@ -3001,7 +3001,12 @@ unsigned int mask2cidr(char *subnetMask)
 
     sscanf(subnetMask, "%d.%d.%d.%d", &l_iFirstByte, &l_iSecondByte,
             &l_iThirdByte, &l_iFourthByte);
+#ifdef FEATURE_STATIC_IPV4
+    /* Multi-static IPv4 supported subnet range 255.255.255.248 - 255.255.255.192 */
+    if(l_iFirstByte == 255 && l_iSecondByte == 255 && l_iThirdByte == 255 && (l_iFourthByte == 248 || l_iFourthByte == 240 || l_iFourthByte == 224 || l_iFourthByte == 192))
+#else    
     if(l_iFirstByte == 255 && l_iSecondByte == 255 && l_iThirdByte == 255 && (l_iFourthByte == 252 || l_iFourthByte == 248 || l_iFourthByte == 240 || l_iFourthByte == 224 || l_iFourthByte == 192))
+#endif	    
     {
         return 24 + countSetBits(l_iFourthByte);
     }
@@ -3137,9 +3142,15 @@ CosaDmlIpIfSetV4Addr
 
             if ( l_iCIDR == 0 )
             {
+#ifdef FEATURE_STATIC_IPV4
+                CcspTraceWarning(("%s Error CIDR netmask is not valid for static IP.. Assigning /29 case for default\n", __FUNCTION__));
+                l_iCIDR = 29;
+                syscfg_set(NULL, "brlan_static_lan_netmask", "255.255.255.248");
+#else		
                 CcspTraceWarning(("%s Error CIDR netmask is not valid for static IP.. Assigning /30 case for default\n", __FUNCTION__));
                 l_iCIDR = 30;
                 syscfg_set(NULL, "brlan_static_lan_netmask", "255.255.255.252");
+#endif		
             }
             else
             {
@@ -3149,7 +3160,11 @@ CosaDmlIpIfSetV4Addr
             _ansc_sprintf(buf, "%d.%d.%d.%d",
                     pEntry->IPAddress.Dot[0],pEntry->IPAddress.Dot[1],pEntry->IPAddress.Dot[2],pEntry->IPAddress.Dot[3]+total_hosts-3 ); // CIDR Usable Host Range Ends
             syscfg_set(NULL, "brlan_static_dhcp_end", buf);
+#ifdef FEATURE_STATIC_IPV4
+            RestartRIPInterfaces(FALSE);	    
+#else
             ErouterStaticIfMode("down");
+#endif	    
                 // commonSyseventSet("dhcp_server-restart", "");
         }
         else

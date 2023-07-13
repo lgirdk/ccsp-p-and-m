@@ -1290,7 +1290,7 @@ static void RestartBrlanInterface(char* brlan_ip, char* brlan_mask, char* brlan_
     pthread_create(&tid2, NULL, updateWIFIStatus, (void *)ripEnable);
 
 }
-static void RestartRIPInterfaces(int ripEnable)
+void RestartRIPInterfaces(int ripEnable)
 {
     char staticErouterEnable[8];
     char staticBrlanEnable[8];
@@ -1299,10 +1299,18 @@ static void RestartRIPInterfaces(int ripEnable)
     char brlan_mask[20];
     char brlan_dhcp_start[20];
     char brlan_dhcp_end[20];
+#ifdef FEATURE_STATIC_IPV4
+    char staticIpAdministrativeStatus[8];
+    int staticIpStatus;    
+#endif
 
 
     syscfg_get(NULL, "erouter_static_ip_enable", staticErouterEnable, sizeof(staticErouterEnable));
     syscfg_get(NULL, "brlan_static_ip_enable", staticBrlanEnable, sizeof(staticBrlanEnable));
+#ifdef FEATURE_STATIC_IPV4
+    syscfg_get(NULL, "staticipadminstatus", staticIpAdministrativeStatus, sizeof(staticIpAdministrativeStatus));
+    staticIpStatus = (0 == (strcmp("3", staticIpAdministrativeStatus))) ? 1 : 0;
+#endif
 
     if(strcmp(staticErouterEnable, "true") == 0)
     {
@@ -1317,8 +1325,15 @@ static void RestartRIPInterfaces(int ripEnable)
                 v_secure_system("ip addr del %s/32 brd 255.255.255.255 dev erouter0", erouter_static_ip);
             }
         }
+    }
 
-        if(ripEnable && syscfg_get(NULL, "brlan_lan_ipaddr", brlan_ip, sizeof(brlan_ip)) == 0)
+#ifdef FEATURE_STATIC_IPV4
+    if(strcmp(staticIpAdministrativeStatus, "2") == 0)
+#else
+    if(strcmp(staticErouterEnable, "true") == 0 && ripEnable)
+#endif
+    {
+        if(syscfg_get(NULL, "brlan_lan_ipaddr", brlan_ip, sizeof(brlan_ip)) == 0)
         {
             if(syscfg_get(NULL, "brlan_lan_netmask", brlan_mask, sizeof(brlan_mask)) == 0)
             {
@@ -1333,7 +1348,11 @@ static void RestartRIPInterfaces(int ripEnable)
     {
         char ip_buf[20];
 
+#ifdef FEATURE_STATIC_IPV4
+        if(strcmp(staticIpAdministrativeStatus, "3") == 0)
+#else
         if(ripEnable)
+#endif
         {
             if(syscfg_get(NULL, "brlan_static_lan_ipaddr", brlan_ip, sizeof(brlan_ip)) == 0)
             {
@@ -1375,10 +1394,18 @@ static void RestartRIPInterfaces(int ripEnable)
 
         if (strlen(brlan_ip) > 0) {
             /* Restart brlan0 interface only if brlan_ip has a valid address. */
+#ifdef FEATURE_STATIC_IPV4
+            RestartBrlanInterface(brlan_ip,brlan_mask,brlan_dhcp_start,brlan_dhcp_end,staticIpStatus);
+#else	    
             RestartBrlanInterface(brlan_ip,brlan_mask,brlan_dhcp_start,brlan_dhcp_end,ripEnable);
+#endif	    
         }
     }//End of else if(strcmp(staticBrlanEnable, "true") == 0)
 
+#ifdef FEATURE_STATIC_IPV4
+    syscfg_commit();
+    commonSyseventSet("firewall-restart", "");
+#endif
 }
 
 /**********************************************************************

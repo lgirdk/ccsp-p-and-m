@@ -298,6 +298,21 @@ int CosaApisSetErouterModeControl(ULONG initMode)
         return 0;
     }
 
+#ifdef FEATURE_STATIC_IPV4    
+    /* No Support for bridge mode configuration if Static IPv4 service is enabled */
+    if (initMode == 1)
+    {
+        char staticIpAdministrativeStatus[8];
+
+        syscfg_get(NULL, "staticipadminstatus", staticIpAdministrativeStatus, sizeof(staticIpAdministrativeStatus));
+
+        if (strcmp(staticIpAdministrativeStatus, "1") != 0)
+        {
+            return 0;
+        }
+    }
+#endif    
+
     switch(initMode)
     {
         case EROUTER_INIT_MODE_CONTROL_DISABLED:
