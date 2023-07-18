@@ -142,20 +142,22 @@ ULONG CosaDmlMulticastGetM2UMaxSessions ( ANSC_HANDLE hContext, ULONG* puLong )
 
 ULONG CosaDmlMulticastSetM2UMaxSessions ( ANSC_HANDLE hContext, ULONG uValue )
 {
+    char cmd[256];
+
     if (syscfg_set_u (NULL, "multicast_m2u_max_sessions", uValue) != 0)
         return ANSC_STATUS_FAILURE;
 
 #ifdef _PUMA6_ARM_
-    {
-        char cmd[256];
-
-        snprintf(cmd, sizeof(cmd), "rpcclient2 'echo %lu > /tmp/.syscfg_multicast_m2u_max_sessions' ; "
-                                   "rpcclient2 'echo %lu > /sys/class/net/br0/bridge/multicast_max_m2u' ; ",
-                                    uValue,
-                                    uValue);
-        system(cmd);
-    }
+    snprintf(cmd, sizeof(cmd), "rpcclient2 'echo %lu > /tmp/.syscfg_multicast_m2u_max_sessions' ; "
+                               "rpcclient2 'echo %lu > /sys/class/net/br0/bridge/multicast_max_m2u' ; ",
+                               uValue,
+                               uValue);
+#else
+    snprintf(cmd, sizeof(cmd), "ovs-vsctl set Bridge brlan0 other_config:mcast-snooping-max-bundle=%lu", uValue);
 #endif
+
+    system(cmd);
+
     return ANSC_STATUS_SUCCESS;
 }
 
