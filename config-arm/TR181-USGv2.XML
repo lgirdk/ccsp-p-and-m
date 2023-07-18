@@ -2017,7 +2017,7 @@
                 </parameter>
                 <parameter>
                   <name>xOpsReverseSshIdleTimeout</name>
-                  <type>unsignedInt</type>
+                  <type>unsignedInt[30:]</type>
                   <syntax>uint32</syntax>
                   <writable>true</writable>
                 </parameter>
