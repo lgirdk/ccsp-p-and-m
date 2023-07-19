@@ -1062,14 +1062,6 @@
           <syntax>string</syntax>
           <writable>true</writable>
         </parameter>
-<?ifdef CISCO_XB3_PLATFORM_CHANGES?>
-        <parameter>
-            <name>PingPeerRebootThreshold</name>
-            <type>int</type>
-            <syntax>int</syntax>
-            <writable>true</writable>
-        </parameter>
-<?endif?>
 <?endif?>
         </parameters>
 
@@ -1818,7 +1810,7 @@
 <?endif?>
                         </functions>
                         <parameters>
-<?ifdef MOCA_HOME_ISOLATION | CISCO_XB3_PLATFORM_CHANGES?>
+<?ifdef MOCA_HOME_ISOLATION?>
                             <parameter>
                                 <name>HomeNetworkIsolation</name>
                                 <type>boolean</type>
