@@ -506,9 +506,10 @@ ANSC_STATUS
 
         if (SerialNumber[0] == '\0')
         {
-            ULONG SerialNumberLength = sizeof(SerialNumber);
-            /* CID: 79484 Out-of-bounds access - updated global decl*/
-            CosaDmlDiGetSerialNumber(NULL, SerialNumber, &SerialNumberLength);
+            if (platform_hal_GetSerialNumber(SerialNumber) != RETURN_OK)
+            {
+                SerialNumber[0] = 0;
+            }
         }
 
         Key_len = strlen(pString);
