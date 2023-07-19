@@ -684,6 +684,14 @@ CosaDmlDiGetProductClass
                     return ANSC_STATUS_FAILURE;
                 }
 	}
+#elif defined(MODEM_ONLY_SUPPORT)
+    {
+        rc = strcpy_s(pValue, *pulSize, "XD4");
+        if ( rc != EOK) {
+            ERR_CHK(rc);
+            return ANSC_STATUS_FAILURE;
+        }
+    }
 #elif defined(_XB8_PRODUCT_REQ_)
     {
         rc = strcpy_s(pValue, *pulSize, "XB8");
