@@ -191,10 +191,6 @@ extern  ANSC_HANDLE             bus_handle;
 #define DMSB_TR181_PSM_WHIX_TxRxRateList                              "dmsb.device.deviceinfo.X_RDKCENTRAL-COM_WHIX.TxRxRateList"
 #define DMSB_TR181_PSM_WIFI_TELEMETRY_SNRList                 "dmsb.device.deviceinfo.X_RDKCENTRAL-COM_WIFI_TELEMETRY.SNRList"
 
-#ifdef CISCO_XB3_PLATFORM_CHANGES
-#undef CONFIG_VENDOR_NAME
-#define CONFIG_VENDOR_NAME "Cisco"
-#endif
 
 /* Localhost port range for stunnel client to listen/accept */
 #define MIN_PORT_RANGE 3000
