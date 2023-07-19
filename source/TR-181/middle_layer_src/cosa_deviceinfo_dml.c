@@ -632,18 +632,6 @@ DeviceInfo_GetParamIntValue
     UNREFERENCED_PARAMETER(ParamName);
     UNREFERENCED_PARAMETER(pInt);
 #endif
-#ifdef CISCO_XB3_PLATFORM_CHANGES
-    if (strcmp(ParamName, "PingPeerRebootThreshold") == 0)
-    {
-        char buf[10] = { 0 };
-        syscfg_get(NULL, "ping_peer_reboot_threshold", buf, sizeof (buf));
-        if (buf[0] != '\0')
-        {
-            *pInt = atoi(buf);
-            return TRUE;
-        }
-    }
-#endif
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
 }
@@ -1241,19 +1229,6 @@ DeviceInfo_SetParamIntValue
 #else
     UNREFERENCED_PARAMETER(ParamName);
     UNREFERENCED_PARAMETER(iValue);
-#endif
-#ifdef CISCO_XB3_PLATFORM_CHANGES
-    if (strcmp(ParamName, "PingPeerRebootThreshold") == 0)
-    {
-        int ret = 0;
-        char buf[10] = { 0 };
-        snprintf(buf, sizeof(buf) - 1, "%d", iValue);
-        if ((ret = syscfg_set_commit(NULL, "ping_peer_reboot_threshold", buf)) != 0)
-        {
-            CcspTraceError(("syscfg_set ping_peer_reboot_threshold failed. Ret %d\n", ret));
-        }
-        return TRUE;
-    }
 #endif
 	/* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
