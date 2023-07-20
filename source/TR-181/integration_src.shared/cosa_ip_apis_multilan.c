@@ -2796,12 +2796,12 @@ CosaDmlIpIfMlanGetStats
     PDMSB_TR181_IP_CONTEXT          pIpContext     = (PDMSB_TR181_IP_CONTEXT)hContext;
     PDMSB_TR181_IP_IF               pIpIf;
 
-    AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     pIpIf = CosaDmlIpIfMlanFindByInstNum(pIpContext, ulIpIfInstanceNumber);
 
     if ( !pIpIf )
     {
+        AnscTraceError(("%s -- failed to find %lu!\n", __FUNCTION__, ulIpIfInstanceNumber));
         return  ANSC_STATUS_CANT_FIND;
     }
     else
@@ -2826,7 +2826,6 @@ CosaDmlIpIfMlanGetStats
         pStats->UnicastPacketsSent          -= pIpIf->LastStats.UnicastPacketsSent;
         pStats->UnknownProtoPacketsReceived -= pIpIf->LastStats.UnknownProtoPacketsReceived;
 
-        AnscTraceFlow(("%s done!\n", __FUNCTION__));
 
         return ANSC_STATUS_SUCCESS;
     }

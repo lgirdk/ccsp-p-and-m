@@ -4528,12 +4528,14 @@ CosaDmlIpIfGetStats
     else
     {
        
-        AnscTraceFlow(("%s...\n", __FUNCTION__));
 
         if (CosaUtilGetIfStats((char *)g_ipif_names[ulIpIfInstanceNumber-1],  (PCOSA_DML_IF_STATS)pStats))
             return ANSC_STATUS_SUCCESS;
-        else 
+        else
+        {
+            AnscTraceError(("%s -- failed!\n", __FUNCTION__)); 
             return ANSC_STATUS_FAILURE;
+        }
     }
 }
 
