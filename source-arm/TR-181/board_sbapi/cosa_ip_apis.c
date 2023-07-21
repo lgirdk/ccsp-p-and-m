@@ -1281,7 +1281,7 @@ int CosaDmlGetPrefixPathName(char * ifname, int inst1, PCOSA_DML_IP_V6ADDR p_dml
             }
             val_len = sizeof(param_val);               
             if (g_GetParamValueString(g_pDslhDmlAgent, name, param_val, &val_len) ||
-                 AnscEqualString(param_val, "Static", TRUE ) )
+                (strcmp(param_val, "Static") == 0))
                 continue;
             
             safec_rc = sprintf_s(name, sizeof(name), "Device.IP.Interface.%d.IPv6Prefix.%d.Prefix", inst1, inst2);
