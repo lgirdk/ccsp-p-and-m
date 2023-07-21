@@ -607,7 +607,7 @@ Host_GetParamIntValue
 #if 0
     int i = 0;
     for(; i<LM_HOST_NumIntPara; i++){
-        if( AnscEqualString(ParamName, lmHosts.pHostIntParaName[i], TRUE))
+        if (strcmp(ParamName, lmHosts.pHostIntParaName[i]) == 0)
         {
             /* collect value */
             *pInt = pHost->iIntParaValue[i];
