@@ -360,13 +360,13 @@ int hotspot_update_circuit_ids(int greinst, int queuestart) {
         snprintf(paramname, sizeof(paramname),"%s.%s", curInt, "SSID");
         size = sizeof(outdata);
         retval = COSAGetParamValueByPathName(bus_handle, &varStruct, &size);
-        if ((!(strcmp(varStruct.parameterValue,""))) || ( retval != ANSC_STATUS_SUCCESS)) {
+        if ((retval != ANSC_STATUS_SUCCESS) || (strlen(varStruct.parameterValue) == 0)) {
             CcspTraceError(("could not fetch proper SSID name\n"));
             pthread_mutex_unlock(&circuitid_lock);
             return -1;
         }
 
-		if(!(strcmp(varStruct.parameterValue,""))){
+		if (strlen(varStruct.parameterValue) == 0) {
 			  snprintf(paramname, sizeof(paramname), "eRT.com.cisco.spvtg.ccsp.Device.WiFi.Radio.SSID.%d.SSID",inst);
 		  GrePsmGet(paramname,varStruct.parameterValue, size);
 		  if(strlen(varStruct.parameterValue)==0) {
