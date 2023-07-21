@@ -11049,7 +11049,7 @@ LanAllowedSubnetTable_SetParamStringValue
     }
     if (strcmp(ParamName, "Alias") == 0)
     {
-        if (strcmp (pString, "") != 0)
+        if (strlen(pString) != 0)
         {
             _ansc_snprintf(pLanAllowedSubnet->Alias, sizeof(pLanAllowedSubnet->Alias), "%s", pString);
             return TRUE;
