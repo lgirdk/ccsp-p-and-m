@@ -1755,7 +1755,7 @@ CosaDmlBrgPortSetCfg
     }
 #endif
 
-    if (!AnscEqualString(pCfg->LinkName, pBPort->linkName, TRUE) || pCfg->LinkType != pBPort->linkType
+    if ((strcmp(pCfg->LinkName, pBPort->linkName) != 0) || pCfg->LinkType != pBPort->linkType
         || pCfg->bEnabled != pBPort->bEnabled || pCfg->mode != pBPort->mode)
     {
         pBridge->control->confirmStructureUpdate(pBridge, pBPort, pCfg);
@@ -3801,7 +3801,7 @@ ANSC_STATUS lnxBrPCtlGetEnabled(PBRIDGE_PORT port, BOOLEAN* enabled) {
     char status[10];
     commonSyseventGet("lan-status", status, sizeof(status));
     
-    *enabled = !AnscEqualString("stopped",status,TRUE) && !AnscEqualString("stopping",status,TRUE);
+    *enabled = (strcmp(status, "stopped") != 0) && (strcmp(status, "stopping") != 0);
     
     return ANSC_STATUS_SUCCESS;
 }

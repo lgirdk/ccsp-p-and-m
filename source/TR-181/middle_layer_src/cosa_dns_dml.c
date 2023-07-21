@@ -1748,7 +1748,7 @@ Server1_Validate
 
         if ( pDnsServer2 && 
             ((ULONG)pDnsServer2 != (ULONG)pDnsServer) &&
-             AnscEqualString(pDnsServer2->Alias, pDnsServer->Alias, TRUE))
+             (strcmp(pDnsServer2->Alias, pDnsServer->Alias) == 0))
         {
             AnscCopyString(pReturnParamName, "Alias");
             *puLength = AnscSizeOfString("Alias");

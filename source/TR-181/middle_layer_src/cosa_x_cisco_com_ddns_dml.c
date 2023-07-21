@@ -1949,7 +1949,7 @@ Service_Validate
         if ( 
                  pDdnsService2 && 
                  ((ULONG)pDdnsService2 != (ULONG)pDdnsService) && 
-                 AnscEqualString(pDdnsService2->Alias, pDdnsService->Alias, TRUE) 
+                 (strcmp(pDdnsService2->Alias, pDdnsService->Alias) == 0)
            )
         {
 
