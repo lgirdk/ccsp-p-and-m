@@ -390,7 +390,7 @@ CGreIf_SetParamStringValue
 
     if (strcmp(ParamName, "Alias") == 0)
     {
-        if (AnscEqualString(strValue, pCGreIf->Alias, TRUE))
+        if (strcmp(strValue, pCGreIf->Alias) == 0)
             return TRUE;
 
         snprintf(pCGreIf->Alias, sizeof(pCGreIf->Alias), "%s", strValue);
@@ -399,7 +399,7 @@ CGreIf_SetParamStringValue
     }
     if (strcmp(ParamName, "Name") == 0)
     {
-        if (AnscEqualString(strValue, pCGreIf->Name, TRUE))
+        if (strcmp(strValue, pCGreIf->Name) == 0)
             return TRUE;
 
         snprintf(pCGreIf->Name, sizeof(pCGreIf->Name), "%s", strValue);
@@ -408,7 +408,7 @@ CGreIf_SetParamStringValue
     }
     if (strcmp(ParamName, "LowerLayers") == 0)
     {
-        if (AnscEqualString(strValue, pCGreIf->LowerLayers, TRUE))
+        if (strcmp(strValue, pCGreIf->LowerLayers) == 0)
             return TRUE;
 
         snprintf(pCGreIf->LowerLayers, sizeof(pCGreIf->LowerLayers), "%s", strValue);
@@ -417,7 +417,7 @@ CGreIf_SetParamStringValue
     }
     if (strcmp(ParamName, "RemoteEndpoint") == 0)
     {
-        if (AnscEqualString(strValue, pCGreIf->RemoteEndpoint, TRUE))
+        if (strcmp(strValue, pCGreIf->RemoteEndpoint) == 0)
             return TRUE;
 
         snprintf(pCGreIf->RemoteEndpoint, sizeof(pCGreIf->RemoteEndpoint), "%s", strValue);
@@ -426,7 +426,7 @@ CGreIf_SetParamStringValue
     }
     if (strcmp(ParamName, "Key") == 0)
     {
-        if (AnscEqualString(strValue, pCGreIf->Key, TRUE))
+        if (strcmp(strValue, pCGreIf->Key) == 0)
             return TRUE;
 
         snprintf(pCGreIf->Key, sizeof(pCGreIf->Key), "%s", strValue);

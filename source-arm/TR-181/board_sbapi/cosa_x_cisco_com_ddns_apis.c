@@ -1738,9 +1738,9 @@ CosaDmlDdnsSetService
     CcspTraceInfo(("------CosaDmlDdnsSetService,ret:%d,enable:%d,provide:%d,user:%s,pass:%s,host:%s\n", ret, ddnsService.enabled,ddnsService.provider,ddnsService.username,ddnsService.password, ddnsService.hostname ));
     CcspTraceInfo(("------CosaDmlDdnsSetService,ServiceName:%s\n", pService->ServiceName));
 
-    if (AnscEqualString(pService->ServiceName,g_DdnsService[0].ServiceName,FALSE)) {
+    if (strcasecmp(pService->ServiceName, g_DdnsService[0].ServiceName) == 0) {
         ddnsService.provider = DDNS_DYNDNS;
-    } else if (AnscEqualString(pService->ServiceName,g_DdnsService[1].ServiceName,FALSE)) {
+    } else if (strcasecmp(pService->ServiceName, g_DdnsService[1].ServiceName) == 0) {
         ddnsService.provider = DDNS_TZO;
     }
 
@@ -1756,15 +1756,15 @@ CosaDmlDdnsSetService
     Utopia_SetDDNSService(&utctx, &ddnsService);
 
     Utopia_Free(&utctx,1);
-    if (AnscEqualString(pService->ServiceName,g_DdnsService[0].ServiceName,FALSE)) {
+    if (strcasecmp(pService->ServiceName, g_DdnsService[0].ServiceName) == 0) {
         saveID(DDNS_NAMESPACE, g_DdnsService[0].ServiceName, g_DdnsService[0].InstanceNumber, pService->Alias);
-    } else if (AnscEqualString(pService->ServiceName,g_DdnsService[1].ServiceName,FALSE)) {
+    } else if (strcasecmp(pService->ServiceName, g_DdnsService[1].ServiceName) == 0) {
         saveID(DDNS_NAMESPACE, g_DdnsService[1].ServiceName, g_DdnsService[1].InstanceNumber, pService->Alias);
     }
     CcspTraceInfo(("------CosaDmlDdnsSetService,Alias:%s,0:%s,1:%s...\n", pService->Alias,g_DdnsService[0].Alias,g_DdnsService[1].Alias));
     for ( i = 0; i < g_DdnsServiceNum; i++)
     {
-        if ( AnscEqualString(g_DdnsService[i].Alias, pService->Alias, FALSE) )
+        if (strcasecmp(g_DdnsService[i].Alias, pService->Alias) == 0)
         {
             g_DdnsService[i].bEnabled = pService->bEnabled;
             AnscCopyString(g_DdnsService[i].ServiceName, pService->ServiceName);

@@ -149,7 +149,7 @@ BOOL CosaIpifGetSetSupported(char * pParamName)
 
     for (p= &not_supported_param_list[0]; (*p)[0]; p++)
     {
-        if (AnscEqualString(pParamName, *p, TRUE))
+        if (strcmp(pParamName, *p) == 0)
         {
             return FALSE;
         }
@@ -3403,7 +3403,7 @@ int CosaDmlDateTimeCompare(char *p_dt1, char *p_dt2)
     if (!p_dt1 || !p_dt2)
         return 0;
 
-    if (AnscEqualString(p_dt1, p_dt2, TRUE))
+    if (strcmp(p_dt1, p_dt2) == 0)
         return 0;
 
     if (sscanf(p_dt1, "%d-%d-%d%*c%02d:%02d:%02d%*c",
@@ -4037,7 +4037,7 @@ CosaDmlIpIfSetV6Addr
                         /*first handle syscfg*/
                         _syscfg_set_v6addr((char *)g_ipif_names[i], &utctx, pEntry);
                             
-                        if (!AnscEqualString(pEntry->IP6Address, g_ipif_be_bufs[i].V6AddrList[j].IP6Address, TRUE))
+                        if (strcmp(pEntry->IP6Address, g_ipif_be_bufs[i].V6AddrList[j].IP6Address) != 0)
                             mask |= _DML_V6ADDR_ADDR_CHANGE;
                 
                         if (pEntry->bEnabled != g_ipif_be_bufs[i].V6AddrList[j].bEnabled)
@@ -4050,13 +4050,13 @@ CosaDmlIpIfSetV6Addr
                             mask |= _DML_V6ADDR_ENABLE_CHANGE;
                         }
 
-                        if (!AnscEqualString(pEntry->Prefix, g_ipif_be_bufs[i].V6AddrList[j].Prefix, TRUE))
+                        if (strcmp(pEntry->Prefix, g_ipif_be_bufs[i].V6AddrList[j].Prefix) != 0)
                             mask |= _DML_V6ADDR_PREFIX_CHANGE;
 
-                        if (!AnscEqualString(pEntry->PreferredLifetime, g_ipif_be_bufs[i].V6AddrList[j].PreferredLifetime, TRUE))
+                        if (strcmp(pEntry->PreferredLifetime, g_ipif_be_bufs[i].V6AddrList[j].PreferredLifetime) != 0)
                             mask |= _DML_V6ADDR_PREFERED_LFT_CHANGE;
                         
-                        if (!AnscEqualString(pEntry->ValidLifetime, g_ipif_be_bufs[i].V6AddrList[j].ValidLifetime, TRUE))
+                        if (strcmp(pEntry->ValidLifetime, g_ipif_be_bufs[i].V6AddrList[j].ValidLifetime) != 0)
                             mask |= _DML_V6ADDR_VALID_LFT_CHANGE;
 
                         if (pEntry->bAnycast != g_ipif_be_bufs[i].V6AddrList[j].bAnycast)
