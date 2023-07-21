@@ -2485,7 +2485,7 @@ static int middle_layer_2_be_struct(PCOSA_DML_IA_POLICY p_in, iap_entry_t * p_ou
 
     p_out->tr_inst_num = p_in->InstanceNumber;
 
-    if (AnscEqualString(p_out->policyname, p_in->Alias, TRUE))
+    if (strcmp(p_out->policyname, p_in->Alias) == 0)
     {
         *p_alias_changed = FALSE;
     }
@@ -2998,7 +2998,7 @@ CosaDmlIaSetPolicyValues
 
     g_iaps[ulIndex].tr_inst_num = ulInstanceNumber;
     
-    if (!AnscEqualString(g_iaps[ulIndex].policyname, pAlias, TRUE))
+    if (strcmp(g_iaps[ulIndex].policyname, pAlias) != 0)
     {
         alias_changed = TRUE;
         safec_rc = strcpy_s(old_name, sizeof(old_name), g_iaps[ulIndex].policyname);
@@ -4108,7 +4108,7 @@ CosaDmlIaPolicySetUrl
     
     /*now i strore index of url_list*/
     p = B.url_tr_alias + TR_ALIAS_SZ*i;
-    if (!AnscEqualString(p, pUrl->Alias, TRUE))
+    if (strcmp(p, pUrl->Alias) != 0)
     {
         safec_rc = strcpy_s(p, TR_ALIAS_SZ, pUrl->Alias);
         if(safec_rc != EOK)
@@ -4117,7 +4117,7 @@ CosaDmlIaPolicySetUrl
         }
     }
     p = B.url_list + URL_SZ*i;
-    if (!AnscEqualString(p, pUrl->Url, TRUE))
+    if (strcmp(p, pUrl->Url) != 0)
     {
         safec_rc = strcpy_s(p, URL_SZ, pUrl->Url);
         if(safec_rc != EOK)

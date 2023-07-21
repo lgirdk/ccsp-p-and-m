@@ -10074,7 +10074,7 @@ SWDLDirect_GetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         char value[8] = {0};
         /* collect value */
@@ -10136,7 +10136,7 @@ SWDLDirect_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, SWDLDirect_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         if(syscfg_set(NULL, "SWDLDirectEnable", (bValue==TRUE)?"true":"false") != 0)
         {
@@ -15456,7 +15456,7 @@ LnFUseXPKI_GetParamBoolValue
  )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( (pBool != NULL) && (AnscEqualString(ParamName, "Enable", TRUE)))
+    if( (pBool != NULL) && (strcmp(ParamName, "Enable") == 0))
     {
         char value[8];
         memset(value, 0, sizeof(value));
@@ -15552,7 +15552,7 @@ UseXPKI_GetParamBoolValue
  )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( (pBool != NULL) && (AnscEqualString(ParamName, "Enable", TRUE)))
+    if( (pBool != NULL) && (strcmp(ParamName, "Enable") == 0))
     {
         char value[8];
         memset(value, 0, sizeof(value));
@@ -15739,7 +15739,7 @@ mTlsCrashdumpUpload_GetParamBoolValue
  )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( (pBool != NULL) && (AnscEqualString(ParamName, "Enable", TRUE)))
+    if( (pBool != NULL) && (strcmp(ParamName, "Enable") == 0))
     {
         char value[8] = {'\0'};
         if( syscfg_get(NULL, "mTlsCrashdumpUpload_Enable", value, sizeof(value)) == 0 ) {

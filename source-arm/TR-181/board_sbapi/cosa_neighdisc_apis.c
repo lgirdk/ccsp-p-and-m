@@ -1016,10 +1016,10 @@ CosaDmlNeighdiscIfSetCfg
         Utopia_RawSet(&utctx,NULL,SYSCFG_FORMAT_NEIGHDISC_IF"_enable",out);
     }
 
-    if (!AnscEqualString(pCfg->Interface, g_neighdisc_interface.Cfg.Interface, TRUE))
+    if (strcmp(pCfg->Interface, g_neighdisc_interface.Cfg.Interface) != 0)
         Utopia_RawSet(&utctx,NULL,SYSCFG_FORMAT_NEIGHDISC_IF"_interface",pCfg->Interface);
  
-    if (!AnscEqualString(pCfg->Alias, g_neighdisc_interface.Cfg.Alias, TRUE))
+    if (strcmp(pCfg->Alias, g_neighdisc_interface.Cfg.Alias) != 0)
         Utopia_RawSet(&utctx,NULL,SYSCFG_FORMAT_NEIGHDISC_IF"_alias",pCfg->Alias);        
 
     if (pCfg->RetransTimer != g_neighdisc_interface.Cfg.RetransTimer)
