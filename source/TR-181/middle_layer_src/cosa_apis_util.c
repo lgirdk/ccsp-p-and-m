@@ -484,7 +484,7 @@ CosaUtilGetLowerLayers
                         continue;
                     }  
                     //AnscTraceFlow(("<HL>%s WiFi instance(%d) has name =%s inputName=%s\n",__FUNCTION__,ulEntryInstanceNum,ucEntryNameValue,pKeyword));
-                    if ( AnscEqualString(ucEntryNameValue, (char*)pKeyword, TRUE ) )
+                    if (strcmp(ucEntryNameValue, (char*)pKeyword) == 0)
                     {
                         rc = sprintf_s(ucEntryFullPath, sizeof(ucEntryFullPath),"Device.MoCA.Interface.%lu",ulEntryInstanceNum);
                         if(rc < EOK)
@@ -668,7 +668,7 @@ CosaUtilGetLowerLayers
                         continue;
                     }  
                     //AnscTraceFlow(("<HL>%s WiFi instance(%d) has name =%s inputName=%s\n",__FUNCTION__,ulEntryInstanceNum,ucEntryNameValue,pKeyword));
-                    if ( AnscEqualString(ucEntryNameValue, (char*)pKeyword, TRUE ) )
+                    if (strcmp(ucEntryNameValue, (char*)pKeyword) == 0)
                     {
                         rc = sprintf_s(ucEntryFullPath, sizeof(ucEntryFullPath),"Device.WiFi.SSID.%lu",ulEntryInstanceNum);
                         if(rc < EOK)
