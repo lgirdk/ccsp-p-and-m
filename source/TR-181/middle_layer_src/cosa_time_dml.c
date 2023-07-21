@@ -85,20 +85,20 @@ extern char * getTime();
 #define BS_SOURCE_RFC_STR "rfc"
 #define  PARTNER_ID_LEN  64
 
-#define IS_UPDATE_ALLOWED_IN_DM(paramName, requestorStr) ({                                                                                                  \
-    if ( g_currentBsUpdate == DSLH_CWMP_BS_UPDATE_firmware ||                                                                                     \
-         (g_currentBsUpdate == DSLH_CWMP_BS_UPDATE_rfcUpdate && !AnscEqualString(requestorStr, BS_SOURCE_RFC_STR, TRUE)))                         \
-    {                                                                                                                                             \
+#define IS_UPDATE_ALLOWED_IN_DM(paramName, requestorStr) ({                                                                                        \
+    if ( g_currentBsUpdate == DSLH_CWMP_BS_UPDATE_firmware ||                                                                                      \
+         (g_currentBsUpdate == DSLH_CWMP_BS_UPDATE_rfcUpdate && (strcmp(requestorStr, BS_SOURCE_RFC_STR) != 0)))                                   \
+    {                                                                                                                                              \
        CcspTraceWarning(("Do NOT allow override of param: %s bsUpdate = %lu, requestor = %s\n", paramName, g_currentBsUpdate, requestorStr));      \
-       return FALSE;                                                                                                                              \
-    }                                                                                                                                             \
+       return FALSE;                                                                                                                               \
+    }                                                                                                                                              \
 })
 
 // If the requestor is RFC but the param was previously set by webpa, do not override it.
-#define IS_UPDATE_ALLOWED_IN_JSON(paramName, requestorStr, UpdateSource) ({                                                                                \
-   if (AnscEqualString(requestorStr, BS_SOURCE_RFC_STR, TRUE) && AnscEqualString(UpdateSource, BS_SOURCE_WEBPA_STR, TRUE))                         \
+#define IS_UPDATE_ALLOWED_IN_JSON(paramName, requestorStr, UpdateSource) ({                                                                        \
+   if ((strcmp(requestorStr, BS_SOURCE_RFC_STR) == 0) && (strcmp(UpdateSource, BS_SOURCE_WEBPA_STR) == 0))                                         \
    {                                                                                                                                               \
-      CcspTraceWarning(("Do NOT allow override of param: %s requestor = %lu updateSource = %s\n", paramName, g_currentWriteEntity, UpdateSource));  \
+      CcspTraceWarning(("Do NOT allow override of param: %s requestor = %lu updateSource = %s\n", paramName, g_currentWriteEntity, UpdateSource)); \
       return FALSE;                                                                                                                                \
    }                                                                                                                                               \
 })
