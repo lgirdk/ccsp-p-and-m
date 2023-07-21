@@ -1115,16 +1115,7 @@ X_CISCO_COM_DMZ_SetParamStringValue
         }
 
         /* save update to backup */
-        if (strcmp(pString, "0.0.0.0") == 0) { /* keep sync between gui and snmp */
-            // pDmz->bEnabled = FALSE;
-            rc = STRCPY_S_NOCLOBBER(pDmz->InternalIP, sizeof(pDmz->InternalIP), pString);
-            if (rc != EOK)
-            {
-                ERR_CHK(rc);
-                return FALSE;
-            }
-        }
-        else if (strcmp(pString, "") == 0) { /* snmp comes with 0.0.0.0 */
+        if ((strlen(pString) == 0) || (strcmp(pString, "0.0.0.0") == 0)) { /* keep sync between gui and snmp, snmp comes with 0.0.0.0 */
             // pDmz->bEnabled = FALSE;
             rc = STRCPY_S_NOCLOBBER(pDmz->InternalIP, sizeof(pDmz->InternalIP), "0.0.0.0");
             if (rc != EOK)

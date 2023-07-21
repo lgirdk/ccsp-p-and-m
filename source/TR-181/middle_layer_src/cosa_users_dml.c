@@ -1275,7 +1275,7 @@ User_SetParamStringValue
                 pthread_t csr_pw_reset_tid;
 
                 // If CSR sets empty password, set timestamp to 0 which terminates the reset thread.
-                if( strcmp(pString, "") == 0 )
+                if (strlen(pString) == 0)
                 {
                     pwd_set_time = 0;
                     system("rm -rf /var/tmp/gui/sess_*"); //FIXME: session path is pointing correctly
@@ -1326,7 +1326,7 @@ User_SetParamStringValue
                 pthread_t csr_pw_reset_tid;
 
                 // If CSR sets empty password, set timestamp to 0 which terminates the reset thread.
-                if( strcmp(pString, "") == 0 )
+                if (strlen(pString) == 0)
                 {
                     pwd_set_time = 0;
                     system("rm -rf /var/tmp/gui/session_*"); 
