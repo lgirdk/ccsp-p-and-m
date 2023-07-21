@@ -428,7 +428,7 @@ CosaUtilGetLowerLayers
                         
                         ulEntryNameLen = sizeof(ucEntryNameValue);
                         if (( 0 == CosaGetParamValueString(ucEntryParamName, ucEntryNameValue, &ulEntryNameLen)) &&
-                            AnscEqualString(ucEntryNameValue, (char*)pKeyword, TRUE) )
+                            (strcmp(ucEntryNameValue, (char*)pKeyword) == 0))
                         {
                             pMatchedLowerLayer = (PUCHAR)AnscCloneString(ucEntryFullPath);
                             
@@ -563,7 +563,7 @@ CosaUtilGetLowerLayers
                             CcspTraceInfo(("----------CosaUtilGetLowerLayers, Param:%s,Param2:%s\n", ucLowerEntryName, ucEntryParamName));
                             ulEntryNameLen = sizeof(ucEntryNameValue);
                             if ( ( 0 == CosaGetParamValueString(ucEntryParamName, ucEntryNameValue, &ulEntryNameLen)) &&
-                                 AnscEqualString(ucEntryNameValue, (char *)pKeyword , TRUE ) )
+                                 (strcmp(ucEntryNameValue, (char *)pKeyword ) == 0))
                             {
                                 pMatchedLowerLayer =  (PUCHAR)AnscCloneString(ucLowerEntryName);
                                 CcspTraceInfo(("----------CosaUtilGetLowerLayers, J:%lu, LowerLayer:%s\n", j, pMatchedLowerLayer));
@@ -729,7 +729,7 @@ CosaUtilGetLowerLayers
                         
                             ulEntryNameLen = sizeof(ucEntryNameValue);
                             if ( ( 0 == CosaGetParamValueString(ucEntryParamName, ucEntryNameValue, &ulEntryNameLen)) &&
-                                 AnscEqualString(ucEntryNameValue, (char*)pKeyword , TRUE ) )
+                                 (strcmp(ucEntryNameValue, (char*)pKeyword ) == 0))
                             {
                                 pMatchedLowerLayer =  (PUCHAR)AnscCloneString(ucLowerEntryName);
                                 CcspTraceInfo(("----------CosaUtilGetLowerLayers, J:%lu, LowerLayer:%s\n", j, pMatchedLowerLayer));
@@ -1203,7 +1203,7 @@ CosaUtilFindBridgePath(char* pBridgeName)
                         
                 ulEntryNameLen = sizeof(ucEntryNameValue);
                 if ( ( 0 == CosaGetParamValueString(ucEntryParamName, ucEntryNameValue, &ulEntryNameLen)) &&
-                        AnscEqualString(ucEntryNameValue, (char*)pBridgeName , TRUE ) )
+                     (strcmp(ucEntryNameValue, (char*)pBridgeName ) == 0))
                 {
                     // not include port instance.
                     pMatchedLowerLayer =  (PUCHAR)AnscCloneString(ucEntryFullPath);
