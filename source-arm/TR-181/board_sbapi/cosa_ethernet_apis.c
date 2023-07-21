@@ -338,10 +338,10 @@ CosaDmlEthInit
                 AnscCopyMemory(g_EthIntSInfo[i].MacAddress, strMac, 6);
         }
         else {
-            if (AnscEqualString(g_EthIntSInfo[i].Name, DMSB_ETH_IF_NAME_DFT_WanRouting, TRUE))
+            if (strcmp(g_EthIntSInfo[i].Name, DMSB_ETH_IF_NAME_DFT_WanRouting) == 0)
                 wanIndex = i;
 #if !defined(_HUB4_PRODUCT_REQ_)
-            if (AnscEqualString(g_EthIntSInfo[i].Name, DMSB_ETH_IF_NAME_DFT_WanBridging, TRUE))
+            if (strcmp(g_EthIntSInfo[i].Name, DMSB_ETH_IF_NAME_DFT_WanBridging) == 0)
                 lbrIndex = i;
 #endif
         }
@@ -486,7 +486,7 @@ CosaDmlEthPortSetCfg
         pEthIf->LastChange = AnscGetTickInSeconds();
     }
     
-    if ( !AnscEqualString(pCfg->Alias, pEthIf->Alias, TRUE) )
+    if (strcmp(pCfg->Alias, pEthIf->Alias) != 0)
     {
         rc = strcpy_s(pEthIf->Alias,sizeof(pEthIf->Alias), pCfg->Alias);
         ERR_CHK(rc);
