@@ -1780,9 +1780,9 @@ CosaDmlDdnsSetService
     }
 
     /* When we enable one, we need to disable another... */
-    if (AnscEqualString(pService->ServiceName,g_DdnsService[0].ServiceName,FALSE) && pService->bEnabled) {
+    if (pService->bEnabled && (strcasecmp(pService->ServiceName, g_DdnsService[0].ServiceName) == 0)) {
         g_DdnsService[1].bEnabled = FALSE;
-    } else if (AnscEqualString(pService->ServiceName,g_DdnsService[1].ServiceName,FALSE) && pService->bEnabled) {
+    } else if (pService->bEnabled && (strcasecmp(pService->ServiceName, g_DdnsService[1].ServiceName) == 0)) {
         g_DdnsService[0].bEnabled = FALSE;
     }
 

@@ -1348,7 +1348,7 @@ static int Utopia_RawSet
     pLink = pHead;
     while( pLink )
     {
-        if ( AnscEqualString( fullname, pLink->name , false ) )
+        if (strcasecmp(fullname, pLink->name ) == 0)
         {
             break;
         }
@@ -1413,7 +1413,7 @@ static int syscfg_unset
     pLink2 = pLink;
     while( pLink )
     {
-        if ( AnscEqualString( fullname, pLink->name , false ) )
+        if (strcasecmp(fullname, pLink->name ) == 0)
         {
             break;
         }
@@ -1485,7 +1485,7 @@ static int Utopia_RawGet
     pLink = pHead;
     while( pLink )
     {
-        if ( AnscEqualString( fullname, pLink->name , false ) )
+        if (strcasecmp(fullname, pLink->name ) == 0)
         {
             break;
         }
@@ -6203,7 +6203,7 @@ _get_iapd_prefix_pathname(char ** pp_pathname, int * p_len)
 
             val_len = sizeof(param_val);               
             if ( ( 0 == g_GetParamValueString(g_pDslhDmlAgent, name, param_val, &val_len)) &&
-                 AnscEqualString(param_val, "PrefixDelegation", TRUE ) )
+                 (strcmp(param_val, "PrefixDelegation") == 0))
             {
                 snprintf(path, sizeof(path)-1, "%sIPv6Prefix.%lu.", p_ipif_path, inst2);
                 *p_len += strlen(path)+1;

@@ -637,7 +637,7 @@ Interface3_DelEntry
 
             pNewEntry = (PCOSA_DML_PPP_IF_FULL)pCosaContext2->hContext;
 
-            if ( pNewEntry && AnscEqualString(pNewEntry->Cfg.Alias, pEntry->Cfg.Alias, FALSE))
+            if ( pNewEntry && (strcasecmp(pNewEntry->Cfg.Alias, pEntry->Cfg.Alias) == 0))
             {
                 AnscSListPopEntryByLink(pListHead, &pCosaContext2->Linkage);
 
