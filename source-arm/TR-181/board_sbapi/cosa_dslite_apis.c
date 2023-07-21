@@ -262,9 +262,9 @@ CosaDmlDsliteSetCfg
         goto SET_DSLITE_RESTART;
     else if(read_dslite_cfg.ipv6_frag_enable != pEntry->ipv6_frag_enable)
         goto SET_DSLITE_RESTART;
-    else if(!AnscEqualString(read_dslite_cfg.addr_fqdn, pEntry->addr_fqdn, TRUE))
+    else if (strcmp(read_dslite_cfg.addr_fqdn, pEntry->addr_fqdn) != 0)
         goto SET_DSLITE_RESTART;
-    else if(!AnscEqualString(read_dslite_cfg.addr_ipv6, pEntry->addr_ipv6, TRUE))
+    else if (strcmp(read_dslite_cfg.addr_ipv6, pEntry->addr_ipv6) != 0)
         goto SET_DSLITE_RESTART;
     else
         goto EXIT;
