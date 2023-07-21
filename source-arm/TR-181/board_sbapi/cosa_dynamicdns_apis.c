@@ -1090,7 +1090,7 @@ CosaDmlDynamicDns_Server_GetEntryByIndex
          g_DDNSServer[index].RetryInterval = retryinterval;
          g_DDNSServer[index].MaxRetries = maxretries;
          g_DDNSServer[index].ServerPort = serverport;
-         if (strcmp(protocol, "") != 0)
+         if (strlen(protocol) != 0)
          {
              _ansc_strncpy(g_DDNSServer[index].Protocol, protocol, sizeof(g_DDNSServer[index].Protocol)-1);
         }
