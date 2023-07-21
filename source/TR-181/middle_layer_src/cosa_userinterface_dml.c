@@ -476,7 +476,7 @@ UserInterface_Validate
     if (pUserCfg->bShowDNSConfigPage)
     {
         PSM_Get_Record_Value2(bus_handle, g_Subsystem, "lgi.com.DNSConfigPageEnable", NULL, &stringValue);
-        if (stringValue == NULL || !AnscEqualString(stringValue, "True", FALSE))
+        if (stringValue == NULL || (strcasecmp(stringValue, "True") != 0))
         {
             AnscCopyString(pReturnParamName, "X_LGI-COM_ShowDNSConfigPage");
             *puLength = AnscSizeOfString("X_LGI-COM_ShowDNSConfigPage");
