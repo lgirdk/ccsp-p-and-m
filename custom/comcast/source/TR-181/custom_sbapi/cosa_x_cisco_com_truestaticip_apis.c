@@ -809,7 +809,7 @@ Start:
             pVal[0].parameterName  = AnscCloneString(pMapping[0].FullPath);
             if (strcasecmp(pStringToken->Name, "wan_ip_method") == 0)
             {
-                pVal[0].parameterValue = AnscEqualString(pValue, "true_static", FALSE) ? AnscCloneString("true") : AnscCloneString("false");
+                pVal[0].parameterValue = (strcasecmp(pValue, "true_static") == 0) ? AnscCloneString("true") : AnscCloneString("false");
                 AnscTraceWarning(("!!! Mode: true_static, value:%s !!!\n", pVal[0].parameterValue));
             }
             else if ( _ansc_strstr(pStringToken->Name, "website_block_") ) /* Special handle for website_block_xxx */
@@ -906,7 +906,7 @@ Start:
                 }
                 continue;
             }
-            else if ( _ansc_strstr(pStringToken->Name, "wan_rip2") && AnscEqualString(pValue, "true", FALSE) )
+            else if ( _ansc_strstr(pStringToken->Name, "wan_rip2") && (strcasecmp(pValue, "true") == 0))
             {
                 g_SetParamValueString("Device.Routing.RIP.InterfaceSetting.1.X_CISCO_COM_SendVersion", "RIP2");
                 g_SetParamValueBool  ("Device.Routing.RIP.InterfaceSetting.1.SendRA", TRUE);

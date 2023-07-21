@@ -448,7 +448,7 @@ static wifi_client_t* lookup_wifi_client(const char *pMac)
         pClient = ACCESS_WIFI_CLIENT(pSLinkEntry);
         pSLinkEntry = AnscSListGetNextEntry(pSLinkEntry);
 
-        if (pClient && AnscEqualString(pClient->mac, pMac, FALSE)){
+        if (pClient && (strcasecmp(pClient->mac, pMac) == 0)){
             pthread_mutex_unlock(&g_wifiClientTable_mutex);
             return pClient;
         }
