@@ -396,7 +396,7 @@ IPv6rdIF_DelEntry(
         pSLinkEntry = AnscSListGetNextEntry(pSLinkEntry);
 
         pNewEntry = (PCOSA_DML_IPV6RD_IF)pCosaContext2->hContext;
-        if (pNewEntry && AnscEqualString(pNewEntry->Alias, pEntry->Alias, FALSE))
+        if (pNewEntry && (strcasecmp(pNewEntry->Alias, pEntry->Alias) == 0))
         {
             AnscSListPopEntryByLink(pListHead, &pCosaContext2->Linkage);
 
