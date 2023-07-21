@@ -2006,7 +2006,7 @@ Link_DelEntry
 
             pNewEntry = (PCOSA_DML_ETH_LINK_FULL)pCosaContext2->hContext;
 
-            if ( pNewEntry && AnscEqualString(pNewEntry->Cfg.Alias, pEntry->Cfg.Alias, FALSE))
+            if ( pNewEntry && (strcasecmp(pNewEntry->Cfg.Alias, pEntry->Cfg.Alias) == 0))
             {
                 AnscSListPopEntryByLink(pListHead, &pCosaContext2->Linkage);
 
@@ -3504,7 +3504,7 @@ VLANTermination_DelEntry
 
             pNewEntry = (PCOSA_DML_ETH_VLAN_TERMINATION_FULL)pCosaContext2->hContext;
 
-            if ( pNewEntry && AnscEqualString(pNewEntry->Cfg.Alias, pEntry->Cfg.Alias, FALSE))
+            if ( pNewEntry && (strcasecmp(pNewEntry->Cfg.Alias, pEntry->Cfg.Alias) == 0))
             {
                 AnscSListPopEntryByLink(pListHead, &pCosaContext2->Linkage);
 
