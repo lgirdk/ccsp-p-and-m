@@ -847,7 +847,7 @@ User_GetParamStringValue
 
             syscfg_get(NULL, "user_name_1", csr_user_name, sizeof(csr_user_name));
 
-            if (AnscEqualString(pUser->Username, csr_user_name, TRUE))
+            if (strcmp(pUser->Username, csr_user_name) == 0)
             {
                 AnscCopyString(pValue, "");
             }
@@ -1261,7 +1261,7 @@ User_SetParamStringValue
     if (strcmp(ParamName, "Password") == 0)
     {
         syscfg_get (NULL, "user_name_4", csr_user_name, sizeof(csr_user_name));
-        if( AnscEqualString(pUser->Username, csr_user_name, TRUE))
+        if (strcmp(pUser->Username, csr_user_name) == 0)
         {
             syscfg_get (NULL, "user_password_timeout_4", csr_user_timeout, sizeof(csr_user_timeout));
             if (csr_user_timeout[0] != '\0') {
@@ -1314,7 +1314,7 @@ User_SetParamStringValue
     if (strcmp(ParamName, "X_CISCO_COM_Password") == 0)
     {
         syscfg_get(NULL, "user_name_1", csr_user_name, sizeof(csr_user_name));
-        if( AnscEqualString(pUser->Username, csr_user_name, TRUE))
+        if (strcmp(pUser->Username, csr_user_name) == 0)
         {
             syscfg_get (NULL, "user_password_timeout_1", csr_user_timeout, sizeof(csr_user_timeout));
             if (csr_user_timeout[0] != '\0')
@@ -1411,9 +1411,9 @@ User_SetParamStringValue
         }
 #endif
         syscfg_get(NULL, "user_name_1", csr_user_name, sizeof(csr_user_name));
-        if( AnscEqualString(pUser->Username, csr_user_name, TRUE))
+        if (strcmp(pUser->Username, csr_user_name) == 0)
         {
-            if( AnscEqualString(pUser->HashedPassword, pString, TRUE))
+            if (strcmp(pUser->HashedPassword, pString) == 0)
             {
                 AnscCopyString(pUser->X_RDKCENTRAL_COM_ComparePassword,"Good_PWD");
 #ifdef FEATURE_NETWORK_LOGS
@@ -1550,7 +1550,7 @@ User_Validate
         
             pUser2 = (PCOSA_DML_USER)pCxtLink->hContext;
         
-            if( AnscEqualString(pUser2->Username, pUser->Username, TRUE) )
+            if (strcmp(pUser2->Username, pUser->Username) == 0)
             {
                 if ( (ANSC_HANDLE)pCxtLink == hInsContext )
                 {
@@ -1643,7 +1643,7 @@ User_Commit
         tmpUser.InstanceNumber = pUser->InstanceNumber;
         CosaDmlUserGetCfg(NULL, &tmpUser);
 
-        if ((!AnscEqualString(pUser->Username, csr_user_name, TRUE)) || (tmpUser.bEnabled != pUser->bEnabled))
+        if ((strcmp(pUser->Username, csr_user_name) != 0) || (tmpUser.bEnabled != pUser->bEnabled))
         {
             returnStatus = CosaDmlUserSetCfg(NULL, pUser);
         }
