@@ -24,6 +24,7 @@
 #include "ccsp_psm_helper.h"
 #include "safec_lib_common.h"
 #include <rbus/rbus.h>
+#include "cosa_drg_common.h"
 
 #define RDKB_WIFI_COMPONENT_NAME                  "com.cisco.spvtg.ccsp.wifi"
 #define RDKB_WIFI_DBUS_PATH                       "/com/cisco/spvtg/ccsp/wifi"
@@ -290,14 +291,16 @@ void* initialize_hotspot_webconfig(void *arg)
     CcspTraceInfo(("Entering thread %s\n", __FUNCTION__));
 
     char comp_status[32] = {0};
+    char WanValue[16] = {0};
     int ret = 0;
     while(1)
     {
 
         checkComponentHealthStatus(RDKB_WIFI_COMPONENT_NAME, RDKB_WIFI_DBUS_PATH, comp_status,&ret);
-        if(ret == CCSP_SUCCESS && (strcmp(comp_status, "Green") == 0))
+        commonSyseventGet("wan-status", WanValue, sizeof(WanValue));
+        if(ret == CCSP_SUCCESS && (strcmp(comp_status, "Green") == 0) && (strncmp(WanValue, "started", strlen("started")) == 0))
         {
-            CcspTraceInfo(("WiFi component health is %s, continue\n", comp_status));
+            CcspTraceInfo(("WiFi component health is %s and wan-status is %s, continue\n", comp_status, WanValue));
             break;
         }
         else
