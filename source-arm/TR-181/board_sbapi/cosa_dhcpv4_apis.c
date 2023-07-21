@@ -906,7 +906,7 @@ static BOOLEAN writeDHCPv4ServerPoolOptionToPSM(ULONG tblInstancenum, PCOSA_DML_
     }
 
     // hexdecimal value
-    if(!AnscEqualString((char*)pNewOption->Value, (char*)pOldOption->Value, TRUE))
+    if (strcmp((char*)pNewOption->Value, (char*)pOldOption->Value) != 0)
     {
         //printf("%s: write Value %s\n", __FUNCTION__, pNewOption->Value);
         rc = sprintf_s(param_name, sizeof(param_name), PSM_DHCPV4_SERVER_POOL_OPTION_VALUE, tblInstancenum, instancenum); 
