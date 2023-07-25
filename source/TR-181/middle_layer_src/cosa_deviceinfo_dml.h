@@ -430,6 +430,32 @@ Control_SetParamStringValue
         char*                       pString
     );
 
+ /***********************************************************************
+
+ APIs for Object:
+
+    Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Identity.DeviceType
+
+    * Identity_GetParamStringValue
+    * Identity_SetParamStringValue
+***********************************************************************/
+ULONG
+Identity_GetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pValue,
+        ULONG*                      pUlSize
+    );
+
+BOOL
+Identity_SetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pString
+    );
+
 /***********************************************************************
 
  APIs for Object:

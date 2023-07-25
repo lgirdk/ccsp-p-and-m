@@ -8336,6 +8336,137 @@ Control_GetParamStringValue
 
     return -1;
 }
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        ULONG
+        Identity_GetParamStringValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                char*                       pValue,
+                ULONG*                      pulSize
+            );
+
+    description:
+
+        This function is called to retrieve String parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                char*                       pValue
+                The buffer of returned string value;
+
+                ULONG*                      pulSize
+                The buffer of returned string size;
+
+    return:     TRUE if succeeded.
+
+**********************************************************************/
+
+ULONG
+Identity_GetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pValue,
+        ULONG*                      pulSize
+    )
+{
+    UNREFERENCED_PARAMETER(hInsContext);
+    char buff[30];
+    memset(buff,0,sizeof(buff));
+    errno_t  rc  = -1;
+    /* check the "DeviceType" parameter name and return the corresponding value */
+    if( AnscEqualString(ParamName, "DeviceType", TRUE))
+    {
+          if(!syscfg_get( NULL, "DeviceType", buff, sizeof(buff))) {
+           rc = strcpy_s(pValue, *pulSize, buff);
+           if(rc != EOK)
+           {
+               ERR_CHK(rc);
+               return -1;
+           }
+           return 0;
+          }
+          return -1;
+    }
+    return -1;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        Identity_SetParamStringValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                char*                       pString
+            );
+
+    description:
+
+        This function is called to set string parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                char*                       pString
+                The updated string value;
+
+    return:     TRUE if succeeded.
+
+**********************************************************************/
+BOOL
+Identity_SetParamStringValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        char*                       pString
+    )
+{
+    
+    if (IsStringSame(hInsContext, ParamName, pString, Identity_GetParamStringValue))
+        return TRUE;
+
+    /* check the "DeviceType" parameter name and set the corresponding value */
+    if( AnscEqualString(ParamName, "DeviceType", TRUE)){
+        if( (strcasecmp(pString, "prod") == 0) || (strcasecmp(pString, "PROD") == 0) || (strcasecmp(pString, "TEST") == 0) || (strcasecmp(pString, "test") == 0) ) {
+            if (syscfg_set(NULL, "DeviceType", pString) != 0){
+                CcspTraceError(("[%s] syscfg_set failed for DeviceType \n",__FUNCTION__));
+                return FALSE;
+            } else {
+                if (syscfg_commit() != 0){
+                    CcspTraceError(("[%s] syscfg_commit failed for DeviceType \n",__FUNCTION__));
+                    return  FALSE;
+                }
+            }
+            CcspTraceInfo(("[%s] DeviceType value set as %s \n",__FUNCTION__,pString));
+        } else{
+            CcspTraceInfo(("[%s] DeviceType value should 'prod' , 'PROD' , 'TEST' , 'test' \n",__FUNCTION__));
+            return FALSE;
+        }
+    } else{
+        CcspTraceWarning(("[%s] Unsupported parameter '%s'\n",__FUNCTION__,ParamName));
+        return FALSE;
+    }
+    return TRUE;
+}
+
 /**
  *  RFC Feature for CrashUpload S3signing url
 */
