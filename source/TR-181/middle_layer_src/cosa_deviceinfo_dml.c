@@ -8701,8 +8701,10 @@ Feature_GetParamBoolValue
         }
         else
         {
-            CcspTraceError(("syscfg_get failed for XfinityHealthCheckEnable\n"));
-            return FALSE;
+            CcspTraceWarning(("syscfg_get failed for XfinityHealthCheckEnable\n"));
+            //TCXB8-2563 Setting to False as XfinityHealthCheck is not set
+            *pBool = FALSE;
+            return TRUE;
         }
     }
     if (strcmp(ParamName, "CodebigSupport") == 0)
