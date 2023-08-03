@@ -374,103 +374,6 @@ bool PAM_Rbus_SyseventInit()
 	return false;
 }
 #endif
-#if defined (_HUB4_PRODUCT_REQ_) || defined (_PLATFORM_RASPBERRYPI_)
-typedef struct
-{
-    char binaryLocation[64];
-    char rbusName[64];
-}Rbus_Module;
-
-int IsFileExists(char *file_name)
-{
-    struct stat file;
-
-    return (stat(file_name, &file));
-}
-
-BOOL Pam_Rbus_discover_components(char const *pModuleList)
-{
-    rbusError_t rc = RBUS_ERROR_SUCCESS;
-    int componentCnt = 0;
-    char **pComponentNames;
-    BOOL ret = FALSE;
-    char ModuleList[1024] = {0};
-    char const *rbusModuleList[7];
-    int count = 0;
-    const char delimit[2] = " ";
-    char *token;
-
-    strcpy(ModuleList,pModuleList);
-
-    /* get the first token */
-    token = strtok(ModuleList, delimit);
-
-    /* walk through other tokens */
-    while( token != NULL ) {
-        printf( " %s\n", token );
-        rbusModuleList[count]=token;
-        count++;
-        token = strtok(NULL, delimit);
-    }
-
-    for(int i=0; i<count;i++)
-    {
-        CcspTraceInfo(("Pam_Rbus_discover_components rbusModuleList[%s]\n", rbusModuleList[i]));
-    }
-
-    rc = rbus_discoverComponentName (handle, count, rbusModuleList, &componentCnt, &pComponentNames);
-
-    if(RBUS_ERROR_SUCCESS != rc)
-    {
-        CcspTraceInfo(("Failed to discover components. Error Code = %d\n", rc));
-        return ret;
-    }
-
-    for (int i = 0; i < componentCnt; i++)
-    {
-        free(pComponentNames[i]);
-    }
-
-    free(pComponentNames);
-
-    if(componentCnt == count)
-    {
-        ret = TRUE;
-    }
-
-    CcspTraceInfo( ("Pam_Rbus_discover_components (%d-%d)ret[%s]\n",componentCnt,count,(ret)?"TRUE":"FALSE"));
-
-    return ret;
-}
-
-static void waitUntilSystemReady()
-{
-    int wait_time = 0;
-    char pModule[1024] = {0};
-    Rbus_Module pModuleNames[] = {{"/usr/bin/PsmSsp",    "rbusPsmSsp"}};
-
-    int elementCnt = ARRAY_SZ(pModuleNames);
-    for(int i=0; i<elementCnt;i++)
-    {
-        if (IsFileExists(pModuleNames[i].binaryLocation) == 0)
-        {
-            strcat(pModule,pModuleNames[i].rbusName);
-            strcat(pModule," ");
-        }
-    }
-
-    /* Check RBUS is ready. This needs to be continued upto 3 mins (180s) */
-    while(wait_time <= 90)
-    {
-        if(Pam_Rbus_discover_components(pModule)){
-            break;
-        }
-
-        wait_time++;
-        sleep(2);
-    }
-}
-#endif
 
 #if defined (WIFI_MANAGE_SUPPORTED)
 rbusError_t getStringHandler(rbusHandle_t handle, rbusProperty_t property, rbusGetHandlerOptions_t *opts)
@@ -735,9 +638,6 @@ rbusError_t devCtrlRbusInit()
 #if  defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED)	
 	//initialize sysevent
 	PAM_Rbus_SyseventInit();
-#endif
-#if defined (_HUB4_PRODUCT_REQ_)
-    waitUntilSystemReady();
 #endif
 	return rc;
 }
