@@ -73,7 +73,6 @@
 #include <openssl/hmac.h>
 #include <syscfg/syscfg.h>
 #include "safec_lib_common.h"
-#include "cedmapi.h"
 
 #define SIZE_OF_HASHPASSWORD  32
 /* Changing SNO as 256 bytes from 64 bytes due to HAL layer access more than 64 byets*/
@@ -571,23 +570,23 @@ user_validatepwd
 
    if(fromDB[0] == '\0')
    {
-     #if defined(_HUB4_PRODUCT_REQ_) || defined(_PLATFORM_RASPBERRYPI_) || defined(_PLATFORM_TURRIS_)
+#if defined(_HUB4_PRODUCT_REQ_) || defined(_PLATFORM_RASPBERRYPI_) || defined(_PLATFORM_TURRIS_)
          user_hashandsavepwd(hContext,pEntry->Password,pEntry);
-     #else
-         uint8_t *credBuf = NULL;
-         size_t credSize;
-   	 if (cedm_decrypt(&credBuf, &credSize, "lkiprgpkmqfk") != CEDM_OK) {
+#else
+         FILE *fptr;
+         char buff[10];
+         fptr=v_secure_popen("r", "/usr/bin/GetConfigFile cosausers stdout");
+         if (NULL == fptr) {
              return ANSC_STATUS_FAILURE;
          }
-         if(credBuf[credSize - 1] == '\n')
-	 {
-             credBuf[credSize - 1]='\0';
-	 }
-         user_hashandsavepwd(hContext,(char *)credBuf,pEntry);
-         if (cedm_free(&credBuf, credSize) != CEDM_OK) {
+         if (NULL == fgets(buff, 9, fptr)) {
+             v_secure_pclose(fptr);
              return ANSC_STATUS_FAILURE;
-         }    
-     #endif
+         }
+         v_secure_pclose(fptr);
+         user_hashandsavepwd(hContext,buff,pEntry);
+         memset_s(buff, sizeof(buff), 0, sizeof(buff));
+#endif
    }
 #if !defined(_HUB4_PRODUCT_REQ_)
    //TODO: Avoid the hardcoded password.
@@ -607,26 +606,26 @@ user_validatepwd
     }
    }
 #if defined(_COSA_FOR_BCI_)
-   uint8_t *credBuf = NULL;
-   size_t credSize;
    if(!strcmp(pEntry->Username,"cusadmin"))
    {
 
    syscfg_get( NULL, "hash_password_2",fromDB, sizeof(fromDB));
 
    if(fromDB[0] == '\0')
-   {     
-	 if (cedm_decrypt(&credBuf, &credSize, "jtxpybrepjab") != CEDM_OK) {
+   {
+         FILE *fptr;
+         char outbuff[10];
+         fptr=v_secure_popen("r", "/usr/bin/GetConfigFile cosausers-cusa stdout");
+         if (NULL == fptr) {
              return ANSC_STATUS_FAILURE;
          }
-         if(credBuf[credSize - 1] == '\n')
-	 {
-             credBuf[credSize - 1]='\0';
-	 }
-         user_hashandsavepwd(hContext,(char *)credBuf,pEntry);
-         if (cedm_free(&credBuf, credSize) != CEDM_OK) {
+         if (NULL == fgets(outbuff, 10, fptr)) {
+             v_secure_pclose(fptr);
              return ANSC_STATUS_FAILURE;
-         }        
+         }
+         v_secure_pclose(fptr);
+         user_hashandsavepwd(hContext,outbuff,pEntry);
+         memset_s(outbuff, sizeof(outbuff), 0, sizeof(outbuff));
    }
    if (!strcmp("highspeed",pString))
    {
@@ -716,16 +715,11 @@ CosaDmlUserResetPassword
 {
    UNREFERENCED_PARAMETER(bValue);
    CcspTraceWarning(("%s, Entered Reset function\n",__FUNCTION__)); 
-#if defined(_HUB4_PRODUCT_REQ_) || defined(_PLATFORM_RASPBERRYPI_) || defined(_PLATFORM_TURRIS_)
    char defPassword[10];
-#else
-   uint8_t *defPassword = NULL;
-   size_t defSize;
-#endif
-   
+
    if(!strcmp(pEntry->Username,"admin"))
    {
-     #if defined(_HUB4_PRODUCT_REQ_) || defined(_PLATFORM_RASPBERRYPI_) || defined(_PLATFORM_TURRIS_)
+#if defined(_HUB4_PRODUCT_REQ_) || defined(_PLATFORM_RASPBERRYPI_) || defined(_PLATFORM_TURRIS_)
          //TODO: Avoid the hardcoded password.        
          errno_t safec_rc = -1;
          safec_rc = strcpy_s(defPassword,sizeof(defPassword),"password");
@@ -733,24 +727,32 @@ CosaDmlUserResetPassword
          {
             ERR_CHK(safec_rc);
          }
-     #else
-         if (cedm_decrypt(&defPassword, &defSize, "lkiprgpkmqfk") != CEDM_OK) {
+#else
+         FILE *fptr;
+         fptr=v_secure_popen("r", "/usr/bin/GetConfigFile cosausers stdout");
+         if (NULL == fptr) {
              return ANSC_STATUS_FAILURE;
          }
-         if(defPassword[defSize - 1] == '\n'){
-             defPassword[defSize - 1]='\0';
+         if (NULL == fgets(defPassword, 9, fptr)) {
+             v_secure_pclose(fptr);
+             return ANSC_STATUS_FAILURE;
          }
-     #endif
+         v_secure_pclose(fptr); 
+#endif
    } 
 #if defined(_COSA_FOR_BCI_)
    else if(!strcmp(pEntry->Username,"cusadmin"))
    {
-         if (cedm_decrypt(&defPassword, &defSize, "jtxpybrepjab") != CEDM_OK) {
+         FILE *fptr;
+         fptr=v_secure_popen("r", "/usr/bin/GetConfigFile cosausers-cusa stdout");
+         if (NULL == fptr) {
              return ANSC_STATUS_FAILURE;
          }
-         if(defPassword[defSize - 1] == '\n'){
-             defPassword[defSize - 1]='\0';
+         if (NULL == fgets(defPassword, 10, fptr)) {
+             v_secure_pclose(fptr);
+             return ANSC_STATUS_FAILURE;
          }
+         v_secure_pclose(fptr);
    }
 #endif
    else
@@ -759,22 +761,16 @@ CosaDmlUserResetPassword
    }
    if(!strcmp(pEntry->Username,"admin"))
    {
-     user_hashandsavepwd(NULL,(char *)defPassword,pEntry);
-#if !(defined(_HUB4_PRODUCT_REQ_) || defined(_PLATFORM_RASPBERRYPI_) || defined(_PLATFORM_TURRIS_))
-     if (cedm_free(&defPassword, defSize) != CEDM_OK) {
-             return ANSC_STATUS_FAILURE;
-     }
-#endif
+     user_hashandsavepwd(NULL,defPassword,pEntry);
+     memset_s(defPassword, sizeof(defPassword), 0, sizeof(defPassword));
      return ANSC_STATUS_SUCCESS;
    }
 #if defined(_COSA_FOR_BCI_)
    if(!strcmp(pEntry->Username,"cusadmin"))
    {
-     user_hashandsavepwd(NULL,(char *)defPassword,pEntry);
+     user_hashandsavepwd(NULL,defPassword,pEntry);
+     memset_s(defPassword, sizeof(defPassword), 0, sizeof(defPassword));
      CcspTraceWarning(("%s, Returning Success\n",__FUNCTION__));
-     if (cedm_free(&defPassword, defSize) != CEDM_OK) {
-             return ANSC_STATUS_FAILURE;
-     }
      return ANSC_STATUS_SUCCESS;
    }
 #endif
