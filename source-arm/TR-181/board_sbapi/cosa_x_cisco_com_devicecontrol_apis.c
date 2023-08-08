@@ -1877,10 +1877,7 @@ void* restoreAllDBs(void* arg)
 #endif
 #if defined(_ARRIS_XB6_PRODUCT_REQ_)
         #define PEER_INTERFACE_IP "192.168.254.253"
-        #define ID "/tmp/elxrretyt-lxy.swr"
-        v_secure_system("/usr/bin/GetConfigFile "ID"");
-        v_secure_system("ssh -i "ID" root@"PEER_INTERFACE_IP" "RM_L2_PATH"");
-        v_secure_system("rm -f "ID"");
+        v_secure_system("/usr/bin/GetConfigFile /tmp/elxrretyt-lxy.swr stdout |  ssh -i /dev/stdin root@"PEER_INTERFACE_IP" "RM_L2_PATH"");
 #endif
 
 #if defined (_CBR_PRODUCT_REQ_) || (defined (_XB7_PRODUCT_REQ_) && defined (_COSA_BCM_ARM_))
