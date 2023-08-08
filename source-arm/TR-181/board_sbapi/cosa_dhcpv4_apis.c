@@ -3523,10 +3523,13 @@ int _cosa_get_dhcps_client(ULONG instancenum, UCHAR *ifName, ULONG minAddress, U
 			pEntry->Active = TRUE;
 		
 		snprintf((char*)pEntry->Chaddr, sizeof(pEntry->Chaddr), "%s", pMac);
+
+        #if !defined(_WNXL11BWL_PRODUCT_REQ_)
 		if(pEntry->Active==TRUE)
 		{
 			usg_get_cpe_associate_interface(pMac, (char*)pEntry->X_CISCO_COM_Interface);
 		}
+        #endif
 		snprintf((char*)pEntry->X_CISCO_COM_HostName, sizeof(pEntry->X_CISCO_COM_HostName), "%s", pHost);
 		mac_string_to_array(pMac,macArray);
 		if(Utopia_Init(&utctx)){
