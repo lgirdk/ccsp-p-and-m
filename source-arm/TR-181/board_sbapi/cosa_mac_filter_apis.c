@@ -134,6 +134,8 @@ CosaDmlFW_MACFilter_AddEntry(COSA_DML_FW_MACFILTER *pEntry)
         return ANSC_STATUS_FAILURE;
     else
     {
+        commonSyseventSet("pp_flush", "1");
+        commonSyseventSet("firewall-restart", "1");
         return ANSC_STATUS_SUCCESS;
     }
 
