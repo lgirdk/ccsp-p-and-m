@@ -1805,49 +1805,14 @@ DeviceInfo_SetParamStringValue
          return TRUE;
    }
 
-   /* Changes for EMS */
+    /* Changes for EMS */
     rc = strcmp_s("X_COMCAST-COM_EMS_ServerURL", strlen("X_COMCAST-COM_EMS_ServerURL"), ParamName,&ind);
     ERR_CHK(rc);
     if((!ind) && (rc == EOK))
-   
     {
-       
-        char wrapped_inputparam[256]={0};
-	    ret=isValidInput(pString,wrapped_inputparam, AnscSizeOfString(pString), sizeof( wrapped_inputparam ));
-	    if(ANSC_STATUS_SUCCESS != ret)
-	    return FALSE;
-	if(sizeof( wrapped_inputparam ) < sizeof(pMyObject->EMS_ServerURL) )
-       {
-	    if (syscfg_set_commit(NULL, "ems_server_url", wrapped_inputparam) != 0) {
-             AnscTraceWarning(("syscfg_set failed\n"));
-          } else {
-		 char ems_url[150];	
-		 rc = sprintf_s(ems_url,sizeof(ems_url),"/etc/whitelist.sh %s",wrapped_inputparam);
-                if(rc < EOK)
-               {
-                   ERR_CHK(rc);
-                   return FALSE;
-               }
-
-                v_secure_system("/etc/whitelist.sh %s",wrapped_inputparam);
-		rc = STRCPY_S_NOCLOBBER(pMyObject->EMS_ServerURL,sizeof(pMyObject->EMS_ServerURL), wrapped_inputparam);
-		if(rc != EOK)
-         {
-              ERR_CHK(rc);
-               return FALSE;
-         }
-             }
-
-	return TRUE;
-      }
-      
-      else
-     {
-         return FALSE;
-     }
-
+        return TRUE;
     }
-    
+
     rc = strcmp_s("X_RDKCENTRAL-COM_LastRebootReason", strlen("X_RDKCENTRAL-COM_LastRebootReason"), ParamName,&ind);
     ERR_CHK(rc);
     if((!ind) && (rc == EOK))
