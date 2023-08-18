@@ -159,6 +159,7 @@ CosaGreTunnelRemove
 void* update_circuitID_thread(void* arg)
 {
     UNREFERENCED_PARAMETER(arg);
+#if !defined (_WNXL11BWL_PRODUCT_REQ_)
     static BOOL running=0;
     int ret=-1;
     if(!running)
@@ -179,6 +180,7 @@ void* update_circuitID_thread(void* arg)
         CcspTraceWarning(("%s: already hotspot_update_circuit_ids is running\n", __FUNCTION__));
         return NULL;
     }
+#endif
     return NULL;
 }
 

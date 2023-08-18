@@ -424,6 +424,7 @@ int hotspot_update_circuit_ids(int greinst, int queuestart) {
 #if !defined (_SR213_PRODUCT_REQ_) || (defined (_SR213_PRODUCT_REQ_) && !defined(RDK_ONEWIFI)) //SHARMAN-1054
 static void* circuit_id_init_thread(void* arg) {
     UNREFERENCED_PARAMETER(arg);
+#if !defined (_WNXL11BWL_PRODUCT_REQ_)
     int ret = -1;
     int counter = 0;
     sleep(INITIAL_CIRCUIT_ID_SLEEP);
@@ -442,7 +443,7 @@ static void* circuit_id_init_thread(void* arg) {
         sleep(POLL_CIRCUIT_ID_SLEEP);
         ret = hotspot_update_circuit_ids(1, INITIAL_SNOOPER_QUEUE);
     }
-    
+#endif
     return NULL;
 }
 #endif

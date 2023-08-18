@@ -416,6 +416,7 @@ int GreTunnel_hotspot_update_circuit_ids(ULONG tuIns, int queuestart) {
 
 static void* GreTunnel_circuit_id_init_thread(void* arg) {
     UNREFERENCED_PARAMETER(arg);
+#if !defined (_WNXL11BWL_PRODUCT_REQ_)
     int ret = -1;
     sleep(INITIAL_CIRCUIT_ID_SLEEP);
 
@@ -426,7 +427,7 @@ static void* GreTunnel_circuit_id_init_thread(void* arg) {
         sleep(POLL_CIRCUIT_ID_SLEEP);
         ret = GreTunnel_hotspot_update_circuit_ids(1, INITIAL_SNOOPER_QUEUE);
     }
-    
+#endif
     return NULL;
 }
 
