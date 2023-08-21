@@ -2369,6 +2369,40 @@ WiFi_Telemetry_SetParamIntValue
         return FALSE;
         }
         CcspTraceInfo(("Successfully set  LogInterval in PSM \n"));
+
+
+#ifdef RDK_ONEWIFI
+        parameterValStruct_t pVal[1];
+        char                 paramName[256] = "Device.WiFi.WHIX_ChUtility_LogInterval";
+        char                 compName[256]  = "eRT.com.cisco.spvtg.ccsp.wifi";
+        char                 dbusPath[256]  = "/com/cisco/spvtg/ccsp/wifi";
+        char*                faultParam     = NULL;
+        int                  ret            = 0;
+        CCSP_MESSAGE_BUS_INFO *bus_info     = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
+
+        pVal[0].parameterName  = paramName;
+        pVal[0].parameterValue = str;
+        pVal[0].type           = ccsp_int;
+
+        ret = CcspBaseIf_setParameterValues(
+                  bus_handle,
+                  compName,
+                  dbusPath,
+                  0,
+                  0,
+                  pVal,
+                  1,
+                  TRUE,
+                  &faultParam
+              );
+
+        if (ret != CCSP_SUCCESS)
+        {
+            CcspTraceError(("%s - %d - Failed to notify WiFi component - Error [%s]\n", __FUNCTION__, __LINE__, faultParam));
+            bus_info->freefunc(faultParam);
+            return FALSE;
+        }
+#endif
         /* save update to backup */
         pMyObject->WiFi_Telemetry.ChUtilityLogInterval = iValue;
         return TRUE;
