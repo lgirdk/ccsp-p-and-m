@@ -348,6 +348,11 @@ CosaDmlMaptApplyConfig
        MAPT_LOG_ERROR("Failed to set nf_conntrack_udp_timeout!");
   }
 
+  if ( v_secure_system("sysctl -w net.netfilter.nf_conntrack_udp_timeout_stream=30") )
+  {
+       MAPT_LOG_ERROR("Failed to set nf_conntrack_udp_timeout_stream!");
+  }
+
   return STATUS_SUCCESS;
 }
 
