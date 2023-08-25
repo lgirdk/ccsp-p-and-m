@@ -273,7 +273,9 @@ DeviceInfo_GetParamStringValue_Custom
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
+#ifndef MODEM_ONLY_SUPPORT
     PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
+#endif
     char isEthEnabled[64]={'\0'};
     int EthWANEnable = 0;
 #ifdef CONFIG_INTERNET2P0
