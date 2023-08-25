@@ -1700,6 +1700,15 @@ Interface2_SetParamUlongValue
     /* check the parameter name and set the corresponding value */
     if (strcmp(ParamName, "MaxMTUSize") == 0)
     {
+
+#ifndef _LG_MV3_
+/*This change has no impact on default values of Device.IP.Interface.{i}.MaxMTUSize,
+ but we can set the values in the range of 1280 to 2000 only for  MV3.*/
+        if (uValue > 1500)
+        {
+            return FALSE;
+        }
+#endif
         /* save update to backup */
         pIPInterface->Cfg.MaxMTUSize = uValue;
         return TRUE;
