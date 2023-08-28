@@ -2402,7 +2402,10 @@ Relay_Rollback
     PCOSA_DATAMODEL_DNS pDns = (PCOSA_DATAMODEL_DNS)g_pCosaBEManager->hDNS;
     PCOSA_DML_DNS_RELAY pRelay = &pDns->Relay;
 
-    return CosaDmlIpDnsGetRelayStatus(NULL, pRelay);
+    if (CosaDmlIpDnsGetRelayStatus(NULL, pRelay) == COSA_DML_DNS_STATUS_Error)
+        return ANSC_STATUS_FAILURE;
+
+    return ANSC_STATUS_SUCCESS;
 }
 
 
