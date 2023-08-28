@@ -1835,8 +1835,8 @@ CosaDmlIpDnsGetRelayStatus
     )
 {
     COSA_DML_DNS_STATUS status = COSA_DML_DNS_STATUS_Error;
-    boolean_t dslite_enable = false;
     UtopiaContext ctx = {};
+
     if (!Utopia_Init(&ctx))
     {
         return status;
@@ -1845,14 +1845,35 @@ CosaDmlIpDnsGetRelayStatus
     int rc = Utopia_GetDnsRelayEnabled(&ctx, &g_DnsRelayEnabled);
     if (rc == 0)
     {
-        Utopia_GetDsliteEnable(&ctx, &dslite_enable);
-        status = ((g_DnsRelayEnabled | dslite_enable) == TRUE) ? COSA_DML_DNS_STATUS_Enabled : COSA_DML_DNS_STATUS_Disabled;
-        pRelay->Status = status;
-        pRelay->bEnabled = g_DnsRelayEnabled;
+        if (g_DnsRelayEnabled)
+        {
+            pRelay->bEnabled = g_DnsRelayEnabled;
+            pRelay->Status = COSA_DML_DNS_STATUS_Enabled;
+        }
+        else
+        {
+            boolean_t dslite_enable = false;
+            Utopia_GetDsliteEnable(&ctx, &dslite_enable);
+            if (dslite_enable)
+            {
+                pRelay->bEnabled = TRUE;
+                pRelay->Status = COSA_DML_DNS_STATUS_Enabled;
+            }
+            else
+            {
+                pRelay->bEnabled = FALSE;
+                pRelay->Status = COSA_DML_DNS_STATUS_Disabled;
+            }
+        }
+
+        status = pRelay->Status;
     }
+
     Utopia_Free(&ctx, 0);
+
     return status;
 }
+
 COSA_DML_DNS_STATUS
 CosaDmlIpDnsGetRelayEnable
     (
