@@ -1916,6 +1916,7 @@ Relay_GetParamBoolValue
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "Enable") == 0)
     {
+        CosaDmlIpDnsGetRelayStatus(NULL, pRelay);
         *pBool = pRelay->bEnabled;
         return TRUE;
     }
