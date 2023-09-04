@@ -19378,6 +19378,129 @@ RPC_SetParamBoolValue
 }
 #endif
 
+/*********************************************************************************************
+
+   caller: owner of this object
+
+   prototype:
+
+       BOOL
+       SyseventTracer_GetParamBoolValue
+           (
+               ANSC_HANDLE                 hInsContext,
+               char*                       ParamName,
+               BOOL*                       pBool
+           );
+
+   description:
+
+       This function is called to retrieve Boolean parameter value;
+
+   argument:   ANSC_HANDLE                 hInsContext,
+               The instance handle;
+
+               char*                       ParamName,
+               The parameter name;
+
+               BOOL*                       pBool
+               The buffer of returned boolean value;
+
+   return:     TRUE if succeeded.
+
+**********************************************************************/
+
+BOOL
+SyseventTracer_GetParamBoolValue
+(
+ANSC_HANDLE                 hInsContext,
+char*                       ParamName,
+BOOL*                       pBool
+)
+{
+    UNREFERENCED_PARAMETER(hInsContext);
+
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+        if(access("/nvram/sysevent_tracer_enabled", F_OK) == 0)
+        {
+            *pBool = TRUE;
+        }
+        else
+        {
+            *pBool = FALSE;
+        }
+        return TRUE;
+    }
+    return FALSE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        SyseventTracer_SetParamBoolValue
+        (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                BOOL                        bValue
+        );
+
+    description:
+
+        This function is called to set BOOL parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                BOOL                        bValue
+                The updated BOOL value;
+
+    return:     TRUE if succeeded.
+
+**********************************************************************/
+
+BOOL
+SyseventTracer_SetParamBoolValue
+(
+ANSC_HANDLE                 hInsContext,
+char*                       ParamName,
+BOOL                        bValue
+)
+{
+    if (IsBoolSame(hInsContext, ParamName, bValue, SyseventTracer_GetParamBoolValue))
+        return TRUE;
+
+    FILE *log_fp = fopen("/rdklogs/logs/sysevent_tracer.txt", "a+");
+
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+        if (bValue == 1)
+        {
+            v_secure_system("touch /nvram/sysevent_tracer_enabled");
+            CcspTraceInfo(("Successfully enabled Sysevent tracer\n"));
+            fprintf(log_fp, "Successfully enabled Sysevent tracer\n");
+            fclose(log_fp);
+            return TRUE;
+        }
+        else if (bValue == 0)
+        {
+            v_secure_system("rm -f /nvram/sysevent_tracer_enabled");
+            CcspTraceInfo(("Successfully disabled Sysevent tracer\n"));
+            fprintf(log_fp, "Successfully disabled Sysevent tracer\n");
+            fclose(log_fp);
+            return TRUE;
+        }
+    }
+    fclose(log_fp);
+    return FALSE;
+}
+
 //sukant start
 /**********************************************************************
 

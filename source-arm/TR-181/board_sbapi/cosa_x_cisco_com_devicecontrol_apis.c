@@ -1801,6 +1801,8 @@ void* restoreAllDBs(void* arg)
     v_secure_system("rm -f /nvram/.FirmwareUpgradeEndTime");
     v_secure_system("rm -f /nvram/.FirmwareUpgradeStartTime");
 
+    v_secure_system("rm -f /nvram/sysevent_tracer_enabled");
+
 	// We have syscfg running on the ATOM side when mesh is running. We need to clear out the
     // syscfg.db on the ATOM side during factory reset.
 #if defined(_COSA_INTEL_USG_ARM_)
