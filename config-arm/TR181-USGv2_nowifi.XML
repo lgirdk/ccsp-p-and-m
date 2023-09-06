@@ -2984,33 +2984,6 @@
                                 </parameters>
                             </object>
 
-                            <object>
-                                <name>Tile</name>
-                                <objectType>object</objectType>
-
-                                <functions>                            
-                                    <func_GetParamStringValue>Generic_GetParamStringValue</func_GetParamStringValue>
-                                    <func_SetParamStringValue>Generic_SetParamStringValue</func_SetParamStringValue>
-                                    <func_GetParamUlongValue>Generic_GetParamUlongValue</func_GetParamUlongValue>
-                                    <func_SetParamUlongValue>Generic_SetParamUlongValue</func_SetParamUlongValue>
-                                </functions>
-
-                                <parameters>
-                                    <parameter>
-                                        <name>ReportingURL</name>
-                                        <type>string</type>
-                                        <syntax>string</syntax>
-                                        <writable>true</writable>
-                                    </parameter>
-
-                                    <parameter>
-                                        <name>ReportingInterval</name>
-                                        <type>unsignedInt</type>
-                                        <syntax>uint32</syntax>
-                                        <writable>true</writable>
-                                    </parameter>
-                                </parameters>
-                            </object>
                         </objects>
                 </object>
 
@@ -3908,74 +3881,7 @@
                                    <writable>true</writable>
                                    </parameter>
                               </parameters>
-                                <objects>
-                                           <object>
-
-                                                 <name>BLE</name>
-
-                                                 <objectType>object</objectType>
-                                                 <functions></functions>
-                                                 <parameters></parameters>
-                                                 <objects>
-                                                        <object>
-                                                                <name>Tile</name>
-
-                                                                <objectType>object</objectType>
-                                                                <functions></functions>
-                                                                <parameters></parameters>
-                                                                 <objects>
-                                                                         <object>
-                                                                                  <name>Cmd</name>
-
-                                                                                   <objectType>object</objectType>
-
-                                                                                   <functions>
-                                                                                                        <func_GetParamStringValue>Cmd_GetParamStringValue</func_GetParamStringValue>
-                                                                                                        <func_SetParamStringValue>Cmd_SetParamStringValue</func_SetParamStringValue>
-
-                                                                                        </functions>
-
-                                                                                        <parameters>
-                                                                                                <parameter>
-
-                                                                                                        <name>Request</name>
-
-                                                                                                        <type>string</type>
-
-                                                                                                        <syntax>string</syntax>
-
-                                                                                                        <writable>true</writable>
-                                                                                                </parameter>
-
-                                                                                        </parameters>
-                                                                                </object>
-                                                                                </objects>
-                                                                                </object>
-                                                                                </objects>
-                                                                                </object>
-
-                                                                        </objects>
 </object>  
-
-<object>
-<name>X_RDK_BlueTooth</name>
-             <objects>
-                   <object>
-                     <name>BLE</name>
-                     <objectType>object</objectType>
-                     <functions>
-                       <func_GetParamStringValue>TileMac_GetParamStringValue</func_GetParamStringValue>
-                     </functions>
-                     <parameters>
-                        <parameter>
-                           <name>TileMac</name>
-                           <type>string</type>
-                           <syntax>string</syntax>
-                       </parameter>
-                      </parameters>
-                   </object>
-              </objects>
-</object>
 
 <!--BlueTooth End-->
 <?endif?>

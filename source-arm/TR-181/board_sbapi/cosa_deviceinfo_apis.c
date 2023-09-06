@@ -105,7 +105,6 @@
 #define DEVICE_PROPERTIES    "/etc/device.properties"
 #define PARTNERS_INFO_FILE              "/nvram/partners_defaults.json"
 #define BOOTSTRAP_INFO_FILE		"/nvram/bootstrap.json"
-#define RFC_DEFAULTS_FILE       "/etc/rfcDefaults.json"
 #define RFC_STORE_FILE       "/opt/secure/RFC/tr181store.json"
 #define CUSTOM_DATA_MODEL_ENABLED "custom_data_model_enabled"
 #define SYSTEMD "systemd"
@@ -4920,7 +4919,7 @@ CosaDmlDiRfcDefaultsInit
     cJSON **pRfcDefaults
   )
 {
-   return RfcJsonInit(pRfcDefaults, RFC_DEFAULTS_FILE);
+   return RfcJsonInit(pRfcDefaults, NULL);
 }
 
 ANSC_STATUS
