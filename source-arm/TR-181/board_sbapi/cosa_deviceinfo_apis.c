@@ -2552,11 +2552,11 @@ ANSC_STATUS getFactoryPartnerId
         PULONG                      pulSize
 	)
 {
-#if defined(_XB6_PRODUCT_REQ_) || defined(_HUB4_PRODUCT_REQ_)
+#if defined(_XB6_PRODUCT_REQ_) || defined(_HUB4_PRODUCT_REQ_) || defined(_WNXL11BWL_PRODUCT_REQ_)
 	if(ANSC_STATUS_SUCCESS == platform_hal_getFactoryPartnerId(pValue))
 	{
 		*pulSize = AnscSizeOfString(pValue);
-		CcspTraceInfo(("%s - %s\n",__FUNCTION__,pValue));
+		CcspTraceInfo(("%s:%d- %s\n",__FUNCTION__,__LINE__,pValue));
 		return ANSC_STATUS_SUCCESS; 
 	}
 	else
