@@ -305,14 +305,25 @@ void CosaDmlDiCheckAndEnableMoCA( void )
 static const int OK = 1 ;
 static const int NOK = 0 ;
 static char reverseSSHArgs[256];
+static char nonshortsHostLogin[256];
+static char shortsHostLogin[256];
+char* user;
+const char localHost[] = "localhost";
+struct revSSHParam{
+        int idletimeout;
+        int sshport;
+        int revsshport;
+        char hostIp[512];
+}revsshparam;
+#define sshCommand "/lib/rdk/startTunnel.sh"
+
+#ifdef ENABLE_SHORTS
 struct stunnelSSHArgs{
         int localport;
         int stunnelport;
         char host[512];
         char hostIp[512];
 }stunnelsshargs;
-#define sshCommand "/lib/rdk/startTunnel.sh"
-#ifdef ENABLE_SHORTS
 #define stunnelCommand "/lib/rdk/startStunnel.sh"
 #endif
 static const char* rsshPidFile = "/var/tmp/rssh.pid";
@@ -346,189 +357,73 @@ PsmGet(const char *param, char *value, int size)
 /**
  * Form dropbear equivalent options from input arguments accepted by TR-69/181
  */
-static char* mapArgsToSSHOption(char *revSSHConfig,bool shortsFlag) {
+bool extractSshArguments(char *revSSHConfig) {
 
 	char* value = NULL;
-	char* option = NULL;
 	errno_t rc = -1;
 
         if (!revSSHConfig)
             return NULL;
-
-        option = (char*) calloc(125, sizeof(char));
-
-	if (option) {
-		if ((value = strstr(revSSHConfig, "idletimeout="))) {
-			rc = sprintf_s(option, 125, " -I %s -f -N -y -T",
-					value + strlen("idletimeout="));
-			if(rc < EOK)
-			{
-				ERR_CHK(rc);
-			}
-                }else if ((value = strstr(revSSHConfig, "sshport=")) && !(value =
-                           strstr(revSSHConfig, "revsshport="))) {
-                  value = strstr(revSSHConfig, "sshport=");
-                        if(shortsFlag)
-                        {
-                                rc=sprintf_s(option, 125, " -p %d",stunnelsshargs.localport);
-                                if(rc < EOK)
-                                    ERR_CHK(rc);
-                        }
-                        else{
-                                rc = sprintf_s(option, 125, " -p %s", value + strlen("sshport="));
-                                if(rc < EOK)
-                                {
-                                      ERR_CHK(rc);
+        
+        if ((value = strstr(revSSHConfig, "idletimeout="))) {
+                revsshparam.idletimeout = atoi(value+strlen("idletimeout="));
+        }else if ((value = strstr(revSSHConfig, "revsshport="))) {
+                        revsshparam.revsshport = atoi(value+strlen("revsshport="));
+        }else if ((value = strstr(revSSHConfig, "sshport="))) {
+                revsshparam.sshport = atoi(value+strlen("sshport="));
+#ifdef ENABLE_SHORTS
+        }else if ((value = strstr(revSSHConfig, "stunnelport="))) {
+               stunnelsshargs.stunnelport=atoi(value + strlen("stunnelport="));
+        }else if ((value = strstr(revSSHConfig, "host="))) {
+                if(stunnelsshargs.host){
+                        rc=strcpy_s(stunnelsshargs.host,512,value+strlen("host="));
+                        if(rc < EOK){
+                                ERR_CHK(rc);
+                                return false;
                                 }
+                        CcspTraceInfo(("[%s] stunnel.host extracted: %s \n",__FUNCTION__,stunnelsshargs.host));
                         }
-		} else if ((value = strstr(revSSHConfig, "revsshport="))) {
-			rc = sprintf_s(option, 125, " -R %s:[CM_IP]:22", value + strlen("revsshport="));
-			if(rc < EOK)
-			{
-				ERR_CHK(rc);
-			}
-		} else {
-                        // Sanity check do not include unrecognised options
-			free(option);
-			option = NULL;
-		}
-	}
-
-	return option;
-}
-
+#endif  
+        }else if ((value = strstr(revSSHConfig, "hostIp="))) {
+#ifdef ENABLE_SHORTS
+                if(stunnelsshargs.hostIp){
+                        rc=strcpy_s(stunnelsshargs.hostIp,512,value+strlen("hostIp="));
+                        if(rc < EOK){
+                                ERR_CHK(rc);
+                                return false;
+                                }
+                       CcspTraceInfo(("[%s] stunnel.hostIp extracted: %s \n",__FUNCTION__,stunnelsshargs.hostIp));
+                       rc= strcpy_s(revsshparam.hostIp,sizeof(revsshparam.hostIp), stunnelsshargs.hostIp);
+                       if(rc < EOK){
+                               ERR_CHK(rc);
+                               return false;
+                               }
+                 }else {
+#endif                         
+                        rc=strcpy_s(revsshparam.hostIp,sizeof(revsshparam.hostIp),value+strlen("hostIp="));
+                        if(rc < EOK){
+                                ERR_CHK(rc);
+                                return false;
+                                }
+                       }
+                       CcspTraceInfo(("[%s] hostIp extracted: %s \n",__FUNCTION__,revsshparam.hostIp));
+         }else if ((value = strstr(revSSHConfig, "user="))) {
+                 user = (char*) calloc(125, sizeof(char));
+                 if(user){
+                        rc=strcpy_s(user,125,value+strlen("user="));
+                        if(rc < EOK){
+                                ERR_CHK(rc);
+                                free(user);
+                                return false;
+                                }
+                         CcspTraceInfo(("[%s] user extracted: %s \n",__FUNCTION__,user));
+                         }
+               }
+         return true;
+         }
 /*
  * Returns string until the first occurrence of delimiter ';' is found.
  */
-static char* findUntilFirstDelimiter(char* input) {
-
-        char tempCopy[512] = { 0 };
-	char *tempStr = NULL;
-	char* option = NULL;
-    unsigned int inputMsgSize = 0;
-    char *st = NULL;
-    errno_t rc = -1;
-
-        if (!input)
-            return NULL;
-
-        option = (char*) calloc(125, sizeof(char));
-	inputMsgSize = strlen(input);
-    if (sizeof(tempCopy) > inputMsgSize)
-    {
-        strncpy(tempCopy, input, inputMsgSize);
-        tempStr = (char*) strtok_r(tempCopy, ";", &st);
-        if (option)
-        {
-            rc = strcpy_s(option, 125, (tempStr ? tempStr : input));
-            ERR_CHK(rc);
-        }
-    }
-	return option;
-}
-
-/**
- * Get login username/target for jump server
- */
-static char* getHostLogin(char *tempStr,bool shortsFlag) {
-	char* value = NULL;
-    char* temp = NULL;
-	char* hostIp = NULL;
-	char* user = NULL;
-	char* hostLogin = NULL;
-	unsigned int inputMsgSize = 0;
-        char tempCopy[512] = { 0 };
-	errno_t rc = -1;
-
-        if (!tempStr)
-          return NULL;
-        inputMsgSize = strlen(tempStr);
-        if ( sizeof(tempCopy) > inputMsgSize)
-        {
-          strncpy(tempCopy, tempStr, inputMsgSize);
-        }
-        else
-        {
-          return NULL;
-        }
-        if ((value = strstr(tempStr, "hostIp="))){
-                sprintf_s(stunnelsshargs.hostIp, 512, value + strlen("hostIp="));
-                CcspTraceInfo(("%s Host: %s \n",__FUNCTION__,stunnelsshargs.hostIp));
-                if(stunnelsshargs.hostIp){
-                          temp = findUntilFirstDelimiter(stunnelsshargs.hostIp);
-                          rc=strcpy_s(stunnelsshargs.hostIp,sizeof(stunnelsshargs.hostIp),temp);
-                          free(temp);
-                          CcspTraceInfo(("%s HostIp extracted: %s \n",__FUNCTION__,stunnelsshargs.hostIp));
-                }
-         }
-         if ((value = strstr(tempStr, "host="))) {
-                 if (shortsFlag) {
-                        int host_len=strlen("localhost");
-                        hostIp = (char*) calloc(host_len+1,sizeof(char));
-                        sprintf_s(hostIp,host_len+1, "%s", "localhost");
-                        sprintf_s(stunnelsshargs.host, 512, value + strlen("host="));
-                        CcspTraceInfo(("%s Host: %s \n",__FUNCTION__,stunnelsshargs.host));
-                        if(stunnelsshargs.host){
-                          temp = findUntilFirstDelimiter(stunnelsshargs.host);
-                          rc=strcpy_s(stunnelsshargs.host,sizeof(stunnelsshargs.host),temp);
-                          free(temp);
-                          CcspTraceInfo(("%s Host extracted: %s \n",__FUNCTION__,stunnelsshargs.host));
-                        }
-                 }
-                 else {
-                       hostIp = (char*) calloc(256, sizeof(char));
-                       if( stunnelsshargs.stunnelport) {
-                         sprintf_s(hostIp,256, "%s", stunnelsshargs.hostIp);
-                       }
-                       else {
-                             sprintf_s(hostIp,256, "%s", value + strlen("host="));
-                       }
-                        CcspTraceInfo(("%s Host: %s \n",__FUNCTION__,hostIp));
-                 }
-        }
-	if ((value = strstr(tempStr, "user="))) {
-		user = (char*) calloc(125, sizeof(char));
-		snprintf(user, 125, "%s", value + strlen("user="));
-	}
-
-	if (user && hostIp) 
-    {
-        temp = findUntilFirstDelimiter(user);
-        if (user)
-        {
-            free(user);
-            user = NULL;
-        }
-        user = temp;
-        CcspTraceInfo(("%s User extracted: %s \n",__FUNCTION__,user));
-        temp = findUntilFirstDelimiter(hostIp);
-        if (hostIp)
-        {
-            free(hostIp);
-            hostIp = NULL;
-        }
-        hostIp = temp;
-        CcspTraceInfo(("%s Host extracted: %s \n",__FUNCTION__,hostIp));
-                hostLogin = (char*) calloc(255, sizeof(char));
-                if (hostLogin) {
-                        rc = sprintf_s(hostLogin, 255, " %s@%s", user, hostIp);
-                        if(rc < EOK)
-                        {
-                             ERR_CHK(rc);
-                        }
-                }
-                CcspTraceInfo(("%s Host Login value: %s \n",__FUNCTION__,hostLogin));
-        }
-
-	if (user)
-		free(user);
-
-	if (hostIp)
-		free(hostIp);
-
-	return hostLogin;
-}
-
 ANSC_STATUS
 CosaDmlDiInit
     (
@@ -2367,27 +2262,7 @@ void setLastRebootReason(char* reason)
 		AnscTraceWarning(("syscfg_set failed for Counter\n"));
 	}
 }
-// Check SHORTS RFC
-bool isShortsEnabled(){
 
-        char buf[8]={0};
-        if (syscfg_get( NULL, "ShortsEnabled", buf, sizeof(buf)) == 0)
-        {
-                if (strncmp(buf, "true", sizeof(buf)) == 0){
-                        CcspTraceInfo(("%s SHORTS Enabled: %s \n",__FUNCTION__,"True"));
-                        return TRUE;
-                }
-                else {
-                        CcspTraceInfo(("%s SHORTS Enabled: %s \n",__FUNCTION__,"False"));
-                        return FALSE;
-                }
-        }
-        else
-        {
-                CcspTraceError(("%s syscfg_get failed  for SHORTS Enable\n",__FUNCTION__));
-                return FALSE;
-        }
-}
 // Find localhost port available in specified range for stunnel-client to listen
 int findLocalPortAvailable()
 {
@@ -2415,113 +2290,72 @@ int findLocalPortAvailable()
         }
         return -1;
 }
-bool isStunnelPortEnabled(char* pString){
-        char tempCopy[512]={ "\0"};
-        char* value=NULL;
-        char *st = NULL;
-        char* tempStr = NULL;
-        errno_t rc = -1;
-        rc = strcpy_s(tempCopy,512, pString);
-        ERR_CHK(rc);
-        tempStr = (char*) strtok_r(tempCopy, ";", &st);
-        while(NULL != tempStr) {
-                if((value = strstr(tempStr, "stunnelport="))){
-                        stunnelsshargs.stunnelport=atoi(value + strlen("stunnelport="));
-                        return TRUE;
-                }
-                tempStr = (char*) strtok_r(NULL, ";", &st);
-        }
-        return FALSE;
-}
 int setXOpsReverseSshArgs(char* pString) {
     char tempCopy[512] = { "\0" };
     char* tempStr = NULL;
-    char* option = NULL;
-    char* hostLogin = NULL;
+    bool status = true;
     int inputMsgSize = 0;
-    int hostloglen = 0;
     char *st = NULL;
     errno_t rc = -1;
+    revsshparam.idletimeout = 0;
+    revsshparam.sshport = 0;
+    revsshparam.revsshport = 0;
+    revsshparam.hostIp[0] = '\0';
+
     stunnelsshargs.localport = 0;
     stunnelsshargs.stunnelport = 0;
     stunnelsshargs.host[0] = '\0';
     stunnelsshargs.hostIp[0] = '\0';
-
-    bool shortsFlag= false;
-#ifdef ENABLE_SHORTS
-    shortsFlag=(isShortsEnabled() && isStunnelPortEnabled(pString));
-#endif
     memset(reverseSSHArgs,0,sizeof(reverseSSHArgs));
     if (!pString)
     {
         return 1;
     }
     inputMsgSize = strlen(pString);
-    hostLogin = getHostLogin(pString,shortsFlag);
-    if (!hostLogin) {
-            AnscTraceWarning(("Warning !!! Target host for establishing reverse SSH tunnel is missing !!!\n"));
-            rc = strcpy_s(reverseSSHArgs, sizeof(reverseSSHArgs), "");
-            ERR_CHK(rc);
-            return 1;
-    }
-    if(shortsFlag)
-    {
-            stunnelsshargs.localport=findLocalPortAvailable();
-            if(stunnelsshargs.localport == -1)
-            {
-                    CcspTraceInfo(("[%s] Reserved ports are not availale... \n",__FUNCTION__));
-                    return NOK;
-            }
-            CcspTraceInfo(("[%s] Stunnel Args = %d %s %s %d \n",__FUNCTION__,stunnelsshargs.localport,stunnelsshargs.hostIp,stunnelsshargs.host,stunnelsshargs.stunnelport));
-    }
+#ifdef ENABLE_SHORTS
+    stunnelsshargs.localport=findLocalPortAvailable();
+#endif
+        if(stunnelsshargs.localport == -1)
+                {
+                        CcspTraceInfo(("[%s] Reserved ports are not available... \n",__FUNCTION__));
+                        return NOK;
+                }
     if (sizeof(tempCopy) > (unsigned int)inputMsgSize)
     {
             rc=strcpy_s(tempCopy, 512, pString);
     }
-    else
-    {
-       if (hostLogin)
-         free(hostLogin);
-            return 1;
-    }
-    tempStr = (char*) strtok_r(tempCopy, ";", &st);
-    if (NULL != tempStr) {
-      option = mapArgsToSSHOption(tempStr,shortsFlag);
-           if (option)
-           {
-                unsigned int len = strlen(option);
-                if (sizeof(reverseSSHArgs) > len)
-                {
-                    strncpy(reverseSSHArgs, option,len);
-                }
+    tempStr = (char*) strtok_r(tempCopy,";", &st);
+    while(NULL != tempStr){
+            status = extractSshArguments(tempStr);
+            if(!status)
+            {   
+                    CcspTraceInfo((" arguments extraction failure \n"));
+                    break;
+            }       
+            tempStr = strtok_r(NULL, ";", &st);
             }
-     } else {
-            AnscTraceWarning(("No Match Found !!!!\n"));
-            printf("No Match Found !!!!\n");
-        }
-     if (option) {
-            free(option);
-     }
+    CcspTraceInfo(("[%s] Stunnel Args = %d %s %s %d \n",__FUNCTION__,stunnelsshargs.localport,stunnelsshargs.hostIp,stunnelsshargs.host,stunnelsshargs.stunnelport));
 
-     while ((tempStr = strtok_r(NULL, ";", &st)) != NULL) {
-       option = mapArgsToSSHOption(tempStr,shortsFlag);
-            if ( NULL != option) {
-                int len = strlen(option);
-                if (sizeof(reverseSSHArgs) > (strlen(reverseSSHArgs) + len))
-                {
-                    strncat(reverseSSHArgs, option,len);
-                }
-                free(option);
-            }
-     }
-     hostloglen = strlen(hostLogin);
-     if (sizeof(reverseSSHArgs) > (strlen(reverseSSHArgs) + hostloglen)){
-       strncat(reverseSSHArgs, hostLogin,hostloglen);
-     }
-     if (hostLogin)
-       free(hostLogin);
-    return ANSC_STATUS_SUCCESS;
+    /*constructing reversesshargs, shortsArgs ,nonShortsArgs */
+    rc = sprintf_s(reverseSSHArgs , 255 ," -I %d -f -N -y -T -R %d:[CM_IP]:22", revsshparam.idletimeout ,revsshparam.revsshport);
+    if ( rc < EOK ){
+            ERR_CHK(rc);
+    }
+    CcspTraceInfo(("[%s] reverseSSHArgs : %s \n",__FUNCTION__ ,reverseSSHArgs));
+    
+    rc = sprintf_s(shortsHostLogin , 255 ," -p %d %s@%s",stunnelsshargs.localport , user,localHost);
+    if (rc < EOK ) {
+             ERR_CHK(rc);
+    }
+
+    rc = sprintf_s(nonshortsHostLogin , 255 ," -p %d %s@%s",revsshparam.sshport , user ,stunnelsshargs.stunnelport?revsshparam.hostIp:stunnelsshargs.host);
+    if (rc < EOK ) {
+             ERR_CHK(rc);
+    }
+
+            return ANSC_STATUS_SUCCESS;
 }
+
 
 
 ANSC_STATUS getXOpsReverseSshArgs
@@ -2556,16 +2390,17 @@ int setXOpsReverseSshTrigger(char *input) {
     #ifdef ENABLE_SHORTS
         char *trigger_shorts = NULL;
         trigger_shorts = strstr(input,"start shorts");
-        if (isShortsEnabled() && trigger_shorts)
+        if (trigger_shorts)
         {
                 CcspTraceInfo(("[%s] Starting Stunnel \n",__FUNCTION__));
-                CcspTraceInfo(("[%s] Stunnel Commmand = %s %d %s %s %d %s \n",__FUNCTION__,stunnelCommand,stunnelsshargs.localport,stunnelsshargs.host,stunnelsshargs.hostIp,stunnelsshargs.stunnelport,reverseSSHArgs));
-                v_secure_system("/bin/sh %s %d %s %s %d %s &",stunnelCommand,stunnelsshargs.localport,stunnelsshargs.host,stunnelsshargs.hostIp,stunnelsshargs.stunnelport,reverseSSHArgs);
+                CcspTraceInfo(("[%s] Stunnel Commmand = %s %d %s %s %d %s %s %s \n",__FUNCTION__,stunnelCommand,stunnelsshargs.localport,stunnelsshargs.host,stunnelsshargs.hostIp,stunnelsshargs.stunnelport,reverseSSHArgs,shortsHostLogin,nonshortsHostLogin));
+                v_secure_system("/bin/sh %s %d %s %s %d %s %s %s &",stunnelCommand,stunnelsshargs.localport,stunnelsshargs.host,stunnelsshargs.hostIp,stunnelsshargs.stunnelport,reverseSSHArgs,shortsHostLogin,nonshortsHostLogin);
         }
+
         else {
     #endif
-                CcspTraceInfo(("[%s] ReverseSSH arguments = %s  \n",__FUNCTION__,reverseSSHArgs));
-                v_secure_system(sshCommand " start %s", reverseSSHArgs);
+                CcspTraceInfo(("[%s] ReverseSSH arguments = %s %s  \n",__FUNCTION__,reverseSSHArgs,nonshortsHostLogin));
+                v_secure_system(sshCommand " start %s%s", reverseSSHArgs,nonshortsHostLogin);
     #ifdef ENABLE_SHORTS
         }
     #endif
