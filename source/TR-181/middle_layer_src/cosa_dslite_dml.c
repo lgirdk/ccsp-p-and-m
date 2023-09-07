@@ -675,6 +675,11 @@ InterfaceSetting4_SetParamStringValue
         COSA_DML_DSLITE read_cfg;
         read_cfg.InstanceNumber = pDsliteTunnel->InstanceNumber;
         CosaDmlDsliteGetCfg(NULL, &read_cfg);
+
+        //when dslite is up and running don;t let change EndpointName
+        if (AnscSizeOfString(pDsliteTunnel->addr_inuse) > 0) {
+            return FALSE;
+        }
         if(read_cfg.mode == 2)//EndpointName is only writable when EndpointAssignmentPrecedence is Static
         {
             /* save update to backup */
@@ -692,6 +697,15 @@ InterfaceSetting4_SetParamStringValue
 
     if (strcmp(ParamName, "EndpointAddress") == 0)
     {
+        COSA_DML_DSLITE read_cfg;
+        read_cfg.InstanceNumber = pDsliteTunnel->InstanceNumber;
+        CosaDmlDsliteGetCfg(NULL, &read_cfg);
+
+        //when dslite is up and running don;t let change EndpointAddr
+        if (AnscSizeOfString(pDsliteTunnel->addr_inuse) > 0) {
+            return FALSE;
+        }
+
         /* save update to backup */
         rc = strcpy_s(pDsliteTunnel->addr_ipv6,sizeof(pDsliteTunnel->addr_ipv6), pString);
         if(rc != EOK)
