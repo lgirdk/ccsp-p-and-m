@@ -2483,6 +2483,9 @@ CosaDmlDcSetFactoryReset
 	if( (factory_reset_mask & FR_ROUTER) && (factory_reset_mask & FR_WIFI)){
 		CcspTraceWarning(("FactoryReset:%d  case is both WIFI and Router removing DB\n",__LINE__));
 		v_secure_system("rm -f /nvram/wifi/rdkb-wifi.db"); //Need to remove wifi-db for Onewifi
+#if defined(_PLATFORM_RASPBERRYPI_)
+		v_secure_system("rm -f /opt/secure/wifi/rdkb-wifi.db"); //Need to remove wifi-db for Onewifi
+#endif
 	}
 #endif
     return ANSC_STATUS_SUCCESS;
