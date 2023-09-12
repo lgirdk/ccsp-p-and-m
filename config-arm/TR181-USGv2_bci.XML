@@ -1306,24 +1306,6 @@
                     </parameters>
                 </object>
 
-		<object>
-                <name>Identity</name>
-                <objectType>object</objectType>
-                <functions>
-                    <func_SetParamStringValue>Identity_SetParamStringValue</func_SetParamStringValue>
-                    <func_GetParamStringValue>Identity_GetParamStringValue</func_GetParamStringValue>
-                </functions>
-
-                <parameters>
-                    <parameter>
-                        <name>DeviceType</name>
-                        <type>string(255)</type>
-                        <syntax>string</syntax>
-                        <writable>true</writable>
-                    </parameter>
-                </parameters>
-             </object>
-
                 <object>
                     <name>Feature</name>
                     <objectType>object</objectType>
