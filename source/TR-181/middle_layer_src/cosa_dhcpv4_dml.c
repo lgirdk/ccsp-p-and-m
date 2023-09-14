@@ -8087,6 +8087,41 @@ StaticAddress_SetParamStringValue
     return FALSE;
 }
 
+static int is_duplicate_ip (uint32_t ipvalue, char *intf)
+{
+    char command[100];
+    char buffer[128];
+    char ip_str[INET_ADDRSTRLEN];
+    struct in_addr ip_addr;
+    int duplicateFound = 0;
+    FILE *fp;
+
+    ip_addr.s_addr = ipvalue;
+    inet_ntop(AF_INET, &ip_addr, ip_str, sizeof(ip_str));
+
+    CcspTraceWarning(("Checking for duplicate IP Addr: %s on interface: %s\n", ip_str, intf));
+
+    snprintf(command, sizeof(command), "arping -I %s -c 3 %s", intf, ip_str);
+    fp = popen(command, "r");
+    if (!fp) {
+        CcspTraceWarning(("popen error %s\n", command));
+        return 1;
+    }
+
+    while (fgets(buffer, sizeof(buffer), fp) != NULL) {
+        if (strstr(buffer, "Unicast reply from")) {
+            // Found an ARP reply indicating a duplicate IP
+            CcspTraceWarning(("duplicate IP Addr found: '%s'\n", buffer));
+            duplicateFound = 1;
+            break;
+        }
+    }
+
+    pclose(fp);
+
+    return duplicateFound;
+}
+
 /**********************************************************************  
 
     caller:     owner of this object 
@@ -8130,6 +8165,13 @@ StaticAddress_Validate
     ULONG                           ipaddr;
 
     char buf[64]={0}, hostCount[5]={0}, insNum[5]={0}, entry[64]={0};
+
+    // send arp and check if duplicate ipaddr exists
+    if (pDhcpStaAddr->Yiaddr.Value != 0) {
+        if (is_duplicate_ip(pDhcpStaAddr->Yiaddr.Value, "brlan0") ||
+            is_duplicate_ip(pDhcpStaAddr->Yiaddr.Value, "brlan7") )
+            return FALSE;
+    }
 
     syscfg_get(NULL, "dhcp_num_static_hosts", hostCount, sizeof(hostCount));
 
