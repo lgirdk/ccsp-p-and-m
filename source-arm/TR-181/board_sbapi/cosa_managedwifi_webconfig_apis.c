@@ -6,6 +6,8 @@
 #include "cosa_common_util.h"
 #include "cosa_drg_common.h"
 
+#define RG_CM_COMMUNICATION_BEGIN "172.31"
+
 extern rbusHandle_t handle;
 extern char g_Subsystem[32];
 
@@ -570,6 +572,13 @@ pErr create_manage_wifi_bridge(lanconfig_t * pLanConfigParams)
     {
         if (0 != validateIpRange(pLanConfigParams->lan_ip_address, pLanConfigParams->dhcp_start_ip_address, pLanConfigParams->dhcp_end_ip_address, pErrRetVal))
             return pErrRetVal;
+        if ((NULL != pLanConfigParams->leasetime) && ('-' == pLanConfigParams->leasetime[0]))
+        {
+            CcspTraceError(("%s:%d, Lease Time is in negative \n",__FUNCTION__, __LINE__));
+            snprintf(pErrRetVal->ErrorMsg, BUFF_LEN_128,"Invalid lease time\n");
+            pErrRetVal->ErrorCode = VALIDATION_FALIED;
+            return pErrRetVal;
+        }
     }
     if (pLanConfigParams->mwenable != sBackupLanConfig.bMwEnable)
     {
@@ -1474,6 +1483,15 @@ int validateIpRange(char *pIpAddr, char *pStartAddr, char *pEndAddr, pErr pErrRe
 
     if ((NULL == pIpAddr) || (NULL == pStartAddr) || (NULL == pEndAddr) || (NULL == pErrRetVal))
         return -1;
+
+
+    if(!strncmp(pIpAddr, RG_CM_COMMUNICATION_BEGIN, strlen(RG_CM_COMMUNICATION_BEGIN)))
+    {
+        CcspTraceError(("%s:%d, bridge ip begins with 172.31, which is used for RG to CM communication\n",__FUNCTION__, __LINE__));
+        snprintf(pErrRetVal->ErrorMsg, BUFF_LEN_128,"Invalid IP for manage Wifi,begins with 172.31.X.X which is used for RG to CM communication\n");
+        pErrRetVal->ErrorCode = VALIDATION_FALIED;
+        return -1;
+    }
 
     memset(&sLanDetails, 0, sizeof(sLanDetails));
     sLanDetails.eInterfaceType = PRIVATE;
