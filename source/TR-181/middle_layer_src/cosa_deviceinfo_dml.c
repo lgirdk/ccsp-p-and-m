@@ -20329,7 +20329,7 @@ MAPT_DeviceInfo_SetParamBoolValue
         }
         else
         {
-#ifdef FEATURE_MAPT
+#if defined(FEATURE_MAPT) || defined(FEATURE_SUPPORT_MAPT_NAT46)
             v_secure_system("sysevent set MAPT_Enable %s", bValue ? "true" : "false");
 #endif
             return TRUE;

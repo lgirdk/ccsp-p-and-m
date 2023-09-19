@@ -99,7 +99,7 @@ int _get_shell_output2 (FILE *fp, char *needle);
  * @param Pointer to ipc_dhcpv6_data_t holds the IPv6 configurations
  * @return 0 on success else returned -1
  */
-static int send_dhcp_data_to_wanmanager (ipc_dhcpv6_data_t *dhcpv6_data); /* Send data to wanmanager using nanomsg. */
+int send_dhcp_data_to_wanmanager (ipc_dhcpv6_data_t *dhcpv6_data, int msgtype); /* Send data to wanmanager using nanomsg. */
 #ifdef WAN_FAILOVER_SUPPORTED
 pthread_t Ipv6Handle_tid;
 void *Ipv6ModeHandler_thrd(void *data);
@@ -8153,6 +8153,29 @@ void addRemoteWanIpv6Route()
 
     }
 }
+#if defined(WAN_MANAGER_UNIFICATION_ENABLED)
+bool delRemoteWanIpv6Route()
+{
+    if (DEVICE_MODE_ROUTER == Get_Device_Mode())
+    {
+        char mesh_wan_ifname[32] = {0};
+        char ipv6_address[128] = {0};
+        getMeshWanIfName(mesh_wan_ifname,sizeof(mesh_wan_ifname));
+        if ((strlen(mesh_wan_ifname) > 0) && (mesh_wan_ifname[0] != '\0'))
+        {
+            memset(ipv6_address,0,sizeof(ipv6_address));
+            commonSyseventGet(MESH_WAN_WAN_IPV6ADDR, ipv6_address, sizeof(ipv6_address));
+            if( '\0' != ipv6_address[0] )
+            {
+                UnSetV6Route(mesh_wan_ifname,strtok(ipv6_address,"/"),1025);
+                commonSyseventSet("remotewan_routeset", "false");
+                return true;
+            }
+        }
+    }
+    return false;
+}
+#endif
 void addIpv6toRemoteWan()
 {                    
     if (DEVICE_MODE_ROUTER == Get_Device_Mode())
@@ -8823,7 +8846,7 @@ dhcpv6c_dbg_thrd(void * in)
             }
 
 #endif //FEATURE_MAPT
-            if (send_dhcp_data_to_wanmanager(&dhcpv6_data) != ANSC_STATUS_SUCCESS) {
+            if (send_dhcp_data_to_wanmanager(&dhcpv6_data, DHCP6C_STATE_CHANGED) != ANSC_STATUS_SUCCESS) {
                 CcspTraceError(("[%s-%d] Failed to send dhcpv6 data to wanmanager!!! \n", __FUNCTION__, __LINE__));
             }
             g_dhcpv6_server_prefix_ready = TRUE;
@@ -9186,11 +9209,14 @@ dhcpv6c_dbg_thrd(void * in)
                            ipv6_prefix           // xx:xx::/yy
                          */
                         v_secure_system("sysevent set ipv6_prefix %s ",v6pref);
-#if defined(FEATURE_RDKB_WAN_MANAGER)
-                        // Disabled sending ipv6 info to wan manager for comcast platforms
-                        // Later we should enable if needed.
-                        if (0)
+#if defined(INTEL_PUMA7)        // handling v6 lease for INTEL platforms
                         {
+#if !defined(WAN_MANAGER_UNIFICATION_ENABLED)
+                            (void)hub4_valid_lft;
+                            (void)hub4_preferred_lft;
+                            (void)send_dhcp_data_to_wanmanager;
+                            (void)Ipv6ModeHandler_thrd;
+#else
                             /*
                              * Send data to wanmanager.
                              */
@@ -9228,11 +9254,12 @@ dhcpv6c_dbg_thrd(void * in)
                                 dhcpv6_data.mapeAssigned = FALSE;
                                 dhcpv6_data.prefixCmd = 0;
                             }
-                            if (send_dhcp_data_to_wanmanager(&dhcpv6_data) != ANSC_STATUS_SUCCESS) {
+                            if (send_dhcp_data_to_wanmanager(&dhcpv6_data, DHCP6C_STATE_CHANGED) != ANSC_STATUS_SUCCESS) {
                                 CcspTraceError(("[%s-%d] Failed to send dhcpv6 data to wanmanager!!! \n", __FUNCTION__, __LINE__));
                             }
+#endif // WAN_MANAGER_UNIFICATION_ENABLED
                         }
-#endif
+#endif //  INTEL_PUMA7 
 
                         CcspTraceDebug(("%s,%d: Calling CosaDmlDHCPv6sTriggerRestart(FALSE)...\n", __FUNCTION__, __LINE__));
                         CosaDmlDHCPv6sTriggerRestart(FALSE);
@@ -9399,7 +9426,7 @@ dhcpv6c_dbg_thrd(void * in)
                         }
 
 #endif //FEATURE_MAPT
-                        if (send_dhcp_data_to_wanmanager(&dhcpv6_data) != ANSC_STATUS_SUCCESS) {
+                        if (send_dhcp_data_to_wanmanager(&dhcpv6_data, DHCP6C_STATE_CHANGED) != ANSC_STATUS_SUCCESS) {
                             CcspTraceError(("[%s-%d] Failed to send dhcpv6 data to wanmanager!!! \n", __FUNCTION__, __LINE__));
                         }
 
@@ -9627,7 +9654,7 @@ EXIT:
     return NULL;
 }
 #if defined(FEATURE_RDKB_WAN_MANAGER)
-static int send_dhcp_data_to_wanmanager (ipc_dhcpv6_data_t *dhcpv6_data)
+int send_dhcp_data_to_wanmanager (ipc_dhcpv6_data_t *dhcpv6_data, int msgtype)
 {
     int ret = ANSC_STATUS_SUCCESS;
     if ( NULL == dhcpv6_data)
@@ -9666,7 +9693,7 @@ static int send_dhcp_data_to_wanmanager (ipc_dhcpv6_data_t *dhcpv6_data)
     /**
      * Copy dhcpv6 data.
      */
-    msg.msg_type = DHCP6C_STATE_CHANGED;
+    msg.msg_type = msgtype; //DHCP6C_STATE_CHANGED;
     memcpy(&msg.data.dhcpv6, dhcpv6_data, sizeof(ipc_dhcpv6_data_t));
 
     /**
@@ -9722,26 +9749,37 @@ void SwitchToULAIpv6()
 /** Switching  between Primary and Secondary Wan for LTE Backup **/
 void Switch_ipv6_mode(char *ifname, int length)
 {
-    char default_wan_ifname[64];
-    memset(default_wan_ifname, 0, sizeof(default_wan_ifname));
-    commonSyseventGet("wan_ifname", default_wan_ifname, sizeof(default_wan_ifname));
-    if (ifname)
+    static char last_wan_ifname[64] = {0};
+    if (ifname && strlen(ifname)>0 && strncmp(ifname, last_wan_ifname,length))
     {
 #ifdef FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE
         char mesh_wan_ifname[32] = {0};
         getMeshWanIfName(mesh_wan_ifname,sizeof(mesh_wan_ifname));
         if(strncmp(ifname, mesh_wan_ifname,length ) == 0)
 #else
+        char default_wan_ifname[64];
+        memset(default_wan_ifname, 0, sizeof(default_wan_ifname));
+        commonSyseventGet("wan_ifname", default_wan_ifname, sizeof(default_wan_ifname));
         if(strncmp(ifname,default_wan_ifname,length) != 0)
 #endif
         {
             SwitchToULAIpv6(); //Secondary Wan
+#if defined(WAN_MANAGER_UNIFICATION_ENABLED)
+            addRemoteWanIpv6Route();
+#endif
         }
         else
         {
+#if defined(WAN_MANAGER_UNIFICATION_ENABLED)
+            delRemoteWanIpv6Route();
+#endif
             SwitchToGlobalIpv6(); //Primary Wan
         }
+    }else
+    {
+        CcspTraceInfo(("%s : Current_wan_ifname:%s last_wan_ifname : %s. Ipv6 Mode not changed.\n",__FUNCTION__, ifname, last_wan_ifname));
     }
+    strncpy(last_wan_ifname, ifname, sizeof(last_wan_ifname) -1);
 }
 
 void *Ipv6ModeHandler_thrd(void *data)
@@ -9752,7 +9790,6 @@ void *Ipv6ModeHandler_thrd(void *data)
     async_id_t async_id_wanfailover[3];
     int err;
     char name[64] = {0}, val[64] = {0};
-    char tmpBuf[32] ={0};
 
     CcspTraceWarning(("%s started\n",__FUNCTION__));
     sysevent_fd = sysevent_open("127.0.0.1", SE_SERVER_WELL_KNOWN_PORT, SE_VERSION, "Ipv6ModeHandler", &sysevent_token);
@@ -9793,7 +9830,8 @@ void *Ipv6ModeHandler_thrd(void *data)
             }
             else if(!strcmp(name, "current_wan_ifname"))
             {
-                memset(tmpBuf,0,sizeof(tmpBuf));
+#if !defined(WAN_MANAGER_UNIFICATION_ENABLED)
+                char tmpBuf[32] ={0};
 #ifdef FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE
                 getMeshWanIfName(tmpBuf,sizeof(tmpBuf));
                 if (strcmp(val,tmpBuf) == 0 )
@@ -9805,6 +9843,8 @@ void *Ipv6ModeHandler_thrd(void *data)
                     _dibbler_server_operation("stop");
                     addRemoteWanIpv6Route();
                 } 
+#endif
+                CcspTraceInfo(("%s : %s set to %s\n",__FUNCTION__,name,val));
                 Switch_ipv6_mode(val,vallen);
             }
         }

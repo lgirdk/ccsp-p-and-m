@@ -89,7 +89,9 @@
 #include "secure_wrapper.h"
 #include "safec_lib_common.h"
 #include "cosa_drg_common.h"
-
+#if defined(WAN_MANAGER_UNIFICATION_ENABLED)
+#include "ipc_msg.h"
+#endif
 /*
  * Macro definitions
  */
@@ -110,6 +112,10 @@
 #define SET_RSHIFT_MASK(maskBits) ((ULONGLONG)(0xFFFFFFFFFFFFFFFF >> (64-maskBits)))
 
 #define STRING_TO_HEX(pStr) ( (pStr-'a'<0)? (pStr-'A'<0)? pStr-'0' : pStr-'A'+10 : pStr-'a'+10 )
+
+#if defined(WAN_MANAGER_UNIFICATION_ENABLED)
+extern int send_dhcp_data_to_wanmanager (ipc_dhcpv6_data_t *dhcpv6_data, int msgtype);
+#endif
 
 /*
  * Static function prototypes
@@ -553,6 +559,19 @@ CosaDmlMaptStopServices
   errno_t rc = -1;
 
   /* Bring down DHCPv4 client */
+#if defined(WAN_MANAGER_UNIFICATION_ENABLED)
+   /*TODO:
+    *The below code should be removed once Unified MAPT Implemented.
+    */
+    ipc_dhcpv6_data_t dhcpv6_data;
+    memset(&dhcpv6_data, 0, sizeof(ipc_dhcpv6_data_t));
+
+    strcpy(dhcpv6_data.ifname, "erouter0");
+    dhcpv6_data.maptAssigned = TRUE;
+    if (send_dhcp_data_to_wanmanager(&dhcpv6_data, MAPT_STATE_CHANGED) != ANSC_STATUS_SUCCESS) {
+        CcspTraceError(("[%s-%d] Failed to send dhcpv6 data to wanmanager!!! \n", __FUNCTION__, __LINE__));
+    }
+#else
   if ( v_secure_system("service_wan dhcp-release") )
   {
        MAPT_LOG_ERROR("Wan Dhcp Release Failed !!");
@@ -561,6 +580,8 @@ CosaDmlMaptStopServices
   {
        MAPT_LOG_ERROR("Wan Dhcp Stop Failed !!");
   }
+#endif
+
   commonSyseventSet ("current_wan_ipaddr", "0.0.0.0");
   /* Try validating the service stop. status may be? */
   MAPT_LOG_INFO("DHCPv4 client is made down.");
@@ -1082,12 +1103,26 @@ CosaDmlMaptResetClient
   {
        if ( fgets(outBuf, BUFLEN_256, fd) && !strstr(outBuf, "erouter0") )
        {
+#if defined(WAN_MANAGER_UNIFICATION_ENABLED)
+          /*TODO:
+           *The below code should be removed once Unified MAPT Implemented.
+           */
+           ipc_dhcpv6_data_t dhcpv6_data;
+           memset(&dhcpv6_data, 0, sizeof(ipc_dhcpv6_data_t));
+
+	   strcpy(dhcpv6_data.ifname, "erouter0");
+           dhcpv6_data.maptAssigned = FALSE;
+           if (send_dhcp_data_to_wanmanager(&dhcpv6_data, MAPT_STATE_CHANGED) != ANSC_STATUS_SUCCESS) {
+               CcspTraceError(("[%s-%d] Failed to send dhcpv6 data to wanmanager!!! \n", __FUNCTION__, __LINE__));
+           }
+#else
             if ( v_secure_system("service_wan dhcp-start") )
             {
                  MAPT_LOG_ERROR("Failed to restore dhclient !");
 		 v_secure_pclose(fd);
                  return STATUS_FAILURE;
             }
+#endif
        }
 	v_secure_pclose(fd);
    }
