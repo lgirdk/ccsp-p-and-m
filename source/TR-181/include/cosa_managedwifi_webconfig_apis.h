@@ -116,4 +116,6 @@ void publishEvent(char * pTr181Param, char *pTr181ParamVal, EventType eEventType
 int confirmManageWifiVap(void);
 void restorePreviousPsmValue(void);
 int validateIpRange(char *pIpAddr, char *pStartAddr, char *pEndAddr, pErr pErrRetVal);
+int validateLeaseTime(char *pLeaseTime, pErr pErrRetVal);
+void extractLeaseTime(char *pBegin, char *pEnd, int * pLeaseTime);
 #endif

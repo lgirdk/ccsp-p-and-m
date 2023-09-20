@@ -572,13 +572,9 @@ pErr create_manage_wifi_bridge(lanconfig_t * pLanConfigParams)
     {
         if (0 != validateIpRange(pLanConfigParams->lan_ip_address, pLanConfigParams->dhcp_start_ip_address, pLanConfigParams->dhcp_end_ip_address, pErrRetVal))
             return pErrRetVal;
-        if ((NULL != pLanConfigParams->leasetime) && ('-' == pLanConfigParams->leasetime[0]))
-        {
-            CcspTraceError(("%s:%d, Lease Time is in negative \n",__FUNCTION__, __LINE__));
-            snprintf(pErrRetVal->ErrorMsg, BUFF_LEN_128,"Invalid lease time\n");
-            pErrRetVal->ErrorCode = VALIDATION_FALIED;
+
+	if (0 != validateLeaseTime(pLanConfigParams->leasetime, pErrRetVal))
             return pErrRetVal;
-        }
     }
     if (pLanConfigParams->mwenable != sBackupLanConfig.bMwEnable)
     {
@@ -1545,4 +1541,139 @@ int validateIpRange(char *pIpAddr, char *pStartAddr, char *pEndAddr, pErr pErrRe
         }
     }
     return 0;
+}
+
+int validateLeaseTime(char *pLeaseTime, pErr pErrRetVal)
+{
+    if ((NULL == pLeaseTime) || (NULL == pErrRetVal))
+        return -1;
+
+    char *pStr = pLeaseTime;
+
+    if ('-' == *pStr)
+    {
+        CcspTraceError(("%s:%d, Lease Time is in negative \n",__FUNCTION__, __LINE__));
+        goto Error;
+    }
+    else if ('0' <= *pStr && '9' >= *pStr)
+    {
+        int iValid = false;
+
+        if ('0' == *pStr)
+        {
+            pStr++;
+            if ('\0' == *pStr)
+                goto Error;
+            else if (('a' <= *pStr && 'z' >= *pStr) || ('A' <= *pStr && 'Z' >= *pStr))
+                goto Error;
+        }
+        while (('\0' != *pStr) && ('0' <= *pStr && '9' >= *pStr))
+            pStr++;
+        if ('\0' != *pStr)
+        {
+            switch(*pStr)
+            {
+                case 'D':
+                case 'd':
+                {
+                    iValid = true;
+                    CcspTraceInfo(("%s:%d, Days\n",__FUNCTION__, __LINE__));
+                    break;
+                }
+                case 'W':
+                case 'w':
+                {
+                    iValid = true;
+                    CcspTraceInfo(("%s:%d, Weeks \n",__FUNCTION__, __LINE__));
+                    break;
+                }
+                case 'H':
+                case 'h':
+                {
+                    iValid = true;
+                    CcspTraceInfo(("%s:%d, Hours \n",__FUNCTION__, __LINE__));
+                    break;
+                }
+                case 'M':
+                case 'm':
+                {
+                    int iVal = 0;
+                    iValid = true;
+                    extractLeaseTime(pLeaseTime, pStr, &iVal);
+                    CcspTraceInfo(("%s:%d, %d minutes\n",__FUNCTION__, __LINE__, iVal));
+                    /* Lease time is less then 2 minutes is invalid*/
+                    if (iVal < 2)
+                    {
+                        CcspTraceError(("%s:%d, lease time :%d minutes\n",__FUNCTION__, __LINE__, iVal));
+                        goto Error;
+                    }
+                    break;
+                }
+                case 'S':
+                case 's':
+                {
+                    int iVal = 0;
+                    iValid = true;
+                    extractLeaseTime(pLeaseTime, pStr, &iVal);
+                    CcspTraceInfo(("%s:%d, %d Seconds \n",__FUNCTION__, __LINE__, iVal));
+                    /* Lease time is less then 120 seconds is invalid*/
+                    if (iVal < 120)
+                    {
+                        CcspTraceError(("%s:%d, Lease Time :%d seconds\n",__FUNCTION__, __LINE__, iVal));
+                        goto Error;
+                    }
+                    break;
+                }
+            }
+            if ((true == iValid) && ('\0' == *(pStr+1)))
+            {
+                CcspTraceInfo(("%s:%d, Valid lease Time\n",__FUNCTION__, __LINE__));
+                return 0;
+            }
+            else
+            {
+                goto Error;
+            }
+        }
+        else
+        {
+            /* Lease time is less then 120 seconds is invalid*/
+            int iVal = atoi(pLeaseTime);
+            if (iVal < 120)
+            {
+                CcspTraceError(("%s:%d, Lease Time :%d seconds\n",__FUNCTION__, __LINE__, iVal));
+                goto Error;
+            }
+        }
+    }
+    else
+    {
+        goto Error;
+    }
+
+    return 0;
+
+Error:
+    CcspTraceError(("%s:%d, Invalid lease time\n",__FUNCTION__, __LINE__));
+    snprintf(pErrRetVal->ErrorMsg, BUFF_LEN_128,"Invalid lease time\n");
+    pErrRetVal->ErrorCode = VALIDATION_FALIED;
+    return -1;
+}
+
+void extractLeaseTime(char *pBegin, char *pEnd, int * pLeaseTime)
+{
+    if((NULL == pBegin) || (NULL == pEnd) || (NULL == pLeaseTime))
+        return;
+
+    int iStrLen = pEnd - pBegin;
+    iStrLen += 1;
+    char *pValue = (char*) malloc (iStrLen);
+    if (NULL != pValue)
+    {
+        memset(pValue, '\0', iStrLen);
+        strncpy(pValue, pBegin, iStrLen);
+        *pLeaseTime = atoi(pValue);
+        free(pValue);
+        pValue = NULL;
+    }
 }
