@@ -492,9 +492,10 @@ CosaDml_GreTunnelGetNumberOfEntries(void)
 ULONG 
 CosaDml_GreTunnelIfGetNumberOfEntries(ULONG tuIns)
 {
-    /* support 4 GRE interface for Comcast Hotspot */
-    if(tuIns==1)
-        return 4;
+    /* support MAX_GRE_TUIF GRE interfaces for Comcast Hotspot */
+    if (tuIns == 1)
+        return MAX_GRE_TUIF;
+
     return 0;
 }
 
