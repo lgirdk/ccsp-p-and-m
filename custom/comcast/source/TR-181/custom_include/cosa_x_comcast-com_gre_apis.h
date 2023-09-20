@@ -48,7 +48,13 @@
 #define _COSA_X_COMCAST__COM_GRE_APIS_H
 
 #define MAX_GRE_TU              1
+
+#if defined(_LG_OFW_)
+#define MAX_GRE_TUIF            2
+#else
 #define MAX_GRE_TUIF            4
+#endif
+
 #define WIFI_FILE "/tmp/wifi_initialized"
 #define GRE_TCPMSS_MAX 1378
 
