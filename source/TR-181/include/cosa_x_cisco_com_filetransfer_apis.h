@@ -49,8 +49,6 @@
 #define  MAX_LINE_SIZE 128
 #define  MAX_STRING_COUNT 128
 #define  PRIVATE_KEY_GENERATED "/tmp/key.pem"
-#define  PRIVATE_KEY_ENCRYPTED "/etc/ssl/certs/xadtcddyu.ovg"
-#define  PUBLIC_CERT_PATH "/etc/ssl/certs/bwg.clnt.xcal.tv.cert.pem"
 
 /***********************************
     Actual definition declaration
@@ -124,13 +122,6 @@ CosaDmlFileTransferInit
         ANSC_HANDLE                 hDml,
         PANSC_HANDLE                phContext
 );
-
-ANSC_STATUS
-CosaDmlFileTransferSetCfg
-    (
-        ANSC_HANDLE                 hContext,
-        PCOSA_DML_FILETRANSFER_CFG  pCfg
-    );
 
 ANSC_STATUS
 CosaDmlFileTransferGetCfg
