@@ -22,7 +22,7 @@ static char *l3netDhcpV4PoolMinAddr = "dmsb.dhcpv4.server.pool.%s.MinAddress";
 static char *l3netDhcpV4PoolMaxAddr = "dmsb.dhcpv4.server.pool.%s.MaxAddress";
 static char *l3netDhcpV4PoolLeaseTime = "dmsb.dhcpv4.server.pool.%s.LeaseTime";
 static char *l3netIPv6Enable = "dmsb.l3net.%s.IPv6Enable";
-static char *l2netWiFiMembers = "dmsb.l2net.%s.Members.WiFi";
+static char *l2netWiFiMembers = "dmsb.l2net.%s.Members.OneWiFi";
 
 static ManageWiFiInfo_t sManageWiFiInfo = {{'\0'},{'\0'},{'\0'},{'\0'}, OTHER_UPDATE};
 static backupLanconfig_t sBackupLanConfig = {false,{'\0'},false,{'\0'},{'\0'},{'\0'},{'\0'}, {'\0'},false, {'\0'}};
