@@ -1316,13 +1316,30 @@ void RestartRIPInterfaces(int ripEnable)
     {
         if(syscfg_get(NULL, "erouter_static_ip_address", erouter_static_ip, sizeof(erouter_static_ip)) == 0)
         {
+            static bool send_value_change = true;
             if (ripEnable)
             {
                 v_secure_system("ip addr add %s/32 brd 255.255.255.255 dev erouter0 label erouter0:0", erouter_static_ip);
+                char erouter_static_ip_instance[8];
+                if (send_value_change && syscfg_get(NULL, "erouter_static_ip_instance", erouter_static_ip_instance, sizeof(erouter_static_ip_instance)) == 0)
+                {
+                    char erouter_static_ip_parameter[64];
+                    parameterSigStruct_t val;
+                    sprintf(erouter_static_ip_parameter,"Device.IP.Interface.1.IPv4Address.%s.IPAddress",erouter_static_ip_instance);
+                    PSM_Set_Record_Value2(bus_handle,g_Subsystem, "eRT.com.cisco.spvtg.ccsp.tr069pa.SecondUpstreamIpAddress.Value",ccsp_string, erouter_static_ip_parameter);
+                    val.parameterName = "Device.Routing.RIP.Enable";
+                    val.newValue = "true";
+                    val.oldValue = "false";
+                    val.subsystem_prefix = g_Subsystem;
+                    val.type = ccsp_string;
+                    CcspBaseIf_SendparameterValueChangeSignal(bus_handle,&val,1);
+                    send_value_change = false;
+                }
             }
             else
             {
                 v_secure_system("ip addr del %s/32 brd 255.255.255.255 dev erouter0", erouter_static_ip);
+                send_value_change = true;
             }
         }
     }
