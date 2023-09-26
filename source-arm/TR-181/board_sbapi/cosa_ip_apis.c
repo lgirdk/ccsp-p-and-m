@@ -2819,6 +2819,7 @@ CosaDmlIpIfGetV4Addr
             {
                 strcpy(pEntry->Alias, alias);
             }
+            syscfg_set_u(NULL,"erouter_static_ip_instance", pEntry->InstanceNumber); 
             ErouterStaticIfMode("restart");
         }
         else
@@ -3199,6 +3200,7 @@ CosaDmlIpIfSetV4Addr
         if(erouter_static_ip != NULL)
         {
             syscfg_set(NULL, "erouter_static_ip_address", erouter_static_ip);
+            syscfg_set_u(NULL,"erouter_static_ip_instance", pEntry->InstanceNumber);
         }
         /*
             Fixme: uncomment the following logic once find a way to
