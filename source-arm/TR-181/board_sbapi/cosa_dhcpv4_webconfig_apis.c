@@ -39,7 +39,7 @@ Dhcpv4_Cache_t g_dhcpv4bkup_cache[DHCPV4_CACHE_MAX_NUM_OF_PARAM];
 Dhcpv4_Cache_t cache_temp[DHCPV4_CACHE_MAX_NUM_OF_PARAM] = {};
 int g_numOfbkupCacheParam = 0;
 int g_numOfReceivedParam = 0;
-
+BOOL Dhcpv4_Lan_Ip_IsInPrivate_Blocked_AddrRange(ULONG addr);
 int Dhcpv4_StaticClients_MutexLock()
 {
     return pthread_mutex_lock(&staticClientsMutex);
@@ -69,10 +69,22 @@ int Dhcpv4_Lan_MutexTryLock()
 {
     return pthread_mutex_trylock(&lanMutex);
 }
+/*192.168.147.0 ~ 192.168.147.255 if the address in the fallowing range not allowed to set lanip
+*/
+BOOL Dhcpv4_Lan_Ip_IsInPrivate_Blocked_AddrRange(ULONG addr)
+{
+    CcspTraceWarning(("%s:addr:%lx\n",__FUNCTION__,addr));
+    if((addr >= 0xC0A89300)&&(addr <= 0xC0A893FF)) //not allowed to set Lan Ip in this range
+    {
+        return TRUE;
+    }
+    return FALSE;
+}
 /*if the address is not in the following range, we think it is a public address
  10.0.0.0    ~ 10.255.255.255
  172.16.0.0  ~ 172.31.255.255
  192.168.0.0 ~ 192.168.255.255.
+ 
  */
 BOOL Dhcpv4_Lan_Ip_ispublic_addr(ULONG addr)
 {
@@ -980,6 +992,11 @@ int Get_LanParameters_ValidityCheckStatus(lanparam_t *pLanParam)
     gateway = ntohl(_ansc_inet_addr(pLanParam->lan_ip_address));
     
     if (Dhcpv4_Lan_Ip_ispublic_addr(gateway))
+    {
+        return LAN_PARAM_GATEWAY_IP_INVALID;
+    }
+    
+    if(Dhcpv4_Lan_Ip_IsInPrivate_Blocked_AddrRange(gateway))
     {
         return LAN_PARAM_GATEWAY_IP_INVALID;
     }
