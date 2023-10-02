@@ -451,7 +451,7 @@ static char* getHostLogin(char *tempStr,bool shortsFlag) {
         {
           return NULL;
         }
-        if ((value = strstr(tempStr, "hostIp=")) && shortsFlag){
+        if ((value = strstr(tempStr, "hostIp="))){
                 sprintf_s(stunnelsshargs.hostIp, 512, value + strlen("hostIp="));
                 CcspTraceInfo(("%s Host: %s \n",__FUNCTION__,stunnelsshargs.hostIp));
                 if(stunnelsshargs.hostIp){
@@ -476,8 +476,13 @@ static char* getHostLogin(char *tempStr,bool shortsFlag) {
                         }
                  }
                  else {
-                        hostIp = (char*) calloc(256, sizeof(char));
-                        sprintf_s(hostIp,256, "%s", value + strlen("host="));
+                       hostIp = (char*) calloc(256, sizeof(char));
+                       if( stunnelsshargs.stunnelport) {
+                         sprintf_s(hostIp,256, "%s", stunnelsshargs.hostIp);
+                       }
+                       else {
+                             sprintf_s(hostIp,256, "%s", value + strlen("host="));
+                       }
                         CcspTraceInfo(("%s Host: %s \n",__FUNCTION__,hostIp));
                  }
         }
@@ -2397,6 +2402,10 @@ int setXOpsReverseSshArgs(char* pString) {
     int hostloglen = 0;
     char *st = NULL;
     errno_t rc = -1;
+    stunnelsshargs.localport = 0;
+    stunnelsshargs.stunnelport = 0;
+    stunnelsshargs.host[0] = '\0';
+    stunnelsshargs.hostIp[0] = '\0';
 
     bool shortsFlag= false;
 #ifdef ENABLE_SHORTS
