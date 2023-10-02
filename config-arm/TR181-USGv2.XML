@@ -1876,6 +1876,12 @@
                                 <writable>true</writable>
                             </parameter>
 <?endif?>
+                            <parameter>
+                                <name>IPModeEnable</name>
+                                <type>boolean</type>
+                                <syntax>bool</syntax>
+                                <writable>true</writable>
+                            </parameter>
 <?ifdef _COSA_INTEL_XB3_ARM_?>
 		            <parameter>
                                 <name>CMRouteIsolationEnable</name>

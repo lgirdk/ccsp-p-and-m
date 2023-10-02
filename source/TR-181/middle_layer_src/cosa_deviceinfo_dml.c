@@ -8889,6 +8889,23 @@ Feature_GetParamBoolValue
            return TRUE;
     }
 #endif
+    if (strcmp(ParamName, "IPModeEnable") == 0)
+    {
+        char *strValue = NULL;
+        int retPsmGet = CCSP_SUCCESS;
+
+        retPsmGet = PSM_Get_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.IPModeEnable", NULL, &strValue);
+        if (retPsmGet == CCSP_SUCCESS)
+        {
+            *pBool = _ansc_atoi(strValue);
+            ((CCSP_MESSAGE_BUS_INFO *)bus_handle)->freefunc(strValue);
+        }
+        else
+        {
+            *pBool = FALSE;
+        }
+        return TRUE;
+    }
 #if (defined _COSA_INTEL_XB3_ARM_)
     if (strcmp(ParamName, "CMRouteIsolationEnable") == 0)
     {
@@ -10447,6 +10464,20 @@ Feature_SetParamBoolValue
         return TRUE;
     }
 #endif
+    if (strcmp(ParamName, "IPModeEnable") == 0)
+    {
+        if(CCSP_SUCCESS != (PSM_Set_Record_Value2(bus_handle,
+                                                 g_Subsystem,
+                                                 "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.IPModeEnable",
+                                                 ccsp_string,
+                                                 bValue ? "1" : "0")))
+        {
+            CcspTraceError(("Failed to set IPModeEnable \n"));
+            return FALSE;
+        }
+        CcspTraceInfo(("Successfully set IPModeEnable \n"));
+        return TRUE;
+    }
 #if (defined _COSA_INTEL_XB3_ARM_)
     if (strcmp(ParamName, "CMRouteIsolationEnable") == 0)
     {
