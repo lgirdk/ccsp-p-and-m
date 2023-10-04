@@ -20,6 +20,7 @@
 #include "cosa_deviceinfo_apis.h"
 #include "cosa_lgi_general_apis.h"
 #include "plugin_main_apis.h"
+#include "cosa_drg_common.h"
 
 #include <platform_hal.h>
 
@@ -476,6 +477,71 @@ CosaDmlGiGetRipSubnetMask
     }
 
     AnscCopyString(pValue, rip_static_mask);
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaDmlGiGetStaticIpAddress
+    (
+        ANSC_HANDLE                 hContext,
+        char                        *pValue,
+        ULONG                       *pUlSize
+    )
+{
+    char static_ip[32];
+    char staticIpAdminStatus[8];
+
+    static_ip[0] = 0;
+
+    syscfg_get(NULL, "staticipadminstatus", staticIpAdminStatus, sizeof(staticIpAdminStatus));
+
+    if (strcmp(staticIpAdminStatus, "2") == 0)
+    {
+        commonSyseventGet("ipv4_erouter0_ipaddr", static_ip, sizeof(static_ip));	    
+    }
+    else if (strcmp(staticIpAdminStatus, "3") == 0)
+    {
+        syscfg_get( NULL, "brlan_static_lan_ipaddr",static_ip, sizeof(static_ip));
+    }
+
+    if (static_ip[0] != 0)
+    {
+        strcpy(pValue, static_ip);	    
+    }
+
+    return ANSC_STATUS_SUCCESS;
+
+}
+
+ANSC_STATUS
+CosaDmlGiGetStaticSubnetMask
+    (
+        ANSC_HANDLE                 hContext,
+        char                        *pValue,
+        ULONG                       *pUlSize
+    )
+{
+    char static_mask[32];
+    char staticIpAdminStatus[8];
+
+    static_mask[0] = 0;
+
+    syscfg_get(NULL, "staticipadminstatus", staticIpAdminStatus, sizeof(staticIpAdminStatus));
+
+    if (strcmp(staticIpAdminStatus, "2") == 0)
+    {
+        commonSyseventGet("ipv4_erouter0_subnet", static_mask, sizeof(static_mask));	    
+    }
+    else if (strcmp(staticIpAdminStatus, "3") == 0)
+    {
+        syscfg_get( NULL, "brlan_static_lan_netmask",static_mask, sizeof(static_mask));
+    }
+
+    if (static_mask[0] != 0)
+    {
+        strcpy(pValue, static_mask);	    
+    }
+
     return ANSC_STATUS_SUCCESS;
 }
 
