@@ -169,6 +169,22 @@ CosaDmlGiGetRipSubnetMask
     ULONG                       *pUlSize
 );
 
+ANSC_STATUS
+CosaDmlGiGetStaticIpAddress
+(
+    ANSC_HANDLE                 hContext,
+    char                        *pValue,
+    ULONG                       *pUlSize
+);
+
+ANSC_STATUS
+CosaDmlGiGetStaticSubnetMask
+(
+    ANSC_HANDLE                 hContext,
+    char                        *pValue,
+    ULONG                       *pUlSize
+);
+
 ULONG
 CosaDmlGiGetAvailableLanguages
 (
