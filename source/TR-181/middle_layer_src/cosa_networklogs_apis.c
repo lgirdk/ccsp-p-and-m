@@ -137,19 +137,19 @@ CosaDmlGetNetworkLogs
 
             if(!strcmp(evt, "unknown"))
                 pEVENTLog[i].EventLevel = 0;
-            else if(!strcmp(evt, "emergency"))
+            else if(!strcmp(evt, "emerg"))
                 pEVENTLog[i].EventLevel = 1;
             else if(!strcmp(evt, "alert"))
                 pEVENTLog[i].EventLevel = 2;
             else if(!strcmp(evt, "crit"))
                 pEVENTLog[i].EventLevel = 3;
-            else if(!strcmp(evt, "error"))
+            else if(!strcmp(evt, "err"))
                 pEVENTLog[i].EventLevel = 4;
-            else if(!strcmp(evt, "warning"))
+            else if(!strcmp(evt, "warn"))
                 pEVENTLog[i].EventLevel = 5;
             else if(!strcmp(evt, "notice"))
                 pEVENTLog[i].EventLevel = 6;
-             else if(!strcmp(evt, "information"))
+             else if(!strcmp(evt, "info"))
                 pEVENTLog[i].EventLevel = 7;
              else if(!strcmp(evt, "debug"))
                 pEVENTLog[i].EventLevel = 8;
