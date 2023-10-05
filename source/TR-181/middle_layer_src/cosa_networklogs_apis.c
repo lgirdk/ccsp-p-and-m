@@ -141,7 +141,7 @@ CosaDmlGetNetworkLogs
                 pEVENTLog[i].EventLevel = 1;
             else if(!strcmp(evt, "alert"))
                 pEVENTLog[i].EventLevel = 2;
-            else if(!strcmp(evt, "critical"))
+            else if(!strcmp(evt, "crit"))
                 pEVENTLog[i].EventLevel = 3;
             else if(!strcmp(evt, "error"))
                 pEVENTLog[i].EventLevel = 4;
