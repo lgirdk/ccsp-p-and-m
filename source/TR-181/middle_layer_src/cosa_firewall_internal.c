@@ -322,13 +322,13 @@ CosaFirewallInitialize
     }
     pPoamIrepFoFwV6IpFilter = (PPOAM_IREP_FOLDER_OBJECT)pPoamIrepFoCOSA->GetFolder(
             (ANSC_HANDLE)pPoamIrepFoCOSA,
-            COSA_IREP_FOLDER_NAME_IP_FILTER_FIREWALL);
+            COSA_IREP_FOLDER_NAME_IP_FILTER_FIREWALL_V6);
     if (!pPoamIrepFoFwV6IpFilter)
     {
         pPoamIrepFoFwV6IpFilter =
             pPoamIrepFoCOSA->AddFolder(
                     (ANSC_HANDLE)pPoamIrepFoCOSA,
-                    COSA_IREP_FOLDER_NAME_IP_FILTER_FIREWALL,
+                    COSA_IREP_FOLDER_NAME_IP_FILTER_FIREWALL_V6,
                     0);
     }
 
@@ -339,7 +339,7 @@ CosaFirewallInitialize
 
     pSlapVariable = (PSLAP_VARIABLE)pPoamIrepFoFwV6IpFilter->GetRecord(
             (ANSC_HANDLE)pPoamIrepFoFwV6IpFilter,
-            COSA_DML_RR_NAME_IP_FILTER_FIREWALL_NextInsNumber,
+            COSA_DML_RR_NAME_IP_FILTER_FIREWALL_NextInsNumber_V6,
             NULL);
     if (pSlapVariable)
     {
@@ -1095,7 +1095,7 @@ CosaFwReg_V6_IpFilterGetInfo
                 (PSLAP_VARIABLE)pPoamIrepFoIpFilterSp->GetRecord
                     (
                         (ANSC_HANDLE)pPoamIrepFoIpFilterSp,
-                        COSA_DML_RR_NAME_IP_FILTER_FIREWALL_InsNum,
+                        COSA_DML_RR_NAME_IP_FILTER_FIREWALL_InsNum_V6,
                         NULL
                     );
 
@@ -1113,7 +1113,7 @@ CosaFwReg_V6_IpFilterGetInfo
                 (PSLAP_VARIABLE)pPoamIrepFoIpFilterSp->GetRecord
                     (
                         (ANSC_HANDLE)pPoamIrepFoIpFilterSp,
-                        COSA_DML_RR_NAME_IP_FILTER_FIREWALL_Alias,
+                        COSA_DML_RR_NAME_IP_FILTER_FIREWALL_Alias_V6,
                         NULL
                     );
 
@@ -1239,7 +1239,7 @@ CosaFwReg_V6_IpFilterAddInfo
             pPoamIrepFoIpFiler->DelRecord
                 (
                     (ANSC_HANDLE)pPoamIrepFoIpFiler,
-                    COSA_DML_RR_NAME_IP_FILTER_FIREWALL_NextInsNumber
+                    COSA_DML_RR_NAME_IP_FILTER_FIREWALL_NextInsNumber_V6
                 );
 
         pSlapVariable->Syntax            = SLAP_VAR_SYNTAX_uint32;
@@ -1249,7 +1249,7 @@ CosaFwReg_V6_IpFilterAddInfo
             pPoamIrepFoIpFiler->AddRecord
                 (
                     (ANSC_HANDLE)pPoamIrepFoIpFiler,
-                    COSA_DML_RR_NAME_IP_FILTER_FIREWALL_NextInsNumber,
+                    COSA_DML_RR_NAME_IP_FILTER_FIREWALL_NextInsNumber_V6,
                     SYS_REP_RECORD_TYPE_UINT,
                     SYS_RECORD_CONTENT_DEFAULT,
                     pSlapVariable,
@@ -1286,7 +1286,7 @@ CosaFwReg_V6_IpFilterAddInfo
                 pPoamIrepFoIpFilterSp->AddRecord
                     (
                         (ANSC_HANDLE)pPoamIrepFoIpFilterSp,
-                        COSA_DML_RR_NAME_IP_FILTER_FIREWALL_InsNum,
+                        COSA_DML_RR_NAME_IP_FILTER_FIREWALL_InsNum_V6,
                         SYS_REP_RECORD_TYPE_UINT,
                         SYS_RECORD_CONTENT_DEFAULT,
                         pSlapVariable,
@@ -1306,7 +1306,7 @@ CosaFwReg_V6_IpFilterAddInfo
                 pPoamIrepFoIpFilterSp->AddRecord
                     (
                         (ANSC_HANDLE)pPoamIrepFoIpFilterSp,
-                        COSA_DML_RR_NAME_IP_FILTER_FIREWALL_Alias,
+                        COSA_DML_RR_NAME_IP_FILTER_FIREWALL_Alias_V6,
                         SYS_REP_RECORD_TYPE_ASTR,
                         SYS_RECORD_CONTENT_DEFAULT,
                         pSlapVariable,
