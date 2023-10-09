@@ -37,6 +37,7 @@
 #define  SYSCFG_SERVER_SERVERPORT_KEY     "ddns_server_serverport_%lu"
 #define  SYSCFG_SERVER_SERVERADDRESS_KEY  "ddns_server_serveraddress_%lu"
 #define  SYSCFG_SERVER_SERVICENAME_KEY    "ddns_server_servicename_%lu"
+#define  SYSCFG_SERVER_NAME_KEY 	      "ddns_server_name_%lu"
 #define  DEFAULT_RETRYINTERVAL            660
 #define  DEFAULT_MAXRETRIES               10
 
@@ -984,8 +985,11 @@ void CosaInitializeTr181DdnsServiceProviderList()
         char enable_path[sizeof(SYSCFG_SERVER_ENABLE_KEY) + 1] = {0};
         char servicename_path[sizeof(SYSCFG_SERVER_SERVICENAME_KEY) +1] = {0};
         char serveraddress_path[sizeof(SYSCFG_SERVER_SERVERADDRESS_KEY) +1] = {0};
+        char name_path[sizeof(SYSCFG_SERVER_NAME_KEY) + 1] = {0};
         g_NrDynamicDnsServer = sizeof(gDdnsServices)/sizeof(DDNS_SERVICE);
         g_DDNSServer = (COSA_DML_DDNS_SERVER *)AnscAllocateMemory(g_NrDynamicDnsServer * sizeof(COSA_DML_DDNS_SERVER));
+        char buf[64];
+
        for(index = 0; index<g_NrDynamicDnsServer; index++)
         {
             g_DDNSServer[index].Enable = FALSE;
@@ -997,21 +1001,29 @@ void CosaInitializeTr181DdnsServiceProviderList()
             }
             if (strstr(service_list, gDdnsServices[index].ServiceName))
             {
-                g_DDNSServer[index].Enable = TRUE;
-                snprintf(enable_path, sizeof(enable_path), SYSCFG_SERVER_ENABLE_KEY, index+1);
-                UtSetBool(enable_path, g_DDNSServer[index].Enable);
+                snprintf(enable_path, sizeof(enable_path), SYSCFG_SERVER_ENABLE_KEY, index + 1);
 
-                snprintf(g_DDNSServer[index].ServiceName, sizeof(g_DDNSServer[index].ServiceName), gDdnsServices[index].ServiceName);
-               snprintf(servicename_path, sizeof(servicename_path), SYSCFG_SERVER_SERVICENAME_KEY, index + 1);
-                UtSetString(servicename_path, g_DDNSServer[index].ServiceName);
-
-                snprintf(g_DDNSServer[index].Name, sizeof(g_DDNSServer[index].Name), gDdnsServices[index].Name);
                 snprintf(g_DDNSServer[index].SupportedProtocols, sizeof(g_DDNSServer[index].SupportedProtocols), gDdnsServices[index].SupportedProtocols);
                 snprintf(g_DDNSServer[index].Protocol, sizeof(g_DDNSServer[index].Protocol), gDdnsServices[index].Protocol);
 
-                snprintf(g_DDNSServer[index].ServerAddress, sizeof(g_DDNSServer[index].ServerAddress), gDdnsServices[index].ServerAddress);
-                snprintf(serveraddress_path, sizeof(serveraddress_path), SYSCFG_SERVER_SERVERADDRESS_KEY, index + 1);
-                UtSetString(serveraddress_path, g_DDNSServer[index].ServerAddress);
+                if (syscfg_get(NULL, enable_path, buf, sizeof(buf)))
+                {
+                    //Value not present in the syscfg db
+                    g_DDNSServer[index].Enable = TRUE;
+                    UtSetBool(enable_path, g_DDNSServer[index].Enable);
+
+                    snprintf(servicename_path, sizeof(servicename_path), SYSCFG_SERVER_SERVICENAME_KEY, index + 1);
+                    snprintf(g_DDNSServer[index].ServiceName, sizeof(g_DDNSServer[index].ServiceName), gDdnsServices[index].ServiceName);
+                    UtSetString(servicename_path, g_DDNSServer[index].ServiceName);
+
+                    snprintf(name_path, sizeof(name_path), SYSCFG_SERVER_NAME_KEY, index + 1);
+                    snprintf(g_DDNSServer[index].Name, sizeof(g_DDNSServer[index].Name), gDdnsServices[index].Name);
+                    UtSetString(name_path, g_DDNSServer[index].Name);
+
+                    snprintf(serveraddress_path, sizeof(serveraddress_path), SYSCFG_SERVER_SERVERADDRESS_KEY, index + 1);
+                    snprintf(g_DDNSServer[index].ServerAddress, sizeof(g_DDNSServer[index].ServerAddress), gDdnsServices[index].ServerAddress);
+                    UtSetString(serveraddress_path, g_DDNSServer[index].ServerAddress);
+                }
             }
         }
     }
@@ -1058,8 +1070,10 @@ CosaDmlDynamicDns_Server_GetEntryByIndex
     char maxretries_path[sizeof(SYSCFG_SERVER_MAXRETRIES_KEY) + 1] = {0};
     char serverport_path[sizeof(SYSCFG_SERVER_SERVERPORT_KEY) + 1] = {0};
     char serveraddress_path[sizeof(SYSCFG_SERVER_SERVERADDRESS_KEY) + 1] = {0};
+    char servicename_path[sizeof(SYSCFG_SERVER_SERVICENAME_KEY) + 1] = {0};
+    char name_path[sizeof(SYSCFG_SERVER_NAME_KEY) + 1] = {0};
 
-    char protocol[8] = {0}, serveraddress[256] = {0};
+    char protocol[8] = {0}, serveraddress[256] = {0}, servicename[64] = {0}, name[64] = {0};
     ULONG checkinterval = 0, retryinterval = DEFAULT_RETRYINTERVAL, maxretries = DEFAULT_MAXRETRIES, serverport = 0;
    BOOLEAN enable = FALSE;
 
@@ -1076,10 +1090,14 @@ CosaDmlDynamicDns_Server_GetEntryByIndex
     snprintf(maxretries_path, sizeof(maxretries_path), SYSCFG_SERVER_MAXRETRIES_KEY, index + 1);
     snprintf(serverport_path, sizeof(serverport_path), SYSCFG_SERVER_SERVERPORT_KEY, index + 1);
     snprintf(serveraddress_path, sizeof(serveraddress_path), SYSCFG_SERVER_SERVERADDRESS_KEY, index + 1);
+    snprintf(servicename_path, sizeof(servicename_path), SYSCFG_SERVER_SERVICENAME_KEY, index + 1);
+    snprintf(name_path, sizeof(name_path), SYSCFG_SERVER_NAME_KEY, index + 1);
 
     if ((UtGetBool(enable_path, &enable) == ANSC_STATUS_SUCCESS) &&
         (UtGetString(protocol_path, protocol, (sizeof(protocol) - 1)) == ANSC_STATUS_SUCCESS) &&
         (UtGetString(serveraddress_path, serveraddress, (sizeof(serveraddress) - 1)) == ANSC_STATUS_SUCCESS) &&
+        (UtGetString(servicename_path, servicename, (sizeof(servicename) - 1)) == ANSC_STATUS_SUCCESS) &&
+        (UtGetString(name_path, name, (sizeof(name) - 1)) == ANSC_STATUS_SUCCESS) &&
         (UtGetUlong(checkinterval_path, &checkinterval) == ANSC_STATUS_SUCCESS) &&
         (UtGetUlong(retryinterval_path, &retryinterval) == ANSC_STATUS_SUCCESS) &&
         (UtGetUlong(maxretries_path, &maxretries) == ANSC_STATUS_SUCCESS) &&
@@ -1095,6 +1113,8 @@ CosaDmlDynamicDns_Server_GetEntryByIndex
              _ansc_strncpy(g_DDNSServer[index].Protocol, protocol, sizeof(g_DDNSServer[index].Protocol)-1);
         }
          _ansc_strncpy(g_DDNSServer[index].ServerAddress, serveraddress, sizeof(g_DDNSServer[index].ServerAddress)-1);
+         _ansc_strncpy(g_DDNSServer[index].ServiceName, servicename, sizeof(g_DDNSServer[index].ServiceName)-1);
+         _ansc_strncpy(g_DDNSServer[index].Name, name, sizeof(g_DDNSServer[index].Name)-1);
     }
 
     /*Copy the values */
@@ -1185,6 +1205,7 @@ CosaDmlDynamicDns_Server_SetConf
     char serverport_path[sizeof(SYSCFG_SERVER_SERVERPORT_KEY) + 1] = {0};
     char serveraddress_path[sizeof(SYSCFG_SERVER_SERVERADDRESS_KEY) + 1] = {0};
     char servicename_path[sizeof(SYSCFG_SERVER_SERVICENAME_KEY) +1] = {0};
+    char name_path[sizeof(SYSCFG_SERVER_NAME_KEY) +1] = {0};
 
     if ((index = DynamicDns_Server_InsGetIndex(ins)) == -1 || (!g_DDNSServer))
     {
@@ -1206,6 +1227,7 @@ CosaDmlDynamicDns_Server_SetConf
     snprintf(serverport_path, sizeof(serverport_path), SYSCFG_SERVER_SERVERPORT_KEY, index + 1);
     snprintf(serveraddress_path, sizeof(serveraddress_path), SYSCFG_SERVER_SERVERADDRESS_KEY, index + 1);
     snprintf(servicename_path, sizeof(servicename_path), SYSCFG_SERVER_SERVICENAME_KEY, index + 1);
+    snprintf(name_path, sizeof(name_path), SYSCFG_SERVER_NAME_KEY, index + 1);
 
     g_DDNSServer[index].ServerPort = pEntry->ServerPort;
     g_DDNSServer[index].CheckInterval = pEntry->CheckInterval;
@@ -1216,6 +1238,7 @@ CosaDmlDynamicDns_Server_SetConf
     _ansc_strncpy(g_DDNSServer[index].ServerAddress, pEntry->ServerAddress, sizeof(g_DDNSServer[index].ServerAddress)-1);
     _ansc_strncpy(g_DDNSServer[index].Protocol,      pEntry->Protocol,      sizeof(g_DDNSServer[index].Protocol)-1);
     _ansc_strncpy(g_DDNSServer[index].ServiceName,      pEntry->ServiceName,      sizeof(g_DDNSServer[index].ServiceName)-1);
+    _ansc_strncpy(g_DDNSServer[index].Name,      pEntry->Name,      sizeof(g_DDNSServer[index].Name)-1);
 
     /* Set syscfg variable */
     UtSetBool(enable_path, g_DDNSServer[index].Enable);
@@ -1226,6 +1249,7 @@ CosaDmlDynamicDns_Server_SetConf
     UtSetUlong(retryinterval_path, g_DDNSServer[index].RetryInterval);
     UtSetUlong(maxretries_path, g_DDNSServer[index].MaxRetries);
     UtSetUlong(serverport_path, g_DDNSServer[index].ServerPort);
+    UtSetString(name_path, g_DDNSServer[index].Name);
 
 #ifdef DDNS_SERVICE_BIN
     if (g_DDNSServer[index].CheckInterval != 0)
