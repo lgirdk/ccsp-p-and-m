@@ -75,6 +75,13 @@
 #define COSA_DML_RR_NAME_IP_FILTER_FIREWALL_InsNum            "IpFilterInstanceNumber"
 #define COSA_DML_RR_NAME_IP_FILTER_FIREWALL_NextInsNumber     "IpFilterNextInstanceNumber"
 #define COSA_DML_RR_NAME_IP_FILTER_FIREWALL_NewlyAdded        "IpFilterNewlyAdded"
+
+#define COSA_IREP_FOLDER_NAME_IP_FILTER_FIREWALL_V6              "IpFilterFirewall_V6"
+#define COSA_DML_RR_NAME_IP_FILTER_FIREWALL_Alias_V6             "IpFilterAlias_V6"
+#define COSA_DML_RR_NAME_IP_FILTER_FIREWALL_InsNum_V6            "IpFilterInstanceNumber_V6"
+#define COSA_DML_RR_NAME_IP_FILTER_FIREWALL_NextInsNumber_V6     "IpFilterNextInstanceNumber_V6"
+#define COSA_DML_RR_NAME_IP_FILTER_FIREWALL_NewlyAdded_V6        "IpFilterNewlyAdded_V6"
+
 #define  COSA_IREP_FOLDER_NAME_V4DAYOFWEEK                    "V4DayOfWeek"
 #define  COSA_DML_RR_NAME_V4DayOfWeekNextInsNumber            "NextInstanceNumber"
 #define  COSA_DML_RR_NAME_V4DayOfWeekInsNumber                "InstanceNumber"
