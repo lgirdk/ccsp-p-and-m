@@ -78,6 +78,7 @@
 #include "cosa_common_util.h"
 #include <ccsp_psm_helper.h>
 #include <sys/stat.h>
+#include <sys/file.h>
 
 extern void* g_pDslhDmlAgent;
 extern ANSC_HANDLE bus_handle;
@@ -110,7 +111,11 @@ void *Ipv6ModeHandler_thrd(void *data);
 #define SYSEVENT_FIELD_IPV6_PREFIXPLTIME  "ipv6_prefix_prdtime"
 #define SYSEVENT_FIELD_IPV6_ULA_ADDRESS   "ula_address"
 #endif
-
+#define MAX_LINE_LENGTH 2000 //system_default 
+#define DHCPV6_SRV_POOL_00_PREFIXRANGEBEGIN  "$dhcpv6spool00::PrefixRangeBegin"
+#define DHCPV6_SRV_POOL_00_PREFIXRANGEEND  "$dhcpv6spool00::PrefixRangeEnd"
+#define DHCPV6_SRV_POOL_10_PREFIXRANGEBEGIN  "$dhcpv6spool10::PrefixRangeBegin"
+#define DHCPV6_SRV_POOL_10_PREFIXRANGEEND  "$dhcpv6spool10::PrefixRangeEnd"
 #if defined (_HUB4_PRODUCT_REQ_)
 #define _DHCPV6_DEFAULT_STATELESS_
 #endif
@@ -4185,6 +4190,212 @@ static int getLanUlaInfo(int *ula_enable)
 
 static int sysevent_fd_global = 0;
 static token_t sysevent_token_global;
+/*
+    This API is use to check IPv6 vaild or not 
+    if valid return 1 else 0
+*/
+static int IsValidIPv6Addr(char* ip_addr_string)
+{
+    struct in6_addr addr;
+	
+    if(ip_addr_string == NULL)
+        return 0;
+	
+    if(1 != inet_pton(AF_INET6, ip_addr_string, &addr))
+    {
+        CcspTraceDebug(("InValid IPv6 Address\n"));
+        return 0;
+    }
+
+    /* Here non valid IPv6 address are
+     * 1) 0:0:0:0:0:0:0:0 
+     * 2) ::
+     */
+    if( (0 == strcmp("0:0:0:0:0:0:0:0", ip_addr_string)) ||
+        (0 == strcmp("::", ip_addr_string)))
+    {
+        CcspTraceDebug(("InValid IPv6 Address\n"));
+        return 0;
+    }
+	return 1;
+}
+/*
+    This API fetch concate ipv6 prefixValue with prefixRangeBegin and prefixRangeEnd
+    if success it return 1 else 0
+    prefixValue = ipv6 prefix value
+    suffixValue = it could be ipv6 rangeBegin or rangeEnd value.  
+*/
+int processConcatIP(const char* prefixValue, const char* suffixValue) {
+    if(prefixValue == NULL || suffixValue == NULL){
+        CcspTraceInfo(("In processConcatIP : Null Parameter is pass as argument.\n"));
+        return 0;
+    }
+    CcspTraceDebug(("IP Address beginning part: %s\n", suffixValue));
+    CcspTraceDebug(("Suffix Range : %s\n", suffixValue));
+    size_t ip_add_len = strlen(prefixValue) + strlen(suffixValue) + 1;
+    char* concat_ip_address = (char*)malloc(ip_add_len);
+    if (concat_ip_address != NULL) {
+        snprintf(concat_ip_address, ip_add_len, "%s%s",prefixValue, suffixValue);
+        CcspTraceInfo(("IPv6 Address after concatenation: %s\n", concat_ip_address));
+        int result_valid_ip = IsValidIPv6Addr(concat_ip_address);
+        if(result_valid_ip == 1){
+            CcspTraceDebug(("Inside processConcatIP : Valid IPv6 Address\n"));
+            free(concat_ip_address);
+            return 1;
+        }
+        else{
+                CcspTraceInfo(("Inside processConcatIP : InValid IPv6 Address\n"));
+                free(concat_ip_address);
+                return 0;
+            }
+        } 
+        else {
+            CcspTraceInfo(("Memory allocation failed for IPv6 suffix range\n"));
+        }
+    return 0;
+}
+
+/*
+    This API extract the data from etc/utopia/system_defaults 
+*/
+void extractValueForPName(const char *targetPName, char **return_defult_value) {
+    FILE *file = fopen("/etc/utopia/system_defaults", "r");
+ 
+    if (file == NULL) {
+        CcspTraceInfo(("Error opening file : system_defaults\n"));
+        return;
+    }
+ 
+    char valueBuffer[MAX_LINE_LENGTH]; // Temporary buffer to store the value
+    while (fgets(valueBuffer, MAX_LINE_LENGTH, file) != NULL) {
+        char *pName = strtok(valueBuffer, "=");
+        char *value = strtok(NULL, "=");
+        if (pName != NULL && value != NULL) {
+            pName = strtok(pName, " \t");
+            value = strtok(value, " \t"); 
+            if (pName != NULL && value != NULL && strcmp(pName, targetPName) == 0) {
+                //truncate carriage return at the end
+                char *value_end = strstr(value, "\n");
+                if (value_end != NULL) {
+                    *value_end = '\0';
+                }
+		//remove slash 64 if present
+                value_end = strstr(value, "1/64");
+                if (value_end != NULL) {
+                    *value_end = '\0';
+                }
+		//Allocate memory for the extracted value
+                size_t valLen = strlen(value);
+                *return_defult_value = (char *)malloc(valLen + 1);
+		memset(*return_defult_value, '\0', (valLen + 1));
+                if (*return_defult_value == NULL) {
+                    fclose(file);
+                    CcspTraceInfo(("memory allocation failed\n"));
+                    return;
+                }
+                strncpy(*return_defult_value, value, valLen);
+                CcspTraceInfo(("system_defaults :  %s=%s\n", targetPName ,*return_defult_value));
+                fclose(file);
+                return;
+            }
+        }
+    }
+    CcspTraceInfo(("%s not found in system_defaults\n", targetPName));
+    fclose(file);
+}
+
+int fetchDefaultIPAdd(FILE *fp, const char* prefixValue, ULONG Index){
+    int retVal = 0;
+    char* targetPrefixRangeBegin = NULL;
+    char* targetPrefixRangeEnd = NULL;
+    if(Index == 1){
+        targetPrefixRangeBegin = DHCPV6_SRV_POOL_10_PREFIXRANGEBEGIN;
+        targetPrefixRangeEnd = DHCPV6_SRV_POOL_10_PREFIXRANGEEND;
+    }
+    else{
+        targetPrefixRangeBegin = DHCPV6_SRV_POOL_00_PREFIXRANGEBEGIN;
+        targetPrefixRangeEnd = DHCPV6_SRV_POOL_00_PREFIXRANGEEND;
+    }
+    
+    char *storePrefixRangeBegin = NULL;
+    extractValueForPName(targetPrefixRangeBegin, &storePrefixRangeBegin);
+    if (storePrefixRangeBegin != NULL) {
+        CcspTraceDebug(("PrefixRangeBegin Value: %s \n", storePrefixRangeBegin));
+    }
+    else {
+        CcspTraceInfo(("PrefixRangeBegin not found in the file.\n"));
+    }
+    char *storePrefixRangeEnd = NULL;
+    extractValueForPName(targetPrefixRangeEnd, &storePrefixRangeEnd); 
+    if (storePrefixRangeEnd != NULL) {
+        CcspTraceDebug(("PrefixRangeEnd Value: %s \n",storePrefixRangeEnd));
+    } else {
+        CcspTraceDebug(("PrefixRangeEnd not found in the file.\n"));
+    }
+
+    if(prefixValue != NULL && storePrefixRangeBegin != NULL && storePrefixRangeEnd != NULL){
+        int erVal = fprintf(fp, "       pool %s%s - %s%s\n", prefixValue, storePrefixRangeBegin, prefixValue, storePrefixRangeEnd );
+        if(erVal < 0){
+            CcspTraceInfo(("poolValueFill : Unable to write to the server file "));
+        }
+        CcspTraceInfo(("Successfully feed the default value to server.conf\n"));
+        retVal = 1;
+    }
+    else{
+        CcspTraceInfo(("Unable to feed to dibbler server.conf\n"));
+    }
+
+    free(storePrefixRangeBegin);
+    free(storePrefixRangeEnd);
+    return retVal;
+}
+
+void poolValueFill(FILE *fp, const char* prefixValue, const char* PrefixRangeBegin, const char* PrefixRangeEnd, ULONG Index)
+{
+	int resStart = 0;
+    int resStop = 0;
+    CcspTraceDebug(("DEBUG LOG : Inside poolValueFill"));
+
+    size_t len_prefix_begin = strlen((const char *)PrefixRangeBegin) + 1;
+    char* prefix_begin = (char *) malloc(len_prefix_begin);
+    if(prefix_begin != NULL){
+        strncpy(prefix_begin,(const char*) PrefixRangeBegin, len_prefix_begin);
+        resStart = processConcatIP(prefixValue, prefix_begin);
+    }
+    else{
+        CcspTraceInfo((" Unable to allocated Prefix_Begin memory"));
+    }        
+    size_t len_prefix_end = strlen((const char *)PrefixRangeEnd) + 1;
+    char* prefix_end = (char *) malloc(len_prefix_end);
+    if(prefix_end != NULL){
+        strncpy(prefix_end,(const char*) PrefixRangeEnd, len_prefix_end);
+        resStop = processConcatIP(prefixValue, prefix_end);
+    }
+    else{
+        CcspTraceInfo((" Unable to allocated Prefix_End memory"));
+    }
+
+    if(resStart == 1 && resStop == 1){
+        CcspTraceDebug(("Valid IPv6 Address for RangeBegin and RangeEnd\n"));
+        int erVal = fprintf(fp, "       pool %s%s - %s%s\n", prefixValue, PrefixRangeBegin, prefixValue, PrefixRangeEnd );
+        if(erVal < 0){
+            CcspTraceInfo(("PoolValueFill : Unable to write to server file"));
+        }
+    }
+    else{
+        CcspTraceInfo(("InValid IPv6 Address for RangeBegin and RangeEnd\n"));
+        CcspTraceInfo(("IPv6 address range Recovery from System defalut value\n"));
+        int res_default = fetchDefaultIPAdd(fp, prefixValue, Index);
+        if(res_default != 1){
+            CcspTraceInfo(("Fetch default value unsuccessful\n"));
+        }
+        else{
+            CcspTraceDebug(("Fetch default value success and store in conf file\n"));
+        }
+    }
+    free(prefix_begin);
+    free(prefix_end);
+}
 
 #ifdef _COSA_INTEL_USG_ARM_
 void __cosa_dhcpsv6_refresh_config()
@@ -4370,8 +4581,9 @@ void __cosa_dhcpsv6_refresh_config()
                         prefixValue[_ansc_strlen(prefixValue)-1] = '\0';
 
                 }
+   
+                poolValueFill(fp, prefixValue, (const char*)sDhcpv6ServerPool[Index].Cfg.PrefixRangeBegin, (const char*) sDhcpv6ServerPool[Index].Cfg.PrefixRangeEnd, Index);
 
-                fprintf(fp, "       pool %s%s - %s%s\n", prefixValue, sDhcpv6ServerPool[Index].Cfg.PrefixRangeBegin, prefixValue, sDhcpv6ServerPool[Index].Cfg.PrefixRangeEnd );
 #endif
 
                 /*we need get two time values */
@@ -5324,8 +5536,9 @@ void __cosa_dhcpsv6_refresh_config()
 
                      }
                 }
-
-                fprintf(fp, "       pool %s%s - %s%s\n", prefixValue, sDhcpv6ServerPool[Index].Cfg.PrefixRangeBegin, prefixValue, sDhcpv6ServerPool[Index].Cfg.PrefixRangeEnd );
+                
+                poolValueFill(fp, prefixValue, (const char*)sDhcpv6ServerPool[Index].Cfg.PrefixRangeBegin, (const char*) sDhcpv6ServerPool[Index].Cfg.PrefixRangeEnd, Index);
+              
 #endif
 
                 /*we need get two time values */
