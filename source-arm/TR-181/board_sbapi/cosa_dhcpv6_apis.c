@@ -8622,7 +8622,8 @@ dhcpv6c_dbg_thrd(void * in)
             int  ret = 0;
             char globalIP[128] = {0};
             BOOL bRestartLan = FALSE;
-
+            int dataLen = 0;
+            char preflen[12] = {0};
 #if defined(FEATURE_RDKB_WAN_MANAGER)
             int hub4_valid_lft = 0;
             int hub4_preferred_lft = 0;
@@ -8635,8 +8636,6 @@ dhcpv6c_dbg_thrd(void * in)
 #endif
 
 #if defined(FEATURE_MAPT) && defined(FEATURE_RDKB_WAN_MANAGER)
-            int dataLen = 0;
-            char preflen[12] = {0};
             char brIPv6Prefix[128] = {0};
             char ruleIPv4Prefix[32] = {0};
             char ruleIPv6Prefix[128] = {0};
@@ -8691,28 +8690,42 @@ dhcpv6c_dbg_thrd(void * in)
 #endif
 #elif defined (FEATURE_SUPPORT_MAPT_NAT46)
 #if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
-            if (sscanf(p, "%63s %63s %63s %s %s %s %s %s %63s %d %s %s %s %s %s %s",
+            dataLen = sscanf(p, "%63s %63s %63s %s %s %s %s %s %63s %s %s %s %s %s %s %s",
                        action, IfaceName, v6addr,    iana_iaid, iana_t1, iana_t2, iana_pretm, iana_vldtm,
-                       v6pref, &pref_len, iapd_iaid, iapd_t1, iapd_t2, iapd_pretm, iapd_vldtm,
-                       opt95_dBuf ) == 16)
+                       v6pref, preflen, iapd_iaid, iapd_t1, iapd_t2, iapd_pretm, iapd_vldtm,
+                       opt95_dBuf);
+            CcspTraceInfo(("%s,%d: dataLen = %d\n", __FUNCTION__, __LINE__, dataLen));
+            if (dataLen == 16)
 #else
-            if (sscanf(p, "%63s %63s %s %s %s %s %s %63s %d %s %s %s %s %s %s",
+            dataLen = sscanf(p, "%63s %63s %s %s %s %s %s %63s %s %s %s %s %s %s %s",
                        action, v6addr,    iana_iaid, iana_t1, iana_t2, iana_pretm, iana_vldtm,
-                       v6pref, &pref_len, iapd_iaid, iapd_t1, iapd_t2, iapd_pretm, iapd_vldtm,
-                       opt95_dBuf ) == 15)
+                       v6pref, preflen, iapd_iaid, iapd_t1, iapd_t2, iapd_pretm, iapd_vldtm,
+                       opt95_dBuf);
+            CcspTraceInfo(("%s,%d: dataLen = %d\n", __FUNCTION__, __LINE__, dataLen));
+	    if (dataLen == 15)
 #endif
 #else // FEATURE_MAPT
 #if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
-            if (sscanf(p, "%63s %63s %63s %s %s %s %s %s %63s %d %s %s %s %s %s", 
+            dataLen = sscanf(p, "%63s %63s %63s %s %s %s %s %s %63s %s %s %s %s %s %s",
                        action, IfaceName, v6addr,    iana_iaid, iana_t1, iana_t2, iana_pretm, iana_vldtm,
-                       v6pref, &pref_len, iapd_iaid, iapd_t1, iapd_t2, iapd_pretm, iapd_vldtm ) == 15)
+                       v6pref, preflen, iapd_iaid, iapd_t1, iapd_t2, iapd_pretm, iapd_vldtm);
+            CcspTraceInfo(("%s,%d: dataLen = %d\n", __FUNCTION__, __LINE__, dataLen));
+            if (dataLen == 15)
 #else
-            if (sscanf(p, "%63s %63s %s %s %s %s %s %63s %d %s %s %s %s %s", 
+            dataLen = sscanf(p, "%63s %63s %s %s %s %s %s %63s %s %s %s %s %s %s",
                        action, v6addr,    iana_iaid, iana_t1, iana_t2, iana_pretm, iana_vldtm,
-                       v6pref, &pref_len, iapd_iaid, iapd_t1, iapd_t2, iapd_pretm, iapd_vldtm ) == 14)
+                       v6pref, preflen, iapd_iaid, iapd_t1, iapd_t2, iapd_pretm, iapd_vldtm);
+            CcspTraceInfo(("%s,%d: dataLen = %d\n", __FUNCTION__, __LINE__, dataLen));
+            if (dataLen == 14)
 #endif
 #endif
             {
+                remove_single_quote(v6addr);
+                remove_single_quote(v6pref);
+                remove_single_quote(preflen);
+                pref_len = atoi(preflen);
+                CcspTraceInfo(("%s,%d: v6addr=%s, v6pref=%s, pref_len=%d\n", __FUNCTION__, __LINE__, v6addr, v6pref, pref_len));
+
                 pString = (char*)CosaUtilGetFullPathNameByKeyword
                     (
                         (PUCHAR)"Device.IP.Interface.",
@@ -8740,6 +8753,7 @@ dhcpv6c_dbg_thrd(void * in)
 				sleep(5);
 			  }
 #if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
+            remove_single_quote(IfaceName);
             /*Move IPv6 handle to WanManager*/
 #if defined(FEATURE_RDKB_WAN_MANAGER)
             /*
@@ -8762,10 +8776,7 @@ dhcpv6c_dbg_thrd(void * in)
                 dhcpv6_data.isExpired = FALSE;
                 dhcpv6_data.prefixAssigned = TRUE;
 #if defined(FEATURE_MAPT)
-                    remove_single_quote(v6pref);
                     strcpy(pdIPv6Prefix, v6pref);
-                    remove_single_quote(preflen);
-                    pref_len=atoi(preflen);
 #endif
                 rc = sprintf_s(dhcpv6_data.sitePrefix, sizeof(dhcpv6_data.sitePrefix), "%s/%d", v6pref, pref_len);
                 if(rc < EOK)
@@ -8980,10 +8991,7 @@ dhcpv6c_dbg_thrd(void * in)
                     }
 
 #if defined(FEATURE_MAPT) && defined(FEATURE_RDKB_WAN_MANAGER)
-                    remove_single_quote(v6pref);
                     strcpy(pdIPv6Prefix, v6pref);
-                    remove_single_quote(preflen);
-                    pref_len=atoi(preflen);
 #endif
                     if (strncmp(v6pref, "::", 2) != 0)
                     {
@@ -9591,7 +9599,12 @@ dhcpv6c_dbg_thrd(void * in)
                         * Parses option-95 response, apply mapt configuration and set
                         * appropriate events.
                         */
-                       {
+                        int pref_tm = atoi(iapd_pretm);
+                        int valid_tm = atoi(iapd_vldtm);
+
+                        // In case of invalid PD details, ignore the option95 processing
+                        if (pref_len > 0 && (pref_tm > 0) && (valid_tm > 0))
+                        {
                           char maptEnable[BUFLEN_8] = {0};
 
                           if (!syscfg_get(NULL, "MAPT_Enable", maptEnable, sizeof(maptEnable)) &&
@@ -9606,6 +9619,11 @@ dhcpv6c_dbg_thrd(void * in)
                                                    __FUNCTION__));
                               }
                           }
+                       }
+                       else
+                       {
+                          CcspTraceWarning(("%s: Not processing option-95 when invalid PD is received \n", __FUNCTION__));
+                          CcspTraceWarning(("%s: pref_len = %d, pref life time=%d, valid life time=%d\n", __FUNCTION__, pref_len, pref_tm, valid_tm));
                        }
 #endif
                    }
