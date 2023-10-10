@@ -4328,16 +4328,26 @@ static void*
 FirmwareDownloadAndFactoryReset(void* arg)
 {
     UNREFERENCED_PARAMETER(arg);
-    FILE *fp;
     char URL[256]={0};
     char Imagename[256]={0};
-    char line[512];
-    char *token;
-    char *val;
-    errno_t rc = -1;
-    if((fp = fopen("/tmp/FactoryReset.txt", "r")) == NULL)
+    
+    if(syscfg_get(NULL,"xconf_url",URL, sizeof(URL)) != 0)
     {
-        CcspTraceInfo(( "/tmp/FactoryReset.txt doesnot exist go for snmp reboot .\n"));
+        commonSyseventSet("fw_update_inprogress", "false");
+        CcspTraceError(("FirmwareDownloadAndFactoryReset: failed to get url"));
+        return NULL;
+    }
+    if(syscfg_get(NULL,"fw_to_upgrade",Imagename,sizeof(Imagename)) != 0)
+    {
+        commonSyseventSet("fw_update_inprogress", "false");
+        CcspTraceError(("FirmwareDownloadAndFactoryReset: failed to get image name"));
+        return NULL;
+    }
+    
+    CcspTraceWarning(("%s: ImageName %s, url %s\n", __FUNCTION__, Imagename, URL));
+    if(strlen(URL)==0 || strlen(Imagename)==0)
+    {
+        CcspTraceInfo(( "Imagename and URL NULL, go for snmp reboot .\n"));
         if( RETURN_ERR == cm_hal_FWupdateAndFactoryReset( NULL, NULL ))
         {
             commonSyseventSet("fw_update_inprogress", "false");
@@ -4346,51 +4356,10 @@ FirmwareDownloadAndFactoryReset(void* arg)
     }
     else
     {
-        while (fgets(line, sizeof(line), fp) != NULL)
-        {
-            token=strtok(line,"=");
-            if(token != NULL)
-            {
-                val = strtok(NULL, "=");
-                if( NULL != val )
-                {
-                    int new_line = strlen(val) -1;
-                    if (val[new_line] == '\n')
-                    val[new_line] = '\0';
-                    if(0 == strcmp(token,"Url"))
-                    {
-                        rc = strcpy_s(URL, sizeof(URL), val);
-                        if(rc != EOK)
-                        {
-                            ERR_CHK(rc);
-                            commonSyseventSet("fw_update_inprogress", "false");
-                            CcspTraceError(("FirmwareDownloadAndFactoryReset: failed to copy url"));
-                            fclose(fp);
-                            return NULL;
-                        }
-                    }
-                    else if(0 == strcmp(token,"Image"))
-                    {
-                        rc = strcpy_s(Imagename, sizeof(Imagename), val);
-                        if(rc != EOK)
-                        {
-                            ERR_CHK(rc);
-                            commonSyseventSet("fw_update_inprogress", "false");
-                            CcspTraceError(("FirmwareDownloadAndFactoryReset: failed to copy image name"));
-                            fclose(fp);
-                            return NULL;
-                        }
-                    }
-                }
-            }
-        }
-        fclose(fp);
-        CcspTraceWarning(("%s: ImageName %s, url %s\n", __FUNCTION__, Imagename, URL));
         if( RETURN_ERR == cm_hal_FWupdateAndFactoryReset( URL, Imagename ))
         {
             CcspTraceError(("FirmwareDownloadAndFactoryReset :cm_hal_FWupdateAndFactoryReset failed\n"));
             commonSyseventSet("fw_update_inprogress", "false");
-            v_secure_system("rm -rf /tmp/FactoryReset.txt");
         }
     }
     return NULL;
