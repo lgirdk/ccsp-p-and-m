@@ -1032,6 +1032,13 @@ DeviceInfo_GetParamStringValue
         return 0;
     }
 
+#if !defined(_SR213_PRODUCT_REQ_) && !defined (_WNXL11BWL_PRODUCT_REQ_)
+    if (strcmp(ParamName, "X_RDKCENTRAL-COM_InActiveFirmware") == 0)
+    {
+        return CosaDmlDiGetInActiveFirmware(NULL, pValue, pulSize);
+    }
+#endif
+
     if (strcmp(ParamName, "X_RDK_RDKProfileName") == 0)
     {
         return update_pValue(pValue, pulSize, "RDKB");

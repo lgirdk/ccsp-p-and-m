@@ -592,6 +592,46 @@ CosaDmlDiGetManufacturerOUI
         return ANSC_STATUS_SUCCESS;
 
 }
+
+#if !defined(_SR213_PRODUCT_REQ_) && !defined (_WNXL11BWL_PRODUCT_REQ_)
+ANSC_STATUS
+CosaDmlDiGetInActiveFirmware
+    (
+        ANSC_HANDLE                 hContext,
+        char*                       pValue,
+        PULONG                      pulSize
+    )
+{
+    UNREFERENCED_PARAMETER(hContext);
+    if (!pValue || !pulSize || *pulSize <= 64)
+        return ANSC_STATUS_FAILURE;
+
+    int ret;
+    int rc = -1;
+    PFW_BANK_INFO pfw_bank = NULL;
+    pfw_bank = AnscAllocateMemory(sizeof(FW_BANK_INFO));
+    ret = platform_hal_GetFirmwareBankInfo(INACTIVE_BANK, pfw_bank);
+
+    if (ret == RETURN_ERR) {
+        AnscFreeMemory(pfw_bank);
+        return ANSC_STATUS_FAILURE;
+    }
+    else {
+        rc = sprintf_s(pValue, *pulSize, "%s", pfw_bank->fw_name);
+        AnscFreeMemory(pfw_bank);
+        if (rc < EOK) {
+            ERR_CHK(rc);
+            return ANSC_STATUS_FAILURE;
+        }
+        char *remove_bin = strstr(pValue, ".bin");
+        if (remove_bin != NULL) {
+            *remove_bin = '\0';
+        }
+        return ANSC_STATUS_SUCCESS;
+    }
+}
+#endif
+
 #if !defined(_COSA_BCM_MIPS_) && !defined (_ENABLE_DSL_SUPPORT_)
 /*Changes for 6560*/
 ANSC_STATUS

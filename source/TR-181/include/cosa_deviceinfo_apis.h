@@ -726,6 +726,14 @@ CosaDmlDiGetCMTSMac
         ULONG*                      pulSize
     );
 
+ANSC_STATUS
+CosaDmlDiGetInActiveFirmware
+    (
+        ANSC_HANDLE                 hContext,
+        char*                       pValue,
+        PULONG                      pulSize
+    );
+
 ANSC_STATUS CosaDmlDiClearResetCount
     (
         ANSC_HANDLE                 hContext,

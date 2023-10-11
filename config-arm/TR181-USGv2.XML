@@ -946,6 +946,16 @@
           <syntax>string</syntax>
 	  <writable>true</writable>
         </parameter>
+
+<?ifndef _SR213_PRODUCT_REQ_ & _WNXL11BWL_PRODUCT_REQ_?>
+        <parameter>
+         <name>X_RDKCENTRAL-COM_InActiveFirmware</name>
+          <type>string(64)</type>
+          <syntax>string</syntax>
+          <writable>false</writable>
+        </parameter>
+<?endif?>
+
         <parameter>
 
           <name>FirstUseDate</name>
