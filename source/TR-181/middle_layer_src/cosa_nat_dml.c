@@ -2966,7 +2966,11 @@ X_RDK_PortMapping_SetParamStringValue
 		{
 
 
+#if !defined(_64BIT_ARCH_SUPPORT_)
 			CcspTraceWarning(("rpm->entries_count is %u\n", rpm->entries_count));
+#else
+			CcspTraceWarning(("rpm->entries_count is %zu\n", rpm->entries_count));
+#endif
 			CcspTraceWarning(("rpm->subdoc_name is %s\n", rpm->subdoc_name));
 			CcspTraceWarning(("rpm->version is %lu\n", (unsigned long)rpm->version));
 			CcspTraceWarning(("rpm->transaction_id is %d\n", rpm->transaction_id));

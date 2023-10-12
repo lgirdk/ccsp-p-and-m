@@ -214,7 +214,7 @@ CosaDmlSetCaptivePortalEnable
         BOOL value
     );
 
-#if defined(INTEL_PUMA7) || defined(_COSA_BCM_ARM_)
+#if defined(INTEL_PUMA7) || defined(_COSA_BCM_ARM_) || defined(_COSA_QCA_ARM_)
 ANSC_STATUS
 CosaDmlSetLED
 		(

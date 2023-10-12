@@ -288,7 +288,11 @@ CosaDmlUpnpDevGetAdvPeriod
 	Utopia_RawGet(&utctx, NULL, "upnp_igd_advr_expire", buf, sizeof(buf));
     
 	if (AnscSizeOfString(buf)){
+#if !defined(_64BIT_ARCH_SUPPORT_)
 		*val = (PULONG)_ansc_atoi(buf);
+#else
+		*val = (PULONG)_ansc_atol(buf);
+#endif
 	}else{
 		*val = (PULONG)g_AdvPeriod; // use default value
 	}
@@ -343,7 +347,11 @@ CosaDmlUpnpDevGetTTL
 	Utopia_RawGet(&utctx, NULL, "upnp_igd_advr_ttl", buf, sizeof(buf));
     
 	if (AnscSizeOfString(buf)){
+#if !defined(_64BIT_ARCH_SUPPORT_)
 		*val = (PULONG)_ansc_atoi(buf);
+#else
+		*val = (PULONG)_ansc_atol(buf);
+#endif
 	}else{
 		*val = (PULONG)g_TTL; // use default value
 	}

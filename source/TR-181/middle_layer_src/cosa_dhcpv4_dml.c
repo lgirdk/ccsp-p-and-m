@@ -3945,7 +3945,12 @@ Server_SetParamStringValue
             }
             if (NULL != pStaticClients)
             {
+#if !defined(_64BIT_ARCH_SUPPORT_)
                 CcspTraceWarning(("pStaticClients->entries_count is %u\n", pStaticClients->entries_count));
+#else
+                CcspTraceWarning(("pStaticClients->entries_count is %zu\n", pStaticClients->entries_count));
+#endif
+
                 CcspTraceWarning(("pStaticClients->subdoc_name is %s\n", pStaticClients->subdoc_name));
                 CcspTraceWarning(("pStaticClients->version is %lu\n", (unsigned long)pStaticClients->version));
                 CcspTraceWarning(("pStaticClients->transaction_id is %d\n", pStaticClients->transaction_id));
@@ -4035,7 +4040,11 @@ Server_SetParamStringValue
             if (NULL != pLanInfo)
             {
 		        pLanInfo->entries_count = 1;// Assigned 1 by default.
+#if !defined(_64BIT_ARCH_SUPPORT_)
                 CcspTraceWarning(("pLanInfo->entries_count is %u\n", pLanInfo->entries_count));
+#else
+                CcspTraceWarning(("pLanInfo->entries_count is %zu\n", pLanInfo->entries_count));
+#endif
                 CcspTraceWarning(("pLanInfo->subdoc_name is %s\n", pLanInfo->subdoc_name));
                 CcspTraceWarning(("pLanInfo->version is %lu\n", (unsigned long)pLanInfo->version));
                 CcspTraceWarning(("pLanInfo->transaction_id is %d\n", pLanInfo->transaction_id));
@@ -6084,7 +6093,11 @@ Pool_GetParamStringValue
             CosaDmlDhcpsGetPoolCfg(NULL,&tmpCfg);
             snprintf(pValue,sizeof(tmpCfg.DomainName),"%s", tmpCfg.DomainName);
         }else {
+#if !defined(_64BIT_ARCH_SUPPORT_)
 	  CcspTraceWarning(("%s: pPool->Cfg.DomainName: %s  0x%1x 0x%1x 0x%1x 0x%1x, sizeof: %d\n", 
+#else
+	  CcspTraceWarning(("%s: pPool->Cfg.DomainName: %s  0x%1x 0x%1x 0x%1x 0x%1x, sizeof: %zu\n",
+#endif
 			    __FUNCTION__, pPool->Cfg.DomainName, (signed) (pPool->Cfg.DomainName[0]), 
 			    (signed) (pPool->Cfg.DomainName[1]), (signed) (pPool->Cfg.DomainName[2]), 
 			    (signed) (pPool->Cfg.DomainName[3]), sizeof(pPool->Cfg.DomainName)));
@@ -7934,7 +7947,11 @@ StaticAddress_SetParamStringValue
     	}
 		else
 		{
+#if !defined(_64BIT_ARCH_SUPPORT_)
 			CcspTraceWarning(("'%s' value should be less than (%d) charecters\n", ParamName, ( sizeof(pDhcpStaticAddress->DeviceName) - 1 )));
+#else
+			CcspTraceWarning(("'%s' value should be less than (%zu) charecters\n", ParamName, ( sizeof(pDhcpStaticAddress->DeviceName) - 1 )));
+#endif
 		}
     }
 
@@ -7953,7 +7970,11 @@ StaticAddress_SetParamStringValue
         }
         else
         {
+#if !defined(_64BIT_ARCH_SUPPORT_)
             CcspTraceWarning(("'%s' value should be less than (%d) charecters\n", ParamName, ( sizeof(pDhcpStaticAddress->Comment) - 1 )));
+#else
+            CcspTraceWarning(("'%s' value should be less than (%zu) charecters\n", ParamName, ( sizeof(pDhcpStaticAddress->Comment) - 1 )));
+#endif
         }
     }
 

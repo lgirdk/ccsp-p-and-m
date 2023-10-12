@@ -1030,7 +1030,7 @@ DeviceInfo_GetParamStringValue
         return 0;
     }
 
-#if !defined(_SR213_PRODUCT_REQ_) && !defined (_WNXL11BWL_PRODUCT_REQ_)
+#if !defined(_SR213_PRODUCT_REQ_) && !defined (_WNXL11BWL_PRODUCT_REQ_) && !defined (_XER5_PRODUCT_REQ_) 
     if (strcmp(ParamName, "X_RDKCENTRAL-COM_InActiveFirmware") == 0)
     {
         return CosaDmlDiGetInActiveFirmware(NULL, pValue, pulSize);
@@ -3508,9 +3508,11 @@ Snmpv3DHKickstart_SetParamBoolValue
         CcspTraceInfo(("Snmpv3DHKickstart_SetParamBoolValue: successfully set %s = %s\n", ParamName, bValue == TRUE ? "TRUE" : "FALSE"));
         if( pKickstart->TableUpdated == TRUE && pKickstart->Enabled == TRUE )
         {
-            i = cm_hal_snmpv3_kickstart_initialize( &Snmpv3_Kickstart_Table );
+#if !defined(_XER5_PRODUCT_REQ_)
+	    i = cm_hal_snmpv3_kickstart_initialize( &Snmpv3_Kickstart_Table );
             CcspTraceError(("cm_hal_snmpv3_kickstart_initialize: return value = %d\n", i));
             pKickstart->TableUpdated = FALSE;
+#endif
         }
     }
     else
@@ -14891,7 +14893,7 @@ Xconf_SetParamBoolValue
             } else {
                 // NOTE:: Firmwaresched.sh used to check for reboot pending before killing, this one doesn't
                 // leaving a note behind if it comes out to be a problem
-#if defined(INTEL_PUMA7) || defined(_COSA_BCM_ARM_)
+#if defined(INTEL_PUMA7) || defined(_COSA_BCM_ARM_) || defined(_COSA_QCA_ARM_)
 #ifdef _CBR_PRODUCT_REQ_
             if(0 == v_secure_system("pidof cbr_firmwareDwnld.sh"))  {
                            v_secure_system ("kill -9 `pidof cbr_firmwareDwnld.sh `");
