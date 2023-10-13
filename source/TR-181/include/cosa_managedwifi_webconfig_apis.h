@@ -86,7 +86,8 @@ typedef enum
 typedef enum
 {
     PRIVATE,
-    XHS
+    XHS,
+    MANAGE_WIFI
 }InterfaceType_t;
 
 typedef struct
@@ -118,4 +119,5 @@ void restorePreviousPsmValue(void);
 int validateIpRange(char *pIpAddr, char *pStartAddr, char *pEndAddr, pErr pErrRetVal);
 int validateLeaseTime(char *pLeaseTime, pErr pErrRetVal);
 void extractLeaseTime(char *pBegin, char *pEnd, int * pLeaseTime);
+void getManageWiFiAddrRange(LanDetails_t * pManageWiFiAddrDetails);
 #endif

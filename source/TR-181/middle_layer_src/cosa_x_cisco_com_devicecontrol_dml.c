@@ -2214,6 +2214,9 @@ LanMngm_Validate
     char wan_ipaddr_buf[32] = {0};
     char wan_netmask_buf[32] = {0};
     bool isPrivate = FALSE;
+#if defined (WIFI_MANAGE_SUPPORTED)
+    unsigned int uiLanIpInHex = 0;
+#endif /*WIFI_MANAGE_SUPPORTED*/
     PCOSA_CONTEXT_LINK_OBJECT       pLinkObj    = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     PCOSA_DML_LAN_MANAGEMENT        pLanMngm    = (PCOSA_DML_LAN_MANAGEMENT)pLinkObj->hContext;
     ULONG lanSubnetMask                         = 0;
@@ -2261,6 +2264,10 @@ LanMngm_Validate
         CcspTraceWarning(("RDKB_LAN_CONFIG_CHANGED: Modified LanSubnetMask doesn't meet the conditions,reverting back to old value  ...\n"));
         goto RET_ERR;
     }
+#if defined (WIFI_MANAGE_SUPPORTED)
+    uiLanIpInHex = ntohl (pLanMngm->LanIPAddress.Value);
+    CcspTraceWarning(("%s:%d- Lan Ip in hex : %08X\n", __FUNCTION__,__LINE__, uiLanIpInHex));
+#endif /*WIFI_MANAGE_SUPPORTED*/
     /* check the gateway IP address */
     /* gateway IP address should be private address,*/
     /* range: 10.0.0.0 to 10.255.255.254, 172.16.0.0 to 172.31.255.255, 192.168.0.0 to 192.168.255.255  */
@@ -2277,6 +2284,13 @@ LanMngm_Validate
     {
         isPrivate = TRUE;
     }
+#if defined (WIFI_MANAGE_SUPPORTED)
+    else if(Dhcpv4_Lan_Ip_IsInManageWiFi_AddrRange(uiLanIpInHex))
+    {
+        CcspTraceWarning(("%s:%d- Lan Ip address is in ManageWifi Range: %08X\n", __FUNCTION__,__LINE__, uiLanIpInHex));
+        goto RET_ERR;
+    }
+#endif /*WIFI_MANAGE_SUPPORTED*/
 
     if(isPrivate == TRUE)
     {

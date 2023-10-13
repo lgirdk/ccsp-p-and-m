@@ -1677,3 +1677,22 @@ void extractLeaseTime(char *pBegin, char *pEnd, int * pLeaseTime)
         pValue = NULL;
     }
 }
+
+void getManageWiFiAddrRange(LanDetails_t * pManageWiFiAddrDetails)
+{
+    char aManageWiFiEnabled[BUFF_LEN_8] = {0};
+
+    if (NULL == pManageWiFiAddrDetails)
+    {
+        CcspTraceError(("%s:%d, NULL parameter passed\n",__FUNCTION__,__LINE__));
+        return;
+    }
+    syscfg_get(NULL, "Manage_WiFi_Enabled", aManageWiFiEnabled, BUFF_LEN_8);
+
+    if ((!strncmp(aManageWiFiEnabled, "true", 4)) && (MANAGE_WIFI == pManageWiFiAddrDetails->eInterfaceType))
+    {
+        strncpy(pManageWiFiAddrDetails->aIpAddr, sBackupLanConfig.aLanIpAddr, sizeof(pManageWiFiAddrDetails->aIpAddr)-1);
+        strncpy(pManageWiFiAddrDetails->aStartIpAddr, sBackupLanConfig.aDhcpStartIpAdd, sizeof(pManageWiFiAddrDetails->aStartIpAddr)-1);
+        strncpy(pManageWiFiAddrDetails->aEndIpAddr, sBackupLanConfig.aDhcpEndIpAdd, sizeof(pManageWiFiAddrDetails->aEndIpAddr)-1);
+    }
+}

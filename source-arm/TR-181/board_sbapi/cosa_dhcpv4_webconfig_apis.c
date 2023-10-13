@@ -69,6 +69,53 @@ int Dhcpv4_Lan_MutexTryLock()
 {
     return pthread_mutex_trylock(&lanMutex);
 }
+
+#if defined (WIFI_MANAGE_SUPPORTED)
+int Dhcpv4_Lan_Ip_IsInManageWiFi_AddrRange(ULONG ulAddr)
+{
+    LanDetails_t manageWiFiAddrDetails;
+    struct in_addr sInAddr;
+    unsigned int uiManageWiFiIpInHex = 0, uiManageWiFiStartIpInHex = 0, uiManageWiFiEndIpInHex = 0;
+    bool bUpdateManageWiFiAddr = false;
+
+    memset(&manageWiFiAddrDetails, 0, sizeof(manageWiFiAddrDetails));
+    manageWiFiAddrDetails.eInterfaceType = MANAGE_WIFI;
+
+    getManageWiFiAddrRange(&manageWiFiAddrDetails);
+
+    CcspTraceWarning(("%s:addr:%lx\n",__FUNCTION__,ulAddr));
+    if (('\0' != manageWiFiAddrDetails.aIpAddr[0]) && (1 == inet_pton (AF_INET, manageWiFiAddrDetails.aIpAddr, &sInAddr)))
+    {
+        uiManageWiFiIpInHex = ntohl (sInAddr.s_addr);
+        if (ulAddr == uiManageWiFiIpInHex)
+        {
+            CcspTraceWarning(("%s:addr:%lx is similar to the ManageWiFi bridge ip:%08X\n",__FUNCTION__,ulAddr, uiManageWiFiIpInHex));
+            return TRUE;
+        }
+    }
+    if (('\0' != manageWiFiAddrDetails.aStartIpAddr[0]) && (1 == inet_pton (AF_INET, manageWiFiAddrDetails.aStartIpAddr, &sInAddr)))
+    {
+        uiManageWiFiStartIpInHex = ntohl (sInAddr.s_addr);
+        bUpdateManageWiFiAddr = true;
+    }
+    if (('\0' != manageWiFiAddrDetails.aEndIpAddr[0]) && (1 == inet_pton (AF_INET, manageWiFiAddrDetails.aEndIpAddr, &sInAddr)))
+    {
+        uiManageWiFiEndIpInHex = ntohl (sInAddr.s_addr);
+        bUpdateManageWiFiAddr = true;
+    }
+
+    if (true == bUpdateManageWiFiAddr)
+    {
+        if((ulAddr >= uiManageWiFiStartIpInHex)&&(ulAddr <= uiManageWiFiEndIpInHex)) //not allowed to set Lan Ip in this range
+        {
+            CcspTraceWarning(("%s:addr:%lx is in the ManageWiFi ip range:%08X-%08X\n",__FUNCTION__,ulAddr, uiManageWiFiStartIpInHex, uiManageWiFiEndIpInHex));
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+#endif /*WIFI_MANAGE_SUPPORTED*/
+
 /*192.168.147.0 ~ 192.168.147.255 if the address in the fallowing range not allowed to set lanip
 */
 BOOL Dhcpv4_Lan_Ip_IsInPrivate_Blocked_AddrRange(ULONG addr)
@@ -1000,6 +1047,13 @@ int Get_LanParameters_ValidityCheckStatus(lanparam_t *pLanParam)
     {
         return LAN_PARAM_GATEWAY_IP_INVALID;
     }
+
+#if defined (WIFI_MANAGE_SUPPORTED)
+    if (Dhcpv4_Lan_Ip_IsInManageWiFi_AddrRange(gateway))
+    {
+        return LAN_PARAM_GATEWAY_IP_INVALID;
+    }
+#endif /*WIFI_MANAGE_SUPPORTED*/
 
     if ((gateway & 0x000000FF) != 1) // last digit in lanip should equal to 1.
     {

@@ -83,4 +83,7 @@ int Dhcpv4_Lan_MutexLock();
 int Dhcpv4_Lan_MutexUnLock();
 int Dhcpv4_Lan_MutexTryLock();
 BOOL Dhcpv4_Lan_CheckIsValidLeaseTime(uint32_t leasetime);
+#if defined (WIFI_MANAGE_SUPPORTED)
+int Dhcpv4_Lan_Ip_IsInManageWiFi_AddrRange(ULONG ulAddr);
+#endif /*WIFI_MANAGE_SUPPORTED*/
 #endif
