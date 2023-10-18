@@ -93,8 +93,8 @@ _COSA_DML_ETH_STATS
 {
     uint64_t                        BytesSent;
     uint64_t                        BytesReceived;
-    ULONG                           PacketsSent;
-    ULONG                           PacketsReceived;
+    uint64_t                        PacketsSent;
+    uint64_t                        PacketsReceived;
     ULONG                           ErrorsSent;
     ULONG                           ErrorsReceived;
     ULONG                           UnicastPacketsSent;

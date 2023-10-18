@@ -6042,14 +6042,14 @@ Stats5_GetParamUlongValue
     if (strcmp(ParamName, "PacketsSent") == 0)
     {
         /* collect value */
-        *puLong = pIPStats->PacketsSent;
+        *puLong = (ULONG) pIPStats->PacketsSent;
         goto SUCCESS;
     }
 
     if (strcmp(ParamName, "PacketsReceived") == 0)
     {
         /* collect value */
-        *puLong = pIPStats->PacketsReceived;
+        *puLong = (ULONG) pIPStats->PacketsReceived;
         goto SUCCESS;
     }
 
