@@ -1601,7 +1601,7 @@ int CosaUtilGetIfStats(char * ifname, PCOSA_DML_IF_STATS pStats)
             switch (idx)
             {
                 case 2:
-                    pStats->BytesReceived = (ULONG)atol(tok);
+                    pStats->BytesReceived = (uint64_t) atoll(tok);
                     break;
                 case 3:
                     pStats->PacketsReceived = (ULONG)atol(tok);
@@ -1613,7 +1613,7 @@ int CosaUtilGetIfStats(char * ifname, PCOSA_DML_IF_STATS pStats)
                     pStats->DiscardPacketsReceived = (ULONG)atol(tok);
                     break;
                 case 10:
-                    pStats->BytesSent = (ULONG)atol(tok);
+                    pStats->BytesSent = (uint64_t) atoll(tok);
                     break;
                 case 11:
                     pStats->PacketsSent = (ULONG)atol(tok);
@@ -1677,7 +1677,7 @@ int CosaUtilGetIfStats (char *ifname, PCOSA_DML_IF_STATS pStats)
     int result = -1;
 
     /*
-       The data types in COSA_DML_IF_STATS are currently ULONG, which is
+       Some of the data types in COSA_DML_IF_STATS are currently ULONG, which is
        not enough to hold 64bit byte and packet counter values. As a
        workaround, use local variables to hold those values during parsing.
        Note that fixing this isn't a simple change as the data types in
@@ -1685,9 +1685,7 @@ int CosaUtilGetIfStats (char *ifname, PCOSA_DML_IF_STATS pStats)
        to change the data model in order to return 64bit byte and packet
        counters...).
     */
-    unsigned long long rx_bytes;
     unsigned long long rx_packets;
-    unsigned long long tx_bytes;
     unsigned long long tx_packets;
 
     memset (pStats, 0, sizeof(COSA_DML_IF_STATS));
@@ -1712,11 +1710,9 @@ int CosaUtilGetIfStats (char *ifname, PCOSA_DML_IF_STATS pStats)
             continue;
 
         if (sscanf (p, "%llu%llu%lu%lu%*u%*u%*u%lu%llu%llu%lu%lu",
-                       &rx_bytes, &rx_packets, &pStats->ErrorsReceived, &pStats->DiscardPacketsReceived, &pStats->MulticastPacketsReceived,
-                       &tx_bytes, &tx_packets, &pStats->ErrorsSent, &pStats->DiscardPacketsSent) == 9)
+                       &pStats->BytesReceived, &rx_packets, &pStats->ErrorsReceived, &pStats->DiscardPacketsReceived, &pStats->MulticastPacketsReceived,
+                       &pStats->BytesSent, &tx_packets, &pStats->ErrorsSent, &pStats->DiscardPacketsSent) == 9)
         {
-            pStats->BytesSent       = (ULONG) tx_bytes;      /* Truncate !! */
-            pStats->BytesReceived   = (ULONG) rx_bytes;      /* Truncate !! */
             pStats->PacketsSent     = (ULONG) tx_packets;    /* Truncate !! */
             pStats->PacketsReceived = (ULONG) rx_packets;    /* Truncate !! */
             result = 0;

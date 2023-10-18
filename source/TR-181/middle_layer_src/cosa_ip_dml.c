@@ -6038,19 +6038,6 @@ Stats5_GetParamUlongValue
     }
 
     /* check the parameter name and return the corresponding value */
-    if (strcmp(ParamName, "BytesSent") == 0)
-    {
-        /* collect value */
-        *puLong = pIPStats->BytesSent;
-        goto SUCCESS;
-    }
-
-    if (strcmp(ParamName, "BytesReceived") == 0)
-    {
-        /* collect value */
-        *puLong = pIPStats->BytesReceived;
-        goto SUCCESS;
-    }
 
     if (strcmp(ParamName, "PacketsSent") == 0)
     {
@@ -6200,11 +6187,41 @@ Stats5_GetParamStringValue
         ULONG*                      pUlSize
     )
 {
-    UNREFERENCED_PARAMETER(hInsContext);
-    UNREFERENCED_PARAMETER(ParamName);
-    UNREFERENCED_PARAMETER(pValue);
-    UNREFERENCED_PARAMETER(pUlSize);
-    /* check the parameter name and return the corresponding value */
+    PCOSA_CONTEXT_LINK_OBJECT pCosaContext = (PCOSA_CONTEXT_LINK_OBJECT) hInsContext;
+    PCOSA_DML_IP_IF_FULL2 pIfFull = (PCOSA_DML_IP_IF_FULL2) pCosaContext->hContext;
+    PCOSA_DATAMODEL_IP pMyObject = (PCOSA_DATAMODEL_IP) g_pCosaBEManager->hIP;
+
+    if (strcmp(ParamName, "BytesSent") == 0)
+    {
+        COSA_DML_IP_STATS IPStats;
+
+        if (CosaDmlIpIfGetStats(pMyObject->hSbContext, pIfFull->Cfg.InstanceNumber, &IPStats) == ANSC_STATUS_SUCCESS)
+        {
+            snprintf(pValue, *pUlSize, "%llu", IPStats.BytesSent);
+        }
+        else
+        {
+            snprintf(pValue, *pUlSize, "%llu", 0);
+        }
+
+        return 0;
+    }
+
+    if (strcmp(ParamName, "BytesReceived") == 0)
+    {
+        COSA_DML_IP_STATS IPStats;
+
+        if (CosaDmlIpIfGetStats(pMyObject->hSbContext, pIfFull->Cfg.InstanceNumber, &IPStats) == ANSC_STATUS_SUCCESS)
+        {
+            snprintf(pValue, *pUlSize, "%llu", IPStats.BytesReceived);
+        }
+        else
+        {
+            snprintf(pValue, *pUlSize, "%llu", 0);
+        }
+
+        return 0;
+    }
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return -1;
