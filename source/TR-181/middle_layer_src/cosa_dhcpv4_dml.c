@@ -8447,7 +8447,7 @@ Option1_AddEntry
     if(pPool->Cfg.InstanceNumber == 1)
     {
         AnscTraceFlow(("%s: not supporting addinging option for pool 1.\n", __FUNCTION__));
-        return (ANSC_HANDLE)ANSC_STATUS_FAILURE;
+        goto EXIT2;
     }
 
     pDhcpOption  = (PCOSA_DML_DHCPSV4_OPTION)AnscAllocateMemory( sizeof(COSA_DML_DHCPSV4_OPTION) );
