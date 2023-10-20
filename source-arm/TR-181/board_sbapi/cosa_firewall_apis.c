@@ -829,6 +829,53 @@ CosaDmlFW_V4_IPFilter_DelEntry
     }
 }
 
+
+ANSC_STATUS
+CosaDmlFW_V4_IPFilter_Validate
+    (
+        ULONG                        ins,
+        COSA_DML_FW_IPFILTER         *pEntry
+    )
+{
+    UtopiaContext ctx;
+
+    if(!Utopia_Init(&ctx))
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+
+    int rc = 0;
+    char protocol[16];
+
+    if(pEntry->ProtocolType == PROTO_TCP)
+        strcpy(protocol, "tcp");
+    else if(pEntry->ProtocolType == PROTO_UDP)
+        strcpy(protocol, "udp");
+    else if(pEntry->ProtocolType == PROTO_BOTH)
+        strcpy(protocol, "both");
+    else if(pEntry->ProtocolType == PROTO_ALL)
+        strcpy(protocol, "All");
+    else
+        strcpy(protocol, "");
+
+    if (!strcmp(pEntry->DstStartIPAddress, "0.0.0.0") && !strcmp(pEntry->DstEndIPAddress, "0.0.0.0"))
+    {
+       if (pEntry->DstStartPort && pEntry->DstEndPort && !Utopia_CheckPortFilterRange(&ctx, pEntry->InstanceNumber, pEntry->DstStartPort, pEntry->DstEndPort,protocol,1))
+       {
+          rc = -1;
+       }
+    }
+    Utopia_Free(&ctx, !rc);
+    if (!rc)
+    {
+        return ANSC_STATUS_SUCCESS;
+    }
+    else
+    {
+        return ANSC_STATUS_FAILURE;
+    }
+}
+
 ANSC_STATUS
 CosaDmlFW_V4_IPFilter_GetConf
     (
