@@ -468,7 +468,9 @@ ULONG CosaDevCtrlReg_GetUserChangedParams(
     if (*pulSize < ret_size)
     {
         *pulSize = ret_size;
-        return 1;
+        CcspTraceError(("%s: Freeing g_MessageBusHandle !!\n", __FUNCTION__));
+	free_parameterInfoStruct_t(g_MessageBusHandle, size, val);
+	return 1;
     }
 
     offset = 0;
