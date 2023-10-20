@@ -1865,21 +1865,24 @@ int _Check_PF_parameter(PCOSA_DML_NAT_PMAPPING pPortMapping)
 	}
 	}
 
-	if((pPortMapping->InternalPortEndRange < pPortMapping->InternalPort) && (pPortMapping->InternalPortEndRange != 0))
+	if ( pPortMapping->InternalClient.Value != 0 )
+	{
+		if (FALSE == CosaDmlNatChkPortMappingClient(pPortMapping->InternalClient.Value))
+		{
+			CcspTraceWarning(("Wrong InternalClient value %x\n",pPortMapping->InternalClient.Value ));
+			return FALSE;
+		}
+	}
+
+
+	if((pPortMapping->InternalPortEndRange < pPortMapping->InternalPort) && (pPortMapping->InternalPortEndRange != 0) || 
+	FALSE == CosaDmlNatChkTargetPortRange(pPortMapping->InstanceNumber, pPortMapping->bEnabled, \
+		 pPortMapping->InternalPort,pPortMapping->InternalPortEndRange,pPortMapping->Protocol,pPortMapping->InternalClient.Value,0))
 	{
 		CcspTraceWarning(("Wrong Port Mapping parameter internal Port %d ~ %d\n", \
 		pPortMapping->InternalPort, pPortMapping->InternalPortEndRange));
 		return FALSE;
         }
-
-	if( pPortMapping->InternalClient.Value != 0 )
-	{
-	if(FALSE == CosaDmlNatChkPortMappingClient(pPortMapping->InternalClient.Value))
-	{
-		CcspTraceWarning(("Wrong InternalClient value %x\n",pPortMapping->InternalClient.Value ));
-		return FALSE;
-	}
-	}
 
 #if defined (SPEED_BOOST_SUPPORTED)
     if( IsPortOverlapWithSpeedboostPortRange(pPortMapping->ExternalPort, pPortMapping->ExternalPortEndRange, pPortMapping->InternalPort , pPortMapping->InternalPort))
@@ -4511,6 +4514,28 @@ int CosaDmlNatChkTriggerPortRange(ULONG InstanceNumber, BOOLEAN enabled, int sta
 
     if(ret == FALSE)
         CcspTraceWarning(("%s Error port over range\n", __FUNCTION__));
+
+    return ret; // return FALSE if port over range
+}
+
+int CosaDmlNatChkTargetPortRange(ULONG InstanceNumber, BOOLEAN enabled, int start, int end, int protocol, unsigned long new_ip, int is_trigger)
+{
+    UtopiaContext Ctx;
+    int ret;
+
+    if(enabled == FALSE)
+        return TRUE;
+
+    if (!Utopia_Init(&Ctx))
+    {
+        CcspTraceWarning(("%s Error initializing context\n", __FUNCTION__));
+        return ANSC_STATUS_FAILURE;
+    }
+    ret = Utopia_CheckPortTargetRange(&Ctx, (int)InstanceNumber, start, end, SB_2_U_PF_PPOTOCOL(protocol), new_ip,is_trigger);
+    Utopia_Free(&Ctx, 0);
+
+    if(ret == FALSE)
+        CcspTraceWarning(("%s Error Inernal port over range\n", __FUNCTION__));
 
     return ret; // return FALSE if port over range
 }
