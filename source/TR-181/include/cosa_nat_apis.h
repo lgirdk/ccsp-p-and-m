@@ -397,6 +397,10 @@ CosaDmlNatChkPortRange(ULONG InstanceNumber, BOOLEAN enabled, int start, int end
 int
 CosaDmlNatChkTriggerPortRange(ULONG InstanceNumber, BOOLEAN enabled, int start, int end, int protocol, int is_trigger);
 
+int 
+CosaDmlNatChkTargetPortRange(ULONG InstanceNumber, BOOLEAN enabled, int start, int end, int protocol, unsigned long new_ip, int is_trigger);
+
+
 int
 CosaDmlChkDesp(char *desp);
 
