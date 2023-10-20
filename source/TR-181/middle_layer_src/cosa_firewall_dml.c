@@ -1287,10 +1287,6 @@ BOOL FW_V4_IpFilter_SetParamUlongValue ( ANSC_HANDLE hInsContext, char *ParamNam
 
     if (strcmp(ParamName, "SrcPortStart") == 0)
     {
-        BOOL ret = Validate_IPFilterPorts(ParamName, ulValue);
-        if (ret != TRUE)
-            return FALSE;
-
         if (is_reserved_port(ulValue))
             return FALSE;
 
@@ -1299,10 +1295,6 @@ BOOL FW_V4_IpFilter_SetParamUlongValue ( ANSC_HANDLE hInsContext, char *ParamNam
     }
     if (strcmp(ParamName, "SrcPortEnd") == 0)
     {
-        BOOL ret = Validate_IPFilterPorts(ParamName, ulValue);
-        if (ret != TRUE)
-            return FALSE;
-
         if (is_reserved_port(ulValue))
             return FALSE;
 
@@ -1311,25 +1303,15 @@ BOOL FW_V4_IpFilter_SetParamUlongValue ( ANSC_HANDLE hInsContext, char *ParamNam
     }
     if (strcmp(ParamName, "DstPortStart") == 0)
     {
-        BOOL ret = Validate_IPFilterPorts(ParamName, ulValue);
-        if (ret != TRUE)
-            return FALSE;
-
         if (is_reserved_port(ulValue))
             return FALSE;
-
         pFwIpFilter->DstStartPort = ulValue;
         return TRUE;
     }
     if (strcmp(ParamName, "DstPortEnd") == 0)
     {
-        BOOL ret = Validate_IPFilterPorts(ParamName, ulValue);
-        if (ret != TRUE)
-            return FALSE;
-
         if (is_reserved_port(ulValue))
             return FALSE;
-
         pFwIpFilter->DstEndPort = ulValue;
         return TRUE;
     }
