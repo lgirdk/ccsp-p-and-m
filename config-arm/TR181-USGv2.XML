@@ -2081,6 +2081,8 @@
 								</parameter>
 							</parameters>
 						</object>
+<?endif?>
+<?ifndef BCI | def RDK_ONEWIFI?>
                         <object>
                             <name>WifiClient</name>
                             <objectType>object</objectType>
