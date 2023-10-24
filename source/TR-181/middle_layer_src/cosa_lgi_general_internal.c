@@ -129,8 +129,8 @@ CosaLgiGeneralInitialize
     CosaDmlGiGetUserBridgeModeAllowed(NULL, &pMyObject->UserBridgeModeAllowed);
 
     /* Further implementation of this parameter is still under design discussion*/
-    AnscCopyString(pMyObject->DataModelVersion, "12.0.1");
-    AnscCopyString(pMyObject->DataModelSpecification, "12.0.1");
+    AnscCopyString(pMyObject->DataModelVersion, "13.0.1");
+    AnscCopyString(pMyObject->DataModelSpecification, "13.0.1");
 
     return returnStatus;
 }
