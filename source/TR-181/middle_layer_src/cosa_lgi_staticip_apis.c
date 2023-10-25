@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *********************************************************************************/
-#ifdef FEATURE_STATIC_IPV4
 
 #include "cosa_lgi_staticip_apis.h"
 #include "cosa_lgi_staticip_internal.h"
@@ -126,6 +125,7 @@ ANSC_STATUS CosaDmlStaticIPGetAdministrativeStatus ( ANSC_HANDLE hContext, ULONG
 
 ANSC_STATUS CosaDmlStaticIPSetAdministrativeStatus ( ANSC_HANDLE hContext, ULONG bValue )
 {
+#ifdef FEATURE_STATIC_IPV4	
     char staticIpAdministrativeStatus[8];
 
     syscfg_get(NULL, "staticipadminstatus", staticIpAdministrativeStatus, sizeof(staticIpAdministrativeStatus));
@@ -143,8 +143,8 @@ ANSC_STATUS CosaDmlStaticIPSetAdministrativeStatus ( ANSC_HANDLE hContext, ULONG
 
     RestartRIPInterfaces(FALSE);    
     pthread_create(&WanRefresh_thread, NULL, WanRefresh, NULL);
+#endif    
 
     return ANSC_STATUS_SUCCESS;
 }
 
-#endif
