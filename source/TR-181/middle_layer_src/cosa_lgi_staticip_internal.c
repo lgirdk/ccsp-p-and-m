@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *********************************************************************************/
-#ifdef FEATURE_STATIC_IPV4
 
 #include "cosa_lgi_staticip_apis.h"
 #include "cosa_lgi_staticip_internal.h"
@@ -67,4 +66,3 @@ ANSC_STATUS CosaLgiStaticIPRemove ( ANSC_HANDLE hThisObject )
     return ANSC_STATUS_SUCCESS;
 }
 
-#endif

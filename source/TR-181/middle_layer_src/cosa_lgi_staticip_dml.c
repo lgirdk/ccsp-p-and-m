@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *********************************************************************************/
-#ifdef FEATURE_STATIC_IPV4
 
 #include "ansc_platform.h"
 #include "plugin_main_apis.h"
@@ -77,4 +76,3 @@ ULONG X_LGI_COM_StaticIPv4Address_Rollback ( ANSC_HANDLE hInsContext )
     return 0;
 }
 
-#endif
