@@ -18949,7 +18949,6 @@
       </parameters> 
     </object>
 
-<?ifdef FEATURE_STATIC_IPV4?>
     <object>
       <name>X_LGI-COM_StaticIPv4Address</name>
       <objectType>object</objectType>
@@ -18974,7 +18973,6 @@
         </parameter>
       </parameters>
     </object>
-<?endif?>
 
 	  </objects>
 
