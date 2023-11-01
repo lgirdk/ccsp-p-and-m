@@ -31,7 +31,9 @@ source /etc/RebootCondition.sh
 
 FILE_LOCK="/tmp/AutoReboot.lock"
 MAX_RETRY_COUNT=10
+MAX_COUNT=90
 count=0
+rcnt=0
 
 #Only one process should schedule cron at a time
 while : ; do
@@ -62,6 +64,24 @@ else
         Rebootday=$1
 fi
 
+while : ; do
+    if [ $rcnt -lt $MAX_COUNT ]; then
+        NTPD_STATUS=`sysevent get ntp_time_sync`
+        RFC_STATUS=`sysevent get RFC_Execution`
+        if [ "x$NTPD_STATUS" != "x1" ] && ["x$RFC_STATUS" == "x"]; then
+            rcnt=$((rcnt+1))
+            sleep 2;
+            continue;
+        else
+            echo_t "[ScheduleAutoReboot.sh]: Exiting, NTP synced or RFC triggered"
+            break;
+        fi
+    else
+        echo_t "[ScheduleAutoReboot.sh]: Exiting, max retry reached for NTP/RFC status"
+        break;
+    fi
+done
+
 calcRebootExecTime()
 {        # Extract maintenance window start and end time
         ExtractMaintenanceTime
@@ -69,12 +89,21 @@ calcRebootExecTime()
         time_offset=`dmcli eRT retv Device.Time.TimeOffset`
         if [ "x$time_offset" == "x" ];then
             echo_t "[ScheduleAutoReboot.sh] time offset is obtained as null"
-            time_offset=-18000
+            if [ "x$BOX_TYPE" = "xHUB4" ]; then
+                time_offset=0
+            else
+                time_offset=-18000
+            fi
         fi
 
         #Maintence start and end time in local
-        main_start_time=$((start_time-time_offset))
-        main_end_time=$((end_time-time_offset))
+        if [ "x$BOX_TYPE" = "xHUB4" ]; then
+            main_start_time=$start_time
+            main_end_time=$end_time
+        else
+            main_start_time=$((start_time-time_offset))
+            main_end_time=$((end_time-time_offset))
+        fi
 
         #calculate random time in sec
         rand_time_in_sec=`awk -v min=$main_start_time -v max=$main_end_time -v seed="$(date +%N)" 'BEGIN{srand(seed);print int(min+rand()*(max-min+1))}'`
@@ -103,6 +132,17 @@ calcRebootExecTime()
         rand_time=$((rand_time/60))
         rand_hr=$((rand_time%60))
 
+#since device time is UTC time so subtracting offset here to run reboot in local time
+#it may goes to previous day UTC time thus managing with 24 hrs, this can only happen if offset time is greater than random time
+        if [ "x$BOX_TYPE" = "xHUB4" ] ; then
+            time_offset_hr=$((time_offset/3600))
+
+            if [ $time_offset_hr -gt $rand_hr ] ; then
+                rand_hr=$((24+$rand_hr-$time_offset_hr))
+            else
+                rand_hr=$((rand_hr-time_offset_hr))
+            fi
+        fi
         echo_t "[ScheduleAutoReboot.sh]start_time: $start_time, end_time: $end_time"
         echo_t "[ScheduleAutoReboot.sh]time_offset: $time_offset"
         echo_t "[ScheduleAutoReboot.sh]main_start_time: $main_start_time , main_end_time= $main_end_time"
