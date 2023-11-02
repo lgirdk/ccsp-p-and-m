@@ -14807,6 +14807,18 @@ Xconf_SetParamBoolValue
         AnscTraceWarning(("Triggering firmware download check from TR181\n"));
         if( TRUE == bValue )
         {
+            /* RDKB-29712 : Firmware Download scripts will not trigger download
+             * if the device is waiting for maintenance window. ".waitingreboot"
+             * file removed to force re-download */
+            if (access("/tmp/.waitingreboot",F_OK) != -1) {
+                AnscTraceWarning(("XConf is waiting for reboot after download. Removing /tmp/.waitingreboot to force redownload image"));
+                remove("/tmp/.waitingreboot");
+            }
+            else if (access("/tmp/.downloadingfw",F_OK) != -1){
+                AnscTraceWarning(("Xconf firmware download in progress. Process will not be restarted."));
+                return FALSE;
+            }
+            
             // static collection as we don't want upgrade path to be changed without a reboot
             static BOOL rdkfwupgraderEnabledCollected = false;
             static BOOL RDKFWUpgraderEnabled = false;
