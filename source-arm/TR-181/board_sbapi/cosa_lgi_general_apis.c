@@ -191,22 +191,13 @@ ANSC_STATUS CosaDmlGiGetSKU (ANSC_HANDLE hContext, char *pValue, ULONG ulSize)
 
 #if defined (_PUMA6_ARM_)
 
-    ULONG len;
-
-    buf[0] = 0;
-    len = sizeof(buf);
-    CosaDmlDiGetProductClass (hContext, buf, &len);
-
-    if (strcmp (buf, "CH7465LG") == 0)
+    if (customerId == 6)
     {
-        if (customerId == 6)
-        {
-            sku = "Nextgen WiFi";
-        }
-        else if (customerId == 8)
-        {
-            sku = "Hub 3";
-        }
+        sku = "Nextgen WiFi";
+    }
+    else if (customerId == 8)
+    {
+        sku = "Hub 3";
     }
 
 #elif defined (_LG_MV2_PLUS_)
