@@ -1875,6 +1875,7 @@ CosaDmlIpDnsGetRelayStatus
     return status;
 }
 
+#if 0
 COSA_DML_DNS_STATUS
 CosaDmlIpDnsGetRelayEnable
     (
@@ -1888,6 +1889,7 @@ CosaDmlIpDnsGetRelayEnable
 
     return strcmp(buf, "1") == 0 ? COSA_DML_DNS_STATUS_Enabled : COSA_DML_DNS_STATUS_Disabled;
 }
+#endif
 
 /*
  *  DNS Relay Forwarding (server)
