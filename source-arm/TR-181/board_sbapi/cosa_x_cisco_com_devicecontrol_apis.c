@@ -3710,6 +3710,8 @@ void* bridge_mode_wifi_notifier_thread(void* arg) {
     int  sizeval2 = 0;
 #endif
     int ulNumOfEntries=0;
+    char rebootevent[8];
+    int rebooteventvalue;
     parameterValStruct_t **valWifistatus;
     char pWifiComponentName[64]="eRT.com.cisco.spvtg.ccsp.wifi";
     char pComponentPath[64]="/com/cisco/spvtg/ccsp/wifi";
@@ -3726,6 +3728,10 @@ void* bridge_mode_wifi_notifier_thread(void* arg) {
     }
 
     openCommonSyseventConnection();
+
+    sysevent_get(commonSyseventFd, commonSyseventToken, "reboot-triggered", rebootevent, sizeof(rebootevent));
+    rebooteventvalue = atoi(rebootevent);
+
     sysevent_set(commonSyseventFd, commonSyseventToken, "wifi-notifier-done", "0" , 0);
 
 	/* 
@@ -3747,6 +3753,12 @@ void* bridge_mode_wifi_notifier_thread(void* arg) {
 		case BRIDGE_MODE_FULL_STATIC:
 		{
 			snprintf(acForceDisableRadioString, sizeof(acForceDisableRadioString), "%s", "true");
+#if defined (_PUMA6_ARM_)
+			if (rebooteventvalue == 1)
+			{
+				system ("rpcclient2 'touch /tmp/erouter_mode_change'");
+			}
+#endif
 		}
 		break;
 
@@ -3944,9 +3956,7 @@ parameterValStruct_t valCommit1[] = {
                 }  
 #endif
 
-        char rebootevent[8];
-        sysevent_get(commonSyseventFd, commonSyseventToken, "reboot-triggered", rebootevent, sizeof(rebootevent));
-        if( atoi(rebootevent) != 1 )
+        if( rebooteventvalue != 1 )
         {
                
             ret = CcspBaseIf_setParameterValues
