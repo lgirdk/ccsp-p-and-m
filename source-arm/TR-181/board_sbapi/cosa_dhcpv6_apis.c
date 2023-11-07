@@ -9923,14 +9923,18 @@ int send_dhcp_data_to_wanmanager (ipc_dhcpv6_data_t *dhcpv6_data, int msgtype)
 
     int sock = -1;
     int conn = -1;
-
+    int socket_timeout_ms = DEFAULT_IPC_SOCKET_TIMEOUT;
     sock = nn_socket(AF_SP, NN_PUSH);
     if (sock < ANSC_STATUS_SUCCESS)
     {
         CcspTraceError(("[%s-%d] Failed to create the nanomsg socket \n", __FUNCTION__, __LINE__));
         return ANSC_STATUS_INTERNAL_ERROR;
     }
-
+    
+    CcspTraceInfo(("[%s %d]  Setting NN_SNDTIMEO, NN_RCVTIMEO to %d ms \n", __FUNCTION__, __LINE__, socket_timeout_ms));
+    nn_setsockopt(sock, NN_SOL_SOCKET, NN_SNDTIMEO, &socket_timeout_ms, sizeof(int));
+    nn_setsockopt(sock, NN_SOL_SOCKET, NN_RCVTIMEO, &socket_timeout_ms, sizeof(int));
+    
     conn = nn_connect(sock, WAN_MANAGER_ADDR);
     if (conn < ANSC_STATUS_SUCCESS)
     {
@@ -9956,7 +9960,7 @@ int send_dhcp_data_to_wanmanager (ipc_dhcpv6_data_t *dhcpv6_data, int msgtype)
     int bytes = 0;
    int sz_msg = sizeof(ipc_msg_payload_t);
 
-
+    CcspTraceInfo(("[%s %d]  Sending message to wanmanager .... \n", __FUNCTION__, __LINE__));
     bytes = nn_send(sock, (char *) &msg, sz_msg, 0);
     if (bytes < 0)
     {
