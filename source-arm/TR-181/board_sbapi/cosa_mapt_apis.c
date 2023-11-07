@@ -136,6 +136,7 @@ static RETURN_STATUS CosaDmlMaptComputePsidAndIPv4Suffix (PCHAR pPdIPv6Prefix,
                          PUINT16 pPsid, PUINT16 pPsidLen, PUINT32 pIPv4Suffix);
 
 static PVOID CosaDmlMaptSetUPnPIGDService (PVOID arg);
+static UINT CosaDmlMaptCalculateChecksum(unsigned char *buf);
 
 /*
  * Global definitions
@@ -143,12 +144,25 @@ static PVOID CosaDmlMaptSetUPnPIGDService (PVOID arg);
 static COSA_DML_MAPT_DATA   g_stMaptData;
 static volatile UINT8 g_bEnableUPnPIGD;
 static UINT8 g_bRollBackInProgress;
+static UINT s_Option95CheckSum = 0;
 
 extern ANSC_HANDLE bus_handle;
 
 /*
  * Static function definitions
  */
+static UINT
+CosaDmlMaptCalculateChecksum(unsigned char *buf)
+{
+    unsigned int checksum = 0;
+
+    while (*buf) {
+        checksum += *buf;
+        buf++;
+    }
+    return checksum;
+}
+
 static RETURN_STATUS
 CosaDmlMaptFormulateIPv4Address
 (
@@ -1420,6 +1434,16 @@ CosaDmlMaptProcessOpt95Response
   RETURN_STATUS ret = STATUS_SUCCESS;
   UINT16  uiOptionBufLen = 0;
   errno_t rc = -1;
+  UINT prevCheckSum = s_Option95CheckSum;
+
+  s_Option95CheckSum = CosaDmlMaptCalculateChecksum(pOptionBuf);
+  MAPT_LOG_INFO("Prev option95 checksum: %d, new option95 checksum: %d", prevCheckSum, s_Option95CheckSum);
+  if (s_Option95CheckSum == prevCheckSum)
+  {
+       MAPT_LOG_INFO("No change in received option95 data. No need to configure MAPT again!");
+       return ret;
+  }
+
   MAPT_LOG_INFO("Entry");
 
   /* Check MAPT configuration, if already active, do rollback RB_ALL */
