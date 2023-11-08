@@ -14810,8 +14810,10 @@ Xconf_SetParamBoolValue
             /* RDKB-29712 : Firmware Download scripts will not trigger download
              * if the device is waiting for maintenance window. ".waitingreboot"
              * file removed to force re-download */
-            if (access("/tmp/.waitingreboot",F_OK) != -1) {
+            FILE *file = fopen( "/tmp/.waitingreboot","r" );
+            if (file != NULL) {
                 AnscTraceWarning(("XConf is waiting for reboot after download. Removing /tmp/.waitingreboot to force redownload image"));
+                fclose(file);
                 remove("/tmp/.waitingreboot");
             }
             else if (access("/tmp/.downloadingfw",F_OK) != -1){
