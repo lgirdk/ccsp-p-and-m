@@ -146,6 +146,9 @@ Pam_GetFirstIpInterfaceObjectName
     ULONG                           ulInstNum           = 0;
     ULONG                           ulLen               = 0;
     char                            pObjName[PAM_MAX_IP_INTERFACE_NUM]       = {0};
+    char                            Alias[PAM_MAX_IP_INTERFACE_NUM]          = {0};
+    ULONG                           AliasSize           = 0;
+    BOOL                            bAliasUpstream      = FALSE;
     char                            Buffer[PAM_MAX_IP_INTERFACE_NUM]         = {0};
     ULONG                           BufferSize          = 0;
     char                            LowerLayers[PAM_MAX_IP_INTERFACE_NUM]    = {0};
@@ -297,7 +300,29 @@ Pam_GetFirstIpInterfaceObjectName
             }
             bLowerLayerUpstream = CosaGetParamValueBool(Buffer);
             
-            if ( bUpstream == bLowerLayerUpstream )
+            if ( (bUpstream == TRUE) && (bLowerLayerUpstream == FALSE) )
+            {
+                /* Consider a case of DOCSIS Wan, check Alias of LowerLayers interface */
+                rc = sprintf_s(Buffer, sizeof(Buffer), "%s.Alias", pObjName);
+                if(rc < EOK)
+                {
+                  ERR_CHK(rc);
+                  returnStatus = ANSC_STATUS_FAILURE;
+                  break;
+                }
+
+                AliasSize = sizeof(Alias);
+                iReturnValue = CosaGetParamValueString(Buffer, Alias, &AliasSize);
+                if ( (iReturnValue == 0) && (AliasSize > 0) )
+                {
+                    if ( strstr(Alias, "Wan") != NULL )
+                    {
+                        bAliasUpstream = TRUE;
+                    }
+                }
+            }
+
+            if ( (bUpstream == bLowerLayerUpstream) || bAliasUpstream )
             {
                 CcspTraceDebug
                     ((
