@@ -525,6 +525,13 @@ void *XfinityWifiThread
             fprintf(stderr, "%s: set WiFi.SSID.21 Disable OK\n", __FUNCTION__);
         }
 #endif
+#if defined (_PLATFORM_RASPBERRYPI_) && defined(RDK_ONEWIFI)
+        if (DmSetBool("Device.WiFi.ApplyAccessPointSettings", "true") != ANSC_STATUS_SUCCESS) {
+            AnscTraceError(("%s: wifi apply settings failed\n", __FUNCTION__));
+	}  else {  
+            AnscTraceError(("%s: wifi apply settings success\n", __FUNCTION__));
+	}    
+#endif	
     }
     else
     {
