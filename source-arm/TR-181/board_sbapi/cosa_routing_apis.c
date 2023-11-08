@@ -608,24 +608,6 @@ COSA_DML_RIPD_CONF CosaDmlRIPDefaultConfig =
 
 COSA_DML_RIPD_CONF CosaDmlRIPCurrentConfig = {0};
 
-
-void _get_shell_output3(FILE *fp, char *buf, int len)
-{
-    char * p;
-
-    if (fp)
-    {
-        if(fgets (buf, len-1, fp) != NULL)
-        {
-            buf[len-1] = '\0';
-            if ((p = strchr(buf, '\n'))) {
-                *p = '\0';
-            }
-        }
-    v_secure_pclose(fp);
-    }
-}
-
 #define RIPD_PID_FILE "/var/tmp/ripd.pid"
 static int CosaRipdOperation(char * arg)
 {

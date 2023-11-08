@@ -84,6 +84,10 @@ extern ANSC_HANDLE bus_handle;
 extern char g_Subsystem[32];
 
 extern int executeCmd(char *cmd);
+
+void _get_shell_output (FILE *fp, char *buf, size_t len);
+int _get_shell_output2 (FILE *fp, char *needle);
+
 #include "ipc_msg.h"
 #if defined SUCCESS
 #undef SUCCESS
@@ -1179,23 +1183,6 @@ char *safe_strcpy (char *dst, char *src, size_t dst_size)
     }
 
     return memcpy (dst, src, len + 1);
-}
-
-void _get_shell_output(FILE *fp, char *buf, int len)
-{
-    char * p;
-
-    if (fp)
-    {
-        if(fgets (buf, len-1, fp) != NULL)
-        {
-            buf[len-1] = '\0';
-            if ((p = strchr(buf, '\n'))) {
-                *p = '\0';
-            }
-        }
-    v_secure_pclose(fp); 
-    }
 }
 
 static int Utopia_Init(UtopiaContext *ctx)
@@ -2436,9 +2423,6 @@ static int _prepare_client_conf(PCOSA_DML_DHCPCV6_CFG       pCfg)
 
     return 0;
 }
-
-void _get_shell_output(FILE *fp, char * buf, int len);
-int _get_shell_output2(FILE *fp, char * dststr);
 
 static int _dibbler_client_operation(char * arg)
 {
@@ -5687,19 +5671,6 @@ CosaDmlDhcpv6sGetState
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-    /*
-    char cmd[256] = {0};
-    char out[256] = {0};
-    sprintf(cmd, "busybox ps |grep %s|grep -v grep", SERVER_BIN);
-    _get_shell_output(cmd, out, sizeof(out));
-    if (strstr(out, SERVER_BIN))
-    {
-        return TRUE;
-    }
-    else
-    {
-        return FALSE;
-    }*/
 
     return g_dhcpv6_server;
 }

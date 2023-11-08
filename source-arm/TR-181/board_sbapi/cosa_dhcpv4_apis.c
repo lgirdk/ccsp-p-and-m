@@ -255,6 +255,9 @@ ANSC_STATUS COSAGetParamValueByPathName(void* bus_handle, parameterValStruct_t *
 
 int Utopia_get_lan_host_comments(UtopiaContext *ctx, unsigned char *pMac, unsigned char *pComments);
 
+void _get_shell_output (FILE *fp, char *buf, size_t len);
+int _get_shell_output2 (FILE *fp, char *needle);
+
 int find_arp_entry(char *ipaddr, char *ifname, unsigned char *pMac)
 {
 	struct arpreq arpreq;
@@ -3784,8 +3787,6 @@ CosaDmlDhcpsGetClient
 
     return ANSC_STATUS_FAILURE;
 }
-
-int _get_shell_output2(FILE *fp, char * dststr);
 
 ANSC_STATUS
 CosaDmlDhcpsPing
