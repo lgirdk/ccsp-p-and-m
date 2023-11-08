@@ -1927,6 +1927,7 @@ int CosaDmlDhcpv6sRestartOnLanStarted(void * arg)
      * This needs to call dibbler-stop action, before dibbler-start */
     CosaDmlDHCPv6sTriggerRestart(FALSE);
 #else
+    CcspTraceDebug(("%s,%d: Calling CosaDmlDHCPv6sTriggerRestart(TRUE)...\n", __FUNCTION__, __LINE__));
     CosaDmlDHCPv6sTriggerRestart(TRUE);
 #endif
 
@@ -3457,6 +3458,7 @@ static int CosaDmlDHCPv6sTriggerRestart(BOOL OnlyTrigger)
         fprintf(stderr, "open dhcpv6 server restart fifo when writing.\n");
         return 1;
     }
+    CcspTraceDebug(("%s,%d: Writing %s to DHCPS6V_SERVER_RESTART_FIFO...\n", __FUNCTION__, __LINE__, str));
     write( fd, str, sizeof(str) );
     close(fd);
 
@@ -5641,6 +5643,7 @@ CosaDmlDhcpv6sEnable
        CcspTraceInfo(("Enable DHCPv6. Starting Dibbler-Server and Zebra Process\n"));
        #endif    
         /* We need enable server */
+        CcspTraceDebug(("%s,%d: Calling CosaDmlDHCPv6sTriggerRestart(FALSE)...\n", __FUNCTION__, __LINE__));
         CosaDmlDHCPv6sTriggerRestart(FALSE);
     }
     else if ( !bEnable  )
@@ -5711,6 +5714,7 @@ CosaDmlDhcpv6sSetType
     if ( g_dhcpv6_server && bApply )
     {
         /* We need enable server */
+        CcspTraceDebug(("%s,%d: Calling CosaDmlDHCPv6sTriggerRestart(FALSE)...\n", __FUNCTION__, __LINE__));
         CosaDmlDHCPv6sTriggerRestart(FALSE);
 #ifdef _HUB4_PRODUCT_REQ_
         v_secure_system("sysevent set zebra-restart");
@@ -5842,6 +5846,7 @@ CosaDmlDhcpv6sAddPool
     SETI_INTO_UTOPIA(DHCPV6S_NAME, "", 0, "", 0, "poolnumber", uDhcpv6ServerPoolNum)
     Utopia_Free(&utctx,1);
 
+    CcspTraceDebug(("%s,%d: Calling CosaDmlDHCPv6sTriggerRestart(FALSE)...\n", __FUNCTION__, __LINE__));
     CosaDmlDHCPv6sTriggerRestart(FALSE);
 
     return ANSC_STATUS_SUCCESS;
@@ -5908,6 +5913,7 @@ CosaDmlDhcpv6sDelPool
     SETI_INTO_UTOPIA(DHCPV6S_NAME, "", 0, "", 0, "poolnumber", uDhcpv6ServerPoolNum)
     Utopia_Free(&utctx,1);
 
+    CcspTraceDebug(("%s,%d: Calling CosaDmlDHCPv6sTriggerRestart(FALSE)...\n", __FUNCTION__, __LINE__));
     CosaDmlDHCPv6sTriggerRestart(FALSE);
 
     return ANSC_STATUS_SUCCESS;
@@ -6198,6 +6204,7 @@ CosaDmlDhcpv6sSetPoolCfg
    
     setpool_into_utopia((PUCHAR)DHCPV6S_NAME, (PUCHAR)"pool", Index, &sDhcpv6ServerPool[Index]);
 
+    CcspTraceDebug(("%s,%d: Calling CosaDmlDHCPv6sTriggerRestart(FALSE)...\n", __FUNCTION__, __LINE__));
     CosaDmlDHCPv6sTriggerRestart(FALSE);
 
 	// Check whether static DNS got enabled or not. If enabled then we need to restart the zebra process
@@ -7053,6 +7060,7 @@ CosaDmlDhcpv6sAddOption
             sDhcpv6ServerPoolOption[Index][Index2] = *pEntry;
             setpooloption_into_utopia((PUCHAR)DHCPV6S_NAME,(PUCHAR)"pool",Index,(PUCHAR)"option",Index2,&sDhcpv6ServerPoolOption[Index][Index2]);
 
+            CcspTraceDebug(("%s,%d: Calling CosaDmlDHCPv6sTriggerRestart(FALSE)...\n", __FUNCTION__, __LINE__));
             CosaDmlDHCPv6sTriggerRestart(FALSE);
 
             return ANSC_STATUS_SUCCESS;
@@ -7106,6 +7114,7 @@ CosaDmlDhcpv6sDelOption
             SETI_INTO_UTOPIA(DHCPV6S_NAME, "pool", Index, "", 0, "optionnumber", uDhcpv6ServerPoolOptionNum[Index])
             Utopia_Free(&utctx,1);
 
+            CcspTraceDebug(("%s,%d: Calling CosaDmlDHCPv6sTriggerRestart(FALSE)...\n", __FUNCTION__, __LINE__));
             CosaDmlDHCPv6sTriggerRestart(FALSE);
 
             return ANSC_STATUS_SUCCESS;
@@ -7147,6 +7156,7 @@ CosaDmlDhcpv6sSetOption
 
                     setpooloption_into_utopia((PUCHAR)DHCPV6S_NAME, (PUCHAR)"pool", Index, (PUCHAR)"option", Index2, &sDhcpv6ServerPoolOption[Index][Index2]);
                     
+                    CcspTraceDebug(("%s,%d: Calling CosaDmlDHCPv6sTriggerRestart(FALSE)...\n", __FUNCTION__, __LINE__));
                     CosaDmlDHCPv6sTriggerRestart(FALSE);
                     
                     return ANSC_STATUS_SUCCESS;
@@ -8593,7 +8603,8 @@ dhcpv6c_dbg_thrd(void * in)
             int  ret = 0;
             char globalIP[128] = {0};
             BOOL bRestartLan = FALSE;
-
+            int dataLen = 0;
+            char preflen[12] = {0};
 #if defined(FEATURE_RDKB_WAN_MANAGER)
             int hub4_valid_lft = 0;
             int hub4_preferred_lft = 0;
@@ -8606,8 +8617,6 @@ dhcpv6c_dbg_thrd(void * in)
 #endif
 
 #if defined(FEATURE_MAPT) && defined(FEATURE_RDKB_WAN_MANAGER)
-            int dataLen = 0;
-            char preflen[12] = {0};
             char brIPv6Prefix[128] = {0};
             char ruleIPv4Prefix[32] = {0};
             char ruleIPv6Prefix[128] = {0};
@@ -8662,28 +8671,42 @@ dhcpv6c_dbg_thrd(void * in)
 #endif
 #elif defined (FEATURE_SUPPORT_MAPT_NAT46)
 #if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
-            if (sscanf(p, "%63s %63s %63s %s %s %s %s %s %63s %d %s %s %s %s %s %s",
+            dataLen = sscanf(p, "%63s %63s %63s %s %s %s %s %s %63s %s %s %s %s %s %s %s",
                        action, IfaceName, v6addr,    iana_iaid, iana_t1, iana_t2, iana_pretm, iana_vldtm,
-                       v6pref, &pref_len, iapd_iaid, iapd_t1, iapd_t2, iapd_pretm, iapd_vldtm,
-                       opt95_dBuf ) == 16)
+                       v6pref, preflen, iapd_iaid, iapd_t1, iapd_t2, iapd_pretm, iapd_vldtm,
+                       opt95_dBuf);
+            CcspTraceDebug(("%s,%d: dataLen = %d\n", __FUNCTION__, __LINE__, dataLen));
+            if (dataLen == 16)
 #else
-            if (sscanf(p, "%63s %63s %s %s %s %s %s %63s %d %s %s %s %s %s %s",
+            dataLen = sscanf(p, "%63s %63s %s %s %s %s %s %63s %s %s %s %s %s %s %s",
                        action, v6addr,    iana_iaid, iana_t1, iana_t2, iana_pretm, iana_vldtm,
-                       v6pref, &pref_len, iapd_iaid, iapd_t1, iapd_t2, iapd_pretm, iapd_vldtm,
-                       opt95_dBuf ) == 15)
+                       v6pref, preflen, iapd_iaid, iapd_t1, iapd_t2, iapd_pretm, iapd_vldtm,
+                       opt95_dBuf);
+            CcspTraceDebug(("%s,%d: dataLen = %d\n", __FUNCTION__, __LINE__, dataLen));
+	    if (dataLen == 15)
 #endif
 #else // FEATURE_MAPT
 #if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
-            if (sscanf(p, "%63s %63s %63s %s %s %s %s %s %63s %d %s %s %s %s %s", 
+            dataLen = sscanf(p, "%63s %63s %63s %s %s %s %s %s %63s %s %s %s %s %s %s",
                        action, IfaceName, v6addr,    iana_iaid, iana_t1, iana_t2, iana_pretm, iana_vldtm,
-                       v6pref, &pref_len, iapd_iaid, iapd_t1, iapd_t2, iapd_pretm, iapd_vldtm ) == 15)
+                       v6pref, preflen, iapd_iaid, iapd_t1, iapd_t2, iapd_pretm, iapd_vldtm);
+            CcspTraceDebug(("%s,%d: dataLen = %d\n", __FUNCTION__, __LINE__, dataLen));
+            if (dataLen == 15)
 #else
-            if (sscanf(p, "%63s %63s %s %s %s %s %s %63s %d %s %s %s %s %s", 
+            dataLen = sscanf(p, "%63s %63s %s %s %s %s %s %63s %s %s %s %s %s %s",
                        action, v6addr,    iana_iaid, iana_t1, iana_t2, iana_pretm, iana_vldtm,
-                       v6pref, &pref_len, iapd_iaid, iapd_t1, iapd_t2, iapd_pretm, iapd_vldtm ) == 14)
+                       v6pref, preflen, iapd_iaid, iapd_t1, iapd_t2, iapd_pretm, iapd_vldtm);
+            CcspTraceDebug(("%s,%d: dataLen = %d\n", __FUNCTION__, __LINE__, dataLen));
+            if (dataLen == 14)
 #endif
 #endif
             {
+                remove_single_quote(v6addr);
+                remove_single_quote(v6pref);
+                remove_single_quote(preflen);
+                pref_len = atoi(preflen);
+                CcspTraceDebug(("%s,%d: v6addr=%s, v6pref=%s, pref_len=%d\n", __FUNCTION__, __LINE__, v6addr, v6pref, pref_len));
+
                 pString = (char*)CosaUtilGetFullPathNameByKeyword
                     (
                         (PUCHAR)"Device.IP.Interface.",
@@ -8711,6 +8734,7 @@ dhcpv6c_dbg_thrd(void * in)
 				sleep(5);
 			  }
 #if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
+            remove_single_quote(IfaceName);
             /*Move IPv6 handle to WanManager*/
 #if defined(FEATURE_RDKB_WAN_MANAGER)
             /*
@@ -8733,10 +8757,7 @@ dhcpv6c_dbg_thrd(void * in)
                 dhcpv6_data.isExpired = FALSE;
                 dhcpv6_data.prefixAssigned = TRUE;
 #if defined(FEATURE_MAPT)
-                    remove_single_quote(v6pref);
                     strcpy(pdIPv6Prefix, v6pref);
-                    remove_single_quote(preflen);
-                    pref_len=atoi(preflen);
 #endif
                 rc = sprintf_s(dhcpv6_data.sitePrefix, sizeof(dhcpv6_data.sitePrefix), "%s/%d", v6pref, pref_len);
                 if(rc < EOK)
@@ -8888,7 +8909,7 @@ dhcpv6c_dbg_thrd(void * in)
                     /*for now we only support one address, one prefix notify, if need multiple addr/prefix, must modify dibbler-client code*/
                     if (strncmp(v6addr, "::", 2) != 0) 
                     {
-                        if (strncmp(v6addr, "''", 2) == 0)
+                        if (strlen(v6addr) == 0 )
                         {
                             commonSyseventSet(COSA_DML_DHCPV6C_ADDR_SYSEVENT_NAME, "");
                         }
@@ -8899,7 +8920,7 @@ dhcpv6c_dbg_thrd(void * in)
 
                             CcspTraceInfo(("%s: v6addr is %s ,pref_len is %d\n", __func__,v6addr,pref_len));
 
-                            remove_single_quote(v6addr);
+                            //remove_single_quote(v6addr);
 			    commonSyseventSet(COSA_DML_DHCPV6C_ADDR_SYSEVENT_NAME,v6addr);
 
                             if ((0 == CheckAndGetDevicePropertiesEntry(dropbearInterface, STRING_LENGTH, "DROPBEAR_INTERFACE")) && (0 == strncmp(dropbearInterface, "erouter0", strlen(dropbearInterface))))
@@ -8951,11 +8972,15 @@ dhcpv6c_dbg_thrd(void * in)
                     }
 
 #if defined(FEATURE_MAPT) && defined(FEATURE_RDKB_WAN_MANAGER)
-                    remove_single_quote(v6pref);
                     strcpy(pdIPv6Prefix, v6pref);
-                    remove_single_quote(preflen);
-                    pref_len=atoi(preflen);
 #endif
+
+                    if (strlen(v6pref) == 0 )
+                    {
+                        CcspTraceInfo(("%s: Did not receive ipv6 prefix \n", __FUNCTION__));
+                        continue;
+                    }
+
                     if (strncmp(v6pref, "::", 2) != 0)
                     {
 #if defined (FEATURE_SUPPORT_MAPT_NAT46)
@@ -9217,6 +9242,7 @@ dhcpv6c_dbg_thrd(void * in)
                         }
 #endif
 
+                        CcspTraceDebug(("%s,%d: Calling CosaDmlDHCPv6sTriggerRestart(FALSE)...\n", __FUNCTION__, __LINE__));
                         CosaDmlDHCPv6sTriggerRestart(FALSE);
 #if defined(_COSA_BCM_ARM_) || defined(INTEL_PUMA7)
                         CcspTraceWarning((" %s dhcpv6_assign_global_ip to brlan0 \n", __FUNCTION__));
