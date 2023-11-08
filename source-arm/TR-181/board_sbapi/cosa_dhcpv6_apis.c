@@ -3653,10 +3653,13 @@ char * CosaDmlDhcpv6sGetStringFromHex(char * hexString){
              char c =  (char)strtol(buff, (char **)NULL, 16);
              if( !iscntrl(c) )
                  newString[j++] = c;
+             else if (j != 0)
+                 newString[j++] = '.';
              memset(buff, 0, sizeof(buff));
              k = 0;
         }
     }
+    newString[j - 1] = '\0';
     CcspTraceWarning(("New normal string is %s from %s .\n", newString, hexString));
 
     return newString;
