@@ -648,9 +648,10 @@ ANSC_STATUS RdkBus_GetParamValueFromAnyComp( char * pQuery, char *pValue)
     // query the data model from the component
     CcspTraceInfo (("%s %d: quering dm:%s from component:%s of dbuspath:%s\n",
                 __FUNCTION__, __LINE__, pQuery, ppComponents[0]->componentName, ppComponents[0]->dbusPath));
-    if (RdkBus_GetParamValues (ppComponents[0]->componentName, ppComponents[0]->dbusPath, pQuery, pValue) != ANSC_STATUS_SUCCESS)
+    if (strstr(ppComponents[0]->componentName,"pam") || 
+                RdkBus_GetParamValues (ppComponents[0]->componentName, ppComponents[0]->dbusPath, pQuery, pValue) != ANSC_STATUS_SUCCESS)
     {
-        CcspTraceError (("%s %d: CcspBaseIf_discComponentSupportingNamespace() call failed\n", __FUNCTION__, __LINE__));
+        CcspTraceError (("%s %d: RdkBus_GetParamValues call failed\n", __FUNCTION__, __LINE__));
         free_componentStruct_t(bus_handle, size, ppComponents);
         return ANSC_STATUS_FAILURE;
     }
