@@ -816,8 +816,8 @@ static void be_struct_2_ml_info(UtopiaContext * p_ctx, wanInfo_t * p_in, PCOSA_D
                 while(fgets(buf, sizeof(buf)-1, fp))
                 {
                     memset(ip, 0, sizeof(ip));
-            
-                    if (sscanf(buf, "nameserver %s", ip) == 1)
+                    /*CID: 66224 fix*/
+                    if (sscanf(buf, "nameserver %127s", ip) == 1)
                     {
                         p_out->DNSServers[i++].Value = _ansc_inet_addr(ip);       
                         /*we support at most 2 dns server*/

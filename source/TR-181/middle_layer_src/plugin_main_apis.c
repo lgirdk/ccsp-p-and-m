@@ -793,11 +793,13 @@ static void CheckAndSetRebootReason()
 static void SetAutoreboot( ANSC_HANDLE  hThisObject)
 {
      PCOSA_DATAMODEL_DEVICEINFO      pMyObject    = (PCOSA_DATAMODEL_DEVICEINFO)hThisObject;
-    char buf[8];
+    char buf[8] = {0};
     int defualtConfigureDays=120;
+    /*CID: 278277 - Array Compared against null - fixed*/
     if(!syscfg_get( NULL, "AutoReboot", buf, sizeof(buf)))
     {
-         if( buf != NULL )
+         /*CID: 278277 - Array Compared against null - fixed*/
+         if( buf[0] != '\0' )
          {
             if( 0 == strcmp( buf, "true"))
             {

@@ -1716,9 +1716,14 @@ InterfaceSetting1_Validate
         pLink   = AnscSListGetNextEntry(pLink);
 
         pRAInterface2 = (PCOSA_DML_RA_IF_FULL2)pCosaContext2->hContext;
+        /*CID: 277733 NULL Pointer dereference fix*/
+        if( pRAInterface2 == NULL)
+        {
+            CcspTraceWarning(("pRAInterface2 is NULL in %s \n",__FUNCTION__));
+            continue;
 
-        if ( pRAInterface2 && 
-            ((ULONG)pRAInterface2 != (ULONG)pRAInterface) &&
+        }
+	if (((ULONG)pRAInterface2 != (ULONG)pRAInterface) &&
              (strcmp(pRAInterface2->Cfg.Alias, pRAInterface->Cfg.Alias) == 0))
         {
             rc = strcpy_s(pReturnParamName, *puLength, "Alias");

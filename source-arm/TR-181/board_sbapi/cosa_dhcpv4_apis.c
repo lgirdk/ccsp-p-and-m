@@ -3763,7 +3763,13 @@ CosaDmlDhcpsGetClient
         snprintf(ucEntryNameValue, sizeof(ucEntryNameValue), "%s", poolCfg.Interface);
     } else {
         snprintf(ucEntryParamName, sizeof(ucEntryParamName), "%s.Name", poolCfg.Interface);
-        CosaGetParamValueString(ucEntryParamName, ucEntryNameValue, &ulEntryNameLen );
+        /* CID 75074 fix*/
+        int rc = 1;
+        rc = CosaGetParamValueString(ucEntryParamName, ucEntryNameValue, &ulEntryNameLen );
+        if (rc == -1)
+        {
+            CcspTraceWarning(("%s CosaGetParamValueString Failed\n", __FUNCTION__ ));
+        }
     }
     ret = _cosa_get_dhcps_client(ulPoolInstanceNumber, (unsigned char*)ucEntryNameValue, poolCfg.MinAddress.Value, poolCfg.MaxAddress.Value);
 
@@ -4089,7 +4095,12 @@ CosaDhcpInitJournal
          if (data != NULL)
          {
                 memset( data, 0, ( sizeof(char) * (len + 1) ));
-                fread( data, 1, len, fileRead );
+                /* CID 60789 fix*/
+                size_t bytes_read = fread( data, 1, len, fileRead );
+                if (bytes_read == 0)
+                {
+                        CcspTraceWarning(("%s-%d : Error in reading JSON file\n" , __FUNCTION__, __LINE__ ));
+                }
          }
          else
          {

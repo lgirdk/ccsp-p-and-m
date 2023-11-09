@@ -192,8 +192,9 @@ static int ParseZebraRaConf(ZebraRaConf_t *conf)
         continue;
 
     /* the first "interface" line */
+    /*61252 - Calling risky function - Fix*/
     if (fgets(line, sizeof(line), fp) == NULL
-            || sscanf(line, "interface %s", conf->interface) != 1)
+            || sscanf(line, "interface %255s", conf->interface) != 1)
         goto BAD_FORMAT;
 
     while (fgets(line, sizeof(line), fp) != NULL) {

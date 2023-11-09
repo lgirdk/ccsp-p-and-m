@@ -2402,7 +2402,8 @@ CosaDmlDcSetFactoryReset
                 {
 		   fileReadStatus	=	GetPartnerIdFromFile(tempPartnerIdBuffer,sizeof(tempPartnerIdBuffer));
 		   if(fileReadStatus 	== 	TRUE){
-		       strcpy(partnerId,tempPartnerIdBuffer);
+                       /*CID: 186482 fix*/
+		       strncpy(partnerId,tempPartnerIdBuffer, sizeof(partnerId) - 1);
 	           }
 	           if(strlen(partnerId) > 0)
                    {

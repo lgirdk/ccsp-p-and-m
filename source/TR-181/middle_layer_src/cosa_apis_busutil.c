@@ -471,13 +471,14 @@ static ANSC_STATUS RdkBus_GetParamValues( char *pComponent, char *pBus, char *pP
     //Copy the value
     if( CCSP_SUCCESS == ret )
     {
-        if( NULL != retVal[0]->parameterValue )
+        /*CID 187399 NULL Pointer dereference Fix*/
+        if( retVal != NULL )
         {
-            memcpy( pReturnVal, retVal[0]->parameterValue, strlen( retVal[0]->parameterValue ) + 1 );
-        }
+                if(NULL != retVal[0]->parameterValue)
+                {
+                   memcpy( pReturnVal, retVal[0]->parameterValue, strlen( retVal[0]->parameterValue ) + 1 );
+                }
 
-        if( retVal )
-        {
             free_parameterValStruct_t (bus_handle, nval, retVal);
         }
 

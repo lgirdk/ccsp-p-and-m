@@ -1213,7 +1213,7 @@ void CosaDmlNeighborTableGetEntry
     if ( *ppNbTbl == NULL ){
         return;
     }
-
+    memset(*ppNbTbl, 0, sizeof(COSA_DML_NEIGHTABLE_INFO)*counter);
     /* 
         2040:cafe::5850:5ff9:d425:f21c dev brlan0 lladdr 3c:97:0e:44:50:95 REACHABLE
         fe80::9490:e980:ba75:3632 dev brlan0 lladdr 3c:97:0e:44:50:95 REACHABLE
@@ -1230,8 +1230,8 @@ void CosaDmlNeighborTableGetEntry
             //get address
             while(*p != ' ') p++;
             *p = 0;
-
-            _ansc_strcpy((*ppNbTbl)[i].Address, p1);
+            /*61751 - Calling risky function - Fix*/
+	    strncpy((*ppNbTbl)[i].Address, p1, (sizeof((*ppNbTbl)[i].Address)-1));
             p++;
 
             //get interface
@@ -1249,7 +1249,7 @@ void CosaDmlNeighborTableGetEntry
             while(*p != ' ') p++;
             *p = 0;
             
-            _ansc_strcpy((*ppNbTbl)[i].Interface, p1);
+            strncpy((*ppNbTbl)[i].Interface, p1, (sizeof((*ppNbTbl)[i].Interface)-1));
             p++;
             
             //get mac
@@ -1267,7 +1267,7 @@ void CosaDmlNeighborTableGetEntry
             while(*p != ' ') p++;
             *p = 0;
             
-            _ansc_strcpy((*ppNbTbl)[i].MACAddress, p1);
+            strncpy((*ppNbTbl)[i].MACAddress, p1, (sizeof((*ppNbTbl)[i].MACAddress)-1));
             p++;
 
             //get status

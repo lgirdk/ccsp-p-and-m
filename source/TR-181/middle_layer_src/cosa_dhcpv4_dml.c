@@ -6596,8 +6596,10 @@ Pool_SetParamStringValue
     BOOL bridgeInd = FALSE;
     errno_t                         rc                = -1;
 		
-    AnscTraceFlow(("%s: ParamName %s, \npString %s\n", __FUNCTION__, ParamName, pString));    
-	is_usg_in_bridge_mode(&bridgeInd);
+    AnscTraceFlow(("%s: ParamName %s, \npString %s\n", __FUNCTION__, ParamName, pString)); 
+    /* CID 54294 fix*/   
+	if (is_usg_in_bridge_mode(&bridgeInd) != ANSC_STATUS_SUCCESS)
+        	CcspTraceWarning(("%s: is_usg_in_bridge_mode call failed. \n", __FUNCTION__));
 	if(bridgeInd)
 		return(FALSE);
 
@@ -7675,8 +7677,9 @@ StaticAddress_SetParamBoolValue
     PCOSA_CONTEXT_LINK_OBJECT       pCxtLink             = (PCOSA_CONTEXT_LINK_OBJECT)hInsContext;
     PCOSA_DML_DHCPS_SADDR           pDhcpStaticAddress   = (PCOSA_DML_DHCPS_SADDR)pCxtLink->hContext;
     BOOL bridgeInd = FALSE;
-		
-	is_usg_in_bridge_mode(&bridgeInd);
+	/* CID 56377 fix*/
+	if (is_usg_in_bridge_mode(&bridgeInd) != ANSC_STATUS_SUCCESS)
+        	CcspTraceWarning(("%s: is_usg_in_bridge_mode call failed. \n", __FUNCTION__));
 	if(bridgeInd)
 		return(FALSE);
 
@@ -8019,10 +8022,11 @@ StaticAddress_Validate
                            char ip_addr_str[16]={0};
                            UINT chAddr[7] = {0};
                            int i=0;
+                           /*CID: 278547 fix*/
                            _ansc_sscanf
                                            (
                                        buf,
-                                       "%x:%x:%x:%x:%x:%x,%s,",
+                                       "%x:%x:%x:%x:%x:%x,%15s,",
                                        chAddr,
                                        chAddr+1,
                                        chAddr+2,
@@ -9474,8 +9478,9 @@ Client2_Synchronize
 
         pCxtLink->NumberOfClient = 0;
     }
-
-        is_usg_in_bridge_mode(&bridgeInd);
+    /* CID 58439 fix*/
+    if (is_usg_in_bridge_mode(&bridgeInd) != ANSC_STATUS_SUCCESS)
+        	CcspTraceWarning(("%s: is_usg_in_bridge_mode call failed. \n", __FUNCTION__));
 	if(bridgeInd){
         pCxtLink->NumberOfClient= 0;
         returnStatus = ANSC_STATUS_SUCCESS;

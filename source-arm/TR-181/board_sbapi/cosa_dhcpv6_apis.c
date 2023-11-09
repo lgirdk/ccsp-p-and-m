@@ -2805,7 +2805,8 @@ CosaDmlDhcpv6cGetServerCfg
                 ERR_CHK(rc);
                 entry_count |= 1;
             }
-            else if (sscanf(buf, "duid %s", val) == 1)
+            /*CID 53842 Fix*/
+            else if (sscanf(buf, "duid %1023s", val) == 1)
             {
                 unsigned int i = 0, j = 0;
                 /*the file stores duid in this format 00:01:..., we need to transfer it to continuous hex*/
@@ -3399,7 +3400,7 @@ CosaDmlDhcpv6cGetReceivedOptionCfg
         pSLinkEntry = AnscSListGetNextEntry(pSLinkEntry);
 
 	/* CID 75064 fix */
-        AnscCopyMemory( *ppEntry + ulIndex, p_rcv, (sizeof(*p_rcv)-1) );
+        AnscCopyMemory( *ppEntry + ulIndex, p_rcv, (AnscSListQueryDepth(&option_list) *sizeof(COSA_DML_DHCPCV6_RECV)) - ulIndex - 1 );
         AnscFreeMemory(p_rcv);
     }
 
@@ -3684,8 +3685,9 @@ int CosaDmlDHCPv6sGetDNS(char* Dns, char* output, int outputLen)
     while(i < count){
         _ansc_strncpy(oneDns, &Dns[i*32], 32);                       
         pStr = CosaDmlDhcpv6sGetAddressFromString(oneDns);
-        _ansc_strcat(output, pStr);
-        _ansc_strcat(output, ",");
+        /*CID 54434 Fix*/
+        strncat(output, pStr,outputLen-strlen(output)-1);
+        strncat(output, ",",outputLen-strlen(output)-1);
         i++;
     }
 
@@ -4197,8 +4199,10 @@ void __cosa_dhcpsv6_refresh_config()
     ULONG Index2 = 0;
     ULONG Index3 = 0;
     ULONG uSize = 0;
-    ULONG preferedTime = 3600;
-    ULONG validTime = 7200;    
+    /*CID:185755 Unused Value Fix*/
+    ULONG preferedTime;
+    /*CID:185758 Unused Value Fix*/
+    ULONG validTime;    
     int   returnValue = 0;
     BOOL  isInCaptivePortal = FALSE;
     char * saveptr = NULL;
@@ -4424,8 +4428,10 @@ void __cosa_dhcpsv6_refresh_config()
 
 				fprintf(fp, "       T1 %lu\n", T1);
 				fprintf(fp, "       T2 %lu\n", T2);
-				fprintf(fp, "       prefered-lifetime %lu\n", iapd_pretm);
-				fprintf(fp, "       valid-lifetime %lu\n", iapd_vldtm);			
+				/*CID:185755 Unused Value Fix*/
+				fprintf(fp, "       prefered-lifetime %lu\n", preferedTime);
+				/*CID:185758 Unused Value Fix*/
+				fprintf(fp, "       valid-lifetime %lu\n", validTime);			
 			}	              
                 fprintf(fp, "   }\n");
 		}
@@ -5745,7 +5751,7 @@ CosaDmlDhcpv6sGetPool
         return ANSC_STATUS_FAILURE;
 
     /* CID 72229 fix */
-    AnscCopyMemory(pEntry, &sDhcpv6ServerPool[ulIndex], sizeof(sDhcpv6ServerPool[ulIndex]));
+    AnscCopyMemory(pEntry, &sDhcpv6ServerPool[ulIndex], sizeof(COSA_DML_DHCPSV6_POOL_FULL));
     
     return ANSC_STATUS_SUCCESS;
 }
@@ -6181,6 +6187,7 @@ CosaDmlDhcpv6sSetPoolCfg
          !_ansc_strstr((const char*)sDhcpv6ServerPool[Index].Info.IANAPrefixes, (const char*)sDhcpv6ServerPool[Index].Cfg.IANAManualPrefixes) ){
         _ansc_strcat((char*)sDhcpv6ServerPool[Index].Info.IANAPrefixes, "," );
         _ansc_strcat((char*)sDhcpv6ServerPool[Index].Info.IANAPrefixes, (const char*)sDhcpv6ServerPool[Index].Cfg.IANAManualPrefixes );
+        
     }
    
     setpool_into_utopia((PUCHAR)DHCPV6S_NAME, (PUCHAR)"pool", Index, &sDhcpv6ServerPool[Index]);
@@ -7279,8 +7286,10 @@ int dhcpv6_assign_global_ip(char * prefix, char * intfName, char * ipAddr)
     //00:50:56: FF:FE:  92:00:22
     _ansc_strncpy(out, pMac, 9);
     out[9] = '\0';
-    _ansc_strcat(out, "FF:FE:");
-    _ansc_strcat(out, pMac+9);
+    /*CID:55616 String Overflow Fix*/
+    strncat(out, "FF:FE:",sizeof(out)-strlen(out)-1);
+    /*CID-135465 String Overflow Fix*/
+    strncat(out, pMac+9,sizeof(out)-strlen(out)-1);
 
     for(k=0,j=0;out[j];j++){
         if ( out[j] == ':' )
@@ -7442,7 +7451,7 @@ int CalcIPv6Prefix(char *GlobalPref, char *pref,int index)
     return 1;
 }
 
-int GenIPv6Prefix(char *ifName,char *GlobalPref, char *pref)
+int GenIPv6Prefix(char *ifName,char *GlobalPref, char *pref,int len)
 {
 int index = 0;
 char cmd[100] = {0};
@@ -7494,7 +7503,8 @@ static int interface_num = 4; // Reserving first 4 /64s for dhcp configurations
 		if(CalcIPv6Prefix(GlobalPref,pref,index)==0 )
 		return 0;
 	}
-	strcat(pref,"/64");
+	/* CID 71710 Fix*/
+        strncat(pref,"/64",len-strlen(pref)-1);
         CcspTraceInfo(("%s: pref %s\n", __func__, pref));
 return 1;
 	
@@ -7511,9 +7521,10 @@ int remove_interface(char* Inf_name)
 	pt = buf;
    while((token = strtok_r(pt, ",", &pt))) {
 	if(strncmp(Inf_name,token,strlen(Inf_name)))
-		{
-			strcat(OutBuff,token);
-			strcat(OutBuff,",");
+		{       
+                        /* CID 173703 Fix*/
+			strncat(OutBuff,token,sizeof(OutBuff)-strlen(OutBuff)-1);
+			strncat(OutBuff,",",sizeof(OutBuff)-strlen(OutBuff)-1);
 		}
    }
 	syscfg_set_commit(NULL, "IPv6_Interface", OutBuff);
@@ -7530,8 +7541,9 @@ int append_interface(char* Inf_name)
 	syscfg_get( NULL, "IPv6_Interface", buf, sizeof(buf));
 	
 	strncpy(OutBuff, buf, (sizeof(OutBuff)-1));
-	strcat(OutBuff,Inf_name);
-	strcat(OutBuff,",");
+        /*CID 173701 fix*/
+	strncat(OutBuff,Inf_name,sizeof(OutBuff)-strlen(OutBuff)-1);
+	strncat(OutBuff,",",sizeof(OutBuff)-strlen(OutBuff)-1);
 	syscfg_set_commit(NULL, "IPv6_Interface", OutBuff);
 	return 0;
 }
@@ -7680,7 +7692,7 @@ int GenAndUpdateIpv6PrefixIntoSysevent(char *pInfName)
       CcspTraceError(("[%s] ERROR return -1 (i.e. error due to get_prefix_info() return -1)\n", __FUNCTION__));
       return -1;
     }
-    if(GenIPv6Prefix(pInfName,prefixvalue,out1))
+    if(GenIPv6Prefix(pInfName,prefixvalue,out1,sizeof(out1)))
     {
         rc = sprintf_s(cmd, sizeof(cmd), "%s_ipaddr_v6", pInfName);
         if(rc < EOK)
@@ -7700,9 +7712,10 @@ int handle_MocaIpv6(char *status)
 	char *str = NULL;
 	int HomeIsolationEnable = 0;
     char tbuff[100];
-    char ipv6If[128], mbuf[128];
+    char ipv6If[128] = {0}; 
+    char mbuf[128];
     int restart_zebra = 0;
-	
+  
     if (!status)
             return -1;
 
@@ -7737,7 +7750,8 @@ int handle_MocaIpv6(char *status)
     }
     if(strcmp((const char*)status, "ready") == 0)
     {
-        if(( mbuf != NULL ) && ( ipv6If != NULL ) && ( Inf_name != NULL ))
+        /*CID: 173691  - Array Compared against null - fixed*/
+        if(( mbuf != NULL ) && ( ipv6If[0] != '\0' ) && ( Inf_name != NULL ))
         {
             if( (strcmp(mbuf, "true") == 0) && (HomeIsolationEnable == 1))
             {
@@ -8019,8 +8033,9 @@ static void *InterfaceEventHandler_thrd(void *data)
                 psmGet(aParamName, aParamVal, BUFF_LEN_64);
                 CcspTraceInfo(("BridgeName:%s\n", aParamVal));
                 if ('\0' != aParamVal[0])
-                {
-                    strcpy(aBridgeName,aParamVal);
+                {   
+                    /*CID 66870*/
+                    strncpy(aBridgeName,aParamVal,sizeof(aBridgeName)-1);
                 }
                 else
                 {
@@ -8377,7 +8392,7 @@ dhcpv6s_dbg_thrd(void * in)
                     while((token = strtok_r(pt, ",", &pt)))
                     {
                         char InterfacePrefix[256] ={0};
-                        if(GenIPv6Prefix(token,IPv6pref,InterfacePrefix))
+                        if(GenIPv6Prefix(token,IPv6pref,InterfacePrefix,sizeof(InterfacePrefix)))
                         {
                             memset(interface_name,0,sizeof(interface_name));
                             strncpy(interface_name,token,sizeof(interface_name)-1);
@@ -9084,7 +9099,7 @@ dhcpv6c_dbg_thrd(void * in)
 				while((token = strtok_r(pt, ",", &pt)))
 				 {
 			 
-					if(GenIPv6Prefix(token,v6Tpref,out1))
+					if(GenIPv6Prefix(token,v6Tpref,out1,sizeof(out1)))
 					{
 						memset(cmd,0,sizeof(cmd));
                         			memset(interface_name,0,sizeof(interface_name));
@@ -9369,7 +9384,8 @@ dhcpv6c_dbg_thrd(void * in)
                             if (strlen(dns_server) != 0)
                             {
                                 dhcpv6_data.dnsAssigned = TRUE;
-                                sscanf (dns_server, "%s %s", dhcpv6_data.nameserver, dhcpv6_data.nameserver1);
+                                /*CID 52882 Fix*/
+                                sscanf (dns_server, "%127s %127s", dhcpv6_data.nameserver, dhcpv6_data.nameserver1);
                             }
                             dhcpv6_data.prefixPltime = hub4_preferred_lft;
                             dhcpv6_data.prefixVltime = hub4_valid_lft;

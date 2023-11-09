@@ -444,7 +444,7 @@ static void UpdateSettingsFile( char param[64], char value[10] )
             {
                 continue;
             }
-            strcat(FileData, Line);
+            strncat(FileData, Line,sizeof(FileData)-strlen(FileData)-1);
         }
 
     }
@@ -754,9 +754,9 @@ DeviceInfo_GetParamUlongValue
 		 CcspTraceError(("%s falied to open /nvram/docsispolltime.txt file \n",__FUNCTION__));
 		 return FALSE;
 	   }
-           retValue = fscanf(fp, "%s", buff);      
-
-           if( (retValue != -1) && (buff != NULL ) )
+           retValue = fscanf(fp, "%29s", buff);      
+            /* CID 64133 fix*/
+           if( (retValue != -1) && (buff[0] != '\0' ) )
 	   {
           	 *puLong = atoi(buff);
            }
@@ -7778,9 +7778,10 @@ Iot_GetParamBoolValue
     {
         /* collect value */
         char buf[8];
+        memset(buf, 0, sizeof(buf));
         syscfg_get( NULL, "X_RDKCENTRAL-COM_ENABLEIOT", buf, sizeof(buf));
-
-        if( buf != NULL )
+        /* CID 66516 fix*/
+        if( buf[0] != '\0' )
         {
             if (strcmp(buf, "true") == 0)
                 *pBool = TRUE;
@@ -8678,9 +8679,13 @@ Control_SetParamStringValue
                          CcspTraceError(("[%s] syscfg_commit failed for XconfRecoveryUrl \n",__FUNCTION__));
                          bReturnValue = FALSE;
                     }
-                    bReturnValue = TRUE;
-                    CcspTraceInfo(("[%s] XconfRecoveryUrl value set as %s success..!!\n",__FUNCTION__,pString));
-                }
+		    /*CID:340237 Unused Value Fix*/
+		    else
+                    { 
+			  bReturnValue = TRUE;
+                          CcspTraceInfo(("[%s] XconfRecoveryUrl value set as %s success..!!\n",__FUNCTION__,pString));
+                    }
+		}
            }
     }
     else
@@ -8772,8 +8777,10 @@ Feature_GetParamBoolValue
     if (strcmp(ParamName, "CodebigSupport") == 0)
     {
          char value[8];
+         memset(value, 0, sizeof(value));
          syscfg_get(NULL,"codebigsupport",value, sizeof(value));
-         if( value != NULL )
+         /* CID 66608 fix*/
+         if( value[0] != '\0' )
          {
              if (strcmp(value, "true") == 0)
                  *pBool = TRUE;
@@ -11133,7 +11140,7 @@ SSIDPSWDCTRL_GetParamBoolValue
 {
     UNREFERENCED_PARAMETER(hInsContext);
     char buf[8];
-
+    memset(buf, 0, sizeof(buf));
     /* check the parameter name and return the corresponding value */
 
     if (strcmp(ParamName, "SnmpEnable") == 0)
@@ -11153,8 +11160,8 @@ SSIDPSWDCTRL_GetParamBoolValue
     {
         /* collect value */
         syscfg_get( NULL, "TR069PSWDCTRLFLAG", buf, sizeof(buf));
-
-        if( buf != NULL )
+        /* CID 54616 fix*/
+        if( buf[0] != '\0' )
         {
             if (strcmp(buf, "true") == 0)
                 *pBool = TRUE;
@@ -12057,8 +12064,10 @@ TDK_GetParamBoolValue
     if (strcmp(ParamName, "Enable") == 0)
     {
         char value[8];
+        memset(value, 0, sizeof(value));
         syscfg_get(NULL,"TDKEnable",value, sizeof(value));
-        if( value != NULL )
+        /*CID 164170 fix*/
+        if( value[0] != '\0' )
         {
              if (strcmp(value, "true") == 0)
                  *pBool = TRUE;
@@ -12175,9 +12184,11 @@ Collectd_GetParamBoolValue
 
     if (strcmp(ParamName, "Enable") == 0)
     {
-        char value[8];
+        char value[8] = {0};
+        /*CID: 253423 - Array Compared against null - fixed*/
         syscfg_get(NULL,"CollectdEnable",value, sizeof(value));
-        if( value != NULL )
+        /*CID: 173704 - Array Compared against null - fixed*/
+        if( value[0] != '\0' )
         {
              if (strcmp(value, "true") == 0)
                  *pBool = TRUE;
@@ -12403,9 +12414,10 @@ IPv6subPrefix_GetParamBoolValue
         {
             /* collect value */
             char buf[8];
+            memset(buf, 0, sizeof(buf));
             syscfg_get( NULL, "IPv6subPrefix", buf, sizeof(buf));
-
-            if( buf != NULL )
+            /*CID 62757 fix*/
+            if( buf[0] != '\0' )
             {
                 if (strcmp(buf, "true") == 0)
                     *pBool = TRUE;
@@ -12518,20 +12530,21 @@ IPv6onLnF_GetParamBoolValue
             /* collect value */
             char buf[128];
 	    char Inf_name[32];
-
+            
+            memset(Inf_name, 0, sizeof(Inf_name));
             syscfg_get( NULL, "iot_brname", Inf_name, sizeof(Inf_name));
             if ( (Inf_name[0] == '\0') && (strlen(Inf_name)) == 0 )
             {
                 syscfg_get( NULL, "iot_ifname", Inf_name, sizeof(Inf_name));
 
             }
-	
-	    if( Inf_name != NULL )
+        /* CID 71221 fix*/
+	    if( Inf_name[0] != '\0' )
             {
-            
-            syscfg_get( NULL, "IPv6_Interface", buf, sizeof(buf));
+              memset(buf, 0, sizeof(buf));
+              syscfg_get( NULL, "IPv6_Interface", buf, sizeof(buf));
 
-		    if( buf != NULL )
+		    if( buf[0] != '\0' )
 		    {
 		        if (strstr(buf, Inf_name))
 		            *pBool = TRUE;
@@ -13830,18 +13843,19 @@ IPv6onLnF_SetParamBoolValue
 	
             memset(buf,0,sizeof(buf));
             memset(OutBuff,0,sizeof(OutBuff));
+            memset(Inf_name, 0, sizeof(Inf_name));
  	    syscfg_get( NULL, "iot_brname", Inf_name, sizeof(Inf_name));
             if ( (Inf_name[0] == '\0') && (strlen(Inf_name)) == 0 )
             {
              	syscfg_get( NULL, "iot_ifname", Inf_name, sizeof(Inf_name));
             
        	    }
-	    
-	    if( Inf_name != NULL )
+	    /* CID 64488 fix*/
+	    if( Inf_name[0] != '\0' )
             {
             	    syscfg_get( NULL, "IPv6_Interface", buf, sizeof(buf));
 
-		    if( buf != NULL )
+		    if( buf[0] != '\0' )
 		    {
 		        if (strstr(buf, Inf_name))
 		            bFound = TRUE;
@@ -13889,8 +13903,8 @@ IPv6onLnF_SetParamBoolValue
 			{
 				if(bValue)
 				{
-				strcat(OutBuff,Inf_name);
-				strcat(OutBuff,",");
+				strncat(OutBuff,Inf_name,sizeof(OutBuff)-strlen(OutBuff)-1);
+				strncat(OutBuff,",",sizeof(OutBuff)-strlen(OutBuff)-1);
 				syscfg_set_commit(NULL, "IPv6_Interface",OutBuff);
 				}
 			}
@@ -14090,8 +14104,8 @@ IPv6onXHS_SetParamBoolValue
 						{
 							if(bValue)
 							{
-							strcat(OutBuff,Inf_name);
-							strcat(OutBuff,",");
+							strncat(OutBuff,Inf_name,sizeof(OutBuff)-strlen(OutBuff)-1);
+							strncat(OutBuff,",",sizeof(OutBuff)-strlen(OutBuff)-1);
 							syscfg_set_commit(NULL, "IPv6_Interface",OutBuff);
 							}
 						}
@@ -14150,7 +14164,7 @@ IPv6onPOD_GetParamBoolValue
     if (strcmp(ParamName, "Enable") == 0)
         {
             /* collect value */
-            char buf[128];
+            char buf[128] = {0};
             char *Inf_name = NULL;
     	    int retPsmGet = CCSP_SUCCESS;
 
@@ -14163,8 +14177,10 @@ IPv6onPOD_GetParamBoolValue
             if (retPsmGet == CCSP_SUCCESS) {
 	    	if( Inf_name != NULL )
             	{
+                    /*CID: 172844 - Array Compared against null - fixed*/
                	    syscfg_get( NULL, "IPv6_Interface", buf, sizeof(buf));
-	        if( buf != NULL )
+                    /*CID: 172805 - Array Compared against null - fixed*/
+	        if( buf[0] != '\0' )
 		    {
 		        if (strstr(buf, Inf_name))
 		            *pBool = TRUE;
@@ -14227,7 +14243,8 @@ IPv6onPOD_SetParamBoolValue
 
  if (strcmp(ParamName, "Enable") == 0)
         {
-     	    char buf[128], OutBuff[128];
+     	    char buf[128] = {0}; 
+            char OutBuff[128];
 			char *Inf_name = NULL;
 			BOOL bFound = FALSE;
     	    int retPsmGet = CCSP_SUCCESS;
@@ -14240,13 +14257,13 @@ IPv6onPOD_SetParamBoolValue
 			}
             if (retPsmGet == CCSP_SUCCESS)
 				{
-                    memset(buf,0,sizeof(buf));
                     memset(OutBuff,0,sizeof(OutBuff));
 
 					if( Inf_name != NULL )
 						{
 						syscfg_get( NULL, "IPv6_Interface", buf, sizeof(buf));
-						if( buf != NULL )
+                                                /*CID: 172805 - Array Compared against null - fixed*/
+						if( buf[0] != '\0' )
 						{
 							if (strstr(buf, Inf_name))
 								bFound = TRUE;
@@ -14277,8 +14294,8 @@ IPv6onPOD_SetParamBoolValue
 									   while((token = strtok_r(pt, ",", &pt))) {
 										if(strncmp(Inf_name,token,strlen(Inf_name)))
 										{
-											strcat(OutBuff,token);
-											strcat(OutBuff,",");
+											strncat(OutBuff,token,sizeof(OutBuff)-strlen(OutBuff)-1);
+											strncat(OutBuff,",",sizeof(OutBuff)-strlen(OutBuff)-1);
 										}
 									   }
 
@@ -14350,10 +14367,11 @@ IPv6onMoCA_GetParamBoolValue
     if (strcmp(ParamName, "Enable") == 0)
         {			
 		/* collect value */
-		char buf[128];
-			
+		char buf[128] = {0};
+                /*CID: 173704 - Array Compared against null - fixed*/
 		syscfg_get( NULL, "ipv6_moca_bridge", buf, sizeof(buf));
-			if( buf != NULL )
+                /*CID: 173704 - Array Compared against null - fixed*/
+			if( buf[0] != '\0' )
 			{
 				if (strcmp(buf, "true") == 0)
 					*pBool = TRUE;
@@ -14412,7 +14430,8 @@ IPv6onMoCA_SetParamBoolValue
 
     if (strcmp(ParamName, "Enable") == 0)
     {
-        char buf[128], OutBuff[128];
+        char buf[128] = {0}; 
+        char OutBuff[128];
         char *Inf_name = NULL;
         char *str = NULL;
         int HomeIsolationEnable = 0;
@@ -14439,13 +14458,13 @@ IPv6onMoCA_SetParamBoolValue
         ((CCSP_MESSAGE_BUS_INFO *)bus_handle)->freefunc(str);
         if (retPsmGet == CCSP_SUCCESS)
         {
-            memset(buf,0,sizeof(buf));
             memset(OutBuff,0,sizeof(OutBuff));
 
             if( Inf_name != NULL )
             {
                 syscfg_get( NULL, "IPv6_Interface", buf, sizeof(buf));
-                if( buf != NULL )
+                /*CID: 173697 - Array Compared against null - fixed*/
+                if( buf[0] != '\0' )
                 {
                     if (strstr(buf, Inf_name))
                         bFound = TRUE;
@@ -14461,8 +14480,9 @@ IPv6onMoCA_SetParamBoolValue
 
                             // interface is not present in the list, we need to add interface to enable IPv6 PD
                             strncpy(OutBuff, buf, sizeof(buf));
-                            strcat(OutBuff,Inf_name);
-                            strcat(OutBuff,",");
+                            strncat(OutBuff,Inf_name,sizeof(OutBuff)-strlen(OutBuff)-1);
+                            strncat(OutBuff,",",sizeof(OutBuff)-strlen(OutBuff)-1);
+
                             CcspTraceWarning((">>>>Debug 1 Value of  OutBuff : %s infname  : %s  HomeIsolationEnable: %d \n", OutBuff, Inf_name, HomeIsolationEnable ));
                             syscfg_set_commit(NULL, "IPv6_Interface",OutBuff);
                         }
@@ -14721,9 +14741,10 @@ RDKFirmwareUpgrader_GetParamBoolValue
         char buf[8];
 
         /* collect value */
+        memset(buf, 0, sizeof(buf));
         syscfg_get( NULL, "RDKFirmwareUpgraderEnabled", buf, sizeof(buf));
-
-        if( buf != NULL )
+        /* CID 108106 fix*/
+        if( buf[0] != '\0' )
         {
             if (strcmp(buf, "true") == 0)
                 *pBool = TRUE;
@@ -19542,9 +19563,10 @@ PeriodicBeacon_GetParamBoolValue
     if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
+        memset(buf, 0, sizeof(buf));
         syscfg_get( NULL, "BLEPeriodicBeacon", buf, sizeof(buf));
-
-        if( buf != NULL )
+        /* CID 168163 fix*/
+        if( buf[0] != '\0' )
         {
             if (strcmp(buf, "true") == 0)
                 *pBool = TRUE;
@@ -19655,13 +19677,14 @@ Broadcast_GetParamBoolValue(
 {
     CcspTraceInfo(("Broadcast_GetParamBoolValue \n"));
     UNREFERENCED_PARAMETER(hInsContext);
-    char buf[8];
+    char buf[8] = {0};
     if (AnscEqualString(ParamName, "Enable", TRUE))
     {
         /* collect value */
+        /*CID: 334992 - Array Compared against null - fixed*/
         syscfg_get(NULL, "BLEBroadcast", buf, sizeof(buf));
-
-        if (buf != NULL)
+        /*CID: 334992 - Array Compared against null - fixed*/
+        if ( buf[0] != '\0')
         {
             if (strcmp(buf, "true") == 0)
                 *pBool = TRUE;
@@ -20175,7 +20198,8 @@ UPnPRefactor_GetParamBoolValue
         char value[8] = {'\0'};
         if( syscfg_get(NULL, "Refactor", value, sizeof(value)) == 0 )
         {
-            if( value != NULL )
+            /* CID 71977 fix*/
+            if( value[0] != '\0' )
             {
                  if (strcmp(value, "true") == 0)
                      *pBool = TRUE;
@@ -20419,7 +20443,8 @@ HwHealthTestEnable_GetParamBoolValue
         char value[8] = {'\0'};
         if( syscfg_get(NULL, "hwHealthTest", value, sizeof(value)) == 0 )
         {
-            if( value != NULL )
+            /* CID 161852 fix*/
+            if( value[0] != '\0' )
             {
                  if (strncmp(value, "true", sizeof(value)) == 0)
                      *pBool = TRUE;
@@ -20786,7 +20811,7 @@ HwHealthTestPTREnable_SetParamBoolValue
         {
             if( NULL != clientVer )
             {
-                fscanf(fp, "%s", clientVer);
+                fscanf(fp, "%7s", clientVer);
                 rc = strcpy_s(version,sizeof(version),clientVer);
                 if(rc != EOK)
                 {
@@ -21289,8 +21314,10 @@ MocaAccountIsolation_GetParamBoolValue
 	if (strcmp(ParamName, "Enable") == 0)
 	{
 		char value[8];
+                memset(value, 0, sizeof(value));
 		syscfg_get(NULL,"enableMocaAccountIsolation",value, sizeof(value));
-		if( value != NULL )
+        /* CID 143845 fix */
+		if( value[0] != '\0' )
 		{
 			if (strcmp(value, "true") == 0)
 			*pBool = TRUE;
@@ -22609,7 +22636,16 @@ BOOL IsBoolSame(ANSC_HANDLE hInsContext,char* ParamName, BOOL bValue, GETBOOL_FU
 
 BOOL IsStringSame(ANSC_HANDLE hInsContext,char* ParamName, char* pValue, GETSTRING_FUNC_PTR getStringFunc)
 {
+
+    /*CID-328971  Null pointer Dereference Fix*/
+    if(pValue == NULL)
+    {
+      CcspTraceWarning(("%s pValue is NULL...\n", __FUNCTION__));
+      return FALSE;
+    }
+
     Generic_SetParamStringValue(hInsContext, ParamName, pValue);
+
     char prevValue[1024];
     ULONG size = 1024;
     getStringFunc( hInsContext, ParamName, (char *)&prevValue, &size );

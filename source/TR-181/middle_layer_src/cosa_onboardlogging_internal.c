@@ -97,12 +97,20 @@ ANSC_STATUS DisableOnboardLogging(ANSC_HANDLE hThisObject)
     char *boxType = NULL, *atomIp = NULL;
     if(getValueFromDevicePropsFile("BOX_TYPE", &boxType) == 0)
     {
-        if(strcmp(boxType, "XB3") == 0)
+        if (boxType != NULL)
         {
-            if(getValueFromDevicePropsFile("ATOM_ARPING_IP", &atomIp) == 0)
+            if(strcmp(boxType, "XB3") == 0)
             {
-                v_secure_system("/usr/bin/rpcclient %s 'touch /nvram/DISABLE_ONBOARD_LOGGING'", atomIp);
+                if(getValueFromDevicePropsFile("ATOM_ARPING_IP", &atomIp) == 0)
+                {
+                    if (atomIp != NULL)
+                    {
+                        v_secure_system("/usr/bin/rpcclient %s 'touch /nvram/DISABLE_ONBOARD_LOGGING'", atomIp);
+                        free(atomIp);
+                    }
+                }
             }
+            free(boxType);
         }
     }
     pMyObject->bEnable = FALSE;
@@ -116,13 +124,21 @@ ANSC_STATUS EnableOnboardLogging(ANSC_HANDLE hThisObject)
     v_secure_system("rm -rf /nvram/DISABLE_ONBOARD_LOGGING");
     char *boxType = NULL, *atomIp = NULL;
     if(getValueFromDevicePropsFile("BOX_TYPE", &boxType) == 0)
-    {
-        if(strcmp(boxType, "XB3") == 0)
+    {      
+        if (boxType != NULL)
         {
-            if(getValueFromDevicePropsFile("ATOM_ARPING_IP", &atomIp) == 0)
+            if(strcmp(boxType, "XB3") == 0)
             {
-                v_secure_system("/usr/bin/rpcclient %s 'rm -rf /nvram/DISABLE_ONBOARD_LOGGING'", atomIp);
+                if(getValueFromDevicePropsFile("ATOM_ARPING_IP", &atomIp) == 0)
+                {
+                    if (atomIp != NULL)
+                    {
+                        v_secure_system("/usr/bin/rpcclient %s 'rm -rf /nvram/DISABLE_ONBOARD_LOGGING'", atomIp);
+                        free(atomIp);
+                    }
+                }
             }
+            free(boxType);
         }
     }
     pMyObject->bEnable = TRUE;
@@ -143,7 +159,8 @@ static int getValueFromDevicePropsFile(char *str, char **value)
                 buf[strcspn( buf, "\r\n" )] = 0; // Strip off any carriage returns
                 tempStr = strstr( buf, "=" );
                 tempStr++;
-                *value = tempStr;
+                /*CID: 73940 fix */
+                *value = strdup(tempStr);
                 /*CID: 72878 Resource leak*/
                 fclose(fp);
                 return 0;

@@ -535,7 +535,7 @@ CosaIFStackCreateAll
                                                              ucTable7, ucTable8,
                                                              ucTable9, ucTable10};
     errno_t                         rc                    = -1;
-
+    
     /* Empty interfaceStack table first */
     CosaIFStackEmptyTable(pMyObject);
 
@@ -568,7 +568,7 @@ CosaIFStackCreateAll
                AnscCopyMemory(ucEntryFullPath, pEnd,  AnscSizeOfString((const char*)pEnd)-1);
 
             /* To get like Device.Bridging.BridgeNumberOfEntries */
-            _ansc_strcat(ucTableParam, "NumberOfEntries");  
+            strncat(ucTableParam, "NumberOfEntries",sizeof(ucTableParam)-strlen(ucTableParam)-1);  
  
             ulNumOfParent =  CosaIFStackGetParamValueULong(ucTableParam);  
 
@@ -742,7 +742,8 @@ CosaIFStackCreateAll
                         
                     while (( pStringToken = AnscTcUnlinkToken(pListTokenChain) ))
                     {
-                        if ( pStringToken->Name )
+                        /*CID: 67432 - Array Compared against null - fixed*/
+                        if ( strlen(pStringToken->Name) != 0 )
                         {
                             /* 4.1 To get one LowerLayer */
                             AnscZeroMemory(sInterfaceStack.LowerLayer, COSA_IFSTACK_NAME_LENGTH);

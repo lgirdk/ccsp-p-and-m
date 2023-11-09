@@ -110,7 +110,7 @@ CosaMldCreate
     {
         return  (ANSC_HANDLE)NULL;
     }
-
+    memset(pMyObject, 0, sizeof(COSA_DATAMODEL_MLD));
     /*
      * Initialize the common variables and functions for a container object.
      */

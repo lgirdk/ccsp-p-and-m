@@ -913,7 +913,8 @@ static int IsSystemdRunning()
         {
             if (line != NULL)
             {
-                sscanf(line, "Name:\t%s\n", initProcess);
+              /*CID: 164056 fix*/
+                sscanf(line, "Name:\t%9s\n", initProcess);
                 if (strncmp(initProcess, SYSTEMD, 7) == 0)
                 {
 		            res = 1;

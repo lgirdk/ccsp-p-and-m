@@ -2885,7 +2885,8 @@ AccessPolicy_GetParamStringValue
     ULONG                           i            = 0;
     int                             pre_buf_size = 1023;
     errno_t                         rc           = -1;
-
+    
+    memset(pValue,0 ,*pUlSize);
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "Alias") == 0)
     {
@@ -2994,8 +2995,8 @@ AccessPolicy_GetParamStringValue
             for ( i = 0; (i < pDmlIAPolicy->LanHost.IprCount) && (i < COSA_DML_IA_LH_MAX_IP_RANGE); i++ )
             {
                 AnscGetIpAddrString(&pDmlIAPolicy->LanHost.IprList[i].StartIp.Value, pValue);
-
-                _ansc_strcat(pValue, "-");
+                /*CID: 57476 - Calling risky function */
+                strncat(pValue, "-", (*pUlSize-strlen(pValue)-1));
 
                 pValue = pValue + AnscSizeOfString(pValue);
 
@@ -3003,7 +3004,7 @@ AccessPolicy_GetParamStringValue
 
                 if ( i < (ULONG)pDmlIAPolicy->LanHost.IprCount - 1 )
                 {
-                    _ansc_strcat(pValue, ",");
+                    strncat(pValue, ",",(*pUlSize-strlen(pValue)-1));
                 }
 
                 pValue = pValue + AnscSizeOfString(pValue);

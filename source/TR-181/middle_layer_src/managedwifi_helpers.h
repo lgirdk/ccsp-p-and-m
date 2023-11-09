@@ -75,7 +75,7 @@ void* comp_mw_helper_convert( const void *buf, size_t len,
                       process_fn_t process,
                       destroy_fn_t destroy );
 
-ssize_t mg_wifi_pack_appenddoc(const mg_wifi_appenddoc_t *appenddocData,void **data);
+size_t mg_wifi_pack_appenddoc(const mg_wifi_appenddoc_t *appenddocData,void **data);
 
 char * mg_append_wifi_doc(char * subdoc_name, uint32_t version, uint16_t trans_id, char * blob_data, size_t blob_size);
 

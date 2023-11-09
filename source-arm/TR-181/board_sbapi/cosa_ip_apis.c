@@ -637,7 +637,8 @@ static int _get_2_lfts(char * fn, int * p_valid, int * p_prefer, ipv6_addr_info_
             p = (char *)buf;
             while (isblank(*p)) p++;
             
-            if (sscanf(p, "inet6 %s", file_str) == 1)
+            /*62934 - Calling risky function - Fix*/
+            if (sscanf(p, "inet6 %7s", file_str) == 1)
             {
                 if (!strncmp((char *)file_str, (char *)addr_str, sizeof(file_str)))
                     found = 1;
@@ -1856,7 +1857,8 @@ IPIF_getEntry_for_Ipv6Pre
         else
         {
              p_dml_v6pre->iapd_vldtm = 0;
-             strcpy(p_dml_v6pre->ValidLifetime, "0001-01-01T00:00:00Z");
+             /*52985 - Calling risky function - Fix*/
+             strncpy(p_dml_v6pre->ValidLifetime, "0001-01-01T00:00:00Z", sizeof(p_dml_v6pre->ValidLifetime)-1);
         }
 
         p_dml_v6pre->Status = COSA_DML_PREFIXENTRY_STATUS_Enabled;
@@ -3315,8 +3317,8 @@ static int _invoke_ip_cmd(char * cmd, PCOSA_DML_IP_V6ADDR p_old, PCOSA_DML_IP_V6
     {
         if (!p_old)
             return -1;
-
-        sprintf(name, "%sPrefix", p_old->Prefix);
+        /*68679 - Calling risky function - Fix*/
+        snprintf(name, sizeof(name), "%sPrefix", p_old->Prefix);
         if ( 0 == g_GetParamValueString(g_pDslhDmlAgent, name, buf, &buf_len))
         {
             if ((p = strchr(buf, '/')))

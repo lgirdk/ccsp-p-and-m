@@ -988,15 +988,15 @@ ANSC_STATUS EthAgent_getParams(char *pComponent, char *pBus, char *pParamName, c
     //Copy the value
     if (CCSP_SUCCESS == ret)
     {
-        CcspTraceWarning(("%s parameterValue[%s]\n", __FUNCTION__, retVal[0]->parameterValue));
-
-        if (NULL != retVal[0]->parameterValue)
+        /*CID-187380 NULL Pointer Dereference*/
+        if (retVal != NULL)
         {
-            memcpy(pReturnVal, retVal[0]->parameterValue, strlen(retVal[0]->parameterValue) + 1);
-        }
-
-        if (retVal)
-        {
+            if (NULL != retVal[0]->parameterValue)
+            {
+                CcspTraceWarning(("%s parameterValue[%s]\n", __FUNCTION__, retVal[0]->parameterValue));
+                memcpy(pReturnVal, retVal[0]->parameterValue, strlen(retVal[0]->parameterValue) + 1);
+            }
+ 
             free_parameterValStruct_t(bus_handle, nval, retVal);
         }
 
@@ -1036,7 +1036,8 @@ CosaUtilGetLowerLayerName
     }
     else
     {
-        _ansc_strcat(pParamPath, ".Name");
+        /*CID: 66733 fix*/
+        strncat(pParamPath, ".Name", sizeof(pParamPath) - strlen(pParamPath) - 1);
     }
 
 #if defined (FEATURE_RDKB_WAN_MANAGER)
@@ -1918,7 +1919,8 @@ int CosaUtilGetIpv6AddrInfo (char * ifname, ipv6_addr_info_t ** pp_info, int * p
     ifv6Details v6Details;
     int parsingResult;
     errno_t rc = -1;
-    
+    memset(v6Details.prefix_v6, 0, sizeof(v6Details.prefix_v6));
+  
     if (!ifname || !pp_info || !p_num)
         return -1;
 
@@ -1950,7 +1952,8 @@ int CosaUtilGetIpv6AddrInfo (char * ifname, ipv6_addr_info_t ** pp_info, int * p
             CcspTraceInfo(("%s,Interface scope is : %d\n",__FUNCTION__,v6Details.scopeofipv6));           
  
             memset(p_ai->v6pre, 0, sizeof(p_ai->v6pre));
-            if(v6Details.prefix_v6)
+            /*CID: 64940 - Array Compared against null - fixed*/
+            if(v6Details.prefix_v6[0] != '\0')
             {
                  rc = strcpy_s(p_ai->v6pre, sizeof(p_ai->v6pre),v6Details.prefix_v6);
                  if(rc != EOK)

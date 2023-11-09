@@ -1634,15 +1634,42 @@ CosaDmlBlkURL_AddEntry(COSA_DML_BLOCKEDURL *pEntry)
     }
 
     /* CID 185693 fix */
-    _ansc_strncpy(blkurl.alias, pEntry->Alias, (sizeof(blkurl.alias)-1));
-    _ansc_strncpy(blkurl.site, pEntry->Site, sizeof(blkurl.site));
-
-    _ansc_strncpy(blkurl.start_time, pEntry->StartTime, sizeof(blkurl.start_time));
-    _ansc_strncpy(blkurl.end_time, pEntry->EndTime, sizeof(blkurl.end_time));
-    _ansc_strncpy(blkurl.block_days, pEntry->BlockDays, sizeof(blkurl.block_days));
+    safec_rc = strcpy_s(blkurl.alias, (sizeof(blkurl.alias)), pEntry->Alias);
+    if(safec_rc != EOK)
+    {
+        ERR_CHK(safec_rc);
+    }
+    safec_rc = strcpy_s(blkurl.site, sizeof(blkurl.site), pEntry->Site);
+    if(safec_rc != EOK)
+    {
+        ERR_CHK(safec_rc);
+    }
+    safec_rc = strcpy_s(blkurl.start_time, sizeof(blkurl.start_time), pEntry->StartTime);
+    if(safec_rc != EOK)
+    {
+        ERR_CHK(safec_rc);
+    }
+    safec_rc = strcpy_s(blkurl.end_time, sizeof(blkurl.end_time), pEntry->EndTime);
+    if(safec_rc != EOK)
+    {
+        ERR_CHK(safec_rc);
+    }
+    safec_rc = strcpy_s(blkurl.block_days, sizeof(blkurl.block_days), pEntry->BlockDays);
+    if(safec_rc != EOK)
+    {
+        ERR_CHK(safec_rc);
+    }
 #ifdef CONFIG_CISCO_FEATURE_CISCOCONNECT
-    _ansc_strncpy(blkurl.mac, pEntry->MAC, sizeof(blkurl.mac));
-    _ansc_strncpy(blkurl.device_name, pEntry->DeviceName, sizeof(blkurl.device_name));
+    safec_rc = strcpy_s(blkurl.mac, sizeof(blkurl.mac), pEntry->MAC);
+    if(safec_rc != EOK)
+    {
+        ERR_CHK(safec_rc);
+    }
+    safec_rc = strcpy_s(blkurl.device_name, sizeof(blkurl.device_name), pEntry->DeviceName);
+    if(safec_rc != EOK)
+    {
+        ERR_CHK(safec_rc);
+    }
 #endif
     rc = Utopia_AddBlkURL(&ctx, &blkurl);
     Utopia_GetNumberOfBlkURL(&ctx, &g_NrBlkURL);

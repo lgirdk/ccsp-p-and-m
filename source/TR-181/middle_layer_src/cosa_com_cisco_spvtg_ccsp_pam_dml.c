@@ -688,7 +688,8 @@ Pam_GetParamStringValue
     {
         if ( ANSC_STATUS_SUCCESS == Pam_GetFirstIpInterfaceObjectName(TRUE, IpIfObjName, &IpIfObjNameSize) )
         {
-            _ansc_strcat(IpIfObjName, "IPv4Address.");            
+            /*CID: 61333 - Calling risky function - Fix*/
+            strncat(IpIfObjName, "IPv4Address.", sizeof(IpIfObjName)-strlen(IpIfObjName)-1);            
             ulInstNum = CosaGetInstanceNumberByIndex(IpIfObjName, 0);
             
             if ( ulInstNum == 0 )
@@ -703,8 +704,8 @@ Pam_GetParamStringValue
                   ERR_CHK(rc);
                   return -1;
                 }
-                _ansc_strcat(IpIfObjName, Buffer);
-                _ansc_strcat(IpIfObjName, "IPAddress");
+                strncat(IpIfObjName, Buffer, sizeof(IpIfObjName)-strlen(IpIfObjName)-1);
+                strncat(IpIfObjName, "IPAddress", sizeof(IpIfObjName)-strlen(IpIfObjName)-1);
             }
 
             BufferSize   = sizeof(Buffer);

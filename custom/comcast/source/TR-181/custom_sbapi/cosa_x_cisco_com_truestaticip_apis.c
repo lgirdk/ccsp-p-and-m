@@ -532,7 +532,8 @@ CosaDmlTSIPLoadMappingFile
         if( pMappingEntryChain )
         {
             AnscTcFree((ANSC_HANDLE)pMappingEntryChain);
-            pMappingEntryChain = (PANSC_TOKEN_CHAIN )NULL;
+	    /*CID:340225 Unused Value Fix*/
+            //pMappingEntryChain = (PANSC_TOKEN_CHAIN )NULL;
         }
 
         AnscFreeMemory(pStringToken);
@@ -1042,10 +1043,11 @@ Start:
                 
                 if ( pValue )
                 {
+                /*CID: 65644 fix*/
                     _ansc_sscanf
                         (
                             pValue,
-                            "%s %d %d %s %d %d %s",
+                            "%7s %d %d %2s %d %d %2s",
                             AlwaysBlock,
                             (INT*)&StartHour,
                             (INT*)&StartMin,

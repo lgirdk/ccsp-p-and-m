@@ -440,11 +440,12 @@ PLmObjectHost Hosts_AddHost(int instanceNum)
     }
     pHost->instanceNum = instanceNum;
     /* Compose Host object name. */
-    char objectName[100] = LM_HOST_OBJECT_NAME_HEADER;
+    char objectName[100] = {0};
     char instanceNumStr[50] = {0};
     _ansc_itoa(pHost->instanceNum, instanceNumStr, 10);
-    strcat(instanceNumStr, ".");
-    strcat(objectName, instanceNumStr);
+    /*CID: 64927 - Calling risky function - Fix */
+    strncat(instanceNumStr, ".", sizeof(instanceNumStr)-strlen(instanceNumStr)-1);
+    snprintf(objectName, sizeof(objectName), "%s%s", LM_HOST_OBJECT_NAME_HEADER, instanceNumStr);
     pHost->objectName = _CloneString(objectName);
 
     pHost->l3unReachableCnt = 0;

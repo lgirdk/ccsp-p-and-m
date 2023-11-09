@@ -1018,9 +1018,18 @@ void CosaDmlGenerateRipdConfigFile(ANSC_HANDLE  hContext )
                 {
                    ERR_CHK(safec_rc);
                 }
-                _ansc_strcat(buf1, "IPv4Address.1.IPAddress");
-                _ansc_strcat(buf2, "IPv4Address.1.SubnetMask");   
-                
+                /*CID: 73105 - Calling risky function - Fix*/
+                safec_rc = strcat_s( buf1, sizeof(buf1), "IPv4Address.1.IPAddress" );
+                if (safec_rc != EOK)
+                {
+                    ERR_CHK(safec_rc);
+                }
+                safec_rc = strcat_s( buf2, sizeof(buf2), "IPv4Address.1.SubnetMask" );
+                if (safec_rc != EOK)
+                {
+                    ERR_CHK(safec_rc);
+                }
+
                 len = sizeof(Address);
                 g_GetParamValueString(g_pDslhDmlAgent, buf1, Address, &len );
                 len = sizeof(Netmask);
@@ -3837,7 +3846,8 @@ CosaDmlRoutingGetNumberOfV4Entries
         bzero(sroute, sizeof(StaticRoute) * Num_V4Entry);
 
         for (index = 0; index < Config_Num; index++) {
-            sscanf(Router_Alias[index].Name, "%s %s %s %d", sroute[index].dest_lan_ip, sroute[index].netmask, sroute[index].gateway,
+            /*CID: 71003 - Calling risky function - Fix */
+            sscanf(Router_Alias[index].Name, "%255s %s %s %d", sroute[index].dest_lan_ip, sroute[index].netmask, sroute[index].gateway,
                    &(sroute[index].metric));
             Router_Alias[index].Index = index;
         }
@@ -5965,8 +5975,8 @@ CosaDmlRoutingGetRouteInfoIf
         else 
             continue;
         
-
-        if (sscanf(line, "%s %d %02x %s", 
+        /*CID: 60067 - Calling risky function - Fix*/
+        if (sscanf(line, "%1023s %d %02x %s", 
                    route_addr,
                    &pref_len,
                    &pref_route_flag,

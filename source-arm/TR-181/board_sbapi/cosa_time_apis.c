@@ -392,12 +392,16 @@ BOOL isTimeSynced()
 	  if(fp == NULL) {
 	       return FALSE;
 	  }
-
-	  fread(buf, 1, sizeof(buf), fp);
-	  if (strncmp(buf, "Synchronized", 12) == 0)
-	       isSync = TRUE;
-	  else
-	       isSync = FALSE;
+      /* CID 63062 fix */
+	  size_t bytes_read = fread(buf, 1, sizeof(buf), fp);
+      if (bytes_read > 0)
+      {
+        buf[sizeof(buf)-1] = '\0';
+        if (strncmp(buf, "Synchronized", 12) == 0)
+            isSync = TRUE;
+        else
+            isSync = FALSE;
+      }
 	  fclose(fp);
      }
      else
@@ -409,15 +413,16 @@ BOOL isTimeSynced()
 	      return isSync;
 	 }
 
-	 fread(buf, 1, sizeof(buf), fp);
-         /* CID: 135459 String not null terminated*/
-         buf[sizeof(buf)-1] = '\0';
-
-	 if (strstr(buf, "Synchronized")!= NULL) 
-	      isSync = TRUE;
-	 else
-	      isSync = FALSE;
-
+	 size_t bytes_read = fread(buf, 1, sizeof(buf), fp);
+     if (bytes_read > 0)
+     {
+        /* CID: 135459 String not null terminated*/
+        buf[sizeof(buf)-1] = '\0';
+        if (strstr(buf, "Synchronized")!= NULL) 
+            isSync = TRUE;
+        else
+            isSync = FALSE;
+     }
 	 fclose(fp);
      }
 
@@ -1170,7 +1175,12 @@ CosaNTPInitJournal
          if (data != NULL)
          {
                 memset( data, 0, ( sizeof(char) * (len + 1) ));
-                fread( data, 1, len, fileRead );
+                /* CID 55708 fix*/
+                size_t bytes_read = fread( data, 1, len, fileRead );
+                if (bytes_read == 0)
+                {
+                        CcspTraceWarning(("%s-%d : Error in reading file\n", __FUNCTION__, __LINE__));
+                }
          }
          else
          {

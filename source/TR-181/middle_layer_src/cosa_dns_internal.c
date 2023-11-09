@@ -301,7 +301,8 @@ CosaDNSInitialize
             }
 
             pPoamIrepFoNextIns->Remove((ANSC_HANDLE)pPoamIrepFoNextIns);
-            pPoamIrepFoNextIns = NULL;
+            /*CID:67224 Unused Value Fix*/
+	    //pPoamIrepFoNextIns = NULL;
         }
     }  
 
@@ -438,7 +439,8 @@ CosaDNSInitialize
             }
 
             pPoamIrepFoNextIns->Remove((ANSC_HANDLE)pPoamIrepFoNextIns);
-            pPoamIrepFoNextIns = NULL;
+            /*CID:67224 Unused Value Fix*/
+	    //pPoamIrepFoNextIns = NULL;
         } 
     }
     
@@ -861,7 +863,8 @@ CosaDNSRegGetInfo
         if ( pFolderName )
         {
             AnscFreeMemory(pFolderName);
-            pFolderName = NULL;
+            /*CID:340219 Unused Value Fix*/
+	    //pFolderName = NULL;
         }
     }
 

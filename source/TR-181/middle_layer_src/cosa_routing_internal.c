@@ -350,7 +350,8 @@ CosaRoutingInitialize
             }
 
             pPoamIrepFoNextIns->Remove((ANSC_HANDLE)pPoamIrepFoNextIns);
-            pPoamIrepFoNextIns = NULL;
+            /*CID:61640 Unused Value Fix*/
+	    //pPoamIrepFoNextIns = NULL;
         }
     }
 
@@ -473,7 +474,8 @@ CosaRoutingInitialize
             }
 
             pPoamIrepFoNextIns->Remove((ANSC_HANDLE)pPoamIrepFoNextIns);
-            pPoamIrepFoNextIns = NULL;
+            /*CID:61640 Unused Value Fix*/
+	    //pPoamIrepFoNextIns = NULL;
         } 
     }
 
@@ -597,7 +599,8 @@ CosaRoutingInitialize
             }
 
             pPoamIrepFoNextIns->Remove((ANSC_HANDLE)pPoamIrepFoNextIns);
-            pPoamIrepFoNextIns = NULL;
+            /*CID:61640 Unused Value Fix*/
+	    //pPoamIrepFoNextIns = NULL;
         } 
     }
 
@@ -1307,7 +1310,8 @@ CosaRoutingRegGetInfo
         if ( pFolderName )
         {
             AnscFreeMemory(pFolderName);
-            pFolderName = NULL;
+            /*CID:339809 Unused Value Fix*/
+	    //pFolderName = NULL;
         }
     }
 
@@ -1692,7 +1696,8 @@ char* CosaTimeGetRipdConfStaticPart (ANSC_HANDLE   hContext)
               ERR_CHK(rc);
               return NULL;
             }
-            _ansc_strcat(Buff,Buff2);
+            /*CID: 62541 - Calling risky function*/
+            strncat(Buff,Buff2, sizeof(Buff)-strlen(Buff)-1);
 
         }
 

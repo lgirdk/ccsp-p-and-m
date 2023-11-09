@@ -560,7 +560,7 @@ static ANSC_STATUS _COSA_DelBPort(ULONG ulInstanceNumber,PBRIDGE pBridge);
 static ANSC_STATUS _COSA_DelBVlan(ULONG ulInstanceNumber,PBRIDGE pBridge);
 static char * _COSA_GetInterfaceTypeStr(COSA_DML_BRG_LINK_TYPE linktype);
 
-static ANSC_STATUS _COSA_AddToken(char *token, char *pStr);
+static ANSC_STATUS _COSA_AddToken(char *token, char *pStr,int pStrlen);
 static ANSC_STATUS _COSA_DelToken(char *token, char *pStr);
 static ANSC_STATUS _COSA_GetNextVlanId(PBRIDGE pBridge);
 static ANSC_STATUS _COSA_GetNewBrName(PBRIDGE pBridge);
@@ -1486,8 +1486,9 @@ CosaDmlBrgPortGetEntry
     pBPort->control->getStatus(pBPort,&pEntry->Info.Status);
 
     errno_t rc =-1;
-    if (pEntry->Cfg.PriorityRegeneration)
-        pEntry->Cfg.PriorityRegeneration[0] = '\0'; //not supported for now
+    /*CID: 175361 - Array Compared against null - fixed*/
+    if (pEntry->Cfg.PriorityRegeneration[0] != '\0')
+         memset(pEntry->Cfg.PriorityRegeneration, 0, sizeof(pEntry->Cfg.PriorityRegeneration));//not supported for now
     rc = strcpy_s(pEntry->Cfg.LinkName,sizeof(pEntry->Cfg.LinkName), pBPort->linkName);
     ERR_CHK(rc);
     rc = strcpy_s(pEntry->Cfg.Alias,sizeof(pEntry->Cfg.Alias), pBPort->alias);
@@ -2684,7 +2685,7 @@ static ANSC_STATUS _COSA_DelBVlan(ULONG bvlanInstNum, PBRIDGE pBridge) {
     return ANSC_STATUS_SUCCESS;
 }
 
-static ANSC_STATUS _COSA_AddToken(char *token, char *pStr)
+static ANSC_STATUS _COSA_AddToken(char *token, char *pStr,int pStrlen)
 {
     char *result = NULL;
     char buf[256]={0};
@@ -2711,9 +2712,12 @@ static ANSC_STATUS _COSA_AddToken(char *token, char *pStr)
             result = strtok_r(NULL,DMSB_DELIM, &st);
         }
         AnscTraceFlow(("<HL> %s Str=%s not found:%s\n",__FUNCTION__,buf,token));
-        strcat(pStr,DMSB_DELIM);
+        /*CID -282089 String Overflow Fix*/
+        strncat(pStr,DMSB_DELIM,pStrlen-strlen(pStr)-1);
     }
-    strcat(pStr,token);
+    /*CID -282089 String Overflow Fix*/
+    strncat(pStr,token,pStrlen-strlen(pStr)-1);
+ 
     AnscTraceFlow(("<HL> %s new Str=%s after add:%s\n",__FUNCTION__,pStr,token));
     return ANSC_STATUS_SUCCESS;
 }
@@ -2872,7 +2876,7 @@ static ANSC_STATUS  _COSA_AddBPortMember(char *path, char *name)
     char list[256] ={0};
     AnscTraceFlow(("<HL> %s path=%s name=%s\n",__FUNCTION__,path,name));
     _Psm_GetBPortMemberList(path,list);
-    if (_COSA_AddToken(name,list)== ANSC_STATUS_SUCCESS)
+    if (_COSA_AddToken(name,list,sizeof(list))== ANSC_STATUS_SUCCESS)
     {
         _Psm_SetBPortMemberList(path,list);
         AnscTraceFlow(("<HL> %s new path=%s name=%s\n",__FUNCTION__,path,list));
@@ -3767,9 +3771,10 @@ ANSC_STATUS lnxBrPCtlGetStatus(PBRIDGE_PORT port, PCOSA_DML_IF_STATUS status) {
     if(enabled) {
         
         int fd = socket(AF_INET, SOCK_DGRAM, 0);
-    
-        AnscCopyString(ifr.ifr_name, (char*)port->hwid);
       
+        /*CID-282034 String overflow Fix*/ 
+        strncpy(ifr.ifr_name, (char*)port->hwid,sizeof(ifr.ifr_name)-1);
+    
         if (ioctl(fd, SIOCGIFFLAGS, &ifr)){
             *status = COSA_DML_IF_STATUS_Unknown;
         } else {

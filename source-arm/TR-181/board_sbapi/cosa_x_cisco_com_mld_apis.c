@@ -424,8 +424,9 @@ CosaDmlMldGetGroup
                 pch =strtok_r(NULL, " \t\r\n", &st);
                 if (pch)
                 {
-                    strcat(pMldGroupArray[count].Interfaces, pch);
-                    strcat(pMldGroupArray[count].Interfaces, ",");
+                    /*CID: 63836 - Calling risky function - Fix*/
+                    strncat(pMldGroupArray[count].Interfaces, pch, sizeof(pMldGroupArray[count].Interfaces)-strlen(pMldGroupArray[count].Interfaces)-1);
+                    strncat(pMldGroupArray[count].Interfaces, ",", sizeof(pMldGroupArray[count].Interfaces)-strlen(pMldGroupArray[count].Interfaces)-1);
                 }
             }
             else if (strcmp(pch, "***") == 0)

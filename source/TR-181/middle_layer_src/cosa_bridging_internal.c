@@ -301,7 +301,8 @@ CosaBridgingInitialize
             }
 
             pPoamIrepFoNextIns->Remove((ANSC_HANDLE)pPoamIrepFoNextIns);
-            pPoamIrepFoNextIns = NULL;
+	    /*CID:340323 Unused Value Fix*/
+            //pPoamIrepFoNextIns = NULL;
         }
     }
 
@@ -443,7 +444,8 @@ CosaBridgingInitialize
                 }
 
                 pPoamIrepFoNextIns->Remove((ANSC_HANDLE)pPoamIrepFoNextIns);
-                pPoamIrepFoNextIns = NULL;
+		/*CID:340323 Unused Value Fix*/
+                //pPoamIrepFoNextIns = NULL;
             }
             else
             {
@@ -580,7 +582,8 @@ CosaBridgingInitialize
                 }
 
                 pPoamIrepFoNextIns->Remove((ANSC_HANDLE)pPoamIrepFoNextIns);
-                pPoamIrepFoNextIns = NULL;
+                /*CID:340323 Unused Value Fix*/
+		//pPoamIrepFoNextIns = NULL;
             }
             else
             {

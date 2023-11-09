@@ -200,9 +200,9 @@ static void __msgpack_pack_string_nvp( msgpack_packer *pk,
     }
 }
 
-ssize_t wifi_pack_appenddoc(const wifi_appenddoc_t *appenddocData,void **data)
+size_t wifi_pack_appenddoc(const wifi_appenddoc_t *appenddocData,void **data)
 {
-    size_t rv = -1;
+    size_t rv = 0;
 
     msgpack_sbuffer sbuf;
     msgpack_packer pk;
@@ -338,7 +338,7 @@ size_t appendWifiEncodedData( void **appendData, void *encodedBuffer, size_t enc
 		int ret = alterWifiMapData( ( char * ) * appendData );
 		CcspTraceWarning(("The value of ret in alterMapData  %d\n",ret));
 		if( ret ) {
-		    return -1;
+		    return 0;
 		}
 		return ( encodedSize + metadataSize );
 	}
@@ -346,14 +346,15 @@ size_t appendWifiEncodedData( void **appendData, void *encodedBuffer, size_t enc
 	{
 		CcspTraceWarning(("Memory allocation failed\n" ));
 	}
-    return -1;
+    return 0;
 }
 
 char * append_wifi_doc(char * subdoc_name, uint32_t version, uint16_t trans_id, char * blob_data, size_t blob_size)
 {
     wifi_appenddoc_t *wifi_appenddata = NULL;
-    size_t wifi_appenddocPackSize = -1;
-    size_t wifi_embeddeddocPackSize = -1;
+    /*CID: 340178 & 340229 fix */
+    size_t wifi_appenddocPackSize = 0;
+    size_t wifi_embeddeddocPackSize = 0;
     void *wifi_appenddocdata = NULL;
     void *wifi_embeddeddocdata = NULL;
     char *wifi_finaldocdata = NULL;

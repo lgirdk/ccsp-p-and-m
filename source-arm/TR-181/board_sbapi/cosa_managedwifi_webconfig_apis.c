@@ -348,8 +348,13 @@ void freeMem_managedwifi(void* arg)
     if (NULL == arg)
         return;
 
-    policySequence *sequenceDetails = (policySequence*)blob_exec_data->user_data;
-
+    policySequence *sequenceDetails = (policySequence*)blob_exec_data->user_data; 
+    /*CID-346806  Null pointer Dereference Fix*/
+    if( sequenceDetails == NULL)
+    {
+        CcspTraceInfo(("sequenceDetails is NULL in %s \n",__FUNCTION__));
+        return;
+    }
     lanconfigdoc_t *mwd = (lanconfigdoc_t *) sequenceDetails->multiCompExecData->comp_exec_data;
     if ( mwd != NULL )
     {
@@ -1068,15 +1073,14 @@ int readLanConfigFromPSM(backupLanconfig_t *pBackupLanConfig)
 {
     char aParamName[BUFF_LEN_64] = {'\0'};
     char aParamVal [BUFF_LEN_32] = {'\0'};
-
     if (NULL == pBackupLanConfig)
         return -1;
 
     snprintf(aParamName,BUFF_LEN_64,l2netBridgeEnable, sManageWiFiInfo.aBridgeIndex);
     if (0 != psmGet(aParamName,aParamVal,BUFF_LEN_32))
         return -1;
-
-    if ('\0' != aParamVal)
+    /*CID: 347105 - Array compared against null - fixed*/
+    if ( '\0' != aParamVal[0] )
     {
         if (!strncmp ("true",aParamVal, 4))
             pBackupLanConfig->bMwEnable = true;

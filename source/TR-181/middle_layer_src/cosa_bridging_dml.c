@@ -2149,10 +2149,11 @@ Port_GetParamStringValue
                 }
 
                 pLowerLayer = CosaUtilGetLowerLayers((PUCHAR)path, (PUCHAR)portList->Cfg.LinkName);
-                
+                                
                 if (pLowerLayer && strlen((const char*)pLowerLayer) != 0) {
-                    strcat(lowerLayer, (const char*)pLowerLayer);
-                    strcat(lowerLayer, ",");
+                    /*CID: 175474 fix*/
+                    strncat(lowerLayer, (const char*)pLowerLayer, sizeof(lowerLayer) - strlen(lowerLayer) - 1);
+                    strncat(lowerLayer, ",", sizeof(lowerLayer) - strlen(lowerLayer) - 1);
                 }
 
                 if(pLowerLayer)

@@ -571,6 +571,8 @@ void init_pf_cache(t_cache *tmp_pf_cache)
     int spf_count;
     int pfr_count;
     bool commit = false;
+    /*CID: 144097 fix*/
+    errno_t rc = -1;
 
     syscfg_get("CosaNAT", "port_forward_enabled", tmp_pf_cache[0].val, sizeof(tmp_pf_cache[0].val));
 
@@ -578,12 +580,20 @@ void init_pf_cache(t_cache *tmp_pf_cache)
 
     if (syscfg_get(NULL, "SinglePortForwardCount", tmp_pf_cache[0].val, VAL_BLOCK_SIZE) != 0)
     {
-        strcpy(tmp_pf_cache[0].val, "0");
+        rc = strcpy_s(tmp_pf_cache[0].val, sizeof(tmp_pf_cache[0].val), "0");
+        if (rc != EOK)
+        {
+            ERR_CHK(rc);
+        }
     }
 
     if (syscfg_get(NULL, "PortRangeForwardCount", tmp_pf_cache[1].val, VAL_BLOCK_SIZE) != 0)
     {
-        strcpy(tmp_pf_cache[1].val, "0");
+        rc = strcpy_s(tmp_pf_cache[1].val, sizeof(tmp_pf_cache[1].val), "0");
+        if (rc != EOK)
+        {
+            ERR_CHK(rc);
+        }
     }
 
     i = 2;

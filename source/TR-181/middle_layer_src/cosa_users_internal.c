@@ -561,7 +561,9 @@ CosaUsersBackendGetUserInfo
 
                 AnscFreeMemory(pUserCxtLink);
                 pUserCxtLink                  = pUserCxtLink2;
-                pUserCxtLink2                 = NULL;
+                /*CID:340162 Unused Value Fix*/
+		AnscFreeMemory(pUserCxtLink2);
+		//pUserCxtLink2                 = NULL;
             }            
         }
     }
@@ -983,7 +985,8 @@ CosaUsersRegSetUserInfo
 
         /*release some resource */        
         pPoamIrepFoEnumUser->Remove((ANSC_HANDLE)pPoamIrepFoEnumUser);
-        pPoamIrepFoEnumUser = NULL;
+        /*CID:63870 Unused Value Fix*/
+	//pPoamIrepFoEnumUser = NULL;
     }
         
 

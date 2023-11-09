@@ -406,7 +406,19 @@ void freeMem_hotspot(void* arg){
 
     execData *exec_data_hotspot  = (execData*) arg;
     
+    /*CID :172863 NULL Pointer dereference Fix*/
+    if(exec_data_hotspot == NULL)
+    {
+        CcspTraceInfo((" exec_data_hotspot is NULL in %s \n",__FUNCTION__));
+        return;
+    }
     policySequence *sequenceDetails = (policySequence*)exec_data_hotspot->user_data;
+    /*CID :172804 NULL Pointer dereference Fix*/
+    if(sequenceDetails == NULL)
+    {
+        CcspTraceInfo(("sequenceDetails is NULL in %s \n",__FUNCTION__));
+        return;
+    }
     tunneldoc_t *td  =  (tunneldoc_t*) sequenceDetails->multiCompExecData->comp_exec_data;
     if ( td != NULL )
     {

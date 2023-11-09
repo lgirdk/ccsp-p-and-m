@@ -727,9 +727,20 @@ X_CISCO_COM_DeviceControl_GetParamStringValue
     {
         int n = 0;
         *pValue = '\0';
-        if (pMyObject->UserOpComponents & 0x00000001) n += sprintf(pValue+n, "%s%s", n ? "," : "", "WebUI");
-        if (pMyObject->UserOpComponents & 0x00000008) n += sprintf(pValue+n, "%s%s", n ? "," : "", "Cli");
-
+        /*CID: 70496 fix*/
+        ULONG rem_buf_size = *pulSize;
+        
+        if (pMyObject->UserOpComponents & 0x00000001)
+        {
+            n += snprintf(pValue+n, rem_buf_size, "%s%s", n ? "," : "", "WebUI");
+            rem_buf_size = *pulSize - n;
+        }
+        
+        if ((pMyObject->UserOpComponents & 0x00000008) && (rem_buf_size > 0))
+        {
+            n += snprintf(pValue+n, rem_buf_size, "%s%s", n ? "," : "", "Cli");
+        }
+        
         return 0;
     }
 
@@ -2301,7 +2312,8 @@ LanMngm_Validate
 
         if ( commonSyseventGet( evt_name, wan_ipaddr_buf, sizeof(wan_ipaddr_buf)) == 0 )
         {
-            if ( (wan_ipaddr_buf != NULL) && (strcmp(wan_ipaddr_buf , "0.0.0.0") == 0 ) )
+            /*CID: 279976 - Array Compared against null - fixed*/
+            if ( ( wan_ipaddr_buf[0] != '\0' ) && (strcmp(wan_ipaddr_buf , "0.0.0.0") == 0 ) )
             {
                 CcspTraceWarning(("wan IP not configured\n"));
                 return TRUE;

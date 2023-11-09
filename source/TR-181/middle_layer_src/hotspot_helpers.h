@@ -73,7 +73,7 @@ void* comp_helper_convert( const void *buf, size_t len,
                       process1_fn_t process,
                       destroy1_fn_t destroy );
 
-ssize_t wifi_pack_appenddoc(const wifi_appenddoc_t *appenddocData,void **data);
+size_t wifi_pack_appenddoc(const wifi_appenddoc_t *appenddocData,void **data);
 
 char * base64wifiblobencoder(char * blob_data, size_t blob_size );
 
