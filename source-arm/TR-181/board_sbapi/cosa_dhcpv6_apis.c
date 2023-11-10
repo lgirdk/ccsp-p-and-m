@@ -7210,7 +7210,7 @@ int dhcpv6_assign_global_ip(char * prefix, char * intfName, char * ipAddr)
 
     i = _ansc_strlen(globalIP);
 
-    while( (globalIP[i-1] != '/') && (i>0) ) i--;
+    while( (i>0) && (globalIP[i-1] != '/') ) i--;
 
     if ( i == 0 ){
         AnscTrace("error, there is not '/' in prefix:%s\n", prefix);
@@ -7228,6 +7228,17 @@ int dhcpv6_assign_global_ip(char * prefix, char * intfName, char * ipAddr)
 
     i = i-1;
 
+#ifdef MODEM_ONLY_SUPPORT
+    /* XD4-525
+       The code is added to prevent SIGSEGV below when calculating indexes for globalIP.
+       Based on mini-dump, it points to the line below checking for '::'.
+       Seg fault could be caused by invalid prefix being parsed and i < 2.
+    */
+    if (i < 2) {
+        AnscTrace("error, invalid IPv6 prefix:%s\n", prefix);
+        return 1;
+    }
+#endif
     if ( (globalIP[i-1]!=':') && (globalIP[i-2]!=':') ){
         AnscTrace("error, there is not '::' in prefix:%s\n", prefix);
         return 1;
