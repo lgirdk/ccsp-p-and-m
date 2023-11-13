@@ -8087,7 +8087,7 @@ StaticAddress_SetParamStringValue
     return FALSE;
 }
 
-static int is_duplicate_ip (uint32_t ipvalue, char *intf)
+static int is_duplicate_ip (uint32_t ipvalue, char *intf, unsigned char *pMac)
 {
     char command[100];
     char buffer[128];
@@ -8095,6 +8095,7 @@ static int is_duplicate_ip (uint32_t ipvalue, char *intf)
     struct in_addr ip_addr;
     int duplicateFound = 0;
     FILE *fp;
+    char macStrg[18];
 
     ip_addr.s_addr = ipvalue;
     inet_ntop(AF_INET, &ip_addr, ip_str, sizeof(ip_str));
@@ -8110,10 +8111,17 @@ static int is_duplicate_ip (uint32_t ipvalue, char *intf)
 
     while (fgets(buffer, sizeof(buffer), fp) != NULL) {
         if (strstr(buffer, "Unicast reply from")) {
-            // Found an ARP reply indicating a duplicate IP
-            CcspTraceWarning(("duplicate IP Addr found: '%s'\n", buffer));
-            duplicateFound = 1;
-            break;
+            snprintf(macStrg, sizeof(macStrg), "%02x:%02x:%02x:%02x:%02x:%02x",
+                        pMac[0],pMac[1],pMac[2],pMac[3],pMac[4],pMac[5]);
+            if (strstr(buffer, macStrg)) {
+                CcspTraceWarning(("Reserve connected client IP: '%s'\n", buffer));
+            }
+            else {
+	        // Found an ARP reply indicating a duplicate IP
+                CcspTraceWarning(("duplicate IP Addr found: '%s'\n", buffer));
+                duplicateFound = 1;
+            }
+	    break;
         }
     }
 
@@ -8168,8 +8176,8 @@ StaticAddress_Validate
 
     // send arp and check if duplicate ipaddr exists
     if (pDhcpStaAddr->Yiaddr.Value != 0) {
-        if (is_duplicate_ip(pDhcpStaAddr->Yiaddr.Value, "brlan0") ||
-            is_duplicate_ip(pDhcpStaAddr->Yiaddr.Value, "brlan7") )
+        if (is_duplicate_ip(pDhcpStaAddr->Yiaddr.Value, "brlan0", pDhcpStaAddr->Chaddr) ||
+            is_duplicate_ip(pDhcpStaAddr->Yiaddr.Value, "brlan7", pDhcpStaAddr->Chaddr) )
             return FALSE;
     }
 
