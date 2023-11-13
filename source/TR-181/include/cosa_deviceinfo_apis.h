@@ -428,6 +428,7 @@ ULONG COSADmlGetCpuUsage();
 ULONG COSADmlGetMemoryStatus(char * ParamName);
 ULONG COSADmlGetMaxWindowSize();
 
+void CosaTemperatureStartPolling (void);
 ANSC_HANDLE CosaTemperatureStatusCreate (void);
 void COSADmlRemoveTemperatureInfo (PCOSA_DATAMODEL_TEMPERATURE_STATUS pObj);
 ANSC_STATUS CosaTemperatureSensorSetLowAlarm (int lowAlarmValue, PCOSA_TEMPERATURE_SENSOR_ENTRY pTempSensor);
