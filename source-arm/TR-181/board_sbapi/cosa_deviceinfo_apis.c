@@ -2339,6 +2339,11 @@ static int pollTemperature_oneshot (PCOSA_DATAMODEL_TEMPERATURE_STATUS pTempStat
        interval here, since the mutex is already held.
     */
     PollingInterval = pTempSensor->PollingInterval;
+    /*If the polling iterval is set to 0, by default the polling should happen every 30 min*/
+    if (PollingInterval == 0)
+    {
+        PollingInterval = 1800;
+    }
 
     if (frompollingthread)
     {
@@ -2394,6 +2399,10 @@ void CosaTemperatureSensorReset (BOOL isEnable, PCOSA_TEMPERATURE_SENSOR_ENTRY p
 
     pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
 
+    //Stop the current polling thread. Restart it if the temperature sensor is enabled or not
+    pthread_cancel(gPoll_threadId[index-1]);
+    pthread_join(gPoll_threadId[index-1], NULL);
+
     if (isEnable)
     {
         pTempSensor->Value = ABSOLUTE_ZERO_TEMPERATURE;
@@ -2408,19 +2417,12 @@ void CosaTemperatureSensorReset (BOOL isEnable, PCOSA_TEMPERATURE_SENSOR_ENTRY p
         strcpy(pTempSensor->LowAlarmTime, UNKNOWN_TIME);
         strcpy(pTempSensor->HighAlarmTime, UNKNOWN_TIME);
 
-        if (pTempSensor->PollingInterval == 0)
-        {
-            pollTemperature_oneshot (pTempStatus, index, currTime, 0);
-        }
         pTempSensor->Status = COSA_DML_TEMPERATURE_SENSOR_STATUS_Enabled;
+        //Start a new thread with new polling interval
+        pthread_create(&gPoll_threadId[index-1], NULL, pollTemperature, (void *) index);
     }
     else
     {
-        if (pTempSensor->PollingInterval != 0)
-        {
-            pthread_cancel(gPoll_threadId[index-1]);
-            pthread_join(gPoll_threadId[index-1], NULL);
-        }
         pTempSensor->Status = COSA_DML_TEMPERATURE_SENSOR_STATUS_Disabled;
     }
 
@@ -2434,28 +2436,21 @@ void CosaTemperatureSensorSetPollingTime (ULONG pollingInterval, PCOSA_TEMPERATU
 
     pthread_mutex_lock(&(pTempStatus->rwLock[index-1]));
 
-    if (pollingInterval != 0)
-    {
-        if (pTempSensor->PollingInterval == 0)
-        {
-            pthread_create(&gPoll_threadId[index-1], NULL, pollTemperature, (void *) index);
-        }
-    }
-    else
-    {
-        if (pTempSensor->PollingInterval != 0)
-        {
-            pthread_cancel(gPoll_threadId[index-1]);
-            pthread_join(gPoll_threadId[index-1], NULL);
-        }
-    }
-
     /*
        It's safe to set this after starting the polling thread since the polling
        thread can not begin to access anything in the pTempStatus struct until
        the mutex is released below.
     */
-    pTempSensor->PollingInterval = pollingInterval;
+    if(pollingInterval != pTempSensor->PollingInterval)
+    {
+        pTempSensor->PollingInterval = pollingInterval;
+        //Cancel the current polling thread for the sensor
+        pthread_cancel(gPoll_threadId[index-1]);
+        pthread_join(gPoll_threadId[index-1], NULL);
+
+	//Start a new thread with new polling interval
+        pthread_create(&gPoll_threadId[index-1], NULL, pollTemperature, (void *) index);
+    }
 
     pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
 }
@@ -2488,6 +2483,16 @@ ANSC_STATUS CosaTemperatureSensorSetHighAlarm (int highAlarmValue, PCOSA_TEMPERA
     pTempSensor->CutOutTempExceeded = FALSE;
     pthread_mutex_unlock(&(pTempStatus->rwLock[index-1]));
     return ANSC_STATUS_SUCCESS;
+}
+
+//To start polling thread for each sensors
+void CosaTemperatureStartPolling (void)
+{
+    int index;
+    for (index = 1; index <= MAX_TEMPSENSOR_INSTANCE; index++)
+    {
+         pthread_create(&gPoll_threadId[index-1], NULL, pollTemperature, (void *) index);
+    }
 }
 
 ANSC_HANDLE CosaTemperatureStatusCreate (void)
@@ -2574,7 +2579,8 @@ ANSC_HANDLE CosaTemperatureStatusCreate (void)
            rely on g_pCosaBEManager->hTemperatureStatus being initialised).
         */
 
-        pollTemperature_oneshot (pTempStatus, index, currTime, 0);
+	/* No need to call one shot as the default polling interval is 1800s. */
+       // pollTemperature_oneshot (pTempStatus, index, currTime, 0);
     }
 
     return pTempStatus;
