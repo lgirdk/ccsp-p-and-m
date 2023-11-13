@@ -509,6 +509,7 @@ if(id != 0)
     pMyObject->hLgiWoL = (ANSC_HANDLE)CosaLgiWoLCreate();
     AnscTraceWarning(("  CosaLgiWoLCreate done !\n"));
     pMyObject->hTemperatureStatus = (ANSC_HANDLE)CosaTemperatureStatusCreate();
+    CosaTemperatureStartPolling();
     AnscTraceWarning(("  CosaTemperatureStatusCreate done!\n"));
     // LGI ADD END
 
