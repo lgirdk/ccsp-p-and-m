@@ -1038,7 +1038,8 @@ ANSC_HANDLE FW_V4_IpFilter_AddEntry ( ANSC_HANDLE hInsContext, ULONG* pInsNumber
     CosaFwReg_V4_IpFilterAddInfo((ANSC_HANDLE)pCosaDMFirewall, (ANSC_HANDLE)pLinkObj);
 
     *pInsNumber = pLinkObj->InstanceNumber;
-
+    //OFW-5246 to save pFwIpFilter->Enable to utopia otherwise Enable will be false after reboot
+    FW_V4_IpFilter_Commit((ANSC_HANDLE)pLinkObj);
     return pLinkObj;
 }
 
@@ -1851,7 +1852,8 @@ ANSC_HANDLE FW_V6_IpFilter_AddEntry ( ANSC_HANDLE hInsContext, ULONG* pInsNumber
     CosaFwReg_V6_IpFilterAddInfo((ANSC_HANDLE)pCosaDMFirewall, (ANSC_HANDLE)pLinkObj);
 
     *pInsNumber = pLinkObj->InstanceNumber;
-
+    //OFW-5246 to save pFwIpFilter->Enable to utopia otherwise Enable will be false after reboot
+    FW_V6_IpFilter_Commit((ANSC_HANDLE)pLinkObj);
     return pLinkObj;
 }
 
