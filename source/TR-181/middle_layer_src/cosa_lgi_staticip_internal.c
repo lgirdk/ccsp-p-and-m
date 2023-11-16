@@ -50,6 +50,11 @@ ANSC_STATUS CosaLgiStaticIPInitialize ( ANSC_HANDLE hThisObject )
     PCOSA_DATAMODEL_LGI_STATICIP pMyObject = (PCOSA_DATAMODEL_LGI_STATICIP)hThisObject;
 
     CosaDmlStaticIPGetAdministrativeStatus(NULL, &pMyObject->AdministrativeStatus);
+
+    if (pMyObject->AdministrativeStatus == 3)
+    {
+        system("/etc/utopia/service.d/static_ip_ui.sh &");
+    }
   
     return ANSC_STATUS_SUCCESS;
 }
