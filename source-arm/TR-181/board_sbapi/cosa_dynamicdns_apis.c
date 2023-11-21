@@ -252,13 +252,22 @@ static int g_NrDynamicDnsClient =  0;
 BOOL
 CosaDmlDynamicDns_GetEnable()
 {
-   char buf[8] = {0};
+    char buf[8];
 
-   if (!syscfg_get(NULL, "dynamic_dns_enable", buf, sizeof(buf)))
-   {
-       return (strcmp(buf, "1") == 0);
-   }
-   return 0;
+    // Ignore dynamic_dns_enable syscfg value in IPv6 only mode
+    syscfg_get(NULL, "last_erouter_mode", buf, sizeof(buf));
+    if (strcmp(buf, "2") == 0)
+    {
+        return FALSE;
+    }
+
+    syscfg_get(NULL, "dynamic_dns_enable", buf, sizeof(buf));
+    if (strcmp(buf, "1") == 0)
+    {
+        return TRUE;
+    }
+
+    return FALSE;
 }
 
 ULONG
@@ -291,13 +300,18 @@ CosaDmlDynamicDns_SetEnable
     )
 {
        if (bValue == TRUE) {
-           char buf[4];
-           syscfg_get(NULL, "dslite_enable", buf, sizeof(buf));
-           if (strcmp(buf, "1") == 0)
+           char buf[8];
+
+           // Can't set dynamic_dns_enable syscfg value in IPv6 only mode
+           syscfg_get(NULL, "last_erouter_mode", buf, sizeof(buf));
+           if (strcmp(buf, "2") == 0)
            {
                return -1;
            }
-           else if (CosaDmlDynamicDns_GetEnable())
+
+           // Check if already enabled - if so there's nothing to do
+           syscfg_get(NULL, "dynamic_dns_enable", buf, sizeof(buf));
+           if (strcmp(buf, "1") == 0)
            {
                return 0;
            }
