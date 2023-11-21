@@ -2427,11 +2427,9 @@ static int _prepare_client_conf(PCOSA_DML_DHCPCV6_CFG       pCfg)
 
 static int _dibbler_client_operation(char * arg)
 {
-#if defined(INTEL_PUMA7) || defined(_COSA_BCM_ARM_)
+#if defined(INTEL_PUMA7)
     FILE *fp = NULL;
     char out[256] = {0};
-#endif
-#if defined (INTEL_PUMA7)
     int watchdog = NO_OF_RETRY;
 #endif
 
@@ -2459,7 +2457,6 @@ static int _dibbler_client_operation(char * arg)
     {
         CcspTraceInfo(("%s start\n", __func__));
 
-#if defined(INTEL_PUMA7) || defined(_COSA_BCM_ARM_) 
 #if defined(INTEL_PUMA7)
         //Intel Proposed RDKB Generic Bug Fix from XB6 SDK      
         /* Waiting for the TLV file to be parsed correctly so that the right erouter mode can be used in the code below.
@@ -2477,22 +2474,6 @@ static int _dibbler_client_operation(char * arg)
             //When 60s have passed and the file is still not configured by CcspGwprov module
             fprintf(stderr, "\n%s()%s(): TLV data has not been initialized by CcspGwProvApp.Continuing with the previous configuration\n",__FILE__, __FUNCTION__);  
         }
-#endif
-        fp = v_secure_popen("r","syscfg get last_erouter_mode");
-        _get_shell_output(fp, out, sizeof(out));
-	/* TODO: To be fixed by Comcast
-	         IPv6 address assigned to erouter0 gets deleted when erouter_mode=3(IPV4 and IPV6 both)
-	         Don't start v6 service in parallel. Wait for wan-status to be set to 'started' by IPv4 DHCP client.
-	*/
-        if (strstr(out, "3"))// If last_erouter_mode is both IPV4/IPV6
-	{
-	     	do{
-                        fp = v_secure_popen("r","sysevent get wan-status");
-                        _get_shell_output(fp, out, sizeof(out));
-        		CcspTraceInfo(("%s waiting for wan-status to started\n", __func__));
-			sleep(1);//sleep(1) is to avoid lots of trace msgs when there is latency
-		}while(!strstr(out,"started"));
-	}
 #endif
         /*This is for ArrisXB6 */
         /*TCXB6 is also calling service_dhcpv6_client.sh but the actuall script is installed from meta-rdk-oem layer as the intel specific code
