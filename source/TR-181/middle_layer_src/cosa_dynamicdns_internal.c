@@ -89,6 +89,8 @@ CosaDynamicDnsInitialize
     COSA_DML_DDNS_CLIENT       *pDynamicDnsClient           = NULL;
     ULONG                      ulDynamicDnsClientCnt        = 0;
     ULONG                      ulDynamicDnsClientIdx        = 0;
+    char                       buf[8];
+    int                        ipv6Only = 0;
 
     /* Device.DynamicDNS.Client.HostName.{i}. */
     ULONG                           ulDynamicDnsHostCnt = 0;
@@ -105,11 +107,20 @@ CosaDynamicDnsInitialize
     PCOSA_CONTEXT_LINK_OBJECT       pDynamicDnsServerLinkObj = NULL;
     errno_t                         rc                       = -1;
 
+    syscfg_get(NULL, "last_erouter_mode", buf, sizeof(buf));
+    if (strcmp(buf, "2") == 0) {
+        ipv6Only = 1;
+    }
+
     AnscSListInitializeHeader(&pMyObject->DDNSClientList);
     pMyObject->DDNSClientNextInsNum = 1;
     //pMyObject->hIrepFolderDDNSClient = g_GetRegistryRootFolder(g_pDslhDmlAgent);
     pPoamIrepFoCOSA = (PPOAM_IREP_FOLDER_OBJECT)g_GetRegistryRootFolder(g_pDslhDmlAgent);
-    ulDynamicDnsClientCnt = CosaDmlDynamicDns_Client_GetNumberOfEntries();
+
+    // Don't display client params if IPv6 only
+    if (!ipv6Only) {
+        ulDynamicDnsClientCnt = CosaDmlDynamicDns_Client_GetNumberOfEntries();
+    }
 
     if (!pPoamIrepFoCOSA)
     {
@@ -209,7 +220,11 @@ CosaDynamicDnsInitialize
 
          CosaSListPushEntryByInsNum(&pMyObject->DDNSClientList, pDynamicDnsClientLinkObj);
     }
-    CosaDynamicDns_ClientGetInfo((ANSC_HANDLE)pMyObject);
+
+    // Don't display client params if IPv6 only
+    if (!ipv6Only) {
+        CosaDynamicDns_ClientGetInfo((ANSC_HANDLE)pMyObject);
+    }
 
     /* Device.DynamicDNS.Client.HostName.{i}. */
     pSlapVariable    = NULL;
@@ -218,7 +233,11 @@ CosaDynamicDnsInitialize
     CosaInitializeTr181DdnsHost();
     pMyObject->DDNSHostNextInsNum = 1;
     pPoamIrepFoCOSA = (PPOAM_IREP_FOLDER_OBJECT)g_GetRegistryRootFolder(g_pDslhDmlAgent);
-    ulDynamicDnsHostCnt = CosaDmlDynamicDns_Host_GetNumberOfEntries();
+
+    // Don't display client params if IPv6 only
+    if (!ipv6Only) {
+        ulDynamicDnsHostCnt = CosaDmlDynamicDns_Host_GetNumberOfEntries();
+    }
 
     if (!pPoamIrepFoCOSA)
     {
