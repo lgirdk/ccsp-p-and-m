@@ -74,7 +74,8 @@
 extern void* g_pDslhDmlAgent;
 extern ANSC_HANDLE bus_handle;
 
-#if ( defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_MIPS_))
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
+
 #include <net/if.h>
 #include <sys/ioctl.h>
 #include <ctype.h>
@@ -138,7 +139,7 @@ IPIF_getEntry_for_Ipv6Pre
 
 BOOL CosaIpifGetSetSupported(char * pParamName)
 {
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     char * not_supported_param_list[]= {"addentry", "delentry", /*"Enable",*/ "AutoIPEnable", \
         "Loopback", "ipv4addr_addentry", "ipv4addr_delentry", "Router", \
         "Anycast", "Status", "StaticType", "IPAddressStatus", "Prefix", "PrefixStatus", "PreferredLifetime", \
@@ -313,7 +314,7 @@ static int _is_in_linux_bridge(char * if_name, char * br_name)
                   The operation status..
 
 **********************************************************************/
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 
 typedef struct USG_IF_CFG
 {
@@ -403,7 +404,7 @@ CosaDmlIpInit
     )
 {
     errno_t rc = -1;
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     ANSC_STATUS                     returnStatus;
     ULONG i;
     for(i = 0; i < COSA_USG_IF_NUM; i++)
@@ -1726,7 +1727,7 @@ IPIF_getEntry_for_Ipv6Pre
             break;
 
 #ifdef CISCO_CONFIG_DHCPV6_PREFIX_DELEGATION        
-  #if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+  #if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
         /* We just put this prefix into erouter0 && brlan0 entry */
         if ( ulIndex > 0 && ulIndex != 3)
             break;
@@ -2422,7 +2423,7 @@ CosaDmlIpIfSetCfg
             safec_rc = strcpy_s(p_be_buf_cfg->Alias,sizeof(p_be_buf_cfg->Alias), pCfg->Alias);
             ERR_CHK(safec_rc);
         }
-    #if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+    #if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
         if (pCfg->MaxMTUSize != p_be_buf_cfg->MaxMTUSize)
         {
             /*
@@ -2923,7 +2924,7 @@ CosaDmlIpIfSetV4AddrValues
     }
     else
     {
-    #if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+    #if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
         return ANSC_STATUS_FAILURE;
     #else
         /*this API will never be called*/

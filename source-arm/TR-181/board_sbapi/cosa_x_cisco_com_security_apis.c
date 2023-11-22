@@ -2396,7 +2396,7 @@ void CosaDmlIaRemove()
 {
 }
 
-#elif (_COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_)
+#elif defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 
 #include <utctx/utctx.h>
 #include <utctx/utctx_api.h>
@@ -2411,7 +2411,7 @@ void CosaDmlIaRemove()
 int g_iap_num;
 iap_entry_t * g_iaps ;
 
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined _COSA_INTEL_USG_ARM_ ||  defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 #if !defined (RESOURCE_OPTIMIZATION)
 static int be_struct_2_middle_layer(iap_entry_t * p_in, PCOSA_DML_IA_POLICY p_out)
 {
@@ -2892,7 +2892,7 @@ CosaDmlIaGetNumberOfPolicies
     )
 {
    UNREFERENCED_PARAMETER(hContext);
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     return g_iap_num;
 #endif
     return 0;
@@ -2940,7 +2940,7 @@ CosaDmlIaGetPolicy
     )
 {
    UNREFERENCED_PARAMETER(hContext);
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 
     be_struct_2_middle_layer(&g_iaps[ulIndex], pEntry);
 
@@ -2996,7 +2996,7 @@ CosaDmlIaSetPolicyValues
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     BOOL  alias_changed = 0;
     UtopiaContext ctx ;
     iap_entry_t * p_iap = NULL;
@@ -3097,7 +3097,7 @@ CosaDmlIaGetPolicyByInsNum
 {
     UNREFERENCED_PARAMETER(hContext);
     /*for rollback*/
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     int i = 0;
 
     for (i=0; i<g_iap_num; i++)
@@ -3151,7 +3151,7 @@ CosaDmlIaAddPolicy
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     iap_entry_t iap;
     UtopiaContext ctx ;
     BOOL          alias_changed = 0;
@@ -3230,7 +3230,7 @@ CosaDmlIaDelPolicy
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     int i = 0;
     UtopiaContext ctx;
     ANSC_STATUS ret = ANSC_STATUS_FAILURE;
@@ -3300,7 +3300,7 @@ CosaDmlIaSetPolicy
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     iap_entry_t * p_iap = NULL;
     UtopiaContext ctx ;    
     BOOL          alias_changed = 0;
@@ -3389,7 +3389,7 @@ CosaDmlIaSetPolicy
 
 **********************************************************************/
 
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 void  be_struct_2_ml_schedule(iap_entry_t * p_iap, PCOSA_DML_IA_POLICY_SCH pEntry)
 {
     errno_t safec_rc = -1;
@@ -3468,7 +3468,7 @@ CosaDmlIaGetPolicySchedule
     )
 {
    UNREFERENCED_PARAMETER(hContext);
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     iap_entry_t * p_iap = NULL;
 
     p_iap = find_ia_policy(ulInstanceNumber);
@@ -3526,7 +3526,7 @@ CosaDmlIaSetPolicySchedule
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     iap_entry_t * p_iap = NULL;
     UtopiaContext ctx ;
     
@@ -3591,7 +3591,7 @@ CosaDmlIaPolicyGetNumberOfUrls
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     iap_entry_t * p_iap = NULL;
     
     p_iap = find_ia_policy(ulPolicyInstanceNumber);
@@ -3650,7 +3650,7 @@ CosaDmlIaPolicyGetUrl
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     char * p_url = NULL;
     iap_entry_t * p_iap = NULL;
     errno_t safec_rc = -1; 
@@ -3730,7 +3730,7 @@ CosaDmlIaPolicyGetUrlByInsNum
 {
     UNREFERENCED_PARAMETER(hContext);
 /*for rollback*/
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     int i = 0;
     char * p_url = NULL;
     iap_entry_t * p_iap = NULL;
@@ -3825,7 +3825,7 @@ CosaDmlIaPolicySetUrlValues
     UNREFERENCED_PARAMETER(hContext);
 /*for internal.c to adjust alias/instNum*/
     
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     /*the two instance number are all sane, no need to validate*/
     iap_entry_t * p_iap = NULL;
     errno_t safec_rc = -1;
@@ -3897,7 +3897,7 @@ CosaDmlIaPolicyAddUrl
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     char * p_url = NULL;
     iap_entry_t * p_iap = NULL;
     UtopiaContext ctx ;
@@ -3993,7 +3993,7 @@ CosaDmlIaPolicyDelUrl
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     int i = 0;
     int j = 0;
     char * p = NULL;
@@ -4089,7 +4089,7 @@ CosaDmlIaPolicySetUrl
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     int i = 0;
     char * p = NULL;
     iap_entry_t * p_iap = NULL;
@@ -4181,7 +4181,7 @@ CosaDmlIaPolicyGetNumberOfKeywords
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     iap_entry_t * p_iap = NULL;
 
     p_iap = find_ia_policy(ulPolicyInstanceNumber);
@@ -4241,7 +4241,7 @@ CosaDmlIaPolicyGetKeyword
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     char * p = NULL;
     iap_entry_t * p_iap = NULL;
     errno_t safec_rc = -1;
@@ -4325,7 +4325,7 @@ CosaDmlIaPolicyGetKeywordByInsNum
 {
     UNREFERENCED_PARAMETER(hContext);
 /*for rollback*/
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     int i = 0;
     char * p = NULL;
     iap_entry_t * p_iap = NULL;
@@ -4421,7 +4421,7 @@ CosaDmlIaPolicySetKeywordValues
 {
     UNREFERENCED_PARAMETER(hContext);
 /*for inernal.c to generate alias/instNum*/
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     char * p = NULL;
     iap_entry_t * p_iap = NULL;
     errno_t safec_rc = -1;
@@ -4501,7 +4501,7 @@ CosaDmlIaPolicyAddKeyword
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     char * p = NULL;
     iap_entry_t * p_iap = NULL;
     UtopiaContext ctx ;
@@ -4600,7 +4600,7 @@ CosaDmlIaPolicyDelKeyword
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     int i = 0;
     int j = 0;
     char * p = NULL;
@@ -4698,7 +4698,7 @@ CosaDmlIaPolicySetKeyword
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     int i = 0;
     char * p = NULL;
     iap_entry_t * p_iap = NULL;
@@ -4782,7 +4782,7 @@ CosaDmlIaPolicySetKeyword
     Return:       The number of the Access Policies.
 
 **********************************************************************/
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 BOOL isWellKnownService (const char *name)
 {
     int i = 0;
@@ -4894,7 +4894,7 @@ CosaDmlIaPolicyGetNumberOfApps
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     iap_entry_t * p_iap = NULL;
 
     p_iap = find_ia_policy(ulPolicyInstanceNumber);
@@ -4955,7 +4955,7 @@ CosaDmlIaPolicyGetApp
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     iap_entry_t * p_iap = NULL;
 
     p_iap = find_ia_policy(ulPolicyInstanceNumber);
@@ -5019,7 +5019,7 @@ CosaDmlIaPolicyGetAppByInsNum
 {
     UNREFERENCED_PARAMETER(hContext);
 /*for rollback*/
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     int i = 0;
     iap_entry_t * p_iap = NULL;
 
@@ -5097,7 +5097,7 @@ CosaDmlIaPolicySetAppValues
 {
     UNREFERENCED_PARAMETER(hContext);
 /*for middle layer generated alias/instNum*/
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     char * p = NULL;
     iap_entry_t * p_iap = NULL;
     errno_t safec_rc = -1;
@@ -5177,7 +5177,7 @@ CosaDmlIaPolicyAddApp
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     iap_entry_t * p_iap = NULL;
     UtopiaContext ctx ;    
 
@@ -5263,7 +5263,7 @@ CosaDmlIaPolicyDelBlockedApp
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     int i = 0;
     int j = 0;
     iap_entry_t * p_iap = NULL;
@@ -5351,7 +5351,7 @@ CosaDmlIaPolicySetBlockedApp
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     int i = 0;
     char * p = NULL;
     iap_entry_t * p_iap = NULL;
@@ -5753,14 +5753,14 @@ CosaDmlIaGetALLLogEntries
 
 void CosaDmlIaRemove()
 {
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     free_iap_entries(g_iaps, g_iap_num);    
 #endif
 }
 
 #endif
 
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
