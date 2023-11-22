@@ -326,7 +326,8 @@ CosaPPPApiRemove(ANSC_HANDLE  hContext)
     return ANSC_STATUS_SUCCESS;
 }
 
-#elif ( defined _COSA_INTEL_USG_ARM_ ) || ( defined _COSA_BCM_MIPS_ )
+#elif defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
+
 #include <utctx/utctx.h>
 #include <utctx/utctx_api.h>
 #include <utapi.h>
@@ -496,11 +497,8 @@ static int ml_cfg_2_be_struct(UtopiaContext * p_ctx, PCOSA_DML_PPP_IF_CFG p_in, 
                     CcspTraceWarning(("OK,  bridge service was stopped\n"));
                 }
 
-#if defined (_COSA_BCM_MIPS_) || defined(_ENABLE_DSL_SUPPORT_)
-                system("ip link set erouter0 up");
-#else
-                system("ip link set wan0 up");
-#endif
+                system("ip link set " INTERFACE " up");
+
                 commonSyseventSet("lan-start", "");
                 /*how strange, lan-start won't ifup lan0!!!*/
                 system("ip link set lan0 up");
