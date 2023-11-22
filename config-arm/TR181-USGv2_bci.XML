@@ -1716,23 +1716,7 @@
                                 </parameter>
                             </parameters>
                         </object>
-                        <object>
-                            <name>HTTPSConfigDownload</name>
-                            <objectType>object</objectType>
-                            <functions>
-                                <func_GetParamBoolValue>HTTPSConfigDownload_GetParamBoolValue</func_GetParamBoolValue>
-                                <func_SetParamBoolValue>HTTPSConfigDownload_SetParamBoolValue</func_SetParamBoolValue>
-                            </functions>
 
-                            <parameters>
-                                <parameter>
-                                    <name>Enabled</name>
-                                    <type>boolean</type>
-                                    <syntax>bool</syntax>
-                                    <writable>true</writable>
-                                </parameter>
-                            </parameters>
-                        </object>
 						<object>
 							<name>SyndicationFlowControl</name>
 							<objectType>object</objectType>
@@ -16075,69 +16059,6 @@
         </object>
       </objects>
     </object>-->
-
-	<object>
-      <name>X_CISCO_COM_FileTransfer</name>
-      <objectType>object</objectType>
-	  <functions>
-        <func_GetParamStringValue>FileTransfer_GetParamStringValue</func_GetParamStringValue>
-        <func_GetParamUlongValue>FileTransfer_GetParamUlongValue</func_GetParamUlongValue>
-        <func_SetParamStringValue>FileTransfer_SetParamStringValue</func_SetParamStringValue>
-        <func_SetParamUlongValue>FileTransfer_SetParamUlongValue</func_SetParamUlongValue>
-        <func_Validate>FileTransfer_Validate</func_Validate>
-        <func_Commit>FileTransfer_Commit</func_Commit>
-        <func_Rollback>FileTransfer_Rollback</func_Rollback>
-	  </functions>
-	  <parameters>
-        <parameter>
-          <name>Server</name>
-          <type>string: Server1(1),Server2(2)</type>
-          <syntax>uint32/mapped</syntax>
-          <writable>true</writable>
-        </parameter>
-		<parameter>
-		  <name>Protocol</name>
-		  <type>string: TFTP(1),FTP(2),HTTP(3),HTTPS(4)</type>
-		  <syntax>uint32/mapped</syntax>
-		  <writable>true</writable>
-		</parameter>
-		<parameter>
-          <name>FileName</name>
-          <type>string(128)</type>
-          <syntax>string</syntax>
-          <writable>true</writable>
-        </parameter>
-		<parameter>
-          <name>Username</name>
-          <type>string(128)</type>
-          <syntax>string</syntax>
-          <writable>true</writable>
-        </parameter>
-		<parameter>
-          <name>Password</name>
-          <type>string(128)</type>
-          <syntax>string</syntax>
-          <writable>true</writable>
-        </parameter>
-		<parameter>
-		  <name>AuthType</name>
-		  <type>string: Basic(1),Digest(2)</type>
-		  <syntax>uint32/mapped</syntax>
-		  <writable>true</writable>
-		</parameter>
-		<parameter>
-		  <name>Action</name>
-		  <type>string: Download(1),Upload(2)</type>
-		  <syntax>uint32/mapped</syntax>
-		  <writable>true</writable>
-		</parameter>
-		<parameter>
-		  <name>Status</name>
-		  <type>string: InProgress(1),Complete(2),Failed(3),FileNotFound(4),ServerNotFound(5),IncorrectFileFormat(6)</type>
-		  <syntax>uint32/mapped</syntax>
-		</parameter>
-	  </parameters>
-	</object>
 
     <object>
       <name>X_CISCO_COM_TrueStaticIP</name>
