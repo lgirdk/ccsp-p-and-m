@@ -64,7 +64,9 @@
         08/30/2011    initial revision.
 
 **************************************************************************/
-#if (defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_MIPS_))
+
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -111,7 +113,7 @@ struct ipv6rd_conf {
 
 static struct ipv6rd_conf *g_ipv6rd_conf;
 
-#if (defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_MIPS_))
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 /* 
  * define USE_SYSTEM to use system() function
  */

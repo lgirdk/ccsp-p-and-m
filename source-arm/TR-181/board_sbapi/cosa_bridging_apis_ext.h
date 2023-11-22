@@ -146,7 +146,7 @@ ANSC_STATUS lSwBrAddVlan(struct bridge *bridge, PCOSA_DML_BRG_VLAN_CFG pEntry);
 ANSC_STATUS lSwBrRemoveVlan(struct bridge *bridge, ULONG vlanId);
 
 
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 //Linux interface functions and hwid structure
 typedef struct _linuxInterfaceID {
     char* ifname;
