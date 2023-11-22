@@ -33,7 +33,8 @@
    limitations under the License.
 **********************************************************************/
 
-#if (defined _COSA_INTEL_USG_ARM_) || (defined _COSA_BCM_MIPS_)
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
+
 #include <sys/stat.h>
 #include <stdio.h>
 #include <string.h>

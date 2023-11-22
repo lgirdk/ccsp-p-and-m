@@ -64,7 +64,7 @@
 #include "safec_lib_common.h"
 
 
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 #include "cosa_bridging_apis_ext.h"
 #include "cosa_ethernet_apis_ext.h"
 #include <utctx/utctx_api.h>
@@ -99,7 +99,7 @@ static int saveID(char* Namespace, char* ifName, ULONG ulInstanceNumber,char* pA
 
 
 
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 #include <net/if.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
@@ -644,7 +644,7 @@ CosaDmlBrgInit
     UNREFERENCED_PARAMETER(hDml);
     UNREFERENCED_PARAMETER(phContext);
     print_time("CosaDmlBrgInit -- in");
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     int retPsmGet1 = CCSP_SUCCESS;
     int retPsmGet2 = CCSP_SUCCESS;
     //$HL 7/8/2013
@@ -833,7 +833,7 @@ CosaDmlBrgGetNumberOfEntries
         ANSC_HANDLE                 hContext
     )
 {
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     int numOfEntries = 0;
     //CcspTraceInfo(("------CosaDmlBrgGetNumberOfEntries...\n"));
     //AnscTraceFlow(("<HL> %s \n",__FUNCTION__));
@@ -886,7 +886,7 @@ CosaDmlBrgGetEntry
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     //CcspTraceInfo(("------CosaDmlBrgGetEntry, ulIndex:%d...\n", ulIndex));
     errno_t rc = -1;
     PBRIDGE pBridge = (PBRIDGE)AnscSListGetEntryByIndex(&g_Bridgings.bridgeList,ulIndex);
@@ -961,7 +961,7 @@ CosaDmlBrgSetValues
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     errno_t rc = -1;
     //AnscTraceFlow(("<HL> %s Index=%lu instancenum=%lu\n",__FUNCTION__,ulIndex,ulInstanceNumber));
 
@@ -1022,7 +1022,7 @@ CosaDmlBrgAddEntry
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     PBRIDGE pBridge = NULL;
     pBridge = (PBRIDGE)AnscAllocateMemory(sizeof (BRIDGE));
     errno_t rc = -1;
@@ -1127,7 +1127,7 @@ CosaDmlBrgDelEntry
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     //AnscTraceFlow(("<HL> %s \n",__FUNCTION__));
 
     PBRIDGE pBridge = getBridge(ulInstanceNumber);
@@ -1182,7 +1182,7 @@ CosaDmlBrgSetCfg
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     int bEvent = 0;
     errno_t rc = -1;
     //AnscTraceFlow(("<HL> %s \n",__FUNCTION__));
@@ -1252,7 +1252,7 @@ CosaDmlBrgGetCfg
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     //CcspTraceInfo(("------CosaDmlBrgGetCfg...\n"));
     PBRIDGE pBridge = getBridge(pCfg->InstanceNumber);
     errno_t rc = -1;
@@ -1314,7 +1314,7 @@ CosaDmlBrgGetInfo
 )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     //CcspTraceInfo(("------CosaDmlBrgGetInfo...\n"));
     //AnscTraceFlow(("<HL> %s\n",__FUNCTION__));
     PBRIDGE pBridge = getBridge(ulInstanceNumber);
@@ -1334,7 +1334,7 @@ int CosaDmlBrgGetVLANID
         ULONG                       ulInstanceNumber
     )
 {
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     //CcspTraceInfo(("------CosaDmlBrgGetInfo...\n"));
     //AnscTraceFlow(("<HL> %s\n",__FUNCTION__));
     PBRIDGE pBridge = getBridge(ulInstanceNumber);
@@ -1351,7 +1351,7 @@ int CosaDmlPortGetVLANID
         ULONG                       uPortInstanceNumber
     )
 {
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     //AnscTraceFlow(("<HL> %s\n",__FUNCTION__));
     PBRIDGE pBridge = getBridge(uBridgeInstanceNumber);
     if (!pBridge) {
@@ -1370,7 +1370,7 @@ char * CosaDmlBrgGetName
         ULONG                       ulInstanceNumber
     )
 {
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     //CcspTraceInfo(("------CosaDmlBrgGetInfo...\n"));
     //AnscTraceFlow(("<HL> %s\n",__FUNCTION__));
     PBRIDGE pBridge = getBridge(ulInstanceNumber);
@@ -1412,7 +1412,7 @@ CosaDmlBrgPortGetNumberOfEntries
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 //    CcspTraceInfo(("------CosaDmlBrgPortGetNumberOfEntries...\n"));
 //    AnscTraceFlow(("<HL> %s\n",__FUNCTION__));
     PBRIDGE pBridge = getBridge(ulBrgInstanceNumber);
@@ -1469,7 +1469,7 @@ CosaDmlBrgPortGetEntry
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 //    CcspTraceInfo(("------CosaDmlBrgPortGetEntry...\n"));
     PBRIDGE pBridge = getBridge(ulBrgInstanceNumber);
 //    AnscTraceFlow(("<HL> %s ulIndex=%d\n",__FUNCTION__,ulIndex));
@@ -1561,7 +1561,7 @@ CosaDmlBrgPortSetValues
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     PBRIDGE pBridge = getBridge(ulBrgInstanceNumber);
     errno_t rc      = -1;
     //CcspTraceInfo(("------CosaDmlBrgPortSetValues...\n"));
@@ -1624,7 +1624,7 @@ CosaDmlBrgPortAddEntry
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     //CcspTraceInfo(("------CosaDmlBrgPortAddEntry...\n"));
     //AnscTraceFlow(("<HL> %s bridge inst=%lu\n",__FUNCTION__,ulBrgInstanceNumber));
     PBRIDGE pBridge = getBridge(ulBrgInstanceNumber);
@@ -1673,7 +1673,7 @@ CosaDmlBrgPortDelEntry
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     //CcspTraceInfo(("------CosaDmlBrgPortDelEntry...\n"));
     PBRIDGE pBridge = getBridge(ulBrgInstanceNumber);
     //AnscTraceFlow(("<HL> %s\n",__FUNCTION__));
@@ -1720,7 +1720,7 @@ CosaDmlBrgPortSetCfg
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 //    CcspTraceInfo(("------CosaDmlBrgPortSetCfg...\n"));
 //    AnscTraceFlow(("<HL> %s\n",__FUNCTION__)); 
     PBRIDGE pBridge = getBridge(ulBrgInstanceNumber);
@@ -1828,7 +1828,7 @@ CosaDmlBrgPortGetCfg
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     //CcspTraceInfo(("------CosaDmlBrgPortGetCfg...\n"));
     //AnscTraceFlow(("<HL> %s\n",__FUNCTION__));
     PBRIDGE pBridge = getBridge(ulBrgInstanceNumber);
@@ -1905,7 +1905,7 @@ CosaDmlBrgPortGetInfo
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     //CcspTraceInfo(("------CosaDmlBrgPortGetInfo...\n"));
     //AnscTraceFlow(("<HL> %s\n",__FUNCTION__));
     PBRIDGE pBridge = getBridge(ulBrgInstanceNumber);
@@ -1963,7 +1963,7 @@ CosaDmlBrgPortGetStats
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     PBRIDGE pBridge = getBridge(ulBrgInstanceNumber);
     if (pBridge == NULL) {
         CcspTraceInfo(("< %s > <pBridge == NULL>\n",__FUNCTION__));
@@ -2021,7 +2021,7 @@ CosaDmlBrgVlanAddEntry
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     //AnscTraceFlow(("------%s...\n", __func__));
     //AnscTraceFlow(("<HL> %s\n",__FUNCTION__));
     PBRIDGE pBridge = getBridge(ulBrgInstanceNumber);
@@ -2072,7 +2072,7 @@ CosaDmlBrgVlanDelEntry
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     //AnscTraceFlow(("------%s...\n", __func__));
     PBRIDGE pBridge = getBridge(ulBrgInstanceNumber);
     if (pBridge == NULL) {
@@ -2090,7 +2090,7 @@ CosaDmlBrgVlanGetNumberOfEntries
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 //    CcspTraceInfo(("------CosaDmlBrgPortGetNumberOfEntries...\n"));
 //    AnscTraceFlow(("<HL> %s\n",__FUNCTION__));
     PBRIDGE pBridge = getBridge(ulBrgInstanceNumber);
@@ -2116,7 +2116,7 @@ CosaDmlBrgVlanSetValues
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     PBRIDGE pBridge = getBridge(ulBrgInstanceNumber);
     errno_t rc      = -1;
     //CcspTraceInfo(("------CosaDmlBrgPortSetValues...\n"));
@@ -2151,7 +2151,7 @@ ANSC_STATUS CosaDmlBrgVlanGetEntry
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 //    CcspTraceInfo(("------CosaDmlBrgVlanGetEntry...\n"));
     PBRIDGE pBridge = getBridge(ulBrgInstanceNumber);
     errno_t rc      = -1;
@@ -2195,7 +2195,7 @@ CosaDmlBrgVlanSetCfg
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     //AnscTraceFlow(("------%s...\n", __func__));
     PBRIDGE pBridge = getBridge(ulBrgInstanceNumber);
     PBRIDGE_VLAN curVlan = NULL;
@@ -2273,7 +2273,7 @@ CosaDmlBrgVlanPortAddEntry
 #if defined _COSA_SIM_ 
     return ANSC_STATUS_CANT_FIND;
 #endif
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     //AnscTraceFlow(("------%s...\n", __func__));
     PBRIDGE pBridge = getBridge(ulBrgInstanceNumber);
     if (pBridge == NULL) {
@@ -2332,7 +2332,7 @@ CosaDmlBrgVlanPortDelEntry
 #if defined _COSA_SIM_ 
     return ANSC_STATUS_CANT_FIND;
 #endif
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     //AnscTraceFlow(("------%s...\n", __func__));
     PBRIDGE pBridge = getBridge(ulBrgInstanceNumber);
     if (pBridge == NULL) {
@@ -2346,7 +2346,7 @@ CosaDmlBrgVlanPortDelEntry
 #endif
 }
 
-#if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 
 ///Maps a bridge instance number to a backend object
 PBRIDGE getBridge(ULONG instanceNumber) 
@@ -3558,7 +3558,7 @@ ANSC_STATUS lSwBrRemoveVlan(struct bridge *bridge, ULONG vlanInstanceNumber)
 #endif
 
 
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 
 //Control functions for ethernet lan's linux bridge TR181 bridge port-------------------------------------------------------------------------
 ANSC_STATUS lanBrPCtlSetEnabled(PBRIDGE_PORT port, BOOLEAN enable) {
