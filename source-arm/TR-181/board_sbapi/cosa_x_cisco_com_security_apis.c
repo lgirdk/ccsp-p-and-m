@@ -2411,7 +2411,7 @@ void CosaDmlIaRemove()
 int g_iap_num;
 iap_entry_t * g_iaps ;
 
-#if defined _COSA_INTEL_USG_ARM_ ||  defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 #if !defined (RESOURCE_OPTIMIZATION)
 static int be_struct_2_middle_layer(iap_entry_t * p_in, PCOSA_DML_IA_POLICY p_out)
 {
