@@ -108,9 +108,6 @@ COSA_DML_RIP_IF_CFG g_RipIfFull[10] =
     {2, 2, "InterfaceSetting2", "wan9", TRUE, TRUE, TRUE, 2, 1, 0x10101012, TRUE, 1, 3, "text2"}
 };
 
-#if 1
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -511,9 +508,7 @@ static void Utopia_Free(UtopiaContext * ctx, ULONG commit)
     return;
 }
 
-#endif
-
-#elif ( defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_MIPS_))
+#elif defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -2394,7 +2389,7 @@ CosaDmlRoutingGetRouteInfoIf
     return pEntry;
 }
 
-#elif ( defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_MIPS_))
+#elif defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 
 #include <stdio.h>
 #include <stdlib.h>

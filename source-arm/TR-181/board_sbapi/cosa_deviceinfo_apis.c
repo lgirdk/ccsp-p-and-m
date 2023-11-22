@@ -125,16 +125,11 @@ static int writeToJson(char *data, char *file);
 
 #ifdef _COSA_SIM_
 
-// this file is in integration_src.intel_usg_arm directory
-
-#elif (_COSA_INTEL_USG_ARM_ || _PLATFORM_IPQ_ || _XER5_PRODUCT_REQ_ || _COSA_BCM_MIPS_)
+#elif defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_) || defined(_PLATFORM_IPQ_) || defined(_XER5_PRODUCT_REQ_)
 
 #include "ccsp_psm_helper.h"            // for PSM_Get_Record_Value2
 #include "dmsb_tr181_psm_definitions.h" // for DMSB_TR181_PSM_DeviceInfo_Root/ProductClass
 
-#if   _COSA_INTEL_USG_ARM_
-//#include "libplat_flash.h"
-#endif
 extern  ANSC_HANDLE             bus_handle;
 
 #include <utctx/utctx.h>
@@ -724,7 +719,7 @@ CosaDmlDiGetSerialNumber
     UCHAR unitsn[128];
     memset(unitsn,0,sizeof(unitsn));
 
-#if   (_COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_)
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 
     if (platform_hal_GetSerialNumber(pValue) != RETURN_OK )
         return ANSC_STATUS_FAILURE;
@@ -749,7 +744,7 @@ CosaDmlDiGetHardwareVersion
 {
     UNREFERENCED_PARAMETER(hContext);
     UNREFERENCED_PARAMETER(pulSize);
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_    
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 
     if (platform_hal_GetHardwareVersion(pValue) != RETURN_OK )
         return ANSC_STATUS_FAILURE;
@@ -1878,7 +1873,7 @@ ULONG COSADmlGetMemoryStatus(char * ParamName)
      }
      if (strcmp(ParamName, "Total") == 0)
      {
-#if defined  _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 #if 0
          /* we want to get the real Physical memory size */
         FILE *fp;
@@ -1917,7 +1912,7 @@ ULONG COSADmlGetMemoryStatus(char * ParamName)
      }
      else if (strcmp(ParamName, "Free") == 0)
      {
-#ifdef _COSA_INTEL_USG_ARM_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 	if ( platform_hal_GetFreeMemorySize(&tmp) != RETURN_OK )
         return 0;
     	else
@@ -1934,7 +1929,7 @@ ULONG COSADmlGetMemoryStatus(char * ParamName)
 
      else if (strcmp(ParamName, "Used") == 0)
      {
-#if (defined _COSA_INTEL_USG_ARM_) || (defined  _COSA_BCM_MIPS_)
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 	if ( platform_hal_GetUsedMemorySize(&tmp) != RETURN_OK )
         return 0;
     	else 
