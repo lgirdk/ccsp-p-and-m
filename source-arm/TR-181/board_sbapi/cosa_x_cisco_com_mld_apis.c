@@ -136,8 +136,7 @@ CosaDmlMldGetGroup
     return ANSC_STATUS_SUCCESS;
 }
 
-
-#elif ( defined _COSA_INTEL_USG_ARM_ || defined _COSA_BCM_MIPS_ )
+#elif defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 
 ANSC_STATUS
 CosaDmlMldInit
