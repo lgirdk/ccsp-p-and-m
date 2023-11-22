@@ -98,8 +98,8 @@
 #endif
 
 #ifdef _COSA_SIM_
-/*Removed code for simulator, because this is usg platform*/
-#elif  (_COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_)
+
+#elif defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 
 #include "cosa_ethernet_apis_ext.h"
 #include "cosa_drg_common.h"
@@ -137,7 +137,7 @@ void rdkb_api_platform_hal_GetLanMacAddr(char* mac);
 **************************************************************************/
 #include "ccsp_hal_ethsw.h" 
 
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 
 #include "syscfg/syscfg.h"
 
@@ -187,7 +187,7 @@ COSA_DML_ETH_PORT_SINFO      g_EthIntSInfo[] =
 
 static const ULONG g_EthernetIntNum = sizeof(g_EthIntSInfo)/sizeof(g_EthIntSInfo[0]);
 
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 static int getIfCfg(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_CFG pcfg);
 static int setIfCfg(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_CFG pcfg);
 static int getIfStats(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_STATS pStats);
@@ -317,7 +317,7 @@ CosaDmlEthInit
 {
     ANSC_STATUS                     returnStatus;
 
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     CHAR strMac[128]        = {0};
     ULONG i                 = 0;
     ULONG wanIndex          = 0;
@@ -429,7 +429,7 @@ CosaDmlEthPortGetEntry
         return ANSC_STATUS_FAILURE;
     }
 
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
     if (ulIndex < g_EthernetIntNum)
     {
         AnscCopyMemory(&pEntry->StaticInfo, &g_EthIntSInfo[ulIndex], sizeof(COSA_DML_ETH_PORT_SINFO));
@@ -1310,7 +1310,7 @@ return ret;
 **********************************************************************/
 
 
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 int puma6_getSwitchCfg(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_CFG pcfg)
 {
     CCSP_HAL_ETHSW_PORT         port        = *((PCCSP_HAL_ETHSW_PORT)eth->hwid);
