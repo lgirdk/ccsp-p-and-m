@@ -63,7 +63,8 @@
 #include "cosa_x_cisco_com_ddns_apis.h"
 #include "secure_wrapper.h"
 
-#if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
+
 #include <utctx/utctx_api.h>
 #include <utapi.h>
 #include "dml_tr181_custom_cfg.h" 
@@ -655,7 +656,8 @@ CosaDmlDdnsGetInfo
     UNREFERENCED_PARAMETER(hContext);
     return ANSC_STATUS_SUCCESS;
 }
-#elif (_COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_)
+
+#elif defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 
 #if 0
 static int saveID(char* Namespace, char* ServiceName, ULONG ulInstanceNumber,char* pAlias) {

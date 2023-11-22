@@ -1274,7 +1274,7 @@ CosaDmlTSIPSetCfg
             setTSIPToPP(pCfg);
         #endif
 
-#if  defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_MIPS_)
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 
         if ( TRUE )
         {
@@ -2364,7 +2364,7 @@ CosaDmlTSIPSubnetDelEntry
 
     /* Send sysevent */
 
-#if  defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_MIPS_)
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 
     if ( TRUE )
     {
@@ -2407,7 +2407,7 @@ CosaDmlTSIPSubnetSetEntry
 
     /* Send sysevent */
 
-#if  defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_MIPS_)
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 
     if ( TRUE )
     {
