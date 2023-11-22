@@ -1050,7 +1050,7 @@ BOOL tagPermitted(int tag)
     return TRUE;
 }
 
-#elif (defined _COSA_INTEL_USG_ARM_) || (defined _COSA_BCM_MIPS_)
+#elif defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 
 #include <net/if.h>
 #include <sys/ioctl.h>
@@ -4415,7 +4415,8 @@ void poolValueFill(FILE *fp, const char* prefixValue, const char* PrefixRangeBeg
     free(prefix_end);
 }
 
-#ifdef _COSA_INTEL_USG_ARM_
+#if defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_)
+
 void __cosa_dhcpsv6_refresh_config()
 {
     FILE * fp = fopen(SERVER_CONF_LOCATION, "w+");
@@ -5300,7 +5301,7 @@ OPTIONS:
       fclose(fp);
 
 
-#if (!defined _COSA_INTEL_USG_ARM_) && (!defined _COSA_BCM_MIPS_)
+#if (!defined _COSA_INTEL_USG_ARM_) && (!defined _COSA_BCM_ARM_) && (!defined _COSA_BCM_MIPS_)
     /*we will copy the updated conf file at once*/
     if (rename(TMP_SERVER_CONF, SERVER_CONF_LOCATION))
         CcspTraceWarning(("%s rename failed %s\n", __FUNCTION__, strerror(errno)));
@@ -5321,9 +5322,9 @@ EXIT:
 
     return;
 }
-#endif
 
-#ifdef _COSA_BCM_MIPS_
+#elif defined (_COSA_BCM_MIPS_)
+
 void __cosa_dhcpsv6_refresh_config()
 {
     FILE * fp = fopen(SERVER_CONF_LOCATION, "w+");

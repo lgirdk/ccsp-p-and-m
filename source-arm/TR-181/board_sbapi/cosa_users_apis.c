@@ -229,8 +229,8 @@ CosaDmlUserGetCfg
 
 }
 
-  
-#elif (defined _COSA_INTEL_USG_ARM_) || (defined  _COSA_BCM_MIPS_)
+#elif defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
+
 #undef _COSA_SIM_
 
 #include <utctx/utctx_api.h>

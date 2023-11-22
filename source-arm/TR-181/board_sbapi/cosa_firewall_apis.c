@@ -202,7 +202,7 @@ CosaDmlFirewallSetConfig
     return ANSC_STATUS_SUCCESS;
 }
 
-#elif (_COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_)
+#elif defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_ARM_) || defined(_COSA_BCM_MIPS_)
 
 /**********************************************************************
 
