@@ -9877,7 +9877,12 @@ dhcpv6c_dbg_thrd(void * in)
                 snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_PREF_VLDTM_SYSEVENT_NAME, IfaceName);
                 commonSyseventSet(sysEventName, iapd_vldtm);
             }
-
+#if defined(_LG_MV3_)
+            if (!strcmp(IfaceName,"erouter0"))
+            {
+                v_secure_system("service_dslite restart &");
+            }
+#endif
             continue;  
             /* 
              * Sysevent and Interface configuration will be done by WanManager for FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE builds.
