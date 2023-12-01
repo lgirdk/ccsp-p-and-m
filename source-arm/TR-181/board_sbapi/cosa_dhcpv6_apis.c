@@ -9935,6 +9935,18 @@ dhcpv6c_dbg_thrd(void * in)
                 snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_PREF_VLDTM_SYSEVENT_NAME, IfaceName);
                 commonSyseventSet(sysEventName, iapd_vldtm);
             }
+            /*Set the lease time received from WAN to the syscfg db so that in dibbler server.conf file, the lease time will get updated properly */
+            ULONG idx = 0;
+            for ( idx=0; idx<uDhcpv6ServerPoolNum; idx++)
+            {
+                if(sDhcpv6ServerPool[idx].Cfg.LeaseTime != atoi(iapd_pretm))
+                {
+                    sDhcpv6ServerPool[idx].Cfg.LeaseTime = atoi(iapd_pretm);
+                    setpool_into_utopia((PUCHAR)DHCPV6S_NAME, (PUCHAR)"pool", idx, &sDhcpv6ServerPool[idx]);
+                }
+
+                sDhcpv6ServerPool[idx].Cfg.ValidLeaseTime = atoi(iapd_vldtm);
+            }
 #if defined(_LG_MV3_)
             if (!strcmp(IfaceName,"erouter0"))
             {
