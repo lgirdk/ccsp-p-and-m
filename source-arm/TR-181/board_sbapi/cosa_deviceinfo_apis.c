@@ -2372,6 +2372,10 @@ void CosaTemperatureSensorSetPollingTime (ULONG pollingInterval, PCOSA_TEMPERATU
     */
     if(pollingInterval != pTempSensor->PollingInterval)
     {
+        char syscfgVar[40];
+        snprintf(syscfgVar, sizeof(syscfgVar), "tempSensor_%d_pollingInterval", index);
+        syscfg_set_u_commit(NULL, syscfgVar, pollingInterval);
+
         pTempSensor->PollingInterval = pollingInterval;
         //Cancel the current polling thread for the sensor
         pthread_cancel(gPoll_threadId[index-1]);
@@ -2429,6 +2433,8 @@ ANSC_HANDLE CosaTemperatureStatusCreate (void)
     int index;
     PCOSA_DATAMODEL_TEMPERATURE_STATUS pTempStatus;
     char currTime[64];
+    char syscfgVar[40];
+    char syscfgValue[12];
 
     pTempStatus = calloc(1, sizeof(COSA_DATAMODEL_TEMPERATURE_STATUS));
     pTempStatus->TemperatureSensorNumberOfEntries = MAX_TEMPSENSOR_INSTANCE;
@@ -2489,7 +2495,16 @@ ANSC_HANDLE CosaTemperatureStatusCreate (void)
         pTempSensor->MaxValue = ABSOLUTE_ZERO_TEMPERATURE;
         pTempSensor->LowAlarmValue = ABSOLUTE_ZERO_TEMPERATURE;
         pTempSensor->HighAlarmValue = TEMP_SENSOR_HIGH_ALARM_LIMIT;
-        pTempSensor->PollingInterval = 0;
+
+        snprintf(syscfgVar, sizeof(syscfgVar), "tempSensor_%d_pollingInterval", index);
+        if (syscfg_get(NULL, syscfgVar, syscfgValue, sizeof(syscfgValue)) == 0)
+        {
+            pTempSensor->PollingInterval = atoi(syscfgValue);
+        }
+        else
+        {
+            pTempSensor->PollingInterval = 0;
+        }
 
         strcpy(pTempSensor->ResetTime, currTime);
         strcpy(pTempSensor->LastUpdate, UNKNOWN_TIME);
