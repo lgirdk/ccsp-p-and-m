@@ -2423,6 +2423,15 @@ void CosaTemperatureSensorSetPollingTime (ULONG pollingInterval, PCOSA_TEMPERATU
     if(pollingInterval != pTempSensor->PollingInterval)
     {
         pTempSensor->PollingInterval = pollingInterval;
+        //Set the polling interval to syscfg DB to make it persistent across reboot
+        char syscfgVar[32];
+        sprintf_s(syscfgVar, sizeof(syscfgVar), "tempSensor_%d_pollingInterval", index);
+        if ((syscfg_set_u_commit(NULL, syscfgVar, pollingInterval) != 0))
+        {
+            AnscTraceWarning(("syscfg_set failed\n"));
+            return -1;
+        }
+
         //Cancel the current polling thread for the sensor
         pthread_cancel(gPoll_threadId[index-1]);
         pthread_join(gPoll_threadId[index-1], NULL);
@@ -2519,7 +2528,19 @@ ANSC_HANDLE CosaTemperatureStatusCreate (void)
         pTempSensor->MaxValue = ABSOLUTE_ZERO_TEMPERATURE;
         pTempSensor->LowAlarmValue = ABSOLUTE_ZERO_TEMPERATURE;
         pTempSensor->HighAlarmValue = TEMP_SENSOR_HIGH_ALARM_LIMIT;
-        pTempSensor->PollingInterval = 0;
+        //Set the polling interval to syscfg DB to make it persistent across reboot
+        char syscfgVar[32], syscfgVal[8];
+        sprintf_s(syscfgVar, sizeof(syscfgVar), "tempSensor_%d_pollingInterval", index);
+        if (syscfg_get(NULL, syscfgVar, syscfgVal, sizeof(syscfgVal)) == 0)
+        {
+            //Read the value from syscfg db
+            pTempSensor->PollingInterval = atoi(syscfgVal);
+        }
+        else
+        {
+            //Write polling interval default value to syscfg db
+            pTempSensor->PollingInterval = 0;
+	    }
 
         strcpy(pTempSensor->ResetTime, currTime);
         strcpy(pTempSensor->LastUpdate, UNKNOWN_TIME);
