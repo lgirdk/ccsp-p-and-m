@@ -1273,14 +1273,11 @@ CosaDmlEthLinkUpdateStaticMac
     else
     {
 
-        if( (0x00 == pEthLink->StaticInfo.MacAddress[0]) && (0x00 == pEthLink->StaticInfo.MacAddress[1]) && (0x00 == pEthLink->StaticInfo.MacAddress[2]) && (0x00 == pEthLink->StaticInfo.MacAddress[3]) && (0x00 == pEthLink->StaticInfo.MacAddress[4]) && (0x00 == pEthLink->StaticInfo.MacAddress[5]))
+        UCHAR strMac[128] = {0};
+        if ( -1 != _getMac(pEthLink->StaticInfo.Name,(char *) strMac) )
         {
-            UCHAR strMac[128] = {0};
-            if ( -1 != _getMac(pEthLink->StaticInfo.Name,(char *) strMac) )
-            {
-                AnscCopyMemory(pEthLink->StaticInfo.MacAddress,strMac,6);
-                AnscCopyMemory(pEntry->StaticInfo.MacAddress,strMac,6);
-            }
+            AnscCopyMemory(pEthLink->StaticInfo.MacAddress,strMac,6);
+            AnscCopyMemory(pEntry->StaticInfo.MacAddress,strMac,6);
         }
 
         return  ANSC_STATUS_SUCCESS;
