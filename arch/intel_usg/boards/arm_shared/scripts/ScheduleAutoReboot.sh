@@ -68,7 +68,7 @@ while : ; do
     if [ $rcnt -lt $MAX_COUNT ]; then
         NTPD_STATUS=`sysevent get ntp_time_sync`
         RFC_STATUS=`sysevent get RFC_Execution`
-        if [ "x$NTPD_STATUS" != "x1" ] && ["x$RFC_STATUS" == "x"]; then
+        if [ "x$NTPD_STATUS" != "x1" ] && [ "x$RFC_STATUS" == "x" ]; then
             rcnt=$((rcnt+1))
             sleep 2;
             continue;
