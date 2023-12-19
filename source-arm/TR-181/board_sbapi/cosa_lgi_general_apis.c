@@ -21,6 +21,7 @@
 #include "cosa_lgi_general_apis.h"
 #include "plugin_main_apis.h"
 #include "cosa_drg_common.h"
+#include "cosa_ip_apis.h"
 
 #include <platform_hal.h>
 
@@ -417,7 +418,9 @@ CosaDmlGiGetRipIpAddress
         }
         else if (strcmp(staticBrlanEnable, "true") == 0)
         {
-            syscfg_get( NULL, "brlan_static_lan_ipaddr",rip_static_ip, sizeof(rip_static_ip));
+            char parameter[32];
+            sprintf(parameter,"brlan_static_%d_lan_ipaddr",COSA_DML_BRLAN_RIP_INST);
+            syscfg_get( NULL, parameter,rip_static_ip, sizeof(rip_static_ip));
         }
 
         if (AnscSizeOfString(rip_static_ip) >= *pUlSize)
@@ -458,7 +461,9 @@ CosaDmlGiGetRipSubnetMask
         }
         else if (strcmp(staticBrlanEnable, "true") == 0)
         {
-            syscfg_get( NULL, "brlan_static_lan_netmask",rip_static_mask, sizeof(rip_static_mask));
+            char parameter[32];
+            sprintf(parameter,"brlan_static_%d_lan_netmask",COSA_DML_BRLAN_RIP_INST);
+            syscfg_get( NULL, parameter,rip_static_mask, sizeof(rip_static_mask));
         }
 
         if (AnscSizeOfString(rip_static_mask) >= *pUlSize)
@@ -492,7 +497,9 @@ CosaDmlGiGetStaticIpAddress
     }
     else if (strcmp(staticIpAdminStatus, "3") == 0)
     {
-        syscfg_get( NULL, "brlan_static_lan_ipaddr",static_ip, sizeof(static_ip));
+        char parameter[32];
+        sprintf(parameter,"brlan_static_%d_lan_ipaddr",COSA_DML_BRLAN_RIP_INST);
+        syscfg_get( NULL, parameter,static_ip, sizeof(static_ip));
     }
 
     if (static_ip[0] != 0)
@@ -525,7 +532,9 @@ CosaDmlGiGetStaticSubnetMask
     }
     else if (strcmp(staticIpAdminStatus, "3") == 0)
     {
-        syscfg_get( NULL, "brlan_static_lan_netmask",static_mask, sizeof(static_mask));
+        char parameter[32];
+        sprintf(parameter,"brlan_static_%d_lan_netmask",COSA_DML_BRLAN_RIP_INST);
+        syscfg_get( NULL, parameter,static_mask, sizeof(static_mask));
     }
 
     if (static_mask[0] != 0)

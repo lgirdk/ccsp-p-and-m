@@ -2301,6 +2301,11 @@ IPv4Address_AddEntry
         pIPv4Addr->InstanceNumber = 2;
         pIPv4Addr->AddressingType = COSA_DML_IP_ADDR_TYPE_Static;
     }
+    else if ( pIPInterface->Cfg.InstanceNumber == 4 )
+    {
+        pIPv4Addr->InstanceNumber = pIPInterface->ulNextIPV4InsNum;
+    }
+
     /* Update the middle layer data */
     if ( TRUE )
     {
@@ -2385,6 +2390,18 @@ IPv4Address_DelEntry
     PCOSA_CONTEXT_LINK_OBJECT       pSubCosaContext = (PCOSA_CONTEXT_LINK_OBJECT)hInstance;
     PCOSA_DML_IP_V4ADDR             pIPv4Addr       = (PCOSA_DML_IP_V4ADDR)pSubCosaContext->hContext;
 
+    if (pIPInterface->Cfg.InstanceNumber == 4)
+    {
+         int instance = GET_BRLAN_STATIC_INSTANCE(pIPv4Addr->Alias);
+         if ( instance == COSA_DML_BRLAN_RIP_INST )
+         {
+             syscfg_unset(NULL, "blran_rip_instance");
+         }
+         else if ( instance == COSA_DML_BRLAN_TUNNELED_STATIC_INST )
+         {
+             syscfg_unset(NULL, "brlan_tunneled_static_instance");
+         }
+    }
     CosaDmlIpIfDelV4Addr(pMyObject->hSbContext, pIPInterface->Cfg.InstanceNumber, pIPv4Addr);
 
     AnscSListPopEntryByLink((PSLIST_HEADER)&pIPInterface->IPV4List, &pSubCosaContext->Linkage);
@@ -2551,7 +2568,7 @@ IPv4Address_GetParamUlongValue
         {
             if(pIPInterface->Cfg.InstanceNumber == 4 && pIPv4Addr->InstanceNumber >= 2)
             {
-                *puLong = CosaDmlGetStaticBrlanIf("ipaddr");
+                *puLong = pIPv4Addr->IPAddress.Value;
             }
             else
             {
@@ -2593,7 +2610,7 @@ IPv4Address_GetParamUlongValue
         {
             if(pIPInterface->Cfg.InstanceNumber == 4 && pIPv4Addr->InstanceNumber >= 2)
             {
-                *puLong = CosaDmlGetStaticBrlanIf("netmask");
+                *puLong = pIPv4Addr->SubnetMask.Value;
             }
             else
             {
