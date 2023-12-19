@@ -2572,11 +2572,7 @@ static int _dibbler_client_operation(char * arg)
 int  CosaDmlStartDHCP6Client()
 {
     pthread_detach(pthread_self());
-#if defined(_COSA_INTEL_XB3_ARM_)
-    CcspTraceInfo(("Not restarting ti_dhcp6c for XB3 case\n"));
-#else
    // _dibbler_client_operation("restart");    
-#endif
     return 0;
 }
 /*
@@ -8543,9 +8539,6 @@ void enable_IPv6(char* if_name)
         }
     	commonSyseventGet(cmd, ipv6_addr, sizeof(ipv6_addr));
     	v_secure_system("ip -6 route add %s dev %s", ipv6_addr, if_name);
-    	#ifdef _COSA_INTEL_XB3_ARM_
-        v_secure_system("ip -6 route add %s dev %s table erouter", ipv6_addr, if_name);
-    	#endif
     	v_secure_system("ip -6 rule add iif %s lookup erouter",if_name);
 
         #ifdef RDKB_EXTENDER_ENABLED
@@ -9310,16 +9303,6 @@ dhcpv6s_dbg_thrd(void * in)
                         {
                             memset(interface_name,0,sizeof(interface_name));
                             strncpy(interface_name,token,sizeof(interface_name)-1);
-#ifdef _COSA_INTEL_XB3_ARM_
-                            char LnFIfName[32] = {0} , LnFBrName[32] = {0} ;
-                            syscfg_get( NULL, "iot_ifname", LnFIfName, sizeof(LnFIfName));
-                            syscfg_get( NULL, "iot_brname", LnFBrName, sizeof(LnFBrName));
-                            if (strcmp((const char*)token,LnFIfName) == 0 && (LnFBrName[0] != '\0' ) && ( strlen(LnFBrName) != 0 ))
-                            {
-                                memset(interface_name,0,sizeof(interface_name));
-                                strncpy(interface_name,LnFBrName,sizeof(interface_name)-1);
-                            }
-#endif
                             memset(sysEventOut,0,sizeof(sysEventOut));
                             rc = sprintf_s(sysEventOut, sizeof(sysEventOut), "%s_ipaddr_v6", interface_name);
                             if(rc < EOK)
@@ -10046,39 +10029,8 @@ dhcpv6c_dbg_thrd(void * in)
 			 
 					if(GenIPv6Prefix(token,v6Tpref,out1,sizeof(out1)))
 					{
-						memset(cmd,0,sizeof(cmd));
-                        			memset(interface_name,0,sizeof(interface_name));
-
-                        			#ifdef _COSA_INTEL_XB3_ARM_
-                                                char LnFIfName[32] = {0} , LnFBrName[32] = {0} ;
-                            			syscfg_get( NULL, "iot_ifname", LnFIfName, sizeof(LnFIfName));
-                            			if( (LnFIfName[0] != '\0' ) && ( strlen(LnFIfName) != 0 ) )
-                            			{
-                                			if (strcmp((const char*)token,LnFIfName) == 0 )
-                                			{
-                                    				syscfg_get( NULL, "iot_brname", LnFBrName, sizeof(LnFBrName));
-                                    				if( (LnFBrName[0] != '\0' ) && ( strlen(LnFBrName) != 0 ) )
-                                    				{
-                                        				strncpy(interface_name,LnFBrName,sizeof(interface_name)-1);
-                                    				}
-                                    				else
-                                    				{
-                                        				strncpy(interface_name,token,sizeof(interface_name)-1);
-                                    				}
-                                			}
-                                			else
-                                			{
-                                    				strncpy(interface_name,token,sizeof(interface_name)-1);
-                                			}
-                            			}
-                            			else
-                            			{
-                                    			strncpy(interface_name,token,sizeof(interface_name)-1);
-
-                            			}
-                        			#else
-                            				strncpy(interface_name,token,sizeof(interface_name)-1);
-						#endif
+						memset(interface_name,0,sizeof(interface_name));
+						strncpy(interface_name,token,sizeof(interface_name)-1);
 						rc = sprintf_s(cmd, sizeof(cmd), "%s_ipaddr_v6", interface_name);
 						if(rc < EOK)
 						{
@@ -10167,13 +10119,9 @@ dhcpv6c_dbg_thrd(void * in)
 */
 #if 0 /* Not required for MVx platforms with MULTILAN feature enabled */
 
-#if !defined(_COSA_INTEL_XB3_ARM_)
                         // not the best place to add route, just to make it work
                         // delegated prefix need to route to LAN interface
                         v_secure_system("ip -6 route add %s dev %s", v6pref, COSA_DML_DHCPV6_SERVER_IFNAME);
-			#ifdef _COSA_INTEL_XB3_ARM_
-                        v_secure_system("ip -6 route add %s dev %s table erouter", v6pref, COSA_DML_DHCPV6_SERVER_IFNAME);
-			#endif
 #if defined(INTEL_PUMA7)        // handling v6 lease for INTEL platforms
                         {
 #if !defined(WAN_MANAGER_UNIFICATION_ENABLED)
@@ -10311,7 +10259,6 @@ dhcpv6c_dbg_thrd(void * in)
 			    CcspTraceWarning(("%s: setting lan-restart\n", __FUNCTION__));
                             commonSyseventSet("lan-restart", "1");
                         }
-#endif
 #endif
 #else
 #if defined(FEATURE_RDKB_WAN_MANAGER)
@@ -10510,18 +10457,12 @@ dhcpv6c_dbg_thrd(void * in)
                         if ((strlen(prevPref) > 3) && (strcmp(prevPref, v6pref) != 0)) {
                             v_secure_system("ip -6 route del %s dev %s", prevPref, COSA_DML_DHCPV6_SERVER_IFNAME);
                             v_secure_system("ip -6 route del %s dev %s table all_lans", prevPref, COSA_DML_DHCPV6_SERVER_IFNAME);
-#ifdef _COSA_INTEL_XB3_ARM_
-                            v_secure_system("ip -6 route del %s dev %s table erouter", prevPref, COSA_DML_DHCPV6_SERVER_IFNAME);
-#endif
                         }
 
                         // not the best place to add route, just to make it work
                         // delegated prefix need to route to LAN interface
                         v_secure_system("ip -6 route add %s dev %s", v6pref, COSA_DML_DHCPV6_SERVER_IFNAME);
                         v_secure_system("ip -6 route add %s dev %s table all_lans", v6pref, COSA_DML_DHCPV6_SERVER_IFNAME);
-			#ifdef _COSA_INTEL_XB3_ARM_
-                        v_secure_system("ip -6 route add %s dev %s table erouter", v6pref, COSA_DML_DHCPV6_SERVER_IFNAME);
-			#endif
                         /* we need save this for zebra to send RA
                            ipv6_prefix           // xx:xx::/yy
                          */
