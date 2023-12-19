@@ -1837,11 +1837,7 @@ void* restoreAllDBs(void* arg)
             else
             {
                 // we are the child
-#ifdef ARRIS_XB3_PLATFORM_CHANGES
-                char *args[] = {"rpcclient2", "/bin/rm -f /nvram/syscfg.db /nvram/.keys/vyinerkyo.wyr", (char *) 0 };
-#else
                 char *args[] = {"rpcclient2", "/bin/rm -f /nvram/syscfg.db", (char *) 0 };
-#endif
                 execv(args[0], args);
                 _exit(EXIT_FAILURE);   // exec never returns
             }        
@@ -3185,14 +3181,6 @@ CosaDmlDcSetReinitMacThreshold
         ULONG                       value
     )
 {
-#ifdef ARRIS_XB3_PLATFORM_CHANGES
-    UNREFERENCED_PARAMETER(hContext);
-    if ( cm_hal_set_ReinitMacThreshold(value) != RETURN_OK )
-        return ANSC_STATUS_FAILURE;
-    else
-        return ANSC_STATUS_SUCCESS;
-
-#else
     UNREFERENCED_PARAMETER(hContext);
     char buf[12];
     errno_t safec_rc = -1;
@@ -3211,7 +3199,6 @@ CosaDmlDcSetReinitMacThreshold
     {
         return ANSC_STATUS_SUCCESS;
     }
-#endif
 }
 
 ANSC_STATUS
@@ -3221,14 +3208,6 @@ CosaDmlDcGetReinitMacThreshold
         ULONG                       *pValue
     )
 {
-#ifdef ARRIS_XB3_PLATFORM_CHANGES
-    UNREFERENCED_PARAMETER(hContext);
-    if ( cm_hal_get_ReinitMacThreshold(pValue) != RETURN_OK )
-        return ANSC_STATUS_FAILURE;
-    else
-        return ANSC_STATUS_SUCCESS;
-
-#else
     char buf[12];
 
     if( (syscfg_get( NULL, "rdkbReinitMacThreshold", buf, sizeof(buf))) == 0 )
@@ -3241,7 +3220,6 @@ CosaDmlDcGetReinitMacThreshold
     	CosaDmlDcSetReinitMacThreshold(hContext, *pValue);
     }
     return ANSC_STATUS_SUCCESS;
-#endif
 }
 
 ANSC_STATUS
