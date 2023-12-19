@@ -222,8 +222,14 @@ ULONG X_LGI_COM_TunneledStaticIPService_Commit (ANSC_HANDLE hInsContext)
 
     if (pMyObject->Cfg.Enable != pMyObject->OldCfg.Enable)
     {
-        bConfigChanged = TRUE;
-        CosaDmlTunneledStaticIPSetEnable(NULL, pMyObject->Cfg.Enable);
+        if (CosaDmlTunneledStaticIPSetEnable(NULL, pMyObject->Cfg.Enable) != ANSC_STATUS_SUCCESS)
+        {
+            pMyObject->Cfg.Enable = pMyObject->OldCfg.Enable;
+        }
+        else
+        {
+            bConfigChanged = TRUE;
+        }
     }
 
     if (strcmp(pMyObject->Cfg.Username, pMyObject->OldCfg.Username))
