@@ -29,6 +29,15 @@ ANSC_STATUS CosaDmlTunneledStaticIPGetEnable (ANSC_HANDLE hContext, BOOL *pValue
 
 ANSC_STATUS CosaDmlTunneledStaticIPSetEnable (ANSC_HANDLE hContext, BOOL bValue)
 {
+    if (bValue)
+    {
+       char buf[8];
+       syscfg_get(NULL, "rip_enabled", buf, sizeof(buf));
+       if (!strcmp(buf,"1"))
+       {
+          return ANSC_STATUS_FAILURE;
+       }
+    }
     if (syscfg_set(NULL, "tunneled_static_ip_enable", bValue ? "1" : "0") != 0)
         return ANSC_STATUS_FAILURE;
     return ANSC_STATUS_SUCCESS;
