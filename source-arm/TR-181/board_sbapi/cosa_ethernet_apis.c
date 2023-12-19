@@ -111,11 +111,7 @@
 #include <utctx/utctx_api.h>
 #include "linux/sockios.h"
 #include <sys/ioctl.h>
-#ifdef ARRIS_XB3_PLATFORM_CHANGES
-  #include "rdk_cm_api_arris.h"
-#else
   #include "linux/if.h"
-#endif
 
 extern void *g_pDslhDmlAgent;
 
@@ -339,11 +335,7 @@ CosaDmlEthInit
      *  It doesn't make sense to even have a MAC address in Ethernet Interface DM object,
      *  so we are not going to fill the MAC address for Upstream interfaces.
      */
-#ifdef ARRIS_XB3_PLATFORM_CHANGES
-    rdkb_api_platform_hal_GetLanMacAddr(strMac);
-#else
     _getMac("brlan0", strMac);
-#endif
 
     /*  Iterate through Ethernet ports, assign LAN mac to downstream ports
         Keep track of the index of upstream ports to assign their MAC addresses
