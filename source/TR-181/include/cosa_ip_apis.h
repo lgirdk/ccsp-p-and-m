@@ -208,6 +208,15 @@ typedef enum
 }
 COSA_DML_IP6PREFIX_STATICTYPE_TYPE;
 
+typedef enum
+{
+    COSA_DML_BRLAN_RIP_INST = 1,
+    COSA_DML_BRLAN_TUNNELED_STATIC_INST
+}
+COSA_DML_BRLAN_STATIC_INSTANCE;
+
+#define GET_BRLAN_STATIC_INSTANCE(_alias) !strcmp(_alias, "tunneled_static") ? COSA_DML_BRLAN_TUNNELED_STATIC_INST : ((strstr(_alias, "static") || strstr(_alias, "rip")) ? COSA_DML_BRLAN_RIP_INST : 0)
+
 /*
  *  Structure definitions for IP Interface
  */
@@ -767,7 +776,7 @@ void RestartRipd(void);
  * Api to get the secondary static ip address
  * and netmask of brlan0
  */
-ULONG CosaDmlGetStaticBrlanIf(char* method);
+ULONG CosaDmlGetStaticBrlanIf(char* method , ULONG InstanceNumber);
 
 #endif
 

@@ -1070,9 +1070,12 @@ void CosaDmlGenerateRipdConfigFile(ANSC_HANDLE  hContext )
             char staticBrlanIP[20];
             char staticBrlanSubnet[20];
             ULONG bits = 0;
-            if (syscfg_get( NULL, "brlan_static_lan_ipaddr",staticBrlanIP, sizeof(staticBrlanIP)) == 0)
+            char parameter[32];
+            sprintf(parameter,"brlan_static_%d_lan_ipaddr",COSA_DML_BRLAN_RIP_INST);
+            if (syscfg_get( NULL, parameter,staticBrlanIP, sizeof(staticBrlanIP)) == 0)
             {
-                if (syscfg_get( NULL, "brlan_static_lan_netmask",staticBrlanSubnet, sizeof(staticBrlanSubnet)) == 0)
+                sprintf(parameter,"brlan_static_%d_lan_netmask",COSA_DML_BRLAN_RIP_INST);
+                if (syscfg_get( NULL, parameter,staticBrlanSubnet, sizeof(staticBrlanSubnet)) == 0)
                 {
                     /* brlan0 static IP's cidr should be more than 24 */
                     bits = 24 + CosaDmlGetBitsNumFromNetMask(staticBrlanSubnet);
@@ -1305,7 +1308,6 @@ void RestartRIPInterfaces(int ripEnable)
     char brlan_dhcp_end[20];
 #ifdef FEATURE_STATIC_IPV4
     char staticIpAdministrativeStatus[8];
-    int staticIpStatus;    
 #endif
 
 
@@ -1313,7 +1315,7 @@ void RestartRIPInterfaces(int ripEnable)
     syscfg_get(NULL, "brlan_static_ip_enable", staticBrlanEnable, sizeof(staticBrlanEnable));
 #ifdef FEATURE_STATIC_IPV4
     syscfg_get(NULL, "staticipadminstatus", staticIpAdministrativeStatus, sizeof(staticIpAdministrativeStatus));
-    staticIpStatus = (0 == (strcmp("3", staticIpAdministrativeStatus))) ? 1 : 0;
+    ripEnable = (0 == (strcmp("3", staticIpAdministrativeStatus))) ? 1 : 0;
 #endif
 
     if(strcmp(staticErouterEnable, "true") == 0)
@@ -1367,34 +1369,50 @@ void RestartRIPInterfaces(int ripEnable)
     }
     else if(strcmp(staticBrlanEnable, "true") == 0)
     {
-        char ip_buf[20];
-
-#ifdef FEATURE_STATIC_IPV4
-        if(strcmp(staticIpAdministrativeStatus, "3") == 0)
-#else
-        if(ripEnable)
+        char buf[20];
+        syscfg_get(NULL, "tunneled_static_ip_enable", buf, sizeof(buf));
+        int tunneled_static = (!strcmp(buf,"1") ? 1 : 0);
+#ifndef FEATURE_STATIC_IPV4	
+        syscfg_get(NULL, "rip_enabled", buf, sizeof(buf));
+        ripEnable = (!strcmp(buf,"1") ? 1 : 0);
 #endif
+        if (ripEnable == 1 || tunneled_static == 1)
         {
-            if(syscfg_get(NULL, "brlan_static_lan_ipaddr", brlan_ip, sizeof(brlan_ip)) == 0)
+            char parameter[32];
+            if (ripEnable == 1)
             {
-                if(syscfg_get(NULL, "brlan_static_lan_netmask", brlan_mask, sizeof(brlan_mask)) == 0)
+                syscfg_get(NULL, "blran_rip_instance", buf, sizeof(buf));
+                syscfg_set(NULL, "active_static_brlan_service","rip");
+            }
+            else if (tunneled_static == 1)
+            {
+                syscfg_get(NULL, "brlan_tunneled_static_instance", buf, sizeof(buf));
+                syscfg_set(NULL, "active_static_brlan_service","tunneled_static");
+            }
+            sprintf(parameter,"brlan_static_%s_lan_ipaddr",buf);
+            if (buf[0] != 0 && syscfg_get(NULL, parameter, brlan_ip, sizeof(brlan_ip)) == 0)
+            {
+                sprintf(parameter,"brlan_static_%s_lan_netmask",buf);
+                if(syscfg_get(NULL, parameter, brlan_mask, sizeof(brlan_mask)) == 0)
                 {
-                    syscfg_get(NULL, "brlan_static_dhcp_start", brlan_dhcp_start, sizeof(brlan_dhcp_start));
-                    syscfg_get(NULL, "brlan_static_dhcp_end", brlan_dhcp_end, sizeof(brlan_dhcp_end));
+                    sprintf(parameter,"brlan_static_%s_dhcp_start",buf);
+                    syscfg_get(NULL, parameter, brlan_dhcp_start, sizeof(brlan_dhcp_start));
+                    sprintf(parameter,"brlan_static_%s_dhcp_end",buf);
+                    syscfg_get(NULL, parameter, brlan_dhcp_end, sizeof(brlan_dhcp_end));
                     /* swap lan_ipaddr, dhcp_start and dhcp_end with brlan static ip ranges if not already done*/
-                    if (syscfg_get(NULL, "brlan_lan_ipaddr", ip_buf, sizeof(ip_buf)))
+                    if (syscfg_get(NULL, "brlan_lan_ipaddr", buf, sizeof(buf)))
                     {
-                        syscfg_get(NULL, "lan_ipaddr", ip_buf, sizeof(ip_buf));
-                        syscfg_set(NULL, "brlan_lan_ipaddr", ip_buf);
+                        syscfg_get(NULL, "lan_ipaddr", buf, sizeof(buf));
+                        syscfg_set(NULL, "brlan_lan_ipaddr", buf);
 
-                        syscfg_get(NULL, "lan_netmask", ip_buf, sizeof(ip_buf));
-                        syscfg_set(NULL, "brlan_lan_netmask", ip_buf);
+                        syscfg_get(NULL, "lan_netmask", buf, sizeof(buf));
+                        syscfg_set(NULL, "brlan_lan_netmask", buf);
 
-                        syscfg_get(NULL, "dhcp_start", ip_buf, sizeof(ip_buf));
-                        syscfg_set(NULL, "brlan_dhcp_start", ip_buf);
+                        syscfg_get(NULL, "dhcp_start", buf, sizeof(buf));
+                        syscfg_set(NULL, "brlan_dhcp_start", buf);
 
-                        syscfg_get(NULL, "dhcp_end", ip_buf, sizeof(ip_buf));
-                        syscfg_set(NULL, "brlan_dhcp_end", ip_buf);
+                        syscfg_get(NULL, "dhcp_end", buf, sizeof(buf));
+                        syscfg_set(NULL, "brlan_dhcp_end", buf);
                     }
 	        }
 	    }
@@ -1411,15 +1429,12 @@ void RestartRIPInterfaces(int ripEnable)
                     syscfg_unset(NULL,"brlan_lan_ipaddr");
                 }
             }
+            syscfg_unset(NULL,"active_static_brlan_service");
         }
 
         if (strlen(brlan_ip) > 0) {
             /* Restart brlan0 interface only if brlan_ip has a valid address. */
-#ifdef FEATURE_STATIC_IPV4
-            RestartBrlanInterface(brlan_ip,brlan_mask,brlan_dhcp_start,brlan_dhcp_end,staticIpStatus);
-#else	    
-            RestartBrlanInterface(brlan_ip,brlan_mask,brlan_dhcp_start,brlan_dhcp_end,ripEnable);
-#endif	    
+            RestartBrlanInterface(brlan_ip,brlan_mask,brlan_dhcp_start,brlan_dhcp_end,ripEnable|tunneled_static);
         }
     }//End of else if(strcmp(staticBrlanEnable, "true") == 0)
 
@@ -1467,6 +1482,16 @@ CosaDmlRipSetCfg
     UNREFERENCED_PARAMETER(hContext);
 
     AnscTraceWarning(("CosaDmlRipSetCfg -- starts.\n"));
+    if (pCfg->Enable)
+    {
+       char buf[8];
+       syscfg_get(NULL, "tunneled_static_ip_enable", buf, sizeof(buf));
+       if (!strcmp(buf,"1"))
+       {
+          pCfg->Enable = FALSE;
+          return returnStatus;
+       } 
+    }
     CosaDmlRIPCurrentConfig.Enable        = pCfg->Enable;
     // CosaDmlRIPCurrentConfig.UpdateTime    = pCfg->X_CISCO_COM_UpdateInterval;
     CosaDmlRIPCurrentConfig.DefaultMetric = pCfg->X_CISCO_COM_DefaultMetric;
