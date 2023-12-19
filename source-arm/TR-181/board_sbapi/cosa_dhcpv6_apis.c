@@ -9522,6 +9522,13 @@ dhcpv6c_dbg_thrd(void * in)
 #endif
                         g_dhcpv6_server_prefix_ready = TRUE;
 
+#if defined (_COSA_BCM_ARM_)
+#ifndef _SKY_HUB_COMMON_PRODUCT_REQ_
+                        CcspTraceDebug(("%s,%d: Calling CosaDmlDHCPv6sTriggerRestart(FALSE)...\n", __FUNCTION__, __LINE__));
+                        CosaDmlDHCPv6sTriggerRestart(FALSE);
+#endif
+#endif /* _COSA_BCM_ARM_ && !_SKY_HUB_COMMON_PRODUCT_REQ_ */
+
                         /*We need get a global ip addres */
 #if defined(_COSA_BCM_ARM_) || defined(INTEL_PUMA7)
 #ifndef _HUB4_PRODUCT_REQ_
@@ -9593,8 +9600,11 @@ dhcpv6c_dbg_thrd(void * in)
                             CcspTraceWarning(("%s: setting lan-restart\n", __FUNCTION__));
                             commonSyseventSet("lan-restart", "1");
 
+#if defined (_SKY_HUB_COMMON_PRODUCT_REQ_)
                             CcspTraceDebug(("%s,%d: Calling CosaDmlDHCPv6sTriggerRestart(FALSE)...\n", __FUNCTION__, __LINE__));
                             CosaDmlDHCPv6sTriggerRestart(FALSE);
+#endif /* _SKY_HUB_COMMON_PRODUCT_REQ_ */
+
                         }
 #endif
 
