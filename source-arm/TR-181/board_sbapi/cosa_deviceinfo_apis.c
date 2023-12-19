@@ -96,9 +96,9 @@
 #include "cosa_x_cisco_com_devicecontrol_apis.h"
 #include "cosa_deviceinfo_internal.h"
 #include "cosa_drg_common.h"
-#include <syscfg/syscfg.h>
 #include "safec_lib_common.h"
 #include "ansc_string_util.h"
+
 #define DEVICE_PROPERTIES    "/etc/device.properties"
 #define PARTNERS_INFO_FILE              "/nvram/partners_defaults.json"
 #define BOOTSTRAP_INFO_FILE		"/nvram/bootstrap.json"
