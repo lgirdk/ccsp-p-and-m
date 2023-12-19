@@ -2717,14 +2717,12 @@ CosaDmlIpIfGetNumberOfV4Addrs
     }
     else if( ulIpIfInstanceNumber == COSA_USG_IF_NUM )
     {
-        /* If brlan static ip is enabled then brlan0 interface should have two ipv4 entries */
-        if(syscfg_get(NULL, "brlan_static_ip_enable", output, sizeof(output)) == 0)
+        /* If brlan lan static ip ,max supported instances are 2 */
+        if(syscfg_get(NULL, "blran_rip_instance", output, sizeof(output)) == 0)
         {
-            if(strcmp(output, "true") == 0)
-            {
-                ret = 2;
-            }
+            ret++;
         }
+        syscfg_unset(NULL, "brlan_tunneled_static_instance");
     }
     else if ( ulIpIfInstanceNumber > COSA_USG_IF_NUM )
     {
@@ -2813,17 +2811,19 @@ CosaDmlIpIfGetV4Addr
         PCOSA_DML_IP_V4ADDR         pEntry
     )
 {
-    char alias[50];
     if ( ulIpIfInstanceNumber >= COSA_USG_IF_NUM )
     {
         /* brlan0's second ipv4 entry must be the static one for rip. */
         if (ulIpIfInstanceNumber == 4 && ulIndex != 0)
         {
-            pEntry->InstanceNumber = 2;
+            char parameter[32]; 
             pEntry->AddressingType  = COSA_DML_IP_ADDR_TYPE_Static;
-            if(syscfg_get(NULL, "brlan_static_ip_alias", alias, sizeof(alias)) == 0)
+            sprintf(parameter,"brlan_static_%lu_ip_alias",ulIndex);
+            if (!syscfg_get(NULL, parameter, pEntry->Alias, sizeof(pEntry->Alias)))
             {
-                strcpy(pEntry->Alias, alias);
+                pEntry->InstanceNumber = ulIndex+1;
+                pEntry->IPAddress.Value = CosaDmlGetStaticBrlanIf("ipaddr",ulIndex);
+                pEntry->SubnetMask.Value = CosaDmlGetStaticBrlanIf("netmask",ulIndex);
             }
         }
         else
@@ -2833,6 +2833,7 @@ CosaDmlIpIfGetV4Addr
     }
     else
     {
+        char alias[50];
         ANSC_STATUS                     returnStatus = ANSC_STATUS_SUCCESS;
        
         //AnscTraceFlow(("%s...\n", __FUNCTION__));
@@ -3153,49 +3154,67 @@ CosaDmlIpIfSetV4Addr
         /* Brlan0's 2,3,etc ipv4 entries points to static rip ip address */
         if(ulIpIfInstanceNumber == 4 && pEntry->InstanceNumber >= 2)
         {
-            char                            rip_status[12]  = {0};
             int                             l_iCIDR = 0,total_hosts = 0;
+            unsigned int                    instance = 0;
 
-            syscfg_get(NULL, "rip_enabled", rip_status, sizeof(rip_status));
-            syscfg_set(NULL, "brlan_static_ip_enable", "true");
-            syscfg_set(NULL, "brlan_static_ip_alias", pEntry->Alias);
-            _ansc_sprintf(buf, "%d.%d.%d.%d",
+            instance = GET_BRLAN_STATIC_INSTANCE(pEntry->Alias);
+
+            if (instance == COSA_DML_BRLAN_RIP_INST)
+            {
+                syscfg_set_u(NULL, "blran_rip_instance", instance);
+            }
+            else if (instance == COSA_DML_BRLAN_TUNNELED_STATIC_INST)	
+            {
+                syscfg_set_u(NULL, "brlan_tunneled_static_instance", instance);
+            }
+
+            if (instance > 0)
+            {
+                char parameter[32];
+                syscfg_set(NULL, "brlan_static_ip_enable", "true");
+                sprintf(parameter,"brlan_static_%u_ip_alias",instance);
+                syscfg_set(NULL, parameter, pEntry->Alias);
+                _ansc_sprintf(buf, "%d.%d.%d.%d",
                     pEntry->IPAddress.Dot[0],pEntry->IPAddress.Dot[1],pEntry->IPAddress.Dot[2],pEntry->IPAddress.Dot[3] );
-            syscfg_set(NULL, "brlan_static_lan_ipaddr", buf);
-            _ansc_sprintf(buf, "%d.%d.%d.%d",
+                sprintf(parameter,"brlan_static_%u_lan_ipaddr",instance);
+                syscfg_set(NULL, parameter, buf);
+                _ansc_sprintf(buf, "%d.%d.%d.%d",
                     pEntry->IPAddress.Dot[0],pEntry->IPAddress.Dot[1],pEntry->IPAddress.Dot[2],pEntry->IPAddress.Dot[3]+1 );
-            syscfg_set(NULL, "brlan_static_dhcp_start", buf); // CIDR Usable Host Range Starts
-            _ansc_sprintf(buf, "%d.%d.%d.%d",
+                sprintf(parameter,"brlan_static_%u_dhcp_start",instance);
+                syscfg_set(NULL, parameter, buf); // CIDR Usable Host Range Starts
+                _ansc_sprintf(buf, "%d.%d.%d.%d",
                     pEntry->SubnetMask.Dot[0],pEntry->SubnetMask.Dot[1],pEntry->SubnetMask.Dot[2],pEntry->SubnetMask.Dot[3] );
 
-            l_iCIDR = mask2cidr(buf);
+                sprintf(parameter,"brlan_static_%u_lan_netmask",instance);
+                l_iCIDR = mask2cidr(buf);
 
-            if ( l_iCIDR == 0 )
-            {
+                if ( l_iCIDR == 0 )
+                {
 #ifdef FEATURE_STATIC_IPV4
-                CcspTraceWarning(("%s Error CIDR netmask is not valid for static IP.. Assigning /29 case for default\n", __FUNCTION__));
-                l_iCIDR = 29;
-                syscfg_set(NULL, "brlan_static_lan_netmask", "255.255.255.248");
-#else		
-                CcspTraceWarning(("%s Error CIDR netmask is not valid for static IP.. Assigning /30 case for default\n", __FUNCTION__));
-                l_iCIDR = 30;
-                syscfg_set(NULL, "brlan_static_lan_netmask", "255.255.255.252");
-#endif		
-            }
-            else
-            {
-                syscfg_set(NULL, "brlan_static_lan_netmask", buf);
-            }
-            total_hosts = 1 << (32 - l_iCIDR);
-            _ansc_sprintf(buf, "%d.%d.%d.%d",
-                    pEntry->IPAddress.Dot[0],pEntry->IPAddress.Dot[1],pEntry->IPAddress.Dot[2],pEntry->IPAddress.Dot[3]+total_hosts-3 ); // CIDR Usable Host Range Ends
-            syscfg_set(NULL, "brlan_static_dhcp_end", buf);
-#ifdef FEATURE_STATIC_IPV4
-            RestartRIPInterfaces(FALSE);	    
+                     CcspTraceWarning(("%s Error CIDR netmask is not valid for static IP.. Assigning /29 case for default\n", __FUNCTION__));
+                     l_iCIDR = 29;
+
+                     syscfg_set(NULL, parameter, "255.255.255.248");
 #else
-            ErouterStaticIfMode("down");
-#endif	    
+                     CcspTraceWarning(("%s Error CIDR netmask is not valid for static IP.. Assigning /30 case for default\n", __FUNCTION__));
+                     l_iCIDR = 30;
+                     syscfg_set(NULL, parameter, "255.255.255.252");
+#endif		
+                }
+                else
+                {
+                     syscfg_set(NULL, parameter, buf);
+                }
+                total_hosts = 1 << (32 - l_iCIDR);
+                _ansc_sprintf(buf, "%d.%d.%d.%d",
+                    pEntry->IPAddress.Dot[0],pEntry->IPAddress.Dot[1],pEntry->IPAddress.Dot[2],pEntry->IPAddress.Dot[3]+total_hosts-3 ); // CIDR Usable Host Range Ends
+                sprintf(parameter,"brlan_static_%u_dhcp_end",instance);
+                syscfg_set(NULL, parameter, buf);
+            
+                RestartRIPInterfaces(FALSE);	    
+                ErouterStaticIfMode("down");
                 // commonSyseventSet("dhcp_server-restart", "");
+            }
         }
         else
         {
@@ -5034,14 +5053,16 @@ void ErouterStaticIfMode(char* method)
     syscfg_commit();
 }
 
-ULONG CosaDmlGetStaticBrlanIf(char* method)
+ULONG CosaDmlGetStaticBrlanIf(char* method, ULONG instance)
 {
     char buff[20];
+    char parameter[32];
     struct in_addr ip;
     ULONG return_value = 0;
     if(strcmp(method, "ipaddr") == 0)
     {
-        syscfg_get( NULL, "brlan_static_lan_ipaddr",buff, sizeof(buff));
+        sprintf(parameter,"brlan_static_%lu_lan_ipaddr",instance);
+        syscfg_get( NULL, parameter,buff, sizeof(buff));
         if(inet_aton(buff, &ip) != 0)
         {
             return_value = ip.s_addr;
@@ -5049,7 +5070,8 @@ ULONG CosaDmlGetStaticBrlanIf(char* method)
     }
     else if(strcmp(method, "netmask") == 0)
     {
-        syscfg_get( NULL, "brlan_static_lan_netmask",buff, sizeof(buff));
+        sprintf(parameter,"brlan_static_%lu_lan_netmask",instance);
+        syscfg_get( NULL, parameter,buff, sizeof(buff));
         if(inet_aton(buff, &ip) != 0)
         {
             return_value = ip.s_addr;
