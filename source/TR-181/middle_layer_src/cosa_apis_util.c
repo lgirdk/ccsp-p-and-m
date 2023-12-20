@@ -1297,6 +1297,7 @@ CosaUtilGetFullPathNameByKeyword
             if(rc < EOK)
             {
               ERR_CHK(rc);
+              AnscFreeMemory(pTableStringToken);
               continue;
             }
             pString[0] = '.';
@@ -1310,6 +1311,7 @@ CosaUtilGetFullPathNameByKeyword
                 if(rc < EOK)
                 {
                   ERR_CHK(rc);
+                  AnscFreeMemory(pTableStringToken);
                   continue;
                 }
 
@@ -1326,6 +1328,7 @@ CosaUtilGetFullPathNameByKeyword
                         if(rc < EOK)
                         {
                           ERR_CHK(rc);
+                          AnscFreeMemory(pTableStringToken);
                           continue;
                         }
 
@@ -1333,6 +1336,7 @@ CosaUtilGetFullPathNameByKeyword
                         if(rc < EOK)
                         {
                           ERR_CHK(rc);
+                          AnscFreeMemory(pTableStringToken);
                           continue;
                         }
                
