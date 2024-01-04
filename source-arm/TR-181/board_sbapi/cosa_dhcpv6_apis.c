@@ -9829,10 +9829,10 @@ dhcpv6c_dbg_thrd(void * in)
                             CcspTraceWarning(("%s: setting lan-restart\n", __FUNCTION__));
                             commonSyseventSet("lan-restart", "1");
 
-#if defined (_SKY_HUB_COMMON_PRODUCT_REQ_)
+#if defined (_SKY_HUB_COMMON_PRODUCT_REQ_) || defined(INTEL_PUMA7)
                             CcspTraceDebug(("%s,%d: Calling CosaDmlDHCPv6sTriggerRestart(FALSE)...\n", __FUNCTION__, __LINE__));
                             CosaDmlDHCPv6sTriggerRestart(FALSE);
-#endif /* _SKY_HUB_COMMON_PRODUCT_REQ_ */
+#endif /* _SKY_HUB_COMMON_PRODUCT_REQ_ and INTEL_PUMA7 */
 
                         }
 #endif
