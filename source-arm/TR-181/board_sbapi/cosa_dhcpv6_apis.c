@@ -9722,6 +9722,11 @@ dhcpv6c_dbg_thrd(void * in)
             } else {
                 dhcpv6_data.isExpired = FALSE;
                 dhcpv6_data.prefixAssigned = TRUE;
+                if(strlen(v6addr) != 0)
+                {
+                    strncpy(dhcpv6_data.address, v6addr, sizeof(dhcpv6_data.address));
+                    dhcpv6_data.addrAssigned = TRUE;
+                }
 #if defined(FEATURE_MAPT)
                     strcpy(pdIPv6Prefix, v6pref);
 #endif
