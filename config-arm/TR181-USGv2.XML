@@ -1497,7 +1497,7 @@
 			</parameter>
 		</parameters>
   	  </object>
-<?ifndef BCI?>
+<?ifdef _CBR2_PRODUCT_REQ_ | !_CBR_PRODUCT_REQ_?>
 	  <object>
 		<name>CloudUI</name>
 		<objectType>object</objectType>

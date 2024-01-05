@@ -2,7 +2,7 @@
    "properties" : {
 
       "comments" : "MANDATORY: !!! Please increment below version value for any new parameter added in this partners_defaults.json !!!",
-      "version" : "8.14"
+      "version" : "8.15"
    },
 
    "comcast" : {
@@ -80,7 +80,14 @@
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.ImageHealthChecker.OperatingMode" : "Monitor",
       "Device.X_RDK_MQTT.BrokerURL" : "hcbroker-chi-02-pub.staging.us-west-2.plume.comcast.net",
       "Device.X_RDK_MQTT.LocationID" : "na",
-      "Device.X_RDK_MQTT.Port" : "443"
+      "Device.X_RDK_MQTT.Port" : "443",
+      "override" : {
+        "CGA4332COM" : {
+                     "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.RDKB_UIBranding.CloudUI.brandname" : "Xfinity" ,
+                     "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.RDKB_UIBranding.CloudUI.productname" : "xFi" ,
+                     "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.RDKB_UIBranding.CloudUI.link" : "xfinity.com"
+        }
+    }
 },
 
  "RDKM" : {
