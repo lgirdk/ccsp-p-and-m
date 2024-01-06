@@ -9471,7 +9471,6 @@ dhcpv6c_dbg_thrd(void * in)
 {
     UNREFERENCED_PARAMETER(in);
     int fd=0 ;
-    char msg[1024];
     char * p = NULL;
     char globalIP2[128] = {0};
     char *pntr = NULL;
@@ -9501,21 +9500,25 @@ dhcpv6c_dbg_thrd(void * in)
         goto EXIT;
     }
 
-    while (1) 
+    while (1)
     {
+        char msg[1024];
 	int retCode = 0;
+        ssize_t numbytes;
+
         tm.tv_sec  = 60;
         tm.tv_usec = 0;
-    
+
         FD_ZERO(&rfds);
         FD_SET(fd, &rfds);
 
-	retCode = select(fd+1, &rfds, NULL, NULL, &tm);
+        retCode = select(fd+1, &rfds, NULL, NULL, &tm);
+
         /* When return -1, it's error.
            When return 0, it's timeout
            When return >0, it's the number of valid fds */
         if (retCode < 0) {
-	    fprintf(stderr, "dbg_thrd : select returns error \n" );
+            fprintf(stderr, "dbg_thrd : select returns error \n" );
 
             if (errno == EINTR)
                 continue;
@@ -9524,27 +9527,39 @@ dhcpv6c_dbg_thrd(void * in)
             CcspTraceWarning(("%s -- select(): %s", __FUNCTION__, strerror(errno)));
             goto EXIT;
         }
-	else if(retCode == 0 )
-	    continue;
 
-        if ( FD_ISSET(fd, &rfds) )
-        {
-             msg[0] = 0;
-             read(fd, msg, sizeof(msg));
-        }
-	else
-	    continue;
+        /* timeout */
+        if (retCode == 0)
+            continue;
 
-        if (msg[0] != 0)
-        {
-            CcspTraceInfo(("%s: get message %s\n", __func__, msg));
-        } else {
-	    //Message is empty. Wait 5 sec before trying the select again.
+        if (FD_ISSET(fd, &rfds) == 0)
+            continue;
+
+        numbytes = read(fd, msg, sizeof(msg));
+
+        /* error */
+        if (numbytes < 0)
+            continue;
+
+        /* local buffer too small - sanity check only, should never happen */
+        if (numbytes >= sizeof(msg))
+            continue;
+
+        /* drop trailing whitespace and newline(s) */
+        while ((numbytes > 0) && ((msg[numbytes - 1] == ' ') || (msg[numbytes - 1] == '\n')))
+            numbytes--;
+
+        /* empty message - wait before trying the select again */
+        if (numbytes == 0) {
             sleep(5);
             continue;
         }
 
-        if (!strncmp(msg, "dibbler-client", strlen("dibbler-client"))) 
+        msg[numbytes] = 0;
+
+        CcspTraceInfo(("%s: get message %s\n", __func__, msg));
+
+        if (strncmp(msg, "dibbler-client", strlen("dibbler-client")) == 0)
         {
             char v6addr[64] = {0};
             char v6pref[128] = {0};
