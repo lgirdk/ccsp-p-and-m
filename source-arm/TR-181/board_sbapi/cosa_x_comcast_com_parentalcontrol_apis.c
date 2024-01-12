@@ -1719,9 +1719,16 @@ CosaDmlBlkURL_DelEntry(ULONG ins)
 #else
         char url2ipFilePath[256];
         snprintf(url2ipFilePath, sizeof(url2ipFilePath), URL2IP_PATH, ins);
-        remove(url2ipFilePath);
+        /* CID: 104500 fix*/
+        if (remove(url2ipFilePath) != 0)
+        {
+            CcspTraceWarning(("%s: Error deleting the file\n", __FUNCTION__));
+        }
         snprintf(url2ipFilePath, sizeof(url2ipFilePath), URL2IP6_PATH, ins);
-        remove(url2ipFilePath);
+        if (remove(url2ipFilePath) != 0)
+        {
+            CcspTraceWarning(("%s: Error deleting the file\n", __FUNCTION__));
+        }
 #endif
 
         commonSyseventSet("pp_flush", "1");

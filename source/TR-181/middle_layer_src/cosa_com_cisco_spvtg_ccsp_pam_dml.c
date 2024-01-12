@@ -580,8 +580,8 @@ Pam_GetParamStringValue
     errno_t                         rc                  = -1;
 
     UNREFERENCED_PARAMETER(hInsContext);
-
-    CcspTraceInfo(("[%s] -- '%s', pValue addr: 0x%s, pulSize addr: 0x%ln \n", __FUNCTION__, ParamName, pValue, pulSize));
+    /* CID: 269727 fix*/
+    // CcspTraceInfo(("[%s] -- '%s', pValue addr: 0x%s, pulSize addr: 0x%ln \n", __FUNCTION__, ParamName, pValue, pulSize));
 
 
     IpIfObjNameSize = sizeof(IpIfObjName) - 1;

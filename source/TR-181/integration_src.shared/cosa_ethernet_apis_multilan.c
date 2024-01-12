@@ -1545,6 +1545,12 @@ BOOLEAN getIfAvailability( const PUCHAR name )
     AnscTraceFlow(("%s... name %s\n", __FUNCTION__,name));
 
     skfd = socket(AF_INET, SOCK_DGRAM, 0);
+    /* CID: 62903 fix*/
+    if (skfd < 0)
+    {
+        CcspTraceWarning(("%s: Socket creation failed.\n", __FUNCTION__));
+        return -1;
+    }
 
     rc = strcpy_s(ifr.ifr_name, sizeof(ifr.ifr_name), (char *)name);
     if(rc != EOK)

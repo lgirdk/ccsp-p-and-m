@@ -858,7 +858,8 @@ static int IsSystemdRunning()
     {
         /* Only need to read the first line to get the process name. Ex. Name:  systemd */
         read = getline(&line, &len, f_name);
-        if (read != 0 || read != -1)
+        /* CID: 164049*/
+        if (read > 0)
         {
             if (line != NULL)
             {
@@ -2216,6 +2217,13 @@ int findLocalPortAvailable()
                 address.sin_port = htons(port);
 
                 sockfd = socket(AF_INET, SOCK_STREAM, 0);
+                /* CID: 190381 fix*/
+                if (sockfd < 0)
+                {
+                    CcspTraceWarning(("%s: Socket creation failed.\n", __FUNCTION__));
+                    port++;
+                    continue;
+                }
 
                 status = connect(sockfd, (struct sockaddr *)&address, sizeof(address));
 

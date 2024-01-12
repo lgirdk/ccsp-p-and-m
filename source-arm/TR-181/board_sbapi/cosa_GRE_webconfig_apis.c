@@ -330,15 +330,18 @@ void* initialize_hotspot_webconfig(void *arg)
     if (fp)
     {
         fseek(fp, 0, SEEK_END);
-        int sz = ftell(fp);
+        long sz = ftell(fp);
         fseek(fp, 0, SEEK_SET);
-        CcspTraceInfo(("%s file size is %d\n",HOTSPOT_BLOB_FILE,sz));
+        CcspTraceInfo(("%s file size is %ld\n",HOTSPOT_BLOB_FILE,sz));
 
         blob = (char*) malloc(sizeof(char) * (sz + 1));
         if (blob != NULL)
         {
-            fscanf(fp,"%s",blob);
-            unpackAndProcessHotspotData(blob);    
+            /* CID: 172835 fix*/
+            if (fscanf(fp,"%s",blob) == 1)
+            {
+                unpackAndProcessHotspotData(blob); 
+            }
             free(blob);
             blob = NULL ;  
         }

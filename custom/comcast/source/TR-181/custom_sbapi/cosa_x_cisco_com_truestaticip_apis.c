@@ -416,8 +416,9 @@ CosaDmlTSIPLoadMappingFile
     ULONG                           ulType                 = 0;
     ULONG                           ulCount                = 0;
     ULONG                           ulIndex                = 0;
-    ULONG                           len                    = 0;
-    ULONG                           len2                   = 0;
+    /* CID: 64430 fix*/
+    long                           len                    = 0;
+    long                           len2                   = 0;
     errno_t                         rc                     = -1;
 
     if ( !pAtomNamespace )
@@ -444,7 +445,7 @@ CosaDmlTSIPLoadMappingFile
         return ANSC_STATUS_FAILURE;
     }
 
-    AnscTraceWarning(("!!!!!! CosaDmlTSIPLoadMappingFile 2 len=%lu !!!!!!\n", len));
+    AnscTraceWarning(("!!!!!! CosaDmlTSIPLoadMappingFile 2 len=%ld !!!!!!\n", len));
 
     fseek(fpMapping, 0L, SEEK_SET);
     pBuffer = (char*)AnscAllocateMemory(len + 1);

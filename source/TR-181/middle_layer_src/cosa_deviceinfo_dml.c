@@ -14875,8 +14875,12 @@ Xconf_SetParamBoolValue
             FILE *file = fopen( "/tmp/.waitingreboot","r" );
             if (file != NULL) {
                 AnscTraceWarning(("XConf is waiting for reboot after download. Removing /tmp/.waitingreboot to force redownload image"));
-                fclose(file);
-                remove("/tmp/.waitingreboot");
+                fclose(file);                
+                /* CID: 155187 fix*/
+                if (remove("/tmp/.waitingreboot") != 0)
+                {
+                    CcspTraceWarning(("%s: Error deleting the file\n", __FUNCTION__));
+                }
             }
             else if (access("/tmp/.downloadingfw",F_OK) != -1){
                 AnscTraceWarning(("Xconf firmware download in progress. Process will not be restarted."));
@@ -20821,14 +20825,17 @@ HwHealthTestPTREnable_SetParamBoolValue
         {
             if( NULL != clientVer )
             {
-                fscanf(fp, "%7s", clientVer);
-                rc = strcpy_s(version,sizeof(version),clientVer);
-                if(rc != EOK)
+                /* CID: 163532 fix*/
+                if (fscanf(fp, "%7s", clientVer) == 1)
                 {
-                  ERR_CHK(rc);
-                  free(clientVer);
-                  fclose(fp);
-                  return FALSE;
+                    rc = strcpy_s(version,sizeof(version),clientVer);
+                    if(rc != EOK)
+                    {
+                    ERR_CHK(rc);
+                    free(clientVer);
+                    fclose(fp);
+                    return FALSE;
+                    }
                 }
                 free(clientVer);
                 clientVer = NULL;

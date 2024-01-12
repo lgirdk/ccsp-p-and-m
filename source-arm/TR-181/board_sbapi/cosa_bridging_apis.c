@@ -3550,10 +3550,17 @@ ANSC_STATUS lSwBrRemoveVlan(struct bridge *bridge, ULONG vlanInstanceNumber)
 ANSC_STATUS lanBrPCtlSetEnabled(PBRIDGE_PORT port, BOOLEAN enable) {
     struct ifreq ifr;
     int fd = socket(AF_INET, SOCK_DGRAM, 0);
+    /* CID: 175364 fix*/
+    if (fd < 0)
+    {
+        AnscTraceFlow(("%s: Socket creation failed. \n", __FUNCTION__));
+        return ANSC_STATUS_FAILURE;
+    }
 
 #if defined(MULTILAN_FEATURE)
     if(port->mode == COSA_DML_BPORT_PASSTHRU) {
         //Do not try to directly set port state of passthru device to up/down
+        close(fd);
         return ANSC_STATUS_SUCCESS;
     }
 #endif
@@ -3582,6 +3589,12 @@ ANSC_STATUS lanBrPCtlSetEnabled(PBRIDGE_PORT port, BOOLEAN enable) {
 ANSC_STATUS lanBrPCtlGetEnabled(PBRIDGE_PORT port, BOOLEAN* enabled) {
     struct ifreq ifr;
     int fd = socket(AF_INET, SOCK_DGRAM, 0);
+    /* CID: 175409 fix*/
+    if (fd < 0)
+    {
+        AnscTraceFlow(("%s: Socket creation failed. \n", __FUNCTION__));
+        return ANSC_STATUS_FAILURE;
+    }
 
     CcspTraceInfo(("------lanBrPCtlGetEnabled, port:%s...\n", port->name));
 
@@ -3659,8 +3672,13 @@ ANSC_STATUS lanBrPCtlGetState(PBRIDGE_PORT port, PCOSA_DML_BRG_PORT_STATE state)
     if (!fd) {
         return ANSC_STATUS_FAILURE;
     }
-
-    fscanf(fd, "%i", &stateVal);
+    /* CID: 175385 fix*/
+    if (fscanf(fd, "%i", &stateVal))
+    {
+        AnscTraceFlow(("%s: fscanf failed. \n", __FUNCTION__));
+        fclose(fd);
+        return ANSC_STATUS_FAILURE;
+    }
 
     fclose(fd);
 
@@ -3771,6 +3789,12 @@ ANSC_STATUS lnxBrPCtlGetStatus(PBRIDGE_PORT port, PCOSA_DML_IF_STATUS status) {
     if(enabled) {
         
         int fd = socket(AF_INET, SOCK_DGRAM, 0);
+        /* CID: 175429 fix*/
+        if (fd < 0)
+        {
+            AnscTraceFlow(("%s: Socket creation failed. \n", __FUNCTION__));
+            return ANSC_STATUS_FAILURE;
+        }
       
         /*CID-282034 String overflow Fix*/ 
         strncpy(ifr.ifr_name, (char*)port->hwid,sizeof(ifr.ifr_name)-1);
