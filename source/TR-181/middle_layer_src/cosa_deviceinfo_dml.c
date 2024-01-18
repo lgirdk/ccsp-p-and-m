@@ -13392,6 +13392,156 @@ RDKRemoteDebugger_SetParamBoolValue
     return FALSE;
 }
 #endif
+
+#ifdef FEATURE_ONEWIFI_TESTSUITE
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+        BOOL
+        OneWiFiTestSuite_GetParamBoolValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                BOOL*                       pBool
+            )
+
+
+
+    description:
+
+        This function is called to retrieve Boolean parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                BOOL*                       pBool
+                The buffer of returned boolean value;
+
+    return:     TRUE if succeeded.
+
+**********************************************************************/
+#define ONEWIFI_TESTSUITE_CFG "onewifi_testsuite"
+
+BOOL
+OneWiFiTestSuite_GetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL*                       pBool
+    )
+{
+    char buf[6] = { 0 };
+
+    UNREFERENCED_PARAMETER(hInsContext);
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+        if (syscfg_get(NULL, ONEWIFI_TESTSUITE_CFG, buf, sizeof(buf)) != 0)
+        {
+            *pBool = FALSE;
+            return TRUE;
+        }
+
+        if (!strncmp(buf, "true", 4))
+        {
+            *pBool = TRUE;
+        }
+        else if (!strncmp(buf, "false", 5))
+        {
+            *pBool = FALSE;
+        }
+        else
+        {
+            CcspTraceWarning(("syscfg_get: value of %s is invalid!\n", ONEWIFI_TESTSUITE_CFG));
+            return FALSE;
+        }
+
+        return TRUE;
+    }
+
+    CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName));
+    return FALSE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+        BOOL
+        OneWiFiTestSuite_SetParamBoolValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                BOOL                        bValue
+            )
+
+
+    description:
+
+        This function is called to set BOOL parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                BOOL                        bValue
+                The updated BOOL value;
+
+    return:     TRUE if succeeded.
+
+**********************************************************************/
+BOOL
+OneWiFiTestSuite_SetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL                        bValue
+    )
+{
+    char buf[6] = { 0 };
+
+    UNREFERENCED_PARAMETER(hInsContext);
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+        char *value = (bValue == TRUE) ? "true" : "false";
+
+        syscfg_get(NULL, ONEWIFI_TESTSUITE_CFG, buf, sizeof(buf));
+
+        if (!strncmp(buf, value, strlen(value)))
+        {
+            return TRUE;
+        }
+
+        if (syscfg_set_commit(NULL, ONEWIFI_TESTSUITE_CFG, value) != 0)
+        {
+            CcspTraceWarning(("syscfg_set failed to set %s\n", COGNITIVE_WIFIMOTION_CFG));
+            return FALSE;
+        }
+
+        if (bValue == TRUE)
+        {
+            v_secure_system("systemctl restart rdkfmac.service");
+        }
+        else
+        {
+            v_secure_system("systemctl stop rdkfmac.service");
+        }
+
+        return TRUE;
+    }
+
+    CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName));
+    return FALSE;
+}
+#endif
+
  #if defined (FEATURE_SUPPORT_INTERWORKING)
 /**********************************************************************
 
