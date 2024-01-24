@@ -72,6 +72,7 @@
 #include "safec_lib_common.h"
 
 extern void* g_pDslhDmlAgent;
+extern ANSC_HANDLE bus_handle;
 
 #if ( defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_MIPS_))
 #include <net/if.h>
