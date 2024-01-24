@@ -25,10 +25,11 @@
 #include "managedwifi_helpers.h"
 #include "managedwifidoc.h"
 #include "ccsp_trace.h"
-#include "base64.h"
+#include <trower-base64/base64.h>
 #include "cosa_webconfig_api.h"
 #include "cosa_rbus_handler_apis.h"
 #include <syscfg/syscfg.h>
+
 BOOL unpackAndProcessManagedWifiData(char* pString);
 void freeMem_managedwifi(void* arg);
 pErr processManagedWebconfigConfig(void *Data);
