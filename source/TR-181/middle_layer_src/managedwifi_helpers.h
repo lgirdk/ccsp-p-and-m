@@ -21,8 +21,9 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <base64.h>
+#include <trower-base64/base64.h>
 #include <msgpack.h>
+
 /*----------------------------------------------------------------------------*/
 /*                                   Macros                                   */
 /*----------------------------------------------------------------------------*/
