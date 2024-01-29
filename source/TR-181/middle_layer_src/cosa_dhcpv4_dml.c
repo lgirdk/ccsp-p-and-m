@@ -10943,8 +10943,30 @@ LanAllowedSubnetTable_GetEntryCount
     )
 {
     PCOSA_DATAMODEL_DHCPV4             pLgGw         = (PCOSA_DATAMODEL_DHCPV4)g_pCosaBEManager->hDhcpv4;
+    PSINGLE_LINK_ENTRY         pLink          = NULL;
+    PCOSA_CONTEXT_LINK_OBJECT  pLinkObject = NULL;
 
-    return AnscSListQueryDepth(&pLgGw->LanAllowedSubnetList);
+    int count = 0;
+    if (AnscSListQueryDepth(&pLgGw->LanAllowedSubnetList) != 0)
+    {
+        pLink = AnscSListGetFirstEntry(&pLgGw->LanAllowedSubnetList);
+
+        while ( pLink )
+        {
+            pLinkObject = (PCOSA_CONTEXT_LINK_OBJECT)ACCESS_COSA_CONTEXT_LINK_OBJECT(pLink);
+            COSA_DML_LAN_Allowed_Subnet  *pLanAllowedSubnet = (COSA_DML_LAN_Allowed_Subnet*)pLinkObject->hContext;
+
+            //Increment count only for COSA_DML_LAN_Allowed_Subnet objects with valid "Alias" field (LanAllowedSubnetTable_DelEntry(),resets object fields to empty for the DELETED object, so don't count them). Newly created objects using "AddObject" will have valid value for "Alias" field and rest of the fields will be empty.
+            if(strlen(pLanAllowedSubnet->Alias))
+            {
+                count++;
+            }
+            pLink = AnscSListGetNextEntry(pLink);
+        }
+    }
+
+    return count;
+    //return AnscSListQueryDepth(&pLgGw->LanAllowedSubnetList);
 }
 
 ANSC_HANDLE
