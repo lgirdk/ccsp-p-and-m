@@ -2309,6 +2309,11 @@ CosaDmlDcSetFactoryReset
 		v_secure_system("rm -f /nvram/wifi/rdkb-wifi.db"); //Need to remove wifi-db for Onewifi
 	}
 #endif
+
+#ifdef _PUMA6_ARM_
+    logger_set_defaults();  /* Fix for OFW-5471 */
+#endif
+
     return ANSC_STATUS_SUCCESS;
 }
 
