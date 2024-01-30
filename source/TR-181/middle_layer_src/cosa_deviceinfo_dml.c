@@ -8831,6 +8831,7 @@ Feature_GetParamBoolValue
     }
 #endif
 
+#ifndef XB10_ONLY_SUPPORT
 #if defined(_XB6_PRODUCT_REQ_)   
    if (strcmp(ParamName, "BLERadio") == 0)
     {
@@ -8849,6 +8850,7 @@ Feature_GetParamBoolValue
             CcspTraceWarning(("%s: ble_GetStatus failed\n", __func__));
 	    }
     }
+#endif
 #endif
     if (strcmp(ParamName, "Xupnp") == 0)
     {
@@ -10384,6 +10386,7 @@ Feature_SetParamBoolValue
 
     }
 #endif
+#ifndef XB10_ONLY_SUPPORT
 #if defined (_XB6_PRODUCT_REQ_)
     if (strcmp(ParamName, "BLERadio") == 0)
     {
@@ -10410,6 +10413,7 @@ Feature_SetParamBoolValue
             CcspTraceWarning(("%s: ble_Enable failed\n", __func__));
        }
     }
+#endif
 #endif
 
     if (strcmp(ParamName, "Xupnp") == 0)
