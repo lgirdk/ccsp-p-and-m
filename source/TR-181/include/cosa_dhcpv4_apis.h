@@ -718,6 +718,12 @@ CosaDmlDhcpsGetPoolInfo
         PCOSA_DML_DHCPS_POOL_INFO   pInfo
     );
 
+ANSC_STATUS
+CosaDmlDhcpsSetIpv4Status
+    (
+        void
+    );
+
 /*
  *  DHCP Server Pool Static Address
  *

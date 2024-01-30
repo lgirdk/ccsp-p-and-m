@@ -6195,7 +6195,13 @@ Pool_SetParamBoolValue
        /* save update to backup */
         pPool->Cfg.bEnabled   = bValue;
         Dhcpv4_Lan_MutexUnLock(); 
-        return TRUE;
+
+	if(pPool->Cfg.InstanceNumber == 1 && bValue == TRUE)
+	{
+       	    CosaDmlDhcpsSetIpv4Status();
+   	}
+
+	return TRUE;
     }
 
 #if 0
