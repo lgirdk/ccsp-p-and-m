@@ -786,10 +786,12 @@ CosaDmlSetLED
 	ledMgmt.State	 = state;
 	ledMgmt.Interval = interval;
 
+#ifndef XB10_ONLY_SUPPORT
 	if(RETURN_ERR == platform_hal_setLed(&ledMgmt)) {
 		CcspTraceWarning(("platform_hal_setLed failed\n"));
 		return ANSC_STATUS_FAILURE;
 	}
+#endif
 
     return ANSC_STATUS_SUCCESS;	
 }
