@@ -2311,6 +2311,11 @@ CosaDmlDcSetFactoryReset
 #endif
 	}
 #endif
+
+#ifdef _PUMA6_ARM_
+    logger_set_defaults();  /* Fix for OFW-5471 */
+#endif
+
     return ANSC_STATUS_SUCCESS;
 }
 
