@@ -2320,6 +2320,9 @@ CosaDmlDcSetFactoryReset
 	}
 #endif
 
+#ifdef _PUMA6_ARM_
+    logger_set_defaults();  /* Fix for OFW-5471 */
+#endif
 
 #if defined(_XER5_PRODUCT_REQ_)
     v_secure_system("rm -rf /nvram/config.db");
