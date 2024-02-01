@@ -903,7 +903,6 @@ IPIF_getEntry_for_Ipv6Addr
     /*the following loop block is on link-local, loopback, RA, DHCPv6 IANA address*/
     /*if we have too many ipv6 addresses, drop them*/
 
-
     for (i=0; i<v6addr_num && i<MAX_IPV6_ENTRY_NUM; i++,p_v6addr++)
     {
         p_dml_v6addr = &g_ipif_be_bufs[ulIndex].V6AddrList[g_ipif_be_bufs[ulIndex].ulNumOfV6Addr];
@@ -924,6 +923,7 @@ IPIF_getEntry_for_Ipv6Addr
         {
             char dhcpv6_addr[64] = {0};
             char global_addr[64] = {0};
+            char evt_name[64] = {0};
             struct sockaddr_in6 sap;
 
             /*first handle RA type*/
@@ -935,8 +935,11 @@ IPIF_getEntry_for_Ipv6Addr
                     break;
                 }
             }
-            
-            commonSyseventGet(COSA_DML_DHCPV6C_ADDR_SYSEVENT_NAME, dhcpv6_addr, sizeof(dhcpv6_addr));
+
+            //add interface specific logic here
+            snprintf(evt_name, sizeof(evt_name), "ipv6_%s_ipaddr", (char *)g_ipif_names[ulIndex]);
+            commonSyseventGet(evt_name, dhcpv6_addr, sizeof(dhcpv6_addr));
+
             if (!strncmp(p_v6addr->v6addr, dhcpv6_addr, sizeof(p_v6addr->v6addr))){
                 p_dml_v6addr->Origin = COSA_DML_IP6_ORIGIN_DHCPv6;
 
