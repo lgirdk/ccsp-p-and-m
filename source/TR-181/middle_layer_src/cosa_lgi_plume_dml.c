@@ -82,6 +82,18 @@ LgiPlume_SetParamBoolValue
 {
     PCOSA_DATAMODEL_LGI_PLUME  pMyObject = (PCOSA_DATAMODEL_LGI_PLUME)g_pCosaBEManager->hLgiPlume;
 
+#ifdef FEATURE_STATIC_IPV4
+    if( (strcmp(ParamName, "SONAdminStatus") == 0 || strcmp(ParamName, "SONOperationalStatus") == 0) && value)
+    {
+        char staticIpAdministrativeStatus[8];
+        syscfg_get(NULL, "staticipadminstatus", staticIpAdministrativeStatus, sizeof(staticIpAdministrativeStatus));
+        if(strcmp("3", staticIpAdministrativeStatus) == 0)
+        {
+            CcspTraceError(("Plume can't be enbled in Multi-static mode.\n"));
+            return FALSE;
+        }
+    }
+#endif
     /* check the parameter name and return the corresponding value */
     if (strcmp(ParamName, "SONAdminStatus") == 0)
     {
