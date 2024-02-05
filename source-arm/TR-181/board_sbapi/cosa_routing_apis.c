@@ -1207,6 +1207,41 @@ CosaDmlRipGetCfg
     return returnStatus;
 }
 
+#ifdef FEATURE_STATIC_IPV4
+static void* updatePlumeStatus(void *arg)
+{
+    char* faultParam = NULL;
+    int ret = 0;
+    int enable = (int) arg;
+    CCSP_MESSAGE_BUS_INFO *bus_info = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
+
+    pthread_detach(pthread_self());
+    parameterValStruct_t param_val[] = {
+                                        { "Device.X_LGI-COM_SON.SONOperationalStatus", "true", ccsp_boolean }
+                                       };
+    if (enable) {
+        param_val[0].parameterValue = "false";
+    }
+
+    ret = CcspBaseIf_setParameterValues(bus_handle,
+                                        "eRT.com.cisco.spvtg.ccsp.pam",
+                                        "/com/cisco/spvtg/ccsp/pam",
+                                        0,
+                                        0,
+                                        param_val,
+                                        sizeof(param_val)/sizeof(param_val[0]),
+                                        TRUE,
+                                        &faultParam
+                                        );
+    if(ret != CCSP_SUCCESS && faultParam)
+    {
+        CcspTraceError(("%s: Failed to SetValue for param '%s'\n",__FUNCTION__,faultParam));
+        bus_info->freefunc(faultParam);
+        faultParam = NULL;
+    }
+    return NULL;
+}
+#endif
 
 static void* updateWIFIStatus(void *arg)
 {
@@ -1282,6 +1317,7 @@ static void RestartBrlanInterface(char* brlan_ip, char* brlan_mask, char* brlan_
     COSA_DML_IP_V4ADDR Entry;
     pthread_t tid1;
     pthread_t tid2;
+    pthread_t tid3;
 
     syscfg_set(NULL, "lan_ipaddr", brlan_ip);
     syscfg_set(NULL, "lan_netmask", brlan_mask);
@@ -1295,6 +1331,10 @@ static void RestartBrlanInterface(char* brlan_ip, char* brlan_mask, char* brlan_
     CosaDmlIpIfMlanSetV4Addr(NULL, 4, &Entry);
     pthread_create(&tid1, NULL, updateDHCPv4Status, (void *)ripEnable);
     pthread_create(&tid2, NULL, updateWIFIStatus, (void *)ripEnable);
+
+#ifdef FEATURE_STATIC_IPV4
+    pthread_create(&tid3, NULL, updatePlumeStatus, (void *)ripEnable);
+#endif
 
 }
 void RestartRIPInterfaces(int ripEnable)
