@@ -566,7 +566,7 @@ CosaDmlMaptStopServices
     ipc_dhcpv6_data_t dhcpv6_data;
     memset(&dhcpv6_data, 0, sizeof(ipc_dhcpv6_data_t));
 
-    strcpy(dhcpv6_data.ifname, "erouter0");
+    strncpy(dhcpv6_data.ifname, "erouter0", sizeof(dhcpv6_data.ifname) - 1);
     dhcpv6_data.maptAssigned = TRUE;
     if (send_dhcp_data_to_wanmanager(&dhcpv6_data, MAPT_STATE_CHANGED) != ANSC_STATUS_SUCCESS) {
         CcspTraceError(("[%s-%d] Failed to send dhcpv6 data to wanmanager!!! \n", __FUNCTION__, __LINE__));
