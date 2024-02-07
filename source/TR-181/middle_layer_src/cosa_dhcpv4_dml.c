@@ -10940,7 +10940,7 @@ LanAllowedSubnetTable_GetEntryCount
     PCOSA_DATAMODEL_DHCPV4             pLgGw         = (PCOSA_DATAMODEL_DHCPV4)g_pCosaBEManager->hDhcpv4;
     PSINGLE_LINK_ENTRY         pLink          = NULL;
     PCOSA_CONTEXT_LINK_OBJECT  pLinkObject = NULL;
-
+#ifdef _LG_MV3_
     int count = 0;
     if (AnscSListQueryDepth(&pLgGw->LanAllowedSubnetList) != 0)
     {
@@ -10961,7 +10961,9 @@ LanAllowedSubnetTable_GetEntryCount
     }
 
     return count;
-    //return AnscSListQueryDepth(&pLgGw->LanAllowedSubnetList);
+#else
+    return AnscSListQueryDepth(&pLgGw->LanAllowedSubnetList);
+#endif
 }
 
 ANSC_HANDLE
