@@ -63,8 +63,19 @@
 
 #include "ansc_platform.h"
 #include "sysevent/libsysevent_internal.h"
+#include "ccsp_base_api.h"
 
 #define MAX_EVENT_NAME_LENGTH   32
+
+#if defined (RBUS_WAN_IP)
+typedef struct{
+    char* parameterName;
+    unsigned int writeID;
+    char* newValue;
+    char* oldValue;
+    enum dataType_e type;
+}arg_struct_t;
+#endif /*RBUS_WAN_IP*/
 
 typedef char * METHOD_NAME;
 typedef int (*CALLBACK_FUNC_NAME)(void *);
@@ -166,5 +177,7 @@ void * EvtDispterEventHandler(void *arg);
 int EvtDispterCheckEvtStatus(int fd, token_t token);
 /*Create a thread to handle the sysevent asynchronously*/
 void EvtDispterHandleEventAsync(void);
-
+#if defined (RBUS_WAN_IP)
+void free_args_struct(arg_struct_t *param);
+#endif
 #endif

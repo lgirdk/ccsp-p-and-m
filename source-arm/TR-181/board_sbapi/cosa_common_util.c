@@ -67,9 +67,12 @@
 #include "cosa_apis_util.h"
 #if defined (WIFI_MANAGE_SUPPORTED)
 #include "ccsp_message_bus.h"
-#include "ccsp_base_api.h"
 #endif /*WIFI_MANAGE_SUPPORTED*/
+#include "ccsp_base_api.h"
 #include "ccsp_psm_helper.h"
+#include "cosa_rbus_handler_apis.h"
+#include "safec_lib.h"
+#include "dslh_definitions_database.h"
 
 #ifdef _HUB4_PRODUCT_REQ_
 
@@ -401,25 +404,191 @@ EvtDispterCallFuncByEvent
 
 static int se_fd = 0; 
 static token_t token;
-#ifdef _HUB4_PRODUCT_REQ_
-static async_id_t async_id[4];
-#else
-static async_id_t async_id[3];
-#endif
+
+static async_id_t async_id[6];
 
 static short server_port;
 static char  server_ip[19];
 #ifdef _HUB4_PRODUCT_REQ_
 enum {EVENT_ERROR=-1, EVENT_OK, EVENT_TIMEOUT, EVENT_HANDLE_EXIT, EVENT_LAN_STARTED=0x10, EVENT_LAN_STOPPED, 
-        EVENT_WAN_STARTED=0x20, EVENT_WAN_STOPPED,EVENT_WAN_IPV4_RECD=0x30, EVENT_VALID_ULA_ADDRESS=0x40, EVENT_DIBBLER_SERVER_RESTART=0x50};
+        EVENT_WAN_STARTED=0x20, EVENT_WAN_STOPPED,EVENT_WAN_IPV4_RECD=0x30, EVENT_WAN_IPV6_RECD, EVENT_VALID_ULA_ADDRESS=0x40, EVENT_DIBBLER_SERVER_RESTART=0x50};
 #else
 enum {EVENT_ERROR=-1, EVENT_OK, EVENT_TIMEOUT, EVENT_HANDLE_EXIT, EVENT_LAN_STARTED=0x10, EVENT_LAN_STOPPED,
-        EVENT_WAN_STARTED=0x20, EVENT_WAN_STOPPED,EVENT_WAN_IPV4_RECD=0x30};
+        EVENT_WAN_STARTED=0x20, EVENT_WAN_STOPPED,EVENT_WAN_IPV4_RECD=0x30, EVENT_WAN_IPV6_RECD};
 #endif
 
+#if defined (RBUS_WAN_IP)
+void free_args_struct(arg_struct_t *param){
+
+    if(param != NULL)
+    {
+        if(param->parameterName != NULL)
+        {
+            free(param->parameterName);
+            param->parameterName = NULL;
+        }
+        if(param->newValue != NULL)
+        {
+            free(param->newValue);
+            param->newValue = NULL;
+        }
+        if(param->oldValue != NULL)
+        {
+            free(param->oldValue);
+            param->oldValue = NULL;
+        }
+        free(param);
+        param = NULL;
+    }
+
+}
+
+void*
+Set_Notifi_ParamName(void *args)
+{
+    errno_t rc = -1;
+    char  str1[512] = {0};
+    FILE *file;
+    char *path = "/tmp/webpanotifyready";
+    bool WebpaNotifyReady= false;
+    char compo[256] = "eRT.com.cisco.spvtg.ccsp.webpaagent";
+    char bus[256] = "/com/cisco/spvtg/ccsp/webpaagent";
+    parameterValStruct_t value[1];
+
+    char* faultParam = NULL;
+    int ret = 0;
+
+    pthread_detach(pthread_self());    
+
+    arg_struct_t *arguments = (arg_struct_t*)args;
+    if(arguments == NULL){
+        CcspTraceError(("%s: arguments struct is NULL", __FUNCTION__)); 
+        return NULL;
+    }
+    
+    rc = sprintf_s(str1,sizeof(str1),"%s,%u,%s,%s,%d",arguments->parameterName, arguments->writeID, (arguments->newValue)!=NULL ? (strlen(arguments->newValue)>0 ? arguments->newValue : "NULL") : "NULL", (arguments->oldValue)!=NULL ? (strlen(arguments->oldValue)>0 ? arguments->oldValue : "NULL") : "NULL", arguments->type);
+    CcspTraceInfo(("%s rc: %d, str1: %s\n", __FUNCTION__ , rc, str1));
+
+    if(rc < EOK)
+    {
+        ERR_CHK(rc);
+        CcspTraceError(("%s Failed to create WAN IP event data. Returning :%d\n", __FUNCTION__, __LINE__));
+        goto EXIT;
+    }
+
+    value[0].parameterName = "Device.Webpa.X_RDKCENTRAL-COM_WebPA_Notification";
+    value[0].parameterValue = str1;
+    value[0].type = ccsp_string;
+    
+    //wait for 30s to update wan status and send notification
+    sleep(30);
+    CcspTraceInfo(("Sending WAN_IP notification after 30sec\n"));
+    /* Check if file exists. Wait for max 2 mins for WebPA to create the file
+     * and send the notification.
+     */
+    
+    for(int count=0; count<24; count++){
+        file = fopen(path, "rb");
+        if(file == NULL)
+        {
+            if(count%4==0){
+                CcspTraceWarning(("%s WebPA is not ready to receive notifications. Waiting for /tmp/webpanotifyready file: %d\n", __FUNCTION__, __LINE__));
+            }
+            sleep(5);
+        }
+        else{
+            WebpaNotifyReady=true;
+            fclose(file);
+            break;
+        }
+    }
+    if(!WebpaNotifyReady)
+    {
+        CcspTraceError(("/tmp/webpanotifyready file is not created even after 2 mins. WebPA is not ready to receive notifications. Exiting\n"));
+        goto EXIT;
+    }
+    else{
+        CcspTraceDebug(("%s /tmp/webpanotifyready file exists. WebPA is ready to receive notifications: %d\n", __FUNCTION__, __LINE__));
+    }
+
+    ret = CcspBaseIf_setParameterValues(  bus_handle,
+                                            compo,
+                                            bus,
+                                            0,
+                                            DSLH_MPA_ACCESS_CONTROL_PAM,
+                                            value,
+                                            1,
+                                            TRUE,
+                                            &faultParam );
+    
+    if (ret != CCSP_SUCCESS && faultParam)
+    {   
+        CcspTraceError(("%s CcspBaseIf_setParameterValues:Failed to SetValue for param '%s'\n", __FUNCTION__, faultParam));
+        CCSP_MESSAGE_BUS_INFO *bus_info = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
+        bus_info->freefunc(faultParam);
+    }
+    else
+    {
+        CcspTraceWarning(("%s: CcspBaseIf_setParameterValues: Param value set succesfully and sent to WebPA.\n", __FUNCTION__ ));
+    }
+  
+    EXIT:
+        free_args_struct(arguments);
+        return NULL;
+}
+
+int Send_WebPANotification_WANIP(char* parameterName, char *ip_addrs, char *previous_ip){
+    if((parameterName == NULL) || (ip_addrs == NULL) || (previous_ip == NULL))
+    {
+        CcspTraceError(("%s arguments are NULL\n", __FUNCTION__ ));
+        return EVENT_ERROR;
+    }
+
+    pthread_t threadId;
+    arg_struct_t *wanip_args = NULL;
+    wanip_args = (arg_struct_t *)malloc(sizeof(arg_struct_t));
+
+    bool IPv6Flag = false;
+    if(strcmp(parameterName,PRIMARY_WAN_IPv6_ADDRESS)==0){
+        IPv6Flag=true;
+    }
+
+    CcspTraceDebug(("%s thread started for %s.\n", __FUNCTION__, IPv6Flag?"IPv6":"IPv4" ));
+
+    if(wanip_args != NULL)
+    {
+        CcspTraceDebug(("%s wanip_args for %s is valid: %d \n", __FUNCTION__, IPv6Flag?"IPv6":"IPv4", __LINE__)); 
+        memset(wanip_args, 0, sizeof(arg_struct_t));
+ 
+        wanip_args->parameterName = strdup(parameterName);
+        wanip_args->writeID         = 256;
+        wanip_args->newValue = strdup(ip_addrs);
+        wanip_args->oldValue = strdup(previous_ip);
+        wanip_args->type            = ccsp_string;
+        CcspTraceDebug(("%s pthread_create with arguments: %s,%u,%s,%s,%d, LINE: %d\n", __FUNCTION__, wanip_args->parameterName, wanip_args->writeID, wanip_args->newValue, wanip_args->oldValue, wanip_args->type,__LINE__)); 
+
+        if (pthread_create(&threadId, NULL, Set_Notifi_ParamName, (void *) wanip_args) != 0) 
+        {
+            CcspTraceError(("%s: Error creating thread Set_Notifi_ParamName for %s\n", __FUNCTION__, IPv6Flag?"IPv6":"IPv4"));
+            free_args_struct(wanip_args);
+            return EVENT_ERROR;
+        }
+        else{
+            CcspTraceInfo(("%s: Created thread Set_Notifi_ParamName for %s\n", __FUNCTION__, IPv6Flag?"IPv6":"IPv4"));
+        }
+    }
+    else
+    {
+        CcspTraceError(("%s wanip_args NULL.\n", __FUNCTION__ ));
+        return EVENT_ERROR;
+    }
+    return(EVENT_OK);
+}
+#endif /*RBUS_WAN_IP*/
 static void
 EvtDispterWanIpAddrsCallback(char *ip_addrs)
 {
+    static char previous_ip[16] = "0.0.0.0";
 #ifdef DUAL_CORE_XB3
     CcspTraceInfo(("%s vsystem %d \n", __FUNCTION__,__LINE__)); 
     CcspTraceInfo(("EvtDispterWanIpAddrsCallback - erouter0 IP = %s\n",ip_addrs));
@@ -434,12 +603,72 @@ EvtDispterWanIpAddrsCallback(char *ip_addrs)
 
      if (strcmp(ip_addrs,"0.0.0.0") != 0 ) {
 
-           CcspTraceInfo(("%s Setting current_wan_ipaddr and restarting firewall %d \n", __FUNCTION__,__LINE__)); 
+        CcspTraceInfo(("%s Setting current_wan_ipaddr and restarting firewall %d \n", __FUNCTION__,__LINE__)); 
 	    sysevent_set(se_fd, token, "current_wan_ipaddr", ip_addrs, 0);
 	    sysevent_set(se_fd, token, "firewall-restart", NULL, 0);
     }
+#if defined (RBUS_WAN_IP)
+    if (strcmp(previous_ip, ip_addrs) != 0) {
+        CcspTraceInfo(("%s New IPv4 address detected: %s, Previous IPv4 address: %s\n", __FUNCTION__, ip_addrs, previous_ip));
+
+        if (publishWanIpAddr(PRIMARY_WAN_IP_ADDRESS, ip_addrs, previous_ip)== RBUS_ERROR_SUCCESS){
+            CcspTraceInfo(("%s publishWanIpAddr success for IPv4 : %d \n", __FUNCTION__,__LINE__)); 
+        }
+        else{
+            CcspTraceError(("%s publishWanIpAddr failed for IPv4 : %d \n", __FUNCTION__,__LINE__)); 
+        }
+  
+        int ret = Send_WebPANotification_WANIP(PRIMARY_WAN_IP_ADDRESS, ip_addrs, previous_ip);
+        if(ret == EVENT_OK){
+            CcspTraceInfo(("%s: Send_WebPANotification_WANIP completed for IPv4 and Set_Notifi_ParamName thread created. %d, ret: %d \n", __FUNCTION__,__LINE__, ret)); 
+        }
+        else{
+            CcspTraceError(("%s: Send_WebPANotification_WANIP failed for IPv4 %d, ret: %d \n", __FUNCTION__,__LINE__, ret)); 
+        }
+        // Storing new IPv4 address
+        strncpy(previous_ip, ip_addrs, sizeof(previous_ip) - 1);
+     }
+     else
+     {
+        CcspTraceInfo(("%s IPv4 address remains the same: %s\n", __FUNCTION__, previous_ip));
+     }
+#endif /*RBUS_WAN_IP*/
 }
 
+#if defined (RBUS_WAN_IP)
+static void
+EvtDispterWanIpv6AddrsCallback(char *ip_addrs)
+{
+    static char previous_ipv6[40] = "::";
+
+    if (strcmp(previous_ipv6, ip_addrs) != 0) 
+    {
+        CcspTraceInfo(("%s New IPv6 address detected: %s, Previous IPv6 address: %s\n", __FUNCTION__, ip_addrs, previous_ipv6));
+      
+        if(publishWanIpAddr(PRIMARY_WAN_IPv6_ADDRESS, ip_addrs, previous_ipv6)== RBUS_ERROR_SUCCESS)
+        {
+            CcspTraceInfo(("%s publishWanIpAddr success for IPv6 : %d \n", __FUNCTION__,__LINE__)); 
+        }
+        else{
+            CcspTraceError(("%s publishWanIpAddr failed for IPv6 : %d \n", __FUNCTION__,__LINE__)); 
+        }
+
+        int ret = Send_WebPANotification_WANIP(PRIMARY_WAN_IPv6_ADDRESS, ip_addrs, previous_ipv6);
+        if(ret == EVENT_OK){
+            CcspTraceInfo(("%s: Send_WebPANotification_WANIP completed for IPv6 and Set_Notifi_ParamName thread created. %d, ret: %d \n", __FUNCTION__,__LINE__, ret)); 
+        }
+        else{
+            CcspTraceError(("%s:  Send_WebPANotification_WANIP failed for IPv6 %d, ret: %d \n", __FUNCTION__,__LINE__, ret)); 
+        }
+        //Storing new IPv6 address
+        strncpy(previous_ipv6, ip_addrs, sizeof(previous_ipv6) - 1);
+     }
+     else
+     {
+            CcspTraceInfo(("%s IPv6 address remains the same: %s\n", __FUNCTION__, previous_ipv6));
+     }
+}
+#endif /*RBUS_WAN_IP*/
 /*
  * Initialize sysevnt 
  *   return 0 if success and -1 if failture.
@@ -479,16 +708,25 @@ EvtDispterEventInits(void)
     if (rc) {
        return(EVENT_ERROR);
     }
+#if defined (RBUS_WAN_IP)
+
+    //register tr_erouter0_dhcpv6_client_v6addr event
+    rc = sysevent_setnotification(se_fd, token, "tr_erouter0_dhcpv6_client_v6addr", &async_id[3]);
+    if (rc) {
+       return(EVENT_ERROR);
+    }
+#endif /*RBUS_WAN_IP*/
+
 #ifdef _HUB4_PRODUCT_REQ_
 	//register valid_ula_address event
     sysevent_set_options(se_fd, token, "valid_ula_address", TUPLE_FLAG_EVENT);
-    rc = sysevent_setnotification(se_fd, token, "valid_ula_address", &async_id[3]);
+    rc = sysevent_setnotification(se_fd, token, "valid_ula_address", &async_id[4]);
     if (rc) {
        return(EVENT_ERROR);
     }
 	//register dibblerServer-restart event
     sysevent_set_options(se_fd, token, "dibblerServer-restart", TUPLE_FLAG_EVENT);
-    rc = sysevent_setnotification(se_fd, token, "dibblerServer-restart", &async_id[0]);
+    rc = sysevent_setnotification(se_fd, token, "dibblerServer-restart", &async_id[5]);
     if (rc) {
        return(EVENT_ERROR);
     }
@@ -566,6 +804,13 @@ EvtDispterEventListen(void)
                 EvtDispterWanIpAddrsCallback(value_str);
                 ret = EVENT_WAN_IPV4_RECD;
             }
+#if defined (RBUS_WAN_IP)
+            else if(!strcmp(name_str, "tr_erouter0_dhcpv6_client_v6addr"))
+            {
+                EvtDispterWanIpv6AddrsCallback(value_str);
+                ret = EVENT_WAN_IPV6_RECD;
+            }
+#endif /*RBUS_WAN_IP*/
 #ifdef _HUB4_PRODUCT_REQ_
             else if(!strcmp(name_str, "valid_ula_address"))
             {
@@ -607,8 +852,12 @@ EvtDispterEventClose(void)
     sysevent_rmnotification(se_fd, token, async_id[0]);
     sysevent_rmnotification(se_fd, token, async_id[1]);
     sysevent_rmnotification(se_fd, token, async_id[2]);
-#ifdef _HUB4_PRODUCT_REQ_
+#if defined (RBUS_WAN_IP)
     sysevent_rmnotification(se_fd, token, async_id[3]);
+#endif /*RBUS_WAN_IP*/
+#ifdef _HUB4_PRODUCT_REQ_
+    sysevent_rmnotification(se_fd, token, async_id[4]);
+    sysevent_rmnotification(se_fd, token, async_id[5]);
 #endif
     /* close this session with syseventd */
     sysevent_close(se_fd, token);
@@ -658,7 +907,13 @@ EvtDispterCheckEvtStatus(int fd, token_t token)
     {
         EvtDispterWanIpAddrsCallback(evtValue);
     }
+#if defined (RBUS_WAN_IP)
 
+    if ( 0 == sysevent_get(fd, token, "tr_erouter0_dhcpv6_client_v6addr", evtValue, sizeof(evtValue)) && '\0' != evtValue[0])
+    {
+        EvtDispterWanIpv6AddrsCallback(evtValue);
+    }
+#endif /*RBUS_WAN_IP*/
     return returnStatus;
 }
 
@@ -696,6 +951,10 @@ EvtDispterEventHandler(void *arg)
                 break;
             case EVENT_WAN_IPV4_RECD:
                 break;
+#if defined (RBUS_WAN_IP)
+            case EVENT_WAN_IPV6_RECD:
+                break;
+#endif /*RBUS_WAN_IP*/
 #ifdef _HUB4_PRODUCT_REQ_
             case EVENT_VALID_ULA_ADDRESS:
                 ValidUlaHandleEventAsync();

@@ -136,7 +136,7 @@
 #include "cosa_common_util.h"
 #endif
 
-#if  defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED) ||  defined(RBUS_BUILD_FLAG_ENABLE) || defined (_HUB4_PRODUCT_REQ_) || defined (_PLATFORM_RASPBERRYPI_)
+#if  defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED) ||  defined(RBUS_BUILD_FLAG_ENABLE) || defined (_HUB4_PRODUCT_REQ_) || defined (_PLATFORM_RASPBERRYPI_) || defined (RBUS_WAN_IP)
 #include "cosa_rbus_handler_apis.h"
 #endif
 #if defined (WIFI_MANAGE_SUPPORTED)
@@ -407,7 +407,7 @@ if(id != 0)
     pMyObject->hRLog          = (ANSC_HANDLE)CosaRLogCreate();
     AnscTraceWarning(("  CosaRLogCreate done!\n"));
 
-#if  defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED) ||  defined(RBUS_BUILD_FLAG_ENABLE) || defined (_HUB4_PRODUCT_REQ_) || defined (_PLATFORM_RASPBERRYPI_)
+#if  defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED) ||  defined(RBUS_BUILD_FLAG_ENABLE) || defined (_HUB4_PRODUCT_REQ_) || defined (_PLATFORM_RASPBERRYPI_) || defined (RBUS_WAN_IP)
     // Device Control Networking Mode init
     devCtrlRbusInit();
 #endif

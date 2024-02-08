@@ -631,7 +631,7 @@
           <syntax>string</syntax>
                                                  
         </parameter>  
-        
+<?ifndef RBUS_WAN_IP?>
         <parameter>
     
           <name>X_COMCAST-COM_WAN_IP</name>
@@ -651,7 +651,7 @@
           <syntax>string</syntax>
 
         </parameter>
-        
+<?endif?>
         <parameter>
     
           <name>X_COMCAST-COM_MTA_MAC</name>

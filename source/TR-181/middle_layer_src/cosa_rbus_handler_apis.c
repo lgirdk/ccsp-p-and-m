@@ -28,12 +28,19 @@
 #include "safec_lib_common.h"
 #include "cosa_dhcpv6_apis.h"
 #include "syscfg/syscfg.h"
+#if defined (RBUS_WAN_IP)
+#include "cosa_deviceinfo_dml.h"
+#endif /*RBUS_WAN_IP*/
 #if defined (WIFI_MANAGE_SUPPORTED)
 #include "cosa_managedwifi_webconfig_apis.h"
 unsigned int gManageWiFiBridgeSubscribersCount = 0;
 unsigned int gManageWiFiEnableSubscribersCount = 0;
 unsigned int gManageWiFiInterfaceSubscribersCount = 0;
 #endif /*WIFI_MANAGE_SUPPORTED*/
+#if defined (RBUS_WAN_IP)
+unsigned int gSubscribersCount_IPv4 = 0;
+unsigned int gSubscribersCount_IPv6 = 0;
+#endif /*RBUS_WAN_IP*/
 
 rbusHandle_t handle;
 
@@ -67,6 +74,10 @@ rbusDataElement_t devCtrlRbusDataElements[] = {
     {MANAGE_WIFI_LAN_BRIDGE, RBUS_ELEMENT_TYPE_EVENT, {getStringHandler, setStringHandler, NULL, NULL, eventManageWiFiBridgeSubHandler,NULL}},
     {MANAGE_WIFI_ENABLE, RBUS_ELEMENT_TYPE_EVENT, {getBoolHandler, NULL, NULL, NULL, eventManageWiFiEnableSubHander, NULL}},
     {MANAGE_WIFI_INTERFACES, RBUS_ELEMENT_TYPE_EVENT, {getStringHandler, setStringHandler, NULL, NULL, eventManageWiFiInterfaceSubHandler,NULL}},
+#endif
+#if defined (RBUS_WAN_IP)
+    {PRIMARY_WAN_IP_ADDRESS, RBUS_ELEMENT_TYPE_EVENT, {getStringHandlerWANIP_RBUS, NULL, NULL, NULL, eventWANIPSubHandler, NULL}},
+    {PRIMARY_WAN_IPv6_ADDRESS, RBUS_ELEMENT_TYPE_EVENT, {getStringHandlerWANIP_RBUS, NULL, NULL, NULL, eventWANIPSubHandler, NULL}},
 #endif
 };
 
@@ -292,52 +303,6 @@ bool initNetMode()
 		return true;
 }
 
-
-/*******************************************************************************
-
-  sendUpdateEvent(): publish event after event value gets updated
-
- ********************************************************************************/
-rbusError_t sendUlongUpdateEvent(char* event_name , uint32_t eventNewData, uint32_t eventOldData)
-{
-	rbusEvent_t event;
-	rbusObject_t data;
-	rbusValue_t value;
-	rbusValue_t oldVal;
-	rbusValue_t byVal;
-	rbusError_t ret = RBUS_ERROR_SUCCESS;
-	
-	//initialize and set previous value for the event
-	rbusValue_Init(&oldVal);
-	rbusValue_SetUInt32(oldVal, eventOldData);
-	//initialize and set new value for the event
-	rbusValue_Init(&value);
-	rbusValue_SetUInt32(value, eventNewData);
-	//initialize and set responsible component name for value change
-	rbusValue_Init(&byVal);
-	rbusValue_SetString(byVal, RBUS_COMPONENT_NAME);
-	//initialize and set rbusObject with desired values
-	rbusObject_Init(&data, NULL);
-	rbusObject_SetValue(data, "value", value);
-	rbusObject_SetValue(data, "oldValue", oldVal);
-	rbusObject_SetValue(data, "by", byVal);
-	//set data to be transferred
-	event.name = event_name;
-	event.data = data;
-	event.type = RBUS_EVENT_VALUE_CHANGED;
-	//publish the event
-	ret = rbusEvent_Publish(handle, &event);
-	if(ret != RBUS_ERROR_SUCCESS) {
-			CcspTraceWarning(("rbusEvent_Publish for %s failed: %d\n", event_name, ret));
-	}
-	//release all initialized rbusValue objects
-	rbusValue_Release(value);
-	rbusValue_Release(oldVal);
-	rbusValue_Release(byVal);
-	rbusObject_Release(data);
-	return ret;
-}
-
 /*******************************************************************************
 
   publishDevCtrlNetMode(): publish DevCtrlNetMode event after event value gets updated
@@ -350,7 +315,7 @@ rbusError_t publishDevCtrlNetMode(uint32_t new_val, uint32_t old_val)
 	CcspTraceInfo(("Publishing Device Networking Mode with updated value=%d\n", new_val));
 	if (gSubscribersCount > 0)
 	{
-		ret = sendUlongUpdateEvent(DEVCTRL_NET_MODE_TR181, new_val, old_val);
+		ret = sendUpdateEvent(DEVCTRL_NET_MODE_TR181, (void*)&new_val, (void*)&old_val, RBUS_INT32);
 		if(ret == RBUS_ERROR_SUCCESS) {
 			CcspTraceInfo(("Published Device Networking Mode with updated value.\n"));
 		}
@@ -373,6 +338,126 @@ bool PAM_Rbus_SyseventInit()
 	CcspTraceError(("Failed to open sysevent. sysevent_fd already have a value '%d'\n", sysevent_fd));
 	return false;
 }
+#endif
+
+/*******************************************************************************
+
+  sendUpdateEvent(): publish event after event value gets updated
+
+ ********************************************************************************/
+rbusError_t sendUpdateEvent(char* event_name , void* eventNewData, void* eventOldData, rbusValueType_t rbus_type)
+{
+    rbusEvent_t event={0};
+    rbusObject_t data;
+    rbusValue_t value, oldVal, byVal;
+    rbusError_t ret = RBUS_ERROR_BUS_ERROR;
+
+    CcspTraceInfo(("sendUpdateEvent event_name:%s, eventNewData:%s, eventOldData:%s, rbus_type: %d\n", event_name, (char*)eventNewData, (char*)eventOldData, rbus_type));
+
+    if(event_name == NULL || eventNewData == NULL){
+        CcspTraceError(("%s %d - Failed publishing\n", __FUNCTION__, __LINE__));
+        return ret;
+    }
+
+    rbusValue_Init(&value);
+    rbusValue_Init(&oldVal);
+
+    switch(rbus_type){
+        case RBUS_INT32:
+            //initialize and set new value for the event
+            rbusValue_SetUInt32(value, *((int*)eventNewData));
+            //initialize and set previous value for the event
+            rbusValue_SetUInt32(oldVal, *((int*)eventOldData));
+            break;
+        case RBUS_STRING:
+            //initialize and set new value for the event
+            rbusValue_SetString(value, (char*)eventNewData);
+            //initialize and set previous value for the event
+            rbusValue_SetString(oldVal, (char*)eventOldData);
+            break;
+        case RBUS_BOOLEAN:
+            rbusValue_SetBoolean(oldVal, *((bool*)eventOldData));
+            rbusValue_SetBoolean(value, *((bool*)eventNewData));
+            break;
+        default:
+            //initialize and set new value for the event
+            rbusValue_Release(value);
+            rbusValue_Release(oldVal);
+            return RBUS_ERROR_BUS_ERROR;
+    }
+
+    //initialize and set responsible component name for value change
+    rbusValue_Init(&byVal);
+    rbusValue_SetString(byVal, RBUS_COMPONENT_NAME);
+    //initialize and set rbusObject with desired values
+    rbusObject_Init(&data, NULL);
+    rbusObject_SetValue(data, "value", value);
+    rbusObject_SetValue(data, "oldValue", oldVal);
+    rbusObject_SetValue(data, "by", byVal);
+    //set data to be transferred
+    event.name = event_name;
+    event.data = data;
+    event.type = RBUS_EVENT_VALUE_CHANGED;
+    //publish the event
+
+    if (NULL == handle)
+    {
+        CcspTraceError(("%s: Rbus handler is NULL\n", __FUNCTION__));
+        return ret;
+    }
+    if (NULL == event.name || NULL == event.data)
+    {
+        CcspTraceError(("%s: Rbus event is NULL\n", __FUNCTION__));
+        return ret;
+    }
+
+    ret = rbusEvent_Publish(handle, &event);
+
+    if(ret != RBUS_ERROR_SUCCESS) {
+            if (ret == RBUS_ERROR_NOSUBSCRIBERS)
+            {
+                CcspTraceError(("%s: No subscribers found for event: %s\n", __FUNCTION__, event_name));
+            }
+            else
+            {
+                CcspTraceError(("rbusEvent_Publish: Unable to Publish event data %s  rbus error code : %d\n",event_name, ret));
+            }
+    }
+    else{
+        CcspTraceWarning(("rbusEvent_Publish for %s success: %d\n", event_name, ret));
+    }
+
+    //release all initialized rbusValue objects
+    rbusValue_Release(value);
+    rbusValue_Release(oldVal);
+    rbusValue_Release(byVal);
+    rbusObject_Release(data);
+    return ret;
+}
+
+#if defined (RBUS_WAN_IP)
+
+rbusError_t publishWanIpAddr(char* event_name, char* new_val, char* old_val)
+{
+    rbusError_t ret = RBUS_ERROR_SUCCESS;
+
+    bool IPv6Flag = false;
+    if(strcmp(event_name,PRIMARY_WAN_IPv6_ADDRESS)==0){
+        IPv6Flag=true;
+    }
+        
+    CcspTraceInfo(("Publishing Primary WAN %s address with updated value=%s\n", IPv6Flag?"IPv6":"IPv4", new_val));
+
+    ret = sendUpdateEvent(event_name, (void*)new_val, (void*)old_val, RBUS_STRING);
+    if(ret == RBUS_ERROR_SUCCESS) {
+        CcspTraceInfo(("Published Primary WAN %s address with updated value.\n", IPv6Flag?"IPv6":"IPv4"));
+    }
+    else {
+        CcspTraceError(("Failed to publish Primary WAN %s address with updated value.\n", IPv6Flag?"IPv6":"IPv4"));
+    }
+    return ret;
+}
+
 #endif
 
 #if defined (WIFI_MANAGE_SUPPORTED)
@@ -605,7 +690,99 @@ rbusError_t eventManageWiFiInterfaceSubHandler(rbusHandle_t handle, rbusEventSub
     return RBUS_ERROR_SUCCESS;
 }
 #endif /*WIFI_MANAGE_SUPPORTED*/
-#if  defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED) ||  defined(RBUS_BUILD_FLAG_ENABLE) ||  defined(_HUB4_PRODUCT_REQ_) || defined (_PLATFORM_RASPBERRYPI_) || defined (WIFI_MANAGE_SUPPORTED)
+
+#if defined (RBUS_WAN_IP)
+
+char const* GetParamName(char const* path)
+{
+    char const* p = path + strlen(path);
+    while(p > path && *(p-1) != '.')
+        p--;
+    return p;
+}
+rbusError_t getStringHandlerWANIP_RBUS(rbusHandle_t handle, rbusProperty_t property, rbusGetHandlerOptions_t *opts)
+{
+    (void)handle;
+    (void)opts;
+
+    int32_t rc;
+    char const* name = rbusProperty_GetName(property);
+    char* param = strdup(GetParamName(name));
+    char val[256];
+    ULONG ulen = 256;
+
+    rbusValue_t value;
+    rbusValue_Init(&value);
+
+    rc = DeviceInfo_GetParamStringValue(NULL, param, val, &ulen);
+    free(param);
+    if(rc != 0)
+    {
+        CcspTraceError(("[%s]: getStringHandlerWANIP_RBUS failed\n", __FUNCTION__));
+        return RBUS_ERROR_BUS_ERROR;
+    }
+    else{
+        CcspTraceInfo(("[%s]: getStringHandlerWANIP_RBUS success\n", __FUNCTION__));
+    }
+
+    rbusValue_SetString(value, val);
+    rbusProperty_SetValue(property, value);
+    rbusValue_Release(value);
+
+    return RBUS_ERROR_SUCCESS;
+}
+rbusError_t eventWANIPSubHandler(rbusHandle_t handle, rbusEventSubAction_t action, const char *eventName, rbusFilter_t filter, int32_t interval, bool *autoPublish)
+{
+    (void)handle;
+    (void)filter;
+    (void)interval;
+    
+    *autoPublish = false;
+    
+    CcspTraceInfo(("%s called for event '%s'\n", __FUNCTION__, eventName));
+
+    if (strcmp(eventName, PRIMARY_WAN_IP_ADDRESS) == 0)
+    {
+        if (action == RBUS_EVENT_ACTION_SUBSCRIBE)
+        {
+            gSubscribersCount_IPv4 += 1;
+        }
+        else
+        {
+            if (gSubscribersCount_IPv4 > 0)
+            {
+                gSubscribersCount_IPv4 -= 1;
+            }
+        }
+        CcspTraceWarning(("WAN IP Subscribers count changed, new value=%d\n", gSubscribersCount_IPv4));
+
+    }
+    else if (strcmp(eventName, PRIMARY_WAN_IPv6_ADDRESS) == 0)
+    {
+        if (action == RBUS_EVENT_ACTION_SUBSCRIBE)
+        {
+            gSubscribersCount_IPv6 += 1;
+        }
+        else
+        {
+            if (gSubscribersCount_IPv6 > 0)
+            {
+                gSubscribersCount_IPv6 -= 1;
+            }
+        }
+        CcspTraceWarning(("WAN IPv6 Subscribers count changed, new value=%d\n", gSubscribersCount_IPv6));
+
+    }
+    else
+    {
+        CcspTraceWarning(("provider: eventSubHandler unexpected eventName %s\n", eventName));
+    }
+    return RBUS_ERROR_SUCCESS;
+}
+
+#endif /*RBUS_WAN_IP*/
+
+#if  defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED) ||  defined(RBUS_BUILD_FLAG_ENABLE) ||  defined(_HUB4_PRODUCT_REQ_) || defined (_PLATFORM_RASPBERRYPI_) || defined (WIFI_MANAGE_SUPPORTED) || defined (RBUS_WAN_IP)
 /***********************************************************************
 
   devCtrlRbusInit(): Initialize Rbus and data elements
@@ -628,7 +805,7 @@ rbusError_t devCtrlRbusInit()
 		rc = RBUS_ERROR_NOT_INITIALIZED;
 		return rc;
 	}
-#if  defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED) || defined (WIFI_MANAGE_SUPPORTED)
+#if  defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED) || defined (WIFI_MANAGE_SUPPORTED) || defined (RBUS_WAN_IP)
 	// Register data elements
 	rc = rbus_regDataElements(handle, NUM_OF_RBUS_PARAMS, devCtrlRbusDataElements);
 #endif

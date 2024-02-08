@@ -30,6 +30,10 @@
 #define RBUS_COMPONENT_NAME	"CcspPandMSsp"
 
 #define DEVCTRL_NET_MODE_TR181	"Device.X_RDKCENTRAL-COM_DeviceControl.DeviceNetworkingMode"
+#if defined (RBUS_WAN_IP)
+#define PRIMARY_WAN_IP_ADDRESS "Device.DeviceInfo.X_COMCAST-COM_WAN_IP"
+#define PRIMARY_WAN_IPv6_ADDRESS "Device.DeviceInfo.X_COMCAST-COM_WAN_IPv6"
+#endif /*RBUS_WAN_IP*/
 
 
 
@@ -49,7 +53,7 @@ rbusError_t eventDevctrlSubHandler(rbusHandle_t handle, rbusEventSubAction_t act
 
 bool initNetMode();
 
-rbusError_t sendUlongUpdateEvent(char* event_name , uint32_t eventNewData, uint32_t eventOldData);
+rbusError_t sendUpdateEvent(char* event_name , void* eventNewData, void* eventOldData, rbusValueType_t rbus_type);
 
 rbusError_t publishDevCtrlNetMode(uint32_t new_val, uint32_t old_val);
 
@@ -64,7 +68,17 @@ rbusError_t getBoolHandler(rbusHandle_t handle, rbusProperty_t property, rbusGet
 rbusError_t eventManageWiFiEnableSubHander(rbusHandle_t handle, rbusEventSubAction_t action, const char *eventName, rbusFilter_t filter, int32_t interval, bool *autoPublish);
 rbusError_t eventManageWiFiInterfaceSubHandler(rbusHandle_t handle, rbusEventSubAction_t action, const char *eventName, rbusFilter_t filter, int32_t interval, bool *autoPublish);
 #endif
-#if defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED) ||  defined(RBUS_BUILD_FLAG_ENABLE) || defined (_HUB4_PRODUCT_REQ_) || defined (_PLATFORM_RASPBERRYPI_)
+
+#if defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED) ||  defined(RBUS_BUILD_FLAG_ENABLE) || defined (_HUB4_PRODUCT_REQ_) || defined (_PLATFORM_RASPBERRYPI_) || defined (RBUS_WAN_IP)
 rbusError_t devCtrlRbusInit();
+#endif
+
+#if defined (RBUS_WAN_IP)
+rbusError_t publishWanIpAddr(char* event_name, char* new_val, char* old_val);
+char const* GetParamName(char const* path);
+rbusError_t getStringHandlerWANIP_RBUS(rbusHandle_t handle, rbusProperty_t property, rbusGetHandlerOptions_t *opts);
+rbusError_t eventWANIPSubHandler(rbusHandle_t handle, rbusEventSubAction_t action, const char *eventName, rbusFilter_t filter, int32_t interval, bool *autoPublish);
+rbusError_t eventWANIPv6SubHandler(rbusHandle_t handle, rbusEventSubAction_t action, const char *eventName, rbusFilter_t filter, int32_t interval, bool *autoPublish);
+
 #endif
 #endif
