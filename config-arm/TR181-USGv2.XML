@@ -18900,6 +18900,30 @@
           <syntax>int</syntax>
           <writable>true</writable>
         </parameter>
+        <parameter>
+          <name>HealthCheckEnable</name>
+          <type>boolean</type>
+          <syntax>bool</syntax>
+          <writable>true</writable>
+        </parameter>
+        <parameter>
+          <name>HealthCheckPingCount</name>
+          <type>unsignedInt[1:5]</type>
+          <syntax>uint32</syntax>
+          <writable>true</writable>
+        </parameter>
+        <parameter>
+          <name>HealthCheckPingInterval</name>
+          <type>unsignedInt[10:20]</type>
+          <syntax>uint32</syntax>
+          <writable>true</writable>
+        </parameter>
+        <parameter>
+          <name>HealthCheckTriggerInterval</name>
+          <type>unsignedInt[10:60]</type>
+          <syntax>uint32</syntax>
+          <writable>true</writable>
+        </parameter>
       </parameters>
     </object>
 
