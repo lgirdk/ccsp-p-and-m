@@ -182,3 +182,63 @@ ANSC_STATUS CosaDmlTunneledStaticIPSetRadiusInterface (ANSC_HANDLE hContext, int
         return ANSC_STATUS_FAILURE;
     return ANSC_STATUS_SUCCESS;
 }
+
+ANSC_STATUS CosaDmlTunneledStaticIPGetHealthCheckEnable (ANSC_HANDLE hContext, BOOL *pValue)
+{
+    char buf[8];
+    syscfg_get(NULL, "tunneled_static_ip_hc_enable", buf, sizeof(buf));
+    *pValue = (strcmp(buf, "1") == 0);
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS CosaDmlTunneledStaticIPSetHealthCheckEnable (ANSC_HANDLE hContext, BOOL bValue)
+{
+    if (syscfg_set(NULL, "tunneled_static_ip_hc_enable", bValue ? "1" : "0") != 0)
+        return ANSC_STATUS_FAILURE;
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS CosaDmlTunneledStaticIPGetHealthCheckPingCount (ANSC_HANDLE hContext, unsigned int *pValue)
+{
+    char buf[8];
+    syscfg_get(NULL, "tunneled_static_ip_hc_ping_count", buf, sizeof(buf));
+    *pValue = atoi(buf);
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS CosaDmlTunneledStaticIPSetHealthCheckPingCount (ANSC_HANDLE hContext, unsigned int value)
+{
+    if (syscfg_set_u(NULL, "tunneled_static_ip_hc_ping_count", value) != 0)
+        return ANSC_STATUS_FAILURE;
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS CosaDmlTunneledStaticIPGetHealthCheckPingInterval (ANSC_HANDLE hContext, unsigned int *pValue)
+{
+    char buf[8];
+    syscfg_get(NULL, "tunneled_static_ip_hc_ping_interval", buf, sizeof(buf));
+    *pValue = atoi(buf);
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS CosaDmlTunneledStaticIPSetHealthCheckPingInterval (ANSC_HANDLE hContext, unsigned int value)
+{
+    if (syscfg_set_u(NULL, "tunneled_static_ip_hc_ping_interval", value) != 0)
+        return ANSC_STATUS_FAILURE;
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS CosaDmlTunneledStaticIPGetHealthCheckTriggerInterval (ANSC_HANDLE hContext, unsigned int *pValue)
+{
+    char buf[8];
+    syscfg_get(NULL, "tunneled_static_ip_hc_trigger_interval", buf, sizeof(buf));
+    *pValue = atoi(buf);
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS CosaDmlTunneledStaticIPSetHealthCheckTriggerInterval (ANSC_HANDLE hContext, unsigned int value)
+{
+    if (syscfg_set_u(NULL, "tunneled_static_ip_hc_trigger_interval", value) != 0)
+        return ANSC_STATUS_FAILURE;
+    return ANSC_STATUS_SUCCESS;
+}
