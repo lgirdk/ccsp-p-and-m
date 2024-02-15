@@ -39,6 +39,10 @@ _COSA_DML_LGI_TUNNELEDSTATICIP_CFG
     char     RadiusAccServerIPAddr[45];
     char     RadiusAccSecret[45];
     int      RadiusAccServerPort;
+    BOOL     HealthCheckEnable;
+    unsigned int HealthCheckPingCount;
+    unsigned int HealthCheckPingInterval;
+    unsigned int HealthCheckTriggerInterval;
 }
 COSA_DML_LGI_TUNNELEDSTATICIP_CFG, *PCOSA_DML_LGI_TUNNELEDSTATICIP_CFG;
 
