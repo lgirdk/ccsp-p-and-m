@@ -41,5 +41,13 @@ ANSC_STATUS CosaDmlTunneledStaticIPGetRadiusAccSecret (ANSC_HANDLE hContext, cha
 ANSC_STATUS CosaDmlTunneledStaticIPSetRadiusAccSecret (ANSC_HANDLE hContext, char *pValue);
 ANSC_STATUS CosaDmlTunneledStaticIPGetRadiusInterface (ANSC_HANDLE hContext, int *pValue);
 ANSC_STATUS CosaDmlTunneledStaticIPSetRadiusInterface (ANSC_HANDLE hContext, int value);
+ANSC_STATUS CosaDmlTunneledStaticIPGetHealthCheckEnable (ANSC_HANDLE hContext, BOOL *pValue);
+ANSC_STATUS CosaDmlTunneledStaticIPSetHealthCheckEnable (ANSC_HANDLE hContext, BOOL bValue);
+ANSC_STATUS CosaDmlTunneledStaticIPGetHealthCheckPingCount (ANSC_HANDLE hContext, unsigned int *pValue);
+ANSC_STATUS CosaDmlTunneledStaticIPSetHealthCheckPingCount (ANSC_HANDLE hContext, unsigned int value);
+ANSC_STATUS CosaDmlTunneledStaticIPGetHealthCheckPingInterval (ANSC_HANDLE hContext, unsigned int *pValue);
+ANSC_STATUS CosaDmlTunneledStaticIPSetHealthCheckPingInterval (ANSC_HANDLE hContext, unsigned int value);
+ANSC_STATUS CosaDmlTunneledStaticIPGetHealthCheckTriggerInterval (ANSC_HANDLE hContext, unsigned int *pValue);
+ANSC_STATUS CosaDmlTunneledStaticIPSetHealthCheckTriggerInterval (ANSC_HANDLE hContext, unsigned int value);
 
 #endif

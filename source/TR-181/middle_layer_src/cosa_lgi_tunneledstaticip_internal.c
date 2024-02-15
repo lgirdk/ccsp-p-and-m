@@ -64,6 +64,10 @@ ANSC_STATUS CosaLgiTunneledStaticIPInitialize (ANSC_HANDLE hThisObject)
     CosaDmlTunneledStaticIPGetRadiusAccServerIPAddr(NULL, &pMyObject->Cfg.RadiusAccServerIPAddr);
     CosaDmlTunneledStaticIPGetRadiusAccSecret(NULL, &pMyObject->Cfg.RadiusAccSecret);
     CosaDmlTunneledStaticIPGetRadiusAccServerPort(NULL, &pMyObject->Cfg.RadiusAccServerPort);
+    CosaDmlTunneledStaticIPGetHealthCheckEnable(NULL, &pMyObject->Cfg.HealthCheckEnable);
+    CosaDmlTunneledStaticIPGetHealthCheckPingCount(NULL, &pMyObject->Cfg.HealthCheckPingCount);
+    CosaDmlTunneledStaticIPGetHealthCheckPingInterval(NULL, &pMyObject->Cfg.HealthCheckPingInterval);
+    CosaDmlTunneledStaticIPGetHealthCheckTriggerInterval(NULL, &pMyObject->Cfg.HealthCheckTriggerInterval);
 
     pMyObject->OldCfg = pMyObject->Cfg;
 
