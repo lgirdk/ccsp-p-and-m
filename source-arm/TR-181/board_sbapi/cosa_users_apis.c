@@ -762,7 +762,11 @@ CosaDmlUserResetPassword
    if(!strcmp(pEntry->Username,"admin"))
    {
      user_hashandsavepwd(NULL,defPassword,pEntry);
-     memset_s(defPassword, sizeof(defPassword), 0, sizeof(defPassword));
+     /* CID 349776 Unchecked return value : fix */
+     int ret = memset_s(defPassword, sizeof(defPassword), 0, sizeof(defPassword));
+     if( ret != 0) {
+        return ANSC_STATUS_FAILURE;
+     }
      return ANSC_STATUS_SUCCESS;
    }
 #if defined(_COSA_FOR_BCI_)
