@@ -32,6 +32,12 @@ BOOL X_LGI_COM_TunneledStaticIPService_GetParamBoolValue (ANSC_HANDLE hInsContex
         return TRUE;
     }
 
+    if (strcmp(ParamName, "HealthCheckEnable") == 0)
+    {
+        *pBool = pMyObject->Cfg.HealthCheckEnable;
+        return TRUE;
+    }
+
     return FALSE;
 }
 
@@ -42,6 +48,12 @@ BOOL X_LGI_COM_TunneledStaticIPService_SetParamBoolValue (ANSC_HANDLE hInsContex
     if (strcmp(ParamName, "Enable") == 0)
     {
         pMyObject->Cfg.Enable = bValue;
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "HealthCheckEnable") == 0)
+    {
+        pMyObject->Cfg.HealthCheckEnable = bValue;
         return TRUE;
     }
 
@@ -194,6 +206,24 @@ BOOL X_LGI_COM_TunneledStaticIPService_GetParamUlongValue (ANSC_HANDLE hInsConte
         return TRUE;
     }
 
+    if (strcmp(ParamName, "HealthCheckPingCount") == 0)
+    {
+        *puLong = pMyObject->Cfg.HealthCheckPingCount;
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "HealthCheckPingInterval") == 0)
+    {
+        *puLong = pMyObject->Cfg.HealthCheckPingInterval;
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "HealthCheckTriggerInterval") == 0)
+    {
+        *puLong = pMyObject->Cfg.HealthCheckTriggerInterval;
+        return TRUE;
+    }
+
     return FALSE;
 }
 
@@ -204,6 +234,24 @@ BOOL X_LGI_COM_TunneledStaticIPService_SetParamUlongValue (ANSC_HANDLE hInsConte
     if (strcmp(ParamName, "RadiusInterface") == 0)
     {
         pMyObject->Cfg.RadiusInterface = (int) uValuepUlong;
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "HealthCheckPingCount") == 0)
+    {
+        pMyObject->Cfg.HealthCheckPingCount = (unsigned int) uValuepUlong;
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "HealthCheckPingInterval") == 0)
+    {
+        pMyObject->Cfg.HealthCheckPingInterval = (unsigned int) uValuepUlong;
+        return TRUE;
+    }
+
+    if (strcmp(ParamName, "HealthCheckTriggerInterval") == 0)
+    {
+        pMyObject->Cfg.HealthCheckTriggerInterval = (unsigned int) uValuepUlong;
         return TRUE;
     }
 
@@ -290,6 +338,30 @@ ULONG X_LGI_COM_TunneledStaticIPService_Commit (ANSC_HANDLE hInsContext)
     {
         bConfigChanged = TRUE;
         CosaDmlTunneledStaticIPSetRadiusAccServerPort(NULL, pMyObject->Cfg.RadiusAccServerPort);
+    }
+
+    if (pMyObject->Cfg.HealthCheckEnable != pMyObject->OldCfg.HealthCheckEnable)
+    {
+        bConfigChanged = TRUE;
+        CosaDmlTunneledStaticIPSetHealthCheckEnable(NULL, pMyObject->Cfg.HealthCheckEnable);
+    }
+
+    if (pMyObject->Cfg.HealthCheckPingCount != pMyObject->OldCfg.HealthCheckPingCount)
+    {
+        bConfigChanged = TRUE;
+        CosaDmlTunneledStaticIPSetHealthCheckPingCount(NULL, pMyObject->Cfg.HealthCheckPingCount);
+    }
+
+    if (pMyObject->Cfg.HealthCheckPingInterval != pMyObject->OldCfg.HealthCheckPingInterval)
+    {
+        bConfigChanged = TRUE;
+        CosaDmlTunneledStaticIPSetHealthCheckPingInterval(NULL, pMyObject->Cfg.HealthCheckPingInterval);
+    }
+
+    if (pMyObject->Cfg.HealthCheckTriggerInterval != pMyObject->OldCfg.HealthCheckTriggerInterval)
+    {
+        bConfigChanged = TRUE;
+        CosaDmlTunneledStaticIPSetHealthCheckTriggerInterval(NULL, pMyObject->Cfg.HealthCheckTriggerInterval);
     }
 
     if (bConfigChanged)
