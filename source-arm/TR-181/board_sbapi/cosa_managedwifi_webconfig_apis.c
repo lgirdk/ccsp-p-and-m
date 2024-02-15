@@ -976,8 +976,14 @@ void getBridgeDetailsFromPsm(void)
     CcspTraceInfo(("%s: aBridgeName=%zu\n", __FUNCTION__,sizeof(sManageWiFiInfo.aBridgeName)));
 #endif
     CcspTraceInfo(("%s: aParamName=%s\n", __FUNCTION__,aParamName));
-    psmGet(aParamName, sManageWiFiInfo.aBridgeName, BUFF_LEN_32);
-    CcspTraceInfo(("%s: aBridgeName=%s\n", __FUNCTION__,sManageWiFiInfo.aBridgeName));
+    
+    /* CID 347167 Unchecked return value fix */
+    int ret = psmGet(aParamName, sManageWiFiInfo.aBridgeName, BUFF_LEN_32);
+    if (ret != 0) {
+        CcspTraceError(("%s:%d, Failed to get bridge details\n",__FUNCTION__,__LINE__));
+    } else {
+        CcspTraceInfo(("%s: aBridgeName=%s\n", __FUNCTION__,sManageWiFiInfo.aBridgeName));
+    }
     if ('\0' == sManageWiFiInfo.aBridgeName[0])
     {
         strncpy(sManageWiFiInfo.aBridgeName,"brlan15", sizeof(sManageWiFiInfo.aBridgeName)-1);
