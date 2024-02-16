@@ -390,11 +390,11 @@ rbusError_t getStringHandler(rbusHandle_t handle, rbusProperty_t property, rbusG
     getManageWiFiDetails(&sManageWifiDetails);
     if (0 == strcmp(name,MANAGE_WIFI_LAN_BRIDGE))
     {
-        snprintf(aParamVal, BUFF_LEN_64, "%s%s",sManageWifiDetails.aKey,sManageWifiDetails.aBridgeName);
+        snprintf(aParamVal, BUFF_LEN_64-1, "%s%s",sManageWifiDetails.aKey,sManageWifiDetails.aBridgeName);
     }
     else if (0 == strcmp(name, MANAGE_WIFI_INTERFACES))
     {
-        snprintf(aParamVal, BUFF_LEN_64, "%s%s",sManageWifiDetails.aKey,sManageWifiDetails.aWiFiInterfaces);
+        snprintf(aParamVal, BUFF_LEN_64-1, "%s%s",sManageWifiDetails.aKey,sManageWifiDetails.aWiFiInterfaces);
     }
     else
     {
