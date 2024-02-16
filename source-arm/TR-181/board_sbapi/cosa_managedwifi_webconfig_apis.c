@@ -1130,7 +1130,9 @@ int readLanConfigFromPSM(backupLanconfig_t *pBackupLanConfig)
     memset(aParamVal, 0, BUFF_LEN_32);
     if (0 != psmGet(aParamName, aParamVal, BUFF_LEN_32))
         return -1;
-    if ('\0' != aParamVal)
+
+    /* CID 347105 Array compared against 0 : fix */
+    if (aParamVal[0] != '\0')
     {
         if (!strncmp ("true",aParamVal, 4))
             pBackupLanConfig->bIpv6Enable= true;
