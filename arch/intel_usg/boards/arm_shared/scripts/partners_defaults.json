@@ -2,7 +2,7 @@
    "properties" : {
 
       "comments" : "MANDATORY: !!! Please increment below version value for any new parameter added in this partners_defaults.json !!!",
-      "version" : "8.15"
+      "version" : "8.16"
    },
 
    "comcast" : {
@@ -608,9 +608,9 @@
       "Device.X_RDKCENTRAL-COM_EthernetWAN_MTA.IPv4SecondaryDhcpServerOptions" : "00000000",
       "Device.X_RDKCENTRAL-COM_EthernetWAN_MTA.IPv6PrimaryDhcpServerOptions" : "00000000",
       "Device.X_RDKCENTRAL-COM_EthernetWAN_MTA.IPv6SecondaryDhcpServerOptions" : "00000000", 
-      "Device.Time.NTPServer1" : "ntp001.videotron.ca",
-      "Device.Time.NTPServer2" : "ntp002.videotron.ca",
-      "Device.Time.NTPServer3" : "ntp003.videotron.ca",
+      "Device.Time.NTPServer1" : "ntp004.videotron.ca",
+      "Device.Time.NTPServer2" : "",
+      "Device.Time.NTPServer3" : "",
       "Device.Time.NTPServer4" : "",
       "Device.Time.NTPServer5" : "",
       "Device.X_RDK_WebConfig.URL" : "https://cpe-config-videotron.xdp.comcast.net/api/v1/device/{mac}/config",
