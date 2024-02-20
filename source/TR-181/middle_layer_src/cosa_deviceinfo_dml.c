@@ -5638,7 +5638,10 @@ MemoryStatus_SetParamUlongValue
     /* check the parameter name and set the corresponding value */
     if (strcmp(ParamName, "X_RDKCENTRAL-COM_FreeMemThreshold") == 0)
     {
-        syscfg_set_u_commit (NULL, "MinMemoryThreshold_Value", uValue);
+        /* CID 339641 Unchecked return value : fix */
+        if (syscfg_set_u_commit (NULL, "MinMemoryThreshold_Value", uValue) != 0) {
+            return FALSE;
+        }
         return TRUE;
     }
 
