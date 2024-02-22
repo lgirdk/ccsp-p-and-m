@@ -5808,9 +5808,9 @@ static int gen_ssmtp_msg_file(const char *to, const char *from, const char *subj
 
 static int ssmtp_send(const char *msgFilePath, const char *subject, const char *attachmentPath)
 {
-    char buf[MAX_LINE_LEN] = "";
-    char recipient[MAX_LINE_LEN] = "";
-    char attachmentPathCopy[MAX_LINE_LEN] = "";
+    char buf[MAX_LINE_LEN] = {0};
+    char recipient[MAX_LINE_LEN] = {0};
+    char attachmentPathCopy[MAX_LINE_LEN] = {0};
 
     FILE *fp;
 
@@ -5823,11 +5823,12 @@ static int ssmtp_send(const char *msgFilePath, const char *subject, const char *
     //copy recipient address from msg file
     fgets(buf, sizeof(buf), fp);
     fclose(fp);
-    strncpy(recipient, buf + strlen("To: "), sizeof(recipient));
+    /* CID 162725 Buffer not null terminated : fix */
+    strncpy(recipient, buf + strlen("To: "), sizeof(recipient)-1 );
 
     /* CID 162725 fix */
     strncpy(attachmentPathCopy, attachmentPath, (sizeof(attachmentPathCopy)-1));
-
+  
     v_secure_system( "(((cat %s; echo 'Subject: %s'; echo; echo; uuencode %s %s) | ssmtp %s) && rm %s) &", msgFilePath, subject, attachmentPath, basename(attachmentPathCopy), recipient, attachmentPath);
 
     return 0;
