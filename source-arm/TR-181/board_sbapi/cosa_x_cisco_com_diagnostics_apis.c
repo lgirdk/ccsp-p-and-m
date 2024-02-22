@@ -462,8 +462,9 @@ static int _get_log(PCOSA_DML_DIAGNOSTICS_ENTRY *ppEntry, char *path, char *user
         return 0;
 
     while((result = readdir(dir))){
-        if(result == NULL)
-            break;
+        /* CID 163446 : Logically Dead code fix*/
+        // if(result == NULL)
+        //    break;
         if(result->d_name[0] == '.')
             continue;
 
