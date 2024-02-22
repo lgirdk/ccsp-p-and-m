@@ -111,7 +111,7 @@
 
 static int writeToJson(char *data, char *file);
 
-#if defined(_PLATFORM_IPQ_)
+#if defined(_PLATFORM_IPQ_) || defined(_XER5_PRODUCT_REQ_)
 #include "ccsp_vendor.h"
 #endif
 
@@ -127,7 +127,7 @@ static int writeToJson(char *data, char *file);
 
 // this file is in integration_src.intel_usg_arm directory
 
-#elif (_COSA_INTEL_USG_ARM_ || _PLATFORM_IPQ_ || _COSA_BCM_MIPS_)
+#elif (_COSA_INTEL_USG_ARM_ || _PLATFORM_IPQ_ || _XER5_PRODUCT_REQ_ || _COSA_BCM_MIPS_)
 
 #include "ccsp_psm_helper.h"            // for PSM_Get_Record_Value2
 #include "dmsb_tr181_psm_definitions.h" // for DMSB_TR181_PSM_DeviceInfo_Root/ProductClass

@@ -395,7 +395,7 @@ if(id != 0)
     pMyObject->hLanMngm          = (ANSC_HANDLE)CosaLanManagementCreate();
 #endif
     AnscTraceWarning(("  CosaLanManagementCreate done!\n"));
-#if !defined(_PLATFORM_IPQ_) || defined(_XER5_PRODUCT_REQ_)
+#if !defined(_PLATFORM_IPQ_)
     //pMyObject->hMoCA          = (ANSC_HANDLE)CosaMoCACreate();
     //AnscTraceWarning(("  CosaMoCACreate done!\n"));
     pMyObject->hUpnp          = (ANSC_HANDLE)CosaUpnpCreate();
