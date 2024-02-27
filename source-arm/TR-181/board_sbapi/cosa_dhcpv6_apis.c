@@ -10045,7 +10045,13 @@ void Switch_ipv6_mode(char *ifname, int length)
     {
         CcspTraceInfo(("%s : Current_wan_ifname:%s last_wan_ifname : %s. Ipv6 Mode not changed.\n",__FUNCTION__, ifname, last_wan_ifname));
     }
+    
+    if (ifname != NULL) {
     strncpy(last_wan_ifname, ifname, sizeof(last_wan_ifname) -1);
+    }
+    else {
+	    CcspTraceError(("[%s] ERROR, ifname is NULL \n", __FUNCTION__));
+    }
 }
 
 void *Ipv6ModeHandler_thrd(void *data)
