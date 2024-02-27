@@ -1739,7 +1739,7 @@ ULONG COSADmlGetCpuUsage()
     COSA_CPUTIME_INFO           time[2];
     ULONG                       UsedTime = 0;
     ULONG                       IdleTime = 0;
-    double                      CPUUsage;
+    double                      CPUUsage = 0;
     int                         CPUNum;
 
     AnscZeroMemory(time, sizeof(time));
@@ -1784,8 +1784,13 @@ ULONG COSADmlGetCpuUsage()
         
     CcspTraceWarning(("UsedTime = %lu\n", UsedTime));
     CcspTraceWarning(("IdleTime = %lu\n", IdleTime));
-        
-    CPUUsage = (UsedTime *100 / (UsedTime + IdleTime)) / CPUNum ;
+
+    if (UsedTime + IdleTime == 0) {
+         CcspTraceWarning(("To avoid division by zero error crash\n"));
+    } 
+    else {
+         CPUUsage = (UsedTime *100 / (UsedTime + IdleTime)) / CPUNum ;
+    }    
 
     if( !CPUUsage )
     {
