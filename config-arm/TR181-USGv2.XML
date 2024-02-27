@@ -54,11 +54,11 @@
     <path>libtr181</path>
 
     <func_Init>COSA_Init</func_Init>
-	
-	<func_Async_Init>COSA_Async_Init</func_Async_Init>
+
+    <func_Async_Init>COSA_Async_Init</func_Async_Init>
 
     <func_Unload>COSA_Unload</func_Unload>
-    
+
     <func_MemoryCheck>COSA_MemoryCheck</func_MemoryCheck>
 
     <func_MemoryUsage>COSA_MemoryUsage</func_MemoryUsage>
@@ -161,92 +161,92 @@
     <object>
 
      <name>X_RDKCENTRAL-COM_DeviceControl</name>
- 
+
      <objectType>object</objectType>
- 
+
       <objects>
-  
+
        <object>
-   
+
         <name>LanManagementEntry</name>
-   
+
         <objectType>object</objectType>
-   
+
         <functions>
-   
+
          <func_GetParamBoolValue>LanManagement_GetParamBoolValue</func_GetParamBoolValue>
-	
+
          <func_GetParamStringValue>LanManagement_GetParamStringValue</func_GetParamStringValue>
-	
+
          <func_SetParamBoolValue>LanManagement_SetParamBoolValue</func_SetParamBoolValue>
-	
+
          <func_SetParamStringValue>LanManagement_SetParamStringValue</func_SetParamStringValue>
-	
+
          <func_Validate>LanManagement_Validate</func_Validate>
-	
+
          <func_Commit>LanManagement_Commit</func_Commit>
-	
+
          <func_Rollback>LanManagement_Rollback</func_Rollback>
-	
+
         </functions>
-   
+
         <parameters>
-   
+
          <parameter>
-	
+
           <name>LanIpv6Enable</name>
-	 
+
           <type>boolean</type>
-	 
+
           <syntax>bool</syntax>
-	 
+
           <writable>true</writable>
-	 
-         </parameter>
-	
-         <parameter>
-	
-          <name>LanIpv6UlaEnable</name>
-	 
-          <type>boolean</type>
-	 
-          <syntax>bool</syntax>
-	 
-          <writable>true</writable>
-	 
-         </parameter>
-	
-         <parameter>
-	
-          <name>LanIpv6Ula</name>
-	 
-          <type>string(64)</type>
-	 
-          <syntax>string</syntax>
-	 
-          <writable>false</writable>
-	 
+
          </parameter>
 
          <parameter>
-	
-          <name>LanIpv6UlaPrefix</name>
-	 
-          <type>string(64)</type>
-	 
-          <syntax>string</syntax>
-	 
+
+          <name>LanIpv6UlaEnable</name>
+
+          <type>boolean</type>
+
+          <syntax>bool</syntax>
+
           <writable>true</writable>
-	 
+
          </parameter>
-	
+
+         <parameter>
+
+          <name>LanIpv6Ula</name>
+
+          <type>string(64)</type>
+
+          <syntax>string</syntax>
+
+          <writable>false</writable>
+
+         </parameter>
+
+         <parameter>
+
+          <name>LanIpv6UlaPrefix</name>
+
+          <type>string(64)</type>
+
+          <syntax>string</syntax>
+
+          <writable>true</writable>
+
+         </parameter>
+
         </parameters>
-   
+
       </object>
-  
+
      </objects>
- 
-    </object>	
+
+    </object>
 <?endif?>
 
 
@@ -621,7 +621,7 @@
         </functions>
 
         <parameters>
-            
+
             <parameter>
                 <name>STPEnable</name>
                 <type>boolean</type>
@@ -1030,7 +1030,7 @@
                 <type>boolean</type>
                 <syntax>bool</syntax>
                 <writable>true</writable>
-	    </parameter>
+        </parameter>
             <parameter>
                 <name>SONMeshEnabled</name>
                 <description>PLUME Control SON Mesh Enable Data Model</description>
@@ -1192,7 +1192,7 @@
         </parameter>
 -->
         <parameter>
-        
+
           <name>X_CISCO_COM_BootloaderVersion</name>
 
           <type>string(64)</type>
@@ -1202,7 +1202,7 @@
         </parameter>
 
         <parameter>
-        
+
           <name>X_LGI-COM_BootloaderBuildTime</name>
 
           <type>string(64)</type>
@@ -1212,7 +1212,7 @@
         </parameter>
 
         <parameter>
-            
+
           <name>X_CISCO_COM_FirmwareName</name>
 
           <type>string(64)</type>
@@ -1232,68 +1232,68 @@
         </parameter>
 
         <parameter>
-    
+
           <name>X_CISCO_COM_FirmwareBuildTime</name>
-                   
+
           <type>string(64)</type>
-                                  
+
           <syntax>string</syntax>
-                                                 
+
         </parameter>
-               
-	<parameter>
+
+    <parameter>
 
           <name>X_RDKCENTRAL-COM_ConfigureWiFi</name>
-	
+
           <type>boolean</type>
-	
+
           <syntax>bool</syntax>
 
           <writable>true</writable>
 
          </parameter>
-	<parameter>
+    <parameter>
 
           <name>X_RDKCENTRAL-COM_CaptivePortalEnable</name>
-	
+
           <type>boolean</type>
-	
+
           <syntax>bool</syntax>
 
           <writable>true</writable>
 
-         </parameter>	
-	 
-	 <parameter>
+         </parameter>
+
+     <parameter>
 
           <name>X_RDKCENTRAL-COM_WiFiNeedsPersonalization</name>
-	
+
           <type>boolean</type>
-	
+
           <syntax>bool</syntax>
 
           <writable>false</writable>
 
     </parameter>
-         
-	<parameter>
+
+    <parameter>
 
           <name>X_RDKCENTRAL-COM_CloudUICapable</name>
-	
+
           <type>boolean</type>
-	
+
           <syntax>bool</syntax>
 
           <writable>true</writable>
 
          </parameter>
 
-	<parameter>
+    <parameter>
 
           <name>X_RDKCENTRAL-COM_CloudUIEnable</name>
-	
+
           <type>boolean</type>
-	
+
           <syntax>bool</syntax>
 
           <writable>true</writable>
@@ -1303,28 +1303,28 @@
   <parameter>
 
           <name>X_RDKCENTRAL-COM_CloudPersonalizationURL</name>
-  
+
           <type>string</type>
-  
+
           <syntax>string</syntax>
 
           <writable>true</writable>
 
          </parameter>
 <?endif?>
-	<parameter>
-            
+    <parameter>
+
           <name>X_RDKCENTRAL-COM_UI_ACCESS</name>
-                           
+
           <type>string(64)</type>
-                                         
+
           <syntax>string</syntax>
-	  
-	  	  <writable>true</writable>
-                                                         
+
+          <writable>true</writable>
+
         </parameter>
 
-	<parameter>
+    <parameter>
 
            <name>X_RDKCENTRAL-COM_CloudUIWebURL</name>
 
@@ -1349,46 +1349,46 @@
         </parameter>
 <?ifdef CONFIG_VENDOR_CUSTOMER_COMCAST?>
         <parameter>
-    
+
           <name>X_COMCAST-COM_CM_MAC</name>
-                   
+
           <type>string(64)</type>
-                                  
+
           <syntax>string</syntax>
-                                                 
+
         </parameter>
-        
+
         <parameter>
-    
+
           <name>X_COMCAST-COM_CM_IP</name>
-                   
+
           <type>string(64)</type>
-                                  
+
           <syntax>string</syntax>
-                                                 
-        </parameter>    
-        
+
+        </parameter>
+
         <parameter>
-    
+
           <name>X_COMCAST-COM_WAN_MAC</name>
-                   
+
           <type>string(64)</type>
-                                  
+
           <syntax>string</syntax>
-                                                 
-        </parameter>  
+
+        </parameter>
 <?ifndef RBUS_WAN_IP?>
         <parameter>
-    
-          <name>X_COMCAST-COM_WAN_IP</name>
-                   
-          <type>string(64)</type>
-                                  
-          <syntax>string</syntax>
-                                                 
-        </parameter>        
 
-		<parameter>
+          <name>X_COMCAST-COM_WAN_IP</name>
+
+          <type>string(64)</type>
+
+          <syntax>string</syntax>
+
+        </parameter>
+
+        <parameter>
 
           <name>X_COMCAST-COM_WAN_IPv6</name>
 
@@ -1399,85 +1399,85 @@
         </parameter>
 <?endif?>
         <parameter>
-    
+
           <name>X_COMCAST-COM_MTA_MAC</name>
-                   
+
           <type>string(64)</type>
-                                  
+
           <syntax>string</syntax>
-                                                 
-        </parameter>  
-        
+
+        </parameter>
+
         <parameter>
-    
+
           <name>X_COMCAST-COM_MTA_IP</name>
-                   
+
           <type>string(64)</type>
-                                  
+
           <syntax>string</syntax>
-                                                 
-        </parameter> 
-        <parameter>
-    
-          <name>X_COMCAST-COM_MTA_IPV6</name>
-                   
-          <type>string(64)</type>
-                                  
-          <syntax>string</syntax>
-                                                 
+
         </parameter>
         <parameter>
-          <name>X_COMCAST-COM_AP_MAC</name>  
+
+          <name>X_COMCAST-COM_MTA_IPV6</name>
+
+          <type>string(64)</type>
+
+          <syntax>string</syntax>
+
+        </parameter>
+        <parameter>
+          <name>X_COMCAST-COM_AP_MAC</name>
           <type>string(64)</type>
           <syntax>string</syntax>
         </parameter>
 <?endif?>
-<!-- Components added for EMS -->		
-		<parameter>
-    
+<!-- Components added for EMS -->
+        <parameter>
+
           <name>X_COMCAST-COM_EMS_MobileNumber</name>
-                   
+
           <type>string(64)</type>
-                                  
+
           <syntax>string</syntax>
-		  
-		  <writable>true</writable>
-                                                 
+
+          <writable>true</writable>
+
         </parameter>
-		
-		<parameter>
-    
+
+        <parameter>
+
           <name>X_COMCAST-COM_EMS_ServerURL</name>
-                   
+
           <type>string(64)</type>
-                                  
+
           <syntax>string</syntax>
-		  
-		  <writable>true</writable>
-                                                 
+
+          <writable>true</writable>
+
         </parameter>
 <!-- End of modification -->
 <?ifndef _COSA_BCM_MIPS_ & _ENABLE_DSL_SUPPORT_?>
 <!--Parameter added for CMTS MAC-->
   <parameter>
-    
+
           <name>X_RDKCENTRAL-COM_CMTS_MAC</name>
-                   
+
           <type>string(64)</type>
-                                  
+
           <syntax>string</syntax>
-                                                 
-        </parameter> 
+
+        </parameter>
 <!-- End of modification -->
 <?endif?>
         <parameter>
-    
+
           <name>X_CISCO_COM_BaseMacAddress</name>
-                   
+
           <type>string(64)</type>
-                                  
+
           <syntax>string</syntax>
-                                                 
+
         </parameter>
 
         <parameter>
@@ -1709,7 +1709,7 @@
 
         </parameter>
 
-	<parameter>
+    <parameter>
 
           <name>X_RDKCENTRAL-COM_BootTime</name>
 
@@ -1718,7 +1718,7 @@
           <syntax>uint32</syntax>
 
         </parameter>
-        
+
        <parameter>
 
           <name>X_RDKCENTRAL-COM_SystemTime</name>
@@ -1733,7 +1733,7 @@
          <name>X_RDKCENTRAL-COM_LastRebootReason</name>
           <type>string(64)</type>
           <syntax>string</syntax>
-	  <writable>true</writable>
+      <writable>true</writable>
         </parameter>
 
 <?ifndef _SR213_PRODUCT_REQ_ & _WNXL11BWL_PRODUCT_REQ_?>
@@ -1779,30 +1779,30 @@
           <writable>true</writable>
         </parameter>
 <?endif?>
-	<parameter>
+    <parameter>
           <name>X_COMCAST-COM_rdkbPlatformCapable</name>
           <type>boolean</type>
           <syntax>bool</syntax>
         </parameter>
-		<!-- parameters added for xPC Sync -->
-	<parameter>
+        <!-- parameters added for xPC Sync -->
+    <parameter>
           <name>X_RDKCENTRAL-COM_ConfigureDocsicPollTime</name>
           <type>unsignedInt</type>
           <syntax>uint32</syntax>
-	  <writable>true</writable>
+      <writable>true</writable>
         </parameter>
-        
+
         <parameter>
           <name>FactoryResetCount</name>
           <type>unsignedInt</type>
           <syntax>uint32</syntax>
         </parameter>
-        
+
         <parameter>
           <name>ClearResetCount</name>
           <type>boolean</type>
           <syntax>bool</syntax>
-	     <writable>true</writable>
+         <writable>true</writable>
         </parameter>
 <?ifndef FEATURE_FWUPGRADE_MANAGER?>
         <parameter>
@@ -1821,14 +1821,14 @@
    </parameter>
 <?endif?>
 <?ifndef BCI?>
-	<!-- placeholder for Xi5 parameter start -->
+    <!-- placeholder for Xi5 parameter start -->
         <parameter>
             <name>X_RDKCENTRAL-COM_EnableMoCAforXi5</name>
             <type>boolean</type>
             <syntax>bool</syntax>
             <writable>true</writable>
         </parameter>
-	<!-- placeholder for Xi5 parameter end -->
+    <!-- placeholder for Xi5 parameter end -->
 <?else?>
         <parameter>
           <name>RouterName</name>
@@ -1889,7 +1889,7 @@
             <func_GetParamBoolValue>Syndication_GetParamBoolValue</func_GetParamBoolValue>
             <func_SetParamBoolValue>Syndication_SetParamBoolValue</func_SetParamBoolValue>
             <func_SetParamStringValue>Syndication_SetParamStringValue</func_SetParamStringValue>
-            <func_GetParamStringValue>Syndication_GetParamStringValue</func_GetParamStringValue>               
+            <func_GetParamStringValue>Syndication_GetParamStringValue</func_GetParamStringValue>
         </functions>
         <parameters>
             <parameter>
@@ -1941,7 +1941,7 @@
                 <writable>true</writable>
             </parameter>
         </parameters>
-	<objects>
+    <objects>
         <object>
                 <name>WANsideSSH</name>
                 <objectType>object</objectType>
@@ -1959,62 +1959,62 @@
                 </parameters>
         </object>
           <object>
-		<name>RDKB_UIBranding</name>
-          	<objectType>object</objectType>
-          	<functions>
+        <name>RDKB_UIBranding</name>
+            <objectType>object</objectType>
+            <functions>
                 <func_GetParamStringValue>RDKB_UIBranding_GetParamStringValue</func_GetParamStringValue>
                 <func_SetParamStringValue>RDKB_UIBranding_SetParamStringValue</func_SetParamStringValue>
-          	</functions>
-	  	<parameters>
-			<parameter>
+            </functions>
+        <parameters>
+            <parameter>
                                 <name>DefaultLanguage</name>
                                 <type>string</type>
                                 <syntax>string</syntax>
                                 <writable>true</writable>
                         </parameter>
-		</parameters>
-	</object>
+        </parameters>
+    </object>
         </objects>
         </object> <!--X_RDKCENTRAL-COM_Syndication-->
-      	<object>
-			<name>X_RDKCENTRAL-COM_xOpsDeviceMgmt</name>
+        <object>
+            <name>X_RDKCENTRAL-COM_xOpsDeviceMgmt</name>
 
-			<objectType>object</objectType>
+            <objectType>object</objectType>
 
-			<functions></functions>
-			<parameters></parameters>
+            <functions></functions>
+            <parameters></parameters>
 
-			 <objects>
-	      <object>
-			<name>Logging</name>
+             <objects>
+          <object>
+            <name>Logging</name>
 
-			<objectType>object</objectType>
+            <objectType>object</objectType>
 
-			<functions>
+            <functions>
 
-				<func_GetParamUlongValue>Logging_GetParamUlongValue</func_GetParamUlongValue>
+                <func_GetParamUlongValue>Logging_GetParamUlongValue</func_GetParamUlongValue>
 
-				<func_SetParamUlongValue>Logging_SetParamUlongValue</func_SetParamUlongValue>
+                <func_SetParamUlongValue>Logging_SetParamUlongValue</func_SetParamUlongValue>
 
-			</functions>
+            </functions>
 
-			<parameters>
+            <parameters>
 
-				<parameter>
+                <parameter>
 
-					<name>DmesgLogSyncInterval</name>
+                    <name>DmesgLogSyncInterval</name>
 
-          			        <type>unsignedInt</type>
+                            <type>unsignedInt</type>
 
-           			       <syntax>uint32</syntax>
+                           <syntax>uint32</syntax>
 
-					<writable>true</writable>
+                    <writable>true</writable>
 
-				</parameter>
+                </parameter>
 
-			</parameters>
+            </parameters>
 
-		</object>
+        </object>
             <object>
               <name>ReverseSSH</name>
               <objectType>object</objectType>
@@ -2053,16 +2053,16 @@
                 </parameter>
               </parameters>
             </object>
-			<object>
+            <object>
               <name>RPC</name>
               <objectType>object</objectType>
               <functions>
                 <func_SetParamStringValue>RPC_SetParamStringValue</func_SetParamStringValue>
                 <func_GetParamStringValue>RPC_GetParamStringValue</func_GetParamStringValue>
-				<func_GetParamUlongValue>RPC_GetParamUlongValue</func_GetParamUlongValue>
-				<func_SetParamUlongValue>RPC_SetParamUlongValue</func_SetParamUlongValue>
+                <func_GetParamUlongValue>RPC_GetParamUlongValue</func_GetParamUlongValue>
+                <func_SetParamUlongValue>RPC_SetParamUlongValue</func_SetParamUlongValue>
                                 <func_GetParamBoolValue>RPC_GetParamBoolValue</func_GetParamBoolValue>
-				<func_SetParamBoolValue>RPC_SetParamBoolValue</func_SetParamBoolValue>
+                <func_SetParamBoolValue>RPC_SetParamBoolValue</func_SetParamBoolValue>
               </functions>
               <parameters>
                 <parameter>
@@ -2070,7 +2070,7 @@
                   <type>unsignedInt</type>
                   <syntax>uint32</syntax>
                   <writable>true</writable>
-                </parameter>			  
+                </parameter>
 <?ifndef FEATURE_FWUPGRADE_MANAGER?>
                 <parameter>
                   <name>DeferFWDownloadReboot</name>
@@ -2085,13 +2085,13 @@
                   <syntax>string</syntax>
                   <writable>true</writable>
                 </parameter>
-		<parameter>
+        <parameter>
                   <name>FirmwareDownloadStartedNotification</name>
                   <type>string</type>
                   <syntax>string</syntax>
                   <writable>true</writable>
                 </parameter>
-		<parameter>
+        <parameter>
                   <name>FirmwareDownloadCompletedNotification</name>
                   <type>boolean</type>
                   <syntax>bool</syntax>
@@ -2103,7 +2103,7 @@
                   <syntax>bool</syntax>
                   <writable>true</writable>
                 </parameter>
-		<parameter>
+        <parameter>
                   <name>DeviceManageableNotification</name>
                   <type>string</type>
                   <syntax>string</syntax>
@@ -2111,17 +2111,17 @@
                 </parameter>
               </parameters>
             </object>
-		</objects>
-		</object>
+        </objects>
+        </object>
         <object>
-			<name>X_RDKCENTRAL-COM_RFC</name>
+            <name>X_RDKCENTRAL-COM_RFC</name>
 
-			<objectType>object</objectType>
+            <objectType>object</objectType>
 
-			<functions></functions>
-			<parameters></parameters>
+            <functions></functions>
+            <parameters></parameters>
 
-			 <objects>
+             <objects>
 
                 <object>
                     <name>Control</name>
@@ -2153,7 +2153,7 @@
                             <func_SetParamBoolValue>Feature_SetParamBoolValue</func_SetParamBoolValue>
 <?ifdef BCI?>
                                 <func_GetParamIntValue>Feature_GetParamIntValue</func_GetParamIntValue>
-                        	<func_SetParamIntValue>Feature_SetParamIntValue</func_SetParamIntValue>
+                            <func_SetParamIntValue>Feature_SetParamIntValue</func_SetParamIntValue>
 <?endif?>
                         </functions>
                         <parameters>
@@ -2194,12 +2194,12 @@
                                 <writable>true</writable>
                             </parameter>
 <?ifdef _COSA_INTEL_XB3_ARM_?>
-		            <parameter>
+                    <parameter>
                                 <name>CMRouteIsolationEnable</name>
                                 <type>boolean</type>
                                 <syntax>bool</syntax>
                                 <writable>true</writable>
-			    </parameter>
+                </parameter>
 <?endif?>
 <?ifdef BCI | COSA_FOR_BCI?>
                             <parameter>
@@ -2279,17 +2279,17 @@
                             <name>WebUIRemoteMgtOption</name>
                             <objectType>object</objectType>
                             <functions>
-		                        <func_GetParamBoolValue>WebUIRemoteMgtOption_GetParamBoolValue</func_GetParamBoolValue>
-		                        <func_SetParamBoolValue>WebUIRemoteMgtOption_SetParamBoolValue</func_SetParamBoolValue>
-	                      </functions>
+                                <func_GetParamBoolValue>WebUIRemoteMgtOption_GetParamBoolValue</func_GetParamBoolValue>
+                                <func_SetParamBoolValue>WebUIRemoteMgtOption_SetParamBoolValue</func_SetParamBoolValue>
+                          </functions>
                             <parameters>
-		                      <parameter>
-			                    <name>Enable</name>
-			                    <type>boolean</type>
+                              <parameter>
+                                <name>Enable</name>
+                                <type>boolean</type>
                                            <syntax>bool</syntax>
-			                    <writable>true</writable>
-		                      </parameter>
-	                      </parameters>   
+                                <writable>true</writable>
+                              </parameter>
+                          </parameters>
                       </object>
                       <object>
                           <name>WebUI</name>
@@ -2302,9 +2302,9 @@
                             <parameter>
                               <name>Enable</name>
 <?ifndef _HUB4_PRODUCT_REQ_ & _SR300_PRODUCT_REQ_?>
-			      <type>string: Enable(1), Disable(0), MSOonly(2)</type>
+                  <type>string: Enable(1), Disable(0), MSOonly(2)</type>
 <?else?>
-			      <type>string: Enable(1), Disable(0)</type>
+                  <type>string: Enable(1), Disable(0)</type>
 <?endif?>
                               <syntax>uint32/mapped</syntax>
                               <writable>true</writable>
@@ -2526,8 +2526,8 @@
                                              <writable>true</writable>
                                          </parameter>
                                      </parameters>
-			     </object>
-			     <object>
+                 </object>
+                 <object>
                                      <name>MTLS</name>
                                      <objectType>object</objectType>
                                      <functions>
@@ -2545,28 +2545,28 @@
                              </object>
                             </objects>
                         </object>
-			<object>
-			  <name>SoftwareProcessManager</name>
-			  <objectType>object</objectType>
-			  <objects>
-			    <object>
-			      <name>SelfHeal</name>
-			      <objectType>object</objectType>
-			      <functions>
-				<func_GetParamUlongValue>SelfHeal_GetParamUlongValue</func_GetParamUlongValue>
-				<func_SetParamUlongValue>SelfHeal_SetParamUlongValue</func_SetParamUlongValue>
-			      </functions>
-			      <parameters>
-				<parameter>
-				  <name>AggressiveInterval</name>
-				  <type>unsignedInt</type>
-				  <syntax>uint32</syntax>
-				  <writable>true</writable>
-				</parameter>
-			      </parameters>
-			    </object>
-			  </objects>
-			</object>
+            <object>
+              <name>SoftwareProcessManager</name>
+              <objectType>object</objectType>
+              <objects>
+                <object>
+                  <name>SelfHeal</name>
+                  <objectType>object</objectType>
+                  <functions>
+                <func_GetParamUlongValue>SelfHeal_GetParamUlongValue</func_GetParamUlongValue>
+                <func_SetParamUlongValue>SelfHeal_SetParamUlongValue</func_SetParamUlongValue>
+                  </functions>
+                  <parameters>
+                <parameter>
+                  <name>AggressiveInterval</name>
+                  <type>unsignedInt</type>
+                  <syntax>uint32</syntax>
+                  <writable>true</writable>
+                </parameter>
+                  </parameters>
+                </object>
+              </objects>
+            </object>
 <?ifdef COLUMBO_HWTEST & !BCI?>
                         <object>
                             <name>hwHealthTest</name>
@@ -2811,7 +2811,7 @@
                               </parameter>
                         </parameters>
                 </object>
-		 <object>
+         <object>
                         <name>collectd</name>
 
                         <objectType>object</objectType>
@@ -2878,7 +2878,7 @@
                     </parameters>
                 </object>
 
-		<object>
+        <object>
                              <name>RDKFirmwareUpgrader</name>
                              <objectType>object</objectType>
                              <functions>
@@ -2895,7 +2895,7 @@
                              </parameters>
                 </object>
  <?ifndef BCI?>
-              	<object>
+                <object>
                         <name>AllowOpenPorts</name>
 
                         <objectType>object</objectType>
@@ -2926,7 +2926,7 @@
 
                 </object>
 
-              	<object>
+                <object>
                         <name>IPv6subPrefix</name>
 
                         <objectType>object</objectType>
@@ -2954,8 +2954,8 @@
 
                         </parameters>
 
-  		</object>
-              	<object>
+        </object>
+                <object>
                         <name>IPv6onLnF</name>
 
                         <objectType>object</objectType>
@@ -2983,8 +2983,8 @@
 
                         </parameters>
 
-  		</object>
-              	<object>
+        </object>
+                <object>
                         <name>IPv6onXHS</name>
 
                         <objectType>object</objectType>
@@ -3012,8 +3012,8 @@
 
                         </parameters>
 
-  		</object>
-		        <object>
+        </object>
+                <object>
                         <name>IPv6onPOD</name>
 
                         <objectType>object</objectType>
@@ -3041,7 +3041,7 @@
 
                         </parameters>
 
-  		</object>
+        </object>
                 <object>
                         <name>EvoStream_DirectConnect</name>
 
@@ -3072,7 +3072,7 @@
 
                 </object>
 <?endif?>
-		<object>
+        <object>
                         <name>TelemetryEndpoint</name>
                         <objectType>object</objectType>
                         <functions>
@@ -3095,39 +3095,39 @@
                                         <writable>true</writable>
                                 </parameter>
                         </parameters>
-		</object>
+        </object>
 
 <?ifdef FEATURE_SUPPORT_INTERWORKING?>
-		<object>
-			<name>WiFi-Interworking</name>
+        <object>
+            <name>WiFi-Interworking</name>
 
-			<objectType>object</objectType>
+            <objectType>object</objectType>
 
-				<functions>
+                <functions>
 
-					<func_GetParamBoolValue>WiFiInterworking_GetParamBoolValue</func_GetParamBoolValue>
+                    <func_GetParamBoolValue>WiFiInterworking_GetParamBoolValue</func_GetParamBoolValue>
 
-					<func_SetParamBoolValue>WiFiInterworking_SetParamBoolValue</func_SetParamBoolValue>
+                    <func_SetParamBoolValue>WiFiInterworking_SetParamBoolValue</func_SetParamBoolValue>
 
-				</functions>
+                </functions>
 
-					<parameters>
+                    <parameters>
 
-						<parameter>
+                        <parameter>
 
-						<name>Enable</name>
+                        <name>Enable</name>
 
-						<type>boolean</type>
+                        <type>boolean</type>
 
-						<syntax>bool</syntax>
+                        <syntax>bool</syntax>
 
-						<writable>true</writable>
+                        <writable>true</writable>
 
-						</parameter>
+                        </parameter>
 
-					</parameters>
+                    </parameters>
 
-		</object>
+        </object>
 <?endif?>
 <?ifdef FEATURE_OFF_CHANNEL_SCAN_5G?>
         <object>
@@ -3148,36 +3148,36 @@
         </object>
 <?endif?>
 <?ifdef FEATURE_SUPPORT_PASSPOINT?>
-		<object>
-			<name>WiFi-Passpoint</name>
+        <object>
+            <name>WiFi-Passpoint</name>
 
-			<objectType>object</objectType>
+            <objectType>object</objectType>
 
-				<functions>
+                <functions>
 
-					<func_GetParamBoolValue>WiFiPasspoint_GetParamBoolValue</func_GetParamBoolValue>
+                    <func_GetParamBoolValue>WiFiPasspoint_GetParamBoolValue</func_GetParamBoolValue>
 
-					<func_SetParamBoolValue>WiFiPasspoint_SetParamBoolValue</func_SetParamBoolValue>
+                    <func_SetParamBoolValue>WiFiPasspoint_SetParamBoolValue</func_SetParamBoolValue>
 
-				</functions>
+                </functions>
 
-					<parameters>
+                    <parameters>
 
-						<parameter>
+                        <parameter>
 
-						<name>Enable</name>
+                        <name>Enable</name>
 
-						<type>boolean</type>
+                        <type>boolean</type>
 
-						<syntax>bool</syntax>
+                        <syntax>bool</syntax>
 
-						<writable>true</writable>
+                        <writable>true</writable>
 
-						</parameter>
+                        </parameter>
 
-					</parameters>
+                    </parameters>
 
-		</object>
+        </object>
 <?endif?>
 
                 <object>
@@ -3211,7 +3211,7 @@
 
                 </object>
 <?ifdef FEATURE_SUPPORT_RADIUSGREYLIST?>
-		 <object>
+         <object>
                         <name>RadiusGreyList</name>
 
                         <objectType>object</objectType>
@@ -3243,7 +3243,7 @@
                 </object>
 <?endif?>
 
-		<object>
+        <object>
                         <name>UniqueTelemetryId</name>
 
                         <objectType>object</objectType>
@@ -3252,15 +3252,15 @@
 
                                 <func_GetParamBoolValue>UniqueTelemetryId_GetParamBoolValue</func_GetParamBoolValue>
 
-				<func_GetParamStringValue>UniqueTelemetryId_GetParamStringValue</func_GetParamStringValue>
+                <func_GetParamStringValue>UniqueTelemetryId_GetParamStringValue</func_GetParamStringValue>
 
-				<func_GetParamIntValue>UniqueTelemetryId_GetParamIntValue</func_GetParamIntValue>
+                <func_GetParamIntValue>UniqueTelemetryId_GetParamIntValue</func_GetParamIntValue>
 
                                 <func_SetParamBoolValue>UniqueTelemetryId_SetParamBoolValue</func_SetParamBoolValue>
 
-				<func_SetParamStringValue>UniqueTelemetryId_SetParamStringValue</func_SetParamStringValue>
+                <func_SetParamStringValue>UniqueTelemetryId_SetParamStringValue</func_SetParamStringValue>
 
-				<func_SetParamIntValue>UniqueTelemetryId_SetParamIntValue</func_SetParamIntValue>
+                <func_SetParamIntValue>UniqueTelemetryId_SetParamIntValue</func_SetParamIntValue>
 
                         </functions>
 
@@ -3276,102 +3276,102 @@
                                         <writable>true</writable>
 
                                 </parameter>
-				
-				<parameter>
 
-					<name>TagString</name>
+                <parameter>
 
-					<type>string(255)</type>
+                    <name>TagString</name>
 
-					<syntax>string</syntax>
+                    <type>string(255)</type>
 
-					<writable>true</writable>
+                    <syntax>string</syntax>
 
-				</parameter>
+                    <writable>true</writable>
 
-				<parameter>
+                </parameter>
 
-					<name>TimingInterval</name>
+                <parameter>
 
-					<type>int</type>
+                    <name>TimingInterval</name>
 
-					<syntax>int</syntax>
+                    <type>int</type>
 
-					<writable>true</writable>
+                    <syntax>int</syntax>
 
-				</parameter>
+                    <writable>true</writable>
+
+                </parameter>
 
                         </parameters>
 
-		</object>
-		<object>
-			<name>LatencyMeasureTcpSetupIPv4</name>
-			<objectType>object</objectType>
-			<functions>
-				<func_GetParamBoolValue>LatencyMeasureTcpSetupIPv4_GetParamBoolValue</func_GetParamBoolValue>
-				<func_SetParamBoolValue>LatencyMeasureTcpSetupIPv4_SetParamBoolValue</func_SetParamBoolValue>
-			</functions>
-			<parameters>
-				<parameter>
-					<name>Enable</name>
-					<type>boolean</type>
-					<syntax>bool</syntax>
-					<writable>true</writable>
-				</parameter>
-			</parameters>
-		</object>
+        </object>
+        <object>
+            <name>LatencyMeasureTcpSetupIPv4</name>
+            <objectType>object</objectType>
+            <functions>
+                <func_GetParamBoolValue>LatencyMeasureTcpSetupIPv4_GetParamBoolValue</func_GetParamBoolValue>
+                <func_SetParamBoolValue>LatencyMeasureTcpSetupIPv4_SetParamBoolValue</func_SetParamBoolValue>
+            </functions>
+            <parameters>
+                <parameter>
+                    <name>Enable</name>
+                    <type>boolean</type>
+                    <syntax>bool</syntax>
+                    <writable>true</writable>
+                </parameter>
+            </parameters>
+        </object>
 
-		<object>
-   			<name>LatencyMeasureTcpSetupIPv6</name>
-			<objectType>object</objectType>
-			<functions>
-				<func_GetParamBoolValue>LatencyMeasureTcpSetupIPv6_GetParamBoolValue</func_GetParamBoolValue>
-				<func_SetParamBoolValue>LatencyMeasureTcpSetupIPv6_SetParamBoolValue</func_SetParamBoolValue>
-			</functions>
-			<parameters>
-				<parameter>
-					<name>Enable</name>
-					<type>boolean</type>
-					<syntax>bool</syntax>
-					<writable>true</writable>
-				</parameter>
-			</parameters>
-		</object>
+        <object>
+            <name>LatencyMeasureTcpSetupIPv6</name>
+            <objectType>object</objectType>
+            <functions>
+                <func_GetParamBoolValue>LatencyMeasureTcpSetupIPv6_GetParamBoolValue</func_GetParamBoolValue>
+                <func_SetParamBoolValue>LatencyMeasureTcpSetupIPv6_SetParamBoolValue</func_SetParamBoolValue>
+            </functions>
+            <parameters>
+                <parameter>
+                    <name>Enable</name>
+                    <type>boolean</type>
+                    <syntax>bool</syntax>
+                    <writable>true</writable>
+                </parameter>
+            </parameters>
+        </object>
 
 
-		<object>
-		        <name>ManageableNotification</name>
-		        <objectType>object</objectType>
-		        <functions>
-				<func_GetParamBoolValue>ManageableNotification_GetParamBoolValue</func_GetParamBoolValue>
-				<func_SetParamBoolValue>ManageableNotification_SetParamBoolValue</func_SetParamBoolValue>
-		        </functions>
-		        <parameters>
-			        <parameter>
-			        <name>Enable</name>
-			        <type>boolean</type>
-			        <syntax>bool</syntax>
-			        <writable>true</writable>
-			        </parameter>
-		        </parameters>
+        <object>
+                <name>ManageableNotification</name>
+                <objectType>object</objectType>
+                <functions>
+                <func_GetParamBoolValue>ManageableNotification_GetParamBoolValue</func_GetParamBoolValue>
+                <func_SetParamBoolValue>ManageableNotification_SetParamBoolValue</func_SetParamBoolValue>
+                </functions>
+                <parameters>
+                    <parameter>
+                    <name>Enable</name>
+                    <type>boolean</type>
+                    <syntax>bool</syntax>
+                    <writable>true</writable>
+                    </parameter>
+                </parameters>
                 </object>
 <?ifndef _XB8_PRODUCT_REQ_?>
                 <object>
- 				 <name>TR069support</name>
- 				 <objectType>object</objectType>
- 				 <functions>
- 				 <func_GetParamBoolValue>TR069support_GetParamBoolValue</func_GetParamBoolValue>
- 				 <func_SetParamBoolValue>TR069support_SetParamBoolValue</func_SetParamBoolValue>
- 				 </functions>
- 				 <parameters>
- 					<parameter>
- 					<name>Enable</name>
- 					<type>boolean</type>
- 					<syntax>bool</syntax>
- 					<writable>true</writable>
- 					</parameter>
- 				  </parameters>
-		</object>
+                 <name>TR069support</name>
+                 <objectType>object</objectType>
+                 <functions>
+                 <func_GetParamBoolValue>TR069support_GetParamBoolValue</func_GetParamBoolValue>
+                 <func_SetParamBoolValue>TR069support_SetParamBoolValue</func_SetParamBoolValue>
+                 </functions>
+                 <parameters>
+                    <parameter>
+                    <name>Enable</name>
+                    <type>boolean</type>
+                    <syntax>bool</syntax>
+                    <writable>true</writable>
+                    </parameter>
+                  </parameters>
+        </object>
 <?endif?>
                 <object>
                                 <name>newNTP</name>
@@ -3421,7 +3421,7 @@
                                         <name>Enable</name>
                                         <type>boolean</type>
                                         <syntax>bool</syntax>
-                                        <writable>true</writable> 
+                                        <writable>true</writable>
                                 </parameter>
                                 <parameter>
                                         <name>LocalFqdn</name>
@@ -3586,9 +3586,9 @@
                         </object>
 <?endif?>
                 </objects>
-		</object>
-		</objects>
-		</object>
+        </object>
+        </objects>
+        </object>
         <object>
             <name>X_RDKCENTRAL-COM_EthernetWAN</name>
             <objectType>object</objectType>
@@ -3601,13 +3601,13 @@
                     <type>string(32)</type>
                     <syntax>string</syntax>
                 </parameter>
-	    </parameters> -->
+        </parameters> -->
 <?ifdef _MACSEC_SUPPORT_?>
             <objects>
                <object>
                   <name>MACsec</name>
                   <objectType>object</objectType>
-                  <functions> 
+                  <functions>
                      <func_GetParamStringValue>EthernetWAN_MACsec_GetParamStringValue</func_GetParamStringValue>
                   </functions>
                   <parameters>
@@ -3789,7 +3789,7 @@
 
         </object>
 
-	<object>
+    <object>
 
           <name>X_RDKCENTRAL-COM</name>
 
@@ -3805,34 +3805,34 @@
 
             <func_GetParamStringValue>X_RDKCENTRAL_COM_GetParamStringValue</func_GetParamStringValue>
 <?ifndef BCI?>
-			<func_SetParamBoolValue>X_RDKCENTRAL_COM_SetParamBoolValue</func_SetParamBoolValue>
+            <func_SetParamBoolValue>X_RDKCENTRAL_COM_SetParamBoolValue</func_SetParamBoolValue>
 <?endif?>
 
           </functions>
-			<parameters>
+            <parameters>
 <?ifndef BCI?>
-				<parameter>
-					<name>DhcpServDetectEnable</name>
-					<type>boolean</type>
-					<syntax>bool</syntax>
-					<writable>true</writable>
-				</parameter>   
-				<parameter>
-					<name>MultipleGW</name>
-					<type>boolean</type>
-					<syntax>bool</syntax>
-					<writable>true</writable>
-				</parameter>   
+                <parameter>
+                    <name>DhcpServDetectEnable</name>
+                    <type>boolean</type>
+                    <syntax>bool</syntax>
+                    <writable>true</writable>
+                </parameter>
+                <parameter>
+                    <name>MultipleGW</name>
+                    <type>boolean</type>
+                    <syntax>bool</syntax>
+                    <writable>true</writable>
+                </parameter>
 <?endif?>
                                 <parameter>
-					<name>InternetStatus</name>
-					<type>boolean</type>
-					<syntax>bool</syntax>
-					<writable>false</writable>
-			</parameter>  
-			</parameters>
-	</object> <!--RDK_CENTRAL-->
-	
+                    <name>InternetStatus</name>
+                    <type>boolean</type>
+                    <syntax>bool</syntax>
+                    <writable>false</writable>
+            </parameter>
+            </parameters>
+    </object> <!--RDK_CENTRAL-->
+
 <?ifndef FEATURE_RESOURCE_OPTIMIZATION?>
 
         <object>
@@ -3916,7 +3916,7 @@
               <type>unsignedInt</type>
 
               <syntax>uint32</syntax>
-  
+
               <notify>off</notify>
 
             </parameter>
@@ -4356,7 +4356,7 @@
 
           <parameter>
 
-	    <name>CliStatList</name>
+        <name>CliStatList</name>
 
             <type>string</type>
 
@@ -4661,28 +4661,28 @@
     </object>
     <object>
 
-	  <name>GRE</name>
+      <name>GRE</name>
 
-	  <objectType>object</objectType>
+      <objectType>object</objectType>
 
-	  <functions>
-	    <func_GetParamStringValue>Gre_GetParamStringValue</func_GetParamStringValue>
-	    <func_SetParamStringValue>Gre_SetParamStringValue</func_SetParamStringValue>
+      <functions>
+        <func_GetParamStringValue>Gre_GetParamStringValue</func_GetParamStringValue>
+        <func_SetParamStringValue>Gre_SetParamStringValue</func_SetParamStringValue>
 
-	  </functions>
-	  <parameters>
-		<parameter>
+      </functions>
+      <parameters>
+        <parameter>
 
-		<name>X_RDK_PublicHotspotData</name>
+        <name>X_RDK_PublicHotspotData</name>
 
-		<type>string</type>
+        <type>string</type>
 
-		<syntax>string</syntax>
+        <syntax>string</syntax>
 
-		<writable>true</writable>
+        <writable>true</writable>
 
-		</parameter>
-	</parameters>
+        </parameter>
+    </parameters>
     </object>
 <?ifdef WIFI_MANAGE_SUPPORTED?>
     <object>
@@ -4716,17 +4716,17 @@
       <name>UserInterface</name>
 
       <objectType>object</objectType>
-	  
+
         <functions>
             <func_GetParamBoolValue>UserInterface_GetParamBoolValue</func_GetParamBoolValue>
-	  <func_SetParamBoolValue>UserInterface_SetParamBoolValue</func_SetParamBoolValue>
+      <func_SetParamBoolValue>UserInterface_SetParamBoolValue</func_SetParamBoolValue>
             <func_GetParamUlongValue>UserInterface_GetParamUlongValue</func_GetParamUlongValue>
             <func_SetParamUlongValue>UserInterface_SetParamUlongValue</func_SetParamUlongValue>
             <func_Validate>UserInterface_Validate</func_Validate>
             <func_Rollback>UserInterface_Rollback</func_Rollback>
             <func_Commit>UserInterface_Commit</func_Commit>
         </functions>
-		<parameters>
+        <parameters>
 
           <parameter>
 
@@ -4813,7 +4813,7 @@
 
           </parameter>
 
-		</parameters>
+        </parameters>
 
       <objects>
 
@@ -4862,7 +4862,7 @@
             <writable>true</writable>
 
           </parameter>
-		  <parameter>
+          <parameter>
 
             <name>HttpPort</name>
 
@@ -4873,7 +4873,7 @@
             <writable>true</writable>
 
           </parameter>
-		  <parameter>
+          <parameter>
 
             <name>HttpsEnable</name>
 
@@ -4884,7 +4884,7 @@
             <writable>true</writable>
 
           </parameter>
-		  <parameter>
+          <parameter>
 
             <name>HttpsPort</name>
 
@@ -4896,7 +4896,7 @@
 
           </parameter>
 <?ifndef _CBR_PRODUCT_REQ_?>
-		  <parameter>
+          <parameter>
 
             <name>TelnetEnable</name>
 
@@ -4908,7 +4908,7 @@
 
           </parameter>
 <?endif?>
-		  <parameter>
+          <parameter>
 
             <name>TelnetPort</name>
 
@@ -4919,7 +4919,7 @@
             <writable>true</writable>
 
           </parameter>
-		  <parameter>
+          <parameter>
 
             <name>SSHEnable</name>
 
@@ -4930,7 +4930,7 @@
             <writable>true</writable>
 
           </parameter>
-		  <parameter>
+          <parameter>
 
             <name>SSHPort</name>
 
@@ -4943,7 +4943,7 @@
           </parameter>
 
           <!--
-		  <parameter>
+          <parameter>
 
             <name>SNMPPort</name>
 
@@ -5427,7 +5427,7 @@
             <syntax>bool</syntax>
             <writable>true</writable>
           </parameter>
-           
+
           <parameter>
 
             <name>X_CISCO_COM_AssociatedDevice</name>
@@ -5448,20 +5448,20 @@
               <maxInstance>256</maxInstance>
 
               <functions>
-		      <func_GetEntryCount>AssociatedDevice1_GetEntryCount</func_GetEntryCount>
-		      <func_GetEntry>AssociatedDevice1_GetEntry</func_GetEntry>
-		      <func_IsUpdated>AssociatedDevice1_IsUpdated</func_IsUpdated>
-		      <func_Synchronize>AssociatedDevice1_Synchronize</func_Synchronize>
-		      <func_GetParamStringValue>AssociatedDevice1_GetParamStringValue</func_GetParamStringValue>
+              <func_GetEntryCount>AssociatedDevice1_GetEntryCount</func_GetEntryCount>
+              <func_GetEntry>AssociatedDevice1_GetEntry</func_GetEntry>
+              <func_IsUpdated>AssociatedDevice1_IsUpdated</func_IsUpdated>
+              <func_Synchronize>AssociatedDevice1_Synchronize</func_Synchronize>
+              <func_GetParamStringValue>AssociatedDevice1_GetParamStringValue</func_GetParamStringValue>
               </functions>
 
               <parameters>
-	      		<parameter>
-			      <name>MACAddress</name>
-			      <type>string(1024)</type>
-			      <syntax>string</syntax>
-			      <writable>true</writable>
-		      </parameter>
+                <parameter>
+                  <name>MACAddress</name>
+                  <type>string(1024)</type>
+                  <syntax>string</syntax>
+                  <writable>true</writable>
+              </parameter>
               </parameters>
 
             </object>
@@ -5749,7 +5749,7 @@
             <syntax>string</syntax>
 
             <notify>off</notify>
-            
+
             <writable>false</writable>
 
           </parameter>
@@ -6029,717 +6029,717 @@
 
 <?ifdef _HUB4_PRODUCT_REQ_ | !FEATURE_RESOURCE_OPTIMIZATION?>
     <object>
-    
+
       <name>PPP</name>
-      
+
       <objectType>object</objectType>
-      
+
       <functions>
-      
+
         <func_GetParamBoolValue>PPP_GetParamBoolValue</func_GetParamBoolValue>
-        
+
         <func_GetParamIntValue>PPP_GetParamIntValue</func_GetParamIntValue>
-        
+
         <func_GetParamUlongValue>PPP_GetParamUlongValue</func_GetParamUlongValue>
-        
+
         <func_GetParamStringValue>PPP_GetParamStringValue</func_GetParamStringValue>
-        
+
       </functions>
-      
+
       <parameters>
-      
+
         <parameter>
-            
+
           <name>SupportedNCPs</name>
-          
+
           <type>string</type>
-          
+
           <syntax>string</syntax>
-            
+
         </parameter>
-      
+
         <parameter>
-        
+
           <name>InterfaceNumberOfEntries</name>
-          
+
           <type>unsignedInt</type>
-          
+
           <syntax>uint32</syntax>
-          
+
         </parameter>
-        
+
       </parameters>
-      
+
       <objects>
-      
+
         <object>
-        
+
           <name>Interface</name>
-          
+
           <objectType>writableTable</objectType>
-          
+
           <maxInstance>128</maxInstance>
-          
+
           <functions>
-          
+
             <func_GetEntryCount>Interface3_GetEntryCount</func_GetEntryCount>
-            
+
             <func_GetEntry>Interface3_GetEntry</func_GetEntry>
-            
+
             <func_AddEntry>Interface3_AddEntry</func_AddEntry>
-            
+
             <func_DelEntry>Interface3_DelEntry</func_DelEntry>
-            
+
             <func_GetParamBoolValue>Interface3_GetParamBoolValue</func_GetParamBoolValue>
-            
+
             <func_GetParamIntValue>Interface3_GetParamIntValue</func_GetParamIntValue>
-            
+
             <func_GetParamUlongValue>Interface3_GetParamUlongValue</func_GetParamUlongValue>
-            
+
             <func_GetParamStringValue>Interface3_GetParamStringValue</func_GetParamStringValue>
-            
+
             <func_SetParamBoolValue>Interface3_SetParamBoolValue</func_SetParamBoolValue>
-            
+
             <func_SetParamIntValue>Interface3_SetParamIntValue</func_SetParamIntValue>
-            
+
             <func_SetParamUlongValue>Interface3_SetParamUlongValue</func_SetParamUlongValue>
-            
+
             <func_SetParamStringValue>Interface3_SetParamStringValue</func_SetParamStringValue>
-            
+
             <func_Validate>Interface3_Validate</func_Validate>
-            
+
             <func_Commit>Interface3_Commit</func_Commit>
-            
+
             <func_Rollback>Interface3_Rollback</func_Rollback>
-            
+
           </functions>
-          
+
           <parameters>
-          
+
           <parameter>
-          
+
             <name>IPCPEnable</name>
-            
+
             <type>boolean</type>
-            
+
             <syntax>bool</syntax>
-            
+
             <writable>true</writable>
-            
+
           </parameter>
-          
+
           <parameter>
-          
+
             <name>Status</name>
-            
+
             <type>string: Up(1),Down(2),Unknown(3),Dormant(4),NotPresent(5),LowerLayerDown(6),Error(7)</type>
-            
+
             <syntax>uint32/mapped</syntax>
-            
+
           </parameter>
-          
+
           <parameter>
-          
+
             <name>Alias</name>
-            
+
             <type>string(64)</type>
-            
+
             <syntax>string</syntax>
-            
+
             <writable>true</writable>
-            
+
           </parameter>
-          
+
           <parameter>
-          
+
             <name>Name</name>
-            
+
             <type>string(64)</type>
-            
+
             <syntax>string</syntax>
-            
+
           </parameter>
-          
+
           <parameter>
-          
+
             <name>LastChange</name>
-            
+
             <type>unsignedInt</type>
-            
+
             <syntax>uint32</syntax>
-            
+
             <notify>off</notify>
-            
+
           </parameter>
-          
+
           <parameter>
-          
+
             <name>LowerLayers</name>
-            
+
             <type>string</type>
-            
+
             <syntax>string</syntax>
-            
+
             <writable>true</writable>
-            
+
           </parameter>
-          
+
           <parameter>
-          
+
             <name>Reset</name>
-            
+
             <type>boolean</type>
-            
+
             <syntax>bool</syntax>
-            
+
             <writable>true</writable>
-            
+
           </parameter>
-          
+
           <parameter>
-          
+
             <name>ConnectionStatus</name>
-            
+
             <type>string: Unconfigured(1),Connecting(2),Authenticating(3),Connected(4),PendingDisconnect(5),Disconnecting(6),Disconnected(7)</type>
-            
+
             <syntax>uint32/mapped</syntax>
-            
+
           </parameter>
-          
+
           <parameter>
-          
+
             <name>LastConnectionError</name>
-            
+
             <type>string: ERROR_NONE(1),ERROR_ISP_TIME_OUT(2),ERROR_COMMAND_ABORTED(3),ERROR_NOT_ENABLED_FOR_INTERNET(4),ERROR_BAD_PHONE_NUMBER(5),ERROR_USER_DISCONNECT(6),ERROR_ISP_DISCONNECT(7),ERROR_IDLE_DISCONNECT(8),ERROR_FORCED_DISCONNECT(9),ERROR_SERVER_OUT_OF_RESOURCES(10),ERROR_RESTRICTED_LOGON_HOURS(11),ERROR_ACCOUNT_DISABLED(12),ERROR_ACCOUNT_EXPIRED(13),ERROR_PASSWORD_EXPIRED(14),ERROR_AUTHENTICATION_FAILURE(15),ERROR_NO_DIALTONE(16),ERROR_NO_CARRIER(17),ERROR_NO_ANSWER(18),ERROR_LINE_BUSY(19),ERROR_UNSUPPORTED_BITSPERSECOND(20),ERROR_TOO_MANY_LINE_ERRORS(21),ERROR_IP_CONFIGURATION(22),ERROR_UNKNOWN(23)</type>
-            
+
             <syntax>uint32/mapped</syntax>
-            
+
           </parameter>
-          
+
           <parameter>
-          
+
             <name>AutoDisconnectTime</name>
-            
+
             <type>unsignedInt</type>
-            
+
             <syntax>uint32</syntax>
-            
+
             <writable>true</writable>
-            
+
           </parameter>
-          
+
           <parameter>
-          
+
             <name>IdleDisconnectTime</name>
-            
+
             <type>unsignedInt</type>
-            
+
             <syntax>uint32</syntax>
-            
+
             <writable>true</writable>
-            
+
           </parameter>
-          
+
           <parameter>
-          
+
             <name>WarnDisconnectDelay</name>
-            
+
             <type>unsignedInt</type>
-            
+
             <syntax>uint32</syntax>
-            
+
             <writable>true</writable>
-            
+
           </parameter>
-          
+
           <parameter>
-          
+
             <name>Username</name>
-            
+
             <type>string(64)</type>
-            
+
             <syntax>string</syntax>
-            
+
             <writable>true</writable>
-            
+
           </parameter>
-          
+
           <parameter>
-          
+
             <name>Password</name>
-            
+
             <type>string(64)</type>
-            
+
             <syntax>string</syntax>
-            
+
             <writable>true</writable>
-            
+
           </parameter>
-          
+
           <parameter>
-          
+
             <name>EncryptionProtocol</name>
-            
+
             <type>string: None(1),MPPE(2)</type>
-            
+
             <syntax>uint32/mapped</syntax>
-            
+
           </parameter>
-          
+
           <parameter>
-          
+
             <name>CompressionProtocol</name>
-            
+
             <type>string: None(1),Van Jacobson(2),STAC LZS(3)</type>
-            
+
             <syntax>uint32/mapped</syntax>
-            
+
           </parameter>
-          
+
           <parameter>
-          
+
             <name>AuthenticationProtocol</name>
-            
+
             <type>string: PAP(1),CHAP(2),MS-CHAP(3)</type>
-            
+
             <syntax>uint32/mapped</syntax>
-            
+
           </parameter>
-          
+
           <parameter>
-          
+
             <name>MaxMRUSize</name>
-            
+
             <type>unsignedInt[1:1540]</type>
-            
+
             <syntax>uint32</syntax>
-            
+
             <writable>true</writable>
-            
+
           </parameter>
-          
+
           <parameter>
-          
+
             <name>CurrentMRUSize</name>
-            
+
             <type>unsignedInt[1:1540]</type>
-            
+
             <syntax>uint32</syntax>
-            
+
             <notify>off</notify>
-            
+
           </parameter>
-          
+
           <parameter>
-          
+
             <name>ConnectionTrigger</name>
-            
+
             <type>string: OnDemand(1),AlwaysOn(2),Manual(3)</type>
-            
+
             <syntax>uint32/mapped</syntax>
-            
+
             <writable>true</writable>
-            
+
           </parameter>
-          
+
           <parameter>
-          
+
             <name>LCPEcho</name>
-            
+
             <type>unsignedInt</type>
-            
+
             <syntax>uint32</syntax>
-            
+
           </parameter>
-          
+
           <parameter>
-          
+
             <name>LCPEchoRetry</name>
-            
+
             <type>unsignedInt</type>
-            
+
             <syntax>uint32</syntax>
-            
+
           </parameter>
-          
+
           </parameters>
-          
+
           <objects>
-          
+
             <object>
-            
+
               <name>PPPoE</name>
-              
+
               <objectType>object</objectType>
-              
+
               <functions>
-              
+
                 <func_GetParamBoolValue>PPPoE_GetParamBoolValue</func_GetParamBoolValue>
-                
+
                 <func_GetParamIntValue>PPPoE_GetParamIntValue</func_GetParamIntValue>
-                
+
                 <func_GetParamUlongValue>PPPoE_GetParamUlongValue</func_GetParamUlongValue>
-                
+
                 <func_GetParamStringValue>PPPoE_GetParamStringValue</func_GetParamStringValue>
-                
+
                 <func_SetParamBoolValue>PPPoE_SetParamBoolValue</func_SetParamBoolValue>
-                
+
                 <func_SetParamIntValue>PPPoE_SetParamIntValue</func_SetParamIntValue>
-                
+
                 <func_SetParamUlongValue>PPPoE_SetParamUlongValue</func_SetParamUlongValue>
-                
+
                 <func_SetParamStringValue>PPPoE_SetParamStringValue</func_SetParamStringValue>
-                
+
                 <func_Validate>PPPoE_Validate</func_Validate>
-                
+
                 <func_Commit>PPPoE_Commit</func_Commit>
-                
+
                 <func_Rollback>PPPoE_Rollback</func_Rollback>
-                
+
               </functions>
-              
+
               <parameters>
-              
+
             <parameter>
-            
+
               <name>SessionID</name>
-              
+
               <type>unsignedInt[1:]</type>
-              
+
               <syntax>uint32</syntax>
-              
+
             </parameter>
-            
+
             <parameter>
-            
+
               <name>ACName</name>
-              
+
               <type>string(256)</type>
-              
+
               <syntax>string</syntax>
-              
+
               <writable>true</writable>
-              
+
             </parameter>
-            
+
             <parameter>
-            
+
               <name>ServiceName</name>
-              
+
               <type>string(256)</type>
-              
+
               <syntax>string</syntax>
-              
+
               <writable>true</writable>
-              
+
             </parameter>
-            
+
               </parameters>
-              
+
             </object>
-            
+
             <object>
-            
+
               <name>IPCP</name>
-              
+
               <objectType>object</objectType>
-              
+
               <functions>
-              
+
                 <func_GetParamBoolValue>IPCP_GetParamBoolValue</func_GetParamBoolValue>
-                
+
                 <func_GetParamIntValue>IPCP_GetParamIntValue</func_GetParamIntValue>
-                
+
                 <func_GetParamUlongValue>IPCP_GetParamUlongValue</func_GetParamUlongValue>
-                
+
                 <func_GetParamStringValue>IPCP_GetParamStringValue</func_GetParamStringValue>
-                
+
                 <func_SetParamBoolValue>IPCP_SetParamBoolValue</func_SetParamBoolValue>
-                
+
                 <func_SetParamIntValue>IPCP_SetParamIntValue</func_SetParamIntValue>
-                
+
                 <func_SetParamUlongValue>IPCP_SetParamUlongValue</func_SetParamUlongValue>
-                
+
                 <func_SetParamStringValue>IPCP_SetParamStringValue</func_SetParamStringValue>
-                
+
                 <func_Validate>IPCP_Validate</func_Validate>
-                
+
                 <func_Commit>IPCP_Commit</func_Commit>
-                
+
                 <func_Rollback>IPCP_Rollback</func_Rollback>
-                
+
               </functions>
-              
+
               <parameters>
-              
+
             <parameter>
-            
+
               <name>LocalIPAddress</name>
-              
+
               <type>string</type>
-              
+
               <syntax>string</syntax>
-              
+
             </parameter>
-            
+
             <parameter>
-            
+
               <name>RemoteIPAddress</name>
-              
+
               <type>string</type>
-              
+
               <syntax>string</syntax>
-              
+
             </parameter>
-            
+
             <parameter>
-            
+
               <name>DNSServers</name>
-              
+
               <type>string</type>
-              
+
               <syntax>string</syntax>
-              
+
             </parameter>
-            
+
             <parameter>
-            
+
               <name>PassthroughEnable</name>
-              
+
               <type>boolean</type>
-              
+
               <syntax>bool</syntax>
-              
+
               <writable>true</writable>
-              
+
             </parameter>
-            
+
             <parameter>
-            
+
               <name>PassthroughDHCPPool</name>
-              
+
               <type>string(256)</type>
-              
+
               <syntax>string</syntax>
-              
+
               <writable>true</writable>
-              
+
             </parameter>
-            
+
               </parameters>
-              
+
             </object>
-           
+
             <object>
-            
+
               <name>Stats</name>
-              
+
               <objectType>object</objectType>
-              
+
               <functions>
-              
+
                 <func_GetParamBoolValue>Stats6_GetParamBoolValue</func_GetParamBoolValue>
-                
+
                 <func_GetParamIntValue>Stats6_GetParamIntValue</func_GetParamIntValue>
-                
+
                 <func_GetParamUlongValue>Stats6_GetParamUlongValue</func_GetParamUlongValue>
-                
+
                 <func_GetParamStringValue>Stats6_GetParamStringValue</func_GetParamStringValue>
-                
+
               </functions>
-              
+
               <parameters>
-              
+
             <parameter>
-            
+
               <name>BytesSent</name>
-              
+
               <type>unsignedInt</type>
-              
+
               <syntax>uint32</syntax>
-              
+
               <notify>off</notify>
-              
+
             </parameter>
-            
+
             <parameter>
-            
+
               <name>BytesReceived</name>
-              
+
               <type>unsignedInt</type>
-              
+
               <syntax>uint32</syntax>
-              
+
               <notify>off</notify>
-              
+
             </parameter>
-            
+
             <parameter>
-            
+
               <name>PacketsSent</name>
-              
+
               <type>unsignedInt</type>
-              
+
               <syntax>uint32</syntax>
-              
+
               <notify>off</notify>
-              
+
             </parameter>
-            
+
             <parameter>
-            
+
               <name>PacketsReceived</name>
-              
+
               <type>unsignedInt</type>
-              
+
               <syntax>uint32</syntax>
-              
+
               <notify>off</notify>
-              
+
             </parameter>
-            
+
             <parameter>
-            
+
               <name>ErrorsSent</name>
-              
+
               <type>unsignedInt</type>
-              
+
               <syntax>uint32</syntax>
-              
+
               <notify>off</notify>
-              
+
             </parameter>
-            
+
             <parameter>
-            
+
               <name>ErrorsReceived</name>
-              
+
               <type>unsignedInt</type>
-              
+
               <syntax>uint32</syntax>
-              
+
               <notify>off</notify>
-              
+
             </parameter>
-            
+
             <parameter>
-            
+
               <name>UnicastPacketsSent</name>
-              
+
               <type>unsignedInt</type>
-              
+
               <syntax>uint32</syntax>
-              
+
               <notify>off</notify>
-              
+
             </parameter>
-            
+
             <parameter>
-            
+
               <name>UnicastPacketsReceived</name>
-              
+
               <type>unsignedInt</type>
-              
+
               <syntax>uint32</syntax>
-              
+
               <notify>off</notify>
-              
+
             </parameter>
-            
+
             <parameter>
-            
+
               <name>DiscardPacketsSent</name>
-              
+
               <type>unsignedInt</type>
-              
+
               <syntax>uint32</syntax>
-              
+
               <notify>off</notify>
-              
+
             </parameter>
-            
+
             <parameter>
-            
+
               <name>DiscardPacketsReceived</name>
-              
+
               <type>unsignedInt</type>
-              
+
               <syntax>uint32</syntax>
-              
+
               <notify>off</notify>
-              
+
             </parameter>
-            
+
             <parameter>
-            
+
               <name>MulticastPacketsSent</name>
-              
+
               <type>unsignedInt</type>
-              
+
               <syntax>uint32</syntax>
-              
+
               <notify>off</notify>
-              
+
             </parameter>
-            
+
             <parameter>
-            
+
               <name>MulticastPacketsReceived</name>
-              
+
               <type>unsignedInt</type>
-              
+
               <syntax>uint32</syntax>
-              
+
               <notify>off</notify>
-              
+
             </parameter>
-            
+
             <parameter>
-            
+
               <name>BroadcastPacketsSent</name>
-              
+
               <type>unsignedInt</type>
-              
+
               <syntax>uint32</syntax>
-              
+
               <notify>off</notify>
-              
+
             </parameter>
-            
+
             <parameter>
-            
+
               <name>BroadcastPacketsReceived</name>
-              
+
               <type>unsignedInt</type>
-              
+
               <syntax>uint32</syntax>
-              
+
               <notify>off</notify>
-              
+
             </parameter>
-            
+
             <parameter>
-            
+
               <name>UnknownProtoPacketsReceived</name>
-              
+
               <type>unsignedInt</type>
-              
+
               <syntax>uint32</syntax>
-              
+
               <notify>off</notify>
-              
+
             </parameter>
-            
+
               </parameters>
-              
+
             </object>
-            
+
           </objects>
-          
+
         </object>
-        
+
       </objects>
-      
+
     </object>
 <?endif?>
 
@@ -6853,7 +6853,7 @@
           <writable>true</writable>
 
         </parameter>
-		
+
         <parameter>
 
           <name>InterfaceNumberOfEntries</name>
@@ -7087,7 +7087,7 @@
             <writable>true</writable>
 
           </parameter>
-		  
+
           <parameter>
 
             <name>IPv6Enable</name>
@@ -7144,7 +7144,7 @@
               <syntax>uint32</syntax>
               <writable>true</writable>
           </parameter>
-  
+
           <parameter>
               <name>X_CISCO_COM_UPnPIGDEnabled</name>
               <type>boolean</type>
@@ -7192,7 +7192,7 @@
             <type>unsignedInt</type>
             <syntax>uint32</syntax>
             <notify>off</notify>
-          </parameter>    
+          </parameter>
 
           </parameters>
 
@@ -7253,15 +7253,15 @@
               <writable>true</writable>
 
             </parameter>
-            
+
             <parameter>
-                
+
               <name>Status</name>
-              
+
               <type>string: Disabled(1),Enabled(2),Error_Misconfigured(3),Error(4)</type>
-              
+
               <syntax>uint32/mapped</syntax>
-              
+
             </parameter>
 
             <parameter>
@@ -8139,7 +8139,7 @@
             <syntax>string</syntax>
 
             <notify>off</notify>
-                        
+
             <writable>true</writable>
 
           </parameter>
@@ -8370,7 +8370,7 @@
               <writable>true</writable>
 
             </parameter>
-            
+
             <parameter>
 
               <name>Origin</name>
@@ -8391,7 +8391,7 @@
               </parameters>
 
             </object>
-            
+
             <object>
 
               <name>IPv6Forwarding</name>
@@ -8485,7 +8485,7 @@
               <type>string</type>
 
               <syntax>string</syntax>
-              
+
               <writable>true</writable>
 
             </parameter>
@@ -8547,7 +8547,7 @@
               <writable>true</writable>
 
             </parameter>
-            
+
             <parameter>
 
               <name>ExpirationTime</name>
@@ -8621,7 +8621,7 @@
             <syntax>uint32/mapped</syntax>
 
           </parameter>
-            
+
             <parameter>
 
               <name>X_CISCO_COM_UpdateInterval</name>
@@ -8633,7 +8633,7 @@
               <writable>true</writable>
 
             </parameter>
-            
+
             <parameter>
 
               <name>X_CISCO_COM_DefaultMetric</name>
@@ -8737,35 +8737,35 @@
               <syntax>string</syntax>
 
               <writable>true</writable>
-              
+
             </parameter>
 
 
             <parameter>
-            
+
               <name>X_CISCO_COM_SendVersion</name>
-              
+
               <type>string: RIP1(1),RIP2(2),RIP1/2(3)</type>
-              
+
               <syntax>uint32/mapped</syntax>
 
               <writable>true</writable>
-              
+
             </parameter>
 
             <parameter>
-            
+
               <name>X_CISCO_COM_ReceiveVersion</name>
-              
+
               <type>string: RIP1(1),RIP2(2),RIP1/2(3)</type>
-              
+
               <syntax>uint32/mapped</syntax>
 
               <writable>true</writable>
-              
+
             </parameter>
-            
-            <parameter>            
+
+            <parameter>
 
               <name>X_CISCO_COM_Neighbor</name>
 
@@ -8774,17 +8774,17 @@
               <syntax>uint32/ip4_addr</syntax>
 
               <writable>true</writable>
-              
+
             </parameter>
 
             <parameter>
-            
+
               <name>ReportIPAddressType</name>
-              
+
               <type>string: Unicast(1), Multicast(2), Broadcast(3)</type>
-              
+
               <syntax>uint32/mapped</syntax>
-              
+
             </parameter>
 
             <parameter>
@@ -8824,7 +8824,7 @@
             </parameter>
 
             <parameter>
-            
+
                 <name>X_CISCO_COM_AuthenticationType</name>
 <?ifndef BCI?>
                 <type>string: NoAuth(1),SimplePassword(2),KEYED-MD5(3)</type>
@@ -8832,45 +8832,45 @@
                 <type>string: NoAuth(1),SimplePassword(2),KEYED-MD5(3),md5(4)</type>
 <?endif?>
                 <syntax>uint32/mapped</syntax>
-                
+
                 <writable>true</writable>
-                
-            </parameter>
-            
-            <parameter>
-            
-                <name>X_CISCO_COM_Md5KeyID</name>
-                
-                <type>unsignedInt[:255]</type>
-                
-                <syntax>uint32</syntax>
-                
-                <writable>true</writable>
-                
-            </parameter>
-            
-            <parameter>
-            
-                <name>X_CISCO_COM_SimplePassword</name>
-                
-                <type>string</type>
-                
-                <syntax>string</syntax>
-                
-                <writable>true</writable>
-                
+
             </parameter>
 
             <parameter>
-            
-                <name>X_CISCO_COM_Md5KeyValue</name>
-                
-                <type>string</type>
-                
-                <syntax>string</syntax>
-                
+
+                <name>X_CISCO_COM_Md5KeyID</name>
+
+                <type>unsignedInt[:255]</type>
+
+                <syntax>uint32</syntax>
+
                 <writable>true</writable>
-                
+
+            </parameter>
+
+            <parameter>
+
+                <name>X_CISCO_COM_SimplePassword</name>
+
+                <type>string</type>
+
+                <syntax>string</syntax>
+
+                <writable>true</writable>
+
+            </parameter>
+
+            <parameter>
+
+                <name>X_CISCO_COM_Md5KeyValue</name>
+
+                <type>string</type>
+
+                <syntax>string</syntax>
+
+                <writable>true</writable>
+
             </parameter>
 
               </parameters>
@@ -8911,7 +8911,7 @@
             <type>unsignedInt</type>
             <syntax>uint32</syntax>
           </parameter>
--->  
+-->
           </parameters>
           <objects>
             <object>
@@ -9064,13 +9064,13 @@
 
         </parameter>
         <parameter>
-        
+
           <name>ForwardNumberOfEntries</name>
-          
+
           <type>unsignedInt</type>
-          
+
           <syntax>uint32</syntax>
-        
+
         </parameter>
 
       </parameters>
@@ -9234,13 +9234,13 @@
       </functions>
 
       <parameters>
-      
+
         <parameter>
 
           <name>Enable</name>
-        
+
          <type>boolean</type>
-        
+
          <syntax>bool</syntax>
 
           <writable>true</writable>
@@ -9284,15 +9284,15 @@
         <func_GetEntryCount>Server1_GetEntryCount</func_GetEntryCount>
 
         <func_GetEntry>Server1_GetEntry</func_GetEntry>
-	
+
         <func_AddEntry>Server1_AddEntry</func_AddEntry>
 
         <func_DelEntry>Server1_DelEntry</func_DelEntry>
 
-	    <func_IsUpdated>Server1_IsUpdated</func_IsUpdated>
+        <func_IsUpdated>Server1_IsUpdated</func_IsUpdated>
 
         <func_Synchronize>Server1_Synchronize</func_Synchronize>
-        
+
         <func_GetParamBoolValue>Server1_GetParamBoolValue</func_GetParamBoolValue>
 
         <func_GetParamIntValue>Server1_GetParamIntValue</func_GetParamIntValue>
@@ -9350,7 +9350,7 @@
           <syntax>string</syntax>
 
           <writable>true</writable>
-        
+
           <notify>off</notify>
 
         </parameter>
@@ -9401,7 +9401,7 @@
     </object>
 
     </objects>
-    
+
     </object>
 
       </objects>
@@ -10215,12 +10215,12 @@
          <objectType>dynamicTable</objectType>
           <maxInstance>100</maxInstance>
            <functions>
-             <func_GetEntryCount>EventLog_GetEntryCount</func_GetEntryCount> 
+             <func_GetEntryCount>EventLog_GetEntryCount</func_GetEntryCount>
              <func_GetEntry>EventLog_GetEntry</func_GetEntry>
              <func_IsUpdated>EventLog_IsUpdated</func_IsUpdated>
              <func_Synchronize>EventLog_Synchronize</func_Synchronize>
              <func_GetParamUlongValue>EventLog_GetParamUlongValue</func_GetParamUlongValue>
-             <func_GetParamStringValue>EventLog_GetParamStringValue</func_GetParamStringValue> 
+             <func_GetParamStringValue>EventLog_GetParamStringValue</func_GetParamStringValue>
            </functions>
             <parameters>
              <parameter>
@@ -10246,8 +10246,8 @@
             </parameters>
            </object>
           </objects>
-         </object> 
-<!-- LGI ADD END CR029--> 
+         </object>
+<!-- LGI ADD END CR029-->
     <object>
 
       <name>NAT</name>
@@ -10263,11 +10263,11 @@
         <func_GetParamUlongValue>NAT_GetParamUlongValue</func_GetParamUlongValue>
 
         <func_GetParamStringValue>NAT_GetParamStringValue</func_GetParamStringValue>
-        
+
         <func_SetParamBoolValue>NAT_SetParamBoolValue</func_SetParamBoolValue>
 
         <func_SetParamUlongValue>NAT_SetParamUlongValue</func_SetParamUlongValue>
-        
+
         <func_Validate>NAT_Validate</func_Validate>
 
         <func_Commit>NAT_Commit</func_Commit>
@@ -10285,11 +10285,11 @@
           <type>unsignedInt</type>
 
           <syntax>uint32</syntax>
-          
+
           <writable>true</writable>
 
         </parameter>
-        
+
         <parameter>
 
           <name>X_CISCO_COM_UDPTimeout</name>
@@ -10297,11 +10297,11 @@
           <type>unsignedInt</type>
 
           <syntax>uint32</syntax>
-          
+
           <writable>true</writable>
 
         </parameter>
-        
+
         <parameter>
 
           <name>X_CISCO_COM_ICMPTimeout</name>
@@ -10309,7 +10309,7 @@
           <type>unsignedInt</type>
 
           <syntax>uint32</syntax>
-          
+
           <writable>true</writable>
 
         </parameter>
@@ -10321,7 +10321,7 @@
           <type>boolean</type>
 
           <syntax>bool</syntax>
-          
+
           <writable>true</writable>
 
         </parameter>
@@ -10333,7 +10333,7 @@
           <type>boolean</type>
 
           <syntax>bool</syntax>
-          
+
           <writable>true</writable>
 
         </parameter>
@@ -10345,7 +10345,7 @@
           <type>boolean</type>
 
           <syntax>bool</syntax>
-          
+
           <writable>true</writable>
 
         </parameter>
@@ -10462,8 +10462,8 @@
           </parameters>
         </object>
 <!-- LG ADD END CR14 -->
-	  
-	    <object>
+
+        <object>
 
           <name>X_CISCO_COM_DMZ</name>
 
@@ -10594,7 +10594,7 @@
             <func_IsUpdated>PortMapping_IsUpdated</func_IsUpdated>
 
             <func_Synchronize>PortMapping_Synchronize</func_Synchronize>
-			
+
             <func_AddEntry>PortMapping_AddEntry</func_AddEntry>
 
             <func_DelEntry>PortMapping_DelEntry</func_DelEntry>
@@ -10806,7 +10806,7 @@
             <writable>true</writable>
 
           </parameter>
-		  
+
           <parameter>
 
             <name>Interface</name>
@@ -10830,38 +10830,38 @@
               <writable>true</writable>
 
           </parameter>
-		  
+
           </parameters>
 
         </object>
 <?ifndef BCI | def _CBR2_PRODUCT_REQ_?>
-	<object>
+    <object>
 
-	  <name>X_RDK_PortMapping</name>
+      <name>X_RDK_PortMapping</name>
 
-	  <objectType>object</objectType>
+      <objectType>object</objectType>
 
-	  <functions>
-	    <func_GetParamStringValue>X_RDK_PortMapping_GetParamStringValue</func_GetParamStringValue>
-	    <func_SetParamStringValue>X_RDK_PortMapping_SetParamStringValue</func_SetParamStringValue>
+      <functions>
+        <func_GetParamStringValue>X_RDK_PortMapping_GetParamStringValue</func_GetParamStringValue>
+        <func_SetParamStringValue>X_RDK_PortMapping_SetParamStringValue</func_SetParamStringValue>
 
-	  </functions>
-	  <parameters>
-	  <parameter>
+      </functions>
+      <parameters>
+      <parameter>
 
-		<name>Data</name>
+        <name>Data</name>
 
-            	<type>string</type>
+                <type>string</type>
 
-            	<syntax>string</syntax>
+                <syntax>string</syntax>
 
-            	<writable>true</writable>
+                <writable>true</writable>
 
-	  </parameter>
-	</parameters>
-	</object>
+      </parameter>
+    </parameters>
+    </object>
 <?endif?>
-	<object>
+    <object>
 
            <name>X_CISCO_COM_PortTriggers</name>
 
@@ -11058,7 +11058,7 @@
         </objects>
 
         </object>
-		
+
       </objects>
 
     </object>
@@ -11112,13 +11112,13 @@
       <objects>
 <!--
         <object>
-          
+
           <name>X_CISCO_COM_StaticAddress</name>
-          
+
           <objectType>writableTable</objectType>
 
           <maxInstance>128</maxInstance>
-          
+
           <functions>
 
             <func_GetEntryCount>X_CISCO_COM_StaticAddress_GetEntryCount</func_GetEntryCount>
@@ -11152,9 +11152,9 @@
             <func_Rollback>X_CISCO_COM_StaticAddress_Rollback</func_Rollback>
 
           </functions>
-          
+
           <parameters>
-            
+
             <parameter>
 
               <name>Yiaddr</name>
@@ -11166,7 +11166,7 @@
               <writable>true</writable>
 
             </parameter>
-            
+
             <parameter>
 
               <name>Chaddr</name>
@@ -11178,7 +11178,7 @@
               <writable>true</writable>
 
             </parameter>
-            
+
             <parameter>
 
               <name>DeviceName</name>
@@ -11190,9 +11190,9 @@
               <writable>true</writable>
 
             </parameter>
-            
+
           </parameters>
-          
+
         </object>
 -->
 <?ifndef FEATURE_RDKB_WAN_MANAGER?>
@@ -11475,7 +11475,7 @@
               <type>string(64)</type>
 
               <syntax>string</syntax>
-		
+
               <notify>off</notify>
 
               <writable>true</writable>
@@ -11762,7 +11762,7 @@
               <syntax>bool</syntax>
 
               <writable>true</writable>
-              
+
             </parameter>
 
             <parameter>
@@ -12316,7 +12316,7 @@
                 <writable>true</writable>
 
               </parameter>
-              
+
               <parameter>
 
                 <name>X_CISCO_COM_DeviceName</name>
@@ -12329,7 +12329,7 @@
 
               </parameter>
 
-			  <parameter>
+              <parameter>
 
                 <name>X_CISCO_COM_Comment</name>
 
@@ -12343,7 +12343,7 @@
 
                   </parameters>
 
-                </object>				
+                </object>
                 <object>
                   <name>Option</name>
                   <objectType>writableTable</objectType>
@@ -12421,13 +12421,13 @@
                 <syntax>string</syntax>
                 <writable>false</writable>
               </parameter>
-			  <parameter>
+              <parameter>
                 <name>X_CISCO_COM_Comment</name>
                 <type>string(255)</type>
                 <syntax>string</syntax>
-				<writable>true</writable>
+                <writable>true</writable>
               </parameter>
-			  <parameter>
+              <parameter>
                 <name>X_CISCO_COM_Interface</name>
                 <type>string(256)</type>
                 <syntax>string</syntax>
@@ -12521,7 +12521,7 @@
                     </object>
                   </objects>
                 </object>
-				
+
               </objects>
 
             </object>
@@ -13357,7 +13357,7 @@
             <writable>true</writable>
 
           </parameter>
-           
+
           <parameter>
 
             <name>RemoteAccessCapable</name>
@@ -13496,9 +13496,9 @@
 
           </parameter>
 <?ifdef COSA_FOR_BCI?>
-	          <parameter>
-	
-        	  <name>NumOfRestoreFailedAttempt</name>
+              <parameter>
+
+              <name>NumOfRestoreFailedAttempt</name>
 
                   <type>unsignedInt</type>
 
@@ -13524,13 +13524,13 @@
 
       <objects>
 
-			<object>
+            <object>
 
-			  <name>Discovery</name>
+              <name>Discovery</name>
 
-			  <objectType>object</objectType>
+              <objectType>object</objectType>
 
-			  <functions>
+              <functions>
 
                 <func_GetParamBoolValue>Discovery_GetParamBoolValue</func_GetParamBoolValue>
 
@@ -13540,51 +13540,51 @@
 
                 <func_GetParamStringValue>Discovery_GetParamStringValue</func_GetParamStringValue>
 
-				<func_SetParamBoolValue>Discovery_SetParamBoolValue</func_SetParamBoolValue>
+                <func_SetParamBoolValue>Discovery_SetParamBoolValue</func_SetParamBoolValue>
 
-				<func_SetParamIntValue>Discovery_SetParamIntValue</func_SetParamIntValue>
+                <func_SetParamIntValue>Discovery_SetParamIntValue</func_SetParamIntValue>
 
-				<func_SetParamUlongValue>Discovery_SetParamUlongValue</func_SetParamUlongValue>
+                <func_SetParamUlongValue>Discovery_SetParamUlongValue</func_SetParamUlongValue>
 
-				<func_SetParamStringValue>Discovery_SetParamStringValue</func_SetParamStringValue>
+                <func_SetParamStringValue>Discovery_SetParamStringValue</func_SetParamStringValue>
 
-				<func_Validate>Discovery_Validate</func_Validate>
+                <func_Validate>Discovery_Validate</func_Validate>
 
-				<func_Commit>Discovery_Commit</func_Commit>
+                <func_Commit>Discovery_Commit</func_Commit>
 
-				<func_Rollback>Discovery_Rollback</func_Rollback>
+                <func_Rollback>Discovery_Rollback</func_Rollback>
 
-			  </functions>
+              </functions>
 
-			  <parameters>
+              <parameters>
 
-				<parameter>
+                <parameter>
 
-				  <name>X_CISCO_COM_Enable</name>
+                  <name>X_CISCO_COM_Enable</name>
 
-				  <type>boolean</type>
+                  <type>boolean</type>
 
-				  <syntax>bool</syntax>
+                  <syntax>bool</syntax>
 
-				  <writable>true</writable>
+                  <writable>true</writable>
 
-				</parameter>
+                </parameter>
 
-				<parameter>
+                <parameter>
 
-				  <name>X_CISCO_COM_PollingInterval</name>
+                  <name>X_CISCO_COM_PollingInterval</name>
 
-				  <type>unsignedInt</type>
+                  <type>unsignedInt</type>
 
-				  <syntax>uint32</syntax>
+                  <syntax>uint32</syntax>
 
-				  <writable>true</writable>
+                  <writable>true</writable>
 
-				</parameter>
+                </parameter>
 
-			  </parameters>
+              </parameters>
 
-			</object>
+            </object>
 
         <object>
 
@@ -13643,29 +13643,29 @@
             <writable>true</writable>
 
           </parameter>
-	  
+
           <parameter>
-          
+
             <name>X_CISCO_COM_IGD_AdvertisementPeriod</name>
-            
+
             <type>unsignedInt</type>
-            
+
             <syntax>uint32</syntax>
-            
+
             <writable>true</writable>
-            
+
           </parameter>
-          
+
           <parameter>
-          
+
             <name>X_CISCO_COM_IGD_TTL</name>
-            
+
             <type>unsignedInt</type>
-            
+
             <syntax>uint32</syntax>
-            
+
             <writable>true</writable>
-            
+
           </parameter>
 
           </parameters>
@@ -14050,11 +14050,11 @@
       <name>X_CISCO_COM_Security</name>
 
       <objectType>object</objectType>
-      
+
       <functions>
 
       </functions>
-      
+
       <parameters>
 
       </parameters>
@@ -14178,7 +14178,7 @@
             <writable>true</writable>
 
           </parameter>
-          
+
           <parameter>
 
             <name>FilterAnonymousInternetRequests</name>
@@ -14190,7 +14190,7 @@
             <writable>true</writable>
 
           </parameter>
-          
+
           <parameter>
 
             <name>FilterAnonymousInternetRequestsV6</name>
@@ -14454,7 +14454,7 @@
               <writable>true</writable>
 
             </parameter>
-            
+
             <parameter>
 
               <name>AllowLanHostMACAddresses</name>
@@ -14490,28 +14490,28 @@
               <writable>true</writable>
 
             </parameter>
-			
-			<parameter>
+
+            <parameter>
               <name>LanHostsIsEffective</name>
               <type>boolean</type>
               <syntax>bool</syntax>
               <writable>true</writable>
             </parameter>
-			
+
             <parameter>
               <name>LanHostMACAddresses</name>
               <type>string(256)</type>
               <syntax>string/mac_addr_list</syntax>
               <writable>true</writable>
             </parameter>
-			
+
             <parameter>
               <name>LanHostIPAddresses</name>
               <type>string(64)</type>
               <syntax>string/ip4_addr_list</syntax>
               <writable>true</writable>
             </parameter>
-			
+
             <parameter>
               <name>LanHostIPRange</name>
               <type>string(256)</type>
@@ -14580,7 +14580,7 @@
                 <writable>true</writable>
 
               </parameter>
-              
+
               <parameter>
 
                 <name>AllDay</name>
@@ -14706,8 +14706,8 @@
                     <func_GetEntryCount>BlockedURL_GetEntryCount</func_GetEntryCount>
 
                     <func_GetEntry>BlockedURL_GetEntry</func_GetEntry>
-					
-					<func_AddEntry>BlockedURL_AddEntry</func_AddEntry>
+
+                    <func_AddEntry>BlockedURL_AddEntry</func_AddEntry>
 
                     <func_DelEntry>BlockedURL_DelEntry</func_DelEntry>
 
@@ -14736,8 +14736,8 @@
                   </functions>
 
                   <parameters>
-				  
-				  <parameter>
+
+                  <parameter>
 
                 <name>Alias</name>
 
@@ -14778,8 +14778,8 @@
                     <func_GetEntryCount>BlockedKeyword_GetEntryCount</func_GetEntryCount>
 
                     <func_GetEntry>BlockedKeyword_GetEntry</func_GetEntry>
-					
-					<func_AddEntry>BlockedKeyword_AddEntry</func_AddEntry>
+
+                    <func_AddEntry>BlockedKeyword_AddEntry</func_AddEntry>
 
                     <func_DelEntry>BlockedKeyword_DelEntry</func_DelEntry>
 
@@ -14808,8 +14808,8 @@
                   </functions>
 
                   <parameters>
-				  
-				  <parameter>
+
+                  <parameter>
 
                 <name>Alias</name>
 
@@ -14850,8 +14850,8 @@
                     <func_GetEntryCount>BlockedApplication_GetEntryCount</func_GetEntryCount>
 
                     <func_GetEntry>BlockedApplication_GetEntry</func_GetEntry>
-					
-					<func_AddEntry>BlockedApplication_AddEntry</func_AddEntry>
+
+                    <func_AddEntry>BlockedApplication_AddEntry</func_AddEntry>
 
                     <func_DelEntry>BlockedApplication_DelEntry</func_DelEntry>
 
@@ -14880,8 +14880,8 @@
                   </functions>
 
                   <parameters>
-				  
-		      <parameter>
+
+              <parameter>
 
                 <name>StartPortNumber</name>
 
@@ -14962,8 +14962,8 @@
                 <func_GetEntryCount>LogEntry_GetEntryCount</func_GetEntryCount>
 
                 <func_GetEntry>LogEntry_GetEntry</func_GetEntry>
-				
-				<func_IsUpdated>LogEntry_IsUpdated</func_IsUpdated>
+
+                <func_IsUpdated>LogEntry_IsUpdated</func_IsUpdated>
 
                 <func_Synchronize>LogEntry_Synchronize</func_Synchronize>
 
@@ -14988,7 +14988,7 @@
               <syntax>uint32</syntax>
 
             </parameter>
-      
+
             <parameter>
 
               <name>SourceIP</name>
@@ -15091,32 +15091,32 @@
         <func_Rollback>X_CISCO_COM_DeviceControl_Rollback</func_Rollback>
       </functions>
       <parameters>
-	<parameter>
-	  <name>Enable</name>
+    <parameter>
+      <name>Enable</name>
           <type>boolean</type>
           <syntax>bool</syntax>
           <writable>true</writable>
         </parameter>
-	<parameter>
-	  <name>Username</name>         
-            <type>string(16)</type>            
-            <syntax>string</syntax>            
-            <writable>true</writable>            
-          </parameter>          
-          <parameter>          
-            <name>Password</name>            
-            <type>string(16)</type>            
-            <syntax>string</syntax>            
-            <writable>true</writable>            
-          </parameter>          
+    <parameter>
+      <name>Username</name>
+            <type>string(16)</type>
+            <syntax>string</syntax>
+            <writable>true</writable>
+          </parameter>
+          <parameter>
+            <name>Password</name>
+            <type>string(16)</type>
+            <syntax>string</syntax>
+            <writable>true</writable>
+          </parameter>
           <parameter>
             <name>SessionTimeout</name>
             <type>unsignedInt</type>
             <syntax>uint32</syntax>
             <writable>true</writable>
          </parameter>
-      </parameters>      
-    </object>    
+      </parameters>
+    </object>
     </objects>
      </object>
 
@@ -15137,33 +15137,33 @@
         <func_Rollback>X_CISCO_COM_DeviceControl_Rollback</func_Rollback>
       </functions>
       <parameters>
-	    <parameter>
+        <parameter>
             <name>IGMPProxyEnable</name>
             <type>boolean</type>
             <syntax>bool</syntax>
             <writable>true</writable>
         </parameter>
-		<parameter>
+        <parameter>
             <name>DNSProxyEnable</name>
             <type>boolean</type>
             <syntax>bool</syntax>
             <writable>true</writable>
         </parameter>
 <?ifndef _CBR_PRODUCT_REQ_?>
-	    <parameter>
+        <parameter>
             <name>TelnetEnable</name>
             <type>boolean</type>
             <syntax>bool</syntax>
             <writable>true</writable>
         </parameter>
 <?endif?>
-		<parameter>
+        <parameter>
             <name>SSHEnable</name>
             <type>boolean</type>
             <syntax>bool</syntax>
             <writable>true</writable>
         </parameter>
-		<parameter>
+        <parameter>
             <name>ReinitCmMac</name>
             <type>boolean</type>
             <syntax>bool</syntax>
@@ -15175,34 +15175,34 @@
           <type>string: Enabled(1),Disabled(2)</type>
           <syntax>uint32/mapped</syntax>
         </parameter>
-        
+
         <parameter>
           <name>DeviceMode</name>
           <type>string: ipDisabled(1),ipv4Only(2),ipv6Only(3),ipv4AndIpv6(4)</type>
           <syntax>uint32/mapped</syntax>
           <writable>true</writable>
         </parameter>
-        
+
         <parameter>
           <name>RebootDevice</name>
           <type>string(255)</type>
           <syntax>string</syntax>
           <writable>true</writable>
         </parameter>
-        
+
         <parameter>
           <name>FactoryReset</name>
           <type>string(255)</type>
           <syntax>string</syntax>
           <writable>true</writable>
         </parameter>
-        
+
         <parameter>
           <name>DeviceConfigStatus</name>
           <type>string</type>
           <syntax>string</syntax>
         </parameter>
-        
+
         <parameter>
           <name>SNMPEnable</name>
           <type>string(31)</type>
@@ -15210,25 +15210,25 @@
           <writable>true</writable>
         </parameter>
 
-		<parameter>
+        <parameter>
             <name>HTTPEnable</name>
             <type>boolean</type>
             <syntax>bool</syntax>
             <writable>true</writable>
         </parameter>
-		<parameter>
+        <parameter>
             <name>HTTPPort</name>
             <type>unsignedInt</type>
             <syntax>uint32</syntax>
             <writable>true</writable>
         </parameter>
-		<parameter>
+        <parameter>
             <name>HTTPSEnable</name>
             <type>boolean</type>
             <syntax>bool</syntax>
             <writable>true</writable>
         </parameter>
-		<parameter>
+        <parameter>
             <name>HTTPSPort</name>
             <type>unsignedInt</type>
             <syntax>uint32</syntax>
@@ -15362,7 +15362,7 @@
             <syntax>string</syntax>
             <writable>false</writable>
         </parameter>
-        
+
         <parameter>
             <name>ErouterEnable</name>
             <type>boolean</type>
@@ -15381,19 +15381,19 @@
         </parameter>
 
       </parameters>
-      
+
       <objects>
-        
+
         <object>
-            
+
           <name>LanManagementEntry</name>
-          
+
           <objectType>writableTable</objectType>
-          
+
           <maxInstance>128</maxInstance>
-          
+
           <functions>
-            
+
             <func_GetEntryCount>LanMngm_GetEntryCount</func_GetEntryCount>
 
             <func_GetEntry>LanMngm_GetEntry</func_GetEntry>
@@ -15423,13 +15423,13 @@
             <func_Commit>LanMngm_Commit</func_Commit>
 
             <func_Rollback>LanMngm_Rollback</func_Rollback>
-            
+
           </functions>
-          
+
           <parameters>
-            
+
             <parameter>
-                
+
               <name>LanMode</name>
 <?ifndef BCI?>
               <type>string: bridge-dhcp(1),bridge-static(2),router(3)</type>
@@ -15439,147 +15439,147 @@
               <syntax>uint32/mapped</syntax>
 
               <writable>true</writable>
-              
+
             </parameter>
-            
+
             <parameter>
-                
+
               <name>LanNetwork</name>
-              
+
               <type>string</type>
-              
+
               <syntax>uint32/ip4_addr</syntax>
-              
+
             </parameter>
-            
+
             <parameter>
-                
+
               <name>LanNetworksAllow</name>
-              
+
               <type>string: default(0),anyPrivateClass(1),anyClass(2)</type>
-              
+
               <syntax>uint32/mapped</syntax>
-              
+
               <writable>true</writable>
-              
+
             </parameter>
-            
+
             <parameter>
-                
+
               <name>LanSubnetMask</name>
-              
+
               <type>string</type>
-              
+
               <syntax>uint32/ip4_addr</syntax>
-              
+
               <writable>true</writable>
-              
+
             </parameter>
-            
+
             <parameter>
-                
+
               <name>LanIPAddress</name>
-              
+
               <type>string</type>
-              
+
               <syntax>uint32/ip4_addr</syntax>
-              
+
               <writable>true</writable>
-              
+
             </parameter>
-            
+
             <parameter>
-                
+
               <name>LanDhcpServer</name>
-              
+
               <type>boolean</type>
-              
+
               <syntax>bool</syntax>
-              
+
               <writable>true</writable>
-              
+
             </parameter>
-            
+
             <parameter>
-                
+
               <name>LanNaptEnable</name>
-              
+
               <type>boolean</type>
-              
+
               <syntax>bool</syntax>
-              
+
               <writable>true</writable>
-              
+
             </parameter>
-           
+
             <parameter>
-                
+
               <name>LanNaptOnDhcp</name>
-              
+
               <type>boolean</type>
-              
+
               <syntax>bool</syntax>
-              
+
               <writable>true</writable>
-              
+
             </parameter>
-            
+
             <parameter>
-                
+
               <name>LanTos</name>
-              
+
               <type>unsignedInt</type>
-              
+
               <syntax>uint32</syntax>
-              
+
               <writable>true</writable>
-              
+
             </parameter>
-            
+
             <parameter>
-                
+
               <name>LanDhcp125</name>
-              
+
               <type>boolean</type>
-              
+
               <syntax>bool</syntax>
-              
+
               <writable>true</writable>
-              
+
             </parameter>
-            
+
             <parameter>
-                
+
               <name>LanHnap</name>
-              
+
               <type>boolean</type>
-              
+
               <syntax>bool</syntax>
-              
+
               <writable>true</writable>
-              
+
             </parameter>
-            
+
             <parameter>
-                
+
               <name>LanUpnp</name>
-              
+
               <type>boolean</type>
-              
+
               <syntax>bool</syntax>
-              
+
               <writable>true</writable>
-              
+
             </parameter>
-            
+
           </parameters>
-            
+
         </object>
 
       </objects>
-      
-      </object>  
-      
+
+      </object>
+
       <object>
       <name>Bridging</name>
       <objectType>object</objectType>
@@ -15651,7 +15651,7 @@
           </functions>
           <parameters>
 <?ifdef MULTILAN_FEATURE & !BCI?>
-          <parameter> 
+          <parameter>
             <name>Name</name>
             <type>string</type>
             <syntax>string</syntax>
@@ -16231,13 +16231,13 @@
           <syntax>bool</syntax>
           <writable>true</writable>
         </parameter>
-<!--		
+<!--
         <parameter>
           <name>InterfaceSettingNumberOfEntries</name>
           <type>unsignedInt</type>
           <syntax>uint32</syntax>
         </parameter>
-		-->
+        -->
       </parameters>
       <objects>
         <object>
@@ -16453,13 +16453,13 @@
           <syntax>bool</syntax>
           <writable>true</writable>
         </parameter>
-<!--		
+<!--
         <parameter>
           <name>InterfaceSettingNumberOfEntries</name>
           <type>unsignedInt</type>
           <syntax>uint32</syntax>
         </parameter>
--->		
+-->
       </parameters>
       <objects>
         <object>
@@ -16576,7 +16576,7 @@
                 <syntax>uint32</syntax>
                 <writable>false</writable>
             </parameter>
--->			
+-->
         </parameters>
 
         <objects>
@@ -16667,13 +16667,13 @@
         </objects>
     </object>
     <object>
-        
+
         <name>X_CISCO_COM_MLD</name>
-        
+
         <objectType>object</objectType>
-        
+
         <functions>
-            
+
         <func_GetParamBoolValue>X_CISCO_COM_MLD_GetParamBoolValue</func_GetParamBoolValue>
 
         <func_GetParamIntValue>X_CISCO_COM_MLD_GetParamIntValue</func_GetParamIntValue>
@@ -16697,119 +16697,119 @@
         <func_Rollback>X_CISCO_COM_MLD_Rollback</func_Rollback>
 
       </functions>
-      
+
       <parameters>
-          
+
           <parameter>
-              
+
               <name>Enable</name>
-              
+
               <type>boolean</type>
-              
+
               <syntax>bool</syntax>
-              
+
               <writable>true</writable>
-              
+
         </parameter>
-        
+
         <parameter>
-            
+
             <name>Status</name>
-            
+
             <type>string: Disabled(1),Enabled(2),Error(3)</type>
-            
+
             <syntax>uint32/mapped</syntax>
-            
+
         </parameter>
 <!--
         <parameter>
-            
+
             <name>MulticastMode</name>
-            
+
             <type>string: ASM(3),SSM(4),Both(5)</type>
-            
+
             <syntax>uint32/mapped</syntax>
-            
+
             <writable>true</writable>
-            
+
         </parameter>
-      
+
         <parameter>
-              
+
               <name>ForwardScope</name>
-              
+
               <type>string: LINK(10),SITE(11),GLOBAL(12)</type>
-              
+
               <syntax>uint32/mapped</syntax>
-              
+
               <writable>true</writable>
-             
+
         </parameter>
-        
+
         <parameter>
-              
+
               <name>ImmediateReportV1</name>
-              
+
               <type>boolean</type>
-              
+
               <syntax>bool</syntax>
-              
+
               <writable>true</writable>
-             
+
         </parameter>
-        
+
         <parameter>
-              
+
               <name>EntryValidity</name>
-              
+
               <type>unsignedInt</type>
-              
+
               <syntax>uint32</syntax>
-              
+
               <writable>true</writable>
-             
+
         </parameter>
--->        
+-->
         <parameter>
-              
+
               <name>SnoopingEnable</name>
-              
+
               <type>boolean</type>
-              
+
               <syntax>bool</syntax>
-              
+
               <writable>true</writable>
-              
+
         </parameter>
-<!--        
+<!--
         <parameter>
-              
+
               <name>GroupNumberOfEntries</name>
-              
+
               <type>unsignedInt</type>
-              
+
               <syntax>uint32</syntax>
-                            
+
         </parameter>
--->      
+-->
       </parameters>
-      
+
       <objects>
-          
+
           <object>
-              
+
               <name>Group</name>
-              
+
               <objectType>dynamicTable</objectType>
-              
+
               <maxInstance>128</maxInstance>
-              
+
               <functions>
 
               <func_GetEntryCount>Group1_GetEntryCount</func_GetEntryCount>
 
               <func_GetEntry>Group1_GetEntry</func_GetEntry>
-                
+
               <func_IsUpdated>Group1_IsUpdated</func_IsUpdated>
 
               <func_Synchronize>Group1_Synchronize</func_Synchronize>
@@ -16823,65 +16823,65 @@
               <func_GetParamStringValue>Group1_GetParamStringValue</func_GetParamStringValue>
 
               </functions>
-          
+
               <parameters>
-              
+
               <parameter>
 
               <name>GroupAddress</name>
 
               <type>string(256)</type>
-                
-              <syntax>string</syntax>                      
+
+              <syntax>string</syntax>
 
             </parameter>
-<!--            
+<!--
             <parameter>
 
               <name>SourceAddress</name>
 
               <type>string(256)</type>
-                
-              <syntax>string</syntax>                      
+
+              <syntax>string</syntax>
 
             </parameter>
-            
+
             <parameter>
-              
+
               <name>Mode</name>
-              
+
               <type>string: MC_ASM(1),MC_SSM(2)</type>
-              
+
               <syntax>uint32/mapped</syntax>
-              
+
               <writable>true</writable>
-             
+
             </parameter>
--->            
+-->
             <parameter>
 
               <name>Interfaces</name>
 
               <type>string(512)</type>
-                
-              <syntax>string</syntax>                      
+
+              <syntax>string</syntax>
 
             </parameter>
-              
+
               </parameters>
-                       
+
           </object>
-          
+
       </objects>
-      
+
     </object>
-    
+
 <?endif?>
-      
+
     <object>
-        
+
         <name>X_CISCO_COM_Diagnostics</name>
-        
+
         <objectType>object</objectType>
 
         <objects>
@@ -16889,85 +16889,85 @@
           <object>
 
            <name>Syslog</name>
-        
+
            <objectType>object</objectType>
 
            <objects>
 
             <object>
-	              
+
             <name>Entry</name>
-            
+
             <objectType>dynamicTable</objectType>
-            
+
             <maxInstance>256</maxInstance>
-            
+
             <functions>
-      
+
             <func_GetEntryCount>Entry_GetEntryCount</func_GetEntryCount>
-      
+
             <func_GetEntry>Entry_GetEntry</func_GetEntry>
-              
+
             <func_IsUpdated>Entry_IsUpdated</func_IsUpdated>
-      
+
             <func_Synchronize>Entry_Synchronize</func_Synchronize>
-      
+
             <func_GetParamBoolValue>Entry_GetParamBoolValue</func_GetParamBoolValue>
-      
+
             <func_GetParamIntValue>Entry_GetParamIntValue</func_GetParamIntValue>
-      
+
             <func_GetParamUlongValue>Entry_GetParamUlongValue</func_GetParamUlongValue>
-      
+
             <func_GetParamStringValue>Entry_GetParamStringValue</func_GetParamStringValue>
-      
+
             </functions>
-        
+
             <parameters>
-            
+
             <parameter>
-      
+
             <name>Time</name>
-      
+
             <type>string(32)</type>
-              
-            <syntax>string</syntax>                      
-      
+
+            <syntax>string</syntax>
+
           </parameter>
-          
+
           <parameter>
-      
+
             <name>Tag</name>
-      
+
             <type>string(16)</type>
-              
-            <syntax>string</syntax>                      
-      
+
+            <syntax>string</syntax>
+
           </parameter>
-          
+
           <parameter>
-            
+
             <name>Level</name>
-            
+
             <type>string: Emergency(1), Alert(2), Critical(3), Error(4), Warning(5), Notice(6), Informational(7), Debug(8) </type>
-            
+
             <syntax>uint32/mapped</syntax>
-            
+
             <writable>true</writable>
-           
+
           </parameter>
-          
+
           <parameter>
-      
+
             <name>Message</name>
-      
+
             <type>string</type>
-              
-            <syntax>string</syntax>                      
-      
+
+            <syntax>string</syntax>
+
           </parameter>
-            
+
          </parameters>
-                 
+
           </object>
 
           <object>
@@ -17022,102 +17022,102 @@
 
         </object>
 
-		  <object>
+          <object>
 
-		   <name>Eventlog</name>
-		
-		   <objectType>object</objectType>
+           <name>Eventlog</name>
 
-		   <objects>
+           <objectType>object</objectType>
 
-			<object>
-				  
-			<name>Entry</name>
-			
-			<objectType>dynamicTable</objectType>
-			
-			<maxInstance>256</maxInstance>
-			
-			<functions>
-	  
-			<func_GetEntryCount>Eventlog_GetEntryCount</func_GetEntryCount>
-	  
-			<func_GetEntry>Eventlog_GetEntry</func_GetEntry>
-			  
-			<func_IsUpdated>Eventlog_IsUpdated</func_IsUpdated>
-	  
-			<func_Synchronize>Eventlog_Synchronize</func_Synchronize>
-	  
-			<func_GetParamBoolValue>Eventlog_GetParamBoolValue</func_GetParamBoolValue>
-	  
-			<func_GetParamIntValue>Eventlog_GetParamIntValue</func_GetParamIntValue>
-	  
-			<func_GetParamUlongValue>Eventlog_GetParamUlongValue</func_GetParamUlongValue>
-	  
-			<func_GetParamStringValue>Eventlog_GetParamStringValue</func_GetParamStringValue>
-	  
-			</functions>
-		
-			<parameters>
-			
-			<parameter>
-	  
-			<name>Time</name>
-	  
-			<type>string(32)</type>
-			  
-			<syntax>string</syntax>                      
-	  
-		  </parameter>
-		  
-		  <parameter>
-	  
-			<name>Tag</name>
-	  
-			<type>string(16)</type>
-			  
-			<syntax>string</syntax>                      
-	  
-		  </parameter>
-		  
-		  <parameter>
-			
-			<name>Level</name>
-			
-			<type>string: Emergency(1), Alert(2), Critical(3), Error(4), Warning(5), Notice(6), Informational(7), Debug(8) </type>
-			
-			<syntax>uint32/mapped</syntax>
-			
-			<writable>true</writable>
-		   
-		  </parameter>
-		  
-		  <parameter>
-	  
-			<name>Message</name>
-	  
-			<type>string</type>
-			  
-			<syntax>string</syntax>                      
-	  
-		  </parameter>
-			
-		 </parameters>
-				 
-		  </object>
+           <objects>
 
-		 </objects>
+            <object>
+
+            <name>Entry</name>
+
+            <objectType>dynamicTable</objectType>
+
+            <maxInstance>256</maxInstance>
+
+            <functions>
+
+            <func_GetEntryCount>Eventlog_GetEntryCount</func_GetEntryCount>
+
+            <func_GetEntry>Eventlog_GetEntry</func_GetEntry>
+
+            <func_IsUpdated>Eventlog_IsUpdated</func_IsUpdated>
+
+            <func_Synchronize>Eventlog_Synchronize</func_Synchronize>
+
+            <func_GetParamBoolValue>Eventlog_GetParamBoolValue</func_GetParamBoolValue>
+
+            <func_GetParamIntValue>Eventlog_GetParamIntValue</func_GetParamIntValue>
+
+            <func_GetParamUlongValue>Eventlog_GetParamUlongValue</func_GetParamUlongValue>
+
+            <func_GetParamStringValue>Eventlog_GetParamStringValue</func_GetParamStringValue>
+
+            </functions>
+
+            <parameters>
+
+            <parameter>
+
+            <name>Time</name>
+
+            <type>string(32)</type>
+
+            <syntax>string</syntax>
+
+          </parameter>
+
+          <parameter>
+
+            <name>Tag</name>
+
+            <type>string(16)</type>
+
+            <syntax>string</syntax>
+
+          </parameter>
+
+          <parameter>
+
+            <name>Level</name>
+
+            <type>string: Emergency(1), Alert(2), Critical(3), Error(4), Warning(5), Notice(6), Informational(7), Debug(8) </type>
+
+            <syntax>uint32/mapped</syntax>
+
+            <writable>true</writable>
+
+          </parameter>
+
+          <parameter>
+
+            <name>Message</name>
+
+            <type>string</type>
+
+            <syntax>string</syntax>
+
+          </parameter>
+
+         </parameters>
+
+          </object>
+
+         </objects>
 
         </object>
 
       </objects>
-            
+
     </object>
 
     <object>
         <name>X_Comcast_com_ParentalControl</name>
         <objectType>object</objectType>
-		<functions>
+        <functions>
 
         <func_GetParamBoolValue>ParentalControl_GetParamBoolValue</func_GetParamBoolValue>
 
@@ -17126,14 +17126,14 @@
       </functions>
 
       <parameters>
-	  <parameter>
+      <parameter>
            <name>RollbackUTC_Local</name>
            <type>boolean</type>
            <syntax>bool</syntax>
            <writable>true</writable>
            </parameter>
-	  </parameters>
-	  
+      </parameters>
+
         <objects>
             <object>
                 <name>ManagedSites</name>
@@ -17428,7 +17428,7 @@
                     <object>
                       <name>Redirect</name>
                       <objectType>object</objectType>
-                      <functions> 
+                      <functions>
                         <func_GetParamStringValue>MDRed_GetParamStringValue</func_GetParamStringValue>
                         <func_SetParamStringValue>MDRed_SetParamStringValue</func_SetParamStringValue>
                         <func_Validate>MDRed_Validate</func_Validate>
@@ -17548,86 +17548,86 @@
     </object>
 
     <object>
-        <name>X_CISCO_COM_MultiLAN</name>        
+        <name>X_CISCO_COM_MultiLAN</name>
         <objectType>object</objectType>
 
         <functions>
           <func_GetParamStringValue>X_CISCO_COM_MultiLAN_GetParamStringValue</func_GetParamStringValue>
         </functions>
-      
+
         <parameters>
-          <parameter>            
+          <parameter>
             <name>PrimayLANIPInterface</name>
             <type>string</type>
             <syntax>string</syntax>
           </parameter>
 
-          <parameter>            
+          <parameter>
             <name>HomeSecurityIPInterface</name>
             <type>string</type>
             <syntax>string</syntax>
           </parameter>
 
-          <parameter>            
+          <parameter>
             <name>PrimaryLANBridge</name>
             <type>string</type>
             <syntax>string</syntax>
           </parameter>
 
-          <parameter>            
+          <parameter>
             <name>PrimaryLANBridgeHSPorts</name>
             <type>string</type>
             <syntax>string</syntax>
           </parameter>
 
-          <parameter>            
+          <parameter>
             <name>HomeSecurityBridge</name>
             <type>string</type>
             <syntax>string</syntax>
           </parameter>
 
-          <parameter>            
+          <parameter>
             <name>HomeSecurityBridgePorts</name>
             <type>string</type>
             <syntax>string</syntax>
           </parameter>
 
-          <parameter>            
+          <parameter>
             <name>HomeSecurityDHCPv4ServerPool</name>
             <type>string</type>
             <syntax>string</syntax>
           </parameter>
 
-          <parameter>            
+          <parameter>
             <name>PrimaryLANDHCPv4ServerPool</name>
             <type>string</type>
             <syntax>string</syntax>
           </parameter>
 
-          <parameter>            
+          <parameter>
             <name>HomeSecurityWiFiRadio</name>
             <type>string</type>
             <syntax>string</syntax>
           </parameter>
 
-          <parameter>            
+          <parameter>
             <name>HomeSecurityWiFiSsid</name>
             <type>string</type>
             <syntax>string</syntax>
           </parameter>
 
-          <parameter>            
+          <parameter>
             <name>HomeSecurityWiFiAp</name>
             <type>string</type>
             <syntax>string</syntax>
           </parameter>
 
         </parameters>
-    </object>      
-    
+    </object>
+
 
 <?ifdef CONFIG_CISCO_HOTSPOT?>
-	<object>
+    <object>
         <name>X_COMCAST-COM_GRE</name>
         <objectType>object</objectType>
         <functions>
@@ -17713,29 +17713,29 @@
                         <syntax>string</syntax>
                         <writable>true</writable>
                     </parameter>
-					<parameter>
+                    <parameter>
                         <name>LastChange</name>
                         <type>unsignedInt</type>
                         <syntax>uint32</syntax>
                     </parameter>
-					<parameter>
+                    <parameter>
                         <name>PrimaryRemoteEndpoint</name>
                         <type>string(256)</type>
                         <syntax>string</syntax>
                         <writable>true</writable>
                     </parameter>
-					<parameter>
+                    <parameter>
                         <name>SecondaryRemoteEndpoint</name>
                         <type>string(256)</type>
                         <syntax>string</syntax>
                         <writable>true</writable>
                     </parameter>
-					<parameter>
+                    <parameter>
                         <name>ConnectedRemoteEndpoint</name>
                         <type>string(256)</type>
                         <syntax>string</syntax>
-                    </parameter>									
-					<parameter>
+                    </parameter>
+                    <parameter>
                         <name>KeyIdentifierGenerationPolicy</name>
                         <type>string: Disabled(1), Provisioned(2), Auto(3)</type>
                         <syntax>uint32/mapped</syntax>
@@ -17759,13 +17759,13 @@
                         <syntax>bool</syntax>
                         <writable>true</writable>
                     </parameter>
-					<parameter>
+                    <parameter>
                         <name>DSCPMarkPolicy</name>
                         <type>int[-1:63]</type>
                         <syntax>int</syntax>
                         <writable>true</writable>
                     </parameter>
-					<parameter>
+                    <parameter>
                         <name>KeepAlivePolicy</name>
                         <type>string: None(1), ICMP(2)</type>
                         <syntax>uint32/mapped</syntax>
@@ -17777,37 +17777,37 @@
                         <syntax>uint32/mapped</syntax>
                         <writable>true</writable>
                     </parameter>
-					<parameter>
+                    <parameter>
                         <name>RemoteEndpointHealthCheckPingCount</name>
                         <type>unsignedInt</type>
                         <syntax>uint32</syntax>
                         <writable>true</writable>
                     </parameter>
-					<parameter>
+                    <parameter>
                         <name>RemoteEndpointHealthCheckPingInterval</name>
                         <type>unsignedInt</type>
                         <syntax>uint32</syntax>
                         <writable>true</writable>
                     </parameter>
-					<parameter>
+                    <parameter>
                         <name>RemoteEndpointHealthCheckPingFailThreshold</name>
                         <type>unsignedInt</type>
                         <syntax>uint32</syntax>
                         <writable>true</writable>
                     </parameter>
-					<parameter>
+                    <parameter>
                         <name>RemoteEndpointHealthCheckPingIntervalInFailure</name>
                         <type>unsignedInt</type>
                         <syntax>uint32</syntax>
                         <writable>true</writable>
                     </parameter>
-					<parameter>
+                    <parameter>
                         <name>ReconnectToPrimaryRemoteEndpoint</name>
                         <type>unsignedInt</type>
                         <syntax>uint32</syntax>
                         <writable>true</writable>
-                    </parameter>	
-					<parameter>
+                    </parameter>
+                    <parameter>
                         <name>EnableCircuitID</name>
                         <type>boolean</type>
                         <syntax>bool</syntax>
@@ -17843,22 +17843,22 @@
                         <syntax>string</syntax>
                         <writable>true</writable>
                     </parameter>
-					<parameter>
-						<name>InterfaceNumberOfEntries</name>
-						<type>unsignedInt</type>
-						<syntax>uint32</syntax>
-					</parameter>
+                    <parameter>
+                        <name>InterfaceNumberOfEntries</name>
+                        <type>unsignedInt</type>
+                        <syntax>uint32</syntax>
+                    </parameter>
 <?ifndef BCI?>
-					<parameter>
-             			<name>HotSpotReset</name>
-			         	<type>boolean</type>
-                		<syntax>bool</syntax>
-				        <writable>true</writable>
-                	</parameter>
+                    <parameter>
+                        <name>HotSpotReset</name>
+                        <type>boolean</type>
+                        <syntax>bool</syntax>
+                        <writable>true</writable>
+                    </parameter>
 <?endif?>
-				</parameters>
-				
-				<objects>
+                </parameters>
+
+                <objects>
                     <object>
                         <name>Stats</name>
                         <type>object</type>
@@ -17890,161 +17890,161 @@
                     </object>
                     <object>
                         <name>Interface</name>
-						<objectType>staticTable</objectType>
-						<maxInstance>4</maxInstance>
+                        <objectType>staticTable</objectType>
+                        <maxInstance>4</maxInstance>
                         <functions>
                             <func_GetEntryCount>GreTunnelIf_GetEntryCount</func_GetEntryCount>
-							<func_GetEntry>GreTunnelIf_GetEntry</func_GetEntry>
-							<func_GetParamBoolValue>GreTunnelIf_GetParamBoolValue</func_GetParamBoolValue>
-							<func_GetParamUlongValue>GreTunnelIf_GetParamUlongValue</func_GetParamUlongValue>
-							<func_GetParamStringValue>GreTunnelIf_GetParamStringValue</func_GetParamStringValue>
-							<func_GetParamIntValue>GreTunnelIF_GetParamIntValue</func_GetParamIntValue>
-							<func_SetParamBoolValue>GreTunnelIf_SetParamBoolValue</func_SetParamBoolValue>
-							<func_SetParamUlongValue>GreTunnelIf_SetParamUlongValue</func_SetParamUlongValue>
-							<func_SetParamStringValue>GreTunnelIf_SetParamStringValue</func_SetParamStringValue>
-							<func_SetParamIntValue>GreTunnelIf_SetParamIntValue</func_SetParamIntValue>
-							<func_Validate>GreTunnelIf_Validate</func_Validate>
-							<func_Commit>GreTunnelIf_Commit</func_Commit>
-							<func_Rollback>GreTunnelIf_Rollback</func_Rollback>
+                            <func_GetEntry>GreTunnelIf_GetEntry</func_GetEntry>
+                            <func_GetParamBoolValue>GreTunnelIf_GetParamBoolValue</func_GetParamBoolValue>
+                            <func_GetParamUlongValue>GreTunnelIf_GetParamUlongValue</func_GetParamUlongValue>
+                            <func_GetParamStringValue>GreTunnelIf_GetParamStringValue</func_GetParamStringValue>
+                            <func_GetParamIntValue>GreTunnelIF_GetParamIntValue</func_GetParamIntValue>
+                            <func_SetParamBoolValue>GreTunnelIf_SetParamBoolValue</func_SetParamBoolValue>
+                            <func_SetParamUlongValue>GreTunnelIf_SetParamUlongValue</func_SetParamUlongValue>
+                            <func_SetParamStringValue>GreTunnelIf_SetParamStringValue</func_SetParamStringValue>
+                            <func_SetParamIntValue>GreTunnelIf_SetParamIntValue</func_SetParamIntValue>
+                            <func_Validate>GreTunnelIf_Validate</func_Validate>
+                            <func_Commit>GreTunnelIf_Commit</func_Commit>
+                            <func_Rollback>GreTunnelIf_Rollback</func_Rollback>
                         </functions>
                         <parameters>
-							<parameter>
-								<name>Enable</name>
-								<type>boolean</type>
-								<syntax>bool</syntax>
-								<writable>true</writable>
-							</parameter>
-							<parameter>
-								<name>Status</name>
-								<type>string: Up(1), Down(2), Error(3)</type>
-								<syntax>uint32/mapped</syntax>
-							</parameter>
-							<parameter>
-								<name>LastChange</name>
-								<type>unsignedInt</type>
-								<syntax>uint32</syntax>
-								<notify>off</notify>
-							</parameter>
-							<parameter>
-								<name>LocalInterfaces</name>
-								<type>string(255)</type>
-								<syntax>string</syntax>
-								<writable>true</writable>
-							</parameter>
-							<parameter>
-								<name>VLANID</name>
-								<type>unsignedInt</type>
-								<syntax>uint32</syntax>		
-								<writable>true</writable>
-							</parameter>							
-							<parameter>
-								<name>AssociatedBridges</name>
-								<type>string(255)</type>
-								<syntax>string</syntax>
-								<writable>true</writable>
-							</parameter>
-							<parameter>
-								<name>AssociatedBridgesWiFiPort</name>
-								<type>string(255)</type>
-								<syntax>string</syntax>
-								<writable>true</writable>
-							</parameter>
-							<parameter>
-								<name>X_LGI-COM_SSID</name>
-								<type>string(22)</type>
-								<syntax>string</syntax>
-								<writable>true</writable>
-							</parameter>
-						</parameters>	
-					</object>
-					
-					<object>
-						<name>SSID</name>
-						<objectType>dynamicTable</objectType>
-						<maxInstance>128</maxInstance>
-						<functions>
-							<func_GetEntryCount>HsSsid_GetEntryCount</func_GetEntryCount>
-							<func_GetEntry>HsSsid_GetEntry</func_GetEntry>
-							<func_GetParamStringValue>HsSsid_GetParamStringValue</func_GetParamStringValue>
-						</functions>
-						<parameters>
-							<parameter>
-								<name>SSID</name>
-								<type>string</type>
-								<syntax>string</syntax>
-							</parameter>
-						</parameters>
+                            <parameter>
+                                <name>Enable</name>
+                                <type>boolean</type>
+                                <syntax>bool</syntax>
+                                <writable>true</writable>
+                            </parameter>
+                            <parameter>
+                                <name>Status</name>
+                                <type>string: Up(1), Down(2), Error(3)</type>
+                                <syntax>uint32/mapped</syntax>
+                            </parameter>
+                            <parameter>
+                                <name>LastChange</name>
+                                <type>unsignedInt</type>
+                                <syntax>uint32</syntax>
+                                <notify>off</notify>
+                            </parameter>
+                            <parameter>
+                                <name>LocalInterfaces</name>
+                                <type>string(255)</type>
+                                <syntax>string</syntax>
+                                <writable>true</writable>
+                            </parameter>
+                            <parameter>
+                                <name>VLANID</name>
+                                <type>unsignedInt</type>
+                                <syntax>uint32</syntax>
+                                <writable>true</writable>
+                            </parameter>
+                            <parameter>
+                                <name>AssociatedBridges</name>
+                                <type>string(255)</type>
+                                <syntax>string</syntax>
+                                <writable>true</writable>
+                            </parameter>
+                            <parameter>
+                                <name>AssociatedBridgesWiFiPort</name>
+                                <type>string(255)</type>
+                                <syntax>string</syntax>
+                                <writable>true</writable>
+                            </parameter>
+                            <parameter>
+                                <name>X_LGI-COM_SSID</name>
+                                <type>string(22)</type>
+                                <syntax>string</syntax>
+                                <writable>true</writable>
+                            </parameter>
+                        </parameters>
+                    </object>
 
-						<objects>
-							<object>
-								<name>AssociatedDevice</name>
-								<objectType>dynamicTable</objectType>
-								<maxInstance>128</maxInstance>
+                    <object>
+                        <name>SSID</name>
+                        <objectType>dynamicTable</objectType>
+                        <maxInstance>128</maxInstance>
+                        <functions>
+                            <func_GetEntryCount>HsSsid_GetEntryCount</func_GetEntryCount>
+                            <func_GetEntry>HsSsid_GetEntry</func_GetEntry>
+                            <func_GetParamStringValue>HsSsid_GetParamStringValue</func_GetParamStringValue>
+                        </functions>
+                        <parameters>
+                            <parameter>
+                                <name>SSID</name>
+                                <type>string</type>
+                                <syntax>string</syntax>
+                            </parameter>
+                        </parameters>
 
-								<functions>
-									<func_GetEntryCount>HsAssoDev_GetEntryCount</func_GetEntryCount>
-									<func_GetEntry>HsAssoDev_GetEntry</func_GetEntry>
-									<func_IsUpdated>HsAssoDev_IsUpdated</func_IsUpdated>
-									<func_Synchronize>HsAssoDev_Synchronize</func_Synchronize>
-									<func_GetParamStringValue>HsAssoDev_GetParamStringValue</func_GetParamStringValue>
-									<func_GetParamIntValue>HsAssoDev_GetParamIntValue</func_GetParamIntValue>
-								</functions>
+                        <objects>
+                            <object>
+                                <name>AssociatedDevice</name>
+                                <objectType>dynamicTable</objectType>
+                                <maxInstance>128</maxInstance>
 
-								<parameters>
-									<parameter>
-										<name>MACAddress</name>
-										<type>string(64)</type>
-										<syntax>string</syntax>
-									</parameter>
-									<parameter>
-										<name>Hostname</name>
-										<type>string</type>
-										<syntax>string</syntax>
-									</parameter>
-									<parameter>
-										<name>RSSILevel</name>
-										<type>int[-200:0]</type>
-										<syntax>int</syntax>
-									</parameter>
-									<parameter>
-										<name>IPv4Address</name>
-										<type>string</type>
-										<syntax>string</syntax>
-									</parameter>
-									<parameter>
-										<name>DHCPv4Status</name>
-										<type>string</type>
-										<syntax>string</syntax>
-									</parameter>
-									<parameter>
-										<name>IPv6Address</name>
-										<type>string</type>
-										<syntax>string</syntax>
-									</parameter>
-									<parameter>
-										<name>IPv6Prefix</name>
-										<type>string</type>
-										<syntax>string</syntax>
-									</parameter>
-									<parameter>
-										<name>DHCPv6Status</name>
-										<type>string</type>
-										<syntax>string</syntax>
-									</parameter>
-									<parameter>
-										<name>IPv6LinkLocalAddress</name>
-										<type>string(64)</type>
-										<syntax>string</syntax>
-									</parameter>
-								</parameters>
-							</object>
-						</objects>
-					</object>
-				</objects>
-			</object>
-		</objects>	
-	</object>			
-				
+                                <functions>
+                                    <func_GetEntryCount>HsAssoDev_GetEntryCount</func_GetEntryCount>
+                                    <func_GetEntry>HsAssoDev_GetEntry</func_GetEntry>
+                                    <func_IsUpdated>HsAssoDev_IsUpdated</func_IsUpdated>
+                                    <func_Synchronize>HsAssoDev_Synchronize</func_Synchronize>
+                                    <func_GetParamStringValue>HsAssoDev_GetParamStringValue</func_GetParamStringValue>
+                                    <func_GetParamIntValue>HsAssoDev_GetParamIntValue</func_GetParamIntValue>
+                                </functions>
+
+                                <parameters>
+                                    <parameter>
+                                        <name>MACAddress</name>
+                                        <type>string(64)</type>
+                                        <syntax>string</syntax>
+                                    </parameter>
+                                    <parameter>
+                                        <name>Hostname</name>
+                                        <type>string</type>
+                                        <syntax>string</syntax>
+                                    </parameter>
+                                    <parameter>
+                                        <name>RSSILevel</name>
+                                        <type>int[-200:0]</type>
+                                        <syntax>int</syntax>
+                                    </parameter>
+                                    <parameter>
+                                        <name>IPv4Address</name>
+                                        <type>string</type>
+                                        <syntax>string</syntax>
+                                    </parameter>
+                                    <parameter>
+                                        <name>DHCPv4Status</name>
+                                        <type>string</type>
+                                        <syntax>string</syntax>
+                                    </parameter>
+                                    <parameter>
+                                        <name>IPv6Address</name>
+                                        <type>string</type>
+                                        <syntax>string</syntax>
+                                    </parameter>
+                                    <parameter>
+                                        <name>IPv6Prefix</name>
+                                        <type>string</type>
+                                        <syntax>string</syntax>
+                                    </parameter>
+                                    <parameter>
+                                        <name>DHCPv6Status</name>
+                                        <type>string</type>
+                                        <syntax>string</syntax>
+                                    </parameter>
+                                    <parameter>
+                                        <name>IPv6LinkLocalAddress</name>
+                                        <type>string(64)</type>
+                                        <syntax>string</syntax>
+                                    </parameter>
+                                </parameters>
+                            </object>
+                        </objects>
+                    </object>
+                </objects>
+            </object>
+        </objects>
+    </object>
+
     <object>
         <name>X_CISCO_COM_GRE</name>
         <objectType>object</objectType>
@@ -18252,17 +18252,17 @@
     <object>
       <name>X_CISCO_COM_TrueStaticIP</name>
       <objectType>object</objectType>
-	  <functions>
-	    <func_GetParamBoolValue>TrueStaticIP_GetParamBoolValue</func_GetParamBoolValue>
+      <functions>
+        <func_GetParamBoolValue>TrueStaticIP_GetParamBoolValue</func_GetParamBoolValue>
         <func_GetParamStringValue>TrueStaticIP_GetParamStringValue</func_GetParamStringValue>
         <func_SetParamBoolValue>TrueStaticIP_SetParamBoolValue</func_SetParamBoolValue>
         <func_SetParamStringValue>TrueStaticIP_SetParamStringValue</func_SetParamStringValue>
         <func_Validate>TrueStaticIP_Validate</func_Validate>
         <func_Commit>TrueStaticIP_Commit</func_Commit>
         <func_Rollback>TrueStaticIP_Rollback</func_Rollback>
-	  </functions>
-	  <parameters>
-	    <parameter>
+      </functions>
+      <parameters>
+        <parameter>
             <name>Enable</name>
             <type>boolean</type>
             <syntax>bool</syntax>
@@ -18292,7 +18292,7 @@
           <syntax>string</syntax>
           <writable>true</writable>
         </parameter>
-	    <parameter>
+        <parameter>
             <name>ConfigApply</name>
             <type>boolean</type>
             <syntax>bool</syntax>
@@ -18303,7 +18303,7 @@
           <type>unsignedInt</type>
           <syntax>uint32</syntax>
         </parameter>
-	  </parameters>
+      </parameters>
       <objects>
         <object>
           <name>AdditionalSubnet</name>
@@ -18440,9 +18440,9 @@
               </parameters>
             </object>
           </objects>
-        </object>        
+        </object>
       </objects>
-    </object> 
+    </object>
 <?endif?>
 <!-- LGI ADD START -->
     <object>
@@ -18927,7 +18927,7 @@
           <syntax>int</syntax>
           <writable>true</writable>
         </parameter>
-      </parameters> 
+      </parameters>
     </object>
 
     <object>
@@ -18955,7 +18955,7 @@
       </parameters>
     </object>
 
-	  </objects>
+      </objects>
 
 </dataModelInfo>
 
