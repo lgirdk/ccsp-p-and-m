@@ -32,6 +32,11 @@ BOOL X_LGI_COM_TunneledStaticIPService_GetParamBoolValue (ANSC_HANDLE hInsContex
         return TRUE;
     }
 
+    if (strcmp(ParamName, "GreTunnelStatus") == 0)
+    {
+        return CosaDmlTunneledStaticIPGetGreTunnelStatus (NULL,pBool);
+    }
+
     if (strcmp(ParamName, "HealthCheckEnable") == 0)
     {
         *pBool = pMyObject->Cfg.HealthCheckEnable;
