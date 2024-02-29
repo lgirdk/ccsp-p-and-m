@@ -49,5 +49,6 @@ ANSC_STATUS CosaDmlTunneledStaticIPGetHealthCheckPingInterval (ANSC_HANDLE hCont
 ANSC_STATUS CosaDmlTunneledStaticIPSetHealthCheckPingInterval (ANSC_HANDLE hContext, unsigned int value);
 ANSC_STATUS CosaDmlTunneledStaticIPGetHealthCheckTriggerInterval (ANSC_HANDLE hContext, unsigned int *pValue);
 ANSC_STATUS CosaDmlTunneledStaticIPSetHealthCheckTriggerInterval (ANSC_HANDLE hContext, unsigned int value);
+ANSC_STATUS CosaDmlTunneledStaticIPGetGreTunnelStatus (ANSC_HANDLE hContext, BOOL *pValue);
 
 #endif
