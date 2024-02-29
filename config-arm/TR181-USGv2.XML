@@ -18902,6 +18902,12 @@
           <writable>true</writable>
         </parameter>
         <parameter>
+          <name>GreTunnelStatus</name>
+          <type>boolean</type>
+          <syntax>bool</syntax>
+          <writable>false</writable>
+        </parameter>
+        <parameter>
           <name>HealthCheckEnable</name>
           <type>boolean</type>
           <syntax>bool</syntax>
