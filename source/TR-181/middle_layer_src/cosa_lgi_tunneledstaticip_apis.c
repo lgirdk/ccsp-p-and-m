@@ -17,6 +17,8 @@
 #include "cosa_lgi_tunneledstaticip_apis.h"
 #include "cosa_lgi_tunneledstaticip_internal.h"
 #include <syscfg/syscfg.h>
+#include "cosa_apis.h"
+#include <net/if.h>
 
 
 ANSC_STATUS CosaDmlTunneledStaticIPGetEnable (ANSC_HANDLE hContext, BOOL *pValue)
@@ -240,5 +242,18 @@ ANSC_STATUS CosaDmlTunneledStaticIPSetHealthCheckTriggerInterval (ANSC_HANDLE hC
 {
     if (syscfg_set_u(NULL, "tunneled_static_ip_hc_trigger_interval", value) != 0)
         return ANSC_STATUS_FAILURE;
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS CosaDmlTunneledStaticIPGetGreTunnelStatus (ANSC_HANDLE hContext, BOOL *pValue)
+{
+    *pValue = false;
+    if (CosaUtilGetIfAddr("vmb0") != 0)
+    {
+       if (CosaUtilIoctlXXX("vmb0", "status", NULL) & IFF_UP)
+       {
+           *pValue = true;
+       }
+    }
     return ANSC_STATUS_SUCCESS;
 }
