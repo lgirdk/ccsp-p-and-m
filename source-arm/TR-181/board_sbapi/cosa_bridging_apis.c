@@ -3602,7 +3602,12 @@ ANSC_STATUS lanBrPCtlGetEnabled(PBRIDGE_PORT port, BOOLEAN* enabled) {
     //CID 281957 : Destination buffer too small (STRING_OVERFLOW)
     _ansc_strncpy(ifr.ifr_name, port->name,sizeof(ifr.ifr_name)-1);
 
-    ioctl(fd, SIOCGIFFLAGS, &ifr);
+    /* CID 175438 Unchecked return value : fix */
+    if (ioctl(fd, SIOCGIFFLAGS, &ifr) == -1) {
+      AnscTraceFlow(("%s: ioctl(SIOCGIFFLAGS) failed (errno: %d): %s\n", __FUNCTION__, errno, strerror(errno)));
+      close(fd);
+      return ANSC_STATUS_FAILURE;
+    }
 
     *enabled = (ifr.ifr_flags & IFF_UP) && (ifr.ifr_flags & IFF_RUNNING);
 
