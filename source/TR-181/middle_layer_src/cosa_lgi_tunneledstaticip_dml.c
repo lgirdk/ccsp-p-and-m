@@ -28,7 +28,17 @@ BOOL X_LGI_COM_TunneledStaticIPService_GetParamBoolValue (ANSC_HANDLE hInsContex
 
     if (strcmp(ParamName, "Enable") == 0)
     {
-        *pBool = pMyObject->Cfg.Enable;
+       	char erouterMode[8];
+        syscfg_get(NULL, "last_erouter_mode", erouterMode, sizeof(erouterMode));
+
+        if ((strcmp(erouterMode, "2") == 0) || (strcmp(erouterMode, "0") == 0))
+        {
+            *pBool = FALSE;
+        }
+        else
+        {
+            *pBool = pMyObject->Cfg.Enable;
+        }
         return TRUE;
     }
 
