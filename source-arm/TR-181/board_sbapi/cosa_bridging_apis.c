@@ -62,7 +62,7 @@
 
 #include "cosa_bridging_apis.h"
 #include "safec_lib_common.h"
-
+#include <errno.h>
 
 #if _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
 #include "cosa_bridging_apis_ext.h"
@@ -3569,7 +3569,12 @@ ANSC_STATUS lanBrPCtlSetEnabled(PBRIDGE_PORT port, BOOLEAN enable) {
     //CID 281798 : Destination buffer too small (STRING_OVERFLOW)
     _ansc_strncpy(ifr.ifr_name, port->name,sizeof(ifr.ifr_name)-1); 
      
-    ioctl(fd, SIOCGIFFLAGS, &ifr);
+    /* CID 175449 Unchecked return value : fix */
+    if (ioctl(fd, SIOCGIFFLAGS, &ifr) == -1) {
+      AnscTraceFlow(("%s: ioctl(SIOCGIFFLAGS) failed (errno: %d): %s\n", __FUNCTION__, errno, strerror(errno)));
+      close(fd);
+      return ANSC_STATUS_FAILURE;
+    }
 
     if(enable) {
         if (!(ifr.ifr_flags & IFF_UP)) {
