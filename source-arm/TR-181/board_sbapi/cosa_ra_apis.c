@@ -704,11 +704,15 @@ CosaDmlRaIfGetOption
     if (ulIndex == 1)
     {
         bool bDnsOverride;
+        char dns_ipv6_preferred[64];
+        char dns_ipv6_alternate[64];
 
         CosaDmlLgiGwGetDnsOverride(&bDnsOverride);
+        syscfg_get(NULL, "dns_ipv6_preferred", dns_ipv6_preferred, sizeof(dns_ipv6_preferred));
+        syscfg_get(NULL, "dns_ipv6_alternate", dns_ipv6_alternate, sizeof(dns_ipv6_alternate));
 
         /* if dns_override is false or undefined then append DNS server(s) from ipv6_nameserver */
-        if (!bDnsOverride)
+        if ((!bDnsOverride) || ((bDnsOverride == TRUE) && (dns_ipv6_preferred[0] == 0) && (dns_ipv6_alternate[0] == 0)))
         {
             char ipv6_nameserver[RA_OPTION_VALUE_SIZE];
 
