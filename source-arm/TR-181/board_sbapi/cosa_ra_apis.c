@@ -705,11 +705,44 @@ CosaDmlRaIfGetOption
     if (ulIndex == 1)
     {
         bool bDnsOverride;
+        char dns_ipv6_preferred[64];
+        char dns_ipv6_alternate[64];
+
+        /*
+           If dns_override is true and both override syscfg values are defined
+           then use override values from syscfg. Else append DNS server(s) from
+           ipv6_nameserver sysevent.
+        */
 
         CosaDmlLgiGwGetDnsOverride(&bDnsOverride);
 
-        /* if dns_override is false or undefined then append DNS server(s) from ipv6_nameserver */
-        if (!bDnsOverride)
+        if (bDnsOverride)
+        {
+            syscfg_get(NULL, "dns_ipv6_preferred", dns_ipv6_preferred, sizeof(dns_ipv6_preferred));
+            syscfg_get(NULL, "dns_ipv6_alternate", dns_ipv6_alternate, sizeof(dns_ipv6_alternate));
+
+            if ((dns_ipv6_preferred[0] == 0) && (dns_ipv6_alternate[0] == 0))
+            {
+                bDnsOverride = false;
+            }
+        }
+
+        if (bDnsOverride)
+        {
+            if ((dns_ipv6_preferred[0] != 0) && (dns_ipv6_alternate[0] != 0))
+            {
+                snprintf(pEntry->Value, sizeof(pEntry->Value), "%s,%s", dns_ipv6_preferred, dns_ipv6_alternate);
+            }
+            else if (dns_ipv6_preferred[0] != 0)
+            {
+                snprintf(pEntry->Value, sizeof(pEntry->Value), "%s", dns_ipv6_preferred);
+            }
+            else
+            {
+                snprintf(pEntry->Value, sizeof(pEntry->Value), "%s", dns_ipv6_alternate);
+            }
+        }
+        else
         {
             char ipv6_nameserver[RA_OPTION_VALUE_SIZE];
 
@@ -730,29 +763,6 @@ CosaDmlRaIfGetOption
                     strcat(pEntry->Value, token);
                     token = strtok(NULL, " ");
                 }
-            }
-        }
-        else
-        {
-            // Collect from syscfg db
-	    size_t len, len2, optvalsz = sizeof(pEntry->Value) - 1;
-
-            syscfg_get(NULL, "dns_ipv6_preferred", pEntry->Value, optvalsz);
-            len = strlen(pEntry->Value);
-            if (len != 0)
-            {
-                pEntry->Value[len] = ',';
-                pEntry->Value[len + 1] = 0;
-                len += 1;
-                optvalsz -= len;
-            }
-
-            syscfg_get(NULL, "dns_ipv6_alternate", pEntry->Value + len, optvalsz);
-            len2 = strlen(pEntry->Value + len);
-            if ((len != 0) && (len2 == 0))
-            {
-                /* No second value, remove comma */
-                pEntry->Value[len - 1] = 0;
             }
         }
     }
