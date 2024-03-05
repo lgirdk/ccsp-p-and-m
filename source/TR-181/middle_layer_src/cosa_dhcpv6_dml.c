@@ -7855,9 +7855,10 @@ Option4_GetParamStringValue
         int Vlen;
         int rbufsz;
         int addcoma;
-        char tmpbuf[64];
         int len;
         BOOL bDnsOverride;
+        char dns_ipv6_preferred[64];
+        char dns_ipv6_alternate[64];
 
         Vlen = strlen(pDhcpOption->Value);
         if (Vlen >= *pUlSize) {
@@ -7869,11 +7870,47 @@ Option4_GetParamStringValue
         rbufsz = *pUlSize - Vlen;
         addcoma = (Vlen > 0) ? 1 : 0;
 
+        /*
+           If dns_override is true and both override syscfg values are defined
+           then use override values from syscfg. Else append DNS server(s) from
+           ipv6_nameserver sysevent.
+        */
+
         CosaDmlLgiGwGetDnsOverride(&bDnsOverride);
 
-        /* if dns_override is false or undefined then append DNS server(s) from ipv6_nameserver */
+        if (bDnsOverride)
+        {
+            syscfg_get(NULL, "dns_ipv6_preferred", dns_ipv6_preferred, sizeof(dns_ipv6_preferred));
+            syscfg_get(NULL, "dns_ipv6_alternate", dns_ipv6_alternate, sizeof(dns_ipv6_alternate));
 
-        if (!bDnsOverride)
+            if ((dns_ipv6_preferred[0] == 0) && (dns_ipv6_alternate[0] == 0))
+            {
+                bDnsOverride = false;
+            }
+        }
+
+        if (bDnsOverride)
+        {
+            len = strlen(dns_ipv6_preferred);
+            if ((len > 0) && (rbufsz > (len + 1))) {
+                if (addcoma) {
+                    strcat(pValue, ",");
+                    len += 1;
+                }
+                strcat(pValue, dns_ipv6_preferred);
+                rbufsz -= len;
+                addcoma = 1;
+            }
+
+            len = strlen(dns_ipv6_alternate);
+            if ((len > 0) && (rbufsz > (len + 1))) {
+                if (addcoma) {
+                    strcat(pValue, ",");
+                }
+                strcat(pValue, dns_ipv6_alternate);
+            }
+        }
+        else
         {
             char ipv6_nameserver[255];
 
@@ -7897,32 +7934,6 @@ Option4_GetParamStringValue
                     }
                 }
             }
-
-            return 0;
-        }
-
-        /*
-         * Collect from syscfg db
-         */
-        syscfg_get(NULL,"dns_ipv6_preferred",tmpbuf,sizeof(tmpbuf));
-        len=AnscSizeOfString(tmpbuf);
-        if ((len > 0) && (rbufsz > (len+1))){
-            if (addcoma) {
-                strcat(pValue,",");
-                len+=1;
-            }
-            strcat(pValue,tmpbuf);
-            rbufsz-=len;
-            addcoma=1;
-        }
-
-        syscfg_get(NULL,"dns_ipv6_alternate",tmpbuf,sizeof(tmpbuf));
-        len=AnscSizeOfString(tmpbuf);
-        if ((len > 0) && (rbufsz > (len+1))){
-            if (addcoma) {
-                strcat(pValue,",");
-            }
-            strcat(pValue,tmpbuf);
         }
 
         return 0;
