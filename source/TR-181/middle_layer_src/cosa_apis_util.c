@@ -327,36 +327,79 @@ CosaUtilGetLowerLayers
             /* CID: 56300 Array compared against 0*/
             if (strcmp(pTableStringToken->Name, "Device.Ethernet.Interface.") == 0)
             {
-                ulNumOfEntries =       CosaGetParamValueUlong("Device.Ethernet.InterfaceNumberOfEntries");
+                parameterValStruct_t varStruct;
+                ulNumOfEntries = 0;
+                rc = strcpy_s(ucEntryParamName, sizeof(ucEntryParamName), "Device.Ethernet.InterfaceNumberOfEntries");
+                ERR_CHK(rc);
+                varStruct.parameterName = ucEntryParamName;
+                varStruct.parameterValue = ucEntryNameValue;
 
-                for ( i = 0 ; i < ulNumOfEntries; i++ )
+                ulEntryNameLen = sizeof(ucEntryNameValue);
+                if (COSAGetParamValueByPathName(g_MessageBusHandle,&varStruct,&ulEntryNameLen))
                 {
-                    ulEntryInstanceNum = CosaGetInstanceNumberByIndex("Device.Ethernet.Interface.", i);
-
-                    if ( ulEntryInstanceNum )
+                    AnscTraceFlow(("<HL>%s not found %s\n",__FUNCTION__,varStruct.parameterName ));
+                    break;
+                }
+                _ansc_sscanf(ucEntryNameValue,"%lu",&ulNumOfEntries);
+                i = 0;
+                ulEntryInstanceNum =1;
+                while (i < ulNumOfEntries)
+                {
+                    _ansc_memset(ucEntryNameValue, 0, sizeof(ucEntryNameValue));
+                    rc = sprintf_s(ucEntryParamName, sizeof(ucEntryParamName),"Device.Ethernet.Interface.%lu.Name",ulEntryInstanceNum);
+                    if(rc < EOK)
                     {
-                        rc = sprintf_s(ucEntryFullPath, sizeof(ucEntryFullPath), "Device.Ethernet.Interface.%lu", ulEntryInstanceNum);
-                        if(rc < EOK)
-                        {
-                          ERR_CHK(rc);
-                          continue;
-                        }
-                        rc = sprintf_s(ucEntryParamName, sizeof(ucEntryParamName), "%s.Name", ucEntryFullPath);
-                        if(rc < EOK)
-                        {
-                          ERR_CHK(rc);
-                          continue;
-                        }
-               
-                        ulEntryNameLen = sizeof(ucEntryNameValue);
-                        if ( ( 0 == CosaGetParamValueString(ucEntryParamName, ucEntryNameValue, &ulEntryNameLen)) &&
-                             (strcmp(ucEntryNameValue, (char*)pKeyword) == 0) )
-                        {
-                            pMatchedLowerLayer =  (PUCHAR)AnscCloneString(ucEntryFullPath);
-
-                            break;
-                        }
+                      ERR_CHK(rc);
+                      ulEntryInstanceNum++;
+                      i++;
+                      continue;
                     }
+
+                    ulEntryNameLen = sizeof(ucEntryNameValue);
+                     if (COSAGetParamValueByPathName(g_MessageBusHandle,&varStruct,&ulEntryNameLen))
+                    {
+                        AnscTraceFlow(("<HL>%s Ethernet instance(%lu) not found\n", __FUNCTION__,
+                            ulEntryInstanceNum));
+                        ulEntryInstanceNum++;
+                        continue;
+                    }
+                    if ( AnscEqualString(ucEntryNameValue, (char*)pKeyword, TRUE ) )
+                    {
+                        rc = sprintf_s(ucEntryFullPath, sizeof(ucEntryFullPath),"Device.Ethernet.Interface.%lu",ulEntryInstanceNum);
+                        if(rc < EOK)
+                        {
+                           ERR_CHK(rc);
+                           ulEntryInstanceNum++;
+                           i++;
+                           continue;
+                        }
+#if defined(_PLATFORM_RASPBERRYPI_)
+                        // This logic is needed for RPI target due to hardware limitations(i,e Ethernet bridge ports are not active at all time)
+                        _ansc_memset(ucEntryNameValue, 0, sizeof(ucEntryNameValue));
+                        rc = sprintf_s(ucEntryParamName, sizeof(ucEntryParamName),"Device.Ethernet.Interface.%lu.Enable",ulEntryInstanceNum);
+                        if(rc < EOK)
+                        {
+                           ERR_CHK(rc);
+                           ulEntryInstanceNum++;
+                           i++;
+                           continue;
+                        }
+                        ulEntryNameLen = sizeof(ucEntryNameValue);
+                        if (COSAGetParamValueByPathName(g_MessageBusHandle,&varStruct,&ulEntryNameLen))
+                        {
+                            AnscTraceFlow(("<HL>%s Ethernet instance(%lu) not found\n", __FUNCTION__,
+                            ulEntryInstanceNum));
+                            ulEntryInstanceNum++;
+                            continue;
+                        }
+                        if ( AnscEqualString(ucEntryNameValue, "false", TRUE ) )
+			     break;
+#endif
+                        pMatchedLowerLayer =  (PUCHAR)AnscCloneString(ucEntryFullPath);
+                        break;
+                    }
+                    ulEntryInstanceNum++;
+                    i++;
                 }
             }
             else if (strcmp(pTableStringToken->Name, "Device.IP.Interface.") == 0)
