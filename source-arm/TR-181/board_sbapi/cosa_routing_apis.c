@@ -1451,6 +1451,9 @@ void RestartRIPInterfaces(int ripEnable)
                     }
 	        }
 	    }
+#if defined(FEATURE_STATIC_IPV4) || defined(VMB_MODE)
+            system("/etc/utopia/service.d/static_ip_ui.sh &");
+#endif
         }// End of if(ripEnable)
         else
         {
@@ -1465,6 +1468,9 @@ void RestartRIPInterfaces(int ripEnable)
                 }
             }
             syscfg_unset(NULL,"active_static_brlan_service");
+#if defined(FEATURE_STATIC_IPV4) || defined(VMB_MODE)
+            system("/etc/utopia/service.d/static_ip_ui.sh &");
+#endif
         }
 
         if (strlen(brlan_ip) > 0) {
