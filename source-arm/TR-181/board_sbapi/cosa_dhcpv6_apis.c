@@ -7891,6 +7891,12 @@ void enable_IPv6(char* if_name)
 
 int getprefixinfo(const char *prefix,  char *value, unsigned int val_len, unsigned int *prefix_len)
 {
+    /* CID 173700 Dereference after null check fix */
+    if (prefix_len == NULL) {
+        CcspTraceError(("[%s] ERROR, prefix_len is NULL\n", __FUNCTION__));
+        return -1;
+    }
+  
     int i;
 
     i = strlen(prefix);
@@ -7903,8 +7909,7 @@ int getprefixinfo(const char *prefix,  char *value, unsigned int val_len, unsign
         return -1;
     }
 
-    if (prefix_len != NULL)
-        *prefix_len = atoi(&prefix[i]);
+    *prefix_len = atoi(&prefix[i]);
 
     if (value != NULL) {
         memset(value, 0, val_len);
@@ -7913,7 +7918,7 @@ int getprefixinfo(const char *prefix,  char *value, unsigned int val_len, unsign
 
     //fprintf(stderr, "[%s] prefix:%s length: %d.\n",__FUNCTION__, value != NULL ? value : "null", *prefix_len);
     CcspTraceInfo(("[%s] output value: %s prefix_len: %d.\n", __FUNCTION__, value != NULL ? value : "null", *prefix_len));
-
+  
     return 0;
 }
 int GenAndUpdateIpv6PrefixIntoSysevent(char *pInfName)
