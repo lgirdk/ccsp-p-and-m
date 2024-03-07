@@ -143,7 +143,6 @@ ANSC_STATUS CosaDmlStaticIPSetAdministrativeStatus ( ANSC_HANDLE hContext, ULONG
 
     RestartRIPInterfaces(FALSE);    
     pthread_create(&WanRefresh_thread, NULL, WanRefresh, NULL);
-    system("/etc/utopia/service.d/static_ip_ui.sh &");
 #endif    
 
     return ANSC_STATUS_SUCCESS;
