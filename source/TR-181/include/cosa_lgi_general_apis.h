@@ -170,6 +170,22 @@ CosaDmlGiGetRipSubnetMask
 );
 
 ANSC_STATUS
+CosaDmlGiGetVmbIpAddress
+(
+    ANSC_HANDLE                 hContext,
+    char                        *pValue,
+    ULONG                       *pUlSize
+);
+
+ANSC_STATUS
+CosaDmlGiGetVmbSubnetMask
+(
+    ANSC_HANDLE                 hContext,
+    char                        *pValue,
+    ULONG                       *pUlSize
+);
+
+ANSC_STATUS
 CosaDmlGiGetStaticIpAddress
 (
     ANSC_HANDLE                 hContext,
