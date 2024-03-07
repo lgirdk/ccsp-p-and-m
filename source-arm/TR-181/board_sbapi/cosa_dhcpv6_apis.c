@@ -7950,7 +7950,7 @@ int handle_MocaIpv6(char *status)
 	int HomeIsolationEnable = 0;
     char tbuff[100];
     char ipv6If[128] = {0}; 
-    char mbuf[128];
+    char mbuf[128] = {0};
     int restart_zebra = 0;
   
     if (!status)
@@ -7987,8 +7987,8 @@ int handle_MocaIpv6(char *status)
     }
     if(strcmp((const char*)status, "ready") == 0)
     {
-        /*CID: 173691  - Array Compared against null - fixed*/
-        if(( mbuf != NULL ) && ( ipv6If[0] != '\0' ) && ( Inf_name != NULL ))
+        /*CID: 173691  - Array Compared against null - Fix */
+        if (mbuf[0] != '\0' && ( ipv6If[0] != '\0' ) && ( Inf_name != NULL ))
         {
             if( (strcmp(mbuf, "true") == 0) && (HomeIsolationEnable == 1))
             {
