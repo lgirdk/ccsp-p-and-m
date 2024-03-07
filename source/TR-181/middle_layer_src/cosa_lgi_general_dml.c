@@ -267,6 +267,14 @@ LgiGeneral_GetParamStringValue
     {
         return CosaDmlGiGetRipSubnetMask(NULL, pValue, pulSize);
     }
+    if (strcmp(ParamName, "VMBIPAddress") == 0)
+    {
+        return CosaDmlGiGetVmbIpAddress(NULL, pValue, pulSize);
+    }
+    if (strcmp(ParamName, "VMBSubnetMask") == 0)
+    {
+        return CosaDmlGiGetVmbSubnetMask(NULL, pValue, pulSize);
+    }
     if (strcmp(ParamName, "StaticIPAddress") == 0)
     {
         return CosaDmlGiGetStaticIpAddress(NULL, pValue, pulSize);
