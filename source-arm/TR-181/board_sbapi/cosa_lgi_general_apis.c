@@ -477,6 +477,54 @@ CosaDmlGiGetRipSubnetMask
 }
 
 ANSC_STATUS
+CosaDmlGiGetVmbIpAddress
+    (
+        ANSC_HANDLE                 hContext,
+        char                        *pValue,
+        ULONG                       *pUlSize
+    )
+{
+    char vmb_static_ip[20];
+    char vmb_status[8];
+
+    syscfg_get(NULL, "tunneled_static_ip_enable", vmb_status, sizeof(vmb_status));
+    if (strcmp(vmb_status, "1") == 0)
+    {
+        syscfg_get(NULL, "vmb_ipaddress", vmb_static_ip, sizeof(vmb_static_ip));
+
+        if (vmb_static_ip[0] != 0)
+        {
+            strcpy(pValue, vmb_static_ip);
+        }
+        return ANSC_STATUS_SUCCESS;
+    }
+}
+
+ANSC_STATUS
+CosaDmlGiGetVmbSubnetMask
+    (
+        ANSC_HANDLE                 hContext,
+        char                        *pValue,
+        ULONG                       *pUlSize
+    )
+{
+    char vmb_static_mask[20];
+    char vmb_status[8];
+
+    syscfg_get(NULL, "tunneled_static_ip_enable", vmb_status, sizeof(vmb_status));
+    if (strcmp(vmb_status, "1") == 0)
+    {
+        syscfg_get(NULL, "vmb_subnetmask", vmb_static_mask, sizeof(vmb_static_mask));
+
+        if(vmb_static_mask[0] != 0)
+        {
+            strcpy(pValue, vmb_static_mask);
+        }
+        return ANSC_STATUS_SUCCESS;
+    }
+}
+
+ANSC_STATUS
 CosaDmlGiGetStaticIpAddress
     (
         ANSC_HANDLE                 hContext,
