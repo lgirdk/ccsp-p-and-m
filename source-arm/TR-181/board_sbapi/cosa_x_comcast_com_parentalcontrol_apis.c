@@ -2413,6 +2413,7 @@ CosaDmlMSServ_AddEntry(COSA_DML_MS_SERV *pEntry)
 {
     int rc = -1;
     UtopiaContext ctx;
+  /* CID 185687 Fix - Buffer not null terminated */
     ms_serv_t ms_serv = {0};
     errno_t safec_rc = -1;
     
@@ -2424,13 +2425,14 @@ CosaDmlMSServ_AddEntry(COSA_DML_MS_SERV *pEntry)
     ms_serv.start_port = pEntry->StartPort;
     ms_serv.end_port = pEntry->EndPort;
     
-    _ansc_strncpy(ms_serv.alias, pEntry->Alias, sizeof(ms_serv.alias)-1);
-    _ansc_strncpy(ms_serv.descp, pEntry->Description, sizeof(ms_serv.descp)-1);
+    /* CID 185687 Fix - Buffer not null terminated */
+    strncpy(ms_serv.alias, pEntry->Alias, sizeof(ms_serv.alias)-1);
+    strncpy(ms_serv.descp, pEntry->Description, sizeof(ms_serv.descp)-1);
 
-    _ansc_strncpy(ms_serv.start_time, pEntry->StartTime, sizeof(ms_serv.start_time));
-    _ansc_strncpy(ms_serv.end_time, pEntry->EndTime, sizeof(ms_serv.end_time));
+    strncpy(ms_serv.start_time, pEntry->StartTime, sizeof(ms_serv.start_time)-1);
+    strncpy(ms_serv.end_time, pEntry->EndTime, sizeof(ms_serv.end_time)-1);
     /* CID 185686 fix */
-    _ansc_strncpy(ms_serv.block_days, pEntry->BlockDays, (sizeof(ms_serv.block_days)-1));
+    strncpy(ms_serv.block_days, pEntry->BlockDays, (sizeof(ms_serv.block_days)-1));
 
     switch(pEntry->Protocol)
     {
