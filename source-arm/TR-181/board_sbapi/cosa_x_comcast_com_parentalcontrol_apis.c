@@ -2664,7 +2664,7 @@ CosaDmlMSTrustedUser_AddEntry(COSA_DML_MS_TRUSTEDUSER *pEntry)
 {
     int rc = -1;
     UtopiaContext ctx;
-    ms_trusteduser_t ms_trusteduser;
+    ms_trusteduser_t ms_trusteduser = {0};
     
     if (!Utopia_Init(&ctx))
         return ANSC_STATUS_FAILURE;
@@ -2674,8 +2674,8 @@ CosaDmlMSTrustedUser_AddEntry(COSA_DML_MS_TRUSTEDUSER *pEntry)
     ms_trusteduser.ipaddrtype = pEntry->IPAddressType == IPADDR_IPV4 ? 4 : 6;
     /* CID 185691 fix  */
     _ansc_strncpy(ms_trusteduser.alias, pEntry->Alias, (sizeof(ms_trusteduser.alias)-1));
-    _ansc_strncpy(ms_trusteduser.host_descp, pEntry->HostDescription, sizeof(ms_trusteduser.host_descp));
-    _ansc_strncpy(ms_trusteduser.ipaddr, pEntry->IPAddress, sizeof(ms_trusteduser.ipaddr));
+    _ansc_strncpy(ms_trusteduser.host_descp, pEntry->HostDescription, sizeof(ms_trusteduser.host_descp)-1);
+    _ansc_strncpy(ms_trusteduser.ipaddr, pEntry->IPAddress, sizeof(ms_trusteduser.ipaddr)-1);
 
     rc = Utopia_AddMSTrustedUser(&ctx, &ms_trusteduser);
     Utopia_GetNumberOfMSTrustedUser(&ctx, &g_NrMSTrustedUsers);
