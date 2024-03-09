@@ -1030,7 +1030,7 @@ DeviceInfo_GetParamStringValue
         return 0;
     }
 
-#if !defined(_SR213_PRODUCT_REQ_) && !defined (_WNXL11BWL_PRODUCT_REQ_) && !defined (_XER5_PRODUCT_REQ_) 
+#if !defined(_SR213_PRODUCT_REQ_) && !defined (_WNXL11BWL_PRODUCT_REQ_) && !defined (_XER5_PRODUCT_REQ_) && !defined (_SCER11BEL_PRODUCT_REQ_)
     if (strcmp(ParamName, "X_RDKCENTRAL-COM_InActiveFirmware") == 0)
     {
         return CosaDmlDiGetInActiveFirmware(NULL, pValue, pulSize);
@@ -14914,6 +14914,11 @@ Xconf_SetParamBoolValue
                            v_secure_system ("kill -9 `pidof wnxl11bwl_firmwareDwnld.sh `");
                        }
                            status = v_secure_system("/etc/wnxl11bwl_firmwareDwnld.sh &");
+#elif defined(_SCER11BEL_PRODUCT_REQ_)
+                        if(0 == v_secure_system("pidof scer11bel_firmwareDwnld.sh"))  {
+                           v_secure_system ("kill -9 `pidof scer11bel_firmwareDwnld.sh `");
+                       }
+                           status = v_secure_system("/etc/scer11bel_firmwareDwnld.sh &");
 #elif defined(_SR300_PRODUCT_REQ_)
                         if(0 == v_secure_system("pidof sr300_firmwareDwnld.sh"))  {
                            v_secure_system ("kill -9 `pidof sr300_firmwareDwnld.sh `");

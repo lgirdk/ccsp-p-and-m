@@ -1892,7 +1892,7 @@ void* restoreAllDBs(void* arg)
         v_secure_system("rm -f /nvram/.bcmwifi_primary /nvram/.bcmwifi_rmCrashLogs /nvram/.bcmwifi_xhs_lnf_enabled");
         v_secure_system("touch /nvram/brcm_wifi_factory_reset");
 #endif
-#if defined (_WNXL11BWL_PRODUCT_REQ_) || defined (_SE501_PRODUCT_REQ_)
+#if defined (_WNXL11BWL_PRODUCT_REQ_) || defined (_SE501_PRODUCT_REQ_) || defined (_SCER11BEL_PRODUCT_REQ_)
   /* wipe out all user data including any debug flags which could produce lot of data.  without invalidate flash memory, /nvram/secure end up corrupting if using rm -rf *. */
 //        v_secure_system("sync; find /nvram /nvram2 /data -mindepth 1 | grep -vE \"Q[[:xdigit:]]{8}$\" | xargs rm -r; sync");  /* remove all files from user directory */
 	v_secure_system("sync;find /nvram /nvram2 /data ! \\( -path '/nvram/.partner_ID' -o -regex '.*/Q[[:xdigit:]]\\{8\\}$' -o -path '/nvram/.apply_partner_defaults' \\) -mindepth 1 | xargs rm -r; sync");
