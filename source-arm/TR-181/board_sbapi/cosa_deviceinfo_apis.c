@@ -2481,6 +2481,7 @@ ANSC_STATUS getFactoryPartnerId
         PULONG                      pulSize
 	)
 {
+#ifndef XB10_ONLY_SUPPORT
 #if defined(_XB6_PRODUCT_REQ_) || defined(_HUB4_PRODUCT_REQ_) || defined(_WNXL11BWL_PRODUCT_REQ_)
 	if(ANSC_STATUS_SUCCESS == platform_hal_getFactoryPartnerId(pValue))
 	{
@@ -2494,6 +2495,8 @@ ANSC_STATUS getFactoryPartnerId
 		CcspTraceError(("%s - Failed Get factoryPartnerId \n", __FUNCTION__));
 	}
 #endif
+#endif
+
     UNREFERENCED_PARAMETER(pValue);
     UNREFERENCED_PARAMETER(pulSize);
 	return ANSC_STATUS_FAILURE;
@@ -3747,14 +3750,17 @@ void FillPartnerIDValues(cJSON *json , char *partnerID , PCOSA_DATAMODEL_RDKB_UI
 						{
 							CcspTraceError(("%s - Failed Set for CMVoiceImg\n", __FUNCTION__ ));
 						}
+#ifndef XB10_ONLY_SUPPORT
 						if (platform_hal_getFactoryCmVariant(platform_info) != RETURN_OK)
 						{
 							CcspTraceError(("%s Unable to fetch CM Variant from platform\n", __FUNCTION__));
 						}
+#endif
 						CcspTraceInfo(("%s CM variant returned by platform: %s\n", __FUNCTION__, platform_info));
 						if (strcmp(CMVoiceImg, platform_info) != 0)
 						{
 							CcspTraceWarning(("%s - CM Image doesn't match.Setting %s\n", __FUNCTION__, CMVoiceImg));
+#ifndef XB10_ONLY_SUPPORT
 							if (platform_hal_setFactoryCmVariant(CMVoiceImg) == RETURN_OK)
 							{
 								CcspTraceInfo(("%s CM variant set to %s. Intiating reboot..\n", __FUNCTION__, CMVoiceImg));
@@ -3764,6 +3770,7 @@ void FillPartnerIDValues(cJSON *json , char *partnerID , PCOSA_DATAMODEL_RDKB_UI
 							{
 								CcspTraceError(("%s Unable to set CM Variant %s\n", __FUNCTION__, CMVoiceImg));
 							}
+#endif
 						}
 					}
 					else

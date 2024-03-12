@@ -2147,6 +2147,7 @@ CosaDmlDcSetFactoryReset
 			ledMgmt.State	 = LED_BLINK;
 			ledMgmt.Interval = FR_BLINK_INTRVL;
 
+#ifndef XB10_ONLY_SUPPORT
 			if(0 == platform_hal_setLed(&ledMgmt)) {
                         	CcspTraceInfo(("Front LED Transition: GREEN LED will blink, Reason: Factory Reset\n"));
 				v_secure_system("touch /tmp/.FRBLINKGREEN");
@@ -2154,6 +2155,7 @@ CosaDmlDcSetFactoryReset
 			else {
 				CcspTraceError(("[%s]:Setting Front LED to Blink Green Failed\n",__FUNCTION__));
 			}
+#endif
 		}
 #endif
 
