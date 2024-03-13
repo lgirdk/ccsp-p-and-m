@@ -1955,6 +1955,8 @@ CosaDmlIpIfMlanAddV4Addr
     {
         pEntry->InstanceNumber = 1;
     }
+    pEntry->bEnabled = TRUE;
+    pEntry->Status = COSA_DML_IP_ADDR_STATUS_Enabled;
     pEntry->AddressingType = COSA_DML_IP_ADDR_TYPE_Static;
     return  ANSC_STATUS_SUCCESS;
 #else
