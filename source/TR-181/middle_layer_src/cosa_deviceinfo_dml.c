@@ -19262,6 +19262,143 @@ RPC_SetParamBoolValue
    prototype:
 
        BOOL
+       OpenVPN_GetParamBoolValue
+           (
+               ANSC_HANDLE                 hInsContext,
+               char*                       ParamName,
+               BOOL*                       pBool
+           );
+
+   description:
+
+       This function is called to retrieve Boolean parameter value;
+
+   argument:   ANSC_HANDLE                 hInsContext,
+               The instance handle;
+
+               char*                       ParamName,
+               The parameter name;
+
+               BOOL*                       pBool
+               The buffer of returned boolean value;
+
+   return:     TRUE if succeeded.
+
+**********************************************************************/
+
+BOOL
+OpenVPN_GetParamBoolValue
+(
+ANSC_HANDLE                 hInsContext,
+char*                       ParamName,
+BOOL*                       pBool
+)
+{
+    UNREFERENCED_PARAMETER(hInsContext);
+
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+        if(access("/tmp/tun0.conf", F_OK) == 0)
+        {
+            *pBool = TRUE;
+        }
+        else
+        {
+            *pBool = FALSE;
+        }
+        return TRUE;
+    }
+    return FALSE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+
+        BOOL
+        OpenVPN_SetParamBoolValue
+        (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                BOOL                        bValue
+        );
+
+    description:
+
+        This function is called to set BOOL parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                BOOL                        bValue
+                The updated BOOL value;
+
+    return:     TRUE if succeeded.
+
+**********************************************************************/
+
+BOOL
+OpenVPN_SetParamBoolValue
+(
+ANSC_HANDLE                 hInsContext,
+char*                       ParamName,
+BOOL                        bValue
+)
+{
+    if (IsBoolSame(hInsContext, ParamName, bValue, OpenVPN_GetParamBoolValue))
+        return TRUE;
+
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+        if (bValue == 1)
+        {
+            FILE *fp;
+            fp = fopen("/tmp/tun0.conf", "w");
+            if (fp == NULL) {
+                CcspTraceError(("Error opening the file.\n"));
+                return 1;
+            }
+            fprintf(fp, "remote 10.6.6.68\n");
+            fprintf(fp, "dev tun0\n");
+            fprintf(fp, "ifconfig 10.9.8.2 10.9.8.1\n");
+            fprintf(fp, "secret /tmp/static.key\n");
+            fprintf(fp, "cipher AES-256-CBC\n");
+            fprintf(fp, "lport 49155\n");
+            fprintf(fp, "rport 49155\n");
+            fclose(fp);
+
+            // Start OpenVPN process
+            int status = v_secure_system("openvpn --config /tmp/tun0.conf --verb 6 >> /rdklogs/logs/openvpn_logs.txt &");
+            if (status != 0) {
+                CcspTraceError(("Error starting OpenVPN process\n"));
+                return FALSE;
+            }
+
+            return TRUE;
+        }
+        else if (bValue == 0)
+        {
+            v_secure_system("rm -f /tmp/tun0.conf");
+            v_secure_system("kill -9 `pidof openvpn`");
+            CcspTraceInfo(("Successfully disabled OpenVPN\n"));
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+/*********************************************************************************************
+
+   caller: owner of this object
+
+   prototype:
+
+       BOOL
        SyseventTracer_GetParamBoolValue
            (
                ANSC_HANDLE                 hInsContext,
