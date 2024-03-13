@@ -3755,11 +3755,12 @@ ErrRet:
 	if(pContentEntry2[i].pOption)
 	    AnscFreeMemory(pContentEntry2[i].pOption);
 	}
-    if(pContentEntry2)
+    if(pContentEntry2) {
         AnscFreeMemory(pContentEntry2);
-        g_dhcpv4_server_client_count = 0;
-        AnscTraceFlow(("Exiting from %s with error\n", __FUNCTION__));
-        return(-1);
+    }
+    g_dhcpv4_server_client_count = 0;
+    AnscTraceFlow(("Exiting from %s with error\n", __FUNCTION__));
+    return(-1);
 }
 
 /*
