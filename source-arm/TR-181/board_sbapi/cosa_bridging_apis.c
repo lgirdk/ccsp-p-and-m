@@ -2807,7 +2807,8 @@ static ANSC_STATUS _Psm_GetDefaultSetting()
         AnscTraceFlow(("%s: retPsmGet == CCSP_SUCCESS reading dmsb.BridgeNamePrefix\n", __FUNCTION__));
         rc = strcpy_s(g_brInfo.bridgeNamePrefix, sizeof(g_brInfo.bridgeNamePrefix), param_value);
         ERR_CHK(rc);
-        strcat(g_brInfo.bridgeNamePrefix,"%d");
+        /* CID 175448 Calling risky function fix */
+        strncat(g_brInfo.bridgeNamePrefix,"%d", sizeof(g_brInfo.bridgeNamePrefix) - strlen(g_brInfo.bridgeNamePrefix) - 1);
         
         ((CCSP_MESSAGE_BUS_INFO *)bus_handle)->freefunc(param_value);
     }
