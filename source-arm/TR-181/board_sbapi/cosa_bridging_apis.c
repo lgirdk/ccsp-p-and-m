@@ -2744,8 +2744,9 @@ static ANSC_STATUS _COSA_DelToken(char *token, char *pStr)
         }
         else 
         {
-            strcat(pBuf, DMSB_DELIM);
-            strcat(pBuf,result);
+            /* CID 175464 Calling risky function fix */
+            strncat(pBuf, DMSB_DELIM, sizeof(buf) - strlen(pBuf) - 1);
+            strncat(pBuf, result, sizeof(buf) - strlen(pBuf) - 1);
         }
         result = strtok_r(NULL, DMSB_DELIM, &st);
     }
