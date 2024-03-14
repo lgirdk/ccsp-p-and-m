@@ -1207,7 +1207,6 @@ CosaDmlRipGetCfg
     return returnStatus;
 }
 
-#ifdef FEATURE_STATIC_IPV4
 static void* updatePlumeStatus(void *arg)
 {
     char* faultParam = NULL;
@@ -1241,7 +1240,6 @@ static void* updatePlumeStatus(void *arg)
     }
     return NULL;
 }
-#endif
 
 static void* updateWIFIStatus(void *arg)
 {
@@ -1331,10 +1329,7 @@ static void RestartBrlanInterface(char* brlan_ip, char* brlan_mask, char* brlan_
     CosaDmlIpIfMlanSetV4Addr(NULL, 4, &Entry);
     pthread_create(&tid1, NULL, updateDHCPv4Status, (void *)ripEnable);
     pthread_create(&tid2, NULL, updateWIFIStatus, (void *)ripEnable);
-
-#ifdef FEATURE_STATIC_IPV4
     pthread_create(&tid3, NULL, updatePlumeStatus, (void *)ripEnable);
-#endif
 
 }
 void RestartRIPInterfaces(int ripEnable)
