@@ -1231,9 +1231,6 @@ User_SetParamStringValue
     char csr_user_name[16];
     char csr_user_timeout[12];
     int csr_timeout = 0;
-#ifndef FEATURE_NETWORK_LOGS
-    static bool log_to_docsis = false;
-#endif
 
     /* check the parameter name and set the corresponding value */
     if (strcmp(ParamName, "Username") == 0)
@@ -1402,11 +1399,18 @@ User_SetParamStringValue
     if (strcmp(ParamName, "X_RDKCENTRAL-COM_ComparePassword") == 0)
     {
 #ifndef FEATURE_NETWORK_LOGS
-        if (log_to_docsis == false)
+        static int log_to_docsis = 0;
+
+        if (log_to_docsis == 0)
         {
-            if (access("/usr/sbin/cbn_eventlog", F_OK) == 0)
+            if ((access("/usr/bin/ofw_eventlog", F_OK) == 0) ||
+                (access("/usr/sbin/ofw_eventlog", F_OK) == 0))
             {
-                log_to_docsis = true;
+                log_to_docsis = 1;
+            }
+            else
+            {
+                log_to_docsis = -1;
             }
         }
 #endif
@@ -1419,9 +1423,13 @@ User_SetParamStringValue
 #ifdef FEATURE_NETWORK_LOGS
                 syslog_networklog("Network",LOG_NOTICE,"%s","GUI Login Status - Login Success from WAN interface");
 #else
-                if (log_to_docsis)
+                if (log_to_docsis == 1)
                 {
-                    system("cbn_eventlog WEBUI LOGIN_WAN_OK &");
+#if defined (_MV1_ARM_CBN_)
+                    system("ofw_eventlog WEBUI LOGIN_WAN_OK &");
+#else
+                    system("ofw_eventlog EVENT_LOGIN_WAN_SUCC &");
+#endif
                 }
 #endif
             }
@@ -1431,9 +1439,13 @@ User_SetParamStringValue
 #ifdef FEATURE_NETWORK_LOGS
                 syslog_networklog("Network",LOG_NOTICE,"%s","GUI Login Status - Login Fail from WAN interface");
 #else
-                if (log_to_docsis)
+                if (log_to_docsis == 1)
                 {
-                    system("cbn_eventlog WEBUI LOGIN_WAN_NOK &");
+#if defined (_MV1_ARM_CBN_)
+                    system("ofw_eventlog WEBUI LOGIN_WAN_NOK &");
+#else
+                    system("ofw_eventlog EVENT_LOGIN_WAN_FAIL &");
+#endif
                 }
 #endif
             }
@@ -1448,9 +1460,13 @@ User_SetParamStringValue
 #ifdef FEATURE_NETWORK_LOGS
                 syslog_networklog("Network",LOG_NOTICE,"%s","GUI Login Status - Login Fail from LAN interface");
 #else
-                if (log_to_docsis)
+                if (log_to_docsis == 1)
                 {
-                    system("cbn_eventlog WEBUI LOGIN_LAN_NOK &");
+#if defined (_MV1_ARM_CBN_)
+                    system("ofw_eventlog WEBUI LOGIN_LAN_NOK &");
+#else
+                    system("ofw_eventlog EVENT_LOGIN_LAN_FAIL &");
+#endif
                 }
 #endif
             }
@@ -1459,9 +1475,13 @@ User_SetParamStringValue
 #ifdef FEATURE_NETWORK_LOGS
                syslog_networklog("Network",LOG_NOTICE,"%s","GUI Login Status - Login Success from LAN interface");
 #else
-               if (log_to_docsis)
+               if (log_to_docsis == 1)
                {
-                   system("cbn_eventlog WEBUI LOGIN_LAN_OK &");
+#if defined (_MV1_ARM_CBN_)
+                    system("ofw_eventlog WEBUI LOGIN_LAN_OK &");
+#else
+                    system("ofw_eventlog EVENT_LOGIN_LAN_SUCC &");
+#endif
                }
 #endif
             }
