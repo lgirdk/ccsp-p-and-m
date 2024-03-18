@@ -2080,6 +2080,14 @@ LanMngm_Validate
     PCOSA_DML_LAN_MANAGEMENT        pLanMngm    = (PCOSA_DML_LAN_MANAGEMENT)pLinkObj->hContext;
     ULONG lanSubnetMask                         = 0;
 
+    char buf[20];
+    syscfg_get(NULL, "active_static_brlan_service", buf, sizeof(buf));
+    if(buf[0] != '\0')
+    {
+        CcspTraceWarning(("Multi static ip is configured via tunneled static or RIPv2 service. Skipping LAN config validation...\n"));
+        return TRUE;
+    }
+
     lanSubnetMask = htonl(pLanMngm->LanSubnetMask.Value);
 
     /* Convert to network byte order and check subnetmask */
