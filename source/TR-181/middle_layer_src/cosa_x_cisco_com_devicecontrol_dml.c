@@ -2328,7 +2328,7 @@ LanMngm_Validate
 
         if (commonSyseventGet( evt_wan_mask, wan_netmask_buf, sizeof(wan_netmask_buf)) == 0)
         {
-            if ( (wan_netmask_buf != NULL) && ((strcmp(wan_netmask_buf ,"0.0.0.0") == 0 ) || (strcmp(wan_netmask_buf ,"0") == 0)))
+            if ((wan_netmask_buf[0] != '\0') && ((strcmp(wan_netmask_buf ,"0.0.0.0") == 0 ) || (strcmp(wan_netmask_buf ,"0") == 0)))
             {
                 CcspTraceWarning(("wan_netmask IP not configured\n"));
                 return TRUE;
