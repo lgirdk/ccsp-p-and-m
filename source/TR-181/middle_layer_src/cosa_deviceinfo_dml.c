@@ -13226,8 +13226,9 @@ WiFiInterworking_SetParamBoolValue
 	    return FALSE;
 	}
 	if(bValue == 0) {
-		retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.WiFi-Passpoint.Enable", ccsp_string, bValue ? "1" : "0");
-		if (retPsmGet != CCSP_SUCCESS) {
+        /* CID 334909 Logically dead code fix */
+		retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.WiFi-Passpoint.Enable", ccsp_string, "0");
+        if (retPsmGet != CCSP_SUCCESS) {
 			CcspTraceError(("Set failed for WiFiPasspointSupport \n"));
 			return FALSE;
 		}
