@@ -547,6 +547,10 @@ if(id != 0)
     //Unknown Reboot Reason 
     
     CheckAndSetRebootReason();
+#if defined (_MV1_ARM_CS_)
+    CcspTraceWarning(("RDKB_SYSTEM_BOOT_UP_LOG : Handle Event Reboot Network Log \n"));
+    system("ofw_eventlog EVENT_REBOOT &");
+#endif
 
     printf("Calling PARODUS!\n");
     //CcspTraceWarning(("RDKB_SYSTEM_BOOT_UP_LOG : PARODUS call!\n")); 
