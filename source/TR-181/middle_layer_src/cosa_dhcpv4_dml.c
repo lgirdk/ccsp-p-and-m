@@ -6153,9 +6153,17 @@ Pool_GetParamStringValue
             if (!bDnsOverride)
             {
                 char wanDhcpDns[255];
-
+                char dslite[6];
                 wanDhcpDns[0] = 0;
-                commonSyseventGet("wan_dhcp_dns", wanDhcpDns, sizeof(wanDhcpDns));
+                syscfg_get(NULL, "dslite_enable", dslite, sizeof(dslite));
+                if (strcmp(dslite, "1") != 0)
+                {
+                    commonSyseventGet("wan_dhcp_dns", wanDhcpDns, sizeof(wanDhcpDns));
+                }
+                else
+                {
+                    syscfg_get( NULL, "lan_ipaddr", wanDhcpDns, sizeof(wanDhcpDns));
+                }
                 if (wanDhcpDns[0] != 0)
                 {
                     len = AnscSizeOfString(wanDhcpDns);
