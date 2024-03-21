@@ -522,6 +522,7 @@ CosaNeighdiscRegGetInfo
 
     for ( ulIndex = 0; ulIndex < ulEntryCount; ulIndex++ )
     {
+
         pFolderName = pPoamIrepFoNeighdiscHA->EnumFolder
             (
                 (ANSC_HANDLE)pPoamIrepFoNeighdiscHA,
@@ -614,12 +615,12 @@ CosaNeighdiscRegGetInfo
             AnscFreeMemory(pAlias);
             pAlias = NULL;
         }
-
+        /* CID 340039 Unused value fix */
         if ( pFolderName )
         {
             AnscFreeMemory(pFolderName);
-            pFolderName = NULL;
         }
+
     }
 
 EXIT:
