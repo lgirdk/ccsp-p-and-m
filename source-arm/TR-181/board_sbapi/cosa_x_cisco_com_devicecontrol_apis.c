@@ -262,7 +262,7 @@ static int initWifiComp() {
 
     ret = CcspBaseIf_discComponentSupportingNamespace(bus_handle,
                 dst_pathname_cr,
-                "Device.WiFi.X_CISCO_COM_FactoryReset",
+                "Device.WiFi.X_RDK-CENTRAL_COM_ForceDisable",
                 g_Subsystem,        /* prefix */
                 &ppComponents,
                 &size);
