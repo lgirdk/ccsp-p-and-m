@@ -13880,8 +13880,9 @@ IPv6onLnF_SetParamBoolValue
 						   while((token = strtok_r(pt, ",", &pt))) {
 							if(strncmp(Inf_name,token,strlen(Inf_name)))
 							{
-								strcat(OutBuff,token);
-								strcat(OutBuff,",");
+                                /* CID 53147 Calling risky function : fix */
+                                strncat(OutBuff,token,sizeof(OutBuff)-strlen(OutBuff)-1);
+                                strncat(OutBuff,",",sizeof(OutBuff)-strlen(OutBuff)-1);
 							}
 
 						   }
