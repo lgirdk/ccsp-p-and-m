@@ -21620,6 +21620,13 @@ SecureWebUI_SetParamBoolValue
  )
 {
     UNREFERENCED_PARAMETER(hInsContext);
+
+    if (IsBoolSame(hInsContext, ParamName, bValue, SecureWebUI_GetParamBoolValue))
+    {
+        CcspTraceInfo(("[%s:] SecureWebUI Set current and previous values are same\n", __FUNCTION__ ));
+        return TRUE;
+    }
+
     if (strcmp(ParamName, "Enable") == 0)
     {
         if (syscfg_set_commit(NULL, "SecureWebUI_Enable", (bValue == TRUE) ? "true" : "false") != 0)
