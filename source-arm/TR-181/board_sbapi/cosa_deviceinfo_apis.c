@@ -4561,39 +4561,38 @@ CosaDmlDi_ValidateRebootDeviceParam( char *pValue )
 				return FALSE;
 			}
 			subStringForDelay   = strtok_r( tmpCharBuffer, " ", &st );
-			if ( (strcasestr(subStringForDelay, "delay="))  || (strcasestr(subStringForDelay, "source=")) )
-			{
-				subStringForSource = strtok_r( NULL, " ", &st );
+            /* CID 74460 Dereference before null check : fix */
+			if (subStringForDelay!=NULL) {
+                IsProceedFurther = FALSE;
+                if ( (strcasestr(subStringForDelay, "delay="))  || (strcasestr(subStringForDelay, "source=")) )
+                {
+                    subStringForSource = strtok_r( NULL, " ", &st );
 
-                                /* CID: 55040 Dereference before null check*/
-                                if(!subStringForSource)
-                                    return FALSE;
+                                    /* CID: 55040 Dereference before null check*/
+                                    if(!subStringForSource)
+                                        return FALSE;
 
-				if ( (strcasestr(subStringForSource, "delay="))  || (strcasestr(subStringForSource, "source=")) )
-				{
-					subStringForDummy   = strtok_r( NULL, " ", &st );
-					if( subStringForDummy != NULL )
-					{
-						IsProceedFurther = FALSE;
-					}
-					else
-					{
-						IsProceedFurther = TRUE;
-					}
-				}
-				else if(subStringForSource != NULL )
-				{
-					IsProceedFurther = FALSE;
-				}
+                    if ( (strcasestr(subStringForSource, "delay="))  || (strcasestr(subStringForSource, "source=")) )
+                    {
+                        subStringForDummy   = strtok_r( NULL, " ", &st );
+                        if( subStringForDummy != NULL )
+                        {
+                            IsProceedFurther = FALSE;
+                        }
+                        else
+                        {
+                            IsProceedFurther = TRUE;
+                        }
+                    }
+                    else if(subStringForSource != NULL )
+                    {
+                        IsProceedFurther = FALSE;
+                    }
+                }
 
-			}
-			else if( subStringForDelay != NULL )
-			{
-				IsProceedFurther = FALSE;
-			}
+            }
 		}
 	}
-
 	 return IsProceedFurther;
 }
 
