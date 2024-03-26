@@ -646,7 +646,15 @@ CosaDmlTSIPApplyConfigFileTask
             if ( pBuffer2 )
             {
                 fseek(fpConfig3, 0L, SEEK_SET);
-                fread(pBuffer2, 1, len3, fpConfig3);
+                int bytesRead = fread(pBuffer2, 1, len3, fpConfig3);
+		/* CID 71435 fix Ignoring number of bytes read */
+		if (bytesRead != len3) {
+			CcspTraceError(("%s : Failed to read the data from the file \n", __FUNCTION__));
+                        fclose(fpConfig3);
+                        returnStatus =  ANSC_STATUS_FAILURE;
+                        goto EXIT;
+		}
+
             }
             fclose(fpConfig3);
            /* CID: 137218 String not null terminated*/
