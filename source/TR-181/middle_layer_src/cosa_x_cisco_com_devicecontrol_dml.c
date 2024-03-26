@@ -2343,7 +2343,7 @@ LanMngm_Validate
             if(*end_ptr)
                 return TRUE;
 
-            if(prefix < 0 || prefix > 32)
+            if(prefix < 0 || prefix > 31)
             {
                 CcspTraceWarning(("Invalid wan_netmask address \n"));
                 return TRUE;
