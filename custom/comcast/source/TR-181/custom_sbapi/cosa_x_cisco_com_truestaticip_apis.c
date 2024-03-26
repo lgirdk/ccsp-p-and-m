@@ -654,11 +654,11 @@ CosaDmlTSIPApplyConfigFileTask
                         returnStatus =  ANSC_STATUS_FAILURE;
                         goto EXIT;
 		}
-
+                /* CID 175373 fix - Dereference after null check */
+                pBuffer2[len3] = '\0';
             }
             fclose(fpConfig3);
            /* CID: 137218 String not null terminated*/
-            pBuffer2[len3] = '\0';
             /*CID: 60125 Unchecked return value from library*/
             if(remove("/var/cliconfig.txt")!=0)
                 AnscTraceWarning(("CosaDmlTSIPApplyConfigFile:Unable to delete a file.!\n"));
