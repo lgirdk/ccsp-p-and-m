@@ -3226,9 +3226,13 @@ CosaDmlDcSetMsoRemoteMgmtEnable
         CcspTraceWarning(("X_CISCO_COM_DeviceControl: Error in initializing context!!! \n" ));
         return ANSC_STATUS_FAILURE;
     }
-
-    Utopia_SetBool(&ctx, UtopiaValue_Mgmt_MsoAccess, bEnabled);
-
+    /* CID 56085 Unchecked return value : fix */
+    if (Utopia_SetBool(&ctx, UtopiaValue_Mgmt_MsoAccess, bEnabled) != SUCCESS ) {
+        CcspTraceWarning(("X_CISCO_COM_DeviceControl: Error in setting Value \n" ));
+        Utopia_Free(&ctx, 0);
+        return ANSC_STATUS_FAILURE;
+    }
+   
     Utopia_Free(&ctx, 1);
 
     return ANSC_STATUS_SUCCESS;
