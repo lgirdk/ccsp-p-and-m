@@ -3712,7 +3712,11 @@ static void setLanMgmtUpnp(UtopiaContext *utctx, BOOLEAN enable)
 	if (utctx == NULL)
 		return;
 
-    Utopia_SetBool(utctx, UtopiaValue_Mgmt_IGDEnabled, bEnabled);
+    /* CID 56042 Unchecked return value : fix */
+    if ( Utopia_SetBool(utctx, UtopiaValue_Mgmt_IGDEnabled, bEnabled) != SUCCESS) {
+        CcspTraceWarning(("X_CISCO_COM_DeviceControl: Error in setting context!!! \n" ));
+        return;
+    }
 }
 
 static 
