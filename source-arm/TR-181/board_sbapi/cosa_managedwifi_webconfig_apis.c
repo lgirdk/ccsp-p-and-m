@@ -970,7 +970,11 @@ void getBridgeDetailsFromPsm(void)
     }
 
     snprintf(aParamName, BUFF_LEN_64, l2netBridgeName, sManageWiFiInfo.aBridgeIndex);
+#if !defined(_64BIT_ARCH_SUPPORT_)
+    CcspTraceInfo(("%s: aBridgeName=%d\n", __FUNCTION__,sizeof(sManageWiFiInfo.aBridgeName)));
+#else
     CcspTraceInfo(("%s: aBridgeName=%zu\n", __FUNCTION__,sizeof(sManageWiFiInfo.aBridgeName)));
+#endif
     CcspTraceInfo(("%s: aParamName=%s\n", __FUNCTION__,aParamName));
     psmGet(aParamName, sManageWiFiInfo.aBridgeName, BUFF_LEN_32);
     CcspTraceInfo(("%s: aBridgeName=%s\n", __FUNCTION__,sManageWiFiInfo.aBridgeName));

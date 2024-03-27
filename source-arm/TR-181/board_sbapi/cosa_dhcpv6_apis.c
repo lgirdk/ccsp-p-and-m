@@ -2942,7 +2942,11 @@ static int _write_dibbler_sent_option_file(void)
         for (i=0; i<g_sent_option_num; i++)
         {
             if (g_sent_options[i].bEnabled)
-                fprintf(fp, "%lu:%d:%s\n", 
+#if !defined(_64BIT_ARCH_SUPPORT_)
+                    fprintf(fp, "%lu:%d:%s\n",
+#else
+                    fprintf(fp, "%lu:%zu:%s\n",
+#endif
                         g_sent_options[i].Tag,
                         strlen((const char*)g_sent_options[i].Value)/2,
                         g_sent_options[i].Value);
@@ -9506,7 +9510,7 @@ dhcpv6c_dbg_thrd(void * in)
 
                         CcspTraceDebug(("%s,%d: Calling CosaDmlDHCPv6sTriggerRestart(FALSE)...\n", __FUNCTION__, __LINE__));
                         CosaDmlDHCPv6sTriggerRestart(FALSE);
-#if defined(_COSA_BCM_ARM_) || defined(INTEL_PUMA7)
+#if defined(_COSA_BCM_ARM_) || defined(INTEL_PUMA7) || defined(_COSA_QCA_ARM_)
                         CcspTraceWarning((" %s dhcpv6_assign_global_ip to brlan0 \n", __FUNCTION__));
                         ret = dhcpv6_assign_global_ip(v6pref, "brlan0", globalIP);
 #elif defined _COSA_BCM_MIPS_
@@ -9766,7 +9770,7 @@ dhcpv6c_dbg_thrd(void * in)
 #endif
                         g_dhcpv6_server_prefix_ready = TRUE;
 
-#if defined (_COSA_BCM_ARM_)
+#if defined (_COSA_BCM_ARM_) || defined(_COSA_QCA_ARM_)
 #ifndef _SKY_HUB_COMMON_PRODUCT_REQ_
                         CcspTraceDebug(("%s,%d: Calling CosaDmlDHCPv6sTriggerRestart(FALSE)...\n", __FUNCTION__, __LINE__));
                         CosaDmlDHCPv6sTriggerRestart(FALSE);
@@ -9774,7 +9778,7 @@ dhcpv6c_dbg_thrd(void * in)
 #endif /* _COSA_BCM_ARM_ && !_SKY_HUB_COMMON_PRODUCT_REQ_ */
 
                         /*We need get a global ip addres */
-#if defined(_COSA_BCM_ARM_) || defined(INTEL_PUMA7)
+#if defined(_COSA_BCM_ARM_) || defined(INTEL_PUMA7) || defined(_COSA_QCA_ARM_)
 #ifndef _HUB4_PRODUCT_REQ_
                         /*this is for tchxb6*/
                         CcspTraceWarning((" %s dhcpv6_assign_global_ip to brlan0 \n", __FUNCTION__));
@@ -9798,8 +9802,12 @@ dhcpv6c_dbg_thrd(void * in)
                             if (strlen(globalIP2) != 0 )
                             {
                                 g_dhcpv6s_refresh_count = bRestartLan;
-                                CcspTraceWarning(("%s: g_dhcpv6s_refresh_count %ld, globalIP2 is %s, strlen is %d\n", __func__, g_dhcpv6s_refresh_count,globalIP2,strlen(globalIP2)));
-                            }
+#if !defined(_64BIT_ARCH_SUPPORT_)
+				CcspTraceWarning(("%s: g_dhcpv6s_refresh_count %ld, globalIP2 is %s, strlen is %d\n", __func__, g_dhcpv6s_refresh_count,globalIP2,strlen(globalIP2)));
+#else
+				CcspTraceWarning(("%s: g_dhcpv6s_refresh_count %ld, globalIP2 is %s, strlen is %zu\n", __func__, g_dhcpv6s_refresh_count,globalIP2,strlen(globalIP2)));
+#endif
+			    }
 
                             rc = strcpy_s(globalIP2, sizeof(globalIP2), globalIP);
                             ERR_CHK(rc);

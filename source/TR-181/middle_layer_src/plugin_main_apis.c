@@ -370,7 +370,7 @@ CosaBackEndManagerInitialize
     returnStatus = CosaDmlMlanInit((ANSC_HANDLE)pMyObject, &pMyObject->hMultiLan);
     AnscTraceWarning(("  CosaDmlMlanInit -- status %lu!\n", returnStatus));
 
-#if !defined(INTEL_PUMA7) && !defined(_COSA_BCM_MIPS_) && !defined(_COSA_BCM_ARM_) && !defined(_PLATFORM_TURRIS_)
+#if !defined(INTEL_PUMA7) && !defined(_COSA_BCM_MIPS_) && !defined(_COSA_BCM_ARM_) && !defined(_PLATFORM_TURRIS_) && !defined(_COSA_QCA_ARM_)
     printf("pnm-status is renamed to bring-lan and set in PSM for XB3\n");
 #else
    printf("**************** sysevent set pnm-status up \n");
@@ -395,7 +395,7 @@ if(id != 0)
     pMyObject->hLanMngm          = (ANSC_HANDLE)CosaLanManagementCreate();
 #endif
     AnscTraceWarning(("  CosaLanManagementCreate done!\n"));
-#if !defined(_PLATFORM_IPQ_)
+#if !defined(_PLATFORM_IPQ_) || defined(_XER5_PRODUCT_REQ_)
     //pMyObject->hMoCA          = (ANSC_HANDLE)CosaMoCACreate();
     //AnscTraceWarning(("  CosaMoCACreate done!\n"));
     pMyObject->hUpnp          = (ANSC_HANDLE)CosaUpnpCreate();

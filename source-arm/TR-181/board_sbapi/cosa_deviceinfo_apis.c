@@ -488,7 +488,7 @@ CosaDmlDiGetManufacturerOUI
 
 }
 
-#if !defined(_SR213_PRODUCT_REQ_) && !defined (_WNXL11BWL_PRODUCT_REQ_)
+#if !defined(_SR213_PRODUCT_REQ_) && !defined (_WNXL11BWL_PRODUCT_REQ_) && !defined(_XER5_PRODUCT_REQ_)
 ANSC_STATUS
 CosaDmlDiGetInActiveFirmware
     (
@@ -602,6 +602,14 @@ CosaDmlDiGetProductClass
                     return ANSC_STATUS_FAILURE;
                 }
 	}
+#elif defined(_XER5_PRODUCT_REQ_)
+    {
+        rc = strcpy_s(pValue, *pulSize, "XER5");
+        if ( rc != EOK) {
+            ERR_CHK(rc);
+            return ANSC_STATUS_FAILURE;
+        }
+    }
 #elif defined(MODEM_ONLY_SUPPORT)
     {
         rc = strcpy_s(pValue, *pulSize, "XD4");

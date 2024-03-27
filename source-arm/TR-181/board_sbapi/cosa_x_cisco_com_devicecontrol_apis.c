@@ -1937,7 +1937,7 @@ void* restoreAllDBs(void* arg)
 #else
 	v_secure_system("restoreAllDBs"); //Perform factory reset on other components
 #endif
-#if defined (INTEL_PUMA7) || (defined (_XB6_PRODUCT_REQ_) && defined (_COSA_BCM_ARM_)) || defined (_CBR_PRODUCT_REQ_) || defined (_HUB4_PRODUCT_REQ_) || defined (_SR213_PRODUCT_REQ_) || defined (_CBR2_PRODUCT_REQ_)
+#if defined (INTEL_PUMA7) || (defined (_XB6_PRODUCT_REQ_) && defined (_COSA_BCM_ARM_)) || defined (_CBR_PRODUCT_REQ_) || defined (_HUB4_PRODUCT_REQ_) || defined (_SR213_PRODUCT_REQ_) || defined (_CBR2_PRODUCT_REQ_) || defined(_COSA_QCA_ARM_)
 	v_secure_system("touch /nvram/apparmor_factory_reset");
 #endif
 
@@ -2203,7 +2203,7 @@ CosaDmlDcSetFactoryReset
 	   	CcspTraceError(("FactoryReset:%s BAD parameter passed to factory defaults parameter ...\n",__FUNCTION__));
 		return ANSC_STATUS_BAD_PARAMETER;
 	    }
-#if (defined (_XB6_PRODUCT_REQ_) || defined (_CBR_PRODUCT_REQ_)) && defined (_COSA_BCM_ARM_) || defined (_HUB4_PRODUCT_REQ_) || defined (_PLATFORM_RASPBERRYPI_) || defined(_COSA_BCM_MIPS_)
+#if (defined (_XB6_PRODUCT_REQ_) || defined (_CBR_PRODUCT_REQ_)) && defined (_COSA_BCM_ARM_) || defined (_HUB4_PRODUCT_REQ_) || defined (_PLATFORM_RASPBERRYPI_) || defined(_COSA_BCM_MIPS_) || defined(_XER5_PRODUCT_REQ_)
                 {
                         unsigned int dbValue = 0;
                         FILE *pdbFile = NULL;

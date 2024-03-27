@@ -2433,7 +2433,11 @@ static int be_struct_2_middle_layer(iap_entry_t * p_in, PCOSA_DML_IA_POLICY p_ou
     p_out->LanHost.IpCount      = p_in->lanhosts.ip_count;
     p_out->LanHost.IprCount     = p_in->lanhosts.iprange_count;    
 
+#if !defined(_64BIT_ARCH_SUPPORT_)
     printf("sizeof(iap_entry_t) %d \n", sizeof(iap_entry_t)); 
+#else
+    printf("sizeof(iap_entry_t) %zu \n", sizeof(iap_entry_t)); 
+#endif
 
     for (i=0; i<p_out->LanHost.MacCount && i<COSA_DML_IA_LH_MAX_MAC; i++)
     {

@@ -962,7 +962,11 @@ CosaUtilConstructLowerLayers
         }
     }
 
+#if !defined(_64BIT_ARCH_SUPPORT_)
     AnscTraceFlow(("%s, size %d, buf len %lu\n", pLowerLayersBuf, _ansc_strlen(pLowerLayersBuf), *pBufLen));
+#else
+    AnscTraceFlow(("%s, size %zu, buf len %lu\n", pLowerLayersBuf, _ansc_strlen(pLowerLayersBuf), *pBufLen));
+#endif
     return  ANSC_STATUS_SUCCESS;
 }
 

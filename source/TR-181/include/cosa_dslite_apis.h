@@ -117,4 +117,8 @@ CosaDmlDsliteSetInsNum
         ULONG                       ulInstanceNumber
     );
 
+int commonSyseventSet(char* key, char* value);
+int commonSyseventGet(char* key, char* value, int valLen);
+int commonSyseventClose();
+
 #endif
