@@ -3280,7 +3280,12 @@ CosaDmlDcSetCusadminRemoteMgmtEnable
         return ANSC_STATUS_FAILURE;
     }
 
-    Utopia_SetBool(&ctx, UtopiaValue_Mgmt_CusadminAccess, bEnabled);
+    /* CID 54172 Unchecked return value : fix */
+    if (Utopia_SetBool(&ctx, UtopiaValue_Mgmt_CusadminAccess, bEnabled)!= SUCCESS) {
+        CcspTraceWarning(("X_CISCO_COM_DeviceControl: Error in setting Value \n" ));
+        Utopia_Free(&ctx, 0);
+        return ANSC_STATUS_FAILURE;
+    }
 
     Utopia_Free(&ctx, 1);
 
