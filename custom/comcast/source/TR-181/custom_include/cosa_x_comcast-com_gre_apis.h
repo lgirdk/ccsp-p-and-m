@@ -19,7 +19,7 @@
 
 /**************************************************************************
 
-    module: cosa_x_comcast-com_gre_api.h
+    module: cosa_x_comcast-com_gre_apis.h
 
         For GRE API Development
 
