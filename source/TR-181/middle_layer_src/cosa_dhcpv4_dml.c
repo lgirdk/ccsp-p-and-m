@@ -8177,10 +8177,23 @@ StaticAddress_Validate
 
     char buf[64]={0}, hostCount[5]={0}, insNum[5]={0}, entry[64]={0};
 
+    PCOSA_CONTEXT_POOL_LINK_OBJECT  pCxtPoolLink      = (PCOSA_CONTEXT_POOL_LINK_OBJECT)pCxtLink->hParentTable;
+    PCOSA_DML_DHCPS_POOL_FULL       pPool             = (PCOSA_DML_DHCPS_POOL_FULL)pCxtPoolLink->hContext;
+    unsigned int                           netmask, gateway;
+
     // send arp and check if duplicate ipaddr exists
     if (pDhcpStaAddr->Yiaddr.Value != 0) {
         if (is_duplicate_ip(pDhcpStaAddr->Yiaddr.Value, "brlan0", pDhcpStaAddr->Chaddr) ||
             is_duplicate_ip(pDhcpStaAddr->Yiaddr.Value, "brlan7", pDhcpStaAddr->Chaddr) )
+            return FALSE;
+    }
+
+    //check if the static ip is within lan subnet
+    ipaddr = ntohl(pDhcpStaAddr->Yiaddr.Value);
+    if(ipaddr != 0) { /*if Yiaddr is the default 0.0.0.0 then it's valid to allow other parameter setting go through before Yiaddr is set*/
+        gateway = ntohl(pPool->Cfg.IPRouters[0].Value);
+        netmask = ntohl(pPool->Cfg.SubnetMask.Value);
+        if(is_invalid_unicast_ip_addr(gateway,netmask,ipaddr))
             return FALSE;
     }
 
