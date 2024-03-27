@@ -1403,7 +1403,7 @@ X_CISCO_COM_StaticIPv4Forwarding_AddEntry
 #if !defined(_64BIT_ARCH_SUPPORT_)
     rc = sprintf_s(pEntry->Name, sizeof(pEntry->Name),"StaticRoute_%x_%lu", (UINT)pEntry, pCxtLink->InstanceNumber );
 #else
-    rc = sprintf_s(pEntry->Name, sizeof(pEntry->Name),"StaticRoute_%x_%lu", pEntry, pCxtLink->InstanceNumber );
+    rc = sprintf_s(pEntry->Name, sizeof(pEntry->Name),"StaticRoute_%p_%lu", pEntry, pCxtLink->InstanceNumber );
 #endif
     if(rc < EOK)
     {

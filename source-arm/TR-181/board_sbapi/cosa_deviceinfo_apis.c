@@ -467,7 +467,7 @@ CosaDmlDiGetManufacturerOUI
     UNREFERENCED_PARAMETER(hContext);
     errno_t rc = -1;
 
-#if defined(_COSA_BCM_ARM_) || defined(_PLATFORM_TURRIS_)
+#if defined(_COSA_BCM_ARM_) || defined(_PLATFORM_TURRIS_) || defined(_COSA_QCA_ARM_)
         rc = sprintf_s(pValue, *pulSize, "%s%c", CONFIG_VENDOR_ID, '\0');
         if(rc < EOK)
         {
