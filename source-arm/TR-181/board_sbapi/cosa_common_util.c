@@ -92,20 +92,26 @@ extern ANSC_HANDLE bus_handle;
 #if defined (WIFI_MANAGE_SUPPORTED)
 extern  char   g_Subsystem[32];
 
-int psmGet(char * pParamName, char *pParamValue, int iParamValLen)
+int psmGet(char *pParamName, char *pParamValue, size_t len)
 {
     char *pVal = NULL;
-    if ((NULL == pParamValue) || (NULL == pParamName))
+
+    if ((pParamValue == NULL) || (len == 0))
         return -1;
-    if ((PSM_Get_Record_Value2(bus_handle, g_Subsystem,pParamName, NULL, &pVal) == CCSP_SUCCESS) && (NULL != pVal))
+
+    *pParamValue = 0;
+
+    if (pParamName == NULL)
+        return -1;
+
+    if ((PSM_Get_Record_Value2(bus_handle, g_Subsystem, pParamName, NULL, &pVal) == CCSP_SUCCESS) && (NULL != pVal))
     {
-        strncpy(pParamValue, pVal, (iParamValLen-1));
+        snprintf(pParamValue, len, "%s", pVal);
         ((CCSP_MESSAGE_BUS_INFO *)bus_handle)->freefunc(pVal);
-        pVal = NULL;
         return 0;
     }
-    else
-        return -1;
+
+    return -1;
 }
 
 int psmSet(char *pParamName, char *pParamValue)
