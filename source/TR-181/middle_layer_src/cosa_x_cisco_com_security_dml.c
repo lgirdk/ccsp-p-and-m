@@ -2936,7 +2936,8 @@ AccessPolicy_GetParamStringValue
 
                 if ( i < (ULONG)pDmlIAPolicy->LanHost.MacCount - 1 )
                 {
-                    _ansc_strcat(pValue, ",");
+                    /* CID 57476 Calling risky function : fix */
+                    strncat(pValue, ",", (*pUlSize - strlen(pValue) - 1) );
                 }
 
                 pValue = pValue + AnscSizeOfString(pValue);
