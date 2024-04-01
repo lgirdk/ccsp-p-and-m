@@ -258,7 +258,7 @@ static void checkComponentHealthStatus(char *compName, char * dbusPath, char *st
         memset(param_name,0,sizeof(param_name));
         memset(wifi_comp_id,0,sizeof(wifi_comp_id));
 
-        sprintf(param_name,"%s.%s",compName, "Health");
+	snprintf(param_name, sizeof(param_name), "%s.%s", compName, "Health");
         parameterNames[0] = param_name;
 
         snprintf(wifi_comp_id, sizeof(wifi_comp_id), "eRT.%s", compName);
