@@ -242,7 +242,8 @@ static int ParseZebraRaConf(ZebraRaConf_t *conf)
             if (sscanf(line, "ipv6 nd mtu %d", &conf->mtu) != 1)
                 goto BAD_FORMAT;
         } else if (strstr(line, "router-preference") != NULL) {
-            if (sscanf(line, "ipv6 nd router-preference %s", sVal[0]) != 1)
+            /* CID 61252 Calling risky function: fix */
+            if (sscanf(line, "ipv6 nd router-preference %63s", sVal[0]) != 1)
                 goto BAD_FORMAT;
 
             if (strcmp(sVal[0], "high") == 0)
