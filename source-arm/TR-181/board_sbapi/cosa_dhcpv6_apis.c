@@ -8935,7 +8935,7 @@ dhcpv6c_dbg_thrd(void * in)
 
 #if defined(FEATURE_MAPT) && defined(FEATURE_RDKB_WAN_MANAGER)
 #if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
-            dataLen = sscanf(p, "%63s %63s %63s %s %s %s %s %s %63s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s",
+            dataLen = sscanf(p, "%63s %63s %63s %31s %31s %31s %31s %31s %63s %11s %31s %31s %31s %31s %31s %7s %127s %127s %127s %7s %7s %7s %7s %7s %7s %7s",
                        action, IfaceName, v6addr,    iana_iaid, iana_t1, iana_t2, iana_pretm, iana_vldtm,
                        v6pref, preflen, iapd_iaid, iapd_t1, iapd_t2, iapd_pretm, iapd_vldtm,
                        mapAssigned, ruleIPv6Prefix, ruleIPv4Prefix, brIPv6Prefix, v6Len, isFMR, eaLen, v4Len,
@@ -8946,7 +8946,7 @@ dhcpv6c_dbg_thrd(void * in)
              * dataLen = 14 : NON-MAPT */
             if((dataLen == 26) || (dataLen == 23) || (dataLen == 15))
 #else
-            dataLen = sscanf(p, "%63s %63s %s %s %s %s %s %63s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s",
+            dataLen = sscanf(p, "%63s %63s %31s %31s %31s %31s %31s %63s %11s %31s %31s %31s %31s %31s %7s %1277s %127s %127s %7s %7s %7s %7s %7s %7s %7s",
                        action, v6addr,    iana_iaid, iana_t1, iana_t2, iana_pretm, iana_vldtm,
                        v6pref, preflen, iapd_iaid, iapd_t1, iapd_t2, iapd_pretm, iapd_vldtm,
                        mapAssigned, ruleIPv6Prefix, ruleIPv4Prefix, brIPv6Prefix, v6Len, isFMR, eaLen, v4Len,
@@ -8959,14 +8959,14 @@ dhcpv6c_dbg_thrd(void * in)
 #endif
 #elif defined (FEATURE_SUPPORT_MAPT_NAT46)
 #if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
-            dataLen = sscanf(p, "%63s %63s %63s %s %s %s %s %s %63s %s %s %s %s %s %s %s",
+            dataLen = sscanf(p, "%63s %63s %63s %31s %31s %31s %31s %31s %63s %11s %31s %31s %31s %31s %31s %255s",
                        action, IfaceName, v6addr,    iana_iaid, iana_t1, iana_t2, iana_pretm, iana_vldtm,
                        v6pref, preflen, iapd_iaid, iapd_t1, iapd_t2, iapd_pretm, iapd_vldtm,
                        opt95_dBuf);
             CcspTraceDebug(("%s,%d: dataLen = %d\n", __FUNCTION__, __LINE__, dataLen));
             if (dataLen == 16)
 #else
-            dataLen = sscanf(p, "%63s %63s %s %s %s %s %s %63s %s %s %s %s %s %s %s",
+            dataLen = sscanf(p, "%63s %63s %31s %31s %31s %31s %31s %127s %11s %31s %31s %31s %31s %31s %255s",
                        action, v6addr,    iana_iaid, iana_t1, iana_t2, iana_pretm, iana_vldtm,
                        v6pref, preflen, iapd_iaid, iapd_t1, iapd_t2, iapd_pretm, iapd_vldtm,
                        opt95_dBuf);
@@ -8975,13 +8975,13 @@ dhcpv6c_dbg_thrd(void * in)
 #endif
 #else // FEATURE_MAPT
 #if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
-            dataLen = sscanf(p, "%63s %63s %63s %s %s %s %s %s %63s %s %s %s %s %s %s",
+            dataLen = sscanf(p, "%63s %63s %63s %31s %31s %31s %31s %31s %63s %11s %31s %31s %31s %31s %31s",
                        action, IfaceName, v6addr,    iana_iaid, iana_t1, iana_t2, iana_pretm, iana_vldtm,
                        v6pref, preflen, iapd_iaid, iapd_t1, iapd_t2, iapd_pretm, iapd_vldtm);
             CcspTraceDebug(("%s,%d: dataLen = %d\n", __FUNCTION__, __LINE__, dataLen));
             if (dataLen == 15)
 #else
-            dataLen = sscanf(p, "%63s %63s %s %s %s %s %s %63s %s %s %s %s %s %s",
+            dataLen = sscanf(p, "%63s %63s %31s %31s %31s %31s %31s %63s %11s %31s %31s %31s %31s %31s",
                        action, v6addr,    iana_iaid, iana_t1, iana_t2, iana_pretm, iana_vldtm,
                        v6pref, preflen, iapd_iaid, iapd_t1, iapd_t2, iapd_pretm, iapd_vldtm);
             CcspTraceDebug(("%s,%d: dataLen = %d\n", __FUNCTION__, __LINE__, dataLen));
