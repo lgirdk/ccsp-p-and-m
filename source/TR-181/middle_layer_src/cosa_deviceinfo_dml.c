@@ -14275,9 +14275,10 @@ IPv6onPOD_SetParamBoolValue
 								{
 								// interface is not present in the list, we need to add interface to enable IPv6 PD
                                                                                 // CID 175253 : Buffer not null terminated (BUFFER_SIZE)
-										strncpy(OutBuff, buf, sizeof(buf)-1);
-										strcat(OutBuff,Inf_name);
-										strcat(OutBuff,",");
+										strncpy(OutBuff, buf, sizeof(OutBuff)-1);
+										/* CID 172842 - Calling risky function (DC.STRING_BUFFER) */
+										strncat(OutBuff,Inf_name,sizeof(OutBuff) - strlen(OutBuff) - 1);
+										strncat(OutBuff,",",sizeof(OutBuff) - strlen(OutBuff) - 1);
 										syscfg_set_commit(NULL, "IPv6_Interface",OutBuff);
 
 								}
