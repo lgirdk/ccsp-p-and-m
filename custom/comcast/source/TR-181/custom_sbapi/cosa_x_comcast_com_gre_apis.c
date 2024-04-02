@@ -748,7 +748,7 @@ CosaDml_GreIfGetLocalInterfaces(ULONG ins, char *ifs, ULONG size)
             /* XXX: MultiLAN DM do not use "." for object path */
             if (strlen(dmval) && dmval[strlen(dmval) - 1] != '.' && strlen(dmval) < sizeof(dmval) - 1) {
                 //AnscTraceDebug(("  Adding '.' to local if path\n"));
-                strcat(dmval, ".");
+                strncat(dmval, ".",sizeof(dmval)-strlen(dmval) -1);
             }
 
             /* add it to list */
