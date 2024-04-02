@@ -6720,6 +6720,12 @@ void _cosa_dhcpsv6_get_client()
             // pTmp1 is 00010001C793092300252E7D05B4
 
             // allocate new one array 
+            if (!g_dhcps6v_clientcontent) {
+                AnscFreeMemory(g_dhcps6v_client);
+                g_dhcps6v_client = NULL;
+                g_dhcps6v_client_num = 0;
+                goto EXIT;
+            }
             g_dhcps6v_clientcontent[Index].NumberofOption++;
             if ( g_dhcps6v_clientcontent[Index].NumberofOption == 1 )
             {
@@ -6868,27 +6874,31 @@ void _cosa_dhcpsv6_get_client()
             timeStamp = atoi(pTmp3);
         }else if ( _ansc_strcmp(pTmp1, "pdPrefered") == 0 )
         {
-            if ( g_dhcps6v_clientcontent[Index].NumberofIPv6Prefix )
-            {
-                t1 = timeStamp;
-                t1 += atoi(pTmp3);
-
-                if ((unsigned int)t1 == 0xffffffff)
+            /* CID 73916 Explicit null dereferenced : fix */
+            if ( g_dhcps6v_clientcontent != NULL ) {
+                if ( g_dhcps6v_clientcontent[Index].NumberofIPv6Prefix )
                 {
-                    rc = strcpy_s(buf, sizeof(buf), "9999-12-31T23:59:59Z");
+                    t1 = timeStamp;
+                    t1 += atoi(pTmp3);
+
+                    if ((unsigned int)t1 == 0xffffffff)
+                    {
+                        rc = strcpy_s(buf, sizeof(buf), "9999-12-31T23:59:59Z");
+                        ERR_CHK(rc);
+                    }
+                    else
+                    {
+                        localtime_r(&t1, &t2);
+                        snprintf(buf, sizeof(buf), "%d-%d-%dT%02d:%02d:%02dZ%c", 
+                            1900+t2.tm_year, t2.tm_mon+1, t2.tm_mday,
+                            t2.tm_hour, t2.tm_min, t2.tm_sec, '\0');
+                    }
+
+                    rc = STRCPY_S_NOCLOBBER((char*)g_dhcps6v_clientcontent[Index].pIPv6Prefix[g_dhcps6v_clientcontent[Index].NumberofIPv6Prefix-1].PreferredLifetime, sizeof(g_dhcps6v_clientcontent[Index].pIPv6Prefix[g_dhcps6v_clientcontent[Index].NumberofIPv6Prefix-1].PreferredLifetime), buf);
                     ERR_CHK(rc);
                 }
-                else
-                {
-                    localtime_r(&t1, &t2);
-                    snprintf(buf, sizeof(buf), "%d-%d-%dT%02d:%02d:%02dZ%c", 
-                         1900+t2.tm_year, t2.tm_mon+1, t2.tm_mday,
-                         t2.tm_hour, t2.tm_min, t2.tm_sec, '\0');
-                }
-
-                rc = STRCPY_S_NOCLOBBER((char*)g_dhcps6v_clientcontent[Index].pIPv6Prefix[g_dhcps6v_clientcontent[Index].NumberofIPv6Prefix-1].PreferredLifetime, sizeof(g_dhcps6v_clientcontent[Index].pIPv6Prefix[g_dhcps6v_clientcontent[Index].NumberofIPv6Prefix-1].PreferredLifetime), buf);
-                ERR_CHK(rc);
             }
+            
 
         }else if ( _ansc_strcmp(pTmp1, "pdValid") == 0 )
         {
