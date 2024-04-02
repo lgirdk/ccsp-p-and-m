@@ -8278,7 +8278,8 @@ static void *InterfaceEventHandler_thrd(void *data)
                 }
                 else
                 {
-                    strcpy(aBridgeName,"brlan15");
+			/* CID 66870 - Calling risky Function Fix */
+                    strncpy(aBridgeName,"brlan15",sizeof(aBridgeName) - 1);
                 }
                 snprintf(aParamName, BUFF_LEN_64, "dmsb.l3net.%s.IPv6Enable", index);
                 psmGet(aParamName, aParamVal, BUFF_LEN_64);
