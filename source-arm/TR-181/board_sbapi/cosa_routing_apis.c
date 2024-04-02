@@ -3847,7 +3847,7 @@ CosaDmlRoutingGetNumberOfV4Entries
 
         for (index = 0; index < Config_Num; index++) {
             /*CID: 71003 - Calling risky function - Fix */
-            sscanf(Router_Alias[index].Name, "%255s %s %s %d", sroute[index].dest_lan_ip, sroute[index].netmask, sroute[index].gateway,
+            sscanf(Router_Alias[index].Name, "%15s %15s %15s %d", sroute[index].dest_lan_ip, sroute[index].netmask, sroute[index].gateway,
                    &(sroute[index].metric));
             Router_Alias[index].Index = index;
         }
