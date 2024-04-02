@@ -736,7 +736,8 @@ CosaDmlTimeGetCfg
           safec_rc = strcpy_s(pTimeCfg->LocalTimeZone,sizeof(pTimeCfg->LocalTimeZone),val);
           ERR_CHK(safec_rc);
           _ansc_memset(val,0,UTOPIA_TR181_PARAM_SIZE1);
-          rc = 0;
+          /* CID 340025 Unused value : fix */
+          // rc = 0;
        }
 
        rc = Utopia_RawGet(&ctx, NULL, "ntp_cityindex", val, sizeof(val)-1 );
