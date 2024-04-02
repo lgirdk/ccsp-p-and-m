@@ -3889,7 +3889,14 @@ ANSC_STATUS UpdateJsonParamLegacy
 	 if (data != NULL) 
 	 {
 		memset( data, 0, ( sizeof(char) * (len + 1) ));
-	 	fread( data, 1, len, fileRead );
+		/* CID 70535 - Ignoring number of bytes read fix */
+		int bytesRead = fread( data, 1, len, fileRead );
+		if (bytesRead != len) {
+			CcspTraceError(("%s : Failed to read the data from the file \n", __FUNCTION__));
+                        fclose(fileRead);
+                        free(data);
+                        return ANSC_STATUS_FAILURE;
+		}
 	 } 
 	 else 
 	 {
