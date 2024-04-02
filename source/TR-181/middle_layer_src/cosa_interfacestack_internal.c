@@ -632,7 +632,7 @@ CosaIFStackCreateAll
             else
             {
                  /* To get like Device.Ethernet.LinkNumberOfEntries */
-                _ansc_strcat(ucTableParam, "NumberOfEntries");        
+                strncat(ucTableParam, "NumberOfEntries", sizeof(ucTableParam)-strlen(ucTableParam)-1);        
                  
                 ulNumOfEntry =  CosaIFStackGetParamValueULong(ucTableParam);  
             }
