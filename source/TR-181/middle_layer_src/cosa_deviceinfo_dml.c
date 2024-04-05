@@ -14866,11 +14866,61 @@ Xconf_SetParamBoolValue
                     CcspTraceWarning(("%s: Error deleting the file\n", __FUNCTION__));
                 }
             }
-            else if (access("/tmp/.downloadingfw",F_OK) != -1){
-                AnscTraceWarning(("Xconf firmware download in progress. Process will not be restarted."));
-                return FALSE;
+ 
+            file = fopen( "/tmp/.downloadingfw","r" );
+            if (file != NULL) {
+                AnscTraceWarning(("Removing /tmp/.downloadingfw to force redownload image\n"));
+                fclose(file);
+                if (remove("/tmp/.downloadingfw") != 0)
+                {
+                    CcspTraceWarning(("%s: Error deleting the file\n", __FUNCTION__));
+                }
+
+                AnscTraceInfo(("Killing XconfHttpDl process and its child process, if running\n"));
+                //Kill XconfHttpDl process and its child process, if running
+                char ps_cmd[] = "pidof XconfHttpDl";
+                char buffer[1024];
+                int pids[10];
+                int num_pids = 0;
+
+                FILE *fp = popen(ps_cmd, "r");
+                if (fp != NULL) {
+                    memset(buffer, 0, sizeof(buffer));
+                    if (fgets(buffer, sizeof(buffer), fp) != NULL) {
+                        char *token = strtok(buffer, " ");
+                        while (token != NULL) {
+                            pids[num_pids++] = atoi(token);
+                            token = strtok(NULL, " ");
+                        }
+                    }
+                    pclose(fp);
+                }
+
+                for (int i = 0; i < num_pids; i++) {
+                    int pstree_pids[20];
+                    char pstree_cmd[50] = {0};
+                    int num_pstree_pids = 0;
+
+                    snprintf(pstree_cmd, sizeof(pstree_cmd), "pstree -p %d | grep -o '[0-9]\\+' | tr '\\n' ' '", pids[i]);
+                    FILE *pstree_fp = popen(pstree_cmd, "r");
+                    memset(buffer, 0, sizeof(buffer));
+                    if (pstree_fp != NULL) {
+                        if (fgets(buffer, sizeof(buffer), pstree_fp) != NULL) {
+                            char *token = strtok(buffer, " ");
+                            while (token != NULL) {
+                                pstree_pids[num_pstree_pids++] = atoi(token);
+                                token = strtok(NULL, " ");
+                            }
+                        }
+                        pclose(pstree_fp);
+                    }
+
+                    for (int i = num_pstree_pids - 1; i >= 0; i--) {
+                         kill(pstree_pids[i], SIGKILL);
+                    }
+                }
             }
-            
+
             // static collection as we don't want upgrade path to be changed without a reboot
             static BOOL rdkfwupgraderEnabledCollected = false;
             static BOOL RDKFWUpgraderEnabled = false;
