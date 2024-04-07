@@ -994,6 +994,45 @@ COSADmlUploadLogsStatus
 }
 
 ANSC_STATUS
+COSADmlLogFileName
+    (
+    ANSC_HANDLE                 Context,
+    char* 	pValue,
+    ULONG*	pUlSize
+    )
+{
+    UNREFERENCED_PARAMETER(Context);
+    FILE *ptr_file;
+    char buf[64];
+    errno_t rc = -1;
+
+    ptr_file =fopen("/tmp/upload_file_value.txt","r");
+    if (ptr_file)
+    {
+        if (fgets(buf,64, ptr_file)!=NULL)
+        {
+            strip_line(buf);
+            rc = strcpy_s(pValue, *pUlSize, buf);
+            if ( rc != EOK) {
+            	ERR_CHK(rc);
+                fclose(ptr_file);
+                return ANSC_STATUS_FAILURE;
+            }
+        }
+        fclose(ptr_file);
+    }
+    else
+    {
+	    rc = strcpy_s(pValue, *pUlSize, "File not found");
+	    if ( rc != EOK) {
+		    ERR_CHK(rc);
+		    return ANSC_STATUS_FAILURE;
+	    }
+    }
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
 CosaDmlDiGetFirstUseDate
     (
         ANSC_HANDLE                 hContext,

@@ -728,6 +728,14 @@ COSADmlUploadLogsNow
                 BOOL                        bEnable
         );
 
+ANSC_STATUS
+COSADmlLogFileName
+    (
+        ANSC_HANDLE                 Context,
+    	char* 	pValue,
+    	ULONG*	pUlSize
+    );
+
 void CosaDmlPresenceEnable(BOOL enable);
 
 ANSC_STATUS

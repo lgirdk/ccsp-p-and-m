@@ -6150,6 +6150,12 @@ Ops_GetParamStringValue
 	COSADmlUploadLogsStatus(NULL, pValue,pUlSize);
         return 0;
     }
+    else if(strcmp(ParamName, "LogFileName") == 0)
+    {
+	/* collect value */
+	COSADmlLogFileName(NULL, pValue,pUlSize);
+	return 0;
+    }
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return -1;
 }
