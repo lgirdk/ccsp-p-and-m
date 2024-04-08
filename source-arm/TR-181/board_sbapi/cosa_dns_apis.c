@@ -951,7 +951,7 @@ CosaDmlDnsRelayGetServer
 
 static const char *DEFAULT_WAN_INTERFACE = "Device.IP.Interface.1";
 static const char *DEFAULT_LAN_INTERFACE = "Device.IP.Interface.3";
-static const char *DNS_RESOLV_CONF = "/etc/resolv.conf";
+static const char *DNS_RESOLV_CONF = "/var/tmp/resolv.conf";
 static const char *DNS_RELAY_RESOLV_CONF = "/var/dnsrelay-resolv.conf";
 static const char *DHCP_OPTIONS = "/var/dhcp_options";
 static const char *DHCPV6_OPTIONS = "/etc/dibbler/server.conf";
