@@ -1002,16 +1002,20 @@ void getManageWiFiDetails(ManageWiFiInfo_t * pManageWifiInfo)
         if ('\0' != sManageWiFiInfo.aBridgeName[0])
         {
             strncpy(pManageWifiInfo->aBridgeName,sManageWiFiInfo.aBridgeName, (sizeof(pManageWifiInfo->aBridgeName)-1));
+            pManageWifiInfo->aBridgeName[sizeof(pManageWifiInfo->aBridgeName) - 1] = '\0';
             CcspTraceInfo(("%s:%d pManageWifiInfo->aBridgeName:%s\n",__FUNCTION__,__LINE__,pManageWifiInfo->aBridgeName));
         }
 
         if ('\0' != sManageWiFiInfo.aWiFiInterfaces[0])
         {
+            /* CID 347175 : fix */
             strncpy(pManageWifiInfo->aWiFiInterfaces, sManageWiFiInfo.aWiFiInterfaces, (sizeof(pManageWifiInfo->aWiFiInterfaces)-1));
+            pManageWifiInfo->aWiFiInterfaces[sizeof(pManageWifiInfo->aWiFiInterfaces) - 1] = '\0';
             CcspTraceInfo(("%s:%d pManageWifiInfo->aWiFiInterfaces:%s\n",__FUNCTION__,__LINE__,pManageWifiInfo->aWiFiInterfaces));
         }
     }
     strncpy(pManageWifiInfo->aKey,sManageWiFiInfo.aKey, (sizeof(pManageWifiInfo->aKey)-1));
+    pManageWifiInfo->aKey[sizeof(pManageWifiInfo->aKey) - 1] = '\0';
     CcspTraceInfo(("%s:%d pManageWifiInfo->aKey:%s\n",__FUNCTION__,__LINE__,pManageWifiInfo->aKey));
 }
 

@@ -471,7 +471,7 @@ rbusError_t getStringHandler(rbusHandle_t handle, rbusProperty_t property, rbusG
     rbusValue_Init(&value);
     ManageWiFiInfo_t sManageWifiDetails = {0};
     char aParamVal[BUFF_LEN_64] = {0};
-
+    
     getManageWiFiDetails(&sManageWifiDetails);
     if (0 == strcmp(name,MANAGE_WIFI_LAN_BRIDGE))
     {
