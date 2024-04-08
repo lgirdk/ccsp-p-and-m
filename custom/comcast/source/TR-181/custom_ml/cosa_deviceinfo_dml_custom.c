@@ -78,6 +78,13 @@
 #define SOLID	0
 #define BLINK	1
 
+#if defined (FEATURE_RDKB_LED_MANAGER_CAPTIVE_PORTAL)
+#include <sysevent/sysevent.h>
+#define SYSEVENT_LED_STATE    "led_event"
+#define IPV4_UP_EVENT         "rdkb_ipv4_up"
+#define LIMITED_OPERATIONAL   "rdkb_limited_operational"
+#endif
+
 
 
 /**********************************************************************  
@@ -436,6 +443,11 @@ DeviceInfo_SetParamBoolValue_Custom
 
     if (strcmp(ParamName, "X_RDKCENTRAL-COM_ConfigureWiFi") == 0)
     {
+#if defined (FEATURE_RDKB_LED_MANAGER_CAPTIVE_PORTAL)
+	int sysevent_led_fd = -1;
+	token_t sysevent_led_token;
+	sysevent_led_fd = sysevent_open("127.0.0.1", SE_SERVER_WELL_KNOWN_PORT, SE_VERSION, "OperationalStateHandler", &sysevent_led_token);
+#endif
 	if ( bValue == TRUE )
 	{
 
@@ -453,6 +465,13 @@ DeviceInfo_SetParamBoolValue_Custom
 			if ( ANSC_STATUS_SUCCESS == CosaDmlSetLED(WHITE, BLINK, 1) )
 				CcspTraceInfo(("Front LED Transition: WHITE LED will blink, Reason: CaptivePortal_MODE\n"));
 #endif
+#if defined (FEATURE_RDKB_LED_MANAGER_CAPTIVE_PORTAL)
+			if(sysevent_led_fd != -1)
+			{
+				sysevent_set(sysevent_led_fd, sysevent_led_token, SYSEVENT_LED_STATE, LIMITED_OPERATIONAL, 0);
+				CcspTraceInfo (("[%s][%d] Successfully sent LIMITED_OPERATIONAL event to RdkledManager\n", __FUNCTION__,__LINE__));
+			}
+#endif
 			    //if CaptivePortal_Enable is true, Then only we need to run redirect_url.sh
 			    printf("%s calling redirect_url.sh script to start redirection\n",__FUNCTION__);
 			    system("source /etc/redirect_url.sh &");
@@ -462,6 +481,13 @@ DeviceInfo_SetParamBoolValue_Custom
 		    {
 			if ( ANSC_STATUS_SUCCESS == CosaDmlSetLED(WHITE, SOLID, 0) )
 				CcspTraceInfo(("Front LED Transition: WHITE LED will be SOLID, Reason: ConfigureWiFi is TRUE, but CaptivePortal is disabled\n"));
+#if defined (FEATURE_RDKB_LED_MANAGER_CAPTIVE_PORTAL)
+			if(sysevent_led_fd != -1)
+			{
+				sysevent_set(sysevent_led_fd, sysevent_led_token, SYSEVENT_LED_STATE, IPV4_UP_EVENT, 0);
+				CcspTraceInfo (("[%s][%d] Successfully sent IPV4_UP_EVENT to RdkledManager\n", __FUNCTION__,__LINE__));
+			}
+#endif
 		    }
 #endif
                 } else {
@@ -493,6 +519,13 @@ DeviceInfo_SetParamBoolValue_Custom
 	{	
         	if ( ANSC_STATUS_SUCCESS == CosaDmlSetLED(WHITE, SOLID, 0) )
             		CcspTraceInfo(("Front LED Transition: WHITE LED will be SOLID, Reason: Gateway_MODE\n"));
+#if defined (FEATURE_RDKB_LED_MANAGER_CAPTIVE_PORTAL)
+		if(sysevent_led_fd != -1)
+		{
+			sysevent_set(sysevent_led_fd, sysevent_led_token, SYSEVENT_LED_STATE, IPV4_UP_EVENT, 0);
+			CcspTraceInfo (("[%s][%d] Successfully sent IPV4_UP_EVENT to RdkledManager\n", __FUNCTION__,__LINE__));
+		}
+#endif
 	}
 #endif
 
@@ -506,7 +539,10 @@ DeviceInfo_SetParamBoolValue_Custom
 
 	    return TRUE;
 	 }	
-
+#if defined (FEATURE_RDKB_LED_MANAGER_CAPTIVE_PORTAL)
+	 if (sysevent_led_fd != -1)
+		 sysevent_close(sysevent_led_fd, sysevent_led_token);
+#endif
 	return FALSE;
     } 
 

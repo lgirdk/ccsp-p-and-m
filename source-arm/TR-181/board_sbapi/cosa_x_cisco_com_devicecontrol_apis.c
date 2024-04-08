@@ -189,6 +189,13 @@ int fwSync = 0;
 #define MESH_MODE_MONITOR 1
 #define MESH_MODE_ENABLE  2
 
+#if defined(FEATURE_RDKB_LED_MANAGER_FACTORY_RESET)
+#include <sysevent/sysevent.h>
+#define SYSEVENT_LED_STATE    "led_event"
+#define FACTORY_RESET_EVENT   "rdkb_factory_reset"
+int sysevent_led_fd = -1;
+token_t sysevent_led_token;
+#endif
 
 static void configBridgeMode(int bEnable);
 static int curticket   = 1; /*The thread should be run with the ticket*/
@@ -2162,6 +2169,7 @@ CosaDmlDcSetFactoryReset
 			ledMgmt.State	 = LED_BLINK;
 			ledMgmt.Interval = FR_BLINK_INTRVL;
 
+#if !defined(_XER5_PRODUCT_REQ_)
 			if(0 == platform_hal_setLed(&ledMgmt)) {
                         	CcspTraceInfo(("Front LED Transition: GREEN LED will blink, Reason: Factory Reset\n"));
 				v_secure_system("touch /tmp/.FRBLINKGREEN");
@@ -2169,19 +2177,32 @@ CosaDmlDcSetFactoryReset
 			else {
 				CcspTraceError(("[%s]:Setting Front LED to Blink Green Failed\n",__FUNCTION__));
 			}
+#endif
 		}
 #endif
 
-#if defined(_SR213_PRODUCT_REQ_)
+#if defined(_SR213_PRODUCT_REQ_) || defined(FEATURE_RDKB_LED_MANAGER_FACTORY_RESET)
                if( (factory_reset_mask & FR_ROUTER) ||
                    (factory_reset_mask & FR_WIFI) ||
                    (factory_reset_mask & FR_FW) ||
                    (factory_reset_mask & FR_OTHER) ) {
                     CcspTraceInfo(("LED Transition: GREEN LED will blink, Reason: Factory Reset\n"));
+#if defined(_SR213_PRODUCT_REQ_)
                     v_secure_system("sysevent set led_event rdkb_factory_reset");
                     sleep(5);
                     // power off the led controller after showing Green LED for 5 seconds
                     v_secure_system("/etc/sky/power_off_led.sh");
+#endif
+#if defined(FEATURE_RDKB_LED_MANAGER_FACTORY_RESET)
+                    sysevent_led_fd = sysevent_open("127.0.0.1", SE_SERVER_WELL_KNOWN_PORT, SE_VERSION, "FactoryResetHandler", &sysevent_led_token);
+                    if(sysevent_led_fd != -1)
+                    {
+                            sysevent_set(sysevent_led_fd, sysevent_led_token, SYSEVENT_LED_STATE, FACTORY_RESET_EVENT, 0);
+                            CcspTraceInfo (("[%s][%d] Successfully sent FACTORY_RESET_EVENT to RdkledManager\n", __FUNCTION__,__LINE__));
+                    }
+                    if (sysevent_led_fd != -1)
+                            sysevent_close(sysevent_led_fd, sysevent_led_token);
+#endif
                }
 #endif
 
