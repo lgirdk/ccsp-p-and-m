@@ -1896,7 +1896,7 @@ ClientEnd:
         if (pAliasX_COM_CISCO_SAddr)
         {
             AnscFreeMemory(pAliasX_COM_CISCO_SAddr);
-            pAliasX_COM_CISCO_SAddr = NULL;
+            /* CID 65057 Unused value: fix  - REMOVED NULL ASSIGNMENT */
         }
 
         pPoamIrepFoEnumX_COM_CISCO_SAddr->Remove((ANSC_HANDLE)pPoamIrepFoEnumX_COM_CISCO_SAddr);
