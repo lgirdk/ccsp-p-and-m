@@ -3211,7 +3211,6 @@ CosaDmlIpIfSetV4Addr
                 sprintf(parameter,"brlan_static_%u_dhcp_end",instance);
                 syscfg_set(NULL, parameter, buf);
             
-                RestartRIPInterfaces(FALSE);	    
                 ErouterStaticIfMode("down");
                 // commonSyseventSet("dhcp_server-restart", "");
             }
@@ -3220,6 +3219,7 @@ CosaDmlIpIfSetV4Addr
         {
             returnStatus =  CosaDmlIpIfMlanSetV4Addr(hContext, ulIpIfInstanceNumber, pEntry);
         }
+        RestartRIPInterfaces(FALSE);
         Utopia_Free(&utctx, 1);
         return returnStatus;
     }
