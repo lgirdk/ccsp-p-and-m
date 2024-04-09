@@ -813,8 +813,8 @@ Pam_GetParamStringValue
                   ERR_CHK(rc);
                   return -1;
                 }
-                _ansc_strcat(IpIfObjName, Buffer);
-                _ansc_strcat(IpIfObjName, "IPAddress");
+                strncat(IpIfObjName, Buffer, sizeof(IpIfObjName) -strlen(IpIfObjName)-1);
+                strncat(IpIfObjName, "IPAddress", sizeof(IpIfObjName)-strlen(IpIfObjName)-1);
             }
 
             BufferSize   = sizeof(Buffer);
