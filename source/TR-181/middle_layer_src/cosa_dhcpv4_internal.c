@@ -3389,7 +3389,7 @@ ClientEnd:
         }
 
         pPoamIrepFoOption->Remove((ANSC_HANDLE)pPoamIrepFoOption);
-        pPoamIrepFoOption = NULL;
+        /* CID 67348 Unused value : fix - REMOVED NULL ASSIGNMENT TO pPoamIrepFoOption */
 
 PoolEnd:
 
