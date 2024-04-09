@@ -2400,6 +2400,8 @@ IPv4Address_DelEntry
          else if ( instance == COSA_DML_BRLAN_TUNNELED_STATIC_INST )
          {
              syscfg_unset(NULL, "brlan_tunneled_static_instance");
+             syscfg_unset(NULL,"brlan_static_ip_enable");
+             syscfg_commit();
          }
     }
     CosaDmlIpIfDelV4Addr(pMyObject->hSbContext, pIPInterface->Cfg.InstanceNumber, pIPv4Addr);
