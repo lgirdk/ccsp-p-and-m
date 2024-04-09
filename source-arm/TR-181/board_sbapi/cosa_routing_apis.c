@@ -1478,6 +1478,30 @@ void RestartRIPInterfaces(int ripEnable)
             RestartBrlanInterface(brlan_ip,brlan_mask,brlan_dhcp_start,brlan_dhcp_end,ripEnable|tunneled_static);
         }
     }//End of else if(strcmp(staticBrlanEnable, "true") == 0)
+    else
+    {
+#if defined(VMB_MODE)
+        // todo :- Check the need for other services
+        // if brlan static ip is unset.
+        if(syscfg_get(NULL, "brlan_lan_ipaddr", brlan_ip, sizeof(brlan_ip)) == 0)
+        {
+            if(syscfg_get(NULL, "brlan_lan_netmask", brlan_mask, sizeof(brlan_mask)) == 0)
+            {
+                /* swap lan_ipaddr, dhcp_start and dhcp_end with brlan ip ranges */
+                syscfg_get(NULL, "brlan_dhcp_start", brlan_dhcp_start, sizeof(brlan_dhcp_start));
+                syscfg_get(NULL, "brlan_dhcp_end", brlan_dhcp_end, sizeof(brlan_dhcp_end));
+                syscfg_unset(NULL,"brlan_lan_ipaddr");
+            }
+        }
+        syscfg_unset(NULL,"active_static_brlan_service");
+        if (strlen(brlan_ip) > 0) {
+            /* Restart brlan0 interface only if brlan_ip has a valid address. */
+            RestartBrlanInterface(brlan_ip,brlan_mask,brlan_dhcp_start,brlan_dhcp_end,0);
+        }
+        system("/etc/utopia/service.d/static_ip_ui.sh &");
+        commonSyseventSet("firewall-restart", "");
+#endif
+    }
 
 #ifdef FEATURE_STATIC_IPV4
     syscfg_commit();
