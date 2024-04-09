@@ -732,7 +732,8 @@ X_CISCO_COM_DeviceControl_GetParamStringValue
         
         if (pMyObject->UserOpComponents & 0x00000001)
         {
-            n += snprintf(pValue+n, rem_buf_size, "%s%s", n ? "," : "", "WebUI");
+            /* CID 60928 Logically dead code: fix */
+            n += snprintf(pValue+n, rem_buf_size, "%s", "WebUI");
             rem_buf_size = *pulSize - n;
         }
         
