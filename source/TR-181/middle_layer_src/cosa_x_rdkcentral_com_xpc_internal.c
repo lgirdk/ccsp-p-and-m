@@ -85,13 +85,12 @@ ANSC_STATUS CosaXpcEnable(ANSC_HANDLE hThisObject)
 {
     ANSC_STATUS                 returnStatus = ANSC_STATUS_SUCCESS;
     PCOSA_DATAMODEL_XPC     pMyObject    = (PCOSA_DATAMODEL_XPC)hThisObject;
-#ifndef XB10_ONLY_SUPPORT
+
     system("sysevent set snmp-onboard-reboot enable");
     if ( platform_hal_SetSNMPOnboardRebootEnable("enable") != RETURN_OK )
     {
         return ANSC_STATUS_FAILURE;
     }
-#endif
     pMyObject->bEnable = TRUE;
     return returnStatus;
 }
@@ -102,12 +101,10 @@ ANSC_STATUS CosaXpcDisable(ANSC_HANDLE hThisObject)
     PCOSA_DATAMODEL_XPC     pMyObject    = (PCOSA_DATAMODEL_XPC)hThisObject;
 
     system("sysevent set snmp-onboard-reboot disable");
-#ifndef XB10_ONLY_SUPPORT
     if ( platform_hal_SetSNMPOnboardRebootEnable("disable") != RETURN_OK )
     {
         return ANSC_STATUS_FAILURE;
     }
-#endif
     pMyObject->bEnable = FALSE;
     return returnStatus;
 }
