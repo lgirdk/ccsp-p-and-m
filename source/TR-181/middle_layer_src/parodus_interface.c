@@ -740,7 +740,16 @@ int readFromFile(char *filename, char **data, int *len)
 	fseek(fp, 0, SEEK_SET);
 	*data = (char *) malloc(sizeof(char) * (ch_count + 1));
 	
-	fread(*data, 1, ch_count,fp);
+	/* CID 119916 - Ignoring number of bytes read fix */
+	int ret_chk = fread(*data, 1, ch_count,fp);
+	if(ret_chk != ch_count)
+                {
+                      CcspTraceWarning(("%s : Failed to read the data from the file \n", __FUNCTION__));
+                      fclose(fp);
+                      free(*data);
+                      return 0;
+                }
+
         //fgets(*data,400,fp);
 	*len = ch_count;
 	(*data)[ch_count] ='\0';
