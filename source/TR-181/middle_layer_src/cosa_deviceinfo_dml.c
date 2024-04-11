@@ -14745,10 +14745,10 @@ EvoStream_DirectConnect_GetParamBoolValue
     if (strcmp(ParamName, "Enable") == 0)
         {
             /* collect value */
-            char buf[8];
+            char buf[8] = {0};
             syscfg_get( NULL, "EvoStreamDirectConnect", buf, sizeof(buf));
 
-            if( buf != NULL )
+            if( buf[0] != '\0')
             {
                 if (strcmp(buf, "true") == 0)
                     *pBool = TRUE;
