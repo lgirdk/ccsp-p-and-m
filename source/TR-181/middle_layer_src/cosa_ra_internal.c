@@ -294,7 +294,9 @@ CosaRAInitialize
             }
 
             pPoamIrepFoNextIns->Remove((ANSC_HANDLE)pPoamIrepFoNextIns);
-            pPoamIrepFoNextIns = NULL;
+            /* CID 339888 : fix
+             removed unnecessary NULL assignment :
+            pPoamIrepFoNextIns = NULL; */
         }
     }
 
@@ -429,7 +431,9 @@ CosaRAInitialize
                 }
 
                 pPoamIrepFoNextIns->Remove((ANSC_HANDLE)pPoamIrepFoNextIns);
-                pPoamIrepFoNextIns = NULL;
+                /* CID 339888 : fix 
+                   removed unnecessary NULL assignment :
+                pPoamIrepFoNextIns = NULL; */
             } 
         }
         
