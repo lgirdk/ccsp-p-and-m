@@ -5986,7 +5986,9 @@ CosaDmlDhcpv6sGetPool
         return ANSC_STATUS_FAILURE;
 
     /* CID 72229 fix */
-    AnscCopyMemory(pEntry, &sDhcpv6ServerPool[ulIndex], sizeof(COSA_DML_DHCPSV6_POOL_FULL));
+    if (ulIndex < DHCPV6S_POOL_NUM) {
+        AnscCopyMemory(pEntry, &sDhcpv6ServerPool[ulIndex], sizeof(COSA_DML_DHCPSV6_POOL_FULL));
+    }
     
     return ANSC_STATUS_SUCCESS;
 }
