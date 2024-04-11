@@ -4925,7 +4925,9 @@ BOOL IsPortInUse(unsigned int port)
                 }
             }
             fclose(f);
-            f = NULL;
+            /* CID 339937 Unused value - fix
+            Removing unnecessary NULL assignment to f
+            f = NULL; */
         }
     }
 
