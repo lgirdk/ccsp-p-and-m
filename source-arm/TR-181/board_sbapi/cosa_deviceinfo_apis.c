@@ -4745,7 +4745,15 @@ RfcJsonInit
     if (data != NULL)
     {
         memset( data, 0, ( sizeof(char) * (len + 1) ));
-        fread( data, 1, len, fileRead );
+	/* CID 128849 - Ignoring number of bytes read fix */
+        int ret = fread( data, 1, len, fileRead );
+	if(ret != len)
+        {
+               CcspTraceWarning(("%s : Failed to read the data from the file \n", __FUNCTION__));
+               fclose( fileRead );
+               free(data);
+               return ANSC_STATUS_FAILURE;
+        }
     }
     else
     {
