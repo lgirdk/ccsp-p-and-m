@@ -1899,6 +1899,10 @@ void* restoreAllDBs(void* arg)
         v_secure_system("mkdir -p /nvram/secure/data/ && touch $_/syscfg.db");
         v_secure_system("echo \"X_RDKCENTRAL-COM_LastRebootReason=factory-reset\" > /nvram/secure/data/syscfg.db");
         v_secure_system("echo \"X_RDKCENTRAL-COM_LastRebootCounter=1\" >> /nvram/secure/data/syscfg.db");
+       // set factory_reset flag directory into db to restore the db value in bootup case
+#if defined (_WNXL11BWL_PRODUCT_REQ_)
+        v_secure_system("echo \"factory_reset=y\" >> /nvram/secure/data/syscfg.db");
+#endif
         v_secure_system("sync");
         /* run addition clean up to fix /nvram/secure corruption issue where encryption key didn't get clean up */
         // v_secure_system("/bin/dd if=/dev/zero of=/dev/mmcblk0p7 count=32768");  /* wipe out /nvram mount partition */
