@@ -459,7 +459,7 @@ static void UpdateSettingsFile( char param[64], char value[10] )
           return;
         }
 
-        strcat(FileData, Line);
+        strncat(FileData, Line, sizeof(FileData)-strlen(FileData)-1);
     }
 
     fp = fopen ("/tmp/.hwselftest_settings", "w");
