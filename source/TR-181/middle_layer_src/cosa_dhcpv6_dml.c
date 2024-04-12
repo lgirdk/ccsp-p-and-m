@@ -4271,21 +4271,25 @@ Pool1_DelEntry
         ANSC_HANDLE                 hInstance
     )
 {
-    ANSC_STATUS                       returnStatus      = ANSC_STATUS_SUCCESS;
-    PCOSA_DATAMODEL_DHCPV6            pDhcpv6           = (PCOSA_DATAMODEL_DHCPV6)g_pCosaBEManager->hDhcpv6;
-    PCOSA_CONTEXT_POOLV6_LINK_OBJECT  pCxtLink          = (PCOSA_CONTEXT_POOLV6_LINK_OBJECT)hInstance;
-    PCOSA_DML_DHCPSV6_POOL_FULL       pPool             = (PCOSA_DML_DHCPSV6_POOL_FULL)pCxtLink->hContext;
 
     UNREFERENCED_PARAMETER(hInsContext);
 
 #ifndef MULTILAN_FEATURE
+ {
+	 UNREFERENCED_PARAMETER(hInstance);
 	/* We just have one Pool. Not permit to add/delete. */
 	return ANSC_STATUS_FAILURE;
-#endif
+ }
 
+#else
     /* Normally, two sublinks are empty because our framework will firstly 
               call delEntry for them before coming here. We needn't care them.
            */
+  {
+    PCOSA_CONTEXT_POOLV6_LINK_OBJECT  pCxtLink          = (PCOSA_CONTEXT_POOLV6_LINK_OBJECT)hInstance;
+    ANSC_STATUS                       returnStatus      = ANSC_STATUS_SUCCESS;
+    PCOSA_DML_DHCPSV6_POOL_FULL       pPool             = (PCOSA_DML_DHCPSV6_POOL_FULL)pCxtLink->hContext;
+    PCOSA_DATAMODEL_DHCPV6           pDhcpv6           = (PCOSA_DATAMODEL_DHCPV6)g_pCosaBEManager->hDhcpv6;
     if ( !pCxtLink->bNew )
     {
         returnStatus = CosaDmlDhcpv6sDelPool(NULL, pPool->Cfg.InstanceNumber);
@@ -4304,6 +4308,8 @@ Pool1_DelEntry
     }
     
     return returnStatus;
+   }
+#endif
 }
 
 /**********************************************************************  
