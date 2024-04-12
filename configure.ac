@@ -91,6 +91,18 @@ AC_ARG_ENABLE([wifimanagesupport],
              [echo "wifimanage is disabled"])
 AM_CONDITIONAL(FEATURE_SUPPORT_MANAGE_WIFI, test "x$WIFI_MANAGE_SUPPORT_ENABLED" = xtrue)
 
+AC_ARG_ENABLE([speedboost],
+             AS_HELP_STRING([--enable-speedboost],[enable speed boost support (default is no)]),
+             [
+              case "${enableval}" in
+               yes) SPEED_BOOST_SUPPORT_ENABLED=true;;
+               no)  SPEED_BOOST_SUPPORT_ENABLED=false;;
+               *) AC_MSG_ERROR([bad value ${enableval} for --enable-speedboost]);;
+              esac
+             ],
+             [echo "speedboost is disabled"])
+AM_CONDITIONAL(FEATURE_SUPPORT_SPEED_BOOST, test "x$SPEED_BOOST_SUPPORT_ENABLED" = xtrue)
+
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h string.h unistd.h])
 

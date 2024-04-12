@@ -36,7 +36,6 @@
 #endif /*RBUS_WAN_IP*/
 
 
-
 #define  ARRAY_SZ(x) (sizeof(x) / sizeof((x)[0]))
 #if defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED)
 typedef struct 

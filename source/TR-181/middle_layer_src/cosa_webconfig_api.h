@@ -41,9 +41,9 @@
 #include "cosa_managedwifi_webconfig_apis.h"
 #endif /*WIFI_MANAGE_SUPPORTED*/
 #if defined (FEATURE_RDKB_DHCP_MANAGER)
-#define SUBDOC_COUNT 4
+#define SUBDOC_COUNT 5
 #else
-#define SUBDOC_COUNT 6
+#define SUBDOC_COUNT 7
 #endif
 
 #define PORTMAP_CACHE_SIZE 1024

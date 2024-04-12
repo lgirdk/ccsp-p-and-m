@@ -393,6 +393,11 @@ CosaDmlNatChkPortMappingMaxRuleNum(PCOSA_DML_NAT_PMAPPING pEntry);
 
 void CosaDmlNatDelDynPortMappings (void);
 
+#if defined (SPEED_BOOST_SUPPORTED)
+int
+IsPortOverlapWithSpeedboostPortRange(int ExternalPort, int ExternalPortEndRange, int InternalPort , int InternalPortend);
+#endif
+
 #if defined(FEATURE_MAPT) || defined(FEATURE_SUPPORT_MAPT_NAT46)
 //if defined (_XB6_PRODUCT_REQ_) || defined (_XB7_PRODUCT_REQ_)
 

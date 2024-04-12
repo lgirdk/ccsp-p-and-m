@@ -90,6 +90,7 @@
 #define   COSA_DML_DHCPV6_ACCESS_INTERVAL_CLIENTRECV     60 /* seconds*/
 #define   COSA_DML_DHCPV6_ACCESS_INTERVAL_POOLCLIENT     10 /* seconds*/
 
+
 #ifndef FEATURE_RDKB_WAN_MANAGER
 /*
 *  This struct is only for dhcpc because it have two sub tables.

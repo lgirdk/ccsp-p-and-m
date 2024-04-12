@@ -87,4 +87,11 @@ endif
 if FEATURE_SUPPORT_MANAGE_WIFI
 libCcspPandM_board_sbapi_la_SOURCES += cosa_managedwifi_webconfig_apis.c
 endif
+
+if FEATURE_SUPPORT_SPEED_BOOST
+libCcspPandM_board_sbapi_la_SOURCES +=  \
+    speedboost_webconfig_apis.c \
+    speedboost_scheduler_apis.c
+endif
+
 libCcspPandM_board_sbapi_la_LDFLAGS = -lccsp_common -ltime_conversion -lwebconfig_framework -lmsgpackc -lHotspotApi

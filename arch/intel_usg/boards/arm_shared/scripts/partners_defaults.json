@@ -2,7 +2,7 @@
    "properties" : {
 
       "comments" : "MANDATORY: !!! Please increment below version value for any new parameter added in this partners_defaults.json !!!",
-      "version" : "8.17"
+      "version" : "8.20"
    },
 
    "comcast" : {
@@ -81,6 +81,8 @@
       "Device.X_RDK_MQTT.BrokerURL" : "",
       "Device.X_RDK_MQTT.LocationID" : "na",
       "Device.X_RDK_MQTT.Port" : "443",
+      "Device.RouterAdvertisement.X_RDK_PvD.Enable" : "true",
+      "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : "pvd.comcast.net",
       "override" : {
         "CGA4332COM" : {
                      "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.RDKB_UIBranding.CloudUI.brandname" : "Xfinity" ,
@@ -159,7 +161,9 @@
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.LogUploadURL" : "https://ssr.ccp.xcal.tv/cgi-bin/rdkb.cgi",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.CrashPortal" : "https://ssr.ccp.xcal.tv/cgi-bin/upload_dump.cgi",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.Telemetry" : "https://stbrtl.stb.r53.xcal.tv",
-      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CDLDM.CDLModuleUrl" : "https://ssr.ccp.xcal.tv/cgi-bin/x1-sign-redirect.pl?K=10&F=stb_cdl"
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CDLDM.CDLModuleUrl" : "https://ssr.ccp.xcal.tv/cgi-bin/x1-sign-redirect.pl?K=10&F=stb_cdl",
+      "Device.RouterAdvertisement.X_RDK_PvD.Enable" : "false",
+      "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : ""
 },
 
    "sky-italia" : {
@@ -232,6 +236,8 @@
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.CrashPortal" : "https://ssr.ccp.xcal.tv/cgi-bin/upload_dump.cgi",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.Telemetry" : "https://stbrtl.stb.r53.xcal.tv",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CDLDM.CDLModuleUrl" : "http://ssr.ccp.xcal.tv/cgi-bin/sky-sign-redirect.pl?partnerid=sky-italia&F=stb_cdl",
+      "Device.RouterAdvertisement.X_RDK_PvD.Enable" : "false",
+      "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : "",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.ImageHealthChecker.OperatingMode" : "Monitor",
       "override" : {
         "SR213" : {
@@ -311,6 +317,8 @@
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.CrashPortal" : "https://ssr.ccp.xcal.tv/cgi-bin/sky-upload_dump.cgi",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.Telemetry" : "https://stbrtl.r53.xcal.sky/",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.ImageHealthChecker.OperatingMode" : "Monitor",
+      "Device.RouterAdvertisement.X_RDK_PvD.Enable" : "false",
+      "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : "",
       "override" : {
         "SR300" : {
                 "Device.X_RDK_WebConfig.URL" : "https://cpe-config-sky-uk.wp.xdp.comcast.net/api/v1/device/{mac}/config",
@@ -400,7 +408,9 @@
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.CrashPortal" : "https://ssr.ccp.xcal.tv/cgi-bin/upload_dump.cgi",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.Telemetry" : "https://stbrtl.stb.r53.xcal.tv",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CDLDM.CDLModuleUrl" : "https://ssr.ccp.xcal.tv/cgi-bin/x1-sign-redirect.pl?K=10&F=stb_cdl",
-      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.ImageHealthChecker.OperatingMode" : "Monitor"
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.ImageHealthChecker.OperatingMode" : "Monitor",
+      "Device.RouterAdvertisement.X_RDK_PvD.Enable" : "false",
+      "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : ""
    },
 
 
@@ -474,7 +484,9 @@
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.CrashPortal" : "https://ssr.ccp.xcal.tv/cgi-bin/upload_dump.cgi",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.Telemetry" : "https://stbrtl.stb.r53.xcal.tv",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CDLDM.CDLModuleUrl" : "https://ssr.ccp.xcal.tv/cgi-bin/x1-sign-redirect.pl?K=10&F=stb_cdl",
-      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.ImageHealthChecker.OperatingMode" : "Monitor"
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.ImageHealthChecker.OperatingMode" : "Monitor",
+      "Device.RouterAdvertisement.X_RDK_PvD.Enable" : "false",
+      "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : ""
    },
 
 
@@ -549,6 +561,8 @@
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.Telemetry" : "https://stbrtl.stb.r53.xcal.tv",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CDLDM.CDLModuleUrl" : "https://ssr.ccp.xcal.tv/cgi-bin/x1-sign-redirect.pl?K=10&F=stb_cdl",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.ImageHealthChecker.OperatingMode" : "Monitor",
+      "Device.RouterAdvertisement.X_RDK_PvD.Enable" : "false",
+      "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : "",
       "override" : {
       "CGM4140COM" : {
                 "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.CMVoiceImageSelect" : "pc15mgcp"
@@ -628,7 +642,9 @@
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.LogUploadURL" : "https://ssr.ccp.xcal.tv/cgi-bin/rdkb.cgi",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.CrashPortal" : "https://ssr.ccp.xcal.tv/cgi-bin/upload_dump.cgi",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.Telemetry" : "https://stbrtl.stb.r53.xcal.tv",
-      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CDLDM.CDLModuleUrl" : "https://ssr.ccp.xcal.tv/cgi-bin/x1-sign-redirect.pl?K=10&F=stb_cdl"
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CDLDM.CDLModuleUrl" : "https://ssr.ccp.xcal.tv/cgi-bin/x1-sign-redirect.pl?K=10&F=stb_cdl",
+      "Device.RouterAdvertisement.X_RDK_PvD.Enable" : "false",
+      "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : ""
    },
 "axb3retail" : {
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.RDKB_UIBranding.Footer.PartnerLink" : "http://www.surfboard.com",
@@ -698,7 +714,9 @@
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.LogUploadURL" : "https://ssr.ccp.xcal.tv/cgi-bin/rdkb.cgi",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.CrashPortal" : "https://ssr.ccp.xcal.tv/cgi-bin/upload_dump.cgi",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.Telemetry" : "https://stbrtl.stb.r53.xcal.tv",
-      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CDLDM.CDLModuleUrl" : "https://ssr.ccp.xcal.tv/cgi-bin/x1-sign-redirect.pl?K=10&F=stb_cdl"
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CDLDM.CDLModuleUrl" : "https://ssr.ccp.xcal.tv/cgi-bin/x1-sign-redirect.pl?K=10&F=stb_cdl",
+      "Device.RouterAdvertisement.X_RDK_PvD.Enable" : "false",
+      "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : ""
   },
    "unknown" : {
 
@@ -768,7 +786,9 @@
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.LogUploadURL" : "https://ssr.ccp.xcal.tv/cgi-bin/rdkb.cgi",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.CrashPortal" : "https://ssr.ccp.xcal.tv/cgi-bin/upload_dump.cgi",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.Telemetry" : "https://stbrtl.stb.r53.xcal.tv",
-      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CDLDM.CDLModuleUrl" : "https://ssr.ccp.xcal.tv/cgi-bin/x1-sign-redirect.pl?K=10&F=stb_cdl"
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CDLDM.CDLModuleUrl" : "https://ssr.ccp.xcal.tv/cgi-bin/x1-sign-redirect.pl?K=10&F=stb_cdl",
+      "Device.RouterAdvertisement.X_RDK_PvD.Enable" : "false",
+      "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : ""
    },
 
     "test-partner" : {
@@ -843,7 +863,9 @@
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.CrashPortal" : "https://ssr.ccp.xcal.tv/cgi-bin/upload_dump.cgi",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.Telemetry" : "https://stbrtl.stb.r53.xcal.tv",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CDLDM.CDLModuleUrl" : "https://ssr.ccp.xcal.tv/cgi-bin/x1-sign-redirect.pl?K=10&F=stb_cdl",
-      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.ImageHealthChecker.OperatingMode" : "Monitor"
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.ImageHealthChecker.OperatingMode" : "Monitor",
+      "Device.RouterAdvertisement.X_RDK_PvD.Enable" : "false",
+      "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : ""
    }
 
 }

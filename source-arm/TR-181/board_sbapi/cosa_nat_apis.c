@@ -1790,6 +1790,12 @@ int _Check_PF_parameter(PCOSA_DML_NAT_PMAPPING pPortMapping)
         CcspTraceWarning(("Wrong InternalClient value %x\n",pPortMapping->InternalClient.Value ));
         return FALSE;
     }
+
+#if defined (SPEED_BOOST_SUPPORTED)
+    if( IsPortOverlapWithSpeedboostPortRange(pPortMapping->ExternalPort, pPortMapping->ExternalPortEndRange, pPortMapping->InternalPort , pPortMapping->InternalPort))
+        return FALSE;
+#endif
+
     return TRUE;
 }
 
@@ -1814,8 +1820,62 @@ int _Check_PT_parameter(PCOSA_DML_NAT_PTRIGGER pPortTrigger)
         return FALSE;
     }
 
+#if defined (SPEED_BOOST_SUPPORTED)
+    if( IsPortOverlapWithSpeedboostPortRange(pPortTrigger->TriggerPortStart, pPortTrigger->TriggerPortEnd , pPortTrigger->ForwardPortStart, pPortTrigger->ForwardPortEnd))
+        return FALSE;
+#endif
+
     return TRUE;
 }
+
+#if defined (SPEED_BOOST_SUPPORTED)
+/*
+- *  Procedure     : IsPortOverlapWithSpeedboostPortRange
+- *  Purpose       : check if External or internal ports are overlap with Speedboot Range port
+- *  Parameters    :
+- *    fp          : External and internal port ranges from PF or PT user defined
+- *  Return        :
+- *    TRUE        : PF/PT port ranges are overlapping with xm speedboost port ranges
+- *    FALSE       : pvd not enabled or PF/PT ports are not overlapping with xm speedboost portranges
+- *
+- */
+int IsPortOverlapWithSpeedboostPortRange(int ExternalPort, int ExternalPortEndRange, int InternalPort , int InternalPortend)
+{
+    char pvd_enabled[8]={0};
+    char sb_port_startv4[16]={0};
+    char sb_port_endv4[16]={0};
+    char sb_port_startv6[16]={0};
+    char sb_port_endv6[16]={0};
+    memset(pvd_enabled, 0, sizeof(pvd_enabled));
+    memset(sb_port_startv4, 0, sizeof(sb_port_startv4));
+    memset(sb_port_endv4, 0, sizeof(sb_port_endv4));
+    memset(sb_port_startv6, 0, sizeof(sb_port_startv6));
+    memset(sb_port_endv6, 0, sizeof(sb_port_endv6));
+
+    int rc = syscfg_get( NULL, "Advertisement_pvd_enable" , pvd_enabled , sizeof( pvd_enabled ) ) ;
+
+    if (rc == 0 && (0 == strcmp("1", pvd_enabled) || 0 == strcasecmp("true", pvd_enabled)))
+    {
+       rc = syscfg_get( NULL, "SpeedBoost_Port_StartV4" , sb_port_startv4 , sizeof( sb_port_startv4 ) );
+       rc |= syscfg_get( NULL, "SpeedBoost_Port_EndV4" , sb_port_endv4 , sizeof( sb_port_endv4 ) );
+       rc |= syscfg_get( NULL, "SpeedBoost_Port_StartV6" , sb_port_startv6 , sizeof( sb_port_startv6 ) );
+       rc |= syscfg_get( NULL, "SpeedBoost_Port_EndV6" , sb_port_endv6 , sizeof( sb_port_endv6 ) );
+
+       if (rc == 0 && atoi(sb_port_startv4) > 0 && atoi(sb_port_endv4) > 0 && atoi(sb_port_startv6) > 0 && atoi(sb_port_endv6) > 0 )
+       {
+          if ((atoi(sb_port_endv4) >= ExternalPort && atoi(sb_port_startv4) <= ExternalPortEndRange) || \
+              (atoi(sb_port_endv4) >= InternalPort && atoi(sb_port_startv4) <= InternalPortend) || \
+              (atoi(sb_port_endv6) >= ExternalPort && atoi(sb_port_startv6) <= ExternalPortEndRange) || \
+              (atoi(sb_port_endv6) >= InternalPort && atoi(sb_port_startv6) <= InternalPortend))
+          {
+             CcspTraceError((" External or Internal port is overlapping with speedboost port, exit from %s\n", __FUNCTION__));
+             return TRUE;
+          }
+       }
+    }
+    return FALSE;
+}
+#endif
 
 /* IP is type of ANSC_IPV4_ADDRESS, but ANSC_IPV4_ADDRESS is defind as union <anonymous> we cannot use it as parameter */  
 static inline void _sent_syslog_pm_sb(char *opt, UCHAR protocol, USHORT external, USHORT external_end, USHORT internal, UCHAR ip[4], BOOLEAN active)

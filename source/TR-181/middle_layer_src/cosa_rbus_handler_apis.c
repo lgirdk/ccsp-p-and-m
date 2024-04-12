@@ -28,6 +28,7 @@
 #include "safec_lib_common.h"
 #include "cosa_dhcpv6_apis.h"
 #include "syscfg/syscfg.h"
+
 #if defined (RBUS_WAN_IP)
 #include "cosa_deviceinfo_dml.h"
 #endif /*RBUS_WAN_IP*/
@@ -41,6 +42,13 @@ unsigned int gManageWiFiInterfaceSubscribersCount = 0;
 unsigned int gSubscribersCount_IPv4 = 0;
 unsigned int gSubscribersCount_IPv6 = 0;
 #endif /*RBUS_WAN_IP*/
+
+#if defined (SPEED_BOOST_SUPPORTED)
+#include "speedboost_rbus_handler.h"
+#include "speedboost_webconfig_apis.h"
+#include "speedboost_dml.h"
+#include "speedboost_apis.h"
+#endif /*SPEED_BOOST_SUPPORTED*/
 
 rbusHandle_t handle;
 
@@ -79,6 +87,19 @@ rbusDataElement_t devCtrlRbusDataElements[] = {
     {PRIMARY_WAN_IP_ADDRESS, RBUS_ELEMENT_TYPE_EVENT, {getStringHandlerWANIP_RBUS, NULL, NULL, NULL, eventWANIPSubHandler, NULL}},
     {PRIMARY_WAN_IPv6_ADDRESS, RBUS_ELEMENT_TYPE_EVENT, {getStringHandlerWANIP_RBUS, NULL, NULL, NULL, eventWANIPSubHandler, NULL}},
 #endif
+#if defined (SPEED_BOOST_SUPPORTED)
+    {ADVERTISEMENT_PVD_ENABLE, RBUS_ELEMENT_TYPE_PROPERTY, {Pvd_GetBoolHandler, Pvd_SetBoolHandler, NULL, NULL, Pvd_subBoolHandler, NULL}},
+    {ADVERTISEMENT_PVD_H_FLAG, RBUS_ELEMENT_TYPE_PROPERTY, {Pvd_GetBoolHandler, Pvd_SetBoolHandler, NULL, NULL, Pvd_subBoolHandler, NULL}},
+    {ADVERTISEMENT_PVD_DELAY, RBUS_ELEMENT_TYPE_PROPERTY, {Pvd_GetIntHandler, Pvd_SetIntHandler, NULL, NULL, Pvd_subIntHandler, NULL}},
+    {ADVERTISEMENT_PVD_SEQ_NUMBER, RBUS_ELEMENT_TYPE_PROPERTY, {Pvd_GetIntHandler, Pvd_SetIntHandler, NULL, NULL, Pvd_subIntHandler, NULL}},
+    {ADVERTISEMENT_PVD_FQDN, RBUS_ELEMENT_TYPE_PROPERTY, {Pvd_GetStringHandler, Pvd_SetStringHandler, NULL, NULL, Pvd_subStringHandler, NULL}},
+    {SPEEDBOOST_BLOB_DATA, RBUS_ELEMENT_TYPE_EVENT, {getBlobHandler, setBlobHandler, NULL, NULL, NULL, NULL}},
+    {SPEEDBOOST_NUMBER_OF_CONFIGURED_DEVICES, RBUS_ELEMENT_TYPE_EVENT, {clientsInfoGetHandler, NULL, NULL, NULL, clientIntSubHandler, NULL}},
+    {SPEEDBOOST_NUMBER_OF_ELIGIBLE_DEVICES, RBUS_ELEMENT_TYPE_EVENT, {clientsInfoGetHandler, NULL, NULL, NULL, clientIntSubHandler, NULL}},
+    {SPEEDBOOST_CURRENT_ACTIVE_DEVICE_LIST, RBUS_ELEMENT_TYPE_EVENT, {clientsInfoGetHandler, NULL, NULL, NULL, clientStringSubHandler, NULL}},
+    {SPEED_BOOST_PORT_RANGE, RBUS_ELEMENT_TYPE_EVENT, {speed_GetStringHandler, speed_SetStringHandler, NULL, NULL, speed_subStringHandler, NULL}},
+    {SPEED_BOOST_NORMAL_PORT_RANGE, RBUS_ELEMENT_TYPE_EVENT, {speed_GetStringHandler, speed_SetStringHandler, NULL, NULL, speed_subStringHandler, NULL}},
+#endif /*SPEED_BOOST_SUPPORTED*/
 };
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;

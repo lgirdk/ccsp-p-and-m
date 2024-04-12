@@ -123,4 +123,14 @@ libCcspPandM_middle_layer_src_la_SOURCES += cosa_managedwifi_dml.c \
     managedwifidoc.c \
     managedwifi_helpers.c
 endif
+
+if FEATURE_SUPPORT_SPEED_BOOST
+libCcspPandM_middle_layer_src_la_SOURCES += \
+    speedboost_dml.c \
+    speedBoostDoc.c \
+    speedboost_rbus_handlers.c \
+    speedboost_event_publish.c \
+    speedboost_apis.c
+endif
+
 libCcspPandM_middle_layer_src_la_LDFLAGS = -lccsp_common -lmsgpackc -lwebconfig_framework -lhal_platform

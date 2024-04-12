@@ -207,9 +207,9 @@ int setBlobVersion (char *subdoc, uint32_t version)
 void webConfigFrameworkInit()
 {
 #if defined (FEATURE_RDKB_DHCP_MANAGER)
-	char *sub_docs[SUBDOC_COUNT+1]= {"portforwarding","wan","hotspot","connectedbuilding",(char *) 0 };
+	char *sub_docs[SUBDOC_COUNT+1]= {"portforwarding","wan","hotspot","connectedbuilding","xmspeedboost",(char *) 0 };
 #else
-	char *sub_docs[SUBDOC_COUNT+1]= {"portforwarding","wan","macbinding","lan","hotspot","connectedbuilding",(char *) 0 };
+	char *sub_docs[SUBDOC_COUNT+1]= {"portforwarding","wan","macbinding","lan","hotspot","connectedbuilding","xmspeedboost",(char *) 0 };
 #endif
     	blobRegInfo *blobData;
 
@@ -480,6 +480,13 @@ int set_portmap_conf(portmappingdoc_t *rpm)
             }
 
 
+#if defined (SPEED_BOOST_SUPPORTED)
+            if( IsPortOverlapWithSpeedboostPortRange(atoi(rpm->entries[j].external_port), atoi(rpm->entries[j].external_port_end_range) , 0, 0))
+            {
+                CcspTraceError(("%s:Ext Port Range %d - %d is overlapping with speedboost port range\n",__FUNCTION__,atoi(rpm->entries[j].external_port), atoi(rpm->entries[j].external_port_end_range)));
+                return OVERLAPPING_SPEEDBOOST_PORT;
+            }
+#endif
 
        		if(strcmp(rpm->entries[j].external_port,rpm->entries[j].external_port_end_range) == 0)
         	{
@@ -744,6 +751,16 @@ pErr Process_PF_WebConfigRequest(void *Data)
                 strncpy(execRetVal->ErrorMsg,"Invalid Protocol",sizeof(execRetVal->ErrorMsg)-1);
 
             }
+#if defined (SPEED_BOOST_SUPPORTED)
+            else if ( OVERLAPPING_SPEEDBOOST_PORT == ret )
+            {
+                CcspTraceError(("%s : Ports overlap with Speedboost ports\n",__FUNCTION__));
+                execRetVal->ErrorCode = OVERLAPPING_SPEEDBOOST_PORT;
+
+                strncpy(execRetVal->ErrorMsg,"Ports overlap with Speedboost ports",sizeof(execRetVal->ErrorMsg)-1);
+
+            }
+#endif
 
             //portmappingdoc_destroy( rpm ); 
 

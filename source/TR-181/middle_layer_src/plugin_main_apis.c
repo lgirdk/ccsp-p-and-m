@@ -143,6 +143,10 @@
 #include "cosa_managedwifi_webconfig_apis.h"
 #endif /*WIFI_MANAGE_SUPPORTED*/
 
+#if defined(SPEED_BOOST_SUPPORTED)
+#include "speedboost_apis.h"
+#include "speedboost_scheduler_apis.h"
+#endif /*SPEED_BOOST_SUPPORTED*/
 static void CheckAndSetRebootReason();
 
 #if defined(_PLATFORM_RASPBERRYPI_)
@@ -367,6 +371,10 @@ CosaBackEndManagerInitialize
 #endif
     */
 
+#ifdef SPEED_BOOST_SUPPORTED
+    initializeSpeedBoostStructVal();
+#endif
+
     returnStatus = CosaDmlMlanInit((ANSC_HANDLE)pMyObject, &pMyObject->hMultiLan);
     AnscTraceWarning(("  CosaDmlMlanInit -- status %lu!\n", returnStatus));
 
@@ -478,6 +486,10 @@ if(id != 0)
 #if defined (WIFI_MANAGE_SUPPORTED)
     initManageWiFiBacupStruct();
 #endif /*WIFI_MANAGE_SUPPORTED*/
+
+#if defined (SPEED_BOOST_SUPPORTED)
+    speedBoostSchdeulerInit();
+#endif /*SPEED_BOOST_SUPPORTED*/
     return returnStatus;
 }
 
