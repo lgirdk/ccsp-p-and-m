@@ -3063,7 +3063,16 @@ CosaDmlDiUiBrandingInit
 	 if (data != NULL) 
 	 {
 		memset( data, 0, ( sizeof(char) * (len + 1) ));
-	 	fread( data, 1, len, fileRead );
+		/* CID 56645 fix - Ignoring number of bytes read */
+	 	int ret = fread( data, 1, len, fileRead );
+		if(ret != len)
+		{
+			CcspTraceError(("%s : Failed to read the data \n", __FUNCTION__));
+                        free(data);
+			fclose(fileRead);
+			return ANSC_STATUS_FAILURE;
+		}
+
 	 } 
 	 else 
 	 {
