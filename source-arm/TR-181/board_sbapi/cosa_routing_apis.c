@@ -5976,7 +5976,7 @@ CosaDmlRoutingGetRouteInfoIf
             continue;
         
         /*CID: 60067 - Calling risky function - Fix*/
-        if (sscanf(line, "%1023s %d %02x %s", 
+        if (sscanf(line, "%63s %d %02x %63s", 
                    route_addr,
                    &pref_len,
                    &pref_route_flag,
