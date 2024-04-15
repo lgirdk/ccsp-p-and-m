@@ -8036,9 +8036,10 @@ int handle_MocaIpv6(char *status)
     }
     if(strcmp((const char*)status, "stopped") == 0)
     {
-        if ( (strcmp(mbuf, "false") == 0) || (HomeIsolationEnable == 0))
+        /* CID 173698 Explicit null dereferenced fix */
+        if ( (strcmp(mbuf, "false") == 0) || (HomeIsolationEnable == 0) )
         {
-            if (strstr(ipv6If, Inf_name)) {
+            if ( Inf_name && strstr(ipv6If, Inf_name) ) {
                 remove_interface(Inf_name);
                 restart_zebra = 1;
             }
