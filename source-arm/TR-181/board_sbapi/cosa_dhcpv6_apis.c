@@ -85,7 +85,7 @@ extern ANSC_HANDLE bus_handle;
 extern char g_Subsystem[32];
 
 extern int executeCmd(char *cmd);
-
+  
 void _get_shell_output (FILE *fp, char *buf, size_t len);
 int _get_shell_output2 (FILE *fp, char *needle);
 
@@ -2014,7 +2014,7 @@ CosaDmlDhcpv6Init
         Utopia_RawSet(&utctx,NULL,"router_managed_flag","1");
         SETI_INTO_UTOPIA(DHCPV6S_NAME,  "", 0, "", 0, "servertype", g_dhcpv6_server_type)
 
-        v_secure_system("sysevent set zebra-restart");
+       v_secure_system("sysevent set zebra-restart");
     }
 #endif
 
@@ -5860,6 +5860,7 @@ CosaDmlDhcpv6sEnable
 
     #if defined(_BCI_FEATURE_REQ)
     v_secure_system("sysevent set zebra-restart");
+     
     #endif
 
     if ( bEnable )
@@ -8783,6 +8784,7 @@ dhcpv6c_dbg_thrd(void * in)
     char globalIP2[128] = {0};
     //When PaM restart, this is to get previous addr.
     commonSyseventGet("lan_ipaddr_v6", globalIP2, sizeof(globalIP2));
+    CcspTraceInfo(("%s globalIP2 %s \n",__FUNCTION__,globalIP2));
     if ( globalIP2[0] )
         CcspTraceWarning(("%s  It seems there is old value(%s)\n", __FUNCTION__, globalIP2));
 
@@ -9195,7 +9197,7 @@ dhcpv6c_dbg_thrd(void * in)
                             char dropbearInterface[STRING_LENGTH] = {0};
 
                             CcspTraceInfo(("%s: v6addr is %s ,pref_len is %d\n", __func__,v6addr,pref_len));
-
+                            
                             //remove_single_quote(v6addr);
 			    commonSyseventSet(COSA_DML_DHCPV6C_ADDR_SYSEVENT_NAME,v6addr);
 
@@ -9310,6 +9312,7 @@ dhcpv6c_dbg_thrd(void * in)
             ERR_CHK(rc);
         }
         commonSyseventSet("lan_prefix",lan_v6_pref);
+                      
 /* The below sysevent is set in wanmanager interface state machine so
  * not setting again. Once Interface state machine is used by all customers
  * need to change the flag to FEATURE_RDKB_WAN_MANAGER.
@@ -9440,7 +9443,7 @@ dhcpv6c_dbg_thrd(void * in)
                             snprintf(objName, sizeof(objName)-1, "%sIPv6Prefix.", pString);
                             g_COSARepopulateTable(g_pDslhDmlAgent, objName);
                         }
-
+                
                         g_COSARepopulateTable(g_pDslhDmlAgent, "Device.DHCPv6.Client.1.ReceivedOption.");
 
                         g_COSARepopulateTable(g_pDslhDmlAgent, "Device.DHCPv6.Server.Pool.1.Option.");
@@ -9473,6 +9476,7 @@ dhcpv6c_dbg_thrd(void * in)
                         /* we need save this for zebra to send RA 
                            ipv6_prefix           // xx:xx::/yy
                          */
+                        CcspTraceInfo(("%s: v6pref is %s ,pref_len is %d\n", __func__,v6pref,pref_len));
                         v_secure_system("sysevent set ipv6_prefix %s ",v6pref);
 #if defined(INTEL_PUMA7)        // handling v6 lease for INTEL platforms
                         {
@@ -9595,7 +9599,7 @@ dhcpv6c_dbg_thrd(void * in)
                                 ERR_CHK(rc);
                             }
                             commonSyseventSet("lan_prefix_v6", cmd);
-
+                            CcspTraceInfo(("%s: lan_prefix_v6 is %s ,pref_len is %d\n", __func__,cmd,pref_len));
 			    CcspTraceWarning(("%s: setting lan-restart\n", __FUNCTION__));
                             commonSyseventSet("lan-restart", "1");
                         }
