@@ -3051,7 +3051,10 @@ CosaDmlIpIfSetV4Addr
         
         if (strcmp(pEntry->Alias, p_be_buf->Alias) != 0)
         {
-            Utopia_Init(&utctx);
+            /*CID: 74354 Unchecked return value - fix */
+            if(!Utopia_Init(&utctx))
+               return ANSC_STATUS_FAILURE;
+            
             safec_rc = sprintf_s(buf, sizeof(buf), "tr_ip_interface_%s_v4addr_alias", g_ipif_names[ulIpIfInstanceNumber-1]);
             if(safec_rc < EOK)
             {
