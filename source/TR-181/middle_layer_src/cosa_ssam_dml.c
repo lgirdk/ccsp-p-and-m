@@ -127,7 +127,12 @@ ULONG X_LGI_COM_DigitalSecurity_GetParamStringValue(ANSC_HANDLE hInsContext, cha
             *pUlSize = 32 + 1;
             return 1;
         }
-        return read_param_string_from_file("/var/sam/agent_version", pValue, pUlSize);
+        read_param_string_from_file("/var/sam/agent_version", pValue, pUlSize);
+        if(*pValue == 0)
+        {
+            syscfg_get(NULL, "ssam_agentversion", pValue, *pUlSize);
+        }
+        return 0;
     }
 
     if (strcmp(ParamName, "Status") == 0) {
