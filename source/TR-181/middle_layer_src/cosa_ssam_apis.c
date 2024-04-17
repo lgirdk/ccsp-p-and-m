@@ -348,10 +348,34 @@ void ssam_start (void)
     }
 }
 
+void save_the_agent_version(void)
+{
+    FILE *fp = NULL;
+    char buffer[32];
+    char old_val[32];
+
+    fp = fopen("/var/sam/agent_version", "r");
+    if(fp != NULL)
+    {
+        fgets(buffer, sizeof(buffer), fp);
+        fclose(fp);
+
+        syscfg_get(NULL, "ssam_agentversion", old_val, sizeof(old_val));
+        if (strcmp(old_val, buffer) == 0)
+        {
+            return;
+        }
+        if (syscfg_set_commit(NULL, "ssam_agentversion", buffer) != 0)
+        {
+            AnscTraceWarning(("Error in syscfg_set for ssam_agentversion \n"));
+        }
+    }
+}
+
 void ssam_stop (void)
 {
+    save_the_agent_version();
     system("killall -s SIGINT sam");
     unlink("/var/sam/.sam.pid");
-    unlink("/var/sam/agent_version");
     unlink("/var/sam/status");
 }
