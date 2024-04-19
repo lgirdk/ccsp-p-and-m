@@ -1213,14 +1213,6 @@ static void getDHCPv4ServerPoolParametersFromPSM(ULONG instancenum, PCOSA_DML_DH
         ((CCSP_MESSAGE_BUS_INFO *)bus_handle)->freefunc(param_value);
     }
 
-    _PSM_READ_PARAM(PSM_DHCPV4_SERVER_POOL_DNSSERVERS);
-    if (retPsmGet == CCSP_SUCCESS)
-    {
-        /*CID: 128145 Out-of-bounds access*/
-        CosaDmlSetIpaddr((PULONG)&pPoolCfg->DNSServers[0], param_value, COSA_DML_DHCP_MAX_ENTRIES);
-        ((CCSP_MESSAGE_BUS_INFO *)bus_handle)->freefunc(param_value);   
-    }
-
     _PSM_READ_PARAM(PSM_DHCPV4_SERVER_POOL_IPROUTERS);
     if (retPsmGet == CCSP_SUCCESS)
     {
