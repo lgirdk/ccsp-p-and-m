@@ -6155,6 +6155,8 @@ Pool_GetParamStringValue
                 char wanDhcpDns[255];
                 char dslite[6];
                 wanDhcpDns[0] = 0;
+                char paramName[256];
+                char *paramValue = NULL;
                 syscfg_get(NULL, "dslite_enable", dslite, sizeof(dslite));
                 if (strcmp(dslite, "1") != 0)
                 {
@@ -6162,7 +6164,21 @@ Pool_GetParamStringValue
                 }
                 else
                 {
-                    syscfg_get( NULL, "lan_ipaddr", wanDhcpDns, sizeof(wanDhcpDns));
+                    /* In DS-lite mode DNS Server learnt by IPv4 LAN client must be LAN interface default gateway IP address
+                       For Pool 1( brlan0 ) fetching value from syscfg and for remaining pools are fetched from PSM */
+                    if (pPool->Cfg.InstanceNumber == 1)
+                    {
+                        syscfg_get( NULL, "lan_ipaddr", wanDhcpDns, sizeof(wanDhcpDns));
+                    }
+                    else
+                    {
+                        sprintf(paramName, "dmsb.dhcpv4.server.pool.%d.DNSServers", pPool->Cfg.InstanceNumber);
+                        int retPsmGet = PSM_Get_Record_Value2(bus_handle, g_Subsystem, paramName, NULL, &paramValue);
+                        if (retPsmGet == CCSP_SUCCESS && paramValue!=NULL)
+                        {
+                            sprintf(wanDhcpDns, "%s", paramValue);
+                        }
+                    }
                 }
                 if (wanDhcpDns[0] != 0)
                 {
