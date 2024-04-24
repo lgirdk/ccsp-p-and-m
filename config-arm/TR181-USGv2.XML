@@ -9869,7 +9869,7 @@
           </parameters>
 
         </object>
-<?ifndef BCI?>
+<?ifndef BCI | def _CBR2_PRODUCT_REQ_?>
 	<object>
 
 	  <name>X_RDK_PortMapping</name>
@@ -10706,7 +10706,8 @@
             <writable>true</writable>
 
           </parameter>
-
+<?endif?>
+<?ifndef BCI | def _CBR2_PRODUCT_REQ_?>
           <parameter>
 
             <name>Lan</name>
