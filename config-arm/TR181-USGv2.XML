@@ -18912,9 +18912,9 @@
         </parameter>
         <parameter>
           <name>RadiusInterface</name>
-          <type>string: eRouter(1),eCM(2)</type>
+          <type>string: eRouter(1)</type>
           <syntax>uint32/mapped</syntax>
-          <writable>true</writable>
+          <writable>false</writable>
         </parameter>
         <parameter>
           <name>RadiusAuthServerIPAddr</name>
