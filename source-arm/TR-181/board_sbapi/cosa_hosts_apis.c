@@ -324,7 +324,7 @@ int FindHostInLeases(char *Temp)
 	char buf[200] = {0};
 	int ret = 0;
 	
-	if ( (fp=fopen("/nvram/dnsmasq.leases", "r")) == NULL )
+	if ( (fp=fopen("/var/lib/misc/dnsmasq.leases", "r")) == NULL )
 	{
 		return 1;
 	}
