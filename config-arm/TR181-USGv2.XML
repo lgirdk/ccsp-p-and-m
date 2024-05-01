@@ -18959,13 +18959,13 @@
         </parameter>
         <parameter>
           <name>HealthCheckPingInterval</name>
-          <type>unsignedInt[10:20]</type>
+          <type>unsignedInt[10:30]</type>
           <syntax>uint32</syntax>
           <writable>true</writable>
         </parameter>
         <parameter>
           <name>HealthCheckTriggerInterval</name>
-          <type>unsignedInt[10:60]</type>
+          <type>unsignedInt[30:120]</type>
           <syntax>uint32</syntax>
           <writable>true</writable>
         </parameter>
