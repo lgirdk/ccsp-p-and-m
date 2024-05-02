@@ -1108,12 +1108,12 @@ User_SetParamUlongValue
 		}
 	#endif
 
-	if (pUser->NumOfFailedAttempts == 0)
+	if (pUser->NumOfFailedAttempts <= 3)
     {
 	    pUser->LockOutRemainingTime = 0;
 		return TRUE;
     }
-	else if (pUser->NumOfFailedAttempts >= 1 && pUser->NumOfFailedAttempts <= 5)
+	else if (pUser->NumOfFailedAttempts <= 5)
 	{
 		if (syscfg_set_commit(NULL, "PasswordLockoutTime", "15000") != 0)
 		{
