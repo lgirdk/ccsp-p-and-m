@@ -750,7 +750,7 @@ if(id != 0)
        }
     }
 
-#if defined(_COSA_INTEL_USG_ARM_) 
+#if defined(_PUMA6_ARM_)
     {
         CcspTraceInfo(("PAM_DBG:-----------------touch pam_initialized in atom ----------------\n"));
         v_secure_system("/usr/bin/rpcclient2  '/bin/touch /tmp/pam_initialized'&");
