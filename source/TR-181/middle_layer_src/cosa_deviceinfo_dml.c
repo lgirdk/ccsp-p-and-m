@@ -14501,7 +14501,8 @@ IPv6onMoCA_SetParamBoolValue
                     if((bValue) && (HomeIsolationEnable == 1))
                     {
                         strcat(OutBuff,Inf_name);
-                        strcat(OutBuff,",");
+                        /* CID Calling risky function : fix */
+                        strncat(OutBuff, ",", sizeof(OutBuff) - strlen(OutBuff) - 1);
                         syscfg_set_commit(NULL, "IPv6_Interface",OutBuff);
                         CcspTraceWarning((">>>>Debug 3 Value of  OutBuff : %s infname  : %s  HomeIsolationEnable: %d \n", OutBuff, Inf_name, HomeIsolationEnable ));
                     }
