@@ -186,6 +186,9 @@ int fwSync = 0;
 #define RM_L2_PATH "rm -rf /nvram/dl"
 #define Device_Config_Ignore_size 1024
 
+#define MESH_MODE_MONITOR 1
+#define MESH_MODE_ENABLE  2
+
 
 static void configBridgeMode(int bEnable);
 static int curticket   = 1; /*The thread should be run with the ticket*/
@@ -196,6 +199,7 @@ extern token_t commonSyseventToken;
 
 void* set_mesh_disabled();
 BOOL is_mesh_enabled();
+BOOL is_mesh_opt_mode_enabled();
 
 #if defined (CONFIG_TI_BBU) || defined (CONFIG_TI_BBU_TI)
     INT mta_hal_BatteryGetPowerSavingModeStatus(ULONG *pValue);
@@ -4538,10 +4542,10 @@ CosaDmlLanMngm_SetConf(ULONG ins, PCOSA_DML_LAN_MANAGEMENT pLanMngm)
 
         if( ( ( bridge_info.mode == BRIDGE_MODE_STATIC ) || \
 			   ( bridge_info.mode == BRIDGE_MODE_FULL_STATIC ) ) && \
-			 ( is_mesh_enabled( ) )
+			 ( is_mesh_enabled( ) || is_mesh_opt_mode_enabled ( ) )
 		   )
         {
-            CcspTraceWarning(("Setting MESH to disabled as LanMode is changed to Bridge mode\n"));
+            CcspTraceWarning(("Setting MESH to disable as LanMode is changed to Bridge mode\n"));
             pthread_t tid;
             pthread_create(&tid, NULL, &set_mesh_disabled, NULL);
         }
@@ -4757,6 +4761,20 @@ BOOL is_mesh_enabled()
         {
             return TRUE;
         }
+    }
+    return FALSE;
+}
+
+BOOL is_mesh_opt_mode_enabled()
+{
+    char buf[10] = {0};
+    int optimization_mode;
+
+    if(!syscfg_get(NULL, "mesh_optimized_mode", buf, sizeof(buf)))
+    {
+        optimization_mode = atoi(buf);
+        if (optimization_mode == MESH_MODE_MONITOR || optimization_mode == MESH_MODE_ENABLE)
+            return TRUE;
     }
     return FALSE;
 }
