@@ -6133,11 +6133,23 @@ Pool_GetParamStringValue
             if (Vlen > 0)
                 addcoma=1;
 
-            char tmpbuf[64];
+            char dns_ipv4_preferred[64];
+            char dns_ipv4_alternate[64];
             BOOL bDnsOverride;
             int len;
 
             CosaDmlLgiGwGetDnsOverride(&bDnsOverride);
+
+            if (bDnsOverride)
+            {
+                syscfg_get(NULL, "dns_ipv4_preferred", dns_ipv4_preferred, sizeof(dns_ipv4_preferred));
+                syscfg_get(NULL, "dns_ipv4_alternate", dns_ipv4_alternate, sizeof(dns_ipv4_alternate));
+
+                if ((dns_ipv4_preferred[0] == 0) && (dns_ipv4_alternate[0] == 0))
+                {
+                    bDnsOverride = false;
+                }
+            }
 
             /* if dns_override is false or undefined then append DNS server(s) from wan_dhcp_dns */
 
@@ -6197,25 +6209,24 @@ Pool_GetParamStringValue
              * Collect from syscfg db, syscfg updated through 
              * Device.X_LGI-COM_Gateway.DNS_IPv4Alternate" & "Device.X_LGI-COM_Gateway.DNS_IPv4Preferred"
             */
-            syscfg_get(NULL,"dns_ipv4_preferred",tmpbuf,sizeof(tmpbuf));
-            len=AnscSizeOfString(tmpbuf);
+
+            len = AnscSizeOfString(dns_ipv4_preferred);
             if ((len > 0) && (rbufsz > (len+1))){
                 if (addcoma) {
                     strcat(pValue,",");
                     len+=1;
                 }
-                strcat(pValue,tmpbuf);
+                strcat(pValue,dns_ipv4_preferred);
                 rbufsz-=len;
                 addcoma=1;
             }
 
-            syscfg_get(NULL,"dns_ipv4_alternate",tmpbuf,sizeof(tmpbuf));
-            len=AnscSizeOfString(tmpbuf);
+            len = AnscSizeOfString(dns_ipv4_alternate);
             if ((len > 0) && (rbufsz > (len+1))){
                 if (addcoma) {
                     strcat(pValue,",");
                 }
-                strcat(pValue,tmpbuf);
+                strcat(pValue,dns_ipv4_alternate);
             }
 
             return 0;
