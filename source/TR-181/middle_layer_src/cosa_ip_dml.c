@@ -4291,7 +4291,7 @@ IPv6Address_Validate
 
     /*validate 2 lifetimes*/
      /*CID: 58024 Array compared against 0*/
-    if (pIPv6Addr->ValidLifetime &&
+    if (pIPv6Addr->ValidLifetime[0] != '\0' &&
         CosaDmlDateTimeCompare(pIPv6Addr->PreferredLifetime, pIPv6Addr->ValidLifetime) > 0
         )
     {
