@@ -443,7 +443,10 @@ rbusError_t setStringHandler(rbusHandle_t handle, rbusProperty_t prop, rbusSetHa
     if (NULL != pKeyVal)
     {
         CcspTraceInfo(("%s:%d, pKeyVal:%s\n",__FUNCTION__,__LINE__,pKeyVal));
-        strcpy(sManageWifiDetails.aKey,pKeyVal);
+
+        /* CID 346807 : Calling risky function fix */
+        strncpy(sManageWifiDetails.aKey, pKeyVal, sizeof(sManageWifiDetails.aKey) - 1);
+        
         CcspTraceInfo(("%s:%d, sManageWifiDetails.aKey:%s\n",__FUNCTION__,__LINE__,sManageWifiDetails.aKey));
     }
     pKeyVal = strtok(NULL, ":");
