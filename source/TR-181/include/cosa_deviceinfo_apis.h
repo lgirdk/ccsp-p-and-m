@@ -87,6 +87,8 @@
                 STRUCTURE AND CONSTANT DEFINITIONS
 **********************************************************************/
 
+#if !defined (RESOURCE_OPTIMIZATION)
+
 enum
 {
     COSA_DML_PROC_STATUS_Running = 1,
@@ -122,6 +124,8 @@ _COSA_DATAMODEL_PROCESS
     COSA_DATAMODEL_PROCESS_CLASS_CONTENT
 }
 COSA_DATAMODEL_PROCSTATUS,  *PCOSA_DATAMODEL_PROCSTATUS;
+
+#endif
 
 typedef  struct
 _COSA_BOOTSTRAP_STR
@@ -345,10 +349,12 @@ void CosaDmlDiCheckAndEnableMoCA( void );
 int getRebootCounter();
 int setRebootCounter();
 int setUnknownRebootReason();
+#if !defined (RESOURCE_OPTIMIZATION)
 ANSC_HANDLE CosaProcStatusCreate();
 void COSADmlRemoveProcessInfo(PCOSA_DATAMODEL_PROCSTATUS pObj);
 void COSADmlGetProcessInfo(PCOSA_DATAMODEL_PROCSTATUS p_info);
 ULONG COSADmlGetCpuUsage();
+#endif
 ULONG COSADmlGetMemoryStatus(char * ParamName);
 ULONG COSADmlGetMaxWindowSize();
 

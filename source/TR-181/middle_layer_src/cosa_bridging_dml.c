@@ -5408,6 +5408,8 @@ VLANPort_Rollback
     return 0;
 }
 
+#if !defined (RESOURCE_OPTIMIZATION)
+
 /***********************************************************************
 
  APIs for Object:
@@ -6389,3 +6391,4 @@ Filter_Rollback
     return 0;
 }
 
+#endif

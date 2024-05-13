@@ -286,6 +286,8 @@ LanMngm_Rollback
         ANSC_HANDLE                 hInsContext
     );
 
+#if !defined (RESOURCE_OPTIMIZATION)
+
 BOOL
 WebAccessLevel_GetParamBoolValue
     (
@@ -370,5 +372,7 @@ WebAccessLevel_Rollback
     (
         ANSC_HANDLE                 hInsContext
     );
+
+#endif
 
 #endif

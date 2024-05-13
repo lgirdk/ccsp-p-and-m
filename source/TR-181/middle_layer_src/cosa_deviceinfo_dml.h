@@ -745,6 +745,8 @@ KickstartTable_SetParamStringValue
         char*                       pString
     );
 
+#if !defined (RESOURCE_OPTIMIZATION)
+
 /***********************************************************************
 
  APIs for Object:
@@ -864,6 +866,8 @@ VendorConfigFile_Rollback
     (
         ANSC_HANDLE                 hInsContext
     );
+
+#endif
 
 /***********************************************************************
 
@@ -992,6 +996,9 @@ MemoryStatus_SetParamUlongValue
     *  ProcessStatus_GetParamStringValue
 
 ***********************************************************************/
+
+#if !defined (RESOURCE_OPTIMIZATION)
+
 BOOL
 ProcessStatus_GetParamBoolValue
     (
@@ -1025,6 +1032,8 @@ ProcessStatus_GetParamStringValue
         ULONG*                      pUlSize
     );
 
+#endif
+
 /***********************************************************************
 
  APIs for Object:
@@ -1041,6 +1050,9 @@ ProcessStatus_GetParamStringValue
     *  Process_GetParamStringValue
 
 ***********************************************************************/
+
+#if !defined (RESOURCE_OPTIMIZATION)
+
 ULONG
 Process_GetEntryCount
     (
@@ -1099,6 +1111,8 @@ Process_GetParamStringValue
         char*                       pValue,
         ULONG*                      pUlSize
     );
+
+#endif
 
 /***********************************************************************
 

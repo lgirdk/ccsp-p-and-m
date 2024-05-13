@@ -103,6 +103,18 @@ AC_ARG_ENABLE([speedboost],
              [echo "speedboost is disabled"])
 AM_CONDITIONAL(FEATURE_SUPPORT_SPEED_BOOST, test "x$SPEED_BOOST_SUPPORT_ENABLED" = xtrue)
 
+AC_ARG_ENABLE([resourceoptimization],
+             AS_HELP_STRING([--enable-resourceoptimization],[enable resource optimization (default is no)]),
+             [
+              case "${enableval}" in
+               yes) RESOURCE_OPTIMIZATION_ENABLED=true;;
+               no)  RESOURCE_OPTIMIZATION_ENABLED=false;;
+               *) AC_MSG_ERROR([bad value ${enableval} for --enable-resourceoptimization]);;
+              esac
+             ],
+             [echo "resourceoptimization is disabled"])
+AM_CONDITIONAL(FEATURE_RESOURCE_OPTIMIZATION, test "x$RESOURCE_OPTIMIZATION_ENABLED" = xtrue)
+
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h string.h unistd.h])
 

@@ -2309,6 +2309,7 @@ CosaDmlRoutingRemove
     return returnStatus;
 }    
 
+#if !defined (RESOURCE_OPTIMIZATION)
 static BOOLEAN g_routeinfo_enabled = TRUE; 
 ANSC_STATUS
 CosaDmlRouteInfoSetEnabled
@@ -2393,6 +2394,7 @@ CosaDmlRoutingGetRouteInfoIf
 
     return pEntry;
 }
+#endif
 
 #elif ( defined(_COSA_INTEL_USG_ARM_) || defined(_COSA_BCM_MIPS_))
 
@@ -3458,11 +3460,14 @@ Route6_SaveParams(const RouteAlias6_t *alias6)
         
 
 **********************************************************************/
+
+#if !defined (RESOURCE_OPTIMIZATION)
 static int
 CosaDmlRouteInfoInit
     (
         void
     );
+#endif
 
 ANSC_HANDLE g_RoutingEntryInMiddleLayer = NULL;
 ANSC_STATUS CosaDmlRipCallBack
@@ -3489,7 +3494,9 @@ CosaDmlRoutingInit
     ANSC_STATUS                     returnStatus = ANSC_STATUS_SUCCESS;
     DSLHDMAGNT_CALLBACK *  pEntry = NULL;
     UNREFERENCED_PARAMETER(phContext);
+#if !defined (RESOURCE_OPTIMIZATION)
     CosaDmlRouteInfoInit();
+#endif
     CosaDmlGetRipdConfiguration();
 
     g_RoutingEntryInMiddleLayer = hDml;
@@ -5725,6 +5732,8 @@ CosaDmlRoutingRemove
     return returnStatus;
 }    
 
+#if !defined (RESOURCE_OPTIMIZATION)
+
 static BOOLEAN g_routeinfo_enabled = FALSE; 
 
 #define SYSCFG_FORMAT_IPV6_ROUTEINFO "tr_ipv6_routeinfo"
@@ -6022,5 +6031,6 @@ CosaDmlRoutingGetRouteInfoIf
 
     return pEntry;
 }
+#endif
 
 #endif

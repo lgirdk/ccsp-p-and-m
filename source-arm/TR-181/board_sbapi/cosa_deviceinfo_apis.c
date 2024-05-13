@@ -1558,6 +1558,7 @@ CosaDmlDiSetFirmwareUpgradeEndTime (char* pString)
 }
 
 
+#if !defined (RESOURCE_OPTIMIZATION)
 
 ANSC_HANDLE CosaProcStatusCreate()
 {
@@ -1847,6 +1848,8 @@ ULONG COSADmlGetCpuUsage()
 
     return  CPUUsage;
 }
+
+#endif
 
 ULONG COSADmlGetMemoryStatus(char * ParamName)
 {

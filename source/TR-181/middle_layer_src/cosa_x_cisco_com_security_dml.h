@@ -326,6 +326,8 @@ InternetAccess_GetParamStringValue
         ULONG*                      pUlSize
     );
 
+#if !defined (RESOURCE_OPTIMIZATION)
+
 /***********************************************************************
 
  APIs for Object:
@@ -968,6 +970,8 @@ BlockedApplication_Rollback
     (
         ANSC_HANDLE                 hInsContext
     );
+
+#endif
 
 /***********************************************************************
 

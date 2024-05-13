@@ -4426,6 +4426,7 @@ MACsecRequired_SetParamBoolValue
 }
 #endif
 
+#if !defined (RESOURCE_OPTIMIZATION)
 
 /***********************************************************************
 
@@ -5051,6 +5052,8 @@ VendorConfigFile_Rollback
     UNREFERENCED_PARAMETER(hInsContext);
     return 0;
 }
+
+#endif
 
 /***********************************************************************
 
@@ -6225,6 +6228,7 @@ Ops_SetParamBoolValue
     return FALSE;
 }
 
+#if !defined (RESOURCE_OPTIMIZATION)
 
 /***********************************************************************
 
@@ -6871,6 +6875,8 @@ Process_GetParamStringValue
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return -1;
 }
+
+#endif
 
 /**********************************************************************
 

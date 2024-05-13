@@ -466,6 +466,7 @@ CosaDmlIaGetNumberOfPolicies
     return g_NumOfPolicies;
 }
 
+#if !defined (RESOURCE_OPTIMIZATION)
 
 /**********************************************************************
 
@@ -2336,6 +2337,7 @@ CosaDmlIaPolicySetBlockedApp
     return ANSC_STATUS_CANT_FIND;
 }
 
+#endif
 
 /**********************************************************************
 
@@ -2410,6 +2412,7 @@ int g_iap_num;
 iap_entry_t * g_iaps ;
 
 #if defined _COSA_INTEL_USG_ARM_ || _COSA_BCM_MIPS_
+#if !defined (RESOURCE_OPTIMIZATION)
 static int be_struct_2_middle_layer(iap_entry_t * p_in, PCOSA_DML_IA_POLICY p_out)
 {
     int i = 0;
@@ -2579,6 +2582,7 @@ static iap_entry_t * find_ia_policy(ULONG index)
     
     return NULL;
 }
+#endif
 
 static void free_iap_entries(iap_entry_t * p_in, int count)
 {
@@ -2596,6 +2600,7 @@ static void free_iap_entries(iap_entry_t * p_in, int count)
     return;
 }
 
+#if !defined (RESOURCE_OPTIMIZATION)
 static int refresh_be_buf(iap_entry_t ** pp_in, int * p_count)
 {
     UtopiaContext ctx ;
@@ -2615,6 +2620,7 @@ static int refresh_be_buf(iap_entry_t ** pp_in, int * p_count)
     
     return 0;
 }
+#endif
 #endif
 
 
@@ -2892,6 +2898,7 @@ CosaDmlIaGetNumberOfPolicies
     return 0;
 }
 
+#if !defined (RESOURCE_OPTIMIZATION)
 
 /**********************************************************************
 
@@ -5393,6 +5400,8 @@ CosaDmlIaPolicySetBlockedApp
 
     return ANSC_STATUS_CANT_FIND;
 }
+
+#endif
 
 #undef B
 

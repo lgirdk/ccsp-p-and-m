@@ -2451,6 +2451,8 @@ LanMngm_Rollback
     return 0;
 }
 
+#if !defined (RESOURCE_OPTIMIZATION)
+
 BOOL
 WebAccessLevel_GetParamBoolValue
     (
@@ -2727,4 +2729,4 @@ WebAccessLevel_Rollback
     return 0;
 }
 
-
+#endif

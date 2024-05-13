@@ -4267,6 +4267,8 @@
 		
 	</object> <!--RDK_CENTRAL-->
 	
+<?ifndef FEATURE_RESOURCE_OPTIMIZATION?>
+
         <object>
 
           <name>ProcessStatus</name>
@@ -4417,6 +4419,8 @@
 
         </object>
 
+<?endif?>
+
         <object>
 
           <name>NetworkProperties</name>
@@ -4561,6 +4565,8 @@
 
     </object>
 
+<?ifndef FEATURE_RESOURCE_OPTIMIZATION?>
+
     <object>
 
       <name>GatewayInfo</name>
@@ -4614,6 +4620,8 @@
       </parameters>
 
     </object>
+
+<?endif?>
 
     <object>
 
@@ -5160,6 +5168,8 @@
 
     </object>
 
+<?ifndef FEATURE_RESOURCE_OPTIMIZATION?>
+
     <object>
 
       <name>InterfaceStack</name>
@@ -5233,6 +5243,8 @@
       </parameters>
 
     </object>
+
+<?endif?>
 
     <object>
 
@@ -6048,6 +6060,8 @@
 
     </object>
 <?ifndef FEATURE_RDKB_XDSL_PPP_MANAGER?>
+
+<?ifdef _HUB4_PRODUCT_REQ_ | !FEATURE_RESOURCE_OPTIMIZATION?>
     <object>
     
       <name>PPP</name>
@@ -6761,6 +6775,8 @@
       </objects>
       
     </object>
+<?endif?>
+
 <?endif?>
     <object>
 
@@ -8860,6 +8876,8 @@
           </objects>
 
         </object>
+
+<?ifndef FEATURE_RESOURCE_OPTIMIZATION?>
         <object>
           <name>RouteInformation</name>
           <objectType>object</objectType>
@@ -8941,6 +8959,7 @@
             </object>
           </objects>
         </object>
+<?endif?>
 
       </objects>
 
@@ -13746,6 +13765,8 @@
 
           <objects>
 
+<?ifndef FEATURE_RESOURCE_OPTIMIZATION?>
+
             <object>
 
               <name>AccessPolicy</name>
@@ -14295,7 +14316,7 @@
               </objects>
 
             </object>
-
+<?endif?>
             <object>
 
               <name>LogEntry</name>
@@ -14927,6 +14948,7 @@
           </parameters>
             
         </object>
+<?ifndef FEATURE_RESOURCE_OPTIMIZATION?>
         <object>
         	<name>WebAccessLevel</name>
         	<objectType>object</objectType>
@@ -15008,7 +15030,7 @@
         		</parameter>
         	</parameters>
         </object>
-
+<?endif?>
       </objects>
       
       </object>  
@@ -15450,6 +15472,7 @@
             </object>
           </objects>
         </object>
+<?ifndef FEATURE_RESOURCE_OPTIMIZATION?>
         <object>
           <name>Filter</name>
           <objectType>writableTable</objectType>
@@ -15635,6 +15658,7 @@
           </parameter>
           </parameters>
         </object>
+<?endif?>
       </objects>
     </object>
 
@@ -15857,6 +15881,7 @@
         </object>
       </objects>
     </object>
+<?ifndef FEATURE_RESOURCE_OPTIMIZATION?>
     <object>
       <name>NeighborDiscovery</name>
       <objectType>object</objectType>
@@ -16297,6 +16322,8 @@
       
     </object>
     
+<?endif?>
+      
     <object>
         
         <name>X_CISCO_COM_Diagnostics</name>

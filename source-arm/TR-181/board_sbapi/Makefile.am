@@ -50,17 +50,12 @@ libCcspPandM_board_sbapi_la_SOURCES = \
     cosa_ethernet_apis.c \
     cosa_ethernet_apis_ext.h \
     cosa_firewall_apis.c \
-    cosa_gatewayinfo_apis.c \
     cosa_GRE_webconfig_apis.c \
     cosa_hosts_apis.c \
-    cosa_interfacestack_apis.c \
     cosa_ip_apis.c \
-    cosa_ipv6rd_apis.c \
     cosa_lanmanagement_apis.c \
     cosa_nat_apis.c \
     cosa_nat_webconfig_apis.c \
-    cosa_neighdisc_apis.c \
-    cosa_ppp_apis.c \
     cosa_ra_apis.c \
     cosa_routing_apis.c \
     cosa_time_apis.c \
@@ -71,7 +66,6 @@ libCcspPandM_board_sbapi_la_SOURCES = \
     cosa_x_cisco_com_devicecontrol_apis.c \
     cosa_x_cisco_com_diagnostics_apis.c \
     cosa_x_cisco_com_filetransfer_apis.c \
-    cosa_x_cisco_com_mld_apis.c \
     cosa_x_cisco_com_rlog_apis.c \
     cosa_x_cisco_com_security_apis.c \
     cosa_x_comcast_com_parentalcontrol_apis.c \
@@ -79,6 +73,16 @@ libCcspPandM_board_sbapi_la_SOURCES = \
     helpers.c \
     lan_webconfig_param.c \
     macbinding_webconfig_param.c
+
+if !FEATURE_RESOURCE_OPTIMIZATION
+libCcspPandM_board_sbapi_la_SOURCES += \
+    cosa_x_cisco_com_mld_apis.c \
+    cosa_ipv6rd_apis.c \
+    cosa_ppp_apis.c \
+    cosa_gatewayinfo_apis.c \
+    cosa_interfacestack_apis.c \
+    cosa_neighdisc_apis.c
+endif
 
 if FEATURE_SUPPORT_MAPT_NAT46
 libCcspPandM_board_sbapi_la_SOURCES += cosa_mapt_apis.c

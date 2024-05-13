@@ -76,7 +76,9 @@
 
 #define REFRESH_INTERVAL 120
 #define TIME_NO_NEGATIVE(x) ((long)(x) < 0 ? 0 : (x))
+#if !defined (RESOURCE_OPTIMIZATION)
 static ULONG last_tick;
+#endif
 
 /***********************************************************************
  IMPORTANT NOTE:
@@ -5921,6 +5923,7 @@ InterfaceSetting_Rollback
     return 0; 
 }
 
+#if !defined (RESOURCE_OPTIMIZATION)
 /***********************************************************************
 
  APIs for Object:
@@ -6946,5 +6949,5 @@ InterfaceSetting3_GetParamStringValue
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return -1;
 }
-
+#endif
 

@@ -95,14 +95,18 @@
 //#include "cosa_moca_internal.h"
 #include "cosa_time_internal.h"
 #include "cosa_userinterface_internal.h"
-#include "cosa_ppp_internal.h"
 #include "cosa_bridging_internal.h"
 #include "cosa_upnp_internal.h"
-#include "cosa_interfacestack_internal.h"
 /*#include "cosa_diagnostic_apis.h"*/
 #include "cosa_x_cisco_com_devicecontrol_internal.h"
+
+#if !defined (RESOURCE_OPTIMIZATION)
 #include "cosa_ipv6rd_internal.h"
 #include "cosa_x_cisco_com_mld_internal.h"
+#include "cosa_ppp_internal.h"
+#include "cosa_interfacestack_internal.h"
+#endif
+
 #include "cosa_x_cisco_com_multilan_apis.h"
 #if defined(DDNS_BROADBANDFORUM)
 #include "cosa_dynamicdns_apis.h"
@@ -186,8 +190,10 @@ COSARepopulateTableProc            g_COSARepopulateTable;
 
 ANSC_HANDLE CosaDhcpv6Create(VOID);
 ANSC_STATUS CosaDhcpv6Remove(ANSC_HANDLE hThisObject);
+#if !defined (RESOURCE_OPTIMIZATION)
 ANSC_HANDLE CosaNeighdiscCreate(VOID);
 ANSC_STATUS CosaNeighdiscRemove(ANSC_HANDLE hThisObject);
+#endif
 ANSC_HANDLE CosaGreTunnelCreate ();
 ANSC_HANDLE CosaCGreCreate(VOID);
 ANSC_STATUS CosaCGreRemove(ANSC_HANDLE hThisObject);
@@ -297,8 +303,10 @@ CosaBackEndManagerInitialize
     /* Create all object */
     pMyObject->hNat           = (ANSC_HANDLE)CosaNatCreate();
     AnscTraceWarning(("  CosaNatCreate done!\n"));
-    pMyObject->hProcStatus    = (ANSC_HANDLE)CosaProcStatusCreate();    
+#if !defined (RESOURCE_OPTIMIZATION)
+    pMyObject->hProcStatus    = (ANSC_HANDLE)CosaProcStatusCreate();
     AnscTraceWarning(("  CosaProcStatusCreate done!\n"));
+#endif
     pMyObject->hDeviceInfo    = (ANSC_HANDLE)CosaDeviceInfoCreate();
     AnscTraceWarning(("  CosaDeviceInfoCreate done!\n"));
     pMyObject->hUserinterface = (ANSC_HANDLE)CosaUserinterfaceCreate();
@@ -336,11 +344,15 @@ CosaBackEndManagerInitialize
     AnscTraceWarning(("  CosaRoutingCreate done!\n"));
     pMyObject->hBridging      = (ANSC_HANDLE)CosaBridgingCreate();
     AnscTraceWarning(("  CosaBridgingCreate done!\n"));
+#if !defined (RESOURCE_OPTIMIZATION)
     pMyObject->hInterfaceStack = (ANSC_HANDLE)CosaIFStackCreate();
     AnscTraceWarning(("  CosaIFStackCreate done!\n"));
+#endif
 #ifndef FEATURE_RDKB_XDSL_PPP_MANAGER
+#if !defined (RESOURCE_OPTIMIZATION)
     pMyObject->hPPP           = (ANSC_HANDLE)CosaPPPCreate();
     AnscTraceWarning(("  CosaPPPCreate done!\n"));
+#endif
 #endif
 
 #ifdef FEATURE_RDKB_DHCP_MANAGER
@@ -351,19 +363,22 @@ CosaBackEndManagerInitialize
 #endif
     pMyObject->hDeviceControl  = (ANSC_HANDLE)CosaDeviceControlCreate();
     AnscTraceWarning(("  CosaDeviceControlCreate done!\n"));
+#if !defined (RESOURCE_OPTIMIZATION)
     pMyObject->hIPv6rd        = (ANSC_HANDLE)CosaIPv6rdCreate();
     AnscTraceWarning(("  CosaIPv6rdCreate done!\n"));
+#endif
     pMyObject->hRA            = (ANSC_HANDLE)CosaRACreate();
     AnscTraceWarning(("  CosaRACreate done!\n"));
 #ifdef DSLITE_FEATURE_SUPPORT
     pMyObject->hDslite         = (ANSC_HANDLE)CosaDsliteCreate();
     AnscTraceWarning(("  CosaDsliteCreate done!\n"));
 #endif
+#if !defined (RESOURCE_OPTIMIZATION)
     pMyObject->hNeighdisc     = (ANSC_HANDLE)CosaNeighdiscCreate();
     AnscTraceWarning(("  CosaNeighdiscCreate done!\n"));
     pMyObject->hMld           = (ANSC_HANDLE)CosaMldCreate();
     AnscTraceWarning(("  CosaMldCreate done!\n"));
-
+#endif
     /*
 #ifdef CONFIG_TI_PACM
     pMyObject->hMTA           = (ANSC_HANDLE)CosaMTACreate();
@@ -589,10 +604,13 @@ CosaBackEndManagerRemove
         CosaUsersRemove((ANSC_HANDLE)pMyObject->hUsers);
     }
     
+#if !defined (RESOURCE_OPTIMIZATION)
     if ( pMyObject->hProcStatus )
     {
         COSADmlRemoveProcessInfo((ANSC_HANDLE)pMyObject->hProcStatus);
     }
+#endif
+
 #if !defined(DDNS_BROADBANDFORUM)
     if ( pMyObject->hDdns )
     {
@@ -647,26 +665,33 @@ CosaBackEndManagerRemove
     {
         CosaUpnpRemove((ANSC_HANDLE)pMyObject->hUpnp);
     }
-    
+
+#if !defined (RESOURCE_OPTIMIZATION)
     if ( pMyObject->hInterfaceStack )
     {
         CosaIFStackRemove((ANSC_HANDLE)pMyObject->hInterfaceStack);
     }
+#endif
+
 #ifndef FEATURE_RDKB_XDSL_PPP_MANAGER
+#if !defined (RESOURCE_OPTIMIZATION)
     if ( pMyObject->hPPP )
     {
         CosaPPPRemove((ANSC_HANDLE)pMyObject->hPPP);
     }
+#endif
 #endif
     if ( pMyObject->hDeviceControl )
     {
         CosaDeviceControlRemove((ANSC_HANDLE)pMyObject->hDeviceControl);
     }
 
+#if !defined (RESOURCE_OPTIMIZATION)
     if ( pMyObject->hIPv6rd )
     {
         CosaIPv6rdRemove((ANSC_HANDLE)pMyObject->hIPv6rd);
     }
+#endif
 
     if ( pMyObject->hRA )
     {
@@ -679,6 +704,8 @@ CosaBackEndManagerRemove
         CosaDsliteRemove((ANSC_HANDLE)pMyObject->hDslite);
     }
 #endif
+
+#if !defined (RESOURCE_OPTIMIZATION)
     if ( pMyObject->hNeighdisc )
     {
         CosaNeighdiscRemove((ANSC_HANDLE)pMyObject->hNeighdisc);
@@ -688,6 +715,7 @@ CosaBackEndManagerRemove
     {
         CosaMldRemove((ANSC_HANDLE)pMyObject->hMld);
     }
+#endif
     /*
 #ifdef CONFIG_TI_PACM
     if ( pMyObject->hMTA )

@@ -55,16 +55,13 @@ CcspPandMSsp_gtest_bin_CPPFLAGS = -I$(PKG_CONFIG_SYSROOT_DIR)$(includedir)/gtest
 CcspPandMSsp_gtest_bin_LDADD = ${top_builddir}/source-arm/TR-181/board_sbapi/libCcspPandM_board_sbapi.la \
                                ${top_builddir}/source/TR-181/integration_src.shared/libCcspPandM_integration_src_shared.la
 CcspPandMSsp_gtest_bin_SOURCES = ../TR-181/middle_layer_src/parodus_interface.c \
-                                 ../TR-181/middle_layer_src/cosa_ipv6rd_dml.c \
                                  ../TR-181/middle_layer_src/plugin_main.c \
                                  ../TR-181/middle_layer_src/cosa_GRE_dml.c \
                                  ../TR-181/middle_layer_src/cosa_x_cisco_com_rlog_internal.c \
-                                 ../TR-181/middle_layer_src/cosa_neighdisc_dml.c \
                                  ../TR-181/middle_layer_src/hotspotdoc.c \
                                  ../TR-181/middle_layer_src/cosa_bridging_internal.c \
                                  ../TR-181/middle_layer_src/cosa_dhcpv6_internal.c \
                                  ../TR-181/middle_layer_src/cosa_onboardlogging_dml.c \
-                                 ../TR-181/middle_layer_src/cosa_interfacestack_dml.c \
                                  ../TR-181/middle_layer_src/cosa_x_cisco_com_diagnostics_dml.c \
                                  ../TR-181/middle_layer_src/plugin_main_apis.c \
                                  ../TR-181/middle_layer_src/webcfgparam.c \
@@ -85,34 +82,27 @@ CcspPandMSsp_gtest_bin_SOURCES = ../TR-181/middle_layer_src/parodus_interface.c 
                                  ../TR-181/middle_layer_src/managedwifi_helpers.c \
                                  ../TR-181/middle_layer_src/cosa_apis_busutil.c \
                                  ../TR-181/middle_layer_src/cosa_x_cisco_com_ddns_dml.c \
-                                 ../TR-181/middle_layer_src/cosa_ppp_dml.c \
                                  ../TR-181/middle_layer_src/cosa_x_rdkcentral_com_xpc_internal.c \
                                  ../TR-181/middle_layer_src/cosa_x_comcast_com_parentalcontrol_internal.c \
                                  ../TR-181/middle_layer_src/cosa_advsec_utils.c \
-                                 ../TR-181/middle_layer_src/cosa_neighdisc_internal.c \
                                  ../TR-181/middle_layer_src/managedwifidoc.c \
-                                 ../TR-181/middle_layer_src/cosa_ppp_internal.c \
                                  ../TR-181/middle_layer_src/cosa_userinterface_internal.c \
                                  ../TR-181/middle_layer_src/cosa_ra_dml.c \
                                  ../TR-181/middle_layer_src/cosa_rbus_handler_apis.c \
                                  ../TR-181/middle_layer_src/cosa_time_internal.c \
                                  ../TR-181/middle_layer_src/array_helpers.c \
                                  ../TR-181/middle_layer_src/cosa_x_cisco_com_multilan_dml.c \
-                                 ../TR-181/middle_layer_src/cosa_interfacestack_internal.c \
                                  ../TR-181/middle_layer_src/cosa_users_internal.c \
                                  ../TR-181/middle_layer_src/cosa_dhcpv6_dml.c \
                                  ../TR-181/middle_layer_src/cosa_ra_internal.c \
                                  ../TR-181/middle_layer_src/cosa_x_cisco_com_diagnostics_internal.c \
                                  ../TR-181/middle_layer_src/cosa_x_cisco_com_ddns_internal.c \
                                  ../TR-181/middle_layer_src/cosa_routing_internal.c \
-                                 ../TR-181/middle_layer_src/cosa_x_cisco_com_mld_internal.c \
                                  ../TR-181/middle_layer_src/cosa_x_cisco_com_rlog_dml.c \
                                  ../TR-181/middle_layer_src/cosa_deviceinfo_internal.c \
                                  ../TR-181/middle_layer_src/cosa_time_dml.c \
                                  ../TR-181/middle_layer_src/cosa_x_cisco_com_devicecontrol_internal.c \
-                                 ../TR-181/middle_layer_src/cosa_ipv6rd_internal.c \
                                  ../TR-181/middle_layer_src/cosa_userinterface_dml.c \
-                                 ../TR-181/middle_layer_src/cosa_x_cisco_com_mld_dml.c \
                                  ../TR-181/middle_layer_src/cosa_lanmanagement_internal.c \
                                  ../TR-181/middle_layer_src/cosa_x_cisco_com_security_dml.c \
                                  ../TR-181/middle_layer_src/cosa_lanmanagement_dml.c \
@@ -121,7 +111,6 @@ CcspPandMSsp_gtest_bin_SOURCES = ../TR-181/middle_layer_src/parodus_interface.c 
                                  ../TR-181/middle_layer_src/cosa_x_cisco_com_security_internal.c \
                                  ../TR-181/middle_layer_src/cosa_users_dml.c \
                                  ../TR-181/middle_layer_src/cosa_firewall_internal.c \
-                                 ../TR-181/middle_layer_src/cosa_gatewayinfo_dml.c \
                                  ../TR-181/middle_layer_src/cosa_dhcpv4_internal.c \
                                  ../TR-181/middle_layer_src/cosa_routing_dml.c \
                                  ../TR-181/middle_layer_src/cosa_ethernet_dml.c \
@@ -163,6 +152,21 @@ CcspPandMSsp_gtest_bin_SOURCES = ../TR-181/middle_layer_src/parodus_interface.c 
                                  mocks/commonutil_mock.cpp \
                                  pandmssp_mock.cpp \
                                  gtest_main.cpp
+
+if !FEATURE_RESOURCE_OPTIMIZATION
+CcspPandMSsp_gtest_bin_SOURCES += \
+    ../TR-181/middle_layer_src/cosa_x_cisco_com_mld_dml.c \
+    ../TR-181/middle_layer_src/cosa_x_cisco_com_mld_internal.c \
+    ../TR-181/middle_layer_src/cosa_ipv6rd_dml.c \
+    ../TR-181/middle_layer_src/cosa_ipv6rd_internal.c \
+    ../TR-181/middle_layer_src/cosa_ppp_dml.c \
+    ../TR-181/middle_layer_src/cosa_ppp_internal.c \
+    ../TR-181/middle_layer_src/cosa_gatewayinfo_dml.c \
+    ../TR-181/middle_layer_src/cosa_neighdisc_dml.c \
+    ../TR-181/middle_layer_src/cosa_interfacestack_dml.c \
+    ../TR-181/middle_layer_src/cosa_interfacestack_internal.c \
+    ../TR-181/middle_layer_src/cosa_neighdisc_internal.c
+endif
 
 if FEATURE_SUPPORT_SPEED_BOOST
 CcspPandMSsp_gtest_bin_SOURCES += ../TR-181/middle_layer_src/speedboost_apis.c \

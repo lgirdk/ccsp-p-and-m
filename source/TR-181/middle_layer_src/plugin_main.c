@@ -60,10 +60,8 @@
 #include "cosa_com_cisco_spvtg_ccsp_pam_dml.h"
 #include "cosa_deviceinfo_dml.h"
 /*#include "cosa_softwaremodules_dml.h"*/
-#include "cosa_gatewayinfo_dml.h"
 #include "cosa_time_dml.h"
 #include "cosa_userinterface_dml.h"
-#include "cosa_interfacestack_dml.h"
 #include "cosa_ethernet_dml.h"
 //#include "cosa_moca_dml.h"
 #include "cosa_ip_dml.h"
@@ -80,15 +78,20 @@
 #include "cosa_x_cisco_com_ddns_dml.h"
 #include "cosa_x_cisco_com_security_dml.h"
 /*#include "cosa_softwaremodules_config.h"*/
-#include "cosa_ppp_dml.h"
 #include "cosa_x_cisco_com_devicecontrol_dml.h"
-#include "cosa_ipv6rd_dml.h"
 #include "cosa_ra_dml.h"
-#include "cosa_neighdisc_dml.h"
-#include "cosa_x_cisco_com_mld_dml.h"
 #include "plugin_main_apis.h"
 //#include "cosa_moca_internal.h"
 #include "safec_lib_common.h"
+
+#if !defined (RESOURCE_OPTIMIZATION)
+#include "cosa_gatewayinfo_dml.h"
+#include "cosa_ipv6rd_dml.h"
+#include "cosa_ppp_dml.h"
+#include "cosa_x_cisco_com_mld_dml.h"
+#include "cosa_neighdisc_dml.h"
+#include "cosa_interfacestack_dml.h"
+#endif
 
 PCOSA_BACKEND_MANAGER_OBJECT g_pCosaBEManager;
 void *                       g_pDslhDmlAgent;

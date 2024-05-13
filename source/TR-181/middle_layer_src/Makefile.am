@@ -58,26 +58,17 @@ libCcspPandM_middle_layer_src_la_SOURCES = \
     cosa_ethernet_internal.c \
     cosa_firewall_dml.c \
     cosa_firewall_internal.c \
-    cosa_gatewayinfo_dml.c \
     cosa_GRE_dml.c \
     cosa_hosts_internal.c \
-    cosa_interfacestack_dml.c \
-    cosa_interfacestack_internal.c \
     cosa_ip_dml.c \
     cosa_ip_internal.c \
-    cosa_ipv6rd_dml.c \
-    cosa_ipv6rd_internal.c \
     cosa_lanmanagement_dml.c \
     cosa_lanmanagement_internal.c \
     cosa_nat_dml.c \
     cosa_nat_dml_custom.c \
     cosa_nat_internal.c \
-    cosa_neighdisc_dml.c \
-    cosa_neighdisc_internal.c \
     cosa_onboardlogging_dml.c \
     cosa_onboardlogging_internal.c \
-    cosa_ppp_dml.c \
-    cosa_ppp_internal.c \
     cosa_ra_dml.c \
     cosa_ra_internal.c \
     cosa_rbus_handler_apis.c \
@@ -98,8 +89,6 @@ libCcspPandM_middle_layer_src_la_SOURCES = \
     cosa_x_cisco_com_devicecontrol_internal.c \
     cosa_x_cisco_com_diagnostics_dml.c \
     cosa_x_cisco_com_diagnostics_internal.c \
-    cosa_x_cisco_com_mld_dml.c \
-    cosa_x_cisco_com_mld_internal.c \
     cosa_x_cisco_com_multilan_dml.c \
     cosa_x_cisco_com_rlog_dml.c \
     cosa_x_cisco_com_rlog_internal.c \
@@ -117,6 +106,21 @@ libCcspPandM_middle_layer_src_la_SOURCES = \
     plugin_main_apis.c \
     portmappingdoc.c \
     webcfgparam.c
+
+if !FEATURE_RESOURCE_OPTIMIZATION
+libCcspPandM_middle_layer_src_la_SOURCES += \
+    cosa_x_cisco_com_mld_dml.c \
+    cosa_x_cisco_com_mld_internal.c \
+    cosa_ipv6rd_dml.c \
+    cosa_ipv6rd_internal.c \
+    cosa_ppp_dml.c \
+    cosa_ppp_internal.c \
+    cosa_gatewayinfo_dml.c \
+    cosa_neighdisc_dml.c \
+    cosa_interfacestack_dml.c \
+    cosa_interfacestack_internal.c \
+    cosa_neighdisc_internal.c
+endif
 
 if FEATURE_SUPPORT_MANAGE_WIFI
 libCcspPandM_middle_layer_src_la_SOURCES += cosa_managedwifi_dml.c \

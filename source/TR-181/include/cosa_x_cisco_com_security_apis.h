@@ -355,6 +355,7 @@ CosaDmlFirewallSetConfig2
         PCOSA_DML_FIREWALL_CFG2     pCfg
     );
 
+#if !defined (RESOURCE_OPTIMIZATION)
 
 ULONG
 CosaDmlIaGetNumberOfPolicies
@@ -602,6 +603,8 @@ CosaDmlIaPolicySetBlockedApp
         ULONG                       ulPolicyInstanceNumber,
         PCOSA_DML_IA_POLICY_APP     pApp        /* Identified by InstanceNumber */
     );
+
+#endif
 
 PCOSA_DML_IA_LOG_ENTRY
 CosaDmlIaGetLogEntries

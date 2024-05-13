@@ -649,6 +649,7 @@ CosaDmlRoutingRemove
         ANSC_HANDLE                 hContext
     );
 
+#if !defined (RESOURCE_OPTIMIZATION)
 PCOSA_DML_ROUTEINFO_IF_INFO
 CosaDmlRoutingGetRouteInfoIf
     (
@@ -667,6 +668,7 @@ CosaDmlRouteInfoGetEnabled
     (
         BOOLEAN * pBool
     );
+#endif
 
 ANSC_STATUS 
 CosaDmlStaticRouteDelEntry

@@ -2348,6 +2348,8 @@ InternetAccess_GetParamStringValue
     return -1;
 }
 
+#if !defined (RESOURCE_OPTIMIZATION)
+
 /***********************************************************************
 
  APIs for Object:
@@ -6910,6 +6912,8 @@ BlockedApplication_Rollback
                    pApp
                );
 }
+
+#endif
 
 /***********************************************************************
 

@@ -161,6 +161,7 @@ CosaSecurityInitialize
     PPOAM_IREP_FOLDER_OBJECT        pPoamIrepFoIA       = (PPOAM_IREP_FOLDER_OBJECT   )NULL;
     PPOAM_IREP_FOLDER_OBJECT        pPoamIrepFoIAHA     = (PPOAM_IREP_FOLDER_OBJECT   )NULL;
     PPOAM_IREP_FOLDER_OBJECT        pPoamIrepFoNextIns  = (PPOAM_IREP_FOLDER_OBJECT   )NULL;
+#if !defined (RESOURCE_OPTIMIZATION)
     PCOSA_CONTEXT_LINK_OBJECT       pCosaContext        = (PCOSA_CONTEXT_LINK_OBJECT  )NULL;
     PCOSA_CONTEXT_LINK_OBJECT       pCosaContext2       = (PCOSA_CONTEXT_LINK_OBJECT  )NULL;
     PCOSA_DML_IA_POLICY2            pDmlIAPolicy        = (PCOSA_DML_IA_POLICY2       )NULL;
@@ -171,6 +172,7 @@ CosaSecurityInitialize
     ULONG                           ulSubCount          = 0;
     ULONG                           ulIndex             = 0;
     ULONG                           ulSubIndex          = 0;
+#endif
     char                            FolderName[32]      = {0};
     errno_t                         rc                  = -1;
 
@@ -360,6 +362,7 @@ CosaSecurityInitialize
         }
     }
 
+#if !defined (RESOURCE_OPTIMIZATION)
     /* Initialize middle layer for Internet Access Policy */
 
     ulPolicyCount = CosaDmlIaGetNumberOfPolicies(NULL);
@@ -910,6 +913,7 @@ CosaSecurityInitialize
             pApp = NULL; /*Make null for next iteration*/
         }
     }
+#endif
 
     /* Load the newly added but not yet commited entries, if any */
 

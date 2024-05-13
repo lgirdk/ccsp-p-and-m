@@ -699,6 +699,8 @@ VLANPort_Rollback
         ANSC_HANDLE                 hInsContext
     );
 
+#if !defined (RESOURCE_OPTIMIZATION)
+
 /***********************************************************************
 
  APIs for Object:
@@ -834,5 +836,7 @@ Filter_Rollback
     (
         ANSC_HANDLE                 hInsContext
     );
+
+#endif
 
 #endif

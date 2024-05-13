@@ -758,6 +758,7 @@ InterfaceSetting_Rollback
         ANSC_HANDLE                 hInsContext
     );
 
+#if !defined (RESOURCE_OPTIMIZATION)
 /***********************************************************************
 
  APIs for Object:
@@ -936,6 +937,7 @@ InterfaceSetting3_GetParamStringValue
         char*                       pValue,
         ULONG*                      pUlSize
     );
+#endif
 
 /***********************************************************************
 
