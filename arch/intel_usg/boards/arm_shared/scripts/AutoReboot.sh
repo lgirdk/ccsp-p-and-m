@@ -32,6 +32,9 @@ DOWNLOAD_INPROGRESS="/tmp/.downloadingfw"
 deferReboot="/tmp/.deferringreboot"
 ABORT_REBOOT="/tmp/AbortReboot"
 abortReboot_count=0
+#Rfc Agent files
+PROCESSING_RFC="/tmp/.processingrfc"
+PENDING_RFC_REBOOT="/tmp/.pendingrfcreboot"
 
 
 calcRandTime()
@@ -82,6 +85,23 @@ checkMaintenanceWindow()
     else
         reb_window=0
     fi
+}
+
+# Check RFC processing and signal rfc agent to start processing
+checkrfcstatus()
+{
+    count=0
+    #Wait here till the RFC's are processed or 10 minutes
+    while [ -f "$PROCESSING_RFC" ] && [ $count -lt 60 ]; do
+        count=$((count + 1))
+        sleep 10
+        if [ $count -eq 60 ]; then
+            echo_t "XCONF SCRIPT : Timed out for RFC processing"
+        fi
+        if [ ! -f "$PROCESSING_RFC" ]; then
+            echo_t "XCONF SCRIPT : RFC processing done"
+        fi
+    done
 }
 
 reboot_device_success=0
@@ -141,6 +161,10 @@ while [ $reboot_device_success -eq 0 ]; do
             done
                  
         fi 
+        
+        if [ ! -f $PENDING_RFC_REBOOT ];then
+            checkrfcstatus    
+        fi
   
     
         # The reboot ready status changed to OK within the maintenance window,proceed
@@ -160,6 +184,10 @@ while [ $reboot_device_success -eq 0 ]; do
                 if [ -f $REBOOT_WAIT ]
                 then
                     echo_t "Waiting for sowftware upgrade reboot,so no need to do auto reboot"
+                    exit
+                elif [ -f $PENDING_RFC_REBOOT ]
+                then
+                    echo_t "Waiting for RFC reboot,so no need to do auto reboot"
                     exit
                 else
                     echo_t "setting LastRebootReason as AutoReboot"

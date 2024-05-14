@@ -2486,8 +2486,17 @@ CosaDmlDcSetFactoryReset
 	}
 	if (factory_reset_mask & FR_NONE){
 	}
-	// do backup logs 
+	// Delete rfc agent files & do backup logs 
 	if (factory_reset_mask & FR_ROUTER) {
+        if ( access("/nvram/rfc.json", F_OK) == 0 )
+        {
+            remove("/nvram/rfc.json");
+        }
+
+        if ( access("/opt/secure/RFC/.RFC_SSHWhiteList.list", F_OK) == 0 )
+        {
+            remove("/opt/secure/RFC/.RFC_SSHWhiteList.list");
+        }
            pthread_t logs;
 	      if (wifiThreadStarted){
 		//if wifithread staretd, pass wifi thread id so backulogs thread waits for it to complete before starting backup
