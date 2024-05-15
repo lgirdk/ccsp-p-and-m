@@ -89,7 +89,8 @@ static void get_parodus_url(char **url)
 
     if( NULL != fp ) {
         char str[255] = {'\0'};
-        while( fscanf(fp,"%s", str) != EOF) {
+		/* CID 135653 Calling risky function : fix */
+        while( fscanf(fp,"%254s", str) != EOF) {
             char *value = NULL;
             if( ( value = strstr(str, "PARODUS_URL=") ) ) {
                 value = value + strlen("PARODUS_URL=");
