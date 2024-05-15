@@ -1,3 +1,4 @@
+
 /*
  * If not stated otherwise in this file or this component's Licenses.txt file the
  * following copyright and licenses apply:
@@ -1605,7 +1606,8 @@ CosaSecurityIARegAddInfo
     
 
         pPoamIrepFo->Remove((ANSC_HANDLE)pPoamIrepFo);
-        pPoamIrepFo = NULL;
+        /* CID 340673 Unused value : fix */
+        // pPoamIrepFo = NULL;
     }
 
         rc = sprintf_s(FolderName, sizeof(FolderName),"%s%lu%lu", pPreffix, ulUpperInsNum, pCosaContext->InstanceNumber);
