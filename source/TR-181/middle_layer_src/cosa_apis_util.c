@@ -1859,7 +1859,7 @@ int parseProcfileParams(char* lineToParse,ifv6Details *detailsToParse,char* inte
     if (lineToParse == NULL)
            return 0;
 
-    if(sscanf(lineToParse, "%s %x %x %x %x %s", detailsToParse->ipv6_addr,&detailsToParse->devIndex,
+    if(sscanf(lineToParse, "%39s %x %x %x %x %19s", detailsToParse->ipv6_addr,&detailsToParse->devIndex,
               &detailsToParse->bitsToMask,&detailsToParse->scopeofipv6,&detailsToParse->flags,detailsToParse->intrName) == 6)
     {
 
