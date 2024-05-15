@@ -779,7 +779,8 @@ CosaDhcpv6BackendGetDhcpv6Info
 
                 AnscFreeMemory(pPoolCxtLink);
                 pPoolCxtLink                  = pPoolCxtLink2;
-                pPoolCxtLink2                 = NULL;
+                /* CID 340706 Unused value : FIX */
+                // pPoolCxtLink2                 = NULL;
                 
             }            
 
