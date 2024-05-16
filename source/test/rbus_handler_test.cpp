@@ -19,7 +19,9 @@ extern "C"
 {
 #include "cosa_rbus_handler_apis.h"
 #include <rbus.h>
+#if  defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED)
 extern rbusError_t publishDevCtrlNetMode(uint32_t new_val, uint32_t old_val);
+#endif
 extern rbusError_t publishWanIpAddr(char* event_name, char* new_val, char* old_val);
 extern rbusError_t sendUpdateEvent(char* event_name , void* eventNewData, void* eventOldData, rbusValueType_t rbus_type);
 extern char const* GetParamName(char const* path);
@@ -83,6 +85,8 @@ TEST_F(PandMSSPTestFixture, GetParamName_3) {
 
 #define MOCK_RBUS_HANDLER_PAM
 
+//TODO:
+#if  defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED)
 extern unsigned int gSubscribersCount;
 
 //Failure case for publishDevCtrlNetMode
@@ -111,6 +115,7 @@ TEST (PandMSSPTest_1, publishDevCtrlNetMode_Test1)
         ret = publishDevCtrlNetMode(new_val, old_val);
         EXPECT_EQ(ret, RBUS_ERROR_SUCCESS);
 }
+#endif
 
 //Failure case for publishWanIpAddr
 TEST_F (PandMSSPTestFixture, publishWanIpAddr_Test1)

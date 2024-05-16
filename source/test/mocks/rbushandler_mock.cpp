@@ -71,6 +71,7 @@ extern "C" bool PAM_Rbus_SyseventInit()
 }
 #endif
 
+/* TODO:
 #ifdef MOCK_RBUS_HANDLER_PAM_1
 extern "C" rbusError_t publishDevCtrlNetMode(uint32_t new_val, uint32_t old_val)
 {
@@ -81,6 +82,7 @@ extern "C" rbusError_t publishDevCtrlNetMode(uint32_t new_val, uint32_t old_val)
     return g_rbusHandlerMock->publishDevCtrlNetMode(new_val, old_val);
 }
 #endif
+*/
 
 #ifdef MOCK_RBUS_HANDLER_PAM_DML
 extern "C" ULONG DeviceInfo_GetParamStringValue(ANSC_HANDLE hInsContext, char* ParamName, char* pValue, ULONG* pUlSize)

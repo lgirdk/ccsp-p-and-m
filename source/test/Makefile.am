@@ -137,11 +137,6 @@ CcspPandMSsp_gtest_bin_SOURCES = ../TR-181/middle_layer_src/parodus_interface.c 
                                  ../TR-181/middle_layer_src/cosa_nat_dml_custom.c \
                                  ../TR-181/middle_layer_src/cosa_onboardlogging_internal.c \
                                  ../TR-181/middle_layer_src/cosa_ip_internal.c \
-                                 ../TR-181/middle_layer_src/speedboost_apis.c \
-                                 ../TR-181/middle_layer_src/speedBoostDoc.c \
-                                 ../TR-181/middle_layer_src/speedboost_dml.c \
-                                 ../TR-181/middle_layer_src/speedboost_rbus_handlers.c \
-                                 ../TR-181/middle_layer_src/speedboost_event_publish.c \
                                  ../../custom/comcast/source/TR-181/custom_ml/cosa_x_comcast_com_gre_internal.c \
                                  ../../custom/comcast/source/TR-181/custom_sbapi/cosa_x_comcast_com_gre_apis.c \
                                  ../../custom/comcast/source/TR-181/custom_sbapi/cosa_deviceinfo_apis_custom.c \
@@ -157,8 +152,10 @@ CcspPandMSsp_gtest_bin_SOURCES = ../TR-181/middle_layer_src/parodus_interface.c 
                                  ../../source-arm/TR-181/board_ml/cosa_x_cisco_com_filetransfer_internal.c \
                                  ../../source-arm/TR-181/board_sbapi/cosa_deviceinfo_apis.c \
                                  ../../source-arm/TR-181/board_sbapi/cosa_ip_apis.c \
-                                 ../../source-arm/TR-181/board_sbapi/speedboost_webconfig_apis.c \
-                                 ../../source-arm/TR-181/board_sbapi/speedboost_scheduler_apis.c \
+                                 ../../source-arm/TR-181/board_sbapi/cosa_bridging_apis.c \
+                                 ../../source-arm/TR-181/board_sbapi/cosa_hosts_apis.c \
+                                 ../../source-arm/TR-181/board_sbapi/cosa_x_cisco_com_devicecontrol_apis.c \
+                                 ../../source-arm/TR-181/board_sbapi/cosa_ethernet_apis.c\
                                  ../PandMSsp/dm_pack_datamodel.c \
                                  rbus_handler_test.cpp \
                                  cosa_common_util_test.cpp \
@@ -166,5 +163,16 @@ CcspPandMSsp_gtest_bin_SOURCES = ../TR-181/middle_layer_src/parodus_interface.c 
                                  mocks/commonutil_mock.cpp \
                                  pandmssp_mock.cpp \
                                  gtest_main.cpp
+
+if FEATURE_SUPPORT_SPEED_BOOST
+CcspPandMSsp_gtest_bin_SOURCES += ../TR-181/middle_layer_src/speedboost_apis.c \
+                                  ../TR-181/middle_layer_src/speedBoostDoc.c \
+                                  ../TR-181/middle_layer_src/speedboost_dml.c \
+                                  ../TR-181/middle_layer_src/speedboost_rbus_handlers.c \
+                                  ../TR-181/middle_layer_src/speedboost_event_publish.c \
+                                  ../../source-arm/TR-181/board_sbapi/speedboost_webconfig_apis.c \
+                                  ../../source-arm/TR-181/board_sbapi/speedboost_scheduler_apis.c
+endif
+
 CcspPandMSsp_gtest_bin_LDFLAGS = -lgtest -lgmock -lgcov -pthread -lccsp_common -ldl -lrbus $(SYSTEMD_LDFLAGS) -lrdkloggers -lsyscfg -lnanomsg -lsysevent -lwebconfig_framework -lmsgpackc -lcurl -ltrower-base64 -lsecure_wrapper -lrtMessage -lhal_platform -lhal_moca -lapi_dhcpv4c -lhal_msomgmt -lhal_ethsw -llmapi -lcm_mgnt -lutapi -lutctx -llibparodus -lcrypto -lulog
 
