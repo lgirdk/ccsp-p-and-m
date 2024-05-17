@@ -26,6 +26,8 @@
 #include <sysevent/sysevent.h>
 #include "safec_lib_common.h"
 #include "secure_wrapper.h"
+#include "cosa_drg_common.h"
+#include "cosa_dynamicdns_dml.h"
 
       /* MACROS */
 #define  SYSCFG_SERVER_ENABLE_KEY         "ddns_server_enable_%lu"
@@ -357,7 +359,7 @@ DynamicDns_Client_InsGetIndex
     for (i = 0; i < g_NrDynamicDnsClient; i++)
     {
         Utopia_GetDynamicDnsClientInsNumByIndex(&ctx, i, &ins_num);
-        if (ins_num == ins) {
+        if ((ULONG)ins_num == ins) {
             ret = i;
             break;
         }
@@ -390,7 +392,7 @@ CosaDmlDynamicDns_Client_GetEntryByIndex
     UtopiaContext ctx;
     DynamicDnsClient_t  DDNSclient = {0};
 
-    if (index >= g_NrDynamicDnsClient || !Utopia_Init(&ctx))
+    if ((int)index >= g_NrDynamicDnsClient || !Utopia_Init(&ctx))
     {
         return ANSC_STATUS_FAILURE;
     }
@@ -421,7 +423,7 @@ CosaDmlDynamicDns_Client_SetValues
     int rc = -1;
     UtopiaContext ctx;
 
-    if (index >= g_NrDynamicDnsClient || !Utopia_Init(&ctx))
+    if ((int)index >= g_NrDynamicDnsClient || !Utopia_Init(&ctx))
     {
         return ANSC_STATUS_FAILURE;
     }
@@ -570,10 +572,10 @@ CosaDmlDynamicDns_Client_SetConf
     syscfg_get(NULL, "ddns_client_Status", client_status, sizeof(client_status));
 
     Utopia_GetDynamicDnsClientByIndex(&ctx, index, &DDNSclient);
-    if (CosaDmlDynamicDns_GetEnable() && pEntry->Enable == TRUE &&
+    if ((CosaDmlDynamicDns_GetEnable() && pEntry->Enable == TRUE &&
        ((strcmp(DDNSclient.Username, pEntry->Username) != 0) ||
        (strcmp(DDNSclient.Password, pEntry->Password) != 0) ||
-       (strcmp(DDNSclient.Server, pEntry->Server) != 0)) ||
+       (strcmp(DDNSclient.Server, pEntry->Server) != 0))) ||
        (atoi(client_status) != CLIENT_UPDATED))
     {
         CcspTraceInfo(("%s UserConf changed \n",__FUNCTION__));
@@ -760,7 +762,7 @@ CosaDmlDynamicDns_Host_GetEntryByIndex
     char name[256] = {0};
     ULONG status = HOST_DISABLED;
 
-    if (index >= g_NrDynamicDnsHost || (!g_DDNSHost))
+    if ((int)index >= g_NrDynamicDnsHost || (!g_DDNSHost))
     {
         return ANSC_STATUS_FAILURE;
     }
@@ -796,7 +798,7 @@ CosaDmlDynamicDns_Host_SetValues
     )
 {
 
-    if (index >= g_NrDynamicDnsHost || !g_DDNSHost)
+    if ((int)index >= g_NrDynamicDnsHost || !g_DDNSHost)
     {
         return ANSC_STATUS_FAILURE;
     }
@@ -824,6 +826,7 @@ CosaDmlDynamicDns_Host_DelEntry
         ULONG ins
     )
 {
+    UNREFERENCED_PARAMETER(ins);
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -864,7 +867,7 @@ CosaDmlDynamicDns_Host_SetConf
     COSA_DML_DDNS_CLIENT *pClientEntry = NULL;
     BOOL bReadyUpdate = FALSE;
 
-    if ((index = DynamicDns_Host_InsGetIndex(ins)) == -1 || (!g_DDNSHost))
+    if ((int)(index = DynamicDns_Host_InsGetIndex(ins)) == -1 || (!g_DDNSHost))
     {
         return ANSC_STATUS_FAILURE;
     }
@@ -988,7 +991,7 @@ void CosaInitializeTr181DdnsServiceProviderList()
         char serveraddress_path[sizeof(SYSCFG_SERVER_SERVERADDRESS_KEY) +1] = {0};
         g_NrDynamicDnsServer = sizeof(gDdnsServices)/sizeof(DDNS_SERVICE);
         g_DDNSServer = (COSA_DML_DDNS_SERVER *)AnscAllocateMemory(g_NrDynamicDnsServer * sizeof(COSA_DML_DDNS_SERVER));
-       for(index = 0; index<g_NrDynamicDnsServer; index++)
+       for(index = 0; (int)index<g_NrDynamicDnsServer; index++)
         {
             g_DDNSServer[index].Enable = FALSE;
             g_DDNSServer[index].InstanceNumber = index+1;
@@ -1025,6 +1028,7 @@ DynamicDns_Server_InsGetIndex
         ULONG ins
     )
 {
+    UNREFERENCED_PARAMETER(ins);
     int i, ret = -1;
 
     CosaDmlDynamicDns_Server_GetNumberOfEntries();
@@ -1065,7 +1069,7 @@ CosaDmlDynamicDns_Server_GetEntryByIndex
     ULONG checkinterval = 0, retryinterval = DEFAULT_RETRYINTERVAL, maxretries = DEFAULT_MAXRETRIES, serverport = 0;
    BOOLEAN enable = FALSE;
 
-    if (index >= g_NrDynamicDnsServer || (!g_DDNSServer))
+    if ((int)index >= g_NrDynamicDnsServer || (!g_DDNSServer))
     {
         return ANSC_STATUS_FAILURE;
     }
@@ -1125,7 +1129,7 @@ CosaDmlDynamicDns_Server_SetValues
     )
 {
 
-    if (index >= g_NrDynamicDnsServer || !g_DDNSServer)
+    if ((int)index >= g_NrDynamicDnsServer || !g_DDNSServer)
     {
         return ANSC_STATUS_FAILURE;
     }
@@ -1142,6 +1146,7 @@ CosaDmlDynamicDns_Server_AddEntry
         COSA_DML_DDNS_SERVER *pEntry
     )
 {
+    UNREFERENCED_PARAMETER(pEntry);
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -1151,6 +1156,7 @@ CosaDmlDynamicDns_Server_DelEntry
         ULONG ins
     )
 {
+    UNREFERENCED_PARAMETER(ins);
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -1188,7 +1194,7 @@ CosaDmlDynamicDns_Server_SetConf
     char serveraddress_path[sizeof(SYSCFG_SERVER_SERVERADDRESS_KEY) + 1] = {0};
     char servicename_path[sizeof(SYSCFG_SERVER_SERVICENAME_KEY) +1] = {0};
 
-    if ((index = DynamicDns_Server_InsGetIndex(ins)) == -1 || (!g_DDNSServer))
+    if ((int)(index = DynamicDns_Server_InsGetIndex(ins)) == -1 || (!g_DDNSServer))
     {
         return ANSC_STATUS_FAILURE;
     }

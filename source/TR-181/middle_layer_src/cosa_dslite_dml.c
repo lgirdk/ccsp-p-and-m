@@ -94,7 +94,6 @@ DSLite_SetParamBoolValue
     UNREFERENCED_PARAMETER(hInsContext);
     UNREFERENCED_PARAMETER(ParamName);
     UNREFERENCED_PARAMETER(bValue);
-    int rc = -1;
     /* check the parameter name and set the corresponding value */
     if (strcmp(ParamName, "Enable") == 0)
     {
@@ -103,7 +102,7 @@ DSLite_SetParamBoolValue
         {
               return FALSE;
         }
-        rc = v_secure_system("/bin/sh /etc/utopia/service.d/set_resolv_conf.sh");
+	v_secure_system("/bin/sh /etc/utopia/service.d/set_resolv_conf.sh");
         return TRUE;
     }
     return FALSE;

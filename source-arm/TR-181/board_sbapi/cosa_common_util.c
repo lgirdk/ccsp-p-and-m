@@ -595,6 +595,11 @@ static void
 EvtDispterWanIpAddrsCallback(char *ip_addrs)
 {
     static char previous_ip[16] = "0.0.0.0";
+
+#if !defined (RBUS_WAN_IP)
+    UNREFERENCED_PARAMETER(previous_ip);
+#endif
+
 #ifdef DUAL_CORE_XB3
     CcspTraceInfo(("%s vsystem %d \n", __FUNCTION__,__LINE__)); 
     CcspTraceInfo(("EvtDispterWanIpAddrsCallback - erouter0 IP = %s\n",ip_addrs));

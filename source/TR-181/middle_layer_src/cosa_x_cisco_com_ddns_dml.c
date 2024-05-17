@@ -199,6 +199,8 @@ X_CISCO_COM_DDNS_GetParamBoolValue
     return FALSE;
 #endif
 #if defined(DDNS_BROADBANDFORUM)
+    UNREFERENCED_PARAMETER(ParamName);
+    UNREFERENCED_PARAMETER(pBool);
     return TRUE;
 #endif
 }
@@ -241,14 +243,14 @@ X_CISCO_COM_DDNS_GetParamIntValue
         int*                        pInt
     )
 {
-    /* check the parameter name and return the corresponding value */
-#if !defined(DDNS_BROADBANDFORUM)
-
-    /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     UNREFERENCED_PARAMETER(hInsContext);
     UNREFERENCED_PARAMETER(ParamName);
     UNREFERENCED_PARAMETER(pInt);
 
+    /* check the parameter name and return the corresponding value */
+#if !defined(DDNS_BROADBANDFORUM)
+
+    /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
 #endif
 #if defined(DDNS_BROADBANDFORUM)
@@ -295,14 +297,13 @@ X_CISCO_COM_DDNS_GetParamUlongValue
         ULONG*                      puLong
     )
 {
+    UNREFERENCED_PARAMETER(hInsContext);
+    UNREFERENCED_PARAMETER(ParamName);
+    UNREFERENCED_PARAMETER(puLong);
     /* check the parameter name and return the corresponding value */
 #if !defined(DDNS_BROADBANDFORUM)
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
-    UNREFERENCED_PARAMETER(hInsContext);
-    UNREFERENCED_PARAMETER(ParamName);
-    UNREFERENCED_PARAMETER(puLong);
-    
     return FALSE;
 #endif
 #if defined(DDNS_BROADBANDFORUM)
@@ -357,15 +358,14 @@ X_CISCO_COM_DDNS_GetParamStringValue
         ULONG*                      pUlSize
     )
 {
-    /* check the parameter name and return the corresponding value */
-#if !defined(DDNS_BROADBANDFORUM)
-
-    /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     UNREFERENCED_PARAMETER(hInsContext);
     UNREFERENCED_PARAMETER(ParamName);
     UNREFERENCED_PARAMETER(pValue);
     UNREFERENCED_PARAMETER(pUlSize);
+    /* check the parameter name and return the corresponding value */
+#if !defined(DDNS_BROADBANDFORUM)
 
+    /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return -1;
 #endif
 #if defined(DDNS_BROADBANDFORUM)
@@ -437,6 +437,8 @@ X_CISCO_COM_DDNS_SetParamBoolValue
     return FALSE;
 #endif
 #if defined(DDNS_BROADBANDFORUM)
+    UNREFERENCED_PARAMETER(ParamName);
+    UNREFERENCED_PARAMETER(bValue);
     return TRUE;
 #endif
 }
@@ -479,15 +481,15 @@ X_CISCO_COM_DDNS_SetParamIntValue
         int                         iValue
     )
 {
+    UNREFERENCED_PARAMETER(hInsContext);
+    UNREFERENCED_PARAMETER(ParamName);
+    UNREFERENCED_PARAMETER(iValue);
+
 #if !defined(DDNS_BROADBANDFORUM)
 
     /* check the parameter name and set the corresponding value */
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
-    UNREFERENCED_PARAMETER(hInsContext);
-    UNREFERENCED_PARAMETER(ParamName);
-    UNREFERENCED_PARAMETER(iValue);
-
     return FALSE;
 #endif
 #if defined(DDNS_BROADBANDFORUM)
@@ -533,15 +535,15 @@ X_CISCO_COM_DDNS_SetParamUlongValue
         ULONG                       uValue
     )
 {
+    UNREFERENCED_PARAMETER(hInsContext);
+    UNREFERENCED_PARAMETER(ParamName);
+    UNREFERENCED_PARAMETER(uValue);
+
 #if !defined(DDNS_BROADBANDFORUM)
 
     /* check the parameter name and set the corresponding value */
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
-    UNREFERENCED_PARAMETER(hInsContext);
-    UNREFERENCED_PARAMETER(ParamName);
-    UNREFERENCED_PARAMETER(uValue);
-
     return FALSE;
 #endif
 #if defined(DDNS_BROADBANDFORUM)
@@ -587,15 +589,15 @@ X_CISCO_COM_DDNS_SetParamStringValue
         char*                       pString
     )
 {
+    UNREFERENCED_PARAMETER(hInsContext);
+    UNREFERENCED_PARAMETER(ParamName);
+    UNREFERENCED_PARAMETER(pString);
+
 #if !defined(DDNS_BROADBANDFORUM)
 
     /* check the parameter name and set the corresponding value */
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
-    UNREFERENCED_PARAMETER(hInsContext);
-    UNREFERENCED_PARAMETER(ParamName);
-    UNREFERENCED_PARAMETER(pString);
-
     return FALSE;
 #endif
 #if defined(DDNS_BROADBANDFORUM)
@@ -851,6 +853,8 @@ Service_GetEntry
     return pCosaContext; /* return the handle */
 #endif
 #if defined(DDNS_BROADBANDFORUM)
+   UNREFERENCED_PARAMETER(nIndex);
+   UNREFERENCED_PARAMETER(pInsNumber);
    return 0;
 #endif
 }
@@ -949,6 +953,7 @@ Service_AddEntry
     return pCosaContext; /* return the handle */
 #endif
 #if defined(DDNS_BROADBANDFORUM)
+   UNREFERENCED_PARAMETER(pInsNumber);
    return 0;
 #endif
 }
@@ -1016,6 +1021,7 @@ Service_DelEntry
     return returnStatus;
 #endif
 #if defined(DDNS_BROADBANDFORUM)
+   UNREFERENCED_PARAMETER(hInstance);
    return 0;
 #endif
 }
@@ -1096,6 +1102,9 @@ Service_GetParamBoolValue
     return FALSE;
 #endif
 #if defined(DDNS_BROADBANDFORUM)
+   UNREFERENCED_PARAMETER(hInsContext);
+   UNREFERENCED_PARAMETER(ParamName);
+   UNREFERENCED_PARAMETER(pBool);
    return TRUE;
 #endif
 
@@ -1139,15 +1148,14 @@ Service_GetParamIntValue
         int*                        pInt
     )
 {
+    UNREFERENCED_PARAMETER(hInsContext);
+    UNREFERENCED_PARAMETER(ParamName);
+    UNREFERENCED_PARAMETER(pInt);
 #if !defined(DDNS_BROADBANDFORUM)
 
     /* check the parameter name and return the corresponding value */
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
-    UNREFERENCED_PARAMETER(hInsContext);
-    UNREFERENCED_PARAMETER(ParamName);
-    UNREFERENCED_PARAMETER(pInt);
-
     return FALSE;
 #endif
 #if defined(DDNS_BROADBANDFORUM)
@@ -1243,6 +1251,9 @@ Service_GetParamUlongValue
     return FALSE;
 #endif
 #if defined(DDNS_BROADBANDFORUM)
+   UNREFERENCED_PARAMETER(hInsContext);
+   UNREFERENCED_PARAMETER(ParamName);
+   UNREFERENCED_PARAMETER(puLong);
    return TRUE;
 #endif
 }
@@ -1378,6 +1389,9 @@ Service_GetParamStringValue
     return -1;
 #endif
 #if defined(DDNS_BROADBANDFORUM)
+  UNREFERENCED_PARAMETER(hInsContext);
+  UNREFERENCED_PARAMETER(ParamName);
+  UNREFERENCED_PARAMETER(pValue);
   return 0;
 #endif
 }
@@ -1452,6 +1466,9 @@ Service_SetParamBoolValue
     return FALSE;
 #endif
 #if defined(DDNS_BROADBANDFORUM)
+    UNREFERENCED_PARAMETER(hInsContext);
+    UNREFERENCED_PARAMETER(ParamName);
+    UNREFERENCED_PARAMETER(bValue);
     return TRUE;
 #endif
 }
@@ -1494,15 +1511,14 @@ Service_SetParamIntValue
         int                         iValue
     )
 {
+    UNREFERENCED_PARAMETER(hInsContext);
+    UNREFERENCED_PARAMETER(ParamName);
+    UNREFERENCED_PARAMETER(iValue);
 #if !defined(DDNS_BROADBANDFORUM)
 
     /* check the parameter name and set the corresponding value */
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
-    UNREFERENCED_PARAMETER(hInsContext);
-    UNREFERENCED_PARAMETER(ParamName);
-    UNREFERENCED_PARAMETER(iValue);
-
     return FALSE;
 #endif
 #if defined(DDNS_BROADBANDFORUM)
@@ -1601,6 +1617,9 @@ Service_SetParamUlongValue
     return FALSE;
 #endif
 #if defined(DDNS_BROADBANDFORUM)
+   UNREFERENCED_PARAMETER(hInsContext);
+   UNREFERENCED_PARAMETER(ParamName);
+   UNREFERENCED_PARAMETER(uValue);
    return TRUE;
 #endif
 }
@@ -1797,6 +1816,9 @@ Service_SetParamStringValue
     return FALSE;
 #endif
 #if defined(DDNS_BROADBANDFORUM)
+    UNREFERENCED_PARAMETER(hInsContext);
+    UNREFERENCED_PARAMETER(ParamName);
+    UNREFERENCED_PARAMETER(pString);
     return TRUE;
 #endif
 
@@ -1849,7 +1871,8 @@ BOOL Service_IsDomainStringHaveRepeatedWord ( char* pStringDomain )
 	return FALSE;
 #endif
 #if defined(DDNS_BROADBANDFORUM)
-       return TRUE;
+	UNREFERENCED_PARAMETER(pStringDomain);
+	return TRUE;
 #endif
 }
 
@@ -1882,6 +1905,10 @@ int Service_CheckRepeatString( struct detail stDetailArray[], const char unit[],
     return ( count + 1);
 #endif
 #if defined(DDNS_BROADBANDFORUM)
+    UNREFERENCED_PARAMETER(stDetailArray);
+    UNREFERENCED_PARAMETER(unit);
+    UNREFERENCED_PARAMETER(count);
+    UNREFERENCED_PARAMETER(pIsHaveRepeatedWord);
     return 0;
 #endif
 }
@@ -1991,6 +2018,9 @@ Service_Validate
     return TRUE;
 #endif
 #if defined(DDNS_BROADBANDFORUM)
+   UNREFERENCED_PARAMETER(hInsContext);
+   UNREFERENCED_PARAMETER(pReturnParamName);
+   UNREFERENCED_PARAMETER(puLength);
    return TRUE;
 #endif
 }
@@ -2049,6 +2079,7 @@ Service_Commit
     return returnStatus;
 #endif
 #if defined(DDNS_BROADBANDFORUM)
+   UNREFERENCED_PARAMETER(hInsContext);
    return 0;
 #endif
 }
@@ -2096,7 +2127,8 @@ Service_Rollback
 
 #endif
 #if defined(DDNS_BROADBANDFORUM) 
-  return 0;
+    UNREFERENCED_PARAMETER(hInsContext);
+    return 0;
 #endif
 }
 

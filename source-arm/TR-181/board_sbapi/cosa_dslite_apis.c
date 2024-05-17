@@ -27,6 +27,8 @@ CosaDmlDsliteInit
         PANSC_HANDLE                phContext
     )
 {
+    UNREFERENCED_PARAMETER(hDml);
+    UNREFERENCED_PARAMETER(phContext);
     return ANSC_STATUS_SUCCESS;
 }
 
@@ -37,6 +39,7 @@ CosaDmlGetDsliteEnable
         BOOL                       *bEnabled
     )
 {
+    UNREFERENCED_PARAMETER(hContext);
     int rc = -1;
     UtopiaContext ctx;
     boolean_t enabled = FALSE;
@@ -66,6 +69,7 @@ CosaDmlSetDsliteEnable
         BOOLEAN                     bEnabled
     )
 {
+    UNREFERENCED_PARAMETER(hContext);
     int rc = -1;
     UtopiaContext ctx;
     boolean_t read_dslite_enable;
@@ -106,6 +110,7 @@ CosaDmlDsliteAddEntry
         PCOSA_DML_DSLITE            pEntry
     )
 {
+    UNREFERENCED_PARAMETER(hContext);
     int rc = -1;
     UtopiaContext ctx;
     DsLiteCfg_t dslite_cfg;
@@ -151,6 +156,7 @@ CosaDmlDsliteDelEntry
         ULONG                       ulInstanceNumber
     )
 {
+    UNREFERENCED_PARAMETER(hContext);
     int rc = -1;
     UtopiaContext ctx;
 
@@ -176,6 +182,7 @@ CosaDmlDsliteSetCfg
         PCOSA_DML_DSLITE            pEntry
     )
 {
+    UNREFERENCED_PARAMETER(hContext);
     int rc = -1;
     UtopiaContext ctx;
     DsLiteCfg_t dslite_cfg;
@@ -246,6 +253,7 @@ CosaDmlDsliteGetCfg
         PCOSA_DML_DSLITE            pEntry
     )
 {
+    UNREFERENCED_PARAMETER(hContext);
     int rc = -1;
     UtopiaContext ctx;
     DsLiteCfg_t dslite_cfg;
@@ -290,6 +298,7 @@ CosaDmlDsliteGetNumberOfEntries
         ULONG                       *pNum
     )
 {
+    UNREFERENCED_PARAMETER(hContext);
     UtopiaContext ctx;
 
     if(!Utopia_Init(&ctx))
@@ -310,6 +319,7 @@ CosaDmlDsliteGetEntry
         PCOSA_DML_DSLITE            pEntry
     )
 {
+    UNREFERENCED_PARAMETER(hContext);
     int rc = -1;
     UtopiaContext ctx;
     DsLiteCfg_t dslite_cfg;
@@ -356,6 +366,7 @@ CosaDmlDsliteSetInsNum
         ULONG                       ulInstanceNumber
     )
 {
+    UNREFERENCED_PARAMETER(hContext);
     int rc = -1;
     UtopiaContext ctx;
 

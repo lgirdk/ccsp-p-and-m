@@ -227,7 +227,7 @@ DDNSClient_AddEntry
     {
         pDynamicDns->DDNSClientNextInsNum = 1;
     }
-    rc = sprintf_s(pClientEntry->Alias, sizeof(pClientEntry->Alias), "cpe-ddns-client-%d", pLinkObj->InstanceNumber);
+    rc = sprintf_s(pClientEntry->Alias, sizeof(pClientEntry->Alias), "cpe-ddns-client-%ld", pLinkObj->InstanceNumber);
     if(rc < EOK)
     {
       ERR_CHK(rc);
@@ -639,7 +639,7 @@ DDNSHostname_AddEntry
     {
         pDynamicDns->DDNSHostNextInsNum = 1;
     }
-    rc = sprintf_s(pHostEntry->Alias, sizeof(pHostEntry->Alias),"cpe-ddns-host-%d", pLinkObj->InstanceNumber);
+    rc = sprintf_s(pHostEntry->Alias, sizeof(pHostEntry->Alias),"cpe-ddns-host-%ld", pLinkObj->InstanceNumber);
     if(rc < EOK)
     {
       ERR_CHK(rc);
