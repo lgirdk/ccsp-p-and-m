@@ -9315,7 +9315,13 @@ dhcpv6c_dbg_thrd(void * in)
  * need to change the flag to FEATURE_RDKB_WAN_MANAGER.
 */
 #ifndef _HUB4_PRODUCT_REQ_
-    commonSyseventSet(COSA_DML_DHCPV6C_PREF_SYSEVENT_NAME,       v6pref);
+    char wan_v6_pref_received[100];
+    memset(wan_v6_pref_received,0,sizeof(wan_v6_pref_received));
+    rc = sprintf_s(wan_v6_pref_received,sizeof(wan_v6_pref_received),"%s/%d",v6Tpref,pref_len);
+    if(rc < EOK){
+        ERR_CHK(rc);
+    }    
+    commonSyseventSet(COSA_DML_DHCPV6C_PREF_SYSEVENT_NAME,       wan_v6_pref_received);
 #endif
 #if defined(CISCO_CONFIG_DHCPV6_PREFIX_DELEGATION) && defined(_CBR_PRODUCT_REQ_)
 #else
