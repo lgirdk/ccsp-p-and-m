@@ -2350,7 +2350,6 @@ PortMapping_SetParamUlongValue
 {
     PCOSA_CONTEXT_PMAPPING_LINK_OBJECT        pCxtLink      = (PCOSA_CONTEXT_PMAPPING_LINK_OBJECT)hInsContext;
     PCOSA_DML_NAT_PMAPPING                    pNatPMapping  = (PCOSA_DML_NAT_PMAPPING)pCxtLink->hContext;
-    ANSC_STATUS                               returnStatus  = ANSC_STATUS_SUCCESS;
 
     #ifndef MULTILAN_FEATURE
     BOOL bridgeMode;
@@ -2429,7 +2428,7 @@ PortMapping_SetParamUlongValue
     }
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
-    return (returnStatus==ANSC_STATUS_SUCCESS) ? TRUE : FALSE;
+    return FALSE ;
 
 }
 
