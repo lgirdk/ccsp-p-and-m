@@ -7386,15 +7386,20 @@ Option4_AddEntry
         ULONG*                      pInsNumber
     )
 {
+#ifndef MULTILAN_FEATURE
+ {
+	 UNREFERENCED_PARAMETER(hInsContext);
+	 UNREFERENCED_PARAMETER(pInsNumber);
+	/* We just have two option:DNS, domain. Not permit to add/delete. */
+	return NULL;
+ }
+#else
+ {
     PCOSA_CONTEXT_POOLV6_LINK_OBJECT  pCxtPoolLink         = (PCOSA_CONTEXT_POOLV6_LINK_OBJECT)hInsContext;
     PCOSA_CONTEXT_LINK_OBJECT         pCxtLink             = NULL;
     PCOSA_DML_DHCPSV6_POOL_OPTION     pDhcpOption          = NULL;
     PCOSA_DATAMODEL_DHCPV6            pDhcpv6              = (PCOSA_DATAMODEL_DHCPV6)g_pCosaBEManager->hDhcpv6;
     errno_t                           rc                   = -1;
-#ifndef MULTILAN_FEATURE
-	/* We just have two option:DNS, domain. Not permit to add/delete. */
-	return NULL;
-#endif
     /* We need ask from backend */
     pDhcpOption  = (PCOSA_DML_DHCPSV6_POOL_OPTION)AnscAllocateMemory( sizeof(COSA_DML_DHCPSV6_POOL_OPTION) );
     if ( !pDhcpOption )
@@ -7445,6 +7450,8 @@ EXIT1:
 EXIT2:   
         
     return NULL;
+ }
+#endif
 }
 
 /**********************************************************************  
@@ -7480,16 +7487,21 @@ Option4_DelEntry
         ANSC_HANDLE                 hInstance
     )
 {
+#ifndef MULTILAN_FEATURE
+ {
+	UNREFERENCED_PARAMETER(hInstance);
+	UNREFERENCED_PARAMETER(hInsContext);
+	/* We just have two option:DNS, domain. Not permit to add/delete. */
+	return ANSC_STATUS_FAILURE;
+ }
+#else
+ {
     ANSC_STATUS                       returnStatus         = ANSC_STATUS_SUCCESS;
     PCOSA_CONTEXT_POOLV6_LINK_OBJECT  pCxtPoolLink         = (PCOSA_CONTEXT_POOLV6_LINK_OBJECT)hInsContext;
     PCOSA_DML_DHCPSV6_POOL_FULL       pDhcpPool           = (PCOSA_DML_DHCPSV6_POOL_FULL)pCxtPoolLink->hContext;
     PCOSA_CONTEXT_LINK_OBJECT         pCxtLink             = (PCOSA_CONTEXT_LINK_OBJECT)hInstance;
     PCOSA_DML_DHCPSV6_POOL_OPTION     pDhcpOption          = (PCOSA_DML_DHCPSV6_POOL_OPTION)pCxtLink->hContext;
     PCOSA_DATAMODEL_DHCPV6            pDhcpv6              = (PCOSA_DATAMODEL_DHCPV6)g_pCosaBEManager->hDhcpv6;
-#ifndef MULTILAN_FEATURE
-	/* We just have two option:DNS, domain. Not permit to add/delete. */
-	return ANSC_STATUS_FAILURE;
-#endif
     if ( !pCxtLink->bNew )
     {
         returnStatus = CosaDmlDhcpv6sDelOption( NULL, pDhcpPool->Cfg.InstanceNumber, pDhcpOption->InstanceNumber );
@@ -7508,7 +7520,8 @@ Option4_DelEntry
     }
     
     return returnStatus;
-        
+ }
+#endif       
 }
 
 /**********************************************************************  
