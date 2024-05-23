@@ -1285,12 +1285,10 @@ static void* updateDHCPv4Status(void *arg)
     CCSP_MESSAGE_BUS_INFO *bus_info = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
     pthread_detach(pthread_self());
 
-    parameterValStruct_t param_val[] = {  { "Device.DHCPv4.Server.Enable", "false", ccsp_boolean},
-                                          { "Device.DHCPv4.Server.Pool.1.Enable", "false", ccsp_boolean}};
+    parameterValStruct_t param_val[] = {  { "Device.DHCPv4.Server.Pool.1.Enable", "false", ccsp_boolean}};
 
     if (!enable) {
         param_val[0].parameterValue = "true";
-        param_val[1].parameterValue = "true";
     }
     ret = CcspBaseIf_setParameterValues(bus_handle,
                                         "eRT.com.cisco.spvtg.ccsp.pam",
@@ -1326,6 +1324,10 @@ static void RestartBrlanInterface(char* brlan_ip, char* brlan_mask, char* brlan_
     Entry.AddressingType = COSA_DML_IP_ADDR_TYPE_Static;
     sscanf( brlan_ip, "%d.%d.%d.%d", &(Entry.IPAddress.Dot[0]), &(Entry.IPAddress.Dot[1]), &(Entry.IPAddress.Dot[2]), &(Entry.IPAddress.Dot[3]));
     sscanf( brlan_mask, "%d.%d.%d.%d", &(Entry.SubnetMask.Dot[0]), &(Entry.SubnetMask.Dot[1]), &(Entry.SubnetMask.Dot[2]), &(Entry.SubnetMask.Dot[3]));
+    if ( CosaDmlDhcpsEnable((ANSC_HANDLE)NULL, (BOOL)(!ripEnable) ) != ANSC_STATUS_SUCCESS )
+    {
+       CcspTraceError(("%s: Failed to Enable Dhcpserver \n",__FUNCTION__));
+    }
     CosaDmlIpIfMlanSetV4Addr(NULL, 4, &Entry);
     pthread_create(&tid1, NULL, updateDHCPv4Status, (void *)ripEnable);
     pthread_create(&tid2, NULL, updateWIFIStatus, (void *)ripEnable);
