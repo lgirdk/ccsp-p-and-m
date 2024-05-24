@@ -9501,11 +9501,13 @@ dhcpv6c_dbg_thrd(void * in)
                                 strncpy(dhcpv6_data.sitePrefix, v6pref, sizeof(dhcpv6_data.sitePrefix));
                                 strncpy(dhcpv6_data.pdIfAddress, "", sizeof(dhcpv6_data.pdIfAddress));
                                 /** DNS servers. **/
-                                commonSyseventGet(SYSEVENT_FIELD_IPV6_DNS_SERVER, dns_server, sizeof(dns_server));
+                                commonSyseventGet("ipv6_nameserver", dns_server, sizeof(dns_server)); //ti_dhcpv6 and dibbler sets V6 DSN details in ipv6_nameserver sysevent
                                 if (strlen(dns_server) != 0)
                                 {
                                     dhcpv6_data.dnsAssigned = TRUE;
                                     sscanf (dns_server, "%s %s", dhcpv6_data.nameserver, dhcpv6_data.nameserver1);
+                                    CcspTraceInfo(("%s %d: Name server : %s, Secondary name server  : %s\n", 
+                                                __FUNCTION__, __LINE__,dhcpv6_data.nameserver,dhcpv6_data.nameserver1));
                                 }
                                 dhcpv6_data.prefixPltime = hub4_preferred_lft;
                                 dhcpv6_data.prefixVltime = hub4_valid_lft;
