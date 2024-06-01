@@ -1870,6 +1870,14 @@ void* restoreAllDBs(void* arg)
     }
 #endif
 
+
+#if defined(_XER5_PRODUCT_REQ_)
+    v_secure_system("rm -rf /nvram/config.db");
+    v_secure_system("cp -rf /usr/ccsp/config.db /nvram/config.db");
+    sync();
+#endif
+
+
         // Need to remove lxy database
 #if defined(_LXY_CXB3_ATOM_IP_)
         #define ATOM_IP "169.254.101.2"
@@ -2494,6 +2502,14 @@ CosaDmlDcSetFactoryReset
 #endif
 	}
 #endif
+
+
+#if defined(_XER5_PRODUCT_REQ_)
+    v_secure_system("rm -rf /nvram/config.db");
+    v_secure_system("cp -rf /usr/ccsp/config.db /nvram/config.db");
+    sync();
+#endif
+
     return ANSC_STATUS_SUCCESS;
 }
 
