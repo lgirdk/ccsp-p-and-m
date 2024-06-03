@@ -9649,7 +9649,7 @@
               <writable>true</writable>
 
           </parameter>
-<?ifndef BCI?>
+<?ifndef BCI | def _CBR2_PRODUCT_REQ_?>
           <parameter>
 
               <name>Data</name>
@@ -10722,7 +10722,7 @@
             <writable>true</writable>
 
           </parameter>
-<?ifndef BCI?>
+<?ifndef BCI | def _CBR2_PRODUCT_REQ_?>
           <parameter>
 
             <name>StaticClientsData</name>
@@ -10734,8 +10734,7 @@
             <writable>true</writable>
 
           </parameter>
-<?endif?>
-<?ifndef BCI | def _CBR2_PRODUCT_REQ_?>
+
           <parameter>
 
             <name>Lan</name>
