@@ -853,7 +853,8 @@ CosaDhcpv4BackendGetDhcpv4Info
 
                 AnscFreeMemory(pPoolCxtLink);
                 pPoolCxtLink                  = pPoolCxtLink2;
-                pPoolCxtLink2                 = NULL;
+                /* CID 60408: Unused Value Fix */
+                // pPoolCxtLink2                 = NULL;
                 
             }            
 
