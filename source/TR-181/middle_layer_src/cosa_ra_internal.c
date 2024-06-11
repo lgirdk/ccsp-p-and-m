@@ -915,7 +915,7 @@ CosaRaRegGetInfo
         if ( pFolderName )
         {
             AnscFreeMemory(pFolderName);
-            pFolderName = NULL;
+            
         }
     }
 
