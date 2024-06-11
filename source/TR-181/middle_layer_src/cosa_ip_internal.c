@@ -1141,7 +1141,7 @@ CosaIpRegGetInfo
         if ( pFolderName )
         {
             AnscFreeMemory(pFolderName);
-            pFolderName = NULL;
+            
         }
     }
 
