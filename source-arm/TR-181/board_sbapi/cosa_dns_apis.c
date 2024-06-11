@@ -1852,18 +1852,8 @@ CosaDmlIpDnsGetRelayStatus
         }
         else
         {
-            boolean_t dslite_enable = false;
-            Utopia_GetDsliteEnable(&ctx, &dslite_enable);
-            if (dslite_enable)
-            {
-                pRelay->bEnabled = TRUE;
-                pRelay->Status = COSA_DML_DNS_STATUS_Enabled;
-            }
-            else
-            {
-                pRelay->bEnabled = FALSE;
-                pRelay->Status = COSA_DML_DNS_STATUS_Disabled;
-            }
+            pRelay->bEnabled = FALSE;
+            pRelay->Status = COSA_DML_DNS_STATUS_Disabled;
         }
 
         status = pRelay->Status;
