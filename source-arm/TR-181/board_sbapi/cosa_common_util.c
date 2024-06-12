@@ -71,7 +71,7 @@
 #include "ccsp_base_api.h"
 #include "ccsp_psm_helper.h"
 #include "cosa_rbus_handler_apis.h"
-#include "safec_lib.h"
+#include "safec_lib_common.h"
 #include "dslh_definitions_database.h"
 
 #ifdef _HUB4_PRODUCT_REQ_
