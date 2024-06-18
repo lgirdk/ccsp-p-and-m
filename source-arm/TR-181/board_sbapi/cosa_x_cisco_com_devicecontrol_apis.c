@@ -2871,7 +2871,7 @@ CosaDmlDcSetIGMPProxyEnable
     {
         if ( detect_process("igmpproxy") == 0 )
         {
-            v_secure_system("igmpproxy &");
+            v_secure_system("/etc/utopia/service.d/service_mcastproxy.sh mcastproxy-restart");
         }
     }
     else
