@@ -3926,7 +3926,7 @@ PortTrigger_Validate
         (FALSE == CosaDmlNatChkPortRange(pPortTrigger->InstanceNumber, pPortTrigger->bEnabled, pPortTrigger->ForwardPortStart, pPortTrigger->ForwardPortEnd, pPortTrigger->ForwardProtocol, 1 )) ||
         //(!CosaDmlChkDesp(pPortTrigger->Description)) ||
         (FALSE == CosaDmlNatChkTargetPortRange(pPortTrigger->InstanceNumber, pPortTrigger->bEnabled, pPortTrigger->ForwardPortStart,pPortTrigger->ForwardPortEnd, pPortTrigger->ForwardProtocol,0,1)) ||
-        (FALSE == CosaDmlNatChkTriggerPortRange(pPortTrigger->InstanceNumber, pPortTrigger->bEnabled, pPortTrigger->TriggerPortStart, pPortTrigger->TriggerPortEnd, pPortTrigger->TriggerProtocol, 1 ))){
+        (FALSE == CosaDmlNatChkPortRange(pPortTrigger->InstanceNumber, pPortTrigger->bEnabled, pPortTrigger->TriggerPortStart, pPortTrigger->TriggerPortEnd, pPortTrigger->TriggerProtocol, 1 ))){
 
         CcspTraceWarning(("Parameter Error in %s \n", __FUNCTION__));
     
