@@ -14978,6 +14978,11 @@ Xconf_SetParamBoolValue
                            v_secure_system ("kill -9 `pidof scer11bel_firmwareDwnld.sh `");
                        }
                            status = v_secure_system("/etc/scer11bel_firmwareDwnld.sh &");
+#elif defined(_XER5_PRODUCT_REQ_)
+			if(0 == v_secure_system("pidof xer5_firmwareDwnld.sh"))  {
+                           v_secure_system ("kill -9 `pidof xer5_firmwareDwnld.sh `");
+                       }
+                           status = v_secure_system("/etc/xer5_firmwareDwnld.sh &");
 #elif defined(_SR300_PRODUCT_REQ_)
                         if(0 == v_secure_system("pidof sr300_firmwareDwnld.sh"))  {
                            v_secure_system ("kill -9 `pidof sr300_firmwareDwnld.sh `");
