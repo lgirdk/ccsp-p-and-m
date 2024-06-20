@@ -73,6 +73,12 @@ rbusError_t devCtrlRbusInit();
 #endif
 
 #if defined (RBUS_WAN_IP)
+typedef struct {
+    char* event_name;
+    char* new_val;
+    char* old_val;
+} publish_wanip_t;
+void free_publish_wanip_struct(publish_wanip_t *param);
 rbusError_t publishWanIpAddr(char* event_name, char* new_val, char* old_val);
 char const* GetParamName(char const* path);
 rbusError_t getStringHandlerWANIP_RBUS(rbusHandle_t handle, rbusProperty_t property, rbusGetHandlerOptions_t *opts);

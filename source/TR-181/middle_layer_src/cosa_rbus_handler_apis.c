@@ -458,25 +458,134 @@ rbusError_t sendUpdateEvent(char* event_name , void* eventNewData, void* eventOl
 
 #if defined (RBUS_WAN_IP)
 
-rbusError_t publishWanIpAddr(char* event_name, char* new_val, char* old_val)
+void free_publish_wanip_struct(publish_wanip_t *param)
 {
-    rbusError_t ret = RBUS_ERROR_SUCCESS;
+    if(param != NULL)
+    {
+        if(param->event_name != NULL)
+        {
+            free(param->event_name);
+            param->event_name = NULL;
+        }
+        if(param->new_val != NULL)
+        {
+            free(param->new_val);
+            param->new_val = NULL;
+        }
+        if(param->old_val != NULL)
+        {
+            free(param->old_val);
+            param->old_val = NULL;
+        }
+        free(param);
+        param = NULL;
+    }
+}
+
+void *waitForTelemetryReady(void *arg) 
+{
+    int ret = 0;
+    FILE *file;
+    char *path = "/tmp/.t2ReadyToReceiveEvents";
+    bool t2ReadyToReceiveEvents = false;
+    pthread_detach(pthread_self());
+
+    publish_wanip_t *wanip_arguments = (publish_wanip_t*)arg;
+    if (wanip_arguments == NULL) {
+        CcspTraceError(("%s publiship_args struct is NULL\n", __FUNCTION__ ));
+        return NULL;
+    }
+
+    char *event_name = wanip_arguments->event_name;
+    char *new_val = wanip_arguments->new_val;
+    char *old_val = wanip_arguments->old_val;
+
+    /* Check if file exists. Wait for max 2 mins for Telemetery to create the file
+     * and send the events.
+     */
+    for(int count=0; count<24; count++){
+        file = fopen(path, "rb");
+        if(file == NULL)
+        {
+            if(count%4==0){
+                CcspTraceWarning(("%s Telemetry is not ready to receive events. Waiting for /tmp/.t2ReadyToReceiveEvents file: %d\n", __FUNCTION__, __LINE__));
+            }
+            sleep(5);
+        }
+        else
+        {
+            t2ReadyToReceiveEvents=true;
+            fclose(file);
+            break;
+        }
+    }
+
+    if(!t2ReadyToReceiveEvents)
+    {
+        CcspTraceError(("/tmp/.t2ReadyToReceiveEvents file is not created even after 2 minutes. Exiting\n"));
+        goto EXIT;
+    }
+    else
+    {
+        CcspTraceInfo(("%s /tmp/.t2ReadyToReceiveEvents file exists. Telemetry is ready to receive eventss: %d\n", __FUNCTION__, __LINE__));
+    }
 
     bool IPv6Flag = false;
     if(strcmp(event_name,PRIMARY_WAN_IPv6_ADDRESS)==0){
         IPv6Flag=true;
     }
-        
-    CcspTraceInfo(("Publishing Primary WAN %s address with updated value=%s\n", IPv6Flag?"IPv6":"IPv4", new_val));
 
+    CcspTraceInfo(("Publishing Primary WAN %s address with updated value=%s\n", IPv6Flag?"IPv6":"IPv4", new_val));
     ret = sendUpdateEvent(event_name, (void*)new_val, (void*)old_val, RBUS_STRING);
-    if(ret == RBUS_ERROR_SUCCESS) {
+    if(ret == RBUS_ERROR_SUCCESS) 
+    {
         CcspTraceInfo(("Published Primary WAN %s address with updated value.\n", IPv6Flag?"IPv6":"IPv4"));
     }
-    else {
+    else 
+    {
         CcspTraceError(("Failed to publish Primary WAN %s address with updated value.\n", IPv6Flag?"IPv6":"IPv4"));
     }
-    return ret;
+
+    EXIT:
+        free_publish_wanip_struct(wanip_arguments);
+        return NULL;
+}
+
+rbusError_t publishWanIpAddr(char* event_name, char* new_val, char* old_val)
+{
+    if((event_name == NULL) || (new_val == NULL) || (old_val == NULL))
+    {
+        CcspTraceError(("%s arguments are NULL\n", __FUNCTION__ ));
+        return RBUS_ERROR_BUS_ERROR;
+    }
+
+    pthread_t threadId;
+    publish_wanip_t *publish_wanip_args = NULL;
+    publish_wanip_args = (publish_wanip_t *)malloc(sizeof(publish_wanip_t));
+
+    if (publish_wanip_args == NULL) {
+        CcspTraceError(("%s publiship_args NULL.\n", __FUNCTION__ ));
+        return RBUS_ERROR_BUS_ERROR;
+    }
+
+    memset(publish_wanip_args, 0, sizeof(publish_wanip_t));
+    publish_wanip_args->event_name = strdup(event_name);
+    publish_wanip_args->new_val = strdup(new_val);
+    publish_wanip_args->old_val = strdup(old_val);
+
+    CcspTraceDebug(("%s pthread_create with arguments for publishing the wan_ip: %s,%s,%s, LINE: %d\n", __FUNCTION__, publish_wanip_args->event_name, publish_wanip_args->new_val, publish_wanip_args->old_val ,__LINE__)); 
+    if (pthread_create(&threadId, NULL, waitForTelemetryReady, (void *) publish_wanip_args) != 0) 
+    {
+        CcspTraceError(("%s: Error creating thread waitForTelemetryReady\n", __FUNCTION__));
+        free_publish_wanip_struct(publish_wanip_args);
+        return RBUS_ERROR_BUS_ERROR;
+    } 
+    else 
+    {
+        CcspTraceInfo(("%s: Created thread waitForTelemetryReady\n", __FUNCTION__));
+    }
+
+    return RBUS_ERROR_SUCCESS;
 }
 
 #endif

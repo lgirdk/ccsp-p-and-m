@@ -720,12 +720,19 @@ EvtDispterEventInits(void)
        return(EVENT_ERROR);
     }
 #if defined (RBUS_WAN_IP)
-
+#if defined (_HUB4_PRODUCT_REQ_) || defined (_SR213_PRODUCT_REQ_)
+    //register lan_ipaddr_v6 event
+    rc = sysevent_setnotification(se_fd, token, "lan_ipaddr_v6", &async_id[3]);
+    if (rc) {
+       return(EVENT_ERROR);
+    }
+#else
     //register tr_erouter0_dhcpv6_client_v6addr event
     rc = sysevent_setnotification(se_fd, token, "tr_erouter0_dhcpv6_client_v6addr", &async_id[3]);
     if (rc) {
        return(EVENT_ERROR);
     }
+#endif
 #endif /*RBUS_WAN_IP*/
 
 #ifdef _HUB4_PRODUCT_REQ_
@@ -816,11 +823,19 @@ EvtDispterEventListen(void)
                 ret = EVENT_WAN_IPV4_RECD;
             }
 #if defined (RBUS_WAN_IP)
+#if defined (_HUB4_PRODUCT_REQ_) || defined (_SR213_PRODUCT_REQ_)
+            else if(!strcmp(name_str, "lan_ipaddr_v6"))
+            {
+                EvtDispterWanIpv6AddrsCallback(value_str);
+                ret = EVENT_WAN_IPV6_RECD;
+            }
+#else
             else if(!strcmp(name_str, "tr_erouter0_dhcpv6_client_v6addr"))
             {
                 EvtDispterWanIpv6AddrsCallback(value_str);
                 ret = EVENT_WAN_IPV6_RECD;
             }
+#endif
 #endif /*RBUS_WAN_IP*/
 #ifdef _HUB4_PRODUCT_REQ_
             else if(!strcmp(name_str, "valid_ula_address"))
@@ -919,11 +934,17 @@ EvtDispterCheckEvtStatus(int fd, token_t token)
         EvtDispterWanIpAddrsCallback(evtValue);
     }
 #if defined (RBUS_WAN_IP)
-
+#if defined (_HUB4_PRODUCT_REQ_) || defined (_SR213_PRODUCT_REQ_)
+    if ( 0 == sysevent_get(fd, token, "lan_ipaddr_v6", evtValue, sizeof(evtValue)) && '\0' != evtValue[0])
+    {
+        EvtDispterWanIpv6AddrsCallback(evtValue);
+    }
+#else
     if ( 0 == sysevent_get(fd, token, "tr_erouter0_dhcpv6_client_v6addr", evtValue, sizeof(evtValue)) && '\0' != evtValue[0])
     {
         EvtDispterWanIpv6AddrsCallback(evtValue);
     }
+#endif
 #endif /*RBUS_WAN_IP*/
     return returnStatus;
 }
