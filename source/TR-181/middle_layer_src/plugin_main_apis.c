@@ -451,6 +451,9 @@ if(id != 0)
 }
 #endif
    system("sysevent set pnm-status up");
+#ifdef _LG_MV3_
+   system("sysevent set dhcp_server-resync");
+#endif
 #endif
 
     pMyObject->hDiag          = (ANSC_HANDLE)CosaDiagnosticsCreate();
