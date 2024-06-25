@@ -1841,7 +1841,7 @@ IPIF_getEntry_for_Ipv6Pre
         else
         {
              p_dml_v6pre->iapd_pretm = 0;
-             strcpy(p_dml_v6pre->PreferredLifetime, "0001-01-01T00:00:00Z");
+             strncpy(p_dml_v6pre->PreferredLifetime, "0001-01-01T00:00:00Z", (sizeof (p_dml_v6pre->PreferredLifetime) -1));
         }
     
 #if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
