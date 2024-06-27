@@ -5609,7 +5609,7 @@ CosaDmlIaGetLogEntries
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-    char fw_log_path[50];
+    char *fw_log_path = "/nvram/log/firewall";
     static int first_flg = 1;
 
     PCOSA_DML_IA_LOG_ENTRY pConf = NULL;
@@ -5621,19 +5621,6 @@ CosaDmlIaGetLogEntries
         return NULL;
     } 
 
-    fw_log_path[0] = '\0';
-#define FWLOG_SUPPORT_OLD_LOCATION
-#ifdef FWLOG_SUPPORT_OLD_LOCATION
-    if((!commonSyseventGet("FW_LOG_FILE_PATH_V2", fw_log_path, sizeof(fw_log_path))) &&\
-        (fw_log_path[0] == '\0')){
-#endif
-        syscfg_get(NULL, "FW_LOG_FILE_PATH", fw_log_path, sizeof(fw_log_path));
-        if(fw_log_path[0] == '\0'){
-            return NULL;
-        }
-#ifdef FWLOG_SUPPORT_OLD_LOCATION
-    }
-#endif
         v_secure_system(GEN_CURRENT_LOG_CMD "; mkdir -p " FIREWALL_LOG_DIR " ;log_handle.sh uncompress_fwlog " FIREWALL_LOG_DIR " %s",fw_log_path);
 
 printf("%d\n",__LINE__);
@@ -5706,25 +5693,12 @@ CosaDmlIaGetALLLogEntries
         ULONG*                         pUlSize
     )
 {
-    char fw_log_path[50];
+    char *fw_log_path = "/nvram/log/firewall";
     ULONG i;
     size_t tmpsize=0;
 
     /* Don't get the log when initializing */
     if(__is_updated(&FWLogLastTick)){
-        fw_log_path[0] = '\0';
-#define FWLOG_SUPPORT_OLD_LOCATION
-#ifdef FWLOG_SUPPORT_OLD_LOCATION
-        if((!commonSyseventGet("FW_LOG_FILE_PATH_V2", fw_log_path, sizeof(fw_log_path))) &&\
-            (fw_log_path[0] == '\0')){
-#endif
-            syscfg_get(NULL, "FW_LOG_FILE_PATH", fw_log_path, sizeof(fw_log_path));
-            if(fw_log_path[0] == '\0'){
-                return ANSC_STATUS_FAILURE;
-            }
-#ifdef FWLOG_SUPPORT_OLD_LOCATION
-        }
-#endif
         if(pFWLogBuf != NULL){
             AnscFreeMemory(pFWLogBuf);
             FWLogNum = 0;
