@@ -101,12 +101,11 @@ VideoService_SetParamBoolValue
                         return TRUE;
                     }
             }
-
+            /* CID 340005: Data race condition - fix */
+            pthread_mutex_lock(&g_videoservice_mutex);
             if(videoServiceEnableInProgress==FALSE)
             {         
                 bval[0] = '1';
-
-                pthread_mutex_lock(&g_videoservice_mutex);
                 videoServiceEnableInProgress = TRUE;                          
      
                 pthread_t videoServiceThread;
@@ -117,11 +116,10 @@ VideoService_SetParamBoolValue
                     pthread_mutex_unlock(&g_videoservice_mutex);
                     return FALSE;
                 }
-
-                pthread_mutex_unlock(&g_videoservice_mutex);
-
+                
                 CcspTraceWarning(("VIDEOSERVICE is ENABLED\n"));
             }
+            pthread_mutex_unlock(&g_videoservice_mutex);
 
         }
         else
