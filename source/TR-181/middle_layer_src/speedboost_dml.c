@@ -32,7 +32,7 @@ bool setBlobDataOfSpeedBoost(ANSC_HANDLE hInsContext, char* pParamName,char* pPa
         return false;
     }
 
-    if(AnscEqualString(pParamName, "Data", TRUE))
+    if (strcmp(pParamName, "Data") == 0)
     {
         CcspTraceInfo(("%s:%d, ParamName: %s\n", __FUNCTION__, __LINE__, pParamName));
         return unpackAndProcessSpeedBoostData(pParamVal);
@@ -51,7 +51,7 @@ bool getBlobDataOfSpeedBoost(ANSC_HANDLE hInsContext, char* pParamName, char *pV
         bRet = false;
     }
 
-    if (AnscEqualString(pParamName, "Data", TRUE))
+    if (strcmp(pParamName, "Data") == 0)
     {
         CcspTraceInfo(("%s:%d, ParamName: %s\n", __FUNCTION__, __LINE__, pParamName));
         snprintf(pVal, iValSize, "%s", "   ");
@@ -74,12 +74,12 @@ bool getParamIntValOfSpeedBoost (ANSC_HANDLE hInsContext, char* pParamName, int*
         CcspTraceError(("%s:%d, Invalid input parameters\n", __FUNCTION__, __LINE__));
         bRet = false;
     }
-    if (AnscEqualString(pParamName, "NumberConfiguredDevices", TRUE))
+    if (strcmp(pParamName, "NumberConfiguredDevices") == 0)
     {
         CcspTraceInfo(("%s:%d, ParamName: %s\n", __FUNCTION__, __LINE__, pParamName));
         *pVal = getNumOfConfiguredClients();
     }
-    else if (AnscEqualString(pParamName, "NumberEligibleDevices", TRUE))
+    else if (strcmp(pParamName, "NumberEligibleDevices") == 0)
     {
         CcspTraceInfo(("%s:%d, ParamName:%s\n",__FUNCTION__, __LINE__, pParamName));
         *pVal = getNumOfActiveClients();
@@ -102,7 +102,7 @@ bool getParamStringValOfSpeedBoost(ANSC_HANDLE hInsContext, char* pParamName, ch
         CcspTraceError(("%s:%d, NULL parameter passed\n", __FUNCTION__, __LINE__));
         bRet = false;
     }
-    if (AnscEqualString(pParamName, "CurrentDeviceList", TRUE))
+    if (strcmp(pParamName, "CurrentDeviceList") == 0)
     {
         CcspTraceInfo(("%s:%d, ParamName: %s\n", __FUNCTION__, __LINE__, pParamName));
         if(!getActiveDevicesListOfSpeedBoost(pParamVal, iParamValSize))

@@ -1367,7 +1367,7 @@ User_Validate
         
             pUser2 = (PCOSA_DML_USER)pCxtLink->hContext;
         
-            if( AnscEqualString(pUser2->Username, pUser->Username, TRUE) )
+            if (strcmp(pUser2->Username, pUser->Username) == 0)
             {
                 if ( (ANSC_HANDLE)pCxtLink == hInsContext )
                 {
