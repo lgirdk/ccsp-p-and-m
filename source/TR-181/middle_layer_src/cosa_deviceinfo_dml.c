@@ -8211,7 +8211,7 @@ Control_GetParamStringValue
     }
 
     /* check the "XconfRecoveryUrl" parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "XconfRecoveryUrl", TRUE))
+    if (strcmp(ParamName, "XconfRecoveryUrl") == 0)
     {
         /* collect value */
         char buff[XCONF_URL_SIZE];
@@ -8285,7 +8285,7 @@ Identity_GetParamStringValue
     memset(buff,0,sizeof(buff));
     errno_t  rc  = -1;
     /* check the "DeviceType" parameter name and return the corresponding value */
-    if( AnscEqualString(ParamName, "DeviceType", TRUE))
+    if (strcmp(ParamName, "DeviceType") == 0)
     {
           if(!syscfg_get( NULL, "DeviceType", buff, sizeof(buff))) {
            rc = strcpy_s(pValue, *pulSize, buff);
@@ -8344,7 +8344,7 @@ Identity_SetParamStringValue
         return TRUE;
 
     /* check the "DeviceType" parameter name and set the corresponding value */
-    if( AnscEqualString(ParamName, "DeviceType", TRUE)){
+    if (strcmp(ParamName, "DeviceType") == 0){
         if( (strcasecmp(pString, "prod") == 0) || (strcasecmp(pString, "PROD") == 0) || (strcasecmp(pString, "TEST") == 0) || (strcasecmp(pString, "test") == 0) ) {
             if (syscfg_set(NULL, "DeviceType", pString) != 0){
                 CcspTraceError(("[%s] syscfg_set failed for DeviceType \n",__FUNCTION__));
@@ -8716,7 +8716,7 @@ Control_SetParamStringValue
            }
     }
     /* check the "XconfRecoveryUrl" parameter name and set the corresponding value */
-    else if( AnscEqualString(ParamName, "XconfRecoveryUrl", TRUE))
+    else if (strcmp(ParamName, "XconfRecoveryUrl") == 0)
     {
         /* collect value */
            int idlen = strlen(pString)-1;
@@ -12995,7 +12995,7 @@ SWDLDirect_GetParamBoolValue
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         char value[8] = {0};
         /* collect value */
@@ -13057,7 +13057,7 @@ SWDLDirect_SetParamBoolValue
     if (IsBoolSame(hInsContext, ParamName, bValue, SWDLDirect_GetParamBoolValue))
         return TRUE;
 
-    if( AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         if(syscfg_set(NULL, "SWDLDirectEnable", (bValue==TRUE)?"true":"false") != 0)
         {
@@ -19916,7 +19916,7 @@ Broadcast_GetParamBoolValue(
     CcspTraceInfo(("Broadcast_GetParamBoolValue \n"));
     UNREFERENCED_PARAMETER(hInsContext);
     char buf[8] = {0};
-    if (AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         /*CID: 334992 - Array Compared against null - fixed*/
@@ -19948,7 +19948,7 @@ Broadcast_SetParamBoolValue(
     if (IsBoolSame(hInsContext, ParamName, bValue, Broadcast_GetParamBoolValue))
         return TRUE;
 
-    if (AnscEqualString(ParamName, "Enable", TRUE))
+    if (strcmp(ParamName, "Enable") == 0)
     {
         /* collect value */
         if (bValue == TRUE)
@@ -22035,7 +22035,7 @@ LnFUseXPKI_GetParamBoolValue
  )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( (pBool != NULL) && (AnscEqualString(ParamName, "Enable", TRUE)))
+    if( (pBool != NULL) && (strcmp(ParamName, "Enable") == 0))
     {
         char value[8];
         memset(value, 0, sizeof(value));
@@ -22131,7 +22131,7 @@ UseXPKI_GetParamBoolValue
  )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( (pBool != NULL) && (AnscEqualString(ParamName, "Enable", TRUE)))
+    if( (pBool != NULL) && (strcmp(ParamName, "Enable") == 0))
     {
         char value[8];
         memset(value, 0, sizeof(value));
@@ -22319,7 +22319,7 @@ mTlsCrashdumpUpload_GetParamBoolValue
  )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    if( (pBool != NULL) && (AnscEqualString(ParamName, "Enable", TRUE)))
+    if( (pBool != NULL) && (strcmp(ParamName, "Enable") == 0))
     {
         char value[8] = {'\0'};
         if( syscfg_get(NULL, "mTlsCrashdumpUpload_Enable", value, sizeof(value)) == 0 ) {
