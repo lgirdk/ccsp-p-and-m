@@ -494,7 +494,7 @@ PLmObjectHost Hosts_FindHostByPhysAddress(char * physAddress)
 {
     int i = 0;
     for(; i<lmHosts.numHost; i++){
-        if(AnscEqualString(lmHosts.hostArray[i]->pStringParaValue[LM_HOST_PhysAddressId], physAddress, FALSE)){
+        if (strcasecmp(lmHosts.hostArray[i]->pStringParaValue[LM_HOST_PhysAddressId], physAddress) == 0){
             return lmHosts.hostArray[i];
         }
     }
@@ -538,7 +538,7 @@ Host_AddIPv4Address
     int i;
     for(i=0; i<pHost->numIPv4Addr; i++){
         /* If IP address already exists, return. */
-        if(AnscEqualString(pHost->ipv4AddrArray[i]->pStringParaValue[LM_HOST_IPv4Address_IPAddressId],ipv4Address, FALSE))
+        if (strcasecmp(pHost->ipv4AddrArray[i]->pStringParaValue[LM_HOST_IPv4Address_IPAddressId], ipv4Address) == 0)
             return pHost->ipv4AddrArray[i]; 
     }
 
@@ -584,7 +584,7 @@ Host_AddIPv6Address
     int i = 0;
     for(i=0; i<pHost->numIPv6Addr; i++){
         /* If IP address already exists, return. */
-        if(AnscEqualString(pHost->ipv6AddrArray[i]->pStringParaValue[LM_HOST_IPv6Address_IPAddressId],ipv6Address, FALSE))
+        if (strcasecmp(pHost->ipv6AddrArray[i]->pStringParaValue[LM_HOST_IPv6Address_IPAddressId], ipv6Address) == 0)
             return pHost->ipv6AddrArray[i]; 
     }
 
