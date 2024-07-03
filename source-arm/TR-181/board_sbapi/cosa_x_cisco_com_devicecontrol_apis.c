@@ -2144,7 +2144,7 @@ CosaDmlDcSetFactoryReset
 			ledMgmt.State	 = LED_BLINK;
 			ledMgmt.Interval = FR_BLINK_INTRVL;
 
-#if !defined(_XER5_PRODUCT_REQ_)
+#if !defined(FEATURE_RDKB_LED_MANAGER_PORT)
 			if(0 == platform_hal_setLed(&ledMgmt)) {
                         	CcspTraceInfo(("Front LED Transition: GREEN LED will blink, Reason: Factory Reset\n"));
 				v_secure_system("touch /tmp/.FRBLINKGREEN");
