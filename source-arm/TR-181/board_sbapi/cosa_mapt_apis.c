@@ -517,11 +517,14 @@ CosaDmlMaptFlushDNSv4Entries
        if ( overWrite )
        {
             char buf[BUFLEN_256] = {0};
-
+            
             if ( !(fp = fopen(RESOLV_CONF_FILE, "w")) ||
-                 !(tp = fopen(RESOLV_CONF_FILE_BK, "r")) )
+                 !(tp = fopen(RESOLV_CONF_FILE_BK, "r")))
             {
                  MAPT_LOG_ERROR("Copy failed %s -> %s", RESOLV_CONF_FILE, RESOLV_CONF_FILE_BK);
+                 /* CID 277328 fix - Resource Leak */
+                 if(fp != NULL)
+		     fclose(fp);
                  return STATUS_FAILURE;
             }
 
