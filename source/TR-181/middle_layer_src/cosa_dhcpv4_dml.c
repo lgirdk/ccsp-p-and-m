@@ -8241,6 +8241,7 @@ StaticAddress_Validate
 
     PCOSA_CONTEXT_POOL_LINK_OBJECT  pCxtPoolLink      = (PCOSA_CONTEXT_POOL_LINK_OBJECT)pCxtLink->hParentTable;
     PCOSA_DML_DHCPS_POOL_FULL       pPool             = (PCOSA_DML_DHCPS_POOL_FULL)pCxtPoolLink->hContext;
+    COSA_DML_DHCPS_POOL_CFG tmpCfg;
     unsigned int                           netmask, gateway;
 
     // send arp and check if duplicate ipaddr exists
@@ -8253,7 +8254,15 @@ StaticAddress_Validate
     //check if the static ip is within lan subnet
     ipaddr = ntohl(pDhcpStaAddr->Yiaddr.Value);
     if(ipaddr != 0) { /*if Yiaddr is the default 0.0.0.0 then it's valid to allow other parameter setting go through before Yiaddr is set*/
-        gateway = ntohl(pPool->Cfg.IPRouters[0].Value);
+        if(pPool->Cfg.InstanceNumber == 1)
+        {
+            memset(&tmpCfg, 0, sizeof(tmpCfg));
+            tmpCfg.InstanceNumber = pPool->Cfg.InstanceNumber;
+            CosaDmlDhcpsGetPoolCfg(NULL,&tmpCfg);
+            gateway = ntohl(tmpCfg.IPRouters[0].Value);
+        }
+        else
+            gateway = ntohl(pPool->Cfg.IPRouters[0].Value);
         netmask = ntohl(pPool->Cfg.SubnetMask.Value);
         if(is_invalid_unicast_ip_addr(gateway,netmask,ipaddr))
             return FALSE;
