@@ -1893,8 +1893,6 @@
                                 <func_GetParamIntValue>Feature_GetParamIntValue</func_GetParamIntValue>
                         	<func_SetParamIntValue>Feature_SetParamIntValue</func_SetParamIntValue>
 <?endif?>
-                            <func_GetParamStringValue>Feature_GetParamStringValue</func_GetParamStringValue>
-                            <func_SetParamStringValue>Feature_SetParamStringValue</func_SetParamStringValue>
                         </functions>
                         <parameters>
 <?ifdef MOCA_HOME_ISOLATION?>
@@ -1905,12 +1903,6 @@
                                 <writable>true</writable>
                             </parameter>
 <?endif?>
-                            <parameter>
-                                <name>TrackRemotePortUsage</name>
-                                <type>string</type>
-                                <syntax>string</syntax>
-                                <writable>true</writable>
-                            </parameter>
 <?ifdef _XB6_PRODUCT_REQ_ & !BCI?>
                             <parameter>
                                 <name>BLERadio</name>
