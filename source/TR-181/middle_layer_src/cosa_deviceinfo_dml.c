@@ -5719,12 +5719,6 @@ TemperatureSensor_GetParamBoolValue
         return TRUE;
     }
 
-    if (strcmp(ParamName, "X_LGI-COM_CutOutTempExceeded") == 0)
-    {
-        *pBool = PTempSensorEntry->CutOutTempExceeded;
-        return TRUE;
-    }
-
     return FALSE;
 }
 
