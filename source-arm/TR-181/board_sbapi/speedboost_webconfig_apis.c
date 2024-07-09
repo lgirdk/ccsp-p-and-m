@@ -212,6 +212,13 @@ pErr processSpeedBoostWebConfigRequest(void *pVoidData)
         return execRetVal;
     }
 
+    if ((0 < pSpeedBoostDoc->pSchedulerInfo->absolute_size) && (NULL == pSpeedBoostDoc->pSchedulerInfo->absolute))
+    {
+        CcspTraceError(("%s:%d, pSpeedBoostDoc->pSchedulerInfo->absolute is NULL\n", __FUNCTION__, __LINE__));
+        execRetVal->ErrorCode = NULL_BLOB_EXEC_POINTER;
+        snprintf(execRetVal->ErrorMsg, sizeof(execRetVal->ErrorMsg) - 1, "%s", "NULL pointer passed for absolute");
+        return execRetVal;
+    }
     CcspTraceInfo(("%s:%d, Number of Unix Time: %d\n", __FUNCTION__, __LINE__, pSpeedBoostDoc->pSchedulerInfo->absolute_size));
     CcspTraceInfo(("%s:%d, Number of Mac Addresses: %d\n", __FUNCTION__, __LINE__, pSpeedBoostDoc->pSchedulerInfo->actions_size));
 
@@ -233,6 +240,14 @@ pErr processSpeedBoostWebConfigRequest(void *pVoidData)
         CcspTraceError(("%s:%d, Number of Mac Addresses(%d) exceeds the limit\n", __FUNCTION__, __LINE__, pSpeedBoostDoc->pSchedulerInfo->actions_size));
         execRetVal->ErrorCode = VALIDATION_FALIED;
         snprintf(execRetVal->ErrorMsg, sizeof(execRetVal->ErrorMsg) - 1, "%s", "Number of Mac Addresses exceeds the limit");
+        return execRetVal;
+    }
+
+    if ((0 < pSpeedBoostDoc->pSchedulerInfo->actions_size) && (NULL == pSpeedBoostDoc->pSchedulerInfo->actions))
+    {
+        CcspTraceError(("%s:%d, pSpeedBoostDoc->pSchedulerInfo->actions is NULL\n", __FUNCTION__, __LINE__));
+        execRetVal->ErrorCode = NULL_BLOB_EXEC_POINTER;
+        snprintf(execRetVal->ErrorMsg, sizeof(execRetVal->ErrorMsg) - 1, "%s", "NULL pointer passed for actions");
         return execRetVal;
     }
 
@@ -287,6 +302,7 @@ pErr processSpeedBoostWebConfigRequest(void *pVoidData)
     {
         CcspTraceInfo(("%s: Failed to start scheduler.\n", __FUNCTION__));
         execRetVal->ErrorCode = BLOB_EXEC_FAILURE;
+        snprintf(execRetVal->ErrorMsg, sizeof(execRetVal->ErrorMsg) - 1, "%s", "Failed to start scheduler");
     }
     return execRetVal;
 }

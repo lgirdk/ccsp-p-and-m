@@ -63,4 +63,23 @@ speedBoostDoc_t* speedBoostDocConvert( const void *pBuf, size_t iLen );
  */
 void speedBoostDocDestroy( speedBoostDoc_t *pSpeedBoostDoc );
 
+/**
+ *  allocate a memory for (size of input_t structure * iActionExecCount) of scheduler
+ *
+ *  @param s  Number of input_t structures of scheduler
+ *
+ *  @return pointer to allocated input_t structure, error otherwise
+ */
+
+input_t* createScheduleInput(size_t iActionExecCount);
+
+/**
+ *  Convert the msgpack map into the doc_t structure.
+ *
+ *  @param s    the entry pointer
+ *  @param map  the msgpack map pointer
+ *
+ *  @return 0 on success, error otherwise
+ */
+int processSpeedBoostInfo( schedule_info_t * pSchedulerInfo, msgpack_object_map *pMsgPackObjMap );
 #endif /*__SPEEDBOOSTDOC_H__s*/

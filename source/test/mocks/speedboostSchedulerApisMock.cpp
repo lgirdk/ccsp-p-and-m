@@ -1,4 +1,4 @@
-/*****************************************************************************
+/*************************************************************************
 * If not stated otherwise in this file or this component's LICENSE file the
 * following copyright and licenses apply:
 *
@@ -15,28 +15,25 @@
 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 * See the License for the specific language governing permissions and
 * limitations under the License.
-*******************************************************************************/
+**************************************************************************/
+#include "speedboostSchedulerApisMock.h"
 
-#include "rbushandler_mock.h"
+extern speedboostSchedulerApisMock * g_speedboostSchedulerApisMock;
 
-using namespace std;
-
-extern rbusHandlerMock * g_rbusHandlerMock;
-
-extern "C" ULONG DeviceInfo_GetParamStringValue(ANSC_HANDLE hInsContext, char* ParamName, char* pValue, ULONG* pUlSize)
+extern "C" int cleanPrevSyscfgParams(void)
 {
-    if (!g_rbusHandlerMock)
+    if (g_speedboostSchedulerApisMock)
     {
-        return -1;
+        return g_speedboostSchedulerApisMock->cleanPrevSyscfgParams();
     }
-    return g_rbusHandlerMock->DeviceInfo_GetParamStringValue(hInsContext, ParamName, pValue, pUlSize);
+    return -1;
 }
 
-extern "C" void configureIpv6Route(uint32_t DeviceMode)
+extern "C" bool triggerFirewallRestart(void)
 {
-   if (!g_rbusHandlerMock)
-   {
-       return;
-   }
-   return g_rbusHandlerMock->configureIpv6Route(DeviceMode);
+    if (g_speedboostSchedulerApisMock)
+    {
+        return g_speedboostSchedulerApisMock->triggerFirewallRestart();
+    }
+    return false;
 }

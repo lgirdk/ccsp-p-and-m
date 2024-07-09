@@ -16,7 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ##########################################################################
-
+if UNIT_TEST_DOCKER_SUPPORT
+SUBDIRS = source
+else
 SUBDIRS = source-arm custom source
 
 lib_LTLIBRARIES = libtr181.la
@@ -36,3 +38,4 @@ libtr181_la_LIBADD = $(libtr181_la_DEPENDENCIES)
 libtr181_la_LDFLAGS = -lsecure_wrapper -lwebconfig_framework -lhal_moca -lapi_dhcpv4c -lhal_msomgmt -lhal_platform -lhal_ethsw -llmapi -lccsp_common -lcm_mgnt -lutapi -lutctx -llibparodus -lcurl
 
 #libtr181_la_LDFLAGS += -Wl,--no-undefined -Wl,--no-allow-shlib-undefined
+endif

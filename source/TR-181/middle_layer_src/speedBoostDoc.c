@@ -29,6 +29,11 @@ static int processSpeedBoostDoc( speedBoostDoc_t *pSpeedBoostDoc, int iNum, ... 
 speedBoostDoc_t* speedBoostDocConvert( const void *pBuf, size_t iLen)
 {
     CcspTraceInfo(("%s:%d, Entry\n", __FUNCTION__, __LINE__));
+    if (NULL == pBuf || 0 == iLen)
+    {
+        CcspTraceError(("%s:%d, NULL parameter passed\n", __FUNCTION__, __LINE__));
+        return NULL;
+    }
     return helper_convert(pBuf, iLen, sizeof(speedBoostDoc_t), XM_SPEED_BOOST_SUBDOC,
                             MSGPACK_OBJECT_MAP, true,
                            (process_fn_t) processSpeedBoostDoc,
@@ -177,6 +182,10 @@ static int processMap(msgpack_object_map *pMsgPackObjMap, input_t **ppScheduleIn
     {
         (*ppScheduleInput)->time = entryTime;
     }
+    if (0 == ui32Size)
+    {
+        iRetVal = -1;
+    }
     return iRetVal;
 }
 
@@ -227,7 +236,10 @@ static int decodeScheduleTable(msgpack_object *pMsgPackObjKey, msgpack_object *p
                         (*ppScheduleInput)[iVar].action_indexes[j] = pScheduleInputTemp->action_indexes[j];
                     }
                 }
-                free(pScheduleInputTemp);
+                if( NULL != pScheduleInputTemp )
+                {
+                    free(pScheduleInputTemp);
+                }
                 pMsgPackObj++;
             }
         }
@@ -312,6 +324,11 @@ int processSpeedBoostInfo( schedule_info_t * pSchedulerInfo, msgpack_object_map 
         if (NULL == pMsgPackObjKey || NULL == pMsgPackObjVal)
         {
             CcspTraceError(("%s:%d, pMsgPackObjKey or pMsgPackObjVal is NULL\n", __FUNCTION__, __LINE__));
+            return SPEEDBOOST_INFO_ERR;
+        }
+        if ((NULL == pMsgPackObjKey->via.str.ptr)|| (0 == pMsgPackObjKey->via.str.size))
+        {
+            CcspTraceError(("%s:%d, pMsgPackObjKey->via.str.ptr is NULL\n", __FUNCTION__, __LINE__));
             return SPEEDBOOST_INFO_ERR;
         }
         if (0 == strncmp(pMsgPackObjKey->via.str.ptr, ABSOLUTE_SCHEDULE, pMsgPackObjKey->via.str.size))

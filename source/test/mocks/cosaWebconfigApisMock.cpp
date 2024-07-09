@@ -1,4 +1,4 @@
-/*****************************************************************************
+/*************************************************************************
 * If not stated otherwise in this file or this component's LICENSE file the
 * following copyright and licenses apply:
 *
@@ -15,28 +15,27 @@
 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 * See the License for the specific language governing permissions and
 * limitations under the License.
-*******************************************************************************/
-
-#include "rbushandler_mock.h"
+**************************************************************************/
+#include "cosaWebconfigApisMock.h"
 
 using namespace std;
 
-extern rbusHandlerMock * g_rbusHandlerMock;
+extern cosaWebconfigApisMock * g_cosaWebconfigApisMock;
 
-extern "C" ULONG DeviceInfo_GetParamStringValue(ANSC_HANDLE hInsContext, char* ParamName, char* pValue, ULONG* pUlSize)
+extern "C" int get_base64_decodedbuffer(char *pString, char **buffer, int *size)
 {
-    if (!g_rbusHandlerMock)
+    if (g_cosaWebconfigApisMock)
     {
-        return -1;
+        return g_cosaWebconfigApisMock->get_base64_decodedbuffer(pString, buffer, size);
     }
-    return g_rbusHandlerMock->DeviceInfo_GetParamStringValue(hInsContext, ParamName, pValue, pUlSize);
+    return -1;
 }
 
-extern "C" void configureIpv6Route(uint32_t DeviceMode)
+extern "C" msgpack_unpack_return get_msgpack_unpack_status(char *decodedbuf, int size)
 {
-   if (!g_rbusHandlerMock)
-   {
-       return;
-   }
-   return g_rbusHandlerMock->configureIpv6Route(DeviceMode);
+    if (g_cosaWebconfigApisMock)
+    {
+        return g_cosaWebconfigApisMock->get_msgpack_unpack_status(decodedbuf, size);
+    }
+    return MSGPACK_UNPACK_SUCCESS;
 }

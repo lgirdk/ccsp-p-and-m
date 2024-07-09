@@ -1,4 +1,4 @@
-/*****************************************************************************
+/*************************************************************************
 * If not stated otherwise in this file or this component's LICENSE file the
 * following copyright and licenses apply:
 *
@@ -15,28 +15,18 @@
 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 * See the License for the specific language governing permissions and
 * limitations under the License.
-*******************************************************************************/
-
-#include "rbushandler_mock.h"
+**************************************************************************/
+#include "helpersMock.h"
 
 using namespace std;
 
-extern rbusHandlerMock * g_rbusHandlerMock;
+extern helpersMock * g_helpersMock;
 
-extern "C" ULONG DeviceInfo_GetParamStringValue(ANSC_HANDLE hInsContext, char* ParamName, char* pValue, ULONG* pUlSize)
+extern "C" void* helper_convert(const void *buf, size_t len, size_t struct_size, const char *wrapper, msgpack_object_type expect_type, bool optional, process_fn_t process, destroy_fn_t destroy)
 {
-    if (!g_rbusHandlerMock)
+    if (g_helpersMock)
     {
-        return -1;
+        return g_helpersMock->helper_convert(buf, len, struct_size, wrapper, expect_type, optional, process, destroy);
     }
-    return g_rbusHandlerMock->DeviceInfo_GetParamStringValue(hInsContext, ParamName, pValue, pUlSize);
-}
-
-extern "C" void configureIpv6Route(uint32_t DeviceMode)
-{
-   if (!g_rbusHandlerMock)
-   {
-       return;
-   }
-   return g_rbusHandlerMock->configureIpv6Route(DeviceMode);
+    return nullptr;
 }

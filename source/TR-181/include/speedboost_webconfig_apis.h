@@ -19,6 +19,8 @@
 #ifndef __SPEEDBOOST_WEBCONFIG_APIS_H__
 #define __SPEEDBOOST_WEBCONFIG_APIS_H__
 
+#include "webconfig_framework.h"
+
 #define SPEEDBOOST_BLOB_DATA                    "Device.X_RDK_Speedboost.Data"
 #define SPEEDBOOST_NUMBER_OF_CONFIGURED_DEVICES "Device.X_RDK_Speedboost.NumberConfiguredDevices"
 #define SPEEDBOOST_NUMBER_OF_ELIGIBLE_DEVICES   "Device.X_RDK_Speedboost.NumberEligibleDevices"
@@ -36,11 +38,12 @@
 #define BUFF_SIZE_16  16
 #define BUFF_SIZE_8   8
 
+int getNumOfConfiguredClients(void);
 // Function to validate MAC address format
 bool CheckMacHasValidCharacter (char* pMac);
-
-int getNumOfConfiguredClients(void);
-
+bool ValidateMac(char* pPhysAddress);
+bool validateUnixTime(int64_t unixTime, char * pErrMessage, int iSizeOfBuffer);
+void freeResourcesSpeedBoostDoc(void *pVoidArg);
+pErr processSpeedBoostWebConfigRequest(void *pVoidData);
 bool unpackAndProcessSpeedBoostData(char *pString);
-
 #endif /*__SPEEDBOOST_WEBCONFIG_APIS_H__ */

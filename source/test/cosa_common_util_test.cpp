@@ -1,31 +1,37 @@
-#include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <string.h>
-#include "gtest/gtest.h"
-#include "gmock/gmock.h"
-#include <experimental/filesystem>
-#include "pandmssp_mock.h"
-#include "mocks/commonutil_mock.h"
-#define MOCK_COMMON_UTIL_PAM
+/*****************************************************************************
+* If not stated otherwise in this file or this component's LICENSE file the
+* following copyright and licenses apply:
+*
+* Copyright 2024 RDK Management
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*******************************************************************************/
 
-using namespace std;
-using std::experimental::filesystem::exists;
-using ::testing::_;
-using ::testing::Return;
-using ::testing::StrEq;
+#include "pandmssp_mock.h"
+#define RBUS_WAN_IP
+
+using namespace testing;
 
 extern "C"
 {
 #include "cosa_common_util.h"
-extern void free_args_struct(arg_struct_t *param);
 extern void* Set_Notifi_ParamName(void *args);
 }
 
-extern rbusCommonUtilMock * g_rbusCommonUtilMock;
+ANSC_HANDLE bus_handle;
+extern SyseventMock * g_syseventMock;
 
-TEST(FreeArgsStructTest_1, FreeArgsStruct)
+TEST (FreeArgsStructTest_1, FreeArgsStruct)
 {
     arg_struct_t* param = nullptr;
 
@@ -34,7 +40,7 @@ TEST(FreeArgsStructTest_1, FreeArgsStruct)
     EXPECT_EQ(param, nullptr);
 }
 
-TEST(FreeArgsStructTest_2, FreeArgsStruct_Test2)
+TEST (FreeArgsStructTest_2, FreeArgsStruct_Test2)
 {
     arg_struct_t* param = (arg_struct_t*)malloc(sizeof(arg_struct_t));
     memset(param, 0, sizeof(arg_struct_t));
@@ -52,7 +58,7 @@ TEST(FreeArgsStructTest_2, FreeArgsStruct_Test2)
     free_args_struct(param);
 }
 
-TEST(FreeArgsStructTest_3, FreeArgsStruct_Test3)
+TEST (FreeArgsStructTest_3, FreeArgsStruct_Test3)
 {
     arg_struct_t* param = (arg_struct_t*)malloc(sizeof(arg_struct_t));
     memset(param, 0, sizeof(arg_struct_t));
@@ -71,7 +77,7 @@ TEST(FreeArgsStructTest_3, FreeArgsStruct_Test3)
     free_args_struct(param);
 }
 
-TEST(FreeArgsStructTest_4, FreeArgsStruct_Test4)
+TEST (FreeArgsStructTest_4, FreeArgsStruct_Test4)
 {
     arg_struct_t* param = (arg_struct_t*)malloc(sizeof(arg_struct_t));
     memset(param, 0, sizeof(arg_struct_t));
@@ -91,8 +97,7 @@ TEST(FreeArgsStructTest_4, FreeArgsStruct_Test4)
     free_args_struct(param);
 }
 
-#define MOCK_COMMON_UTIL_PAM_1
-TEST(Set_Notifi_ParamNameTest, Set_Notifi_ParamName_Test1)
+TEST (Set_Notifi_ParamNameTest, Set_Notifi_ParamName_Test1)
 {
     arg_struct_t* args = nullptr;
     EXPECT_EQ(args, nullptr);
