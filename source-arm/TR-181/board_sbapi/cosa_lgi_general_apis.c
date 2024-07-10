@@ -27,6 +27,49 @@
 
 extern void* g_pDslhDmlAgent;
 
+static const char *UPDATE_RESOLV_CMD = "/bin/sh /etc/utopia/service.d/set_resolv_conf.sh";
+
+static int RestartPlatform(boolean_t doIpv6Restart)
+{
+    int rc = system(UPDATE_RESOLV_CMD);
+    if ((rc == 0) && (doIpv6Restart == TRUE))
+    {
+        rc = CosaDmlDHCPv6sTriggerRestart(FALSE);
+    }
+    return rc;
+}
+
+ANSC_STATUS
+CosaDmlGiGetDNSv4ProxyEnable
+    (
+        ANSC_HANDLE                 hContext,
+        BOOL                        *pValue
+    )
+{
+    char buf[8];
+
+    syscfg_get (NULL, "dns_v4_proxy_enable", buf, sizeof(buf));
+
+    *pValue = (strcmp(buf, "1") == 0);
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaDmlGiSetDNSv4ProxyEnable
+    (
+        ANSC_HANDLE                 hContext,
+        BOOL                        bValue
+    )
+{
+    int rc;
+
+    syscfg_set_commit (NULL, "dns_v4_proxy_enable", bValue ? "1" : "0");
+    rc = RestartPlatform(TRUE);
+
+    return (rc == 0) ? ANSC_STATUS_SUCCESS : ANSC_STATUS_FAILURE;
+}
+
 ULONG
 CosaDmlGiGetFirstInstallWizardEnable
     (
