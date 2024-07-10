@@ -189,7 +189,7 @@ int fwSync = 0;
 #define MESH_MODE_MONITOR 1
 #define MESH_MODE_ENABLE  2
 
-#if defined(FEATURE_RDKB_LED_MANAGER_FACTORY_RESET)
+#if defined(_SR213_PRODUCT_REQ_) || defined(FEATURE_RDKB_LED_MANAGER_FACTORY_RESET)
 #include <sysevent/sysevent.h>
 #define SYSEVENT_LED_STATE    "led_event"
 #define FACTORY_RESET_EVENT   "rdkb_factory_reset"
@@ -2162,13 +2162,6 @@ CosaDmlDcSetFactoryReset
                    (factory_reset_mask & FR_FW) ||
                    (factory_reset_mask & FR_OTHER) ) {
                     CcspTraceInfo(("LED Transition: GREEN LED will blink, Reason: Factory Reset\n"));
-#if defined(_SR213_PRODUCT_REQ_)
-                    v_secure_system("sysevent set led_event rdkb_factory_reset");
-                    sleep(5);
-                    // power off the led controller after showing Green LED for 5 seconds
-                    v_secure_system("/etc/sky/power_off_led.sh");
-#endif
-#if defined(FEATURE_RDKB_LED_MANAGER_FACTORY_RESET)
                     sysevent_led_fd = sysevent_open("127.0.0.1", SE_SERVER_WELL_KNOWN_PORT, SE_VERSION, "FactoryResetHandler", &sysevent_led_token);
                     if(sysevent_led_fd != -1)
                     {
@@ -2177,6 +2170,10 @@ CosaDmlDcSetFactoryReset
                     }
                     if (sysevent_led_fd != -1)
                             sysevent_close(sysevent_led_fd, sysevent_led_token);
+#if defined(_SR213_PRODUCT_REQ_)
+                    sleep(5);
+                    // power off the led controller after showing Green LED for 5 seconds
+                    v_secure_system("/etc/sky/power_off_led.sh");
 #endif
                }
 #endif
