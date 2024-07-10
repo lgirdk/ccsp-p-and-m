@@ -140,7 +140,11 @@ ULONG X_LGI_COM_DigitalSecurity_GetParamStringValue(ANSC_HANDLE hInsContext, cha
             *pUlSize = 32 + 1;
             return 1;
         }
-        return read_param_string_from_file("/var/sam/status", pValue, pUlSize);
+        read_param_string_from_file("/var/sam/status", pValue, pUlSize);
+        if (pValue[0] == 0) {
+            strcpy(pValue,"Disabled");
+        }
+        return 0;
     }
 
     if (strcmp(ParamName, "SecretKey") == 0) {
