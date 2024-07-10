@@ -151,6 +151,11 @@ LgiGeneral_GetParamBoolValue
         return TRUE;
     }
 
+    if (strcmp(ParamName, "DNSv4ProxyEnable") == 0)
+    {
+        *pBool = pMyObject->DNSv4ProxyEnable;
+        return TRUE;
+    }
     // LGI ADD END
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
@@ -500,6 +505,11 @@ LgiGeneral_SetParamBoolValue
         pMyObject->LocalUIonStaticIPEnable = bValue;
         return TRUE;
     }
+    if (strcmp(ParamName, "DNSv4ProxyEnable") == 0)
+    {
+        pMyObject->DNSv4ProxyEnable = bValue;
+        return TRUE;
+    }
 
     return FALSE;
 }
@@ -693,7 +703,7 @@ LgiGeneral_Commit
 
     CosaDmlGiSetSTPEnable(NULL, pMyObject->STPEnable);
     CosaDmlGiSetLocalUIonStaticIPEnabled(NULL, pMyObject->LocalUIonStaticIPEnable);
-
+    CosaDmlGiSetDNSv4ProxyEnable(NULL, pMyObject->DNSv4ProxyEnable);
     /*
        The above call to CosaDmlGiSetSTPEnable() includes an unconditional call
        to syscfg_set_commit(), so we don't need another call to syscfg_commit()
