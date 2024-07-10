@@ -624,6 +624,13 @@
         <parameters>
 
             <parameter>
+                <name>DNSv4ProxyEnable</name>
+                <type>boolean</type>
+                <syntax>bool</syntax>
+                <writable>true</writable>
+            </parameter>
+
+            <parameter>
                 <name>STPEnable</name>
                 <type>boolean</type>
                 <syntax>bool</syntax>
