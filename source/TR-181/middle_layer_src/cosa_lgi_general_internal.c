@@ -139,7 +139,7 @@ CosaLgiGeneralInitialize
     CosaDmlGiGetLedOLTProvisioningErrorTimer(NULL, &pMyObject->OLTProvisioningErrorTimer);
     CosaDmlGiGetLedWanDhcpErrorTimer(NULL, &pMyObject->WanDhcpErrorTimer);
     CosaDmlGiGetLocalUIonStaticIPEnabled(NULL, &pMyObject->LocalUIonStaticIPEnable);
-
+    CosaDmlGiGetDNSv4ProxyEnable(NULL, &pMyObject->DNSv4ProxyEnable);
 
     /* Further implementation of this parameter is still under design discussion*/
     AnscCopyString(pMyObject->DataModelVersion, "14.0.0");
