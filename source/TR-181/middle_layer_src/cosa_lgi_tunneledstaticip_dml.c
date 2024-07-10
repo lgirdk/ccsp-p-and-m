@@ -291,6 +291,10 @@ ULONG X_LGI_COM_TunneledStaticIPService_Commit (ANSC_HANDLE hInsContext)
         }
         else
         {
+            if (!pMyObject->Cfg.Enable)
+            {
+               syscfg_unset(NULL,"brlan_static_ip_enable");
+            }
             bConfigChanged = TRUE;
         }
     }
