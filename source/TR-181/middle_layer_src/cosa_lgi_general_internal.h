@@ -52,6 +52,7 @@ _COSA_DATAMODEL_LGI_GENERAL_CLASS_CONTENT
     int                             OLTProvisioningErrorTimer;
     int                             WanDhcpErrorTimer;
     BOOL                            LocalUIonStaticIPEnable;
+    BOOL                            DNSv4ProxyEnable;
 }
 COSA_DATAMODEL_LGI_GENERAL, *PCOSA_DATAMODEL_LGI_GENERAL;
 
