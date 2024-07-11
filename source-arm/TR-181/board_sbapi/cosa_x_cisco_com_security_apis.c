@@ -5609,7 +5609,7 @@ CosaDmlIaGetLogEntries
     )
 {
     UNREFERENCED_PARAMETER(hContext);
-    char *fw_log_path = "/var/log";
+    char *fw_log_path = "/var/log/firewall";
     static int first_flg = 1;
 
     PCOSA_DML_IA_LOG_ENTRY pConf = NULL;
@@ -5693,7 +5693,7 @@ CosaDmlIaGetALLLogEntries
         ULONG*                         pUlSize
     )
 {
-    char *fw_log_path = "/var/log";
+    char *fw_log_path = "/var/log/firewall";
     ULONG i;
     size_t tmpsize=0;
 
