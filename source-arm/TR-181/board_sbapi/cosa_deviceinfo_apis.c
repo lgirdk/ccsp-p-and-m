@@ -610,6 +610,14 @@ CosaDmlDiGetProductClass
             return ANSC_STATUS_FAILURE;
         }
     }
+#elif defined(_SCER11BEL_PRODUCT_REQ_)
+    {
+       rc = strcpy_s(pValue, *pulSize, "XER10");
+       if ( rc != EOK) {
+            ERR_CHK(rc);
+            return ANSC_STATUS_FAILURE;
+        }
+    }
 #elif defined(MODEM_ONLY_SUPPORT)
     {
         rc = strcpy_s(pValue, *pulSize, "XD4");
@@ -682,14 +690,6 @@ CosaDmlDiGetProductClass
                     return ANSC_STATUS_FAILURE;
                 }
         }	
-#elif defined(_SCER11BEL_PRODUCT_REQ_)
-    {
-                rc = strcpy_s(pValue, *pulSize, "XER10");
-                if ( rc != EOK) {
-                    ERR_CHK(rc);
-                    return ANSC_STATUS_FAILURE;
-                }
-        }
 #elif defined( _HUB4_PRODUCT_REQ_)
         {
                 rc = strcpy_s(pValue, *pulSize, "HOMEHUB4");
