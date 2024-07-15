@@ -62,10 +62,21 @@ CosaDmlGiSetDNSv4ProxyEnable
         BOOL                        bValue
     )
 {
-    int rc;
+    int rc =0;
+    BOOL enable;
 
-    syscfg_set_commit (NULL, "dns_v4_proxy_enable", bValue ? "1" : "0");
-    rc = RestartPlatform(TRUE);
+    CosaDmlGiGetDNSv4ProxyEnable(NULL,&enable);
+
+    /* compare the new value with the current DNSv4ProxyEnable value */
+    if (enable != bValue)
+    {
+        syscfg_set_commit (NULL, "dns_v4_proxy_enable", bValue ? "1" : "0");
+        rc = RestartPlatform(TRUE);
+    }
+    else
+    {
+        CcspTraceInfo(("DNSv4ProxyEnable Param value didn't change. DNSv4Proxy is already - %s\n",bValue?"Enabled":"Disabled"));
+    }
 
     return (rc == 0) ? ANSC_STATUS_SUCCESS : ANSC_STATUS_FAILURE;
 }
