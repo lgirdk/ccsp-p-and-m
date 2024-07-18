@@ -607,9 +607,10 @@ CosaDmlGiGetStaticIpAddress
     if (static_ip[0] != 0)
     {
         strcpy(pValue, static_ip);	    
+        return ANSC_STATUS_SUCCESS;
     }
 
-    return ANSC_STATUS_SUCCESS;
+    return ANSC_STATUS_FAILURE;
 
 }
 
@@ -642,9 +643,10 @@ CosaDmlGiGetStaticSubnetMask
     if (static_mask[0] != 0)
     {
         strcpy(pValue, static_mask);	    
+        return ANSC_STATUS_SUCCESS;
     }
 
-    return ANSC_STATUS_SUCCESS;
+    return ANSC_STATUS_FAILURE;
 }
 
 ANSC_STATUS
