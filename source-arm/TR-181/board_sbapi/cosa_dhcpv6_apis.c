@@ -8846,8 +8846,11 @@ dhcpv6c_dbg_thrd(void * in)
 
         if ( FD_ISSET(fd, &rfds) )
         {
+             ssize_t msg_len = 0;
              msg[0] = 0;
-             read(fd, msg, sizeof(msg));
+             msg_len = read(fd, msg, sizeof(msg)-1);
+             if(msg_len > 0)
+                 msg[msg_len] = 0;
         }
 	else
 	    continue;
