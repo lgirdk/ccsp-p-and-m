@@ -1084,8 +1084,36 @@ CosaDmlGatewayV6GetFwEnable
     if (strcmp(buf, "None") == 0) {
         *pValue = false;
     }
-    else {
-        *pValue = true;
+    else
+    {
+        char staticBrLanEnable[8];
+        char staticIPEnable[8];
+        staticIPEnable[0] = '0';
+
+        syscfg_get( NULL, "brlan_static_ip_enable", staticBrLanEnable, sizeof(staticBrLanEnable));
+        if (strcmp(staticBrLanEnable, "true") == 0)
+        {
+#if defined(FEATURE_STATIC_IPV4)
+            char staticIpAdministrativeStatus[8];
+            syscfg_get( NULL, "staticipadminstatus", staticIpAdministrativeStatus, sizeof(staticIpAdministrativeStatus));
+            staticIPEnable[0] = ((strcmp("3", staticIpAdministrativeStatus))== 0) ? '1' : '0';
+#else
+            syscfg_get( NULL, "tunneled_static_ip_enable", staticIPEnable, sizeof(staticIPEnable));
+            if (staticIPEnable[0] != '1')
+            {
+                syscfg_get( NULL, "rip_enabled", staticIPEnable, sizeof(staticIPEnable));
+            }
+#endif
+        }
+
+        if (staticIPEnable[0] == '1')
+        {
+            *pValue = false;
+        }
+        else
+        {
+            *pValue = true;
+        }
     }
 
     return ANSC_STATUS_SUCCESS;
