@@ -219,7 +219,17 @@ Pam_GetFirstIpInterfaceObjectName
               returnStatus = ANSC_STATUS_FAILURE;
               break;
             }
-
+#if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)	    
+#if defined(WAN_MANAGER_UNIFICATION_ENABLED)
+            /* For FirstDownstreamIpInterface ignore the FirstUpstreamIpInterface set by WanManager for WanUnification Builds. */
+            if( bUpstream == FALSE && strlen(gFirstUpstreamIpInterface) > 0 &&
+                strncmp(gFirstUpstreamIpInterface, pObjName, strlen(gFirstUpstreamIpInterface))==0)
+            {
+                    CcspTraceInfo(("%s %d Ignoring gFirstUpstreamIpInterface  %s for FirstDownstreamIpInterface\n", __FUNCTION__, __LINE__, pObjName));
+                    continue;
+            }
+#endif
+#endif	    
             /*CcspTraceInfo(("Checking %s...\n", pObjName));*/
 
             LowerLayersSize = sizeof(LowerLayers);

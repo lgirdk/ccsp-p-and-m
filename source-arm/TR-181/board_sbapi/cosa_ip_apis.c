@@ -385,6 +385,12 @@ ANSC_STATUS CosaUpdateIfname(int Index, char *Ifname)
     memset(gFirstUpstreamIpInterface, 0 , sizeof(gFirstUpstreamIpInterface));
     memset(gFirstDownstreamIpInterface, 0 , sizeof(gFirstDownstreamIpInterface));
 
+#if defined(WAN_MANAGER_UNIFICATION_ENABLED)
+    /* WanUnification builds doesn't use interface Upstream DML for enabling WAN.
+     * directly setting gFirstUpstreamIpInterface to IP.Interface updated by WanManager.
+     */
+    snprintf(gFirstUpstreamIpInterface, sizeof(gFirstUpstreamIpInterface), "Device.IP.Interface.%d.", Index+1);
+#endif
     return ANSC_STATUS_SUCCESS;
 }
 #endif
@@ -641,7 +647,7 @@ static int _get_2_lfts(char * fn, int * p_valid, int * p_prefer, ipv6_addr_info_
             /*62934 - Calling risky function - Fix*/
             if (sscanf(p, "inet6 %7s", file_str) == 1)
             {
-                if (!strncmp((char *)file_str, (char *)addr_str, sizeof(file_str)))
+                if (!strncmp((char *)file_str, (char *)addr_str, 7))
                     found = 1;
             }
 
@@ -686,7 +692,9 @@ static int _get_datetime_lfts(char * p_pref_datetime, int len1,  char * p_valid_
     char iana_pretm[32] = {0};
     char iana_vldtm[32] = {0};
     errno_t safec_rc = -1;
-
+#if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
+    char sysEventName[256] = {0};
+#endif
     /*it's hard to use iproute2 C code to obtain 2 lifetimes, here call "ip" directly*/
     v_secure_system("ip -6 addr show dev %s > " TMP_IP_OUTPUT, g_ipif_names[ulIndex]);
        
@@ -705,8 +713,17 @@ static int _get_datetime_lfts(char * p_pref_datetime, int len1,  char * p_valid_
        ERR_CHK(safec_rc);
     }
 
+#if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
+        snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_PREF_PRETM_SYSEVENT_NAME, (char *)g_ipif_names[ulIndex]);
+        commonSyseventSet(sysEventName, iana_pretm);
+
+        memset( sysEventName, 0, sizeof(sysEventName));
+        snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_PREF_VLDTM_SYSEVENT_NAME, (char *)g_ipif_names[ulIndex]);
+        commonSyseventSet(sysEventName, iana_vldtm);
+#else    
     commonSyseventSet(COSA_DML_DHCPV6C_ADDR_PRETM_SYSEVENT_NAME, iana_pretm);
     commonSyseventSet(COSA_DML_DHCPV6C_ADDR_VLDTM_SYSEVENT_NAME, iana_vldtm);
+#endif
 
     return 0;
 }
@@ -868,7 +885,9 @@ IPIF_getEntry_for_Ipv6Addr
     char namespace[256] = {0};
     int  need_write = 0;
     errno_t safec_rc = -1;
-    
+#if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
+    char sysEventName[256] = {0};
+#endif    
     AnscTraceFlow(("%s...\n", __FUNCTION__));
 
     CosaUtilGetIpv6AddrInfo((char *)g_ipif_names[ulIndex], &p_v6addr, &v6addr_num);
@@ -1040,14 +1059,27 @@ IPIF_getEntry_for_Ipv6Addr
 	#else
 	    if ( _ansc_strstr(g_ipif_names[ulIndex], "erouter0" )  ) {
 	#endif
-		if (!commonSyseventGet(COSA_DML_DHCPV6C_ADDR_PRETM_SYSEVENT_NAME, out, sizeof(out)) ) {
+            #if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
+                memset( sysEventName, 0, sizeof(sysEventName));
+                snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_PREF_PRETM_SYSEVENT_NAME, (char *)g_ipif_names[ulIndex]);
+                if (!commonSyseventGet(sysEventName, out, sizeof(out)) )
+            #else		    
+	        if (!commonSyseventGet(COSA_DML_DHCPV6C_ADDR_PRETM_SYSEVENT_NAME, out, sizeof(out)) )
+	    #endif
+		{
 			p_dml_v6addr->iana_pretm = atoi(out);
 		}
 		else {
 			p_dml_v6addr->iana_pretm = 0;
 		}
-
-		if (!commonSyseventGet(COSA_DML_DHCPV6C_ADDR_VLDTM_SYSEVENT_NAME, out, sizeof(out)) ) {
+           #if defined(FEATURE_RDKB_CONFIGURABLE_WAN_INTERFACE)
+                memset( sysEventName, 0, sizeof(sysEventName));
+                snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_PREF_VLDTM_SYSEVENT_NAME, (char *)g_ipif_names[ulIndex]);
+                if (!commonSyseventGet(sysEventName, out, sizeof(out)) )
+           #else
+		if (!commonSyseventGet(COSA_DML_DHCPV6C_ADDR_VLDTM_SYSEVENT_NAME, out, sizeof(out)) ) 
+	   #endif
+		{
 			p_dml_v6addr->iana_vldtm = atoi(out);
 		}
 		else {
