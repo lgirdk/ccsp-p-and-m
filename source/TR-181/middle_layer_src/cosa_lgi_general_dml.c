@@ -156,6 +156,11 @@ LgiGeneral_GetParamBoolValue
         *pBool = pMyObject->DNSv4ProxyEnable;
         return TRUE;
     }
+    if (strcmp(ParamName, "AutoBrightness") == 0)
+    {
+        CosaDmlGiGetAutoBrightness(NULL, pBool);
+        return TRUE;
+    }
     // LGI ADD END
 
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
@@ -510,6 +515,11 @@ LgiGeneral_SetParamBoolValue
         pMyObject->DNSv4ProxyEnable = bValue;
         return TRUE;
     }
+    if (strcmp(ParamName, "AutoBrightness") == 0)
+    {
+        pMyObject->AutoBrightness = bValue;
+        return TRUE;
+    }
 
     return FALSE;
 }
@@ -692,6 +702,7 @@ LgiGeneral_Commit
     CosaDmlGiSetWebUISkin(NULL, pMyObject->WebUISkin);
     CosaDmlGiSetCustomerId(NULL, pMyObject->CustomerId);
     CosaDmlGiSetBrightness(NULL, pMyObject->Brightness);
+    CosaDmlGiSetAutoBrightness(NULL, pMyObject->AutoBrightness);
     CosaDmlGiSetUserBridgeModeAllowed(NULL, pMyObject->UserBridgeModeAllowed);
     CosaDmlGiSetLedDSErrorTimer(NULL, pMyObject->LedDSErrorTimer);
     CosaDmlGiSetLedUSErrorTimer(NULL, pMyObject->LedUSErrorTimer);
