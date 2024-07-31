@@ -129,7 +129,7 @@ CosaLgiGeneralInitialize
     ULONG size_DefaultAdminPassword = sizeof(pMyObject->DefaultAdminPassword);
     memset(pMyObject->DefaultAdminPassword, 0, size_DefaultAdminPassword);
     CosaDmlGiGetDefaultAdminPassword(NULL, pMyObject->DefaultAdminPassword, &size_DefaultAdminPassword);
-
+    CosaDmlGiGetAutoBrightness(NULL, &pMyObject->AutoBrightness);
     CosaDmlGiGetBrightness(NULL, &pMyObject->Brightness);
     CosaDmlGiGetUserBridgeModeAllowed(NULL, &pMyObject->UserBridgeModeAllowed);
     CosaDmlGiGetLedDSErrorTimer(NULL, &pMyObject->LedDSErrorTimer);

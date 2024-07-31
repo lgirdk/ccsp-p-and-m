@@ -230,6 +230,20 @@ CosaDmlGiSetBrightness
     ULONG                       pValue
 );
 
+ANSC_STATUS
+CosaDmlGiGetAutoBrightness
+(
+    ANSC_HANDLE                 hContext,
+    BOOL                        *pValue
+);
+
+ANSC_STATUS
+CosaDmlGiSetAutoBrightness
+(
+    ANSC_HANDLE                 hContext,
+    BOOL                        bValue
+);
+
 ULONG
 CosaDmlGiGetDefaultAdminPassword
 (
