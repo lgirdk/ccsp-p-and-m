@@ -741,6 +741,34 @@ CosaDmlLGiSetUiHashPassword
 }
 
 ANSC_STATUS
+CosaDmlGiGetAutoBrightness
+    (
+        ANSC_HANDLE                 hContext,
+        BOOL                        *pValue
+    )
+{
+    char buf[16];
+
+    syscfg_get (NULL, "led_auto_brightness", buf, sizeof(buf));
+
+    *pValue = (strcmp(buf, "true") == 0);
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
+CosaDmlGiSetAutoBrightness
+    (
+        ANSC_HANDLE                 hContext,
+        BOOL                        bValue
+    )
+{
+    syscfg_set (NULL, "led_auto_brightness", bValue ? "true" : "false");
+
+    return ANSC_STATUS_SUCCESS;
+}
+
+ANSC_STATUS
 CosaDmlGiGetBrightness
     (
         ANSC_HANDLE                 hContext,
