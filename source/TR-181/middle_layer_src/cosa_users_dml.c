@@ -333,7 +333,7 @@ User_AddEntry
     USERS_USER_SET_DEFAULTVALUE(pUser);
 
     pCxtLink = (PCOSA_CONTEXT_LINK_OBJECT)AnscAllocateMemory( sizeof(COSA_CONTEXT_LINK_OBJECT) );
-    if ( !pUser )
+    if ( !pCxtLink )
     {
         goto EXIT1;
     }
