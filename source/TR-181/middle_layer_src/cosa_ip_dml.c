@@ -5284,9 +5284,10 @@ IPv6Prefix_SetParamBoolValue
         /*not supported, even for static Prefix, */
         return FALSE;
     
-#endif
+#else
 		pIPv6Pre->bOnlink = bValue;
         return TRUE;
+#endif
     }
 
     if (strcmp(ParamName, "Autonomous") == 0)
@@ -5296,9 +5297,10 @@ IPv6Prefix_SetParamBoolValue
         /*not supported, even for static Prefix, */
         return FALSE;
     
-#endif
+#else
 		pIPv6Pre->bAutonomous = bValue;
         return TRUE;
+#endif
     }
 
 
