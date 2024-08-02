@@ -21,6 +21,8 @@
 #include <ccsp_trace.h>
 #include <syscfg/syscfg.h>
 #include "cosa_ssam_apis.h"
+#include "ccsp_message_bus.h"
+#include "ccsp_base_api.h"
 
 #include <openssl/conf.h>
 #include <openssl/evp.h>
@@ -34,6 +36,11 @@ static const unsigned char rndkey[32] = {
     0x04, 0x23, 0x12, 0x9d, 0xf9, 0xc3, 0x3a, 0x9d,
     0xff, 0xee, 0xeb, 0x71, 0x45, 0xdc, 0x89, 0xbb,
 };
+
+static pthread_t ssam_thread_id = 0;
+static BOOL ssam_thread_running = FALSE;
+char *const g_cComponent_id  = "ccsp.samdelaythread";
+static void *bus_handle = NULL;
 
 static int get_erouter_mac (struct ether_addr *mac)
 {
@@ -225,7 +232,7 @@ static int read_random_bytes (void *buf, size_t len)
     return nbytes;
 }
 
-void ssam_start (void)
+void ssam_start_local (void)
 {
     char buf[12];
     char cmd[1024];
@@ -234,20 +241,6 @@ void ssam_start (void)
     unsigned short r;
     char *p;
     int i;
-
-    syscfg_get(NULL, "ssam_enable", buf, sizeof(buf));
-    if (strcmp(buf, "1") != 0) {
-        return;
-    }
-
-    syscfg_get(NULL, "bridge_mode", buf, sizeof(buf));
-    if (strcmp(buf, "0") != 0) {
-        return;
-    }
-
-    if (access("/var/sam/.sam.pid", F_OK) == 0) {
-        return;
-    }
 
     syscfg_get(NULL, "Customer_Index", buf, sizeof(buf));
     if (buf[0] != 0) {
@@ -348,6 +341,148 @@ void ssam_start (void)
     }
 }
 
+/**
+ * @brief init_message_bus Function initializes the bus.
+ */
+
+static BOOL init_message_bus(void)
+{
+    char *pCfg = CCSP_MSG_BUS_CFG;
+    if (!bus_handle)
+    {
+        int ret = CCSP_Message_Bus_Init(g_cComponent_id, pCfg, &bus_handle, (CCSP_MESSAGE_BUS_MALLOC)Ansc_AllocateMemory_Callback, Ansc_FreeMemory_Callback);
+        if (ret == -1)
+        {
+            AnscTraceWarning(("%s,%d: Failed to initialize message bus...\n", __FUNCTION__,__LINE__));
+            bus_handle = NULL;
+            return FALSE;
+        }
+    }
+    return TRUE;
+}
+
+/**
+ * @brief isSystemReady Function to query CR and check if system is ready.
+ */
+static int isSystemReady()
+{
+    char str[256];
+    unsigned int val;
+    int ret;
+    snprintf(str, sizeof(str), "eRT.%s", CCSP_DBUS_INTERFACE_CR);
+    // Query CR for system ready
+    ret = CcspBaseIf_isSystemReady(bus_handle, str, &val);
+    AnscTraceWarning(("%s,%d: isSystemReady(): ret %d, val %u\n", __FUNCTION__,__LINE__, ret, val));
+    return (int)val;
+}
+
+/**
+ * @brief sam_launch_thread function to launch SAM application after the system is ready.
+ */
+static void *ssam_launch_thread(void *data)
+{
+    #define SSAM_THREAD_TIMEOUT 600
+    int wait_time = 0;
+    int ret;
+
+    AnscTraceWarning(("%s,%d: Entering Thread...\n", __FUNCTION__,__LINE__));
+    ssam_thread_running = TRUE;
+
+    if ( !init_message_bus())
+    {
+        AnscTraceWarning(("%s,%d: Error! initializing bus, exiting...\n", __FUNCTION__,__LINE__));
+        ssam_thread_running = FALSE;
+        return NULL;
+    }
+
+    AnscTraceWarning(("%s,%d: Waiting for system ready signal\n", __FUNCTION__,__LINE__));
+
+    while(1)
+    {
+        if(isSystemReady())
+        {
+            AnscTraceWarning(("%s,%d: Checked CR - System is ready, proceed with launching SAM Application\n", __FUNCTION__,__LINE__));
+            ssam_start_local();
+            break;
+        }
+        else
+        {
+            AnscTraceWarning(("%s,%d: Queried CR for system ready after waiting for %d sec, it is still not ready\n", __FUNCTION__,__LINE__, wait_time));
+        }
+        if (wait_time > SSAM_THREAD_TIMEOUT)
+        {
+            AnscTraceWarning(("%s,%d: Max timeout (%d Secs) is reached to launch SAM\n", __FUNCTION__,__LINE__, SSAM_THREAD_TIMEOUT));
+            break;
+        }
+        sleep(10);
+        wait_time += 10;
+    }
+    AnscTraceWarning(("%s,%d: Exiting Thread...\n", __FUNCTION__,__LINE__));
+    ssam_thread_running = FALSE;
+    return NULL;
+}
+
+/**
+ * @brief ssam_exit_thread stop ssam thread if it is still running.
+ */
+
+static void ssam_exit_thread (void)
+{
+    AnscTraceWarning(("%s,%d: -E-\n", __FUNCTION__,__LINE__));
+    if (ssam_thread_running)
+    {
+        pthread_cancel(ssam_thread_id);
+        pthread_join(ssam_thread_id, NULL);
+        ssam_thread_id = 0;
+        ssam_thread_running = FALSE;
+        AnscTraceWarning(("%s,%d: Exiting ssam launch thread\n", __FUNCTION__,__LINE__));
+    }
+}
+
+void ssam_start (void)
+{
+    char buf[12];
+    const char *filename = "/var/sam/.sam.pid";
+
+    AnscTraceWarning(("%s,%d: -E-\n", __FUNCTION__,__LINE__));
+
+    syscfg_get(NULL, "ssam_enable", buf, sizeof(buf));
+    if (strcmp(buf, "1") != 0) 
+    {
+        AnscTraceWarning(("%s,%d: SAM is not enabled, exiting...\n", __FUNCTION__, __LINE__));
+        return;
+    }
+
+    syscfg_get(NULL, "bridge_mode", buf, sizeof(buf));
+    if (strcmp(buf, "0") != 0) 
+    {
+        AnscTraceWarning(("%s,%d: In bridge mode, skip running SAM...\n", __FUNCTION__, __LINE__));
+        return;
+    }
+
+    if (access(filename, F_OK) == 0)
+    {
+        AnscTraceWarning(("%s,%d: SAM application is already running. exiting...\n", __FUNCTION__,__LINE__));
+        return;
+    }
+
+    if (ssam_thread_running)
+    {
+        AnscTraceWarning(("%s,%d: SAM application already in the process of starting. Please wait...\n", __FUNCTION__, __LINE__));
+        return;
+    }
+
+    int ret = pthread_create(&ssam_thread_id, NULL, ssam_launch_thread, NULL);
+    if (ret)
+    {
+        AnscTraceWarning(("%s,%d: Failed to create SAM launcher thread, ret=%d\n", __FUNCTION__, __LINE__, ret));
+    }
+    else
+    {
+        pthread_detach(ssam_thread_id);
+    }
+}
+
 void save_the_agent_version(void)
 {
     FILE *fp = NULL;
@@ -375,6 +510,7 @@ void save_the_agent_version(void)
 void ssam_stop (void)
 {
     save_the_agent_version();
+    ssam_exit_thread();
     system("killall -s SIGINT sam");
     unlink("/var/sam/.sam.pid");
     unlink("/var/sam/status");
