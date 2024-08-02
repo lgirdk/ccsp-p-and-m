@@ -964,6 +964,7 @@ static void CheckAndSetRebootReason()
             fprintf(fpBootLogFile, "Received reboot_reason as:%s\n", rebootReason);
 	    t2_event_s("rdkb_rebootreason_split", rebootReason);
             fclose(fpBootLogFile);
+            CcspTraceInfo(("%s %d - Last Reboot Reason is : %s\n", __FUNCTION__, __LINE__, rebootReason));
         }
         else
         {
