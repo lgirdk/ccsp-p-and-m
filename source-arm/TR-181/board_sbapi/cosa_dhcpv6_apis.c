@@ -2819,7 +2819,7 @@ CosaDmlDhcpv6cGetServerCfg
         
         while(fgets(buf, sizeof(buf), fp))
         {
-            if (sscanf(buf, "addr %s", val) == 1)
+            if (sscanf(buf, "addr %1023s", val) == 1)
             {
                 rc = strncpy_s((char*)(*ppCfg)->SourceAddress, sizeof((*ppCfg)->SourceAddress), val, sizeof((*ppCfg)->SourceAddress) - 1);
                 ERR_CHK(rc);
