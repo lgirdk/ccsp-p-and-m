@@ -254,7 +254,11 @@ void ssam_start_local (void)
         if (mkdir("/var/sam", 0777) != 0) {
             return;
         }
+#if defined(_PUMA6_ARM_)
+        if (system("mount -t tmpfs -o size=8M tmpfs /var/sam") != 0) {
+#else
         if (system("mount -t tmpfs -o size=32M tmpfs /var/sam") != 0) {
+#endif
             return;
         }
 
