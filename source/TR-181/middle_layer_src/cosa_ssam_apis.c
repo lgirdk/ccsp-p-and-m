@@ -401,6 +401,21 @@ static void *ssam_launch_thread(void *data)
     {
         if(isSystemReady())
         {
+#ifdef _PUMA6_ARM_
+            // During system bootup, the value of wait_time is always more than 0.
+            // Add additional bootup delay for MV1 before launching SAM first time.
+            // Susequent SAM start doesn't require any additional delay
+            if (wait_time != 0)
+            {
+                int boot_time_delay = 120;
+                AnscTraceWarning(("%s,%d: Additional bootup delay %d Secs to start SAM on MV1\n", __FUNCTION__,__LINE__, boot_time_delay ));
+                while (boot_time_delay)
+                {
+                    boot_time_delay = sleep(boot_time_delay);
+                }
+
+            }
+#endif
             AnscTraceWarning(("%s,%d: Checked CR - System is ready, proceed with launching SAM Application\n", __FUNCTION__,__LINE__));
             ssam_start_local();
             break;
