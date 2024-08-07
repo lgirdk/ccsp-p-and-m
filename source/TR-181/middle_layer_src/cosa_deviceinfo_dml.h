@@ -997,8 +997,6 @@ MemoryStatus_SetParamUlongValue
 
 ***********************************************************************/
 
-#if !defined (RESOURCE_OPTIMIZATION)
-
 BOOL
 ProcessStatus_GetParamBoolValue
     (
@@ -1031,8 +1029,6 @@ ProcessStatus_GetParamStringValue
         char*                       pValue,
         ULONG*                      pUlSize
     );
-
-#endif
 
 /***********************************************************************
 

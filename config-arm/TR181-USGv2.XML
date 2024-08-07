@@ -4275,7 +4275,6 @@
 		
 	</object> <!--RDK_CENTRAL-->
 	
-<?ifndef FEATURE_RESOURCE_OPTIMIZATION?>
 
         <object>
 
@@ -4320,6 +4319,8 @@
           </parameter>
 
           </parameters>
+
+<?ifndef FEATURE_RESOURCE_OPTIMIZATION?>
 
           <objects>
 
@@ -4425,9 +4426,9 @@
 
           </objects>
 
-        </object>
-
 <?endif?>
+
+        </object>
 
         <object>
 
