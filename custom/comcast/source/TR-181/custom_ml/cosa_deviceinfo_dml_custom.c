@@ -84,6 +84,7 @@
 #define IPV4_UP_EVENT         "rdkb_ipv4_up"
 #define IPV4_DOWN_EVENT       "rdkb_ipv4_down"
 #define LIMITED_OPERATIONAL   "rdkb_limited_operational"
+#define WAN_LINK_UP          "rdkb_wan_link_up"
 #endif
 
 
@@ -478,8 +479,22 @@ DeviceInfo_SetParamBoolValue_Custom
 			{
 				if(sysevent_led_fd != -1)
 				{
-					sysevent_set(sysevent_led_fd, sysevent_led_token, SYSEVENT_LED_STATE, LIMITED_OPERATIONAL, 0);
-					CcspTraceInfo (("[%s][%d] Successfully sent LIMITED_OPERATIONAL event to RdkledManager\n", __FUNCTION__,__LINE__));
+					snprintf(cmd, sizeof(cmd), "sysevent get led_event");
+					if (((fp = popen(cmd,"r")) != NULL) && (fgets(ledStatus, sizeof(ledStatus), fp))) 
+					{
+						CcspTraceInfo (("[%s][%d] ledStatus is %s\n", __FUNCTION__,__LINE__, ledStatus));
+						if(strncmp(ledStatus, "rdkb_wan_link_up", strlen("rdkb_wan_link_up")) == 0)
+						{
+							sysevent_set(sysevent_led_fd, sysevent_led_token, SYSEVENT_LED_STATE,WAN_LINK_UP, 0);
+							CcspTraceInfo (("[%s][%d] Sent WAN_LINK_UP Event to RdkLedManager; reason wan registration\n", __FUNCTION__,__LINE__));
+						}
+						else
+						{
+							sysevent_set(sysevent_led_fd, sysevent_led_token, SYSEVENT_LED_STATE, LIMITED_OPERATIONAL, 0);
+							CcspTraceInfo (("[%s][%d] Successfully sent LIMITED_OPERATIONAL event to RdkledManager\n", __FUNCTION__,__LINE__));
+						}
+
+					} 
 				}
 			}
 			else
