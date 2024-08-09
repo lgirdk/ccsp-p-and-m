@@ -841,6 +841,23 @@ CosaDmlDynamicDns_Host_DelEntry
 }
 
 ANSC_STATUS
+CosaDmlDynamicDns_Host_Unset_sysCfg
+    (
+        ULONG ins
+    )
+{
+    char buf[32]={0};
+
+    snprintf(buf, sizeof(buf), SYSCFG_HOST_NAME_KEY, ins);
+    syscfg_unset(NULL, buf);
+    snprintf(buf, sizeof(buf), SYSCFG_HOST_STATUS_KEY, ins);
+    syscfg_unset(NULL, buf);
+    snprintf(buf, sizeof(buf), SYSCFG_HOST_ENABLE_KEY, ins);
+    syscfg_unset(NULL, buf);
+    syscfg_commit();
+}
+
+ANSC_STATUS
 CosaDmlDynamicDns_Host_GetConf
     (
         ULONG ins,

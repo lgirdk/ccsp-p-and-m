@@ -98,6 +98,7 @@ ANSC_STATUS CosaDmlDynamicDns_Host_AddEntry(COSA_DML_DDNS_HOST *pEntry);
 ANSC_STATUS CosaDmlDynamicDns_Host_DelEntry(ULONG ins);
 ANSC_STATUS CosaDmlDynamicDns_Host_GetConf(ULONG ins, COSA_DML_DDNS_HOST *pEntry);
 ANSC_STATUS CosaDmlDynamicDns_Host_SetConf(ULONG ins, COSA_DML_DDNS_HOST *pEntry);
+ANSC_STATUS CosaDmlDynamicDns_Host_Unset_sysCfg(ULONG ins);
 /* To get the Last successful update of this name to the Dynamic DNS Server. */
 ULONG CosaDmlDynamicDns_GetHostLastUpdate(char*  lastUpdate);
 void CosaInitializeTr181DdnsHost();
