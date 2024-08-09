@@ -353,7 +353,16 @@ Firewall_GetParamStringValue
 
         CosaDmlFirewallGetConfig(NULL, pFirewallCfg);
         /* collect value */
-        rc = strcpy_s(pValue,*pUlSize, pFirewallCfg->LastChange);
+        if (strlen(pFirewallCfg->LastChange) != 0)
+        {
+            rc = strcpy_s(pValue,*pUlSize, pFirewallCfg->LastChange);
+        }
+        else
+        {
+            /* Set zero time instead of empty string*/
+            rc = strcpy_s(pValue,*pUlSize, "0000-00-00T00:00:00Z");
+        }
+
         if(rc != EOK)
         {
            ERR_CHK(rc);
