@@ -140,9 +140,17 @@ ULONG X_LGI_COM_DigitalSecurity_GetParamStringValue(ANSC_HANDLE hInsContext, cha
             *pUlSize = 32 + 1;
             return 1;
         }
-        read_param_string_from_file("/var/sam/status", pValue, pUlSize);
-        if (pValue[0] == 0) {
-            strcpy(pValue,"Disabled");
+
+        char buf[8];
+        syscfg_get(NULL, "ssam_enable", buf, sizeof(buf));
+        if (strcmp(buf, "1") != 0) {
+            strcpy(pValue, "Disabled");
+        }
+        else {
+            read_param_string_from_file("/var/sam/status", pValue, pUlSize);
+            if (pValue[0] == 0) {
+                strcpy(pValue, "Disabled");
+            }
         }
         return 0;
     }
