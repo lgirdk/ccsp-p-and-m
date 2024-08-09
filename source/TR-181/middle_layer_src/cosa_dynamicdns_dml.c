@@ -242,6 +242,9 @@ DDNSClient_AddEntry
     CosaSListPushEntryByInsNum((PSLIST_HEADER)&pDynamicDns->DDNSClientList, pLinkObj);
     CosaDynamicDns_ClientAddInfo((ANSC_HANDLE)pDynamicDns, (ANSC_HANDLE)pLinkObj);
 
+    //reset ddns_host_* syscfgdb
+    CosaDmlDynamicDns_Host_Unset_sysCfg(1);
+
     *pInsNumber = pLinkObj->InstanceNumber;
     return pLinkObj;
 }
@@ -258,6 +261,12 @@ DDNSClient_DelEntry
     PCOSA_CONTEXT_LINK_OBJECT  pLinkObj      = (PCOSA_CONTEXT_LINK_OBJECT)hInstance;
     COSA_DML_DDNS_CLIENT       *pClientEntry = (COSA_DML_DDNS_CLIENT *)pLinkObj->hContext;
     ANSC_STATUS                returnStatus  = ANSC_STATUS_SUCCESS;
+
+    /*
+     * unset syscfg instances of ddns_host_name_
+     * only one instance with val=1 created in syscfg it is always ddns_host_*_1
+     */
+    CosaDmlDynamicDns_Host_Unset_sysCfg(1);
 
     CosaDmlDynamicDns_Client_DelEntry(pLinkObj->InstanceNumber);
     AnscSListPopEntryByLink((PSLIST_HEADER)&pDynamicDns->DDNSClientList, &pLinkObj->Linkage);
