@@ -326,7 +326,7 @@ void CosaDmlDiCheckAndEnableMoCA( void )
    Temperature limit in Celsius. Attempts to set the high temperature alarm
    above this value (ie to effectively disable the alarm) will be rejected.
 */
-#define TEMP_SENSOR_HIGH_ALARM_LIMIT 99
+#define TEMP_SENSOR_HIGH_ALARM_LIMIT 120
 
 static pthread_t gPoll_threadId[MAX_TEMPSENSOR_INSTANCE];
 
