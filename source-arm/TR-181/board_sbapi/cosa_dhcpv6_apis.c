@@ -7843,6 +7843,37 @@ void enable_Ula_IPv6(char* ifname)
 }
 #endif
 
+static int sysctl_iface_set(const char *path, const char *ifname, const char *content)
+{
+    char buf[128];
+    char *filename;
+    size_t len;
+    int fd;
+
+    if (ifname) {
+        snprintf(buf, sizeof(buf), path, ifname);
+        filename = buf;
+    }
+    else
+        filename = path;
+
+    if ((fd = open(filename, O_WRONLY)) < 0) {
+        perror("Failed to open file");
+        return -1;
+    }
+
+    len = strlen(content);
+    if (write(fd, content, len) != (ssize_t) len) {
+        perror("Failed to write to file");
+        close(fd);
+        return -1;
+    }
+
+    close(fd);
+
+    return 0;
+}
+
 void enable_IPv6(char* if_name)
 {
         FILE *fp = NULL;
@@ -7857,7 +7888,7 @@ void enable_IPv6(char* if_name)
 
     	if(tbuff[strlen(tbuff)-1] == '0')
     	{
-            v_secure_system("sysctl -w net.ipv6.conf.%s.autoconf=1",if_name);
+            sysctl_iface_set("/proc/sys/net/ipv6/conf/%s/autoconf", if_name, "1");
             v_secure_system("ifconfig %s down;ifconfig %s up",if_name,if_name);
     	}
         rc = sprintf_s(cmd, sizeof(cmd), "%s_ipaddr_v6",if_name);
