@@ -284,6 +284,38 @@ CosaDmlMaptGetIPv6StringFromHex
 }
 
 
+static int sysctl_iface_set(const char *path, const char *ifname, const char *content)
+{
+    char buf[128];
+    char *filename;
+    size_t len;
+    int fd;
+
+    if (ifname) {
+        snprintf(buf, sizeof(buf), path, ifname);
+        filename = buf;
+    }
+    else
+        filename = path;
+
+    if ((fd = open(filename, O_WRONLY)) < 0) {
+        perror("Failed to open file");
+        return -1;
+    }
+
+    len = strlen(content);
+    if (write(fd, content, len) != (ssize_t) len) {
+        perror("Failed to write to file");
+        close(fd);
+        return -1;
+    }
+
+    close(fd);
+
+    return 0;
+}
+
+
 static RETURN_STATUS
 CosaDmlMaptApplyConfig
 (
@@ -363,12 +395,12 @@ CosaDmlMaptApplyConfig
   MAPT_LOG_INFO("Ip routes modified successfully.");
 
   // override udp timeout for mapt
-  if ( v_secure_system("sysctl -w net.netfilter.nf_conntrack_udp_timeout=30") )
+  if (sysctl_iface_set("/proc/sys/net/netfilter/nf_conntrack_udp_timeout", NULL, "30") != 0)
   {
        MAPT_LOG_ERROR("Failed to set nf_conntrack_udp_timeout!");
   }
 
-  if ( v_secure_system("sysctl -w net.netfilter.nf_conntrack_udp_timeout_stream=30") )
+  if (sysctl_iface_set("/proc/sys/net/netfilter/nf_conntrack_udp_timeout_stream", NULL, "30") != 0)
   {
        MAPT_LOG_ERROR("Failed to set nf_conntrack_udp_timeout_stream!");
   }
