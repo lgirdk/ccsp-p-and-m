@@ -14583,6 +14583,7 @@ IPv6onPOD_SetParamBoolValue
         }
     return FALSE;
 }
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
 /**********************************************************************
 
     caller:     owner of this object
@@ -14644,7 +14645,6 @@ IPv6onMoCA_GetParamBoolValue
 		}
      return FALSE;
 }
-#if !defined (NO_MOCA_FEATURE_SUPPORT)
 /**********************************************************************
 
     caller:     owner of this object
