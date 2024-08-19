@@ -237,7 +237,9 @@ _PSM_BRIDGE_TML
 //    _PSM_BRIDGE_TML_ATOM_BENABLE,
     _PSM_BRIDGE_TML_SW_MEMBERS,
     _PSM_BRIDGE_TML_ETH_MEMBERS,
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
     _PSM_BRIDGE_TML_MOCA_MEMBERS,
+#endif
     //$HL 07/15/2013
     _PSM_BRIDGE_TML_GRE_MEMBERS,
     _PSM_BRIDGE_TML_WIFI_MEMBERS,
@@ -304,7 +306,9 @@ static const char *g_brTemple[] = {
 //    DMSB_ATOM_L2_CONCAT("enable"),
     DMSB_L2_CONCAT("Members.SW"),
     DMSB_L2_CONCAT("Members.Eth"),
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
     DMSB_L2_CONCAT("Members.Moca"),
+#endif
     //$HL 7/15/2013
     DMSB_L2_CONCAT("Members.Gre"),
     DMSB_L2_CONCAT("Members.WiFi"),
@@ -480,6 +484,7 @@ static const char *g_bVlanTemple[] = {
             _ansc_memset(param_name, 0, sizeof(param_name)); \
         }
 
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
 #define _COSA_FORMAT_MEMBERS_STRING(_Bridge, _BPort, _DmsbInx,_Value )  { \
             errno_t rc = -1; \
             if (_BPort->mode==COSA_DML_BPORT_PASSTHRU) \
@@ -538,7 +543,58 @@ static const char *g_bVlanTemple[] = {
                 } \
             } \
         } 
-
+#else
+#define _COSA_FORMAT_MEMBERS_STRING(_Bridge, _BPort, _DmsbInx,_Value )  { \
+            errno_t rc = -1; \
+            if (_BPort->mode==COSA_DML_BPORT_PASSTHRU) \
+            { \
+                rc = sprintf_s(_Value, 256, "%s-t", _BPort->linkName); \
+                if(rc < EOK) { \
+                    ERR_CHK(rc); \
+                } \
+            } \
+            else \
+            { \
+                rc = sprintf_s(_Value, 256, "%s", _BPort->linkName); \
+                if(rc < EOK) { \
+                    ERR_CHK(rc); \
+                } \
+            }  \
+            if (_ansc_strstr(_BPort->linkName,"sw")) \
+            { \
+                rc = sprintf_s(_DmsbInx, 256, g_brTemple[_PSM_BRIDGE_TML_SW_MEMBERS], _Bridge->l2InstanceNumber, \
+                    _Value); \
+                if(rc < EOK) { \
+                    ERR_CHK(rc); \
+                } \
+            } \
+            else if (_BPort->linkType == COSA_DML_BRG_LINK_TYPE_WiFiSsid) \
+            { \
+                rc = sprintf_s(_DmsbInx, 256, g_brTemple[_PSM_BRIDGE_TML_WIFI_MEMBERS], _Bridge->l2InstanceNumber, \
+                    _Value); \
+                if(rc < EOK) { \
+                    ERR_CHK(rc); \
+                } \
+            } \
+            else if ((_BPort->linkType == COSA_DML_BRG_LINK_TYPE_Eth) || \
+                (_BPort->linkType == COSA_DML_BRG_LINK_TYPE_EthVlan)) \
+            { \
+                rc = sprintf_s(_DmsbInx, 256, g_brTemple[_PSM_BRIDGE_TML_ETH_MEMBERS], _Bridge->l2InstanceNumber, \
+                    _Value); \
+                if(rc < EOK) { \
+                    ERR_CHK(rc); \
+                } \
+            } \
+            else if (_BPort->linkType == COSA_DML_BRG_LINK_TYPE_Gre)\
+            { \
+                rc = sprintf_s(_DmsbInx, 256, g_brTemple[_PSM_BRIDGE_TML_GRE_MEMBERS], _Bridge->l2InstanceNumber, \
+                    _Value); \
+                if(rc < EOK) { \
+                    ERR_CHK(rc); \
+                } \
+            } \
+        } 
+#endif
 #define _PSM_REMOVE_MEMBERS(_Bridge, _BPort, _DmsbInx, _Value )  { \
             if (AnscSizeOfString(_BPort->linkName)) { \
                 _COSA_FORMAT_MEMBERS_STRING(_Bridge,_BPort, _DmsbInx, _Value ); \
@@ -2393,8 +2449,10 @@ static char *_COSA_GetInterfaceTypeStr(COSA_DML_BRG_LINK_TYPE linktype)
             return("Usb");
         case COSA_DML_BRG_LINK_TYPE_Hpna:
             return("Hpna");
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
         case COSA_DML_BRG_LINK_TYPE_Moca:
             return("Moca");
+#endif
         //$HL 7/15/2013
         case COSA_DML_BRG_LINK_TYPE_Gre:
             return("Gre");
@@ -3201,9 +3259,11 @@ static ANSC_STATUS _Psm_SetBr(ULONG instancenum,PBRIDGE pBridge)
         _PSM_SET_BR(_PSM_BRIDGE_TML_ETH_MEMBERS);
         rc = strcpy_s(param_value, sizeof(param_value), " ");
         ERR_CHK(rc);
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
         _PSM_SET_BR(_PSM_BRIDGE_TML_MOCA_MEMBERS);
         rc = strcpy_s(param_value, sizeof(param_value), " ");
         ERR_CHK(rc);
+#endif
         //$HL 07/15/2013
         _PSM_SET_BR(_PSM_BRIDGE_TML_GRE_MEMBERS);
         rc = strcpy_s(param_value, sizeof(param_value), " ");
@@ -3267,8 +3327,10 @@ static ANSC_STATUS _Psm_GetBPort(ULONG l2InstNum, ULONG bportInstNum, PBRIDGE_PO
         {
             if (strcmp(records[i]->parameterValue, "Ethernet") == 0)
                 pBPort->linkType = COSA_DML_BRG_LINK_TYPE_Eth;
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
             else if (strcmp(records[i]->parameterValue, "Moca") == 0)
                 pBPort->linkType = COSA_DML_BRG_LINK_TYPE_Moca;
+#endif
             else if (strcmp(records[i]->parameterValue, "Gre") == 0)
                 pBPort->linkType = COSA_DML_BRG_LINK_TYPE_Gre;
             else if (strcmp(records[i]->parameterValue, "WiFi") == 0)

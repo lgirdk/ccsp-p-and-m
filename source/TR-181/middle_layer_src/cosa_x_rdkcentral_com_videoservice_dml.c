@@ -145,7 +145,9 @@ static void *SetVideoServiceConfig(void *arg)
     UNREFERENCED_PARAMETER(arg);
     int ret = ANSC_STATUS_SUCCESS;
     BOOL isBridgeMode = FALSE;
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
     char buf[5] = {0};
+#endif
     char FirewallLevel[32] = {0};
     ULONG len = 0;
 
@@ -207,6 +209,7 @@ static void *SetVideoServiceConfig(void *arg)
     }
 
 
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
     /* CID : 71973 Array compared against 0*/
     if(!syscfg_get( NULL, "moca_enabled", buf, sizeof(buf)))
     {
@@ -254,7 +257,7 @@ static void *SetVideoServiceConfig(void *arg)
        CcspTraceError(("RDK_LOG_ERROR,  [%s] syscfg_get failed\n",__FUNCTION__));
        return NULL;
     }
-
+#endif
     pthread_mutex_lock(&g_videoservice_mutex);
     videoServiceEnableInProgress = FALSE;                          
     pthread_mutex_unlock(&g_videoservice_mutex);

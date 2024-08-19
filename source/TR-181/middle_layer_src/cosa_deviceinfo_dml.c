@@ -14644,6 +14644,7 @@ IPv6onMoCA_GetParamBoolValue
 		}
      return FALSE;
 }
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
 /**********************************************************************
 
     caller:     owner of this object
@@ -14788,6 +14789,7 @@ IPv6onMoCA_SetParamBoolValue
     }
     return FALSE;	
 }
+#endif
 /**********************************************************************  
 
     caller:     owner of this object
@@ -21597,7 +21599,7 @@ Telemetry_SetParamStringValue (ANSC_HANDLE hInsContext, char* ParamName, char* p
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
 }
-
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
 /**********************************************************************
 
     caller:     owner of this object
@@ -21721,7 +21723,7 @@ MocaAccountIsolation_SetParamBoolValue
   CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName));
   return FALSE;
 }
-
+#endif
 
 /**********************************************************************
 

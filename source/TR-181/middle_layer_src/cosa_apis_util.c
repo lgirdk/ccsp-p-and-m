@@ -483,6 +483,7 @@ CosaUtilGetLowerLayers
             else if (strcmp(pTableStringToken->Name, "Device.HomePlug.Interface.") == 0)
             {
             }
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
             else if (strcmp(pTableStringToken->Name, "Device.MoCA.Interface.") == 0)
             {
 
@@ -546,6 +547,7 @@ CosaUtilGetLowerLayers
                 }
 
             }
+#endif
             else if (strcmp(pTableStringToken->Name, "Device.X_CISCO_COM_GRE.Interface.") == 0)
             {
                 ulNumOfEntries =       CosaGetParamValueUlong("Device.X_CISCO_COM_GRE.InterfaceNumberOfEntries");
@@ -844,10 +846,12 @@ LINKTYPE_MAP_T g_linktype_map[COSA_DML_LINK_TYPE_TOTAL] = {
         "HPNA", 
         COSA_DML_LINK_TYPE_Hpna
     },
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
     {   "Device.MoCA.Interface.", 
         "MoCA", 
         COSA_DML_LINK_TYPE_Moca
     },
+#endif
     {   "Device.HomePlug.Interface.", 
         "HomePlug", 
         COSA_DML_LINK_TYPE_HomePlug

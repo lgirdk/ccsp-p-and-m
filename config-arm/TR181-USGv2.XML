@@ -1059,12 +1059,14 @@
             <writable>true</writable>
          </parameter>
 	<!-- placeholder for Xi5 parameter start -->
+<?ifndef NO_MOCA_FEATURE_SUPPORT?>
         <parameter>
             <name>X_RDKCENTRAL-COM_EnableMoCAforXi5</name>
             <type>boolean</type>
             <syntax>bool</syntax>
             <writable>true</writable>
         </parameter>
+<?endif?>
 	<!-- placeholder for Xi5 parameter end -->
 <?else?>
         <parameter>
@@ -2038,6 +2040,23 @@
                         </object>
 <?endif?>
 <?ifndef BCI?>
+									<object>
+							<name>WMMdownstreamMap</name>
+							<objectType>object</objectType>
+							<functions>
+								<func_GetParamBoolValue>WMMdownstreamMap_GetParamBoolValue</func_GetParamBoolValue>
+								<func_SetParamBoolValue>WMMdownstreamMap_SetParamBoolValue</func_SetParamBoolValue>
+							</functions>
+							<parameters>
+								<parameter>
+									<name>Enable</name>
+									<type>boolean</type>
+									<syntax>bool</syntax>
+									<writable>true</writable>
+								</parameter>
+							</parameters>
+						</object>
+<?ifndef NO_MOCA_FEATURE_SUPPORT?>
                        <object>
                             <name>MocaAccountIsolation</name>
                             <objectType>object</objectType>
@@ -2054,6 +2073,7 @@
                               </parameter>
                             </parameters>
                         </object>
+<?endif?>
 <?ifdef _XB6_PRODUCT_REQ_?>
                     <object>
                             <name>CaptivePortalForNoCableRF</name>
@@ -2072,22 +2092,6 @@
                             </parameters>
                         </object>
 <?endif?>
-									<object>
-							<name>WMMdownstreamMap</name>
-							<objectType>object</objectType>
-							<functions>
-								<func_GetParamBoolValue>WMMdownstreamMap_GetParamBoolValue</func_GetParamBoolValue>
-								<func_SetParamBoolValue>WMMdownstreamMap_SetParamBoolValue</func_SetParamBoolValue>
-							</functions>
-							<parameters>
-								<parameter>
-									<name>Enable</name>
-									<type>boolean</type>
-									<syntax>bool</syntax>
-									<writable>true</writable>
-								</parameter>
-							</parameters>
-						</object>
 <?endif?>
 <?ifndef BCI | def RDK_ONEWIFI?>
                         <object>
@@ -3179,6 +3183,7 @@
                         </parameters>
 
   		</object>
+<?ifndef NO_MOCA_FEATURE_SUPPORT?>
 	<object>
                         <name>IPv6onMoCA</name>
 
@@ -3208,6 +3213,7 @@
                         </parameters>
 
   		</object>
+<?endif?>
                 <object>
                         <name>EvoStream_DirectConnect</name>
 

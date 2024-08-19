@@ -332,6 +332,7 @@ COSA_HHT_PTR;
 /**********************************************************************
                 FUNCTION PROTOTYPES
 **********************************************************************/
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
 ANSC_STATUS
 CosaDmlDiGetEnableMoCAforXi5Flag
   (
@@ -346,6 +347,7 @@ CosaDmlDiSetEnableMoCAforXi5Flag
           BOOLEAN*                                        pEnableMoCAforXi5Flag
    );
 void CosaDmlDiCheckAndEnableMoCA( void );
+#endif
 int getRebootCounter();
 int setRebootCounter();
 int setUnknownRebootReason();

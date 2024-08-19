@@ -89,9 +89,10 @@ typedef struct _Name_DM
 int g_IPIfNameDMListNum = 0;
 Name_DM_t *g_pIPIfNameDMList = NULL;
 
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
 int g_MoCAADListNum = 0;
 Name_DM_t *g_pMoCAADList = NULL;
-
+#endif
 int g_DHCPv4ListNum = 0;
 Name_DM_t *g_pDHCPv4List = NULL;
 
@@ -622,8 +623,10 @@ Host_AddIPv6Address
 static inline char* _get_host_mediaType(enum LM_MEDIA_TYPE m_type)
 {
     switch (m_type){
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
         case LM_MEDIA_TYPE_MOCA:
             return _CloneString("MoCA");
+#endif
         case LM_MEDIA_TYPE_WIFI:
             return _CloneString("WiFi");
         case LM_MEDIA_TYPE_ETHERNET:
@@ -756,9 +759,11 @@ static inline void _get_host_info(LM_host_t *pDestHost, PLmObjectHost pHost)
                     pHost->pStringParaValue[LM_HOST_AssociatedDeviceId] = NULL;
                 }
            }
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
         }else if(strstr(pDestHost->l1IfName, "MoCA") != NULL){
             _get_dmbyname(g_MoCAADListNum, g_pMoCAADList, &(pHost->pStringParaValue[LM_HOST_AssociatedDeviceId]), pHost->pStringParaValue[LM_HOST_PhysAddressId]);
             STRNCPY_NULL_CHK(pHost->pStringParaValue[LM_HOST_Layer1InterfaceId], pDestHost->l1IfName);
+#endif
         }else if(strstr(pDestHost->l1IfName, "WiFi") != NULL){
             STRNCPY_NULL_CHK(pHost->pStringParaValue[LM_HOST_Layer1InterfaceId], pDestHost->l1IfName);
             STRNCPY_NULL_CHK(pHost->pStringParaValue[LM_HOST_AssociatedDeviceId], pDestHost->AssociatedDevice)
@@ -881,7 +886,9 @@ CosaDmlHostsGetHosts
     {
         *pulCount = hosts->count;
         _init_DM_List(&g_IPIfNameDMListNum, &g_pIPIfNameDMList, "Device.IP.Interface.", "Name");
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
         _init_DM_List(&g_MoCAADListNum, &g_pMoCAADList, "Device.MoCA.Interface.1.AssociatedDevice.", "MACAddress");
+#endif
         _init_DM_List(&g_DHCPv4ListNum, &g_pDHCPv4List, "Device.DHCPv4.Server.Pool.1.Client.", "Chaddr");
         for(i = 0; i < hosts->count; i++){
             plmHost = &(hosts->hosts[i]);
