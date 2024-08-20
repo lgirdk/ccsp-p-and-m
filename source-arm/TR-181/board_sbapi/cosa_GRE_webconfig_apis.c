@@ -33,6 +33,7 @@
 extern ANSC_HANDLE bus_handle;
 extern char g_Subsystem[32];
 extern int gBroadcastSubscribed;
+int gDisableNotification = 0;
 
 BOOL unpackAndProcessHotspotData(char* pString)
 {
@@ -200,6 +201,12 @@ BOOL unpackAndProcessHotspotData(char* pString)
             execDataHotspot->calcTimeout = calculateTimeout ;
             execDataHotspot->user_data = (void*) sequenceDetails;
             execDataHotspot->multiCompRequest =1 ;
+            if(gDisableNotification)
+            {
+                //Disable sending webconfig notification when blob applied locally 
+                execDataHotspot->disableWebCfgNotification = 1; 
+                gDisableNotification = 0;
+            }
 
             memset(filename,0,sizeof(filename));
             rc = sprintf_s(filename,sizeof(filename),"/tmp/.%s%u",execDataHotspot->subdoc_name,execDataHotspot->version);
@@ -340,6 +347,7 @@ void* initialize_hotspot_webconfig(void *arg)
             /* CID: 172835 fix*/
             if (fscanf(fp,"%s",blob) == 1)
             {
+                gDisableNotification = 1;
                 unpackAndProcessHotspotData(blob); 
             }
             free(blob);
