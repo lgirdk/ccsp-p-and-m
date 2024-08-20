@@ -142,7 +142,6 @@ static RETURN_STATUS CosaDmlMaptComputePsidAndIPv4Suffix (PCHAR pPdIPv6Prefix,
                          PUINT16 pPsid, PUINT16 pPsidLen, PUINT32 pIPv4Suffix);
 
 static PVOID CosaDmlMaptSetUPnPIGDService (PVOID arg);
-static UINT CosaDmlMaptCalculateChecksum(unsigned char *buf);
 
 /*
  * Global definitions
@@ -150,13 +149,15 @@ static UINT CosaDmlMaptCalculateChecksum(unsigned char *buf);
 static COSA_DML_MAPT_DATA   g_stMaptData;
 static volatile UINT8 g_bEnableUPnPIGD;
 static UINT8 g_bRollBackInProgress;
+#if !defined(WAN_MANAGER_UNIFICATION_ENABLED)
 static UINT s_Option95CheckSum = 0;
-
+#endif
 extern ANSC_HANDLE bus_handle;
 
 /*
  * Static function definitions
  */
+#if !defined(WAN_MANAGER_UNIFICATION_ENABLED)
 static UINT
 CosaDmlMaptCalculateChecksum(unsigned char *buf)
 {
@@ -168,6 +169,7 @@ CosaDmlMaptCalculateChecksum(unsigned char *buf)
     }
     return checksum;
 }
+#endif
 
 static RETURN_STATUS
 CosaDmlMaptFormulateIPv4Address
@@ -1098,39 +1100,39 @@ CosaDmlMaptResetClient
     VOID
 )
 {
+  MAPT_LOG_INFO("Entry");
+
+#if defined(WAN_MANAGER_UNIFICATION_ENABLED)
+    /*TODO:
+     *The below code should be removed once Unified MAPT Implemented.
+     */
+    ipc_dhcpv6_data_t dhcpv6_data;
+    memset(&dhcpv6_data, 0, sizeof(ipc_dhcpv6_data_t));
+
+    strcpy(dhcpv6_data.ifname, "erouter0");
+    dhcpv6_data.maptAssigned = FALSE;
+    if (send_dhcp_data_to_wanmanager(&dhcpv6_data, MAPT_STATE_CHANGED) != ANSC_STATUS_SUCCESS) {
+        CcspTraceError(("[%s-%d] Failed to send dhcpv6 data to wanmanager!!! \n", __FUNCTION__, __LINE__));
+    }
+#else
+
   FILE* fd = NULL;
   CHAR  outBuf[BUFLEN_256] = {0};
-
-  MAPT_LOG_INFO("Entry");
 
   if ( (fd = v_secure_popen("r", "ps | grep udhcp | grep erouter0")) )
   {
        if ( fgets(outBuf, BUFLEN_256, fd) && !strstr(outBuf, "erouter0") )
        {
-#if defined(WAN_MANAGER_UNIFICATION_ENABLED)
-          /*TODO:
-           *The below code should be removed once Unified MAPT Implemented.
-           */
-           ipc_dhcpv6_data_t dhcpv6_data;
-           memset(&dhcpv6_data, 0, sizeof(ipc_dhcpv6_data_t));
-
-	   strcpy(dhcpv6_data.ifname, "erouter0");
-           dhcpv6_data.maptAssigned = FALSE;
-           if (send_dhcp_data_to_wanmanager(&dhcpv6_data, MAPT_STATE_CHANGED) != ANSC_STATUS_SUCCESS) {
-               CcspTraceError(("[%s-%d] Failed to send dhcpv6 data to wanmanager!!! \n", __FUNCTION__, __LINE__));
-           }
-#else
             if ( v_secure_system("service_wan dhcp-start") )
             {
                  MAPT_LOG_ERROR("Failed to restore dhclient !");
 		 v_secure_pclose(fd);
                  return STATUS_FAILURE;
             }
-#endif
        }
 	v_secure_pclose(fd);
    }
-
+#endif
   return STATUS_SUCCESS;
 }
 
@@ -1473,6 +1475,8 @@ CosaDmlMaptProcessOpt95Response
   RETURN_STATUS ret = STATUS_SUCCESS;
   UINT16  uiOptionBufLen = 0;
   errno_t rc = -1;
+
+#if !defined(WAN_MANAGER_UNIFICATION_ENABLED)
   UINT prevCheckSum = s_Option95CheckSum;
 
   s_Option95CheckSum = CosaDmlMaptCalculateChecksum(pOptionBuf);
@@ -1482,7 +1486,7 @@ CosaDmlMaptProcessOpt95Response
        MAPT_LOG_INFO("No change in received option95 data. No need to configure MAPT again!");
        return ret;
   }
-
+#endif
   MAPT_LOG_INFO("Entry");
 
   /* Check MAPT configuration, if already active, do rollback RB_ALL */
