@@ -13641,6 +13641,89 @@ WiFiPasspoint_SetParamBoolValue
 
 #if defined (FEATURE_OFF_CHANNEL_SCAN_5G)
 BOOL
+WiFiOffChannelScan_GetParamBoolValue
+(ANSC_HANDLE                hInsContext,
+ char *                     ParamName,
+ BOOL *                     pBool
+ )
+{
+    UNREFERENCED_PARAMETER(hInsContext);
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+        /* Collect Value */
+        char *strValue = NULL;
+        int retPsmGet = CCSP_SUCCESS;
+
+        retPsmGet = PSM_Get_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDK_RFC.Feature.WiFiOffChannelScan.Enable", NULL, &strValue);
+        if (retPsmGet == CCSP_SUCCESS)
+        {
+            *pBool = _ansc_atoi(strValue);
+            ((CCSP_MESSAGE_BUS_INFO *)bus_handle)->freefunc(strValue);
+        }
+        else
+        {
+            *pBool = FALSE;
+        }
+        return TRUE;
+    }
+    return FALSE;
+}
+
+BOOL
+WiFiOffChannelScan_SetParamBoolValue
+(
+ ANSC_HANDLE                 hInsContext,
+ char*                       ParamName,
+ BOOL                        bValue
+ )
+{
+    UNREFERENCED_PARAMETER(hInsContext);
+    if (strcmp(ParamName, "Enable") == 0) {
+        int retPsmGet = CCSP_SUCCESS;
+
+#ifdef RDK_ONEWIFI
+        parameterValStruct_t pVal[1];
+        char                 paramName[256] = "Device.WiFi.WiFi-OffChannelScan-APP";
+        char                 compName[256]  = "eRT.com.cisco.spvtg.ccsp.wifi";
+        char                 dbusPath[256]  = "/com/cisco/spvtg/ccsp/wifi";
+        char*                faultParam     = NULL;
+        int                  ret            = 0;
+        CCSP_MESSAGE_BUS_INFO *bus_info               = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
+           pVal[0].parameterName  = paramName;
+           pVal[0].parameterValue = bValue ? "true" : "false";
+           pVal[0].type           = ccsp_boolean;
+
+           ret = CcspBaseIf_setParameterValues(
+                     bus_handle,
+                     compName,
+                     dbusPath,
+                     0,
+                     0,
+                     pVal,
+                     1,
+                     TRUE,
+                     &faultParam
+                 );
+
+           if (ret != CCSP_SUCCESS)
+           {
+               CcspTraceError(("%s - %d - Failed to notify WiFi component - Error [%s]\n", __FUNCTION__, __LINE__, faultParam));
+               bus_info->freefunc(faultParam);
+               return FALSE;
+           }
+#endif
+            retPsmGet = PSM_Set_Record_Value2(bus_handle,g_Subsystem, "Device.DeviceInfo.X_RDK_RFC.Feature.WiFiOffChannelScan.Enable", ccsp_string, bValue ? "1" : "0");
+            if (retPsmGet != CCSP_SUCCESS) {
+                CcspTraceError(("Set failed for app Off Channel Scan RFC\n"));
+                return FALSE;
+            }
+            CcspTraceInfo(("Successfully set app Off Channel Scan RFC\n"));
+            return TRUE;
+    }
+    return FALSE;
+}
+#endif // (FEATURE_OFF_CHANNEL_SCAN_5G)
+BOOL
 off_channel_scan_GetParamBoolValue
 (
  ANSC_HANDLE                 hInsContext,
@@ -13729,7 +13812,6 @@ off_channel_scan_SetParamBoolValue
     }
     return FALSE;
 }
-#endif // (FEATURE_OFF_CHANNEL_SCAN_5G)
 
 /**********************************************************************
 
