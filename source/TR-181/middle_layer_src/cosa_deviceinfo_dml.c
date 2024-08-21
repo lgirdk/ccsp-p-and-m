@@ -6228,8 +6228,6 @@ Ops_SetParamBoolValue
     return FALSE;
 }
 
-#if !defined (RESOURCE_OPTIMIZATION)
-
 /***********************************************************************
 
  APIs for Object:
@@ -6383,8 +6381,15 @@ ProcessStatus_GetParamUlongValue
          
         return TRUE;
     }
-
-
+#if defined (RESOURCE_OPTIMIZATION)
+    if (strcmp(ParamName, "ProcessNumberOfEntries") == 0)
+    {
+        /* collect value */
+         *puLong = COSADmlGetProcessNumberOfEntries();
+         
+        return TRUE;
+    }
+#endif
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
 }
@@ -6445,6 +6450,8 @@ ProcessStatus_GetParamStringValue
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return -1;
 }
+
+#if !defined (RESOURCE_OPTIMIZATION)
 
 /***********************************************************************
 

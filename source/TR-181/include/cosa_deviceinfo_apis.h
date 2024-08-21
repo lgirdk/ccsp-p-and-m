@@ -353,7 +353,10 @@ int setUnknownRebootReason();
 ANSC_HANDLE CosaProcStatusCreate();
 void COSADmlRemoveProcessInfo(PCOSA_DATAMODEL_PROCSTATUS pObj);
 void COSADmlGetProcessInfo(PCOSA_DATAMODEL_PROCSTATUS p_info);
+#endif
 ULONG COSADmlGetCpuUsage();
+#if defined (RESOURCE_OPTIMIZATION)
+ULONG COSADmlGetProcessNumberOfEntries();
 #endif
 ULONG COSADmlGetMemoryStatus(char * ParamName);
 ULONG COSADmlGetMaxWindowSize();

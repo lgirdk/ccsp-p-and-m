@@ -1766,6 +1766,8 @@ void test_get_proc_info()
 
 }
 
+#endif
+
 typedef  struct
 _CPUTIME_INFO
 {
@@ -1847,6 +1849,86 @@ ULONG COSADmlGetCpuUsage()
     }
 
     return  CPUUsage;
+}
+
+#if defined (RESOURCE_OPTIMIZATION)
+
+ULONG COSADmlGetProcessNumberOfEntries()
+{
+    ULONG                       ProcessNumber       = MAX_PROCESS_NUMBER;
+    struct dirent               *result = NULL;
+    DIR                         *dir;
+    FILE                        *fp;
+    char*                       name;
+    ULONG                       i;
+    ULONG                       pid;
+    char                        status[32];
+    char                        buf[400];
+    errno_t                     rc = -1;
+
+    dir = opendir("/proc");
+
+    if ( !dir )
+    {
+        CcspTraceWarning(("Failed to open /proc!\n"));
+        return 0;
+    }
+
+    result = NULL;
+    for(i = 0; i < ProcessNumber; )
+    {
+        result = readdir(dir);
+        if( result == NULL )
+        {
+            closedir(dir);
+            dir = NULL;
+            break;
+        }
+
+        name = result->d_name;
+
+        if ( *name >= '0' && *name <= '9' )
+        {
+            /*CcspTraceWarning(("Begin to parse process %lu!", i));*/
+            pid = atoi(name);
+            rc = sprintf_s(status, sizeof(status), "/proc/%lu/stat", pid);
+            if(rc < EOK)
+            {
+                ERR_CHK(rc);
+                continue;
+            }
+
+            if ( !(fp = fopen(status, "r")) )
+            {
+                CcspTraceWarning(("Failed to open %s!\n", status));
+                continue;
+            }
+
+            name = fgets(buf, sizeof(buf), fp);
+            fclose(fp);
+
+            if ( !name )
+            {
+                CcspTraceWarning(("Failed to get process %lu information!\n", pid));
+                continue;
+            }
+            i++;
+            if ( name )
+            {
+                *name = '\0';
+            }
+        }
+    }
+
+    if ( dir != NULL )
+    {
+        closedir(dir);
+        dir = NULL;
+    }
+
+    fprintf(stderr,"\n %s %d  ProcessNumberOfEntries:%lu", __func__, __LINE__, i);
+    CcspTraceWarning(("\n %s %d  ProcessNumberOfEntries:%lu\n", __func__, __LINE__, i));
+    return i;
 }
 
 #endif
