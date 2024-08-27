@@ -3183,6 +3183,7 @@ CosaDmlIpIfSetV4Addr
 
     if ( ulIpIfInstanceNumber >= COSA_USG_IF_NUM )
     {
+        char staticErouterEnable[8];
         /* Brlan0's 2,3,etc ipv4 entries points to static rip ip address */
         if(ulIpIfInstanceNumber == 4 && pEntry->InstanceNumber >= 2)
         {
@@ -3251,7 +3252,11 @@ CosaDmlIpIfSetV4Addr
         {
             returnStatus =  CosaDmlIpIfMlanSetV4Addr(hContext, ulIpIfInstanceNumber, pEntry);
         }
-        RestartRIPInterfaces(FALSE);
+        syscfg_get(NULL, "erouter_static_ip_enable", staticErouterEnable, sizeof(staticErouterEnable));
+        if (strcmp(staticErouterEnable, "false") == 0)                      //needs only in case of multi-static RIP and VMB 
+        {
+            RestartRIPInterfaces(FALSE);
+        }
         Utopia_Free(&utctx, 1);
         return returnStatus;
     }
