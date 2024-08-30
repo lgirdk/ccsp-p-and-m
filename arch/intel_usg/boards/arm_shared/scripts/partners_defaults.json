@@ -78,6 +78,9 @@
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.Telemetry" : "https://stbrtl.stb.r53.xcal.tv",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CDLDM.CDLModuleUrl" : "https://ssr.ccp.xcal.tv/cgi-bin/x1-sign-redirect.pl?K=10&F=stb_cdl",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.ImageHealthChecker.OperatingMode" : "Monitor",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.Enable" : "true",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.ConfigURL" : "https://xconf.xcal.tv/loguploader/getT2Settings",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.Version" : "2.0.1",
       "Device.X_RDK_MQTT.BrokerURL" : "",
       "Device.X_RDK_MQTT.LocationID" : "na",
       "Device.X_RDK_MQTT.Port" : "443",
@@ -179,7 +182,10 @@
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.Telemetry" : "https://stbrtl.stb.r53.xcal.tv",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CDLDM.CDLModuleUrl" : "https://ssr.ccp.xcal.tv/cgi-bin/x1-sign-redirect.pl?K=10&F=stb_cdl",
       "Device.RouterAdvertisement.X_RDK_PvD.Enable" : "false",
-      "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : ""
+      "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : "",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.Enable" : "true",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.ConfigURL" : "https://xconf.xcal.tv/loguploader/getT2Settings",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.Version" : "2.0.1"
 },
 
    "sky-italia" : {
@@ -255,6 +261,9 @@
       "Device.RouterAdvertisement.X_RDK_PvD.Enable" : "false",
       "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : "",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.ImageHealthChecker.OperatingMode" : "Monitor",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.Enable" : "true",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.ConfigURL" : "https://xconf.xcal.tv/loguploader/getT2Settings",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.Version" : "2.0.1",
       "override" : {
         "SR213" : {
 		"Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.XconfURL" : "https://secure.xconfds.coast.xcal.tv"
@@ -335,13 +344,16 @@
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.ImageHealthChecker.OperatingMode" : "Monitor",
       "Device.RouterAdvertisement.X_RDK_PvD.Enable" : "false",
       "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : "",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.Enable" : "true",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.ConfigURL" : "https://xconf.xdp.eu-1.xcal.tv/loguploader/getT2Settings",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.Version" : "2.0.1",
       "override" : {
         "SR300" : {
                 "Device.X_RDK_WebConfig.URL" : "https://cpe-config-sky-uk.wp.xdp.comcast.net/api/v1/device/{mac}/config",
                 "Device.X_RDK_WebConfig.SupplementaryServiceUrls.Telemetry" : "https://cpe-profile-sky-uk.wp.xdp.comcast.net/api/v1/device/{mac}/config",
                 "Device.X_RDKCENTRAL-COM_Webpa.Server.URL" : "https://fabric.xmidt-eu.comcast.net:8080",
                 "Device.X_RDKCENTRAL-COM_Webpa.TokenServer.URL" : "https://issuer.xmidt-eu.comcast.net:8080/issue",
-                "Device.X_RDKCENTRAL-COM_Webpa.DNSText.URL" : "fabric.xmidt-eu.comcast.net"		
+                "Device.X_RDKCENTRAL-COM_Webpa.DNSText.URL" : "fabric.xmidt-eu.comcast.net"
         },
         "SR213" : {
                 "Device.X_RDK_WebConfig.URL" : "https://cpe-config-sky-uk.wp.xdp.comcast.net/api/v1/device/{mac}/config",
@@ -425,6 +437,9 @@
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.Telemetry" : "https://stbrtl.stb.r53.xcal.tv",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CDLDM.CDLModuleUrl" : "https://ssr.ccp.xcal.tv/cgi-bin/x1-sign-redirect.pl?K=10&F=stb_cdl",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.ImageHealthChecker.OperatingMode" : "Monitor",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.Enable" : "true",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.ConfigURL" : "https://xconf.xcal.tv/loguploader/getT2Settings",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.Version" : "2.0.1",
       "Device.RouterAdvertisement.X_RDK_PvD.Enable" : "false",
       "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : "" ,
       "no_apply_system_default" : {
@@ -517,6 +532,9 @@
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.Telemetry" : "https://stbrtl.stb.r53.xcal.tv",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CDLDM.CDLModuleUrl" : "https://ssr.ccp.xcal.tv/cgi-bin/x1-sign-redirect.pl?K=10&F=stb_cdl",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.ImageHealthChecker.OperatingMode" : "Monitor",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.Enable" : "true",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.ConfigURL" : "https://xconf.xcal.tv/loguploader/getT2Settings",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.Version" : "2.0.1",
       "Device.RouterAdvertisement.X_RDK_PvD.Enable" : "false",
       "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : "",
       "no_apply_system_default" : {
@@ -610,6 +628,9 @@
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.Telemetry" : "https://stbrtl.stb.r53.xcal.tv",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CDLDM.CDLModuleUrl" : "https://ssr.ccp.xcal.tv/cgi-bin/x1-sign-redirect.pl?K=10&F=stb_cdl",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.ImageHealthChecker.OperatingMode" : "Monitor",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.Enable" : "true",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.ConfigURL" : "https://xconf.xcal.tv/loguploader/getT2Settings",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.Version" : "2.0.1",
       "Device.RouterAdvertisement.X_RDK_PvD.Enable" : "false",
       "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : "",
       "override" : {
@@ -710,7 +731,10 @@
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.Telemetry" : "https://stbrtl.stb.r53.xcal.tv",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CDLDM.CDLModuleUrl" : "https://ssr.ccp.xcal.tv/cgi-bin/x1-sign-redirect.pl?K=10&F=stb_cdl",
       "Device.RouterAdvertisement.X_RDK_PvD.Enable" : "false",
-      "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : ""
+      "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : "",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.Enable" : "true",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.ConfigURL" : "https://xconf.xcal.tv/loguploader/getT2Settings",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.Version" : "2.0.1"
    },
 "axb3retail" : {
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.RDKB_UIBranding.Footer.PartnerLink" : "http://www.surfboard.com",
@@ -782,7 +806,10 @@
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.Telemetry" : "https://stbrtl.stb.r53.xcal.tv",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CDLDM.CDLModuleUrl" : "https://ssr.ccp.xcal.tv/cgi-bin/x1-sign-redirect.pl?K=10&F=stb_cdl",
       "Device.RouterAdvertisement.X_RDK_PvD.Enable" : "false",
-      "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : ""
+      "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : "",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.Enable" : "true",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.ConfigURL" : "https://xconf.xcal.tv/loguploader/getT2Settings",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.Version" : "2.0.1"
   },
    "unknown" : {
 
@@ -854,7 +881,10 @@
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.Telemetry" : "https://stbrtl.stb.r53.xcal.tv",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CDLDM.CDLModuleUrl" : "https://ssr.ccp.xcal.tv/cgi-bin/x1-sign-redirect.pl?K=10&F=stb_cdl",
       "Device.RouterAdvertisement.X_RDK_PvD.Enable" : "false",
-      "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : ""
+      "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : "",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.Enable" : "true",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.ConfigURL" : "https://xconf.xcal.tv/loguploader/getT2Settings",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.Version" : "2.0.1"
    },
 
     "test-partner" : {
@@ -930,6 +960,9 @@
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.Telemetry" : "https://stbrtl.stb.r53.xcal.tv",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CDLDM.CDLModuleUrl" : "https://ssr.ccp.xcal.tv/cgi-bin/x1-sign-redirect.pl?K=10&F=stb_cdl",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.ImageHealthChecker.OperatingMode" : "Monitor",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.Enable" : "true",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.ConfigURL" : "https://xconf.xcal.tv/loguploader/getT2Settings",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.Version" : "2.0.1",
       "Device.RouterAdvertisement.X_RDK_PvD.Enable" : "false",
       "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : ""
    }

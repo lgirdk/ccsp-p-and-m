@@ -3081,10 +3081,11 @@ CosaDmlDiUiBrandingInit
   (
 	ANSC_HANDLE                 hContext,
 	PCOSA_DATAMODEL_RDKB_UIBRANDING	PUiBrand,
-        PCOSA_DATAMODEL_RDKB_CDLDM PCdlDM
+	PCOSA_DATAMODEL_RDKB_CDLDM PCdlDM,
+	PCOSA_DATAMODEL_RDKB_RFC_TELEMETRY PRfcTelemetry
   )
  {
-        
+
 	char *data = NULL;
 	char buf[64] = {0};
 	cJSON *json = NULL;
@@ -3192,7 +3193,7 @@ CosaDmlDiUiBrandingInit
 			 	if ( PartnerID[0] != '\0' )
 			 	{
 					CcspTraceWarning(("%s : Partner = %s \n", __FUNCTION__, PartnerID));
-					FillPartnerIDValues(json, PartnerID, PUiBrand, PCdlDM, hContext);
+					FillPartnerIDValues(json, PartnerID, PUiBrand, PCdlDM, PRfcTelemetry, hContext);
 			 	}
 				else
 				{
@@ -3205,7 +3206,7 @@ CosaDmlDiUiBrandingInit
 						free(data);
 						return ANSC_STATUS_FAILURE;
 					}
-					FillPartnerIDValues(json, PartnerID, PUiBrand, PCdlDM, hContext);
+					FillPartnerIDValues(json, PartnerID, PUiBrand, PCdlDM, PRfcTelemetry, hContext);
 				}
 			}
 	 		else{
@@ -3325,7 +3326,7 @@ void FillParamString(cJSON *partnerObj, char *key, COSA_BOOTSTRAP_STR *paramData
     }
 }
 
-void FillPartnerIDValues(cJSON *json , char *partnerID , PCOSA_DATAMODEL_RDKB_UIBRANDING PUiBrand, PCOSA_DATAMODEL_RDKB_CDLDM PCdlDM, ANSC_HANDLE hContext)
+void FillPartnerIDValues(cJSON *json , char *partnerID , PCOSA_DATAMODEL_RDKB_UIBRANDING PUiBrand, PCOSA_DATAMODEL_RDKB_CDLDM PCdlDM, PCOSA_DATAMODEL_RDKB_RFC_TELEMETRY PRfcTelemetry, ANSC_HANDLE hContext)
 {
 		cJSON *partnerObj = NULL;
 		char buf[64] = {0};
@@ -3337,6 +3338,9 @@ void FillPartnerIDValues(cJSON *json , char *partnerID , PCOSA_DATAMODEL_RDKB_UI
 		if( partnerObj != NULL) 
 		{
 				FillParamString(partnerObj, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CDLDM.CDLModuleUrl", &PCdlDM->CDLModuleUrl);
+				FillParamBool(partnerObj, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.Enable", &PRfcTelemetry->Enable);
+				FillParamString(partnerObj, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.Version", &PRfcTelemetry->Version);
+				FillParamString(partnerObj, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.ConfigURL", &PRfcTelemetry->ConfigURL);
 			        FillParamString(partnerObj, "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.RDKB_UIBranding.Footer.PartnerLink", &PUiBrand->Footer.PartnerLink);
 				FillParamString(partnerObj, "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.RDKB_UIBranding.Footer.UserGuideLink", &PUiBrand->Footer.UserGuideLink);
 				FillParamString(partnerObj, "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.RDKB_UIBranding.Footer.CustomerCentralLink", &PUiBrand->Footer.CustomerCentralLink);
@@ -3513,6 +3517,147 @@ void FillPartnerIDValues(cJSON *json , char *partnerID , PCOSA_DATAMODEL_RDKB_UI
 				else
 				{
 					CcspTraceWarning(("%s - AllowEthernetWAN Object is NULL\n", __FUNCTION__ ));
+				}
+
+                                paramObj = cJSON_GetObjectItem( partnerObj, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.Enable");
+                                if ( paramObj != NULL )
+                                {
+					char *TelemetryEnable = NULL;
+                                        paramObjVal = cJSON_GetObjectItem(paramObj, "ActiveValue");
+                                        if (paramObjVal)
+                                                TelemetryEnable = paramObjVal->valuestring;
+					if (TelemetryEnable != NULL)
+					{
+						syscfg_get( NULL, "T2Enable", buf, sizeof(buf));
+						if (buf[0] == '\0')
+						{
+							if (syscfg_set_commit(NULL, "T2Enable", TelemetryEnable) == 0)
+							{
+                                                            CcspTraceWarning(("%s - Telemetry Enable is %s\n", __FUNCTION__,TelemetryEnable));
+							}
+                                                        else
+                                                        {
+                                                            CcspTraceWarning(("syscfg_set failed for Telemetry Enable\n"));
+                                                        }
+							TelemetryEnable = NULL;
+						}
+						else
+						{
+							CcspTraceWarning(("%s - Telemetry Enable is NULL\n", __FUNCTION__ ));
+						}
+					}
+					char *valuestr = NULL;
+					paramObjVal = cJSON_GetObjectItem(paramObj, "UpdateSource");
+				        if (paramObjVal)
+				            valuestr = paramObjVal->valuestring;
+				        if (valuestr != NULL)
+				        {
+                                            rc = STRCPY_S_NOCLOBBER(PRfcTelemetry->Enable.UpdateSource, sizeof(PRfcTelemetry->Enable.UpdateSource), valuestr);
+                                            ERR_CHK(rc);
+				            valuestr = NULL;
+				        }
+				        else
+				        {
+				            CcspTraceWarning(("%s - Telemetry Enable.UpdateSource is NULL\n", __FUNCTION__ ));
+				        }
+				}
+				else
+				{
+					CcspTraceWarning(("%s - Telemetry Enable Object is NULL\n", __FUNCTION__ ));
+				}
+
+                                paramObj = cJSON_GetObjectItem( partnerObj, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.Version");
+                                if ( paramObj != NULL )
+                                {
+					char *TelemetryVersion = NULL;
+                                        paramObjVal = cJSON_GetObjectItem(paramObj, "ActiveValue");
+                                        if (paramObjVal)
+                                                TelemetryVersion = paramObjVal->valuestring;
+					if (TelemetryVersion != NULL)
+					{
+						syscfg_get( NULL, "T2Version", buf, sizeof(buf));
+						if (buf[0] == '\0')
+						{
+							if (syscfg_set_commit(NULL, "T2Version", TelemetryVersion) == 0)
+							{
+                                                            CcspTraceWarning(("%s - Telemetry Version is %s\n", __FUNCTION__,TelemetryVersion));
+							}
+                                                        else
+                                                        {
+                                                            CcspTraceWarning(("syscfg_set failed for Telemetry Version\n"));
+                                                        }
+							TelemetryVersion = NULL;
+						}
+						else
+						{
+							CcspTraceWarning(("%s - Telemetry Version is NULL\n", __FUNCTION__ ));
+						}
+					}
+					char *valuestr = NULL;
+					paramObjVal = cJSON_GetObjectItem(paramObj, "UpdateSource");
+				        if (paramObjVal)
+				            valuestr = paramObjVal->valuestring;
+				        if (valuestr != NULL)
+				        {
+                                            rc = STRCPY_S_NOCLOBBER(PRfcTelemetry->Version.UpdateSource, sizeof(PRfcTelemetry->Version.UpdateSource), valuestr);
+                                            ERR_CHK(rc);
+				            valuestr = NULL;
+				        }
+				        else
+				        {
+				            CcspTraceWarning(("%s - Telemetry Version.UpdateSource is NULL\n", __FUNCTION__ ));
+				        }
+				}
+				else
+				{
+					CcspTraceWarning(("%s - Telemetry Version Object is NULL\n", __FUNCTION__ ));
+				}
+
+                                paramObj = cJSON_GetObjectItem( partnerObj, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Telemetry.ConfigURL");
+                                if ( paramObj != NULL )
+                                {
+					char *TelemetryConfigURL = NULL;
+                                        paramObjVal = cJSON_GetObjectItem(paramObj, "ActiveValue");
+                                        if (paramObjVal)
+                                                TelemetryConfigURL = paramObjVal->valuestring;
+					if (TelemetryConfigURL != NULL)
+					{
+						syscfg_get( NULL, "T2ConfigURL", buf, sizeof(buf));
+						if (buf[0] == '\0')
+						{
+							if (syscfg_set_commit(NULL, "T2ConfigURL", TelemetryConfigURL) == 0)
+							{
+                                                            CcspTraceWarning(("%s - Telemetry ConfigURL is %s\n", __FUNCTION__,TelemetryConfigURL));
+							}
+                                                        else
+                                                        {
+                                                            CcspTraceWarning(("syscfg_set failed for Telemetry ConfigURL\n"));
+                                                        }
+							TelemetryConfigURL = NULL;
+						}
+						else
+						{
+							CcspTraceWarning(("%s - Telemetry ConfigURL is NULL\n", __FUNCTION__ ));
+						}
+					}
+					char *valuestr = NULL;
+					paramObjVal = cJSON_GetObjectItem(paramObj, "UpdateSource");
+				        if (paramObjVal)
+				            valuestr = paramObjVal->valuestring;
+				        if (valuestr != NULL)
+				        {
+                                            rc = STRCPY_S_NOCLOBBER(PRfcTelemetry->ConfigURL.UpdateSource, sizeof(PRfcTelemetry->ConfigURL.UpdateSource), valuestr);
+                                            ERR_CHK(rc);
+				            valuestr = NULL;
+				        }
+				        else
+				        {
+				            CcspTraceWarning(("%s - Telemetry ConfigURL.UpdateSource is NULL\n", __FUNCTION__ ));
+				        }
+				}
+				else
+				{
+					CcspTraceWarning(("%s - Telemetry ConfigURL Object is NULL\n", __FUNCTION__ ));
 				}
 
                                 paramObj = cJSON_GetObjectItem( partnerObj, "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.SyndicationFlowControl.Enable");
