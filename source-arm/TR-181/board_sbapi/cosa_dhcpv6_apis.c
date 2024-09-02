@@ -9044,19 +9044,31 @@ dhcpv6c_dbg_thrd(void * in)
             } else {
                 dhcpv6_data.isExpired = FALSE;
                 dhcpv6_data.prefixAssigned = TRUE;
+                if(strlen(v6pref) > 0 && strncmp(v6pref, "\\0",2)!=0)
+                {
+                    CcspTraceInfo(("%s %d Prefix Assigned\n", __FUNCTION__, __LINE__));
+
 #if defined(FEATURE_MAPT)
                     strcpy(pdIPv6Prefix, v6pref);
 #endif
-                rc = sprintf_s(dhcpv6_data.sitePrefix, sizeof(dhcpv6_data.sitePrefix), "%s/%d", v6pref, pref_len);
-                if(rc < EOK)
-                {
-                    ERR_CHK(rc);
-                }
-                memset( sysEventName, 0, sizeof(sysEventName));
-                snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_PREF_SYSEVENT_NAME, IfaceName);
-                commonSyseventSet(sysEventName,  dhcpv6_data.sitePrefix);
+                    rc = sprintf_s(dhcpv6_data.sitePrefix, sizeof(dhcpv6_data.sitePrefix), "%s/%d", v6pref, pref_len);
+                    if(rc < EOK)
+                    {
+                        ERR_CHK(rc);
+                    }
+                    memset( sysEventName, 0, sizeof(sysEventName));
+                    snprintf(sysEventName, sizeof(sysEventName), COSA_DML_WANIface_PREF_SYSEVENT_NAME, IfaceName);
+                    commonSyseventSet(sysEventName,  dhcpv6_data.sitePrefix);
 
-                strncpy(dhcpv6_data.pdIfAddress, "", sizeof(dhcpv6_data.pdIfAddress));
+                    strncpy(dhcpv6_data.pdIfAddress, "", sizeof(dhcpv6_data.pdIfAddress));
+                }
+                if(strlen(v6addr) > 0 && strncmp(v6addr, "\\0",2)!=0)
+                {
+                    CcspTraceInfo(("%s %d Addr Assigned\n", __FUNCTION__, __LINE__));
+                    dhcpv6_data.addrAssigned = TRUE;
+                    strncpy(dhcpv6_data.address, v6addr, sizeof(dhcpv6_data.address)-1);
+                    dhcpv6_data.addrCmd   = 0;
+                }
                 /** DNS servers. **/
                 commonSyseventGet(SYSEVENT_FIELD_IPV6_DNS_SERVER, dns_server, sizeof(dns_server));
                 if (strlen(dns_server) != 0)
@@ -9513,13 +9525,24 @@ dhcpv6c_dbg_thrd(void * in)
 #else
                             strncpy(dhcpv6_data.ifname, CFG_TR181_DHCPv6_CLIENT_IfName, sizeof(dhcpv6_data.ifname));
 #endif
-                            if(strlen(v6pref) == 0) {
+                            if(strlen(v6pref) == 0 && strlen(v6addr) ==0) {
                                 dhcpv6_data.isExpired = TRUE;
                             } else {
                                 dhcpv6_data.isExpired = FALSE;
-                                dhcpv6_data.prefixAssigned = TRUE;
-                                strncpy(dhcpv6_data.sitePrefix, v6pref, sizeof(dhcpv6_data.sitePrefix));
-                                strncpy(dhcpv6_data.pdIfAddress, "", sizeof(dhcpv6_data.pdIfAddress));
+                                if(strlen(v6pref) > 0 && strncmp(v6pref, "\\0",2)!=0)
+                                {
+                                    CcspTraceInfo(("%s %d Prefix Assigned\n", __FUNCTION__, __LINE__));
+                                    dhcpv6_data.prefixAssigned = TRUE;
+                                    strncpy(dhcpv6_data.sitePrefix, v6pref, sizeof(dhcpv6_data.sitePrefix));
+                                    strncpy(dhcpv6_data.pdIfAddress, "", sizeof(dhcpv6_data.pdIfAddress));
+                                }
+                                if(strlen(v6addr) > 0 && strncmp(v6addr, "\\0",2)!=0)
+                                {
+                                    CcspTraceInfo(("%s %d Addr Assigned\n", __FUNCTION__, __LINE__));
+                                    dhcpv6_data.addrAssigned = TRUE;
+                                    strncpy(dhcpv6_data.address, v6addr, sizeof(dhcpv6_data.address)-1);
+                                    dhcpv6_data.addrCmd   = 0;
+                                }
                                 /** DNS servers. **/
                                 commonSyseventGet("ipv6_nameserver", dns_server, sizeof(dns_server)); //ti_dhcpv6 and dibbler sets V6 DSN details in ipv6_nameserver sysevent
                                 if (strlen(dns_server) != 0)
@@ -9634,17 +9657,31 @@ dhcpv6c_dbg_thrd(void * in)
 #else
                         strncpy(dhcpv6_data.ifname, CFG_TR181_DHCPv6_CLIENT_IfName, sizeof(dhcpv6_data.ifname));
 #endif
-                        if(strlen(v6pref) == 0) {
+                        if(strlen(v6pref) == 0  && strlen(v6addr) ==0) 
+                        {
                             dhcpv6_data.isExpired = TRUE;
-                        } else {
+                        } 
+                        else 
+                        {
                             dhcpv6_data.isExpired = FALSE;
-                            dhcpv6_data.prefixAssigned = TRUE;
-                            rc = sprintf_s(dhcpv6_data.sitePrefix, sizeof(dhcpv6_data.sitePrefix), "%s/%d", v6Tpref, pref_len);
-                            if(rc < EOK)
+                            if(strlen(v6pref) > 0 && strncmp(v6pref, "\\0",2)!=0)
                             {
-                                ERR_CHK(rc);
+                                CcspTraceInfo(("%s %d Prefix Assigned\n", __FUNCTION__, __LINE__));
+                                dhcpv6_data.prefixAssigned = TRUE;
+                                rc = sprintf_s(dhcpv6_data.sitePrefix, sizeof(dhcpv6_data.sitePrefix), "%s/%d", v6Tpref, pref_len);
+                                if(rc < EOK)
+                                {
+                                    ERR_CHK(rc);
+                                }
+                                strncpy(dhcpv6_data.pdIfAddress, "", sizeof(dhcpv6_data.pdIfAddress));
                             }
-                            strncpy(dhcpv6_data.pdIfAddress, "", sizeof(dhcpv6_data.pdIfAddress));
+                            if(strlen(v6addr) > 0 && strncmp(v6addr, "\\0",2)!=0)
+                            {
+                                CcspTraceInfo(("%s %d Addr Assigned\n", __FUNCTION__, __LINE__));
+                                dhcpv6_data.addrAssigned = TRUE;
+                                strncpy(dhcpv6_data.address, v6addr, sizeof(dhcpv6_data.address)-1);
+                                dhcpv6_data.addrCmd   = 0;
+                            }
                             /** DNS servers. **/
                             commonSyseventGet(SYSEVENT_FIELD_IPV6_DNS_SERVER, dns_server, sizeof(dns_server));
                             if (strlen(dns_server) != 0)
