@@ -698,6 +698,14 @@ CosaDmlDiGetProductClass
                     return ANSC_STATUS_FAILURE;
                 }
         }
+#elif defined(_PLATFORM_RASPBERRYPI_)
+        {
+                rc = strcpy_s(pValue, *pulSize, "ER");
+                if ( rc != EOK) {
+                    ERR_CHK(rc);
+                    return ANSC_STATUS_FAILURE;
+                }
+        }
 #else
 	{
                 rc = strcpy_s(pValue, *pulSize, "XB3");
