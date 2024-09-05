@@ -1251,9 +1251,15 @@ static void* updateWIFIStatus(void *arg)
     parameterValStruct_t param_val[] = {  { "Device.WiFi.X_RDK-CENTRAL_COM_ForceDisable", "false", ccsp_boolean},
                                           { "Device.WiFi.Radio.1.X_CISCO_COM_ApplySetting", "true", ccsp_boolean},
                                           { "Device.WiFi.Radio.2.X_CISCO_COM_ApplySetting", "true", ccsp_boolean} };
+
     if (enable) {
-        param_val[0].parameterValue = "true";
+        char staticBrlanEnable[8];
+        syscfg_get(NULL, "brlan_static_ip_enable", staticBrlanEnable, sizeof(staticBrlanEnable));
+        if (strcmp(staticBrlanEnable, "true") == 0) {
+            param_val[0].parameterValue = "true";
+        }
     }
+
     while (ppComponents == NULL && initWifiComp())
     {
         CcspTraceInfo(("Waiting for WiFi Componenet to come up \n"));
