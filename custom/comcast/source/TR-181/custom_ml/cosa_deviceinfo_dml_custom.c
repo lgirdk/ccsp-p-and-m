@@ -476,7 +476,7 @@ PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaB
 		if(!syscfg_get( NULL, "CaptivePortal_Enable" , buf, sizeof(buf))) {
 		    if (strcmp(buf,"true") == 0)
 		    {
-#if defined(INTEL_PUMA7) || defined(_XB6_PRODUCT_REQ_) || defined(_CBR2_PRODUCT_REQ_)
+#if defined(INTEL_PUMA7) || defined(_XB6_PRODUCT_REQ_)
 			if ( ANSC_STATUS_SUCCESS == CosaDmlSetLED(WHITE, BLINK, 1) )
 				CcspTraceInfo(("Front LED Transition: WHITE LED will blink, Reason: CaptivePortal_MODE\n"));
 #endif
@@ -530,7 +530,7 @@ PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaB
 			    printf("%s calling redirect_url.sh script to start redirection\n",__FUNCTION__);
 			    system("source /etc/redirect_url.sh &");
 		    }
-#if defined(INTEL_PUMA7) || defined(_XB6_PRODUCT_REQ_) || defined(_CBR2_PRODUCT_REQ_)
+#if defined(INTEL_PUMA7) || defined(_XB6_PRODUCT_REQ_) 
 		    else
 		    {
 			if ( ANSC_STATUS_SUCCESS == CosaDmlSetLED(WHITE, SOLID, 0) )
