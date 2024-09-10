@@ -2595,40 +2595,21 @@ CosaDmlDhcpsSetPoolCfg
 ANSC_STATUS CosaDmlDhcpsSetIpv4Status()
 {
 //update ipv4_4-status value here based on lan_status-dhcp event
-        token_t        se_token;
         char           dhcp_ipv4Status[64]={'\0'};
-        int            se_fd = -1;
         char           evtValue[10]={'\0'};
-
-        se_fd = s_sysevent_connect(&se_token);
-        if (0 > se_fd) {
-
-            AnscTraceFlow(("%s: dhcpipv4_status = syseventerror\n", __FUNCTION__));
-
-            AnscCopyString(dhcp_ipv4Status, "syseventError");
-            return ANSC_STATUS_FAILURE;
+        commonSyseventGet("lan_status-dhcp", evtValue, sizeof(evtValue));
+        if ('\0' == evtValue[0])
+        {
+            AnscTraceFlow(("%s: ipv4_4-status needs to be redo to start Authoritative dns\n",__FUNCTION__));
+            /* Get DHCP Server Status */
+            commonSyseventSet("ipv4_4-status", "down");
+            sleep(3);
+            commonSyseventSet("ipv4_4-status", "up");
         }
         else
         {
-            if( 0 == sysevent_get(se_fd, se_token, "lan_status-dhcp", evtValue, sizeof(evtValue)) )
-            {
-                if ('\0' == evtValue[0])
-                {
-
-                    AnscTraceFlow(("%s: ipv4_4-status needs to be redo to start Authoritative dns\n",__FUNCTION__));
-                    /* Get DHCP Server Status */
-                    sysevent_set(se_fd, se_token, "ipv4_4-status", "down", 0);
-                    sleep(3);
-                    sysevent_set(se_fd, se_token, "ipv4_4-status", "up", 0);
-
-                }
-                else
-                {
-                    AnscTraceFlow(("%s: ip4_4-status=%s\n",__FUNCTION__,evtValue));
-                }
-            }
+            AnscTraceFlow(("%s: ip4_4-status=%s\n",__FUNCTION__,evtValue));
         }
-  	sysevent_close(se_fd,se_token);
         return ANSC_STATUS_SUCCESS;
 
 }
