@@ -980,6 +980,7 @@ EvtDispterEventHandler(void *arg)
                 EvtDispterCallFuncByEvent("wan-status");
                 break;
             case EVENT_WAN_STOPPED:
+                EvtDispterCallFuncByEvent("wan-status");
                 break;
             case EVENT_WAN_IPV4_RECD:
                 break;

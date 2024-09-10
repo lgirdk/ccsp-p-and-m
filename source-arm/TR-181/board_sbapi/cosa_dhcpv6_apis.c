@@ -120,6 +120,9 @@ void *Ipv6ModeHandler_thrd(void *data);
 #define _DHCPV6_DEFAULT_STATELESS_
 #endif
 
+#define CM_AGENT_COMPONENT_NAME "eRT.com.cisco.spvtg.ccsp.cm"
+#define CM_AGENT_BUS_PATH       "eRT/com/cisco/spvtg/ccsp/cm"
+
 #if defined(RDKB_EXTENDER_ENABLED) || defined(WAN_FAILOVER_SUPPORTED)
 typedef enum deviceMode
 {
@@ -1897,6 +1900,39 @@ CosaDmlDhcpv6SMsgHandler
     return 0;
 }
 
+int ManageDhcpv6sOnWanStatus() {
+	char wan_status[16];
+	char *paramName[]= { "Device.DeviceInfo.X_RDKCENTRAL-COM_CableRfSignalStatus" };
+	int ret = 0, nval;
+	parameterValStruct_t    **cableRfSignalStatus;
+
+	// Get the current WAN status
+	commonSyseventGet("wan-status", wan_status, sizeof(wan_status));
+	if (strcmp(wan_status, "stopped") != 0)
+	{
+		return 0; // No action required if WAN is not stopped
+	}
+	// Check if Cable RF Signal Detected
+	ret = CcspBaseIf_getParameterValues ( bus_handle,CM_AGENT_COMPONENT_NAME,CM_AGENT_BUS_PATH,paramName,1,&nval,&cableRfSignalStatus);
+	if( ret != CCSP_Message_Bus_OK )
+	{
+		CcspTraceError(("%s cableRfSignalStatus getv failed  ret %d\n", __FUNCTION__, ret));
+		return;
+	}
+	
+	if( strcmp( "false", cableRfSignalStatus[0]->parameterValue ) == 0 )
+	{
+		CcspTraceInfo(("%s cableRfSignalStatus is set to %s  . Stopping DHCPv6 server...\n", __FUNCTION__,cableRfSignalStatus[0]->parameterValue));
+#if defined(CISCO_CONFIG_DHCPV6_PREFIX_DELEGATION) && ! defined(DHCPV6_PREFIX_FIX) 
+		commonSyseventSet("dhcpv6_server-stop", "");
+#else
+		_dibbler_server_operation("stop");
+#endif
+	}
+	free_parameterValStruct_t ( bus_handle, nval, cableRfSignalStatus );
+	return 0;
+}
+
 int CosaDmlDhcpv6sRestartOnLanStarted(void * arg)
 {
     UNREFERENCED_PARAMETER(arg);
@@ -2155,6 +2191,8 @@ CosaDmlDhcpv6Init
     g_RegisterCallBackAfterInitDml(g_pDslhDmlAgent, pEntry);
 
     /*register callback function to restart dibbler-server at right time*/
+    CcspTraceWarning(("%s -- %d register wan-status to event dispatcher \n", __FUNCTION__, __LINE__));
+    EvtDispterRgstCallbackForEvent("wan-status", ManageDhcpv6sOnWanStatus, NULL);
     CcspTraceWarning(("%s -- %d register lan-status to event dispatcher \n", __FUNCTION__, __LINE__));
     EvtDispterRgstCallbackForEvent("lan-status", CosaDmlDhcpv6sRestartOnLanStarted, NULL);
 #ifdef _HUB4_PRODUCT_REQ_
