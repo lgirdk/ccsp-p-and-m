@@ -26,6 +26,10 @@
 #include <rbus/rbus.h>
 #include <pthread.h>
 
+#if defined (USE_REMOTE_DEBUGGER)
+#include "rrdInterface.h"
+#endif
+
 //#define RBUS_COMPONENT_NAME	"RbusPandMSsp"
 #define RBUS_COMPONENT_NAME	"CcspPandMSsp"
 
@@ -66,6 +70,13 @@ rbusError_t eventManageWiFiBridgeSubHandler(rbusHandle_t handle, rbusEventSubAct
 rbusError_t getBoolHandler(rbusHandle_t handle, rbusProperty_t property, rbusGetHandlerOptions_t *opts);
 rbusError_t eventManageWiFiEnableSubHander(rbusHandle_t handle, rbusEventSubAction_t action, const char *eventName, rbusFilter_t filter, int32_t interval, bool *autoPublish);
 rbusError_t eventManageWiFiInterfaceSubHandler(rbusHandle_t handle, rbusEventSubAction_t action, const char *eventName, rbusFilter_t filter, int32_t interval, bool *autoPublish);
+#endif
+
+#if defined (USE_REMOTE_DEBUGGER)
+rbusError_t RRD_GetStringHandler(rbusHandle_t handle, rbusProperty_t property, rbusGetHandlerOptions_t* opts);
+rbusError_t RRD_SetStringHandler(rbusHandle_t handle, rbusProperty_t property, rbusSetHandlerOptions_t* opts);
+rbusError_t RRDWebCfg_GetStringHandler(rbusHandle_t handle, rbusProperty_t property, rbusGetHandlerOptions_t* opts);
+rbusError_t RRDWebCfg_SetStringHandler(rbusHandle_t handle, rbusProperty_t property, rbusSetHandlerOptions_t* opts);
 #endif
 
 #if defined  (WAN_FAILOVER_SUPPORTED) || defined(RDKB_EXTENDER_ENABLED) ||  defined(RBUS_BUILD_FLAG_ENABLE) || defined (_HUB4_PRODUCT_REQ_) || defined (_PLATFORM_RASPBERRYPI_) || defined (RBUS_WAN_IP)

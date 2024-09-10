@@ -68,6 +68,11 @@ unsigned int gSubscribersCount = 0;
 static int sysevent_fd 	  = -1;
 static token_t sysevent_token = 0;
 #endif
+
+#if defined (USE_REMOTE_DEBUGGER)
+char RRDIssueType[256];
+char RRDWebCfgData[256];
+#endif
 /***********************************************************************
 
   Data Elements declaration:
@@ -100,6 +105,10 @@ rbusDataElement_t devCtrlRbusDataElements[] = {
     {SPEED_BOOST_PORT_RANGE, RBUS_ELEMENT_TYPE_EVENT, {speed_GetStringHandler, speed_SetStringHandler, NULL, NULL, speed_subStringHandler, NULL}},
     {SPEED_BOOST_NORMAL_PORT_RANGE, RBUS_ELEMENT_TYPE_EVENT, {speed_GetStringHandler, speed_SetStringHandler, NULL, NULL, speed_subStringHandler, NULL}},
 #endif /*SPEED_BOOST_SUPPORTED*/
+#if defined (USE_REMOTE_DEBUGGER)  
+    {RRD_SET_ISSUE_EVENT, RBUS_ELEMENT_TYPE_EVENT, {RRD_GetStringHandler, RRD_SetStringHandler, NULL, NULL, NULL, NULL}},
+    {RRD_WEBCFG_ISSUE_EVENT, RBUS_ELEMENT_TYPE_EVENT, {RRDWebCfg_GetStringHandler, RRDWebCfg_SetStringHandler, NULL, NULL, NULL, NULL}},
+#endif  
 };
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -441,7 +450,7 @@ rbusError_t sendUpdateEvent(char* event_name , void* eventNewData, void* eventOl
             }
             else
             {
-                CcspTraceError(("rbusEvent_Publish: Unable to Publish event data %s  rbus error code : %d\n",event_name, ret));
+                CcspTraceError(("rbusEvent_Publish: Unable to Publish event data %s  rbus error code : %s\n",event_name, rbusError_ToString(ret)));
             }
     }
     else{
@@ -481,6 +490,206 @@ void free_publish_wanip_struct(publish_wanip_t *param)
         param = NULL;
     }
 }
+
+#if defined (USE_REMOTE_DEBUGGER)
+rbusError_t RRDWebCfg_GetStringHandler(rbusHandle_t handle, rbusProperty_t property, rbusGetHandlerOptions_t* opts)
+{
+    (void) handle;
+    (void) opts;
+    char const* propertyName;
+    CcspTraceInfo(("Enter %s \n", __FUNCTION__));
+
+    propertyName = rbusProperty_GetName(property);
+    if(propertyName)
+    {
+        CcspTraceInfo(("[%s]: Called for %s\n", __FUNCTION__, propertyName));
+    }
+    else
+    {
+        CcspTraceError(("[%s]: Invalid property name \n", __FUNCTION__));
+        return RBUS_ERROR_INVALID_INPUT;
+    }
+    if(strcmp(propertyName, RRD_WEBCFG_ISSUE_EVENT) == 0)
+    {
+
+            rbusValue_t value;
+            rbusValue_Init(&value);
+            rbusValue_SetString(value, RRDWebCfgData);
+            rbusProperty_SetValue(property, value);
+            rbusValue_Release(value);
+    }
+    else
+    {
+        CcspTraceError(("[%s]: Incorrect property name %s\n", __FUNCTION__, propertyName));
+        return RBUS_ERROR_INVALID_INPUT;
+    }
+
+    CcspTraceInfo(("Exit %s \n", __FUNCTION__));
+
+    return RBUS_ERROR_SUCCESS;
+}
+
+rbusError_t RRDWebCfg_SetStringHandler(rbusHandle_t handle, rbusProperty_t property, rbusSetHandlerOptions_t* opts)
+{
+    (void) handle;
+    (void) opts;
+    char const* propertyName;
+    rbusError_t ret = RBUS_ERROR_SUCCESS;
+
+    CcspTraceInfo(("Enter %s \n", __FUNCTION__));
+
+    propertyName = rbusProperty_GetName(property);
+    if(propertyName)
+    {
+        CcspTraceInfo(("[%s]: Called for %s\n", __FUNCTION__, propertyName));
+    }
+    else
+    {
+        CcspTraceError(("[%s]: Invalid property name\n", __FUNCTION__));
+        return RBUS_ERROR_INVALID_INPUT;
+    }
+    if(strcmp(propertyName, RRD_WEBCFG_ISSUE_EVENT) == 0)
+    {
+        char prev_val[256] = {0};
+        rbusValue_t value = rbusProperty_GetValue(property);
+        if(rbusValue_GetType(value) != RBUS_STRING)
+        {
+            CcspTraceError(("[%s]: Invalid gettype name\n", __FUNCTION__));
+            return RBUS_ERROR_INVALID_INPUT;
+        }
+        strncpy(prev_val, RRDWebCfgData, sizeof(prev_val)-1);
+        CcspTraceInfo(("[%s]: RemotedebuggerWebCfgData Previous String Value is %s\n", __FUNCTION__,RRDWebCfgData));
+        const char* webcfgstr = rbusValue_GetString(value,NULL);
+        if(strlen(webcfgstr) > 255)
+        {
+            CcspTraceError(("[%s]: Invalid string length\n", __FUNCTION__));
+            return RBUS_ERROR_INVALID_INPUT;
+        }
+
+        strncpy(RRDWebCfgData, webcfgstr, sizeof(RRDWebCfgData)-1);
+        CcspTraceInfo(("[%s]: RemotedebuggerWebCfgData String Value is %s\n", __FUNCTION__,RRDWebCfgData));
+        if(syscfg_set_commit(NULL, "RemotedebuggerWebCfgData", RRDWebCfgData) != 0)
+        {
+            CcspTraceError(("[%s]: RemotedebuggerWebCfgData as %s syscfg_set Failed!!!\n",__FUNCTION__,RRDWebCfgData));
+            return RBUS_ERROR_BUS_ERROR;
+        }
+
+        CcspTraceInfo(("[%s]: Publishing RBUS Event for RemotedebuggerWebCfgData as %s \n", __FUNCTION__,RRDWebCfgData));
+        ret = sendUpdateEvent(RRD_WEBCFG_ISSUE_EVENT, RRDWebCfgData, prev_val, RBUS_STRING);
+        if(ret == RBUS_ERROR_SUCCESS)
+        {
+            CcspTraceWarning(("%s: RBUS Publish event failed for %s with return : %s !!! \n ", __FUNCTION__, propertyName, rbusError_ToString(ret)));
+        }
+        else
+        {
+            CcspTraceInfo(("%s: RBUS Publish event success for %s !!! \n ", __FUNCTION__, propertyName));
+        }
+    }
+
+    CcspTraceInfo(("Exit %s \n", __FUNCTION__));
+
+    return RBUS_ERROR_SUCCESS;
+}
+
+rbusError_t RRD_GetStringHandler(rbusHandle_t handle, rbusProperty_t property, rbusGetHandlerOptions_t* opts)
+{
+    (void) handle;
+    (void) opts;
+    char const* propertyName;
+    CcspTraceInfo(("Enter %s \n", __FUNCTION__));
+
+    propertyName = rbusProperty_GetName(property);
+    if(propertyName)
+    {
+        CcspTraceInfo(("Called %s for [%s]\n", __FUNCTION__, propertyName));
+    }
+    else
+    {
+        CcspTraceError(("[%s]: Invalid property name\n", __FUNCTION__));
+        return RBUS_ERROR_INVALID_INPUT;
+    }
+    if(strcmp(propertyName, RRD_SET_ISSUE_EVENT) == 0)
+    {
+
+            rbusValue_t value;
+            rbusValue_Init(&value);
+            rbusValue_SetString(value, RRDIssueType);
+            rbusProperty_SetValue(property, value);
+            rbusValue_Release(value);
+    }
+    else
+    {
+        CcspTraceError(("[%s]: Incorrect property name %s\n", __FUNCTION__, propertyName));
+        return RBUS_ERROR_INVALID_INPUT;
+    }
+
+    CcspTraceInfo(("Exit %s \n", __FUNCTION__));
+
+    return RBUS_ERROR_SUCCESS;
+}
+
+rbusError_t RRD_SetStringHandler(rbusHandle_t handle, rbusProperty_t property, rbusSetHandlerOptions_t* opts)
+{
+    (void) handle;
+    (void) opts;
+    char const* propertyName;
+    rbusError_t ret = RBUS_ERROR_SUCCESS;
+
+    CcspTraceInfo(("Enter %s \n", __FUNCTION__));
+
+    propertyName = rbusProperty_GetName(property);
+    if(propertyName)
+    {
+        CcspTraceInfo(("Called %s for [%s]\n", __FUNCTION__, propertyName));
+    }
+    else
+    {
+        CcspTraceError(("[%s]: Invalid property name\n", __FUNCTION__));
+        return RBUS_ERROR_INVALID_INPUT;
+    }
+    if(strcmp(propertyName, RRD_SET_ISSUE_EVENT) == 0)
+    {
+        char prev_val[256] = {0};
+        rbusValue_t value = rbusProperty_GetValue(property);
+        if(rbusValue_GetType(value) != RBUS_STRING)
+        {
+            CcspTraceError(("[%s]: Invalid gettype name\n", __FUNCTION__));
+            return RBUS_ERROR_INVALID_INPUT;
+        }
+        strncpy(prev_val, RRDIssueType, sizeof(prev_val)-1);
+        CcspTraceInfo(("[%s]: RemotedebuggerIssueType Previous String Value is %s\n", __FUNCTION__,RRDIssueType));
+        const char* str = rbusValue_GetString(value,NULL);
+        if(strlen(str) > 255)
+        {
+            CcspTraceError(("[%s]: Invalid string length\n", __FUNCTION__));
+            return RBUS_ERROR_INVALID_INPUT;
+        }
+
+        strncpy(RRDIssueType, str, sizeof(RRDIssueType)-1);
+        CcspTraceInfo(("[%s]: RemotedebuggerIssueType String Value is %s\n", __FUNCTION__,RRDIssueType));
+        if(syscfg_set_commit(NULL, "RemoteDebuggerIssueType", RRDIssueType) != 0)
+        {
+            CcspTraceError(("[%s]: RemotedebuggerIssueType as %s syscfg_set Failed!!!\n",__FUNCTION__,RRDIssueType));
+            return RBUS_ERROR_BUS_ERROR;
+        }
+
+        CcspTraceInfo(("[%s]: Publishing RBUS Event for RemotedebuggerIssueType as %s \n", __FUNCTION__,RRDIssueType));
+        ret = sendUpdateEvent(RRD_SET_ISSUE_EVENT, RRDIssueType, prev_val, RBUS_STRING);
+        if(ret == RBUS_ERROR_SUCCESS)
+        {
+           CcspTraceWarning(("%s: RBUS Publish event failed for %s with return : %s !!! \n ", __FUNCTION__, propertyName, rbusError_ToString(ret)));
+        }
+        else
+        {
+            CcspTraceInfo(("%s: RBUS Publish event success for %s !!! \n ", __FUNCTION__, propertyName));
+        }
+    }
+
+    CcspTraceInfo(("Exit %s \n", __FUNCTION__));
+
+    return RBUS_ERROR_SUCCESS;
+}
+#endif
 
 void *waitForTelemetryReady(void *arg) 
 {

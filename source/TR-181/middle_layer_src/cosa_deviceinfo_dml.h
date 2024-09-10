@@ -1155,6 +1155,33 @@ NetworkProperties_GetParamStringValue
         ULONG*                      pUlSize
     );
 
+#if defined (USE_REMOTE_DEBUGGER)
+/***********************************************************************
+
+ APIs for Object:
+
+    Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.RDKRemoteDebugger.Enable
+
+    *  RDKRemoteDebugger_GetParamBoolValue
+    *  RDKRemoteDebugger_SetParamBoolValue
+***********************************************************************/
+BOOL
+RDKRemoteDebugger_GetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL*                       pBool
+    );
+
+BOOL
+RDKRemoteDebugger_SetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL                        bValue
+    );
+#endif
+
 /***********************************************************************
 
  APIs for Object:

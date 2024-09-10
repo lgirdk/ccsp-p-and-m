@@ -73,6 +73,7 @@
 #include "ansc_platform.h"
 #include "cosa_deviceinfo_dml.h"
 #include "cosa_advsec_utils.h"
+#include "cosa_rbus_handler_apis.h"
 #include "dml_tr181_custom_cfg.h"
 #include "safec_lib_common.h"
 #include "secure_wrapper.h"
@@ -13237,6 +13238,160 @@ CognitiveMotionDetection_SetParamBoolValue
 }
 #endif // FEATURE_COGNITIVE_WIFIMOTION
 
+#ifdef USE_REMOTE_DEBUGGER
+/**********************************************************************
+
+ APIs for Object:
+
+    Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.RDKRemoteDebugger.Enable
+
+    *  RDKRemoteDebugger_SetParamBoolValue // Set args required for RemoteDebugger
+    *  RDKRemoteDebugger_GetParamBoolValue // Get args set for RemoteDebugger
+
+    caller:     owner of this object
+
+    prototype:
+        BOOL
+        RDKRemoteDebugger_GetParamBoolValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                BOOL*                       pBool
+            )
+
+
+
+    description:
+
+        This function is called to retrieve Boolean parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                BOOL*                       pBool
+                The buffer of returned boolean value;
+
+    return:     TRUE if succeeded.
+
+**********************************************************************/
+
+BOOL
+RDKRemoteDebugger_GetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL*                       pBool
+    )
+{
+    char buf[6] = { 0 };
+
+    UNREFERENCED_PARAMETER(hInsContext);
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+        if (syscfg_get(NULL, "RemoteDebuggerEnabled", buf, sizeof(buf)) != 0)
+        {
+            *pBool = FALSE;
+            return TRUE;
+        }
+
+        if (!strncmp(buf, "true", 4))
+        {
+            *pBool = TRUE;
+        }
+        else if (!strncmp(buf, "false", 5))
+        {
+            *pBool = FALSE;
+        }
+        else
+        {
+            CcspTraceWarning(("%s: syscfg_get: value of RemoteDebuggerEnabled invalid!\n", __FUNCTION__));
+             return FALSE;
+        }
+
+        return TRUE;
+    }
+
+    CcspTraceWarning(("%s: Unsupported parameter '%s'\n", __FUNCTION__, ParamName));
+    return FALSE;
+}
+
+/**********************************************************************
+
+    caller:     owner of this object
+
+    prototype:
+        BOOL
+        RDKRemoteDebugger_SetParamBoolValue
+            (
+                ANSC_HANDLE                 hInsContext,
+                char*                       ParamName,
+                BOOL                        bValue
+            )
+
+
+    description:
+
+        This function is called to set BOOL parameter value;
+
+    argument:   ANSC_HANDLE                 hInsContext,
+                The instance handle;
+
+                char*                       ParamName,
+                The parameter name;
+
+                BOOL                        bValue
+                The updated BOOL value;
+
+    return:     TRUE if succeeded.
+
+**********************************************************************/
+BOOL
+RDKRemoteDebugger_SetParamBoolValue
+    (
+        ANSC_HANDLE                 hInsContext,
+        char*                       ParamName,
+        BOOL                        bValue
+    )
+{
+    char buf[6] = { 0 };
+
+    UNREFERENCED_PARAMETER(hInsContext);
+    if (strcmp(ParamName, "Enable") == 0)
+    {
+        char *value = (bValue == TRUE) ? "true" : "false";
+
+        syscfg_get(NULL, "RemoteDebuggerEnabled", buf, sizeof(buf));
+
+        if (!strncmp(buf, value, strlen(value)))
+        {
+            return TRUE;
+        }
+
+        if (syscfg_set_commit(NULL, "RemoteDebuggerEnabled", value) != 0)
+        {
+            CcspTraceWarning(("%s: syscfg_set failed on RemoteDebuggerEnabled\n", __FUNCTION__));
+            return FALSE;
+        }
+
+        if (bValue == TRUE)
+        {
+            v_secure_system("systemctl restart remote-debugger.service");
+        }
+        else
+        {
+            v_secure_system("systemctl stop remote-debugger.service");
+        }
+
+        return TRUE;
+    }
+
+    CcspTraceWarning(("%s: Unsupported parameter '%s'\n", __FUNCTION__, ParamName));
+    return FALSE;
+}
+#endif
  #if defined (FEATURE_SUPPORT_INTERWORKING)
 /**********************************************************************
 
