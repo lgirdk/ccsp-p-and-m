@@ -2156,12 +2156,10 @@ CosaDmlDiGetProcessorSpeed
         ERR_CHK(rc);
        }     
     }
+    v_secure_pclose(fp);
+    fp = NULL;
 #endif
     
-    if(fp != NULL) {
-        v_secure_pclose(fp);
-	fp = NULL;
-    }
     *pulSize = AnscSizeOfString(pValue);
     if(pValue[*pulSize-1] == '\n') pValue[--(*pulSize)] = '\0';
     return ANSC_STATUS_SUCCESS; 
