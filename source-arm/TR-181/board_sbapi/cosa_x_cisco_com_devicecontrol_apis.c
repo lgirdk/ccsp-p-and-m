@@ -2222,10 +2222,14 @@ CosaDmlDcSetFactoryReset
                         char buf[128]={0};
                         #define FACTORY_RESET_COUNT_FILE "/nvram/.factory_reset_count"
                         pdbFile = fopen(FACTORY_RESET_COUNT_FILE, "r");
+                        /* CID 79131 - Ignoring number of bytes read : fix */
                         if(pdbFile != NULL){
-                           fread(buf,sizeof(buf),1,pdbFile);
+                            if ( fread(buf, sizeof(buf), 1, pdbFile) == 0 || feof(pdbFile) ) {
+                                CcspTraceError(("[%s]: Failed to read\n", __FUNCTION__));
+                            } else {
+                                dbValue = atoi(buf);
+                            }
                            fclose(pdbFile);
-                           dbValue = atoi(buf);
                         }
                         dbValue++;
                         pdbFile = fopen(FACTORY_RESET_COUNT_FILE, "w+");
@@ -2240,10 +2244,14 @@ CosaDmlDcSetFactoryReset
                         char buf[128]={0};
                         #define ROUTER_RESET_COUNT_FILE "/nvram/.router_reset_count"
                         pdbFile = fopen(ROUTER_RESET_COUNT_FILE, "r");
+                        /* CID 79131 */
                         if(pdbFile != NULL){
-                           fread(buf,sizeof(buf),1,pdbFile);
+                            if ( fread(buf, sizeof(buf), 1, pdbFile) == 0 || feof(pdbFile) ) {
+                                CcspTraceError(("[%s]: Failed to read\n", __FUNCTION__));
+                            } else {
+                                dbValue = atoi(buf);
+                            }
                            fclose(pdbFile);
-                           dbValue = atoi(buf);
                         }
                         dbValue++;
                         pdbFile = fopen(ROUTER_RESET_COUNT_FILE, "w+");
