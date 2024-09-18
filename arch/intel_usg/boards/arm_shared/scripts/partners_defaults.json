@@ -2,7 +2,7 @@
    "properties" : {
 
       "comments" : "MANDATORY: !!! Please increment below version value for any new parameter added in this partners_defaults.json !!!",
-      "version" : "8.21"
+      "version" : "8.22"
    },
 
    "comcast" : {
@@ -314,7 +314,7 @@
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.MAP-T.Enable" : "true",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.XconfURL" : "https://xconf.xdp.eu-1.xcal.tv",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.LogUploadURL" : "https://ssr.xdp.eu-1.xcal.tv/cgi-bin/sky-S3.cgi",
-      "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.CrashPortal" : "https://ssr.ccp.xcal.tv/cgi-bin/sky-upload_dump.cgi",
+      "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.CrashPortal" : "https://ssr.xdp.eu-1.xcal.tv/cgi-bin/sky-upload_dump.cgi",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.Telemetry" : "https://stbrtl.r53.xcal.sky/",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.ImageHealthChecker.OperatingMode" : "Monitor",
       "Device.RouterAdvertisement.X_RDK_PvD.Enable" : "false",
