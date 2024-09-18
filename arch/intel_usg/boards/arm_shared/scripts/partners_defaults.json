@@ -2,7 +2,7 @@
    "properties" : {
 
       "comments" : "MANDATORY: !!! Please increment below version value for any new parameter added in this partners_defaults.json !!!",
-      "version" : "8.22"
+      "version" : "8.23"
    },
 
    "comcast" : {
@@ -89,7 +89,23 @@
                      "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.RDKB_UIBranding.CloudUI.productname" : "xFi" ,
                      "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.RDKB_UIBranding.CloudUI.link" : "xfinity.com"
         }
-    }
+      },
+      "no_apply_system_default" : {
+         "WNXL11BWL" : {
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPNNumberOfEntries" : "1",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.ProfileID" : "0",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.MCCMNC" : "311480,310590,310599,311481,311482,311483,311484,311485,311486,311487,311488,311489",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.ProfileType" : "3gpp",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.PDPType" : "IPv4IPv6",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.Authentication" : "NONE",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.ProfileName" : "DefaultProfile",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.APN" : "VZWINTERNET",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.UserName" : "",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.Password" : "",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.IsNoRoaming" : "FALSE",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.IsAPNDisabled" : "FALSE"
+         }
+      }
 },
 
  "RDKM" : {
@@ -410,7 +426,23 @@
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CDLDM.CDLModuleUrl" : "https://ssr.ccp.xcal.tv/cgi-bin/x1-sign-redirect.pl?K=10&F=stb_cdl",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.ImageHealthChecker.OperatingMode" : "Monitor",
       "Device.RouterAdvertisement.X_RDK_PvD.Enable" : "false",
-      "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : ""
+      "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : "" ,
+      "no_apply_system_default" : {
+         "WNXL11BWL" : {
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPNNumberOfEntries" : "1",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.ProfileID" : "0",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.MCCMNC" : "311480,310590,310599,311481,311482,311483,311484,311485,311486,311487,311488,311489",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.ProfileType" : "3gpp",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.PDPType" : "IPv4IPv6",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.Authentication" : "NONE",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.ProfileName" : "DefaultProfile",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.APN" : "VZWINTERNET",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.UserName" : "",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.Password" : "",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.IsNoRoaming" : "FALSE",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.IsAPNDisabled" : "FALSE"
+         }
+      }
    },
 
 
@@ -486,7 +518,24 @@
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.CDLDM.CDLModuleUrl" : "https://ssr.ccp.xcal.tv/cgi-bin/x1-sign-redirect.pl?K=10&F=stb_cdl",
       "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.ImageHealthChecker.OperatingMode" : "Monitor",
       "Device.RouterAdvertisement.X_RDK_PvD.Enable" : "false",
-      "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : ""
+      "Device.RouterAdvertisement.X_RDK_PvD.FQDN" : "",
+      "no_apply_system_default" : {
+         "WNXL11BWL" : {
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPNNumberOfEntries" : "1",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.ProfileID" : "0",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.MCCMNC" : "302720,030272",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.ProfileType" : "3gpp",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.PDPType" : "IPv4IPv6",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.Authentication" : "NONE",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.ProfileName" : "RogersDefault",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.APN" : "wlsbackup.apn",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.UserName" : "",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.Password" : "",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.IsNoRoaming" : "FALSE",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.IsAPNDisabled" : "FALSE"
+
+         }
+      }
    },
 
 
@@ -570,6 +619,23 @@
         "TG3482G" : {
                 "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.CMVoiceImageSelect" : "pc15mgcp"
         }
+      },
+      "no_apply_system_default" : {
+         "WNXL11BWL" : {
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPNNumberOfEntries" : "1",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.ProfileID" : "0",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.MCCMNC" : "302720,030272",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.ProfileType" : "3gpp",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.PDPType" : "IPv4IPv6",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.Authentication" : "NONE",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.ProfileName" : "RogersDefault",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.APN" : "wlsbackup.apn",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.UserName" : "",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.Password" : "",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.IsNoRoaming" : "FALSE",
+            "Device.Cellular.AccessPoint.X_RDK_DefaultAPN.1.IsAPNDisabled" : "FALSE"
+
+         }
       }
    },
 
