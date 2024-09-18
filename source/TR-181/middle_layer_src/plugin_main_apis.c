@@ -851,6 +851,7 @@ static void SetAutoreboot( ANSC_HANDLE  hThisObject)
             {
                 pMyObject->AutoReboot.Enable = FALSE;
                 CcspTraceWarning(("No need to schedule as default value is set to %s \n", buf));
+                CosaDmlScheduleAutoReboot(defualtConfigureDays, FALSE);
             }
          }
     }

@@ -57,10 +57,18 @@ done
 
 if [ "$2" == "0" ]
 then
+        echo_t "[ScheduleAutoReboot.sh]: **************** if > $2"
         Removecron
         rm -f $FILE_LOCK
+        echo_t "[ScheduleAutoReboot.sh]: **************** checking pidof AutoReboot.sh"
+        pid=$(pidof AutoReboot.sh)
+        if [ -n "$pid" ]; then
+            echo_t "[ScheduleAutoReboot.sh]: **************** Process found with PID: $pid. Killing it now."
+            kill -9 $pid
+        fi
         exit
 else
+	echo_t "[ScheduleAutoReboot.sh]: **************** else > $2"
         Rebootday=$1
 fi
 
