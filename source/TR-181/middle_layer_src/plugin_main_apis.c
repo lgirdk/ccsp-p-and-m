@@ -928,7 +928,7 @@ static void CheckAndSetRebootReason()
     fpLastReboot = fopen("/var/tmp/lastrebootreason","r");
     if(fpLastReboot == NULL)
     {
-        char rebootReason[64] = "unknown";
+        char rebootReason[80] = "unknown";
         char BOOT_TIME_LOG_FILE[32] = "/rdklogs/logs/BootTime.log";
         FILE *fpBootLogFile = NULL;
 
