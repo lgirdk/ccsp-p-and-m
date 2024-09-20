@@ -2407,9 +2407,9 @@ CosaDmlDcSetFactoryReset
 	memset(partnerId,0,sizeof(partnerId));
         retVal = syscfg_get(NULL, "PartnerID", partnerId, sizeof(partnerId)) ;
 
-        if ( !retVal  && ( strcmp(partnerId,"test-partner") == 0 ) && (access(PARTNERID_FILE, F_OK) != 0))
+        if ( !retVal  && (access(PARTNERID_FILE, F_OK) != 0))
         {
-            CcspTraceInfo(("Setting test-partner as partner ID\n"));
+            CcspTraceInfo(("Setting %s as partner ID\n", partnerId));
             setTempPartnerId( partnerId );
         } 
 
