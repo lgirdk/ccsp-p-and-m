@@ -2402,6 +2402,7 @@ IPv4Address_DelEntry
              syscfg_unset(NULL, "brlan_tunneled_static_instance");
              syscfg_unset(NULL,"brlan_static_ip_enable");
              syscfg_commit();
+             RestartRIPInterfaces(FALSE);
          }
     }
     CosaDmlIpIfDelV4Addr(pMyObject->hSbContext, pIPInterface->Cfg.InstanceNumber, pIPv4Addr);
