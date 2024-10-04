@@ -2650,7 +2650,12 @@ CosaDmlDcSetEnableStaticNameServer
         return ANSC_STATUS_FAILURE;
     }
 
-    Utopia_SetBool(&ctx, UtopiaValue_WAN_EnableStaticNameServer, bEnabled);
+    if(Utopia_SetBool(&ctx, UtopiaValue_WAN_EnableStaticNameServer, bEnabled) != SUCCESS)
+    {
+	    CcspTraceError(("%s, Failed to set boolean value for UtopiaValue_WAN_EnableStaticNameServer \n",__FUNCTION__));
+            Utopia_Free(&ctx, 0);
+	    return ANSC_STATUS_FAILURE;
+    }
     Utopia_Free(&ctx, 1);
     
     //get nameservers by DHCP if static nameservers not enabled on GUI
