@@ -224,11 +224,13 @@ DeviceInfo_GetParamBoolValue_Custom
 
 	return TRUE;
     }
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
     if (strcmp(ParamName, "X_RDKCENTRAL-COM_EnableMoCAforXi5") == 0)
     {
        *pBool = pMyObject->bEnableMoCAforXi5;
            return TRUE;
     }
+#endif
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
 }
@@ -440,7 +442,14 @@ DeviceInfo_SetParamBoolValue_Custom
     )
 {
     UNREFERENCED_PARAMETER(hInsContext);
-    PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
+
+#if !defined (CONFIG_INTERNET2P0) && defined (NO_MOCA_FEATURE_SUPPORT) && !defined (CONFIG_CISCO_HOTSPOT)
+UNREFERENCED_PARAMETER(ParamName);
+UNREFERENCED_PARAMETER(bValue);
+#else
+PCOSA_DATAMODEL_DEVICEINFO      pMyObject = (PCOSA_DATAMODEL_DEVICEINFO)g_pCosaBEManager->hDeviceInfo;
+#endif
+
 #ifdef CONFIG_INTERNET2P0
 
     if (strcmp(ParamName, "X_RDKCENTRAL-COM_ConfigureWiFi") == 0)
@@ -719,6 +728,7 @@ DeviceInfo_SetParamBoolValue_Custom
         return TRUE;
     }
 #endif
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
     if (strcmp(ParamName, "X_RDKCENTRAL-COM_EnableMoCAforXi5") == 0)
     {
                /* No need to process same value received case */
@@ -729,6 +739,7 @@ DeviceInfo_SetParamBoolValue_Custom
                CosaDmlDiSetEnableMoCAforXi5Flag( pMyObject, &bValue, &pMyObject->bEnableMoCAforXi5 );
        return TRUE;
     }
+#endif
     /* CcspTraceWarning(("Unsupported parameter '%s'\n", ParamName)); */
     return FALSE;
 }

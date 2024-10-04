@@ -213,7 +213,9 @@ BOOL is_mesh_opt_mode_enabled();
 #endif
 
 #if defined (INTEL_PUMA7)
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
     BOOL moca_factoryReset(void);
+#endif
 #endif
 
 #if 0
@@ -1912,9 +1914,11 @@ void* restoreAllDBs(void* arg)
 	v_secure_system("latticecli -n \"set Cm.ResetNonvolNoReboot 1\"");
 #endif
 #if defined (_XB6_PRODUCT_REQ_) && defined (_COSA_BCM_ARM_)
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
         CcspTraceWarning(("FactoryReset:%s in thread  Restoring moca to factory defaults  ...\n",__FUNCTION__));
         v_secure_system("rm -f /nvram/moca.conf.default"); //TCXB6-1028
         v_secure_system("rm -f /nvram/*.moca0"); //TCXB6-1028
+#endif
 #endif
         v_secure_system("rm -f /nvram/mesh_enabled"); //RDKB-23900
 #if defined (_ARRIS_XB6_PRODUCT_REQ_)
@@ -2370,8 +2374,10 @@ CosaDmlDcSetFactoryReset
 #endif
 
 #if defined (INTEL_PUMA7)
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
 	CcspTraceWarning (("***** New API call to MOCA FactoryReset: Restoring MOCA to factory defaults  ...\n")); //ARRISXB6-7326
 	moca_factoryReset();
+#endif
 #endif
 	pthread_t other;
         pthread_create(&other, NULL, &restoreAllDBs, NULL);
@@ -4228,7 +4234,7 @@ CosaDmlLanMngm_SetConf(ULONG ins, PCOSA_DML_LAN_MANAGEMENT pLanMngm)
     bridgeInfo_t bridge_info;
     char str[IFNAME_SZ];    
     napt_mode_t napt;
-#if !defined(_CBR_PRODUCT_REQ_) && !defined(_PLATFORM_RASPBERRYPI_) && !defined(_HUB4_PRODUCT_REQ_) && !defined(_PLATFORM_TURRIS_)// MOCA is not present for TCCBR environment, HUB4 and RaspberryPi environment
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
 	parameterValStruct_t **valMoCAstatus = NULL;
 	char pMoCAComponentName[64]="eRT.com.cisco.spvtg.ccsp.moca";
 	char pComponentPath[64]="/com/cisco/spvtg/ccsp/moca";
@@ -4282,16 +4288,18 @@ CosaDmlLanMngm_SetConf(ULONG ins, PCOSA_DML_LAN_MANAGEMENT pLanMngm)
                /* To delete xi5 device connected file when device entering into bridge-mode */
                if ( pLanMngm->LanMode == COSA_DML_LanMode_BridgeStatic || pLanMngm->LanMode == COSA_DML_LanMode_FullBridgeStatic )
                {
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
                        FILE *fp = NULL;
                        if( ( fp = fopen( "/tmp/MoCAforXi5DeviceConnected", "r" ) ) != NULL )
                        {
                                fclose(fp);
                                v_secure_system("rm -rf /tmp/MoCAforXi5DeviceConnected");
                        }
+#endif
                }
 
         Utopia_SetBridgeSettings(&utctx,&bridge_info);
-#if !defined(_CBR_PRODUCT_REQ_) && !defined(_PLATFORM_RASPBERRYPI_) && !defined(_HUB4_PRODUCT_REQ_) && !defined(_PLATFORM_TURRIS_)// MOCA is not present for TCCBR environment, HUB4 and RaspberryPi environment
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
 		ret = CcspBaseIf_getParameterValues(
 		    bus_handle,
 		    pMoCAComponentName,

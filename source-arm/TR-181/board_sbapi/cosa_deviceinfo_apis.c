@@ -164,6 +164,7 @@ extern  ANSC_HANDLE             bus_handle;
 
 extern void* g_pDslhDmlAgent;
 extern ANSC_HANDLE bus_handle;
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
 ANSC_STATUS
 CosaDmlDiGetEnableMoCAforXi5Flag
   (
@@ -289,7 +290,7 @@ void CosaDmlDiCheckAndEnableMoCA( void )
                }
        }
 }
-
+#endif
 static const int OK = 1 ;
 static const int NOK = 0 ;
 static char reverseSSHArgs[256];

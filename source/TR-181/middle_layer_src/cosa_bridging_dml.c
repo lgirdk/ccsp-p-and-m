@@ -2105,7 +2105,7 @@ Port_GetParamStringValue
                        return -1;
                      }
                      break;
-                  #ifndef _CBR_PRODUCT_REQ_
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
                   case COSA_DML_BRG_LINK_TYPE_Moca:
                      rc = strcpy_s(path, sizeof(path), "Device.MoCA.Interface.");
                      if(rc != EOK)
@@ -2114,7 +2114,7 @@ Port_GetParamStringValue
                        return -1;
                      }
                      break;
-                  #endif
+#endif
                   case COSA_DML_BRG_LINK_TYPE_WiFiSsid:
                      rc = strcpy_s(path, sizeof(path), "Device.WiFi.SSID.");
                      if(rc != EOK)
@@ -2719,7 +2719,7 @@ fprintf(stderr, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 1\n");
                     }
                   }  
             }
-
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
             else if (_ansc_strstr(pString,"MoCA"))
             {
                 int ret = COSAGetParamValueByPathName(g_MessageBusHandle,&varStruct,&ulEntryNameLen);
@@ -2746,6 +2746,7 @@ fprintf(stderr, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 1\n");
                   }
 
             }   
+#endif
             else if (( 0 == CosaGetParamValueString(ucEntryParamName, ucEntryNameValue, &ulEntryNameLen ) ) &&
                 ( AnscSizeOfString(ucEntryNameValue) != 0 ) )
             {

@@ -141,7 +141,9 @@ static char *InstanceNum = "dmsb.l2net.5.InstanceNum";
 static char *Type = "dmsb.l2net.5.Type";
 static char *SW = "dmsb.l2net.5.Members.SW";
 static char *Eth = "dmsb.l2net.5.Members.Eth";
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
 static char *Moca = "dmsb.l2net.5.Members.Moca";
+#endif
 static char *WiFi = "dmsb.l2net.5.Members.WiFi";
 static char *Link = "dmsb.l2net.5.Members.Link";
 static char *Gre = "dmsb.l2net.5.Members.Gre";
@@ -189,7 +191,9 @@ void* BwgRemoveParam_Thread(void* arg)
     PSM_Del_Record(bus_handle,g_Subsystem,Type);
     PSM_Del_Record(bus_handle,g_Subsystem,SW);
     PSM_Del_Record(bus_handle,g_Subsystem,Eth);
+#if !defined (NO_MOCA_FEATURE_SUPPORT)
     PSM_Del_Record(bus_handle,g_Subsystem,Moca);
+#endif
     PSM_Del_Record(bus_handle,g_Subsystem,WiFi);
     PSM_Del_Record(bus_handle,g_Subsystem,Link);
     PSM_Del_Record(bus_handle,g_Subsystem,Gre);
