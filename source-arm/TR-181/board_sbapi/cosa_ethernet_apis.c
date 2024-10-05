@@ -1378,7 +1378,11 @@ int puma6_getSwitchCfg(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_CFG pcfg)
             }
             case CCSP_HAL_ETHSW_LINK_Auto:
             {
+#if defined (_MV1_ARM_CBN_)
+                pcfg->MaxBitRate = 1000;
+#else
                 pcfg->MaxBitRate = -1;
+#endif
                 break;
             }
             default:
@@ -1734,7 +1738,11 @@ int puma6_getEntry(PCosaEthInterfaceInfo eth, PCOSA_DML_ETH_PORT_FULL pEntry)
             }
             case CCSP_HAL_ETHSW_LINK_Auto:
             {
+#if defined (_MV1_ARM_CBN_)
+                pcfg->MaxBitRate = 1000;
+#else
                 pcfg->MaxBitRate = -1;
+#endif
                 break;
             }
             default:
