@@ -1995,6 +1995,13 @@ CosaDmlDhcpv6Init
     }
 
     GETI_FROM_UTOPIA(DHCPV6S_NAME,    "", 0, "", 0, "servertype",   g_dhcpv6_server_type)
+#ifdef _MV1_ARM_CBN_
+    if (g_dhcpv6_server_type == 0)
+    {
+        g_dhcpv6_server_type = 2;
+        SETI_INTO_UTOPIA(DHCPV6S_NAME,  "", 0, "", 0, "servertype", g_dhcpv6_server_type)
+    }
+#endif
     GETI_FROM_UTOPIA(DHCPV6S_NAME,  "", 0, "", 0, "poolnumber", uDhcpv6ServerPoolNum)
 
     if (g_dhcpv6_server == 1)
